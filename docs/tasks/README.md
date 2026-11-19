@@ -5,11 +5,11 @@ bottom. Deliver on branch `helper/<name>/<task-id>` through a pull request. Do n
 
 | ID | Title | Assignee | Status | Delivers to |
 |---|---|---|---|---|
-| T-001 | Concept art: settlements through the ages | Grok | open | `docs/concept/settlements/` |
-| T-002 | Concept art: landmarks, wonders and god powers | Grok | open | `docs/concept/landmarks/` |
-| T-003 | Asset sourcing research (close-up 3D assets and licences) | Astra | open | `docs/research/assets.md` |
+| T-001 | Concept art: settlements through the ages | Grok | done (merged 2026-11-19) | `docs/concept/settlements/` |
+| T-002 | Concept art: landmarks, wonders and god powers | Grok | done (merged 2026-11-19) | `docs/concept/landmarks/` |
+| T-003 | Asset sourcing research (close-up 3D assets and licences) | Astra | done (merged 2026-11-19) | `docs/research/assets.md` |
 | T-004 | Culture and language design proposals | Astra | open | `docs/content/cultures.md` |
-| T-005 | Chronicle voice: sample entries and god epithets | Grok | open | `docs/content/chronicle-voice.md` |
+| T-005 | Chronicle voice: sample entries and god epithets | Grok | done (merged 2026-11-19) | `docs/content/chronicle-voice.md` |
 | T-006 | Design review of the game rules | Astra | open | `docs/reviews/astra-design-review.md` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.

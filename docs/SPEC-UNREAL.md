@@ -22,6 +22,14 @@ lab and write references: `docs/lab/clouds.md` (weather-driven volumetric clouds
 (descent LOD, ground material, ocean, rivers), `docs/lab/vegetation-and-towns.md` (generated trees and
 buildings). Read the one for your module if it exists and build on what it proved.
 
+**Approved concept targets (merged 2026-11-19).** `docs/concept/settlements/` (each age from Stone to
+Space, three culture styles, a night city) and `docs/concept/landmarks/` (buildings, wonders,
+god-power effects), each with an `index.md` of artist notes. They define the close-up look that the
+later real-asset pass aims at; towns, nature and fx engineers should match their layouts,
+silhouettes, palettes and effect readability now (with simple stand-in meshes, per 0.4).
+Chronicle prose and god epithets: `docs/content/chronicle-voice.md`. Asset sourcing (owner's $0
+additional-spend rule): `docs/research/assets.md`.
+
 ## 0. Working rules for client engineers
 
 0.1 **Lanes.** Unreal builds one module; a half-written file from one engineer breaks everyone's
