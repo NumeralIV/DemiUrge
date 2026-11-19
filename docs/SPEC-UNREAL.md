@@ -27,7 +27,7 @@ Space, three culture styles, a night city) and `docs/concept/landmarks/` (buildi
 god-power effects), each with an `index.md` of artist notes. They define the close-up look that the
 later real-asset pass aims at; towns, nature and fx engineers should match their layouts,
 silhouettes, palettes and effect readability now (with simple stand-in meshes, per 0.4).
-Chronicle prose and god epithets: `docs/content/chronicle-voice.md`. Asset sourcing (owner's $0
+UI target: `docs/concept/ui/` (HUD, panels, chronicle book, screens, icons, with px, hex and font notes); fonts Cinzel, Cormorant Garamond, EB Garamond and Inter (SIL OFL) arrive in `assets/fonts/` (T-009) and replace the Windows stand-in fonts. Chronicle prose and god epithets: `docs/content/chronicle-voice.md`. Asset sourcing (owner's $0
 additional-spend rule): `docs/research/assets.md`.
 
 ## 0. Working rules for client engineers
