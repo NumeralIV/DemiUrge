@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script></head>
+<body><div class="stage" style="background-image:url(bg/near.jpg)"></div>
+<script>
+label(956,347,'Vornhal','U');
+label(975,600,'Tel Asha','U',{big:true,cap:true});
+label(1312,840,'Ashkel','U',{glyphs:['praying']});
+// rain brush ring on dry upland (perspective ellipse)
+h(`<svg class="abs" style="left:420px;top:390px" width="440" height="280" viewBox="0 0 440 280">
+<defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7fc7e8" stop-opacity=".22"/><stop offset=".85" stop-color="#7fc7e8" stop-opacity=".10"/><stop offset="1" stop-color="#7fc7e8" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="220" cy="140" rx="190" ry="110" fill="url(#g)"/>
+<ellipse cx="220" cy="140" rx="190" ry="110" fill="none" stroke="#fff1c9" stroke-width="2" opacity=".9"/>
+<ellipse cx="220" cy="140" rx="200" ry="118" fill="none" stroke="#fff1c9" stroke-width="1" opacity=".35" stroke-dasharray="6 6"/>
+<g stroke="#bfe6f7" stroke-width="1.6" stroke-linecap="round" opacity=".75">${Array.from({length:26},(_,i)=>{const a=i*2.39996,r=Math.sqrt((i+.5)/26)*0.86;const x=220+Math.cos(a)*190*r,y=140+Math.sin(a)*110*r;return `<line x1="${x}" y1="${y-7}" x2="${x-3}" y2="${y+5}"/>`}).join('')}</g>
+<circle cx="220" cy="140" r="3" fill="#fff1c9"/></svg>`);
+cursor(642,532);
+h(`<div class="tip" style="left:860px;top:470px;width:296px"><b>Dry grassland</b><br>24 °C · rainfall scarce<br><span style="color:var(--awe)">Rain · 5 Awe a second</span><br><span class="good">+ Thirsty land: they will notice this</span></div>`);
+topbar({world:'Ithe',year:'Year 1,284',age:'Iron Age',ageIcon:'age2',ageP:.64,
+  stats:[['people','18,400','people'],['culture','2','living cultures']],
+  awe:'96',aweMax:'340',inc:'1.9',epithet:'the Green Hand',regard:'Regarded',regardIcon:'eye',speed:'1'});
+h(`<div class="panel abs" id="hud-armed" style="left:50%;transform:translateX(-50%);top:888px;height:44px;display:flex;align-items:center;gap:12px;padding:0 8px 0 16px;border-color:var(--line-hi)">
+<span style="color:var(--gold-hi)">${svg('rain',20)}</span><span class="serif" style="font-size:19px;font-weight:600;color:var(--gold-hi)">Rain</span><span class="num" style="color:var(--awe);font-size:14px">5 Awe / s</span><span class="dim" style="font-size:13px">Hold over the land</span>
+<span class="sep" style="height:24px"></span><span class="dim" style="font-size:13px">Brush</span><span class="btn icon" style="width:30px;height:30px;min-width:30px">${svg('minus',14)}</span><span class="btn icon" style="width:30px;height:30px;min-width:30px">${svg('plus',14)}</span>
+<span class="btn icon" data-action="disarm" style="width:30px;height:30px;min-width:30px">${svg('close',14)}</span></div>`);
+palette({state:{rain:'armed',meteor:'locked',volcano:'locked',awaken:'locked',prophet:'poor',peace:'poor'}});
+// power tooltip above the hovered (locked) Meteor button
+const m = document.querySelector('[data-power="meteor"]').getBoundingClientRect();
+h(`<div class="tip" style="left:${m.left+m.width/2-170}px;top:${876-128}px;width:340px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><b>Meteor</b><span class="num dim">M · 150 Awe</span></div>
+<div class="body" style="font-size:16px;margin:2px 0 6px;color:var(--text)">A falling star. It leaves a crater and darkens the sky with dust.</div>
+<div style="display:flex;gap:8px;align-items:center;color:var(--gold)">${svg('lock',14)}<span style="font-size:13px">Wakes in the Sail Age, or when your Awe can hold 450.</span></div></div>`);
+cursor(m.left+m.width/2+6, m.top+24);
+</script></body></html>

@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script></head>
+<body><div class="stage" style="background-image:url(bg/orbit.jpg)"></div>
+<script>
+// settlement labels (#labels)
+label(735,395,'Tel Asha','U',{big:true,cap:true});
+label(830,342,'Vornhal','U');
+label(655,722,'Qe-Luun','Q',{glyphs:['praying']});
+label(1292,262,'Dar Imen','V',{big:true,glyphs:['war']});
+label(1430,430,'Umar-Kesh','V');
+// inspire target ring around Tel Asha
+h(`<svg class="abs" style="left:695px;top:355px" width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="30" fill="rgba(255,217,138,.08)" stroke="#fff1c9" stroke-width="1.6" stroke-dasharray="5 4"/><circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,241,201,.35)" stroke-width="1"/></svg>`);
+cursor(758,420);
+h(`<div class="tip" style="left:786px;top:444px;width:300px"><b>Tel Asha</b> <span class="dim">· capital of the Umari</span><br><span class="num">41,200</span> people, growing<br><span style="color:var(--awe)">Inspire · 60 Awe</span> <span class="dim">: their makers will dream for forty years.</span></div>`);
+topbar({world:'Ithe',year:'Year 3,212',age:'Space Age',ageIcon:'age6',ageP:1,
+  stats:[['people','2.41 M','people'],['culture','4','living cultures'],['thermometer','+1.2 °C','temperature'],['rising-sea','+0.6 m','sea level']],
+  awe:'186',aweMax:'1,040',inc:'4.4',epithet:'the Rain-Giver',regard:'Beloved',regardIcon:'heart',ark:[38,'beloved'],speed:'2'});
+// weight-3 banner
+h(`<div class="abs" style="left:560px;top:104px;width:800px;text-align:center;padding:16px 40px 18px;background:radial-gradient(closest-side,rgba(11,15,23,.8),rgba(11,15,23,.55) 60%,rgba(11,15,23,0));">
+<div class="rule" style="margin:0 120px 10px"></div><div class="small-caps">Year 3,198 · The Umari</div>
+<div class="body" style="font-size:24px;line-height:1.3;margin-top:6px;color:var(--gold-hi)">At Tel Asha the Umari began to build a ship that would not sail on water. The children were told it was for them. It was.</div>
+<div class="rule" style="margin:12px 120px 0"></div></div>`);
+// first-steps hint (genesis guide card slot)
+h(`<div class="panel abs" id="hud-genesis" style="left:24px;top:96px;width:372px;padding:14px 16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span class="small-caps">A sign</span><span class="dim">${svg('close',16)}</span></div>
+<div class="body" style="font-size:18px;line-height:1.35;margin-top:6px">They are building a ship to leave. How they feel about you now is how the story ends.</div></div>`);
+// chronicle feed
+h(`<div class="panel abs" style="left:1556px;top:96px;width:340px;padding:14px 16px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="display:flex;gap:8px;align-items:center" class="gold">${svg('scroll',18)}<span class="small-caps">Chronicle</span></span><span class="btn" id="pan-chronicle-open" style="height:30px;font-size:13px;padding:0 10px">Open</span></div>
+<div class="feed-entry"><span class="yr">YEAR 3,198</span>At Tel Asha the Umari began to build a ship that would not sail on water.</div>
+<div class="rule" style="margin:10px 0"></div>
+<div class="feed-entry" style="opacity:.78"><span class="yr">YEAR 3,171</span>The feet of traders wore a road between Vornhal and Qe-Luun. Along it went pots and coins and, later, fevers.</div>
+<div class="rule" style="margin:10px 0"></div>
+<div class="feed-entry" style="opacity:.55"><span class="yr">YEAR 3,150</span>Iskaral prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.</div></div>`);
+// now strip
+h(`<div class="panel abs" id="pan-now" style="left:1556px;top:470px;width:340px;padding:12px 16px">
+<div class="small-caps" style="margin-bottom:8px">Needs you</div>
+${[['war','The Vesh against the Qoruun','bad'],['plague','Plague in 2 towns','bad'],['praying','Qe-Luun prays for rain','gold'],['rain','A storm over the eastern sea','dim']].map(([i,t,c])=>`<div style="display:flex;align-items:center;gap:10px;height:34px;font-size:15px"><span class="${c}">${svg(i,18)}</span><span>${t}</span><span class="dim" style="margin-left:auto">${svg('arrow',14)}</span></div>`).join('')}</div>`);
+// toast
+h(`<div id="hud-toasts" class="abs" style="left:1596px;top:760px;width:300px">
+<div class="panel" style="padding:10px 14px;display:flex;gap:10px;align-items:center;font-size:15px;border-color:rgba(226,131,111,.5)"><span class="bad">${svg('awe',18)}</span><span>Not enough Awe for Volcano</span></div></div>`);
+// overlay switch + legend popover (hover on Cultures)
+h(`<div class="panel abs" style="left:24px;top:794px;width:236px;padding:10px 10px 8px">
+<div style="display:flex;align-items:center;gap:8px;padding:0 6px 6px" class="gold">${svg('layers',18)}<span class="small-caps">Overlay</span></div>
+${['None','Cultures','Temperature','Rainfall','Devotion','Habitability'].map((t,i)=>`<div data-overlay="${i}" style="height:28px;display:flex;align-items:center;gap:10px;padding:0 8px;border-radius:6px;font-size:14px;${i==0?'background:rgba(232,205,150,.16);color:var(--gold-hi)':i==1?'background:rgba(232,205,150,.07)':'color:var(--dim)'}"><span style="width:8px;height:8px;border-radius:50%;border:1px solid var(--gold);${i==0?'background:var(--gold)':''}"></span>${t}</div>`).join('')}
+<div class="rule" style="margin:6px 0"></div><div style="height:28px;display:flex;align-items:center;gap:10px;padding:0 8px;font-size:14px;color:var(--dim)">${svg('eye',16)}Hide interface <span class="num" style="margin-left:auto;font-size:12px">H</span></div></div>`);
+h(`<div class="panel abs" style="left:24px;top:600px;width:236px;padding:12px 14px">
+<div class="small-caps" style="margin-bottom:8px">Cultures</div>
+${[['U','the Umari'],['V','the Vesh'],['Q','the Qoruun'],['T','the Telessi']].map(([k,n])=>`<div style="display:flex;align-items:center;gap:10px;height:26px;font-family:var(--serif);font-size:17px;font-weight:600"><span class="sigil" style="background:${C[k]};width:16px;height:16px;font-size:10px">${k}</span>${n}</div>`).join('')}
+<div style="display:flex;align-items:center;gap:10px;height:24px;font-size:13px" class="dim"><span style="width:16px;height:16px;border-radius:50%;border:1px dashed var(--dim)"></span>Unclaimed land</div></div>`);
+// armed chip
+h(`<div class="panel abs" id="hud-armed" style="left:50%;transform:translateX(-50%);top:888px;height:44px;display:flex;align-items:center;gap:12px;padding:0 8px 0 16px;border-color:var(--line-hi)">
+<span style="color:var(--gold-hi)">${svg('inspire',20)}</span><span class="serif" style="font-size:19px;font-weight:600;color:var(--gold-hi)">Inspire</span><span class="num" style="color:var(--awe);font-size:14px">60 Awe</span><span class="dim" style="font-size:13px">Choose a settlement</span><span class="btn icon" data-action="disarm" style="width:30px;height:30px;min-width:30px">${svg('close',14)}</span></div>`);
+palette({state:{inspire:'armed',volcano:'poor',awaken:'poor'}});
+</script></body></html>

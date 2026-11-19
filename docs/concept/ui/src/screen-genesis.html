@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script></head>
+<body><div class="stage" style="background-image:url(bg/genesis.jpg)"></div>
+<script>
+topbar({world:'Ithe',year:'Genesis',age:'The second day: water',ageIcon:'sea',ageP:.5,speed:'1'});
+// genesis guide card
+const steps=['Molten','Water','Life','People'];
+h(`<div class="panel abs" id="hud-genesis" style="left:50%;transform:translateX(-50%);top:656px;width:640px;padding:18px 24px 20px">
+<div style="display:flex;align-items:center;gap:0;margin-bottom:14px">${steps.map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;${i<3?'flex:1':''}"><span style="width:12px;height:12px;border-radius:50%;border:1.5px solid var(--gold);${i<1?'background:var(--gold)':i==1?'background:var(--gold-hi);box-shadow:0 0 10px #ffd98a':''}"></span><span class="small-caps" style="${i==1?'color:var(--gold-hi)':i>1?'color:var(--dim)':''}">${s}</span>${i<3?'<span style="flex:1;height:1px;margin:0 10px;background:var(--line)"></span>':''}</div>`).join('')}</div>
+<div class="body" style="font-size:24px;line-height:1.3;color:var(--gold-hi)">Call down comets to fill the seas. Raise or lower the land while the clay is soft.</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 6px"><span style="font-size:16px"><span class="num" style="color:var(--water);font-weight:600">Ocean 41 %</span> <span class="body" style="font-size:18px;font-style:italic;color:var(--text)"> · a temperate world</span></span><span class="dim" style="font-size:13px">comets called: 6</span></div>
+<div style="position:relative"><div class="bar" style="height:8px;border-radius:4px"><i style="width:41%;background:linear-gradient(90deg,#3d7fa3,#7fc7e8)"></i></div><div style="position:absolute;left:35%;width:40%;top:-4px;height:16px;border-left:1px solid var(--gold);border-right:1px solid var(--gold)"></div><div class="dim" style="position:relative;left:35%;width:40%;text-align:center;font-size:12px;margin-top:6px">temperate, 35–75 %</div></div>
+<div style="display:flex;justify-content:flex-end;margin-top:16px"><div class="btn primary" id="hud-genesis-next" style="height:44px;font-size:16px;padding:0 18px">Continue to life ${svg('arrow',18)}</div></div></div>`);
+// genesis palette: comet + shape (free during genesis)
+const pw=(id,nm,key,cost,st='')=>`<div class="pw ${st}" data-power="${id}"><span class="key num">${key}</span>${svg(id,26)}<span class="nm">${nm}</span><span class="ct num">${cost}</span></div>`;
+h(`<div class="palette"><div class="group"><div class="gname">GENESIS</div><div class="row">${pw('comet','Comet','C','free','armed')}</div></div><div class="group"><div class="gname">SHAPE</div><div class="row">${pw('raise','Raise','U','free')}${pw('lower','Lower','J','free')}</div></div></div>`);
+// comet aim marker on the planet
+h(`<svg class="abs" style="left:900px;top:420px" width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="22" fill="none" stroke="#fff1c9" stroke-width="1.8"/><path d="M45 13v12M45 65v12M13 45h12M65 45h12" stroke="#fff1c9" stroke-width="1.8" stroke-linecap="round"/></svg>`);
+cursor(948,468);
+</script></body></html>

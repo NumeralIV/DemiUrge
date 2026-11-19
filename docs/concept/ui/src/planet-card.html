@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script>
+<style>.k{display:flex;flex-direction:column;gap:2px}.k .v{font-family:var(--sans);font-size:24px;font-weight:600;color:var(--text)}.k .l{font-family:var(--caps);font-size:12px;letter-spacing:.16em;color:var(--gold)}</style></head>
+<body><div class="stage" style="background-image:url(bg/orbit.jpg)"></div>
+<div class="abs" style="inset:0;background:linear-gradient(0deg,rgba(11,15,23,.92) 0%,rgba(11,15,23,.55) 26%,rgba(11,15,23,0) 44%),linear-gradient(180deg,rgba(11,15,23,.6),rgba(11,15,23,0) 18%)"></div>
+<div class="abs" style="left:36px;top:36px;right:36px;bottom:36px;border:1px solid var(--line-hi);border-radius:6px"></div>
+<div class="abs" style="left:44px;top:44px;right:44px;bottom:44px;border:1px solid var(--line);border-radius:4px"></div>
+<script>
+h(`<div class="abs" id="card" style="left:96px;top:84px"><div class="caps" style="font-size:16px;letter-spacing:.3em;color:var(--gold)">DEMIURGE</div></div>
+<div class="abs" style="right:96px;top:84px;text-align:right" class="dim"><div class="small-caps">Seed 7731-ITHE</div></div>
+<div class="abs" style="left:96px;bottom:92px;width:1728px">
+<div style="display:flex;align-items:flex-end;justify-content:space-between">
+<div><div class="caps" style="font-size:92px;font-weight:500;letter-spacing:.24em;color:var(--gold-hi);line-height:1">ITHE</div>
+<div class="body" style="font-size:28px;font-style:italic;color:var(--gold);margin-top:10px">Kept by Ashtavai, the Rain-Giver</div>
+<div class="body" style="font-size:20px;color:var(--text);margin-top:8px;max-width:820px">3,214 years, from the first fire to the Space Age. They left you beloved.</div></div>
+<div style="display:flex;gap:44px;padding-bottom:6px">
+<div class="k"><span class="l">Years</span><span class="v">3,214</span></div>
+<div class="k"><span class="l">Age</span><span class="v">Space</span></div>
+<div class="k"><span class="l">People</span><span class="v">2.43 M</span></div>
+<div class="k"><span class="l">Peoples</span><span class="v" style="display:flex;gap:6px;align-items:center">${['U','V','Q','T'].map(k=>`<span class="sigil" style="background:${C[k]}">${k}</span>`).join('')}</span></div>
+<div class="k"><span class="l">Ending</span><span class="v" style="color:var(--good)">Beloved</span></div>
+<div class="k"><span class="l">Score</span><span class="v" style="color:var(--awe)">8,460</span></div>
+</div></div></div>`);
+</script></body></html>
