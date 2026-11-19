@@ -45,6 +45,11 @@ struct ChronicleTune {
 	// with no distinct memory, how the people feel (society::regard) names the god
 	double belovedLove = 0.4, belovedDevotion = 0.45;   // -> 'the Beloved', 'the Kind One', ...
 	double dreadLove = -0.35;        // -> 'the Dreaded', 'the Jealous One', ... (also overrides a two-sided epithet)
+	// --- integration verifier (2026-11-19): the late game drowned the chronicle in notable entries ---
+	double famineGap = 10;           // a famine in a city (notable): at most one entry per culture per this many years
+	double bigTierGap = 20;          // a culture's cities / metropolises after its first: one entry per this many years
+	double dustFamine = 0.05;        // w.dust at or above this: famines are told as the darkened sun's doing
+	double forgetDeeds = 0.5;        // a deed-named god falls back to a plain name only below forgetDeeds x minDeeds
 };
 
 namespace chronicle {

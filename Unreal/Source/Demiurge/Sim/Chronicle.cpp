@@ -432,6 +432,20 @@ bool minorOk(const World& w, string_view type, int culture, double gap, double g
 	return !(globalGap > 0 && recent(w, type, kAnyCulture, globalGap));
 }
 
+// (integration verifier) A notable (weight >= 2) entry of this type for this culture within `gap` years?
+// exceptCell >= 0: entries at that cell do not count (the same place may be told again).
+bool recentNotable(const World& w, string_view type, int culture, double gap, int exceptCell = -1) {
+	const double y = fin(w.year);
+	int scanned = 0;
+	for (size_t i = w.chronicle.size(); i-- > 0;) {
+		const ChronicleEntry& e = w.chronicle[i];
+		if (e.year < y - gap - 1e-9) break;
+		if (++scanned > 5000) return true;
+		if (e.culture == culture && e.weight >= 2 && e.type == type && (exceptCell < 0 || e.cell != exceptCell)) return true;
+	}
+	return false;
+}
+
 // ====================================================================== templates
 // Keys: {s} settlement, {st} its size word, {t} terrain phrase at it ("on the plains"), {c} culture plural
 // ("the Umari"), {ca} adjective, {cn} name, {g} the culture's name for the god, {ge} god + epithet,
@@ -509,7 +523,7 @@ const char* const kLightningNat[] = {
 const char* const kWave[] = {
 	"A wall of water came out of the sea upon {s}.",
 	"The sea rose up and walked inland at {s}, [taking boats and houses and cattle|and did not ask leave].",
-	"A great wave struck the shore {w}, and the people of {s} [ran for the hills|counted their dead].",
+	"A great wave broke {w}, and the people of {s} [ran for the hills|counted their dead].",
 	"The sea went out from the shore of {s}, very far, and then it came back all at once.",
 	"A grey wave as tall as a temple broke over the fields of {s}, and salt lay on them for years.",
 };
@@ -810,6 +824,13 @@ const char* const kFamine[] = {
 	"Hunger walked the streets of {s}, [and {c} sold their tools for grain|and the fields were not enough for all of them].",
 	"The fields about {s} could not feed it any longer. [Some families left in the night.|The priests asked {g} for bread.]",
 };
+// famines while dust darkens the sky (volcanic or nuclear winter): the hunger is everywhere
+const char* const kFamineDust[] = {
+	"Ash hid the sun from {W}, the summers did not come, and {s} went hungry[, and many places besides| with all its neighbours].",
+	"The sky stayed grey over {W} for years. The harvest failed at {s}, and not only there.",
+	"In the dark years the barley would not ripen, and hunger came to {s} and to many towns of {c}.",
+	"The sun was a pale coin behind the dust, and the granaries of {s} stood empty. {c} remembered those years as the hungry ones.",
+};
 const char* const kPlague[] = {
 	"A sickness came to {s}.",
 	"Fever spread through {s}, [and the priests could do nothing|and many were buried].",
@@ -990,7 +1011,7 @@ const char* const kAgeIndustry[] = {
 const char* const kAgeAtomic[] = {
 	"{c} split the smallest thing in the world, and found a fire inside it.",
 	"The wise of {c} learned to wake the fire inside stones, [and the god was not consulted|and some of them were afraid].",
-	"{c} entered the age of the hidden fire, [with great hopes|with great fears|with both].",
+	"{c} entered the age of the hidden fire, [with great hopes|with great fears|with both hope and fear].",
 };
 const char* const kAgeSpace[] = {
 	"{c} turned their eyes to the stars, and built towers of fire to reach them.",
@@ -1040,6 +1061,13 @@ const char* const kTradeForeign[] = {
 	"Traders of {c} and {c2} met at {s2}, and each thought they had cheated the other.",
 	"A road was opened between {s} of {c} and {s2} of {c2}, [and strange coins began to turn up in both markets|and the two peoples began to borrow each other's words].",
 	"{c2} of {s2} saw their first {ca} merchants, [and laughed at their hats|and bought everything they had].",
+};
+// later routes between two peoples who already trade (minor)
+const char* const kTradeForeignMore[] = {
+	"Caravans of {c} now came to {s2} of {c2} as well.",
+	"Another road joined {s} to {s2} of {c2}, [and the inns along it prospered|and the tolls on it were argued over].",
+	"{s2} of {c2} [began to buy|grew used to] the goods of {s}, and its merchants learned the {ca} way of haggling.",
+	"Traders from {s} found their way to {s2} of {c2}, where {ca} coin was already known.",
 };
 const char* const kProphetRisen[] = {
 	"A prophet named {n} arose in {s}, saying that {g} had spoken to [her|him|them].",
@@ -1172,6 +1200,12 @@ const char* const kEpiChange[] = {
 	"Among {c} the god was no longer {old} but {e}, and the old name was forgotten.",
 	"{c} had called the god {old}. After what they had seen, they called {herm} {e}.",
 	"Among {c}, mothers who had once told their children of {old} now told them of {e}.",
+};
+// (integration verifier) the change to the silent names: nothing was seen
+const char* const kEpiSilent[] = {
+	"Generations passed and {c} saw nothing of {old}; they began to call the god {e}.",
+	"The god did nothing that {c} could see for longer than anyone remembered, and {old} became {e}.",
+	"{c} still kept the shrines, but the priests now spoke of {e}, not {old}.",
 };
 
 // ====================================================================== event handlers
@@ -1411,11 +1445,23 @@ void onTier(World& w, const EvSettlementTier& e) {
 	case 3: {
 		bool first = true;
 		for (const Settlement& o : w.settlements) if (o.id != e.id && o.tier >= 3) { first = false; break; }
-		if (first) write(w, "tier", 3, s->cell, cid, tpl(kTierFirstCity), "tier-first-city", x);
-		else write(w, "tier", 2, s->cell, cid, tpl(kTierCity), "tier-city", x);
+		if (first) { write(w, "tier", 3, s->cell, cid, tpl(kTierFirstCity), "tier-first-city", x); break; }
+		// (integration verifier) every later city was notable and unlimited: when an age raises the
+		// gate twenty towns become cities within a few years. A culture's first city always; then one
+		// per bigTierGap years.
+		bool cultureFirst = true;
+		for (const Settlement& o : w.settlements) if (o.id != e.id && o.culture == cid && !o.dead && o.tier >= 3) { cultureFirst = false; break; }
+		if (!cultureFirst && recentNotable(w, "tier", cid, T.bigTierGap)) break;
+		write(w, "tier", 2, s->cell, cid, tpl(kTierCity), "tier-city", x);
 		break;
 	}
-	case 4: write(w, "tier", 2, s->cell, cid, tpl(kTierMetro), "tier-metro", x); break;
+	case 4: {
+		bool cultureFirst = true;
+		for (const Settlement& o : w.settlements) if (o.id != e.id && o.culture == cid && !o.dead && o.tier >= 4) { cultureFirst = false; break; }
+		if (!cultureFirst && recentNotable(w, "tier", cid, T.bigTierGap)) break;
+		write(w, "tier", 2, s->cell, cid, tpl(kTierMetro), "tier-metro", x);
+		break;
+	}
 	default: break;
 	}
 }
@@ -1463,11 +1509,17 @@ void onFamine(World& w, const EvSettlementFamine& e) {
 	const ChronicleTune& T = tuneOf(w);
 	const int cid = s->culture;
 	const bool big = s->tier >= 3;
+	// (integration verifier) a city famine is notable, but a volcanic or nuclear winter starves every
+	// city at once (25 entries in one year): after one city of a culture is told, its other cities'
+	// famines wait famineGap years
 	if (!big && !minorOk(w, "famine", cid, T.minorGap)) return;
+	if (big && recentNotable(w, "famine", cid, T.famineGap, s->cell)) return;
 	Ctx x;
+	ctxWorld(x, w);
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, cid);
-	write(w, "famine", big ? 2 : 1, s->cell, cid, tpl(kFamine), "famine", x);
+	if (fin(w.dust, 0) >= T.dustFamine) write(w, "famine", big ? 2 : 1, s->cell, cid, tpl(kFamineDust), "famine-dust", x);
+	else write(w, "famine", big ? 2 : 1, s->cell, cid, tpl(kFamine), "famine", x);
 }
 
 void onPlague(World& w, const EvSettlementPlague& e) {
@@ -1584,11 +1636,14 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	Ctx x;
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, cid);
+	// (integration verifier) a kind god answering every year made hundreds of notable entries: one
+	// notable answer per culture per minorGap years, the others still written but minor
+	const int wgt = recentNotable(w, "prayer-answered", cid, tuneOf(w).minorGap) ? 1 : 2;
 	switch (e.kind) {
-	case PrayerKind::Rain: write(w, "prayer-answered", 2, s->cell, cid, tpl(kAnsRain), "ans-rain", x); break;
-	case PrayerKind::Heal: write(w, "prayer-answered", 2, s->cell, cid, tpl(kAnsHeal), "ans-heal", x); break;
-	case PrayerKind::Peace: write(w, "prayer-answered", 2, s->cell, cid, tpl(kAnsPeace), "ans-peace", x); break;
-	case PrayerKind::Bloom: write(w, "prayer-answered", 2, s->cell, cid, tpl(kAnsBloom), "ans-bloom", x); break;
+	case PrayerKind::Rain: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsRain), "ans-rain", x); break;
+	case PrayerKind::Heal: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsHeal), "ans-heal", x); break;
+	case PrayerKind::Peace: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsPeace), "ans-peace", x); break;
+	case PrayerKind::Bloom: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsBloom), "ans-bloom", x); break;
 	}
 }
 
@@ -1722,7 +1777,19 @@ void onTradeRoute(World& w, const EvTradeRoute& e) {
 	ctxCulture(x, w, a->culture);
 	ctxCulture(x, w, b->culture, "2");
 	if (a->culture != b->culture) {
-		write(w, "trade", 2, a->cell, a->culture, tpl(kTradeForeign), "trade-foreign", x);
+		// (integration verifier) trade:route is per settlement pair, so two trading peoples produced
+		// dozens of notable "first caravan" / "saw their first merchants" entries. The first route
+		// between two peoples is notable (kept in vars.num, so it survives a save); later ones are
+		// minor, rate-limited, and told without "first".
+		const int lo = std::min(a->culture, b->culture), hi = std::max(a->culture, b->culture);
+		const string key = "chronicle_tp." + std::to_string(lo) + "." + std::to_string(hi);
+		if (!w.vars.num.count(key)) {
+			w.vars.num[key] = fin(w.year);
+			write(w, "trade", 2, a->cell, a->culture, tpl(kTradeForeign), "trade-foreign", x);
+			return;
+		}
+		if (!minorOk(w, "trade", a->culture, T.minorGap * 2)) return;
+		write(w, "trade", 1, a->cell, a->culture, tpl(kTradeForeignMore), "trade-foreign-more", x);
 		return;
 	}
 	if (!minorOk(w, "trade", a->culture, T.minorGap * 2)) return;
@@ -2053,6 +2120,9 @@ int chooseRaw(const World& w, const Culture& c, const Memory& m);
 int chooseCat(const World& w, const Culture& c, const Memory& m) {
 	const int raw = chooseRaw(w, c, m);
 	if (m.cat < 0 || raw == m.cat) return raw;
+	// (integration verifier) the Silent One is left only for a deed worth a name: a passing natural
+	// event used to flip 'the Silent One' -> 'the Waker' -> 'the Silent One' every few centuries
+	if (m.cat == CatSilent && (raw == CatWaker || raw == CatAncestral)) return m.cat;
 	if (m.cat == CatWaker || m.cat == CatAncestral || m.cat == CatSilent) return raw;
 	if (raw == CatSilent) return raw;
 	const ChronicleTune& T = tuneOf(w);
@@ -2065,7 +2135,12 @@ int chooseRaw(const World& w, const Culture& c, const Memory& m) {
 	const double year = fin(w.year);
 	if (year - std::max(m.heard, fin(c.born)) >= T.silentYears) return CatSilent;
 	const Scores s = scoresOf(m);
-	if (s.total < T.minDeeds) {
+	// (integration verifier) hysteresis: a god named for a deed keeps that name until the memory has
+	// faded below forgetDeeds x minDeeds (natural eruptions hovering at the threshold flipped 'the
+	// Elder' <-> 'She Who Opens the Mountains' five times in 300 years)
+	const bool deedNamed = (m.cat >= CatRain && m.cat <= CatFire) || m.cat == CatMixed;
+	const double need = deedNamed ? T.minDeeds * fin(T.forgetDeeds, 0.5) : T.minDeeds;
+	if (s.total < need) {
 		// nothing distinct to remember: how the people feel about their god names it
 		const society::Regard rg = society::regard(w, c.id);
 		const double love = fin(rg.love), dev = fin(rg.devotion);
@@ -2268,6 +2343,7 @@ void updateEpithets(World& w) {
 			x.set("e", e);
 			x.set("old", old);
 			if (old.empty()) write(w, "epithet", 2, -1, cid, tpl(kEpiFirst), "epithet-first", x);
+			else if (cat == CatSilent) write(w, "epithet", 2, -1, cid, tpl(kEpiSilent), "epithet-silent", x);   // (integration verifier) not "after what they had seen"
 			else write(w, "epithet", 2, -1, cid, tpl(kEpiChange), "epithet-change", x);
 		}
 		const double p = popOf(w, cid);
