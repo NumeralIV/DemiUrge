@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;width:1920px;height:1080px;background:#16181c;font-family:Inter,sans-serif;color:#e9e1cf;position:relative;overflow:hidden}
+h1{font-family:Cinzel,serif;font-weight:600;letter-spacing:.14em;font-size:30px;margin:0;position:absolute;left:60px;top:34px;color:#e6c98a}
+.sub{position:absolute;left:60px;top:78px;font-size:16px;color:#a99f8c}
+.grid{position:absolute;left:60px;top:120px;display:grid;grid-template-columns:repeat(3,580px);gap:20px 30px}
+.cell{width:580px;height:430px;position:relative}
+.img{width:580px;height:360px;background:url(materials-raw.jpg) no-repeat;border-radius:6px}
+.lab{display:flex;align-items:center;gap:12px;margin-top:10px}
+.lab b{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#f1e6cc}
+.chip{width:30px;height:30px;border-radius:4px;border:1px solid rgba(255,255,255,.25)}
+.hex{font-size:15px;color:#bfb5a1}
+</style></head><body>
+<h1>VILLAGE SHRINE · MATERIALS</h1>
+<div class="sub">Close swatches generated from the approved shrine design (no text in the source image); names and albedo targets composited here as real text. Chips show the de-lit base colour for the modeller.</div>
+<div class="grid" id="g"></div>
+<script>
+// source cells in the 1280x720 raw image: x0,y0,x1,y1
+const M=[
+ ['Plinth · fitted limestone','#a39276',[112,20,447,343]],
+ ['Walls · rubble stone and clay','#8a6c4c',[473,20,807,343]],
+ ['Posts · weathered oak','#5b4532',[833,20,1167,343]],
+ ['Roof · reed thatch, rope bands','#9a7a4a',[112,368,447,692]],
+ ['Cloth · saffron wool','#c88f2e',[473,368,807,692]],
+ ['Lintel · carved oak, zigzag band','#5b4532',[833,368,1167,692]]];
+const g=document.getElementById('g');
+for(const [n,hex,[x0,y0,x1,y1]] of M){
+  const sx=580/(x1-x0), sy=360/(y1-y0), s=Math.max(sx,sy);
+  const d=document.createElement('div');d.className='cell';
+  d.innerHTML=`<div class="img" style="background-size:${1280*s}px ${720*s}px;background-position:${-x0*s}px ${-y0*s}px"></div><div class="lab"><span class="chip" style="background:${hex}"></span><b>${n}</b><span class="hex">${hex}</span></div>`;
+  g.appendChild(d);
+}
+</script></body></html>
