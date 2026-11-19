@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Cinzel;src:url(../../../../assets/fonts/cinzel/Cinzel%5Bwght%5D.ttf)}
+@font-face{font-family:EBG;src:url(../../../../assets/fonts/eb-garamond/EBGaramond-Italic.ttf)}
+html,body{margin:0;width:1920px;height:1080px;background:#14161c;overflow:hidden}
+.f{position:absolute;overflow:hidden;box-shadow:0 0 0 1px #2a2e38}
+.f img{width:100%;height:100%;display:block}
+.z{position:absolute;border:2px dashed rgba(120,220,255,.85);box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.w{font-family:Cinzel;font-weight:500;color:#fff1c9;letter-spacing:.2em;line-height:1;white-space:nowrap}
+.t{font-family:EBG;font-style:italic;color:#d8b46a;margin-top:.5em;white-space:nowrap}
+</style></head><body>
+<script>
+// [file, crop w, crop h, shown at x, y, scale, safe zone in crop px [x0,y0,x1,y1], wordmark px in crop]
+const F=[
+ ['title-1920x1080.png',1920,1080,20,20,0.42,[120,200,820,700],96],
+ ['capsule-header-920x430.png',920,430,846,20,0.6,[24,60,350,370],44],
+ ['capsule-vertical-748x896.png',748,896,1418,20,0.52,[30,16,520,100],40],
+ ['capsule-main-1232x706.png',1232,706,20,500,0.55,[40,120,480,590],60],
+ ['library-hero-3840x1240.png',3840,1240,718,500,0.31,[160,200,1500,1040],170],
+];
+for(const [f,w,h,x,y,s,z,fs] of F){
+ const d=document.createElement('div');d.className='f';Object.assign(d.style,{left:x+'px',top:y+'px',width:w*s+'px',height:h*s+'px'});
+ d.innerHTML=`<img src="../${f}">`;
+ const q=document.createElement('div');q.className='z';Object.assign(q.style,{left:z[0]*s+'px',top:z[1]*s+'px',width:(z[2]-z[0])*s+'px',height:(z[3]-z[1])*s+'px'});
+ q.innerHTML=`<div class="w" style="font-size:${fs*s}px">DEMIURGE</div>`+(f.startsWith('title')?`<div class="t" style="font-size:${fs*s*0.3}px">A world in your hands.</div>`:'');
+ d.appendChild(q);document.body.appendChild(d);
+}
+</script></body></html>
