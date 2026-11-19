@@ -4,8 +4,8 @@
 GH="$LOCALAPPDATA/Microsoft/WinGet/Packages/GitHub.cli_Microsoft.Winget.Source_8wekyb3d8bbwe/bin/gh.exe"
 STATE="$LOCALAPPDATA/demiurge-pr-watch.state"
 POLL="${1:-300}"
-snap() { "$GH" pr list -R NumeralIV/DemiUrge --state open --json number,headRefOid,updatedAt,title,isDraft \
-  --jq 'sort_by(.number) | .[] | "\(.number)\t\(.headRefOid)\t\(.updatedAt)\t\(.isDraft)\t\(.title)"' 2>/dev/null; }
+snap() { "$GH" pr list -R NumeralIV/DemiUrge --state open --json number,headRefOid,title,isDraft \
+  --jq 'sort_by(.number) | .[] | "\(.number)\t\(.headRefOid)\t\(.isDraft)\t\(.title)"' 2>/dev/null; }
 [ -f "$STATE" ] || snap > "$STATE"
 while true; do
   cur=$(snap) || { sleep "$POLL"; continue; }
