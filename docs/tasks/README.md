@@ -17,7 +17,7 @@ bottom (at most 2 of your pull requests open at once; the lead is notified of ne
 | T-010 | Concept art: the genesis sequence from orbit | Grok | done (merged 2026-11-19) | `docs/concept/genesis/` |
 | T-011 | Concept art: units and wildlife on the move | Grok | done (merged 2026-11-19) | `docs/concept/units/` |
 | T-012 | Sound and music direction | Grok | done (merged 2026-11-19) | `docs/content/sound-direction.md` |
-| T-013 | Concept art: the planet's changing states from orbit | Grok | open | `docs/concept/world-states/` |
-| T-014 | Model reference sheet: the village shrine (first real asset) | Grok | open | `docs/concept/assets/shrine/` |
+| T-013 | Concept art: the planet's changing states from orbit | Grok | done (merged 2026-11-19) | `docs/concept/world-states/` |
+| T-014 | Model reference sheet: the village shrine (first real asset) | Grok | done (merged 2026-11-19) | `docs/concept/assets/shrine/` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.
