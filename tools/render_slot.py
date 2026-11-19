@@ -1,9 +1,13 @@
 """Run a heavy command (render, Unreal launch, bake) only when one of N machine-wide slots is free.
 
-    python tools/render_slot.py [--slots 3] [--timeout 3600] -- <command> [args...]
+    python tools/render_slot.py [--slots 5] [--cpu] [--timeout 3600] -- <command> [args...]
+
+    --cpu  also wait while CPU load is over 70 % (use for CPU-heavy jobs such as Cycles CPU renders or bakes)
 
 Slots are lock files in %TEMP%/demiurge-render-slots holding the owner's PID; slots of dead
-processes are reclaimed. The command's exit code is returned.
+processes are reclaimed. A job also waits while the machine is busier than the owner allows
+(GPU utilisation over 80 % or CPU load over 70 %, sampled; owner's limits, 2026-11-19).
+The command's exit code is returned.
 """
 import os
 import subprocess
@@ -29,12 +33,37 @@ def pid_alive(pid):
     except OSError:
         return False
 
+GPU_MAX, CPU_MAX = 80, 70
+
+def machine_busy(check_cpu=False):
+    """True while GPU utilisation (and, for CPU-heavy jobs, CPU load) is above the owner's limits."""
+    try:
+        out = subprocess.run(["nvidia-smi", "--query-gpu=utilization.gpu", "--format=csv,noheader,nounits"],
+                             capture_output=True, text=True, timeout=10).stdout
+        if out.strip() and max(int(x) for x in out.split()) > GPU_MAX:
+            return True
+    except Exception:
+        pass
+    if not check_cpu:
+        return False
+    try:
+        out = subprocess.run(["powershell", "-NoProfile", "-Command",
+                              "(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average"],
+                             capture_output=True, text=True, timeout=20).stdout
+        if out.strip() and float(out.strip()) > CPU_MAX:
+            return True
+    except Exception:
+        pass
+    return False
+
 def main():
     args = sys.argv[1:]
-    slots, timeout = 3, 3600.0
+    slots, timeout, cpu = 5, 3600.0, False
     while args and args[0] != "--":
         if args[0] == "--slots":
             slots = int(args[1]); args = args[2:]
+        elif args[0] == "--cpu":
+            cpu = True; args = args[1:]
         elif args[0] == "--timeout":
             timeout = float(args[1]); args = args[2:]
         else:
@@ -50,6 +79,12 @@ def main():
     t0 = time.time()
     held = None
     while held is None:
+        if machine_busy(cpu):
+            if time.time() - t0 > timeout:
+                print("render_slot: timed out waiting for the machine", file=sys.stderr)
+                return 3
+            time.sleep(10)
+            continue
         for i in range(slots):
             p = os.path.join(d, "slot%d.lock" % i)
             try:

@@ -39,7 +39,7 @@ engineer's write-up) disagrees with this file, **this file wins**; the lead reco
   40 m three-quarter, 300 m oblique and 1 km oblique; EEVEE, 1280×720.
   Save to `shots/asset-<family>-<asset>-<view>.png` and look at every image.
 - **GPU and CPU are shared by up to 40 agents.** Run every render and every Unreal launch through
-  the slot tool so at most 3 heavy jobs run at once:
+  the slot tool so at most 5 heavy jobs run at once and none starts while the GPU is above 80 % or the CPU above 70 % (owner's limits):
   `python "<root>/tools/render_slot.py" -- <command and args>` (it waits for a free slot).
 - Check: scale against a 1.8 m figure, pivot at ground, normals out, no non-manifold holes in
   closed parts, UVs inside 0–1 without overlaps for baked maps, triangle counts within budget.
