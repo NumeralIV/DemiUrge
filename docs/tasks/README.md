@@ -14,7 +14,8 @@ bottom (at most 2 of your pull requests open at once; the lead is notified of ne
 | T-007 | Concept art: HUD, panels and screens | Grok | done (merged 2026-11-19) | `docs/concept/ui/` |
 | T-008 | Concept art: landscapes and biomes on the way down | Grok | done (merged 2026-11-19) | `docs/concept/nature/` |
 | T-009 | Add the open-licence UI fonts to the repository | Grok | done (merged 2026-11-19) | `assets/fonts/` |
-| T-010 | Concept art: the genesis sequence from orbit | Grok | open | `docs/concept/genesis/` |
+| T-010 | Concept art: the genesis sequence from orbit | Grok | done (merged 2026-11-19) | `docs/concept/genesis/` |
 | T-011 | Concept art: units and wildlife on the move | Grok | open | `docs/concept/units/` |
+| T-012 | Sound and music direction | Grok | open | `docs/content/sound-direction.md` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.
