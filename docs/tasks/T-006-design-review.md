@@ -1,6 +1,6 @@
 # T-006 — Design review of the game rules
 
-**Assignee:** Astra · **Status:** open · **Branch:** `helper/astra/T-006`
+**Assignee:** any helper (Astra first; Astra is out of usage, so another helper may take it) · **Status:** open · **Branch:** `helper/astra/T-006`
 **Deliver to:** `docs/reviews/astra-design-review.md` only.
 
 ## Read first

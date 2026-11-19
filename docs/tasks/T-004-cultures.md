@@ -1,6 +1,6 @@
 # T-004 — Culture and language design proposals
 
-**Assignee:** Astra · **Status:** open · **Branch:** `helper/astra/T-004`
+**Assignee:** any helper (Astra first; Astra is out of usage, so another helper may take it) · **Status:** open · **Branch:** `helper/astra/T-004`
 **Deliver to:** `docs/content/cultures.md` only (a proposal; the lead folds accepted parts into the build).
 
 ## Read first
