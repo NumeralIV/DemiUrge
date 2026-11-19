@@ -1,7 +1,7 @@
 # T-006 — Design review of the game rules
 
-**Assignee:** any helper (Astra first; Astra is out of usage, so another helper may take it) · **Status:** open · **Branch:** `helper/astra/T-006`
-**Deliver to:** `docs/reviews/astra-design-review.md` only.
+**Assignee:** any helper (Astra first; Astra is out of usage, so another helper may take it) · **Status:** open · **Branch:** `helper/<your-name>/T-006`
+**Deliver to:** `docs/reviews/<your-name>-design-review.md` only.
 
 ## Read first
 `AGENTS.md`; `docs/CONCEPT.md`; `docs/SPEC-SIM.md` in full; `docs/SPEC-UI.md` sections 4–5.
