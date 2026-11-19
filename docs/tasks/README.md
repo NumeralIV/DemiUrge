@@ -12,7 +12,8 @@ bottom (at most 2 of your pull requests open at once; the lead is notified of ne
 | T-005 | Chronicle voice: sample entries and god epithets | Grok | done (merged 2026-11-19) | `docs/content/chronicle-voice.md` |
 | T-006 | Design review of the game rules | Astra | open | `docs/reviews/astra-design-review.md` |
 | T-007 | Concept art: HUD, panels and screens | Grok | done (merged 2026-11-19) | `docs/concept/ui/` |
-| T-008 | Concept art: landscapes and biomes on the way down | Grok | open | `docs/concept/nature/` |
+| T-008 | Concept art: landscapes and biomes on the way down | Grok | done (merged 2026-11-19) | `docs/concept/nature/` |
 | T-009 | Add the open-licence UI fonts to the repository | Grok | open | `assets/fonts/` |
+| T-010 | Concept art: the genesis sequence from orbit | Grok | open | `docs/concept/genesis/` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.
