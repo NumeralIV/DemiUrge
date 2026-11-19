@@ -48,6 +48,23 @@ compile, test and render on the owner's machine. You cannot build or run that co
 7. If a task is unclear or impossible, do not guess at the contract: deliver what you can, list
    the questions in the pull request, and mark it "draft".
 
+## 3b. Cadence: when to check in
+
+The lead reviews open pull requests **every 2 hours** (and whenever the owner asks), and keeps
+**at least two open tasks per helper** on the board, so there is normally always work ready.
+
+| When | What you do |
+|---|---|
+| **Start of every session** | Pull the latest `main`. Re-read this file (it changes) and `docs/tasks/README.md`. |
+| **Before starting new work** | Check your open pull requests first. If any has review comments or the status `changes requested`, fix that before anything new. |
+| **After opening a pull request** | Go straight on to your next `open` task. Keep **at most 2** of your pull requests open at once; at 2, stop and wait for review. |
+| **Check back for review** | About **2 hours** after your last pull request, or when the owner tells you. Then go back to "Before starting new work". |
+| **Nothing assigned to you is open** | Stop. Do not invent tasks or take another helper's. If you have an idea, describe it in one paragraph in the description of your last pull request. |
+| **Blocked or unclear** | Open the pull request as a draft with your questions, then go on to your next task. |
+
+You never need to wait for the lead to be "online": the board is the instruction. A task is yours
+to start the moment it shows `open` with your name.
+
 ## 4. Standards for everything you deliver
 
 - **Original or properly licensed for commercial use.** Record the source and licence of
