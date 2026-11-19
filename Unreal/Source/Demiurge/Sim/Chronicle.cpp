@@ -359,7 +359,8 @@ bool recent(const World& w, string_view type, int culture, double gap) {
 	for (size_t i = w.chronicle.size(); i-- > 0;) {
 		const ChronicleEntry& e = w.chronicle[i];
 		if (e.year < y - gap - 1e-9) break;
-		if (++scanned > 600) break;
+		// a window this crowded may hide the same kind further back: count it as recent (the rate limit holds)
+		if (++scanned > 5000) return true;
 		if ((culture == kAnyCulture || e.culture == culture) && e.type == type) return true;
 	}
 	return false;
@@ -649,7 +650,7 @@ const char* const kPlagueSent[] = {
 const char* const kAwakening[] = {
 	"{g} touched the sleeping clay {t}, and the first of {c} opened their eyes. They named their camp {s}.",
 	"Here begins the story of {c}. The god woke them {t}, and they gathered at {s}, [not knowing who had called them|afraid of the dark|and looked up].",
-	"{c} woke [at dawn|under strange stars|in the rain] at {s}. [The first word they spoke was a name for the one who woke them.|They were few, and they were hungry, and they were alive.]",
+	"At {s}, {c} woke [at dawn|under strange stars|in the rain]. [The first word they spoke was a name for the one who woke them.|They were few, and they were hungry, and they were alive.]",
 };
 const char* const kAwakeningAgain[] = {
 	"Again the god woke a people: {c}, at {s}.",
@@ -1422,6 +1423,7 @@ void onTier(World& w, const EvSettlementTier& e) {
 void onBuilding(World& w, const EvSettlementBuilding& e) {
 	const Settlement* s = sett(w, e.id);
 	if (!s || e.building == Building::WONDER) return;     // wonder:built tells that story
+	if (int(e.building) < 0 || int(e.building) >= Building::COUNT) return;   // Settlement::has would index out of range
 	const ChronicleTune& T = tuneOf(w);
 	const int cid = s->culture;
 	bool first = true;
@@ -1751,7 +1753,7 @@ void onEdict(World& w, const EvEdict& e) {
 	if (!c || e.edict == Edict::None) return;
 	Ctx x;
 	ctxCulture(x, w, e.culture);
-	x.set("n", c->prophet && !c->prophet->name.empty() ? c->prophet->name : string("the prophet of ") + culturePlural(w, e.culture).substr(culturePlural(w, e.culture).rfind(' ') + 1));
+	x.set("n", c->prophet && !c->prophet->name.empty() ? c->prophet->name : string("the prophet"));
 	Tpl t = tpl(kEdictPeace);
 	string key = "edict-peace";
 	switch (e.edict) {
@@ -2398,7 +2400,11 @@ Tale tale(const World& w) {
 			ctxSettlement(x, w, home);
 			if (home < 0) x.set("s", "a place no one remembers");
 			std::vector<string> others;
-			for (const Culture& c : w.cultures) if (c.id != first) others.push_back(culturePlural(w, c.id));
+			for (const Culture& c : w.cultures) {
+				if (c.id == first) continue;
+				string nm = culturePlural(w, c.id);
+				if (std::find(others.begin(), others.end(), nm) == others.end()) others.push_back(nm);   // distinct names only
+			}
 			string p = expandOne("The first people were {c}. The god woke them {t} at {s}, and they called the god {g}.", x, r);
 			if (!others.empty()) {
 				if (others.size() > 6) others.resize(6);
@@ -2528,9 +2534,9 @@ Tale tale(const World& w) {
 				default: p = expandOne(inYear(en.year) + ", {c} left for the stars, and the god watched them go, not knowing quite what they had been to each other.", x, r); break;
 				}
 			} else if (en.mood == Mood::Ash) {
-				p = inYear(en.year) + " the last of the peoples died in the ash of their own fires. " + W + " was silent.";
+				p = inYear(en.year) + ", the last of the peoples died in the ash of their own fires. " + W + " was silent.";
 			} else {
-				p = inYear(en.year) + " the last of the peoples passed away, and " + W + " grew quiet, and green, and empty.";
+				p = inYear(en.year) + ", the last of the peoples passed away, and " + W + " grew quiet, and green, and empty.";
 			}
 		} else if (liveIds.empty() && !w.settlements.empty()) {
 			p = "Now no one lives on " + W + ", and the god waits.";

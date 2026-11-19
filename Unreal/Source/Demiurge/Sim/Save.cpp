@@ -7,8 +7,9 @@
 //   meta:               str name, u32 seed, f64 year, u8 phase, i32 age, f64 pop, i64 savedAt
 //   u32 byte count, then the state::serialize blob (its layout belongs to State.cpp)
 //   [bit 0] u32 count, then per snapshot: f64 year, f64 heat, f64 seaLevel, f64 pop, and three
-//           arrays of n cells (biome u8, owner i8, urban u8), each as runs: u32 runs, then per run
-//           u8 value and u16 length (>= 1); the lengths of each array add up to exactly n
+//           arrays of n cells (biome u8, owner i8, urban u8), each stored as its byte-wise XOR with
+//           the same array of the previous frame (the first frame: as is), as runs: u32 runs, then
+//           per run u8 value and u16 length (>= 1); the lengths of each array add up to exactly n
 //   u32 CRC-32 (IEEE 802.3, reflected, as zlib) of every byte before it
 //
 // encode() decodes its own bytes before returning them, so a container that cannot be loaded is
@@ -145,7 +146,10 @@ std::string wideToUtf8(const std::wstring& w) {
 }
 #endif
 
+// An empty path or one holding a NUL byte is refused: the OS would silently cut the name at the NUL
+// (writing "dir/a" for "dir/a\0b.dmsave"), and an empty folder would mean the working directory.
 bool toPath(const std::string& utf8, std::filesystem::path& out) {
+	if (utf8.empty() || utf8.find('\0') != std::string::npos) return false;
 #if defined(_WIN32)
 	std::wstring w;
 	if (!utf8ToWide(utf8, w)) return false;
@@ -268,31 +272,45 @@ bool snapshotsFit(const World& w, std::string& why) {
 
 // Runs of equal values: u32 runs, then per run u8 value, u16 length. Lengths are at least 1.
 void putRuns(ByteWriter& o, const uint8_t* v, size_t n) {
-	std::vector<std::pair<uint8_t, uint16_t>> runs;
-	size_t i = 0;
-	while (i < n) {
+	size_t count = 0;
+	for (size_t i = 0; i < n; count++) {
 		size_t j = i + 1;
 		while (j < n && v[j] == v[i] && j - i < 65535) j++;
-		runs.emplace_back(v[i], uint16_t(j - i));
 		i = j;
 	}
-	o.u32(uint32_t(runs.size()));
-	for (const auto& r : runs) {
-		o.u8(r.first);
-		o.u16(r.second);
+	o.u32(uint32_t(count));
+	for (size_t i = 0; i < n;) {
+		size_t j = i + 1;
+		while (j < n && v[j] == v[i] && j - i < 65535) j++;
+		o.u8(v[i]);
+		o.u16(uint16_t(j - i));
+		i = j;
 	}
+}
+
+// Frames are stored as the difference to the frame before (byte XOR; the first frame against
+// zeros), then as runs: consecutive frames differ in a few hundred cells, so this is about 15 times
+// smaller than runs of the frames themselves (measured on a real L 6 history).
+void putDelta(ByteWriter& o, const uint8_t* v, const uint8_t* prev, size_t n, std::vector<uint8_t>& tmp) {
+	tmp.assign(v, v + n);
+	if (prev) for (size_t c = 0; c < n; c++) tmp[c] ^= prev[c];
+	putRuns(o, tmp.data(), n);
 }
 
 void putSnapshots(ByteWriter& o, const World& w) {
 	o.u32(uint32_t(w.snapshots.size()));
-	for (const Snapshot& s : w.snapshots) {
+	std::vector<uint8_t> tmp;
+	for (size_t i = 0; i < w.snapshots.size(); i++) {
+		const Snapshot& s = w.snapshots[i];
+		const Snapshot* p = i > 0 ? &w.snapshots[i - 1] : nullptr;
 		o.f64(zeroIfNotFinite(s.year));
 		o.f64(zeroIfNotFinite(s.heat));
 		o.f64(zeroIfNotFinite(s.seaLevel));
 		o.f64(zeroIfNotFinite(s.pop));
-		putRuns(o, s.biome.data(), s.biome.size());
-		putRuns(o, reinterpret_cast<const uint8_t*>(s.owner.data()), s.owner.size());
-		putRuns(o, s.urban.data(), s.urban.size());
+		const size_t n = s.biome.size();
+		putDelta(o, s.biome.data(), p ? p->biome.data() : nullptr, n, tmp);
+		putDelta(o, reinterpret_cast<const uint8_t*>(s.owner.data()), p ? reinterpret_cast<const uint8_t*>(p->owner.data()) : nullptr, n, tmp);
+		putDelta(o, s.urban.data(), p ? p->urban.data() : nullptr, n, tmp);
 	}
 }
 
@@ -313,6 +331,13 @@ bool getRuns(ByteReader& r, size_t n, std::vector<uint8_t>& out, std::string& wh
 	return true;
 }
 
+// One delta-coded array: runs, then XOR with the previous frame's array (if any).
+bool getDelta(ByteReader& r, size_t n, const uint8_t* prev, std::vector<uint8_t>& out, std::string& why) {
+	if (!getRuns(r, n, out, why)) return false;
+	if (prev) for (size_t c = 0; c < n; c++) out[c] ^= prev[c];
+	return true;
+}
+
 bool getSnapshots(ByteReader& r, World& w, std::string& why) {
 	const uint32_t count = r.u32();
 	if (!r.ok() || size_t(count) > r.remaining() / kMinSnapshotBytes) return setWhy(why, "save: bad snapshot count");
@@ -320,6 +345,7 @@ bool getSnapshots(ByteReader& r, World& w, std::string& why) {
 	const int nc = int(w.cultures.size());
 	w.snapshots.clear();
 	w.snapshots.reserve(count);
+	std::vector<uint8_t> owner, prevOwner;
 	for (uint32_t i = 0; i < count; i++) {
 		Snapshot s;
 		s.year = r.f64();
@@ -329,8 +355,10 @@ bool getSnapshots(ByteReader& r, World& w, std::string& why) {
 		if (!r.ok()) return setWhy(why, "save: truncated snapshot");
 		if (!std::isfinite(s.year) || !std::isfinite(s.heat) || !std::isfinite(s.seaLevel) || !std::isfinite(s.pop))
 			return setWhy(why, "save: snapshot with a number that is not finite");
-		std::vector<uint8_t> owner;
-		if (!getRuns(r, n, s.biome, why) || !getRuns(r, n, owner, why) || !getRuns(r, n, s.urban, why)) return false;
+		const Snapshot* p = i > 0 ? &w.snapshots.back() : nullptr;
+		if (!getDelta(r, n, p ? p->biome.data() : nullptr, s.biome, why) || !getDelta(r, n, p ? prevOwner.data() : nullptr, owner, why) ||
+			!getDelta(r, n, p ? p->urban.data() : nullptr, s.urban, why))
+			return false;
 		s.owner.resize(n);
 		for (size_t c = 0; c < n; c++) {
 			if (int(s.biome[c]) >= int(Biome::COUNT)) return setWhy(why, "save: snapshot biome out of range");
@@ -338,6 +366,7 @@ bool getSnapshots(ByteReader& r, World& w, std::string& why) {
 			if (o < -1 || o >= nc) return setWhy(why, "save: snapshot owner names no culture");
 			s.owner[c] = int8_t(o);
 		}
+		prevOwner.swap(owner);
 		w.snapshots.push_back(std::move(s));
 	}
 	return true;
@@ -392,8 +421,9 @@ bool parseBool(std::string_view s, bool& out) {
 	return false;
 }
 
-// Shortest text that reads back as the same double.
+// Shortest text that reads back as the same double; "" (the line is left out) for NaN / infinity.
 std::string numText(double v) {
+	if (!std::isfinite(v)) return std::string();
 	char buf[64];
 	const std::to_chars_result r = std::to_chars(buf, buf + sizeof(buf), v);
 	return std::string(buf, r.ptr);
@@ -423,6 +453,9 @@ void applySetting(UserSettings& s, std::string_view key, std::string_view val) {
 }
 
 void addLine(std::string& text, const char* key, const std::string& value) {
+	// A value that could not be read back (a line break, NaN, infinity) is left out, so the key keeps
+	// its default on load and no other line can be injected through it.
+	if (value.empty() || value.find_first_of("\r\n") != std::string::npos) return;
 	text += key;
 	text += '=';
 	text += value;
@@ -634,6 +667,7 @@ bool removeSlot(const std::string& dir, std::string_view slot) {
 	std::filesystem::path p;
 	if (path.empty() || !toPath(path, p)) return false;
 	std::error_code ec;
+	if (!std::filesystem::is_regular_file(p, ec)) return false;   // never a folder that happens to carry the name
 	const bool removed = std::filesystem::remove(p, ec);
 	return removed && !ec;
 }
@@ -679,7 +713,7 @@ bool saveSettings(const UserSettings& s, const std::string& path) {
 	addLine(t, "sfx", numText(s.sfx));
 	addLine(t, "ambience", numText(s.ambience));
 	addLine(t, "quality", std::to_string(s.quality));
-	addLine(t, "sun", s.sun);
+	if (s.sun == "orbit" || s.sun == "follow") addLine(t, "sun", s.sun);   // anything else: the default on load
 	addLine(t, "tilt", numText(s.tilt));
 	// flashes / shake are written only when they are not the full-strength default: a player who
 	// never touched them keeps the reduced-motion default (0.3) when the file is loaded under

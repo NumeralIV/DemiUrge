@@ -195,6 +195,14 @@ void Policy::decideKind(World& w) {
 	//    before Bloom unlocks) over the least loved of the leading culture's 24 largest towns;
 	//    with Awe to spare also inspire one
 	if (lead < 0) return;
+	// (integration) while the leading culture has no prophet, save up for one instead of blooming:
+	// a prophet is what keeps a late-age culture devout (baseline +0.15 and his visits)
+	{
+		const Culture& lc = w.cultures[size_t(lead)];
+		const Settlement* lcap = state::settlement(w, lc.capital);
+		const bool wantProphet = !lc.prophet && lcap && !lcap->dead && powers::unlocked(w, "prophet");
+		if (wantProphet && w.god.awe < powers::cost(w, "prophet") + 20) return;
+	}
 	std::vector<int> top = topOf(w, lead, 24);
 	std::stable_sort(top.begin(), top.end(), [&](int a, int b) { return w.settlements[size_t(a)].love < w.settlements[size_t(b)].love; });
 	if (!top.empty()) {

@@ -1,0 +1,1 @@
+2026-11-19 diplomacy (A10) verified: run.ps1 diplomacy 33 passed, 0 failed (20 builder + 13 adversarial in test_diplomacy_adv.cpp), link 3 passed; same 33 against every real module (private build) 33 passed; 4 fixes (stale cached routes re-searched, armies use cached routes after the search budget, caravans to a new enemy do nothing, no roads on lakes); quality 8/10

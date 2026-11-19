@@ -136,7 +136,9 @@ bool UDmSimSubsystem::LoadFixture(const FString& NameOrPath, const FDmFixtureOpt
 	const double T0 = FPlatformTime::Seconds();
 	const FString Bad = DmFixture::Validate(*W);
 	UE_LOG(LogDmSim, Display, TEXT("DmFixture: %s"), *Rep.Summary);
-	UE_LOG(LogDmSim, Display, TEXT("DmFixture: validate %s (%.0f ms)"), Bad.IsEmpty() ? TEXT("OK") : *Bad, (FPlatformTime::Seconds() - T0) * 1000.0);
+	const std::string NonFinite = dm::sim::firstNonFinite(*W);
+	UE_LOG(LogDmSim, Display, TEXT("DmFixture: validate %s (%.0f ms); sim::firstNonFinite \"%s\""), Bad.IsEmpty() ? TEXT("OK") : *Bad,
+		(FPlatformTime::Seconds() - T0) * 1000.0, *FromUtf8(NonFinite));
 	FixtureReport = Rep;
 	AdoptWorld(std::move(W), false, TEXT("fixture ") + FPaths::GetBaseFilename(Path));
 	if (bInLive) MakeLive();

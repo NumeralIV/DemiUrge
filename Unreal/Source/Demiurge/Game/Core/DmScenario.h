@@ -18,13 +18,16 @@
 //   powershell -NoProfile -ExecutionPolicy Bypass -File Unreal/Lanes/<key>/shot.ps1 planet-coast
 //
 // Command line (all optional; FDmShotArgs parses them once):
-//   -scenario=<name>     scenario to run (unknown names fall back to the longest registered prefix,
-//                        "orbit-night" -> "orbit"); without it the game runs "play"
+//   -scenario=<name>     scenario to run (an unknown name falls back to the longest registered name
+//                        made of whole '-' words of it: "orbit-night" and "bridge-orbit-night" run
+//                        "orbit"); without it the game runs "play"
 //   -shot=<png>          take a screenshot at frame -warm, then exit
 //   -warm=<frames>       frames before the shot (default 240: clouds, Lumen and TSR settle)
 //   -seq=a,b,c           extra shots at these frames: <shot>-f<frame>.png (the last one also exits)
 //   -cam=lat,lon,distKm[,heading,pitch,fov]   camera looking at a surface point (pitch 90 = straight
-//                        down, heading 0 = north up, fov horizontal degrees); overrides the scenario's
+//                        down, heading 0 = north up, 90 = looking east (compass, clockwise); fov
+//                        horizontal degrees); overrides the scenario's. Latitude / longitude are the
+//                        sim's (geo lat / lon in degrees; longitude increases WESTWARD, DmCoords.h)
 //   -sun=lat,lon         subsolar point in planet coordinates (pins the sun)
 //   -year=<y>            world year (seasons, history time)
 //   -fixture=<name|path|none>   fixture planet (default planet_7); -seed=<n> creates a sim world instead
@@ -103,6 +106,8 @@ public:
 	void Finish();
 	/** Do not exit when the shots are written; wait for Finish() (tests that run longer). */
 	void HoldExit();
+	/** Process exit code when the game quits (tests: non-zero = failed; shot.ps1 -noshot reports it). */
+	void SetExitCode(int32 Code);
 	void Log(const FString& Msg) const;
 };
 

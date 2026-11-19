@@ -6,7 +6,8 @@
 // The world itself is (de)serialized by state::serialize / state::deserialize (FOUNDATION-CPP 4.3):
 // Save WRAPS it, it does not reimplement it. A save file is a container:
 //   magic "DMSV", container version, flags, meta (name, seed, year, phase, age, pop, savedAt),
-//   the state::serialize blob, the snapshots (optional: Snapshot is memory-only in the State format),
+//   the state::serialize blob, the snapshots (optional: Snapshot is memory-only in the State format;
+//   each frame is stored as its difference to the previous one, run-length coded),
 //   a checksum over everything before it. Little-endian on every platform.
 // Loading checks magic, version, lengths and checksum; never returns a half-loaded world. The
 // caller runs sim::use on the result (balance, chronicle subscription, derived fields, caches).
@@ -71,12 +72,13 @@ std::unique_ptr<World> decode(const uint8_t* data, size_t size, std::string* why
 // Meta of container bytes without loading the world (nullopt if not a valid header).
 std::optional<Meta> peek(const uint8_t* data, size_t size);
 
-// Files (atomic write). Paths are UTF-8.
+// Files (atomic write). Paths are UTF-8; an empty path, invalid UTF-8 or a NUL byte is refused.
 bool writeFile(const World& w, const std::string& path, const EncodeOpts& opts = {}, std::string* why = nullptr);
 std::unique_ptr<World> readFile(const std::string& path, std::string* why = nullptr);
 std::optional<Meta> readMeta(const std::string& path);
 
-// Slots: "<dir>/<slot>.dmsave"; slot names are [A-Za-z0-9_-]{1,64} (others are refused).
+// Slots: "<dir>/<slot>.dmsave"; slot names are [A-Za-z0-9_-]{1,64} and dir must not be empty (others
+// are refused: slotPath returns ""). removeSlot removes only a regular file.
 std::string slotPath(const std::string& dir, std::string_view slot);
 bool writeSlot(const World& w, const std::string& dir, std::string_view slot, const EncodeOpts& opts = {}, std::string* why = nullptr);
 std::unique_ptr<World> readSlot(const std::string& dir, std::string_view slot, std::string* why = nullptr);

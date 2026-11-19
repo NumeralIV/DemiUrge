@@ -118,7 +118,8 @@ void ADmGameMode::StartPlay()
 	if (!Scenario)
 	{
 		UE_LOG(LogDmMode, Error, TEXT("DmScenario: unknown scenario \"%s\" (known: %s)"), *Name, *FString::Join(FDmScenarios::Names(), TEXT(", ")));
-		if (!A.Shot.IsEmpty() || A.ExitAfter > 0) Quit(TEXT("unknown scenario"));
+		ExitCode = 3;
+		Quit(TEXT("unknown scenario"));
 		return;
 	}
 	if (!Scenario->Name.Equals(Name, ESearchCase::IgnoreCase))
@@ -237,8 +238,8 @@ void ADmGameMode::Quit(const TCHAR* Why)
 {
 	if (bQuitting) return;
 	bQuitting = true;
-	UE_LOG(LogDmMode, Display, TEXT("DmMode: exit (%s) at frame %d"), Why, Frame);
-	FPlatformMisc::RequestExit(false, TEXT("DmShot"));
+	UE_LOG(LogDmMode, Display, TEXT("DmMode: exit (%s) at frame %d, code %d"), Why, Frame, ExitCode);
+	FPlatformMisc::RequestExitWithStatus(false, uint8(FMath::Clamp(ExitCode, 0, 255)), TEXT("DmShot"));
 }
 
 void ADmGameMode::Tick(float DeltaSeconds)

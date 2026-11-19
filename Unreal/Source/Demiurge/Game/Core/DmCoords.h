@@ -73,16 +73,18 @@ namespace DmCoords
 		OutLonDeg = FMath::RadiansToDegrees(FMath::Atan2(S.z, S.x));
 	}
 
-	/** Local frame at a planet-frame direction: East = direction of increasing longitude, North = of
-	 *  increasing latitude (at the poles East falls back to +Y). Note: dm::v3::basis's "east" is the
-	 *  opposite (decreasing longitude); client code uses this one. */
+	/** Local frame at a planet-frame direction, the same as dm::v3::basis mapped to Unreal: North =
+	 *  toward +Z (increasing latitude), East = to the right of North seen from outside the planet
+	 *  (compass headings turn clockwise). Note: the sim's longitude (atan2(z, x)) INCREASES WESTWARD
+	 *  (seen from outside, with north up, a larger longitude is to the left), while MapImg maps draw
+	 *  longitude increasing to the right: maps are mirror images of the globe. At the poles East = +X. */
 	inline void Basis(const FVector& Up, FVector& OutEast, FVector& OutNorth)
 	{
 		const FVector N = Up.GetSafeNormal();
-		FVector E = FVector::CrossProduct(FVector::UpVector, N);
-		if (E.SizeSquared() < 1e-12) E = FVector(0, 1, 0);
+		FVector E = FVector::CrossProduct(N, FVector::UpVector);
+		if (E.SizeSquared() < 1e-12) E = FVector(1, 0, 0);
 		E.Normalize();
 		OutEast = E;
-		OutNorth = FVector::CrossProduct(N, E).GetSafeNormal();
+		OutNorth = FVector::CrossProduct(E, N).GetSafeNormal();
 	}
 }

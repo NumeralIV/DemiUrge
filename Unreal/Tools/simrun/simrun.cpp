@@ -88,6 +88,27 @@ double nowMs() {
 	return duration<double, std::milli>(steady_clock::now().time_since_epoch()).count();
 }
 
+// CPU time of this thread (A14 verifier): wall-clock tick times on this shared PC include time the
+// thread spent descheduled (other engineers' builds), which made "max tick <= 30 ms" fail at random.
+// QueryThreadCycleTime counts only cycles this thread ran (TSC based); dividing by the TSC rate
+// (measured against the wall clock over the run) gives milliseconds. Declared by hand: <windows.h>
+// redefines IN / OUT, which the forced-in UeMacroGuard.h forbids.
+#if defined(_WIN32)
+} // namespace
+#include <intrin.h>
+extern "C" __declspec(dllimport) int __stdcall QueryThreadCycleTime(void* thread, unsigned long long* cycles);
+extern "C" __declspec(dllimport) void* __stdcall GetCurrentThread();
+namespace {
+unsigned long long threadCycles() {
+	unsigned long long c = 0;
+	return QueryThreadCycleTime(GetCurrentThread(), &c) ? c : 0;
+}
+unsigned long long tscNow() { return __rdtsc(); }
+#else
+unsigned long long threadCycles() { return 0; }
+unsigned long long tscNow() { return 0; }
+#endif
+
 // ---------------------------------------------------------------- arguments
 
 struct Args {
@@ -108,6 +129,7 @@ struct Args {
 	double afterEnding = 0;
 	int chronicle = 0;
 	double slowMs = 0;                       // --slow: report ticks slower than this
+	bool diag = false;                       // --diag: balance diagnostics under every timeline row
 };
 
 const char* kHelp =
@@ -130,6 +152,8 @@ const char* kHelp =
 	"  --saveload Y       at year Y serialize, deserialize, sim::use and continue with the loaded world\n"
 	"  --after-ending Y   keep running Y years after an ending (default 0)\n"
 	"  --chronicle N      print the last N chronicle entries     --tale   print chronicle::tale\n"
+	"  --diag             balance diagnostics under each timeline row (research rate per culture, settlement\n"
+	"                     heights above the sea, tiers, Awe S, regard)\n"
 	"exit code: 0 ok, 3 a NaN / non-finite value was found, 2 a --summary target failed (with --strict), 1 bad arguments\n";
 
 bool parseSeeds(const std::string& s, std::vector<uint32_t>& out) {
@@ -212,6 +236,7 @@ bool parseArgs(int argc, char** argv, Args& a, bool& listKeys) {
 		else if (k == "--quiet") a.quiet = true;
 		else if (k == "--strict") a.strict = true;
 		else if (k == "--genesis") a.genesis = true;
+		else if (k == "--diag") a.diag = true;
 		else if (k == "--tale") a.tale = true;
 		else if (k == "--list-keys") listKeys = true;
 		else { std::fprintf(stderr, "unknown argument '%s' (--help)\n", k.c_str()); return false; }
@@ -249,7 +274,9 @@ struct Result {
 	double years = 0, yearsCap = 0, yearsBelow90 = 0;
 	double incStone = 0, incLater = 0, incGreat = 0;
 	int nStone = 0, nLater = 0, nGreat = 0;
-	double meanMs = 0, maxMs = 0, maxMsYear = 0;
+	double meanMs = 0, maxMs = 0, maxMsYear = 0;     // wall clock
+	double cpuMeanMs = 0, cpuMaxMs = 0, cpuP999Ms = 0; // thread CPU time (immune to other processes)
+	bool cpuOk = false;
 	int64_t ticks = 0;
 	size_t largestFire = 0;
 	double largestFireYear = 0;
@@ -398,6 +425,10 @@ Result runOne(const Args& args, uint32_t seed, PolicyKind pk, bool live, std::mu
 
 	Policy policy(pk, seed);
 	double tickMsSum = 0;
+	std::vector<unsigned long long> tickCycles;     // thread cycles per tick (converted to ms at the end)
+	tickCycles.reserve(size_t(std::max(0.0, args.years)) * 4 + 16);
+	const double wall0 = nowMs();
+	const unsigned long long tsc0 = tscNow();
 	int cpNext = 0;
 	size_t mapNext = 0;
 	bool saved = false;
@@ -406,6 +437,60 @@ Result runOne(const Args& args, uint32_t seed, PolicyKind pk, bool live, std::mu
 	std::optional<double> endedAt;
 	const double seaBase = wp->vars.seaBase.value_or(wp->seaLevel);
 
+	// --diag: research progress of every culture between rows (progress-years per year, ages included)
+	std::vector<double> sciPrev;
+	double sciYear = 0;
+	auto sciTotal = [&](const World& w, size_t id) {
+		const EconomyTune& ET = w.tune<EconomyTune>();
+		const Culture& c = w.cultures[id];
+		double tot = std::max(0.0, c.science);
+		for (int a = 0; a < c.age && a < 6; a++) tot += ET.ageNeed[size_t(a)];
+		return tot;
+	};
+	auto diagLine = [&](World& w) {
+		std::string d = "        diag: rate";
+		const double dy = w.year - sciYear;
+		std::string rates;
+		for (size_t id = 0; id < w.cultures.size(); id++) {
+			const Culture& c = w.cultures[id];
+			if (!c.dead && id < sciPrev.size() && dy > 0) rates += fmt(" %zu:%.2f", id, (sciTotal(w, id) - sciPrev[id]) / dy);
+		}
+		sciPrev.resize(w.cultures.size());
+		for (size_t id = 0; id < w.cultures.size(); id++) sciPrev[id] = sciTotal(w, id);
+		sciYear = w.year;
+		d += rates.empty() ? std::string(" -") : rates;
+		int low1 = 0, low3 = 0, nLive = 0;
+		std::array<int, 5> tiers{};
+		double S = 0;
+		for (const Settlement& s : w.settlements) {
+			if (s.dead || !w.valid(s.cell)) continue;
+			nLive++;
+			const double h = double(w.elev[size_t(s.cell)]) - w.seaLevel;
+			if (h < 0.1) low1++;
+			if (h < 0.3) low3++;
+			tiers[size_t(std::clamp(s.tier, 0, 4))]++;
+			S += s.devotion * (0.2 + 0.5 * s.b[Building::SHRINE] + 1.2 * s.b[Building::TEMPLE]) * (1 + s.tier / 2.0);
+		}
+		d += fmt(" | low<0.1 %d <0.3 %d of %d | tiers %d/%d/%d/%d/%d | S %.0f", low1, low3, nLive, tiers[0], tiers[1], tiers[2], tiers[3], tiers[4], S);
+		const society::Regard rg = society::regard(w, -1);
+		d += fmt(" | regard %.2f/%+.2f", rg.devotion, rg.love);
+		// relations between living cultures: min / mean v, mean trade, pairs at war, in contact
+		double vMin = 2, vSum = 0, trSum = 0;
+		int pairs = 0, atWar = 0, contact = 0;
+		for (const auto& kv : w.vars.rel) {
+			const Culture* ca = state::culture(w, kv.first.first);
+			const Culture* cb = state::culture(w, kv.first.second);
+			if (!ca || !cb || ca->dead || cb->dead) continue;
+			pairs++;
+			vMin = std::min(vMin, kv.second.v);
+			vSum += kv.second.v;
+			trSum += kv.second.trade;
+			atWar += kv.second.war ? 1 : 0;
+			contact += kv.second.contact ? 1 : 0;
+		}
+		if (pairs > 0) d += fmt(" | rel v min %+.2f mean %+.2f trade %.2f, %d pairs, %d in contact, %d at war", vMin, vSum / pairs, trSum / pairs, pairs, contact, atWar);
+		return d;
+	};
 	auto rowNow = [&](World& w) {
 		Row row;
 		row.s = sim::sample(w);
@@ -420,6 +505,7 @@ Result runOne(const Args& args, uint32_t seed, PolicyKind pk, bool live, std::mu
 				row.s.co2, row.s.dust, row.s.awe, row.s.aweMax, inc, inc > 0 ? 40 / (2 * inc) : 0.0, 100 * row.capShare);
 			for (int i = 0; i < 10; i++) l += fmt(" %5d", row.ev[size_t(i)]);
 			say(l);
+			if (args.diag) say(diagLine(w));
 		}
 		window.fill(0);
 		capWin = 0;
@@ -456,8 +542,11 @@ Result runOne(const Args& args, uint32_t seed, PolicyKind pk, bool live, std::mu
 		inTick.fill(0);
 		spawnedInTick.clear();
 		const double t0 = nowMs();
+		const unsigned long long cyc0 = threadCycles();
 		sim::advance(w, 1);
+		const unsigned long long cyc1 = threadCycles();
 		const double dt = nowMs() - t0;
+		tickCycles.push_back(cyc1 - cyc0);
 		if (args.slowMs > 0 && dt > args.slowMs) {
 			std::string evs;
 			for (int t = 0; t < kEventCount; t++) if (inTick[size_t(t)]) evs += fmt(" %s %d", eventName(Ev(t)), inTick[size_t(t)]);
@@ -534,6 +623,20 @@ Result runOne(const Args& args, uint32_t seed, PolicyKind pk, bool live, std::mu
 	R.yearsRun = w.year;
 	R.ending = w.ending;
 	R.meanMs = R.ticks > 0 ? tickMsSum / double(R.ticks) : 0;
+	{   // thread CPU time per tick: cycles / (TSC cycles per wall ms over the run)
+		const double wallMs = nowMs() - wall0;
+		const double tscPerMs = wallMs > 50 ? double(tscNow() - tsc0) / wallMs : 0;
+		if (tscPerMs > 0 && !tickCycles.empty() && tickCycles.back() > 0) {
+			double sum = 0;
+			std::vector<double> ms(tickCycles.size());
+			for (size_t k = 0; k < tickCycles.size(); k++) { ms[k] = double(tickCycles[k]) / tscPerMs; sum += ms[k]; }
+			R.cpuMeanMs = sum / double(ms.size());
+			R.cpuMaxMs = *std::max_element(ms.begin(), ms.end());
+			std::sort(ms.begin(), ms.end());
+			R.cpuP999Ms = ms[std::min(ms.size() - 1, size_t(double(ms.size()) * 0.999))];
+			R.cpuOk = true;
+		}
+	}
 	R.pstats = policy.stats();
 	R.score = sim::score(w).total;
 	if (R.nan.empty()) {
@@ -566,9 +669,10 @@ Result runOne(const Args& args, uint32_t seed, PolicyKind pk, bool live, std::mu
 		for (const auto& kv : R.pstats.byPower) bp += fmt(" %s %d", kv.first.c_str(), kv.second);
 		say(fmt("   policy: %d clicks, %d strokes, %d refused, %d edicts;%s", R.pstats.clicks, R.pstats.strokes, R.pstats.refused, R.pstats.edicts, bp.c_str()));
 	}
-	say(fmt("   timing: %lld ticks, mean %.3f ms, max %.2f ms (year %.0f); score %.0f; non-finite: %s%s",
-		(long long)R.ticks, R.meanMs, R.maxMs, R.maxMsYear, R.score, R.nan.empty() ? "none" : R.nan.c_str(),
-		R.nan.empty() ? "" : fmt(" (year %.0f)", R.nanYear).c_str()));
+	say(fmt("   timing: %lld ticks, wall mean %.3f ms, max %.2f ms (year %.0f); thread CPU mean %s ms, max %s ms, p99.9 %s ms; score %.0f; non-finite: %s%s",
+		(long long)R.ticks, R.meanMs, R.maxMs, R.maxMsYear, R.cpuOk ? fmt("%.3f", R.cpuMeanMs).c_str() : "n/a",
+		R.cpuOk ? fmt("%.2f", R.cpuMaxMs).c_str() : "n/a", R.cpuOk ? fmt("%.2f", R.cpuP999Ms).c_str() : "n/a", R.score,
+		R.nan.empty() ? "none" : R.nan.c_str(), R.nan.empty() ? "" : fmt(" (year %.0f)", R.nanYear).c_str()));
 	{
 		const society::Regard all = society::regard(w, -1);
 		std::string line = fmt("   regard now: everyone devotion %.3f love %+.3f (%s)", all.devotion, all.love, toStr(all.mood));
@@ -613,8 +717,8 @@ std::string toJson(const Result& R) {
 		jnum(R.peakAnom).c_str(), jnum(R.peakDust).c_str(), jnum(R.peakCo2).c_str(), jnum(R.seaRise).c_str(),
 		R.lostYear >= 0 ? jnum(R.lostYear).c_str() : "null", jnum(R.years > 0 ? R.yearsCap / R.years : 0).c_str(),
 		jnum(R.years > 0 ? R.yearsBelow90 / R.years : 0).c_str());
-	j += fmt(",\"largestFire\":%zu,\"meanTickMs\":%s,\"maxTickMs\":%s,\"nonFinite\":%s,\"hash\":\"%08x\",\"score\":%s", R.largestFire, jnum(R.meanMs).c_str(),
-		jnum(R.maxMs).c_str(), jsonStr(R.nan).c_str(), R.hash, jnum(R.score).c_str());
+	j += fmt(",\"largestFire\":%zu,\"meanTickMs\":%s,\"maxTickMs\":%s,\"cpuMeanTickMs\":%s,\"cpuMaxTickMs\":%s,\"nonFinite\":%s,\"hash\":\"%08x\",\"score\":%s", R.largestFire, jnum(R.meanMs).c_str(),
+		jnum(R.maxMs).c_str(), (R.cpuOk ? jnum(R.cpuMeanMs) : std::string("null")).c_str(), (R.cpuOk ? jnum(R.cpuMaxMs) : std::string("null")).c_str(), jsonStr(R.nan).c_str(), R.hash, jnum(R.score).c_str());
 	j += ",\"events\":{";
 	bool first = true;
 	for (int t = 0; t < kEventCount; t++) {
@@ -639,16 +743,16 @@ std::string cell(double v, const char* f = "%.0f") { return v >= 0 ? fmt(f, v) :
 
 std::string table(const std::vector<Result>& rs) {
 	std::string t;
-	t += "seed policy  | Bronze  Iron  Sail Indus Atom Space   Ark | ending           | pop@500 @1000 @2000 @3000 @3500 | settl@1000 @3000 | cult@2000 | anom+  sea+   | lost<500 | awe<90% cap% | ms mean  max | nan | hash\n";
+	t += "seed policy  | Bronze  Iron  Sail Indus Atom Space   Ark | ending           | pop@500 @1000 @2000 @3000 @3500 | settl@1000 @3000 | cult@2000 | anom+  sea+   | lost<500 | awe<90% cap% | ms mean  max  cpu | nan | hash\n";
 	for (const Result& r : rs) {
 		std::string end = r.ending ? fmt("%s/%s %.0f", toStr(r.ending->type), toStr(r.ending->mood), r.ending->year) : std::string("none");
-		t += fmt("%4u %-7s | %6s %5s %5s %5s %4s %5s %5s | %-16s | %7s %5s %5s %5s %5s | %10s %5s | %9s | %+5.2f %+5.3f | %8s | %7.0f %4.0f | %7.3f %4.1f | %3s | %08x\n",
+		t += fmt("%4u %-7s | %6s %5s %5s %5s %4s %5s %5s | %-16s | %7s %5s %5s %5s %5s | %10s %5s | %9s | %+5.2f %+5.3f | %8s | %7.0f %4.0f | %7.3f %4.1f %4.1f | %3s | %08x\n",
 			r.seed, simrun::toStr(r.policy), cell(r.ageYear[1]).c_str(), cell(r.ageYear[2]).c_str(), cell(r.ageYear[3]).c_str(), cell(r.ageYear[4]).c_str(),
 			cell(r.ageYear[5]).c_str(), cell(r.ageYear[6]).c_str(), cell(r.arkYear).c_str(), end.c_str(), r.popAt[1] >= 0 ? big(r.popAt[1]).c_str() : "-",
 			r.popAt[2] >= 0 ? big(r.popAt[2]).c_str() : "-", r.popAt[4] >= 0 ? big(r.popAt[4]).c_str() : "-", r.popAt[6] >= 0 ? big(r.popAt[6]).c_str() : "-",
 			r.popAt[7] >= 0 ? big(r.popAt[7]).c_str() : "-", cell(r.settlAt[2]).c_str(), cell(r.settlAt[6]).c_str(), cell(r.cultAt[4]).c_str(),
 			r.peakAnom, r.seaRise, r.lostYear >= 0 && r.lostYear < 500 ? fmt("y%.0f", r.lostYear).c_str() : "no",
-			r.years > 0 ? 100 * r.yearsBelow90 / r.years : 0.0, r.years > 0 ? 100 * r.yearsCap / r.years : 0.0, r.meanMs, r.maxMs,
+			r.years > 0 ? 100 * r.yearsBelow90 / r.years : 0.0, r.years > 0 ? 100 * r.yearsCap / r.years : 0.0, r.meanMs, r.maxMs, r.cpuMaxMs,
 			r.nan.empty() ? "ok" : "NaN", r.hash);
 	}
 	return t;
@@ -691,6 +795,13 @@ std::string targets(const std::vector<Result>& rs, PolicyKind pk, bool& allPass)
 	auto ageY = [](int a) { return [a](const Result& r) { return r.ageYear[size_t(a)] >= 0 ? r.ageYear[size_t(a)] : -1e9; }; };
 	auto moodS = [](const Result& r) { return r.ending ? std::string(toStr(r.ending->mood)) : std::string("none"); };
 	yes("no non-finite value", [](const Result& r) { return r.nan.empty(); });
+	// Awe at 1x (2 years per real second): seconds to earn a small (40) / great (150) miracle
+	auto every = [](double awe, double inc) { return inc > 0 ? awe / (2 * inc) : 1e9; };
+	if (pk != PolicyKind::Doom) {     // (doom ends the world in its Stone age by design)
+		range("small miracle (40 Awe) every N s, Stone age", [=](const Result& r) { return r.nStone ? every(40, r.incStone / r.nStone) : -1e9; }, 5, 15);
+		range("small miracle (40 Awe) every N s, later ages", [=](const Result& r) { return r.nLater ? every(40, r.incLater / r.nLater) : -1e9; }, 3, 8);
+		range("great miracle (150 Awe) every N s once meteors unlock", [=](const Result& r) { return r.nGreat ? every(150, r.incGreat / r.nGreat) : -1e9; }, 25, 60);
+	}
 	if (pk == PolicyKind::Passive) {
 		range("Bronze year", ageY(1), 300, 700);
 		range("Iron year", ageY(2), 700, 1300);
@@ -730,8 +841,19 @@ std::string targets(const std::vector<Result>& rs, PolicyKind pk, bool& allPass)
 	if (pk == PolicyKind::Doom) {
 		yes("doom drives the world to silence", [](const Result& r) { return r.ending && r.ending->type == EndingType::Silence; }, 0.5, moodS);
 	}
-	yes("mean tick <= 2.5 ms", [](const Result& r) { return r.meanMs <= 2.5; }, 1.0, [](const Result& r) { return fmt("%.2f", r.meanMs); });
-	yes("max tick <= 30 ms", [](const Result& r) { return r.maxMs <= 30; }, 1.0, [](const Result& r) { return fmt("%.1f", r.maxMs); });
+	// the performance targets use thread CPU time when available (wall time includes time this thread
+	// was descheduled by other processes); the wall-clock maximum is listed for information
+	auto meanT = [](const Result& r) { return r.cpuOk ? r.cpuMeanMs : r.meanMs; };
+	auto maxT = [](const Result& r) { return r.cpuOk ? r.cpuMaxMs : r.maxMs; };
+	yes("mean tick <= 2.5 ms (thread CPU time)", [=](const Result& r) { return meanT(r) <= 2.5; }, 1.0, [=](const Result& r) { return fmt("%.2f", meanT(r)); });
+	yes("max tick <= 30 ms (thread CPU time)", [=](const Result& r) { return maxT(r) <= 30; }, 1.0, [=](const Result& r) { return fmt("%.1f", maxT(r)); });
+	{
+		Target T;
+		T.what = "max tick, wall clock (informational: includes descheduled time)";
+		T.need = false;
+		for (const Result& r : rs) T.detail += (T.detail.empty() ? "" : " ") + fmt("%.1f", r.maxMs);
+		ts.push_back(T);
+	}
 	std::string out = fmt("targets (SPEC-SIM 4), policy %s, %zu seeds:\n", simrun::toStr(pk), rs.size());
 	for (const Target& T : ts) {
 		const bool ok = !T.need || (T.n > 0 && double(T.pass) >= T.minShare * T.n - 1e-9);

@@ -48,19 +48,33 @@ std::vector<int> hopsFrom(const World& w, int from) {
 	return d;
 }
 
-// a habitable land cell exactly k hops from `from` whose ring of `rad` hops is all land and unowned
+// a habitable land cell k hops from `from` (else k + 1 ... k + 4) on the same landmass, whose ring of
+// `rad` hops is all land and unowned
 int landAt(const World& w, int from, int k, int rad = 2) {
 	if (from < 0) return -1;
 	const std::vector<int> d = hopsFrom(w, from);
+	const bool ids = w.cache.landId.size() == size_t(w.n);
 	std::vector<int32_t> tmp;
-	for (int c = 0; c < w.n; c++) {
-		if (d[size_t(c)] != k || seaAt(w, c) || w.hab[size_t(c)] < 0.1f) continue;
-		w.geo->ring(c, rad, tmp);
-		bool good = true;
-		for (const int m : tmp) if (seaAt(w, m) || w.owner[size_t(m)] >= 0) { good = false; break; }
-		if (good) return c;
-	}
+	for (int kk = k; kk <= k + 4; kk++)
+		for (int c = 0; c < w.n; c++) {
+			if (d[size_t(c)] != kk || seaAt(w, c)) continue;   // (hab is irrelevant to Diplomacy)
+			if (ids && w.cache.landId[size_t(c)] != w.cache.landId[size_t(from)]) continue;
+			w.geo->ring(c, rad, tmp);
+			bool good = true;
+			for (const int m : tmp) if (seaAt(w, m) || w.owner[size_t(m)] >= 0) { good = false; break; }
+			if (good) return c;
+		}
 	return -1;
+}
+
+// the most habitable cell of the largest landmass (landId 0)
+int mainland(const World& w) {
+	int best = -1;
+	for (int c = 0; c < w.n; c++) {
+		if (seaAt(w, c) || w.cache.landId.size() != size_t(w.n) || w.cache.landId[size_t(c)] != 0) continue;
+		if (best < 0 || w.hab[size_t(c)] > w.hab[size_t(best)]) best = c;
+	}
+	return best;
 }
 
 int newFolk(World& w, double aggression, int age = 0) {
@@ -254,14 +268,14 @@ DM_TEST("diplomacy adv: writes only what the writers table allows (collaborators
 	society::rel(*w, a, c)->v = 0.2;
 	auto mk = [&](UnitType t, int cu, int from, int to) {
 		Unit& u = state::newUnit(*w, t);
-		u.culture = cu; u.from = from; u.to = to; u.dest = w->settlements[size_t(to)].cell; u.size = 400;
+		u.culture = cu; u.from = from; u.to = to; u.dest = w->settlements[size_t(to)].cell; u.size = t == UnitType::Army ? 10 : 400;   // the army loses (a won battle would end the war by the 40 % rule before the bomb)
 		u.path = bfs(*w, w->settlements[size_t(from)].cell, u.dest, NavalMode::Land, 99);
 		return u.id;
 	};
 	const int army = mk(UnitType::Army, a, a1, b1), trader = mk(UnitType::Trader, a, a2, c1), prophet = mk(UnitType::Prophet, a, a1, a2);
 	std::vector<uint8_t> b0;
 	if (!ok(state::serialize(*w, b0), "serialize")) return;
-	std::vector<std::vector<double>> cellsBefore(size_t(state::kCellFieldCount));
+	std::vector<std::vector<double>> cellsBefore(static_cast<size_t>(state::kCellFieldCount), std::vector<double>{});
 	for (int f = 0; f < state::kCellFieldCount; f++) {
 		const CellArray arr = state::cellArray(*w, f);
 		for (int k = 0; k < w->n; k++) cellsBefore[size_t(f)].push_back(arr.get(size_t(k)));
@@ -304,9 +318,9 @@ DM_TEST("diplomacy adv: writes only what the writers table allows (collaborators
 	w->stats.wars = ref->stats.wars;
 	w->rng = ref->rng;
 	w->year = ref->year;
-	std::vector<uint8_t> b1;
-	state::serialize(*w, b1);
-	ok(b1 == b0, "nothing else in the persisted world changed (" + std::to_string(b0.size()) + " bytes compared)");
+	std::vector<uint8_t> bytesAfter;
+	state::serialize(*w, bytesAfter);
+	ok(bytesAfter == b0, "nothing else in the persisted world changed (" + std::to_string(b0.size()) + " bytes compared)");
 	// collaborators called: only the documented edges of the call graph (and read-only queries)
 	const std::set<std::string> allowed{ "civ_capture", "civ_destroy", "civ_damage", "civ_infect", "units_spawn", "units_kill",
 		"life_ignite", "climate_addDust", "society_witness", "path_find", "civ_at", "civ_near", "civ_live", "units_near", "units_cellOf" };
@@ -507,6 +521,7 @@ DM_TEST("diplomacy adv: NaN and garbage inputs never put NaN into the world") {
 	const double nan = std::numeric_limits<double>::quiet_NaN();
 	const double inf = std::numeric_limits<double>::infinity();
 	newTown(w, landAt(w, w.settlements[size_t(d.sa)].cell, 9), d.a, 500, 2, 2);
+	if (!ok(w.settlements.size() == 3, "three towns")) return;
 	for (Settlement& s : w.settlements) { s.b[Building::MARKET] = 1; s.tier = 2; }
 	w.settlements[size_t(d.sa)].love = nan;
 	w.settlements[size_t(d.sb)].devotion = inf;
@@ -571,6 +586,9 @@ DM_TEST("diplomacy adv: no sea, no land, the poles, every phase, bare worlds, L 
 			for (Settlement& s : w->settlements) s.b[Building::MARKET] = s.b[Building::PORT] = 1;
 			society::rel(*w, a, b)->v = -0.9;
 			for (int y = 1; y <= 30; y++) { w->year = y; society::diplomacy(*w); if (fk) deliver(*w); }
+			const Relation* rr = society::peek(*w, a, b);
+			std::printf("    L %d no sea: %zu towns, sea cells %d, v %.2f contact %d, wars %d\n", L, w->settlements.size(),
+				int(std::count_if(w->elev.begin(), w->elev.end(), [&](float e) { return double(e) < w->seaLevel; })), rr ? rr->v : 9.0, rr ? int(rr->contact) : -1, w->stats.wars);
 			ok(w->stats.wars >= 1, "L " + std::to_string(L) + " no sea: war still possible");
 			noNaN(*w, "no sea");
 		}
@@ -636,14 +654,14 @@ DM_TEST("diplomacy adv: same calls, same world (L 4 and L 6); a mid-war save/loa
 	fakes();
 	auto run = [](int L, uint32_t seed, int years, std::unique_ptr<World>* keep) -> uint32_t {
 		auto w = makeWorld({ .L = L, .seed = seed, .land = 0.45 });
-		const int c0 = bestHab(*w);
+		const int c0 = mainland(*w);
 		const int a = newFolk(*w, 0.85, Age::ATOMIC), b = newFolk(*w, 0.8, Age::ATOMIC), c = newFolk(*w, 0.6, Age::IRON);
 		const int step = L >= 6 ? 9 : 5;
 		newTown(*w, c0, a, 3000, 2, 2);
 		newTown(*w, landAt(*w, c0, step), b, 2500, 2, 2);
 		newTown(*w, landAt(*w, c0, 2 * step), a, 1500, 2, 2);
 		newTown(*w, landAt(*w, c0, 3 * step), c, 1200, 2, 2);
-		for (Settlement& s : w->settlements) s.b[Building::MARKET] = 1;
+		w->settlements.back().b[Building::MARKET] = 1;          // only C trades: A and B stay hostile (trade makes friends)
 		w->tune<DiplomacyTune>().nukeP = 0.05;
 		for (int y = 0; y < years; y++) {
 			w->year = y;
@@ -652,6 +670,7 @@ DM_TEST("diplomacy adv: same calls, same world (L 4 and L 6); a mid-war save/loa
 			for (Settlement& s : w->settlements) if (!s.dead) s.pop = std::max(3.0, s.pop + 0.03 * s.pop * (1 - s.pop / 3000));
 		}
 		noNaN(*w);
+		if (keep) std::printf("    L %d seed %u: %zu towns, %zu relations\n", L, seed, w->settlements.size(), w->vars.rel.size());
 		const uint32_t h = hash(*w);
 		if (keep) *keep = std::move(w);
 		return h;
@@ -696,6 +715,7 @@ DM_TEST("diplomacy adv: event payloads carry the documented ids (war, battle, nu
 	Duo d = duo(7, 5, 3, 0.3, 0.9);       // B is the aggressor
 	World& w = *d.w;
 	if (!ok(d.sb >= 0, "site")) return;
+	for (Culture& c : w.cultures) c.age = Age::BRONZE;   // a strait between them would do (canReach)
 	w.tune<DiplomacyTune>().noise = 0;
 	society::rel(w, d.a, d.b)->v = -0.9;
 	w.year = 3;
@@ -802,6 +822,7 @@ DM_TEST("diplomacy adv: double declarations, repeated peace, edicts on the aggre
 	Duo d = duo(6, 5, 3, 0.9, 0.2);
 	World& w = *d.w;
 	if (!ok(d.sb >= 0, "site")) return;
+	for (Culture& c : w.cultures) c.age = Age::BRONZE;
 	w.year = 10;
 	auto evs = capture(w, [&] { society::declareWar(w, d.a, d.b); society::declareWar(w, d.b, d.a); });
 	eq(count(evs, Ev::WarDeclared), 1, "one war:declared");
@@ -837,6 +858,38 @@ DM_TEST("diplomacy adv: double declarations, repeated peace, edicts on the aggre
 	w.tune<DiplomacyTune>().nukeP = 1;
 	evs = capture(w, [&] { w.year = 62; society::diplomacy(w); });
 	eq(count(evs, Ev::Nuke), 0, "no bomb against a Stone-age people");
+}
+
+// ================================================================ balance evidence (printed for the lead)
+
+DM_TEST("diplomacy adv: how much trade calms two aggressive neighbours (600 years, printed)") {
+	stub::Guard guard(false);
+	if (!faked()) return;
+	fakes();
+	for (const bool markets : { false, true }) {
+		auto w = makeWorld({ .L = 6, .seed = 2, .land = 0.45 });
+		const int c0 = mainland(*w);
+		const int a = newFolk(*w, 0.85, Age::IRON), b = newFolk(*w, 0.8, Age::IRON);
+		int prev = c0;
+		for (int k = 0; k < 6 && prev >= 0; k++) {
+			const int s = newTown(*w, prev, k < 3 ? a : b, 1500, 4, 2);
+			if (markets && s >= 0) w->settlements[size_t(s)].b[Building::MARKET] = 1;
+			prev = landAt(*w, prev, 9, 4);
+		}
+		int warYears = 0, wars = 0;
+		double sumV = 0, minV = 1;
+		for (int y = 1; y <= 600; y++) {
+			w->year = y;
+			const auto evs = capture(*w, [&] { society::diplomacy(*w); deliver(*w); });
+			wars += count(evs, Ev::WarDeclared);
+			for (Settlement& s : w->settlements) if (!s.dead) s.pop = std::max(3.0, s.pop + 0.03 * s.pop * (1 - s.pop / 1500));
+			if (const Relation* r = society::peek(*w, a, b)) { warYears += r->war; sumV += r->v; minV = std::min(minV, r->v); }
+		}
+		const Relation* r = society::peek(*w, a, b);
+		std::printf("    aggression 0.85 / 0.80, %zu towns, markets %s: %d wars, %d of 600 years at war, mean v %+.2f, min v %+.2f, trade now %.2f\n",
+			w->settlements.size(), markets ? "yes" : "no ", wars, warYears, sumV / 600, minV, r ? r->trade : 0.0);
+		noNaN(*w);
+	}
 }
 
 // ================================================================ real modules (run.ps1 all)

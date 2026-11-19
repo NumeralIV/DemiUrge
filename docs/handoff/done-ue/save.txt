@@ -1,0 +1,1 @@
+2026-11-19, save (A15) verified: save 41 passed 0 failed (26 builder + 15 adversarial), link 3 passed 0 failed, all-real private build 41 passed + real-sim long run passed; 5 fixes (NUL/empty paths, removeSlot on folders, settings line injection, delta-coded frames: real L6 y3000 save 7.6 MB -> 1.6 MB); quality 7/10

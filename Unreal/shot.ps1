@@ -3,8 +3,8 @@
 #   powershell -NoProfile -ExecutionPolicy Bypass -File "<project or lane>\shot.ps1" <name> [game args] [script options]
 #
 #   <name>        output shots/ue-<name>.png (a name starting with "ue-" is used as is) and the
-#                 scenario to run unless -scenario= is given (unknown names fall back to the longest
-#                 registered prefix: "orbit-night" runs "orbit")
+#                 scenario to run unless -scenario= is given (an unknown name falls back to the longest
+#                 registered name made of whole '-' words of it: "orbit-night", "c1-orbit-dusk" run "orbit")
 #   game args     passed to the game: -cam=lat,lon,distKm,heading,pitch,fov -sun=lat,lon -year=
 #                 -warm= (default 240) -seq=a,b,c -fixture= -seed= -skip -live -speed= -ev= -parts=
 #                 -noparts= -overlay= -exitafter= ... (see Source/Demiurge/Game/Core/DmScenario.h)
@@ -19,8 +19,10 @@
 # crashed or killed script releases its slot at once. The slot also records the game's process id
 # (Unreal/Saved/ShotSlots of the main project); a game left running by a killed script is ended by
 # the next script that takes that slot. Prints the PNG path, seconds, exit code and the log's key
-# lines (DmShot, DmStats, DmScenario, DmFixture, errors). Exit code 0 = PNG written (or -noshot and
-# the game exited 0); 1 = no shot; 2 = timeout / stall (game killed); 3 = no render slot.
+# lines (DmShot, DmStats, DmScenario, DmFixture, errors). Exit code 0 = PNG written and the scenario
+# did not report a failure (-noshot: the scenario finished with code 0); 1 = no shot or the scenario
+# failed (FDmScenarioContext::SetExitCode, logged as "DmMode: exit (...) code N"); 2 = timeout /
+# stall (game killed); 3 = no render slot.
 
 param([Parameter(Position = 0)][string]$Name = 'orbit', [Parameter(ValueFromRemainingArguments = $true)][string[]]$Rest)
 
@@ -93,18 +95,33 @@ $slotFile = Join-Path $slotDir "slot$slot.json"
 $exitCode = 1
 $reason = ''
 $proc = $null
+
+# a game left behind by a killed shot.ps1 (its slot's mutex is free again but the game still renders)
+function Stop-Orphan([string]$file, [int]$k) {
+	if (-not (Test-Path -LiteralPath $file)) { return }
+	try {
+		$old = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+		$op = Get-Process -Id ([int]$old.pid) -ErrorAction SilentlyContinue
+		if ($op -and $op.ProcessName -like 'UnrealEditor*' -and $op.StartTime.ToString('o') -eq $old.start) {
+			Write-Host "shot ${Name}: ending orphaned game pid $($old.pid) left in slot $k ($($old.name))"
+			Stop-Tree ([int]$old.pid)
+		}
+	} catch {}
+	Remove-Item -LiteralPath $file -Force -ErrorAction SilentlyContinue
+}
 try {
-	# a game left behind by a killed shot.ps1 that held this slot
-	if (Test-Path -LiteralPath $slotFile) {
-		try {
-			$old = Get-Content -LiteralPath $slotFile -Raw | ConvertFrom-Json
-			$op = Get-Process -Id ([int]$old.pid) -ErrorAction SilentlyContinue
-			if ($op -and $op.ProcessName -like 'UnrealEditor*' -and $op.StartTime.ToString('o') -eq $old.start) {
-				Write-Host "shot ${Name}: ending orphaned game pid $($old.pid) left in slot $slot ($($old.name))"
-				Stop-Tree ([int]$old.pid)
-			}
-		} catch {}
-		Remove-Item -LiteralPath $slotFile -Force -ErrorAction SilentlyContinue
+	Stop-Orphan $slotFile $slot
+	# the other slot: if its mutex is free, whatever its file names is an orphan too (so an orphan never
+	# makes a third game)
+	for ($k = 0; $k -lt 2; $k++) {
+		if ($k -eq $slot) { continue }
+		$other = Join-Path $slotDir "slot$k.json"
+		if (-not (Test-Path -LiteralPath $other)) { continue }
+		$m2 = New-Object System.Threading.Mutex($false, "Global\DemiurgeShotSlot$k")
+		$got2 = $false
+		try { $got2 = $m2.WaitOne(0) } catch [System.Threading.AbandonedMutexException] { $got2 = $true }
+		if ($got2) { Stop-Orphan $other $k; try { $m2.ReleaseMutex() } catch {} }
+		$m2.Dispose()
 	}
 	if (-not $noShot -and (Test-Path -LiteralPath $png)) { Remove-Item -LiteralPath $png -Force }
 	if (Test-Path -LiteralPath $logPath) { Remove-Item -LiteralPath $logPath -Force -ErrorAction SilentlyContinue }
@@ -114,26 +131,38 @@ try {
 	$null = $proc.Handle   # keep the handle so ExitCode is available after exit
 	@{ pid = $proc.Id; start = $proc.StartTime.ToString('o'); name = $Name; project = $proj } | ConvertTo-Json | Set-Content -LiteralPath $slotFile -Encoding UTF8
 
-	$lastSize = -1; $lastGrow = Get-Date; $pngSeen = $null
+	$lastSize = -1; $lastGrow = Get-Date; $exitSeen = $null; $lastExitCheck = Get-Date
 	while (-not $proc.HasExited) {
 		Start-Sleep -Milliseconds 500
 		$now = Get-Date
 		$size = 0
 		if (Test-Path -LiteralPath $logPath) { $size = (Get-Item -LiteralPath $logPath).Length }
 		if ($size -ne $lastSize) { $lastSize = $size; $lastGrow = $now }
-		if (-not $noShot -and -not $pngSeen -and (Test-Path -LiteralPath $png)) { $pngSeen = $now }
-		if ($pngSeen -and ($now - $pngSeen).TotalSeconds -gt 60) { $reason = 'did not exit 60 s after the shot (killed)'; Stop-Tree $proc.Id; break }
+		# the game asked to quit ("DmMode: exit ..."): it gets 60 s to do so. (A scenario that keeps running
+		# after its shots, HoldExit, is not cut short; -timeout / -stall still guard it.)
+		if (-not $exitSeen -and $size -gt 0 -and ($now - $lastExitCheck).TotalSeconds -ge 2) {
+			$lastExitCheck = $now
+			if (Select-String -LiteralPath $logPath -Pattern 'DmMode: exit \(' -Quiet) { $exitSeen = $now }
+		}
+		if ($exitSeen -and ($now - $exitSeen).TotalSeconds -gt 60) { $reason = 'did not exit 60 s after it asked to quit (killed)'; Stop-Tree $proc.Id; break }
 		if (($now - $tRun).TotalSeconds -gt $timeout) { $reason = "timeout after $timeout s (killed)"; Stop-Tree $proc.Id; break }
 		if (($now - $lastGrow).TotalSeconds -gt $stall) { $reason = "log silent for $stall s (killed)"; Stop-Tree $proc.Id; break }
 	}
 	try { $proc.WaitForExit(15000) | Out-Null } catch {}
 	$code = if ($proc.HasExited) { $proc.ExitCode } else { -1 }
+	# the harness logs "DmMode: exit (<why>) at frame <n>, code <c>": the scenario's verdict
+	$harnessCode = $null
+	if (Test-Path -LiteralPath $logPath) {
+		$hm = Select-String -LiteralPath $logPath -Pattern 'DmMode: exit \((.*)\) at frame \d+, code (\d+)' | Select-Object -Last 1
+		if ($hm) { $harnessCode = [int]$hm.Matches[0].Groups[2].Value }
+	}
+	if ($null -ne $harnessCode -and $code -eq 0) { $code = $harnessCode }
 	$secs = [int]((Get-Date) - $tRun).TotalSeconds
-	$ok = if ($noShot) { $code -eq 0 -and $reason -eq '' } else { Test-Path -LiteralPath $png }
+	$ok = if ($noShot) { $code -eq 0 -and $reason -eq '' -and $null -ne $harnessCode } else { (Test-Path -LiteralPath $png) -and ($null -eq $harnessCode -or $harnessCode -eq 0) }
 	if ($ok) { $exitCode = 0 } elseif ($reason -ne '') { $exitCode = 2 } else { $exitCode = 1 }
 	$what = if ($noShot) { '(no shot)' } elseif (Test-Path -LiteralPath $png) { $png } else { 'NO SHOT' }
 	$extra = if ($reason) { " - $reason" } else { '' }
-	Write-Host "$Name : $what in $secs s (slot $slot, waited $waitSecs s, exit code $code)$extra"
+	Write-Host "$Name : $what in $secs s (slot $slot, waited $waitSecs s, game exit code $code)$extra"
 	if (Test-Path -LiteralPath $logPath) {
 		Get-Content -LiteralPath $logPath | Select-String -Pattern 'Error|Fatal|Ensure|DmShot|DmStats|DmScenario|DmFixture|DmSim:|DmSimTest|DmPickTest|DmPlaceholder|DmScene' |
 			Where-Object { $_.Line -notmatch 'LogStreaming|LogConfig|LogPython|SourceControl|LogEOS' } | Select-Object -Last 40 | ForEach-Object { $_.Line }

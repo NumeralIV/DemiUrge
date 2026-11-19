@@ -34,6 +34,7 @@ public:
 	void HarnessShot(const FString& Suffix);
 	void HarnessFinish() { bFinishRequested = true; }
 	void HarnessHoldExit() { bHoldExit = true; }
+	void HarnessSetExitCode(int32 Code) { ExitCode = Code; }
 	ACameraActor* GetHarnessCamera() const { return Camera; }
 	const TArray<AActor*>& GetSceneActors() const { return SceneActors; }
 	void AddSceneActors(const TArray<AActor*>& Actors) { SceneActors.Append(Actors); }
@@ -57,6 +58,7 @@ private:
 	bool bViewSet = false;
 	bool bFinishRequested = false;
 	bool bHoldExit = false;
+	int32 ExitCode = 0;
 	bool bQuitting = false;
 	int32 Frame = 0;
 	int32 QuitFrame = -1;

@@ -1,4 +1,4 @@
-# DEMIURGE: private build lanes for client engineers (SPEC-UNREAL 0.1). Owner: C0 bridge.
+﻿# DEMIURGE: private build lanes for client engineers (SPEC-UNREAL 0.1). Owner: C0 bridge.
 # (Build output folders named build / build-* anywhere are never copied either.)
 #
 #   powershell -NoProfile -ExecutionPolicy Bypass -File "<root>\Unreal\lane.ps1" <command> <key> [options]
@@ -16,10 +16,18 @@
 #                            ("planet" and "planet-verify" are related keys and never conflict).
 #                            -Prune also deletes main files that match the owned list but no longer exist
 #                            in the lane. The .owned file itself is synced when the lane holds one.
+#                            Stale-copy protection (the lane's .lane-base records what it took from main):
+#                            a file you never changed in the lane is skipped when main has a newer version
+#                            ("skip ... run refresh"); a file changed both in the lane and in main since is a
+#                            CONFLICT (exit 3; merge, then -Force); -Prune only deletes files the lane had
+#                            and removed, and only if main still holds that version.
 #   refresh <key> [-DryRun]  pull main's current files into the lane (everything except the lane's owned
-#                            files and the excluded folders), so a lane picks up work others synced.
+#                            files and the excluded folders), so a lane picks up work others synced; files
+#                            main deleted or renamed are removed from the lane (unless you changed them).
 #   status <key>             owned files and how they differ between the lane and main
+#                            (same / lane only / main only / yours / main newer / both changed)
 #   build <key>              build the lane (same as Unreal/Lanes/<key>/build.ps1)
+#   scaffold <key>           rewrite the lane's generated build.ps1 (after lane.ps1 changed)
 #   list                     every lane
 #   remove <key>             delete the lane folder (Unreal/Lanes/<key> only)
 #
@@ -53,7 +61,8 @@ function Get-MainRoot {
 $Main = Get-MainRoot
 $LanesDir = Join-Path $Main 'Lanes'
 $Excluded = @('Intermediate', 'Binaries', 'Saved', 'DerivedDataCache', 'Lanes', 'SimTests/build')
-$NeverSync = @('build.ps1', '.lane', 'Demiurge.uproject')   # lane scaffolding (build.ps1 is generated per lane)
+$BaseName = '.lane-base'
+$NeverSync = @('build.ps1', '.lane', $BaseName, 'Demiurge.uproject')   # lane scaffolding (build.ps1 is generated per lane)
 
 function Fail([string]$msg) { Write-Host "lane: $msg"; exit 1 }
 
@@ -156,7 +165,47 @@ function Test-SameFile([string]$a, [string]$b) {
 	if (-not $fa.Exists -or -not $fb.Exists) { return $false }
 	if ($fa.Length -ne $fb.Length) { return $false }
 	if ($fa.Length -eq 0) { return $true }
-	return ((Get-FileHash -LiteralPath $a -Algorithm MD5).Hash -eq (Get-FileHash -LiteralPath $b -Algorithm MD5).Hash)
+	return ((Get-Md5 $a) -eq (Get-Md5 $b))
+}
+
+# ---------------------------------------------------------------- the lane's base (what it last took from main)
+# <lane>/.lane-base: "md5<TAB>relative path" of every file as it was copied from main (new / refresh) or
+# last synced to main. It tells "you changed this" from "main changed this since", so sync never pushes a
+# stale copy over a newer main file, refresh removes files main deleted, and -Prune never deletes files
+# that were added to main after the lane last looked. Lanes made before it existed have none (old rules).
+$Md5 = [System.Security.Cryptography.MD5]::Create()
+function Get-Md5([string]$path) {
+	$s = [System.IO.File]::OpenRead($path)
+	try { return [System.BitConverter]::ToString($Md5.ComputeHash($s)).Replace('-', '') } finally { $s.Dispose() }
+}
+
+function Read-Base([string]$lane) {
+	$p = Join-Path $lane $BaseName
+	if (-not (Test-Path -LiteralPath $p)) { return $null }
+	$h = @{}
+	foreach ($line in [System.IO.File]::ReadAllLines($p)) {
+		$i = $line.IndexOf("`t")
+		if ($i -gt 0) { $h[$line.Substring($i + 1)] = $line.Substring(0, $i) }
+	}
+	return $h
+}
+
+function Write-Base([string]$lane, $h) {
+	$lines = New-Object System.Collections.Generic.List[string]
+	foreach ($k in @($h.Keys | Sort-Object)) { $lines.Add("$($h[$k])`t$k") }
+	[System.IO.File]::WriteAllLines((Join-Path $lane $BaseName), $lines.ToArray())
+}
+
+function New-Base([string]$lane) {
+	# only files the lane holds exactly as main has them (new -Force keeps lane-only files: those are yours)
+	$h = @{}
+	foreach ($rel in Get-TreeFiles $lane) {
+		if ($NeverSync -contains $rel) { continue }
+		$m = Join-Path $Main $rel
+		if (Test-SameFile (Join-Path $lane $rel) $m) { $h[$rel] = Get-Md5 $m }
+	}
+	Write-Base $lane $h
+	return $h.Count
 }
 
 function Copy-One([string]$src, [string]$dst) {
@@ -170,9 +219,11 @@ function Copy-One([string]$src, [string]$dst) {
 function Write-LaneBuild([string]$laneRoot, [string]$k) {
 	$text = @'
 # DEMIURGE lane build (generated by Unreal/lane.ps1 for lane "__KEY__"; do not sync to main).
-# Builds this lane's DemiurgeEditor (Win64 Development) with Build.bat -NoMutex: UBT's mutex is global
-# (keyed by the engine's UnrealBuildTool.dll path), so without -NoMutex every lane would wait for every
-# other lane. Each lane is its own project (own Intermediate / Binaries), so concurrent builds are safe.
+# Builds this lane's DemiurgeEditor (Win64 Development) with Build.bat, without blocking other builds:
+#  - UBT's mutex is global (keyed by the engine's UnrealBuildTool.dll path): -NoMutex.
+#  - Build.bat also serializes itself with a lock file %TMP%\<path of Build.bat>.lock: this script
+#    points TMP / TEMP at the lane's Saved/Temp, so each lane has its own Build.bat lock (and UBT temp).
+# Each lane is its own project (own Intermediate / Binaries), so concurrent builds are safe.
 # Prints the result, elapsed seconds, the log paths and every line with "error" or "warning C".
 param([switch]$Clean)
 $ErrorActionPreference = 'Continue'
@@ -184,6 +235,10 @@ if (-not (Test-Path -LiteralPath $logDir)) { [void](New-Item -ItemType Directory
 $stamp  = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
 $ubtLog = Join-Path $logDir "UBT-$stamp.txt"
 $outLog = Join-Path $logDir "build-$stamp.log"
+$tmpDir = Join-Path $PSScriptRoot 'Saved/Temp'
+if (-not (Test-Path -LiteralPath $tmpDir)) { [void](New-Item -ItemType Directory -Force -Path $tmpDir) }
+$env:TMP = [System.IO.Path]::GetFullPath($tmpDir)
+$env:TEMP = $env:TMP
 $buildArgs = @('DemiurgeEditor', 'Win64', 'Development', "-Project=$uproject", '-NoMutex', '-NoHotReload', "-Log=$ubtLog")
 if ($Clean) { $buildArgs += '-Clean' }
 Write-Host "Building lane __KEY__ (DemiurgeEditor Win64 Development, -NoMutex)"
@@ -193,7 +248,7 @@ $exitCode = $LASTEXITCODE
 $watch.Stop()
 $lines | Set-Content -LiteralPath $outLog -Encoding UTF8
 $result = if ($exitCode -eq 0) { 'Succeeded' } else { 'Failed' }
-$hits = @($lines | Where-Object { $_ -match 'error|warning C' })
+$hits = @($lines | Where-Object { $_ -match 'error|warning C' -and $_ -notmatch 'WarningsAsErrors' })
 Write-Host ""
 Write-Host "Result:  $result (exit code $exitCode)"
 Write-Host "Elapsed: $([Math]::Round($watch.Elapsed.TotalSeconds, 1)) s"
@@ -218,13 +273,14 @@ function Invoke-New([string]$k) {
 	foreach ($e in $Excluded) { $xd += (Join-Path $Main $e.Replace('/', '\')) }
 	# robocopy: /E subfolders, /XD excluded folders (by full path: only the top-level ones), multithreaded, quiet
 	$xd += @('build', 'build-*', '.vs')   # build output folders anywhere (SimTests/build, Tools/simrun/build-*)
-	$rc = @($Main, $lane, '/E', '/XD') + $xd + @('/XF', '.lane', '/MT:16', '/R:1', '/W:1', '/NFL', '/NDL', '/NJH', '/NJS', '/NP')
+	$rc = @($Main, $lane, '/E', '/XD') + $xd + @('/XF', '.lane', $BaseName, '/MT:16', '/R:1', '/W:1', '/NFL', '/NDL', '/NJH', '/NJS', '/NP')
 	& robocopy.exe @rc | Out-Null
 	$code = $LASTEXITCODE
 	if ($code -ge 8) { Fail "robocopy failed with exit code $code" }
 	$info = [ordered]@{ key = $k; main = $Main; created = (Get-Date).ToString('s'); by = 'lane.ps1' }
 	($info | ConvertTo-Json) | Set-Content -LiteralPath (Join-Path $lane '.lane') -Encoding UTF8
 	Write-LaneBuild $lane $k
+	[void](New-Base $lane)
 	$owned = Join-Path $LanesDir "$k.owned"
 	if (-not (Test-Path -LiteralPath $owned)) {
 		@("# Files lane '$k' owns, relative to Unreal/ (one path or glob per line; ** = any depth).",
@@ -256,18 +312,45 @@ function Invoke-Sync([string]$k) {
 		if ($op.Count -gt 0) { $others += [pscustomobject]@{ key = $ok; rx = @($op | ForEach-Object { ConvertTo-GlobRegex $_ }) } }
 	}
 
+	$base = Read-Base $lane
+	if ($null -eq $base) { Write-Host "  (lane made before .lane-base existed: no stale-copy protection; 'lane.ps1 new $k -Force' adds it)" }
+	$baseChanged = $false
 	$laneFiles = @(Get-TreeFiles $lane | Where-Object { (Test-Match $mine $_) -and ($NeverSync -notcontains $_) })
-	$copied = 0; $same = 0; $refused = 0; $deleted = 0; $failed = 0
+	$copied = 0; $same = 0; $refused = 0; $deleted = 0; $failed = 0; $stale = 0; $conflicts = 0
 	foreach ($rel in $laneFiles) {
+		$src = Join-Path $lane $rel
+		$dst = Join-Path $Main $rel
+		$laneHash = $null
+		if (Test-SameFile $src $dst) {
+			$same++
+			if ($null -ne $base) { $laneHash = Get-Md5 $src; if ($base[$rel] -ne $laneHash) { $base[$rel] = $laneHash; $baseChanged = $true } }
+			continue
+		}
+		$mainExists = Test-Path -LiteralPath $dst
+		if ($null -ne $base) {
+			$laneHash = Get-Md5 $src
+			$was = $base[$rel]
+			if ($was -and $laneHash -eq $was) {
+				# the lane never touched it: main moved on (or deleted it); pushing it would undo someone's work
+				$why = if ($mainExists) { 'main has a newer version' } else { 'main removed it' }
+				Write-Host "  skip $rel (unchanged in your lane; ${why}: run 'lane.ps1 refresh $k')"
+				$stale++; continue
+			}
+			$mainChanged = $mainExists -and ((-not $was) -or ((Get-Md5 $dst) -ne $was))
+			if ($mainChanged -and -not $Force) {
+				Write-Host "  CONFLICT $rel (changed in your lane AND in main since your lane last took it: merge main's version into yours, then sync -Force)"
+				$conflicts++; continue
+			}
+		}
 		$owner = $null
 		foreach ($o in $others) { if (Test-Match $o.rx $rel) { $owner = $o.key; break } }
 		if ($owner -and -not $Force) { Write-Host "  REFUSED $rel (claimed by '$owner'; -Force to override)"; $refused++; continue }
-		$src = Join-Path $lane $rel
-		$dst = Join-Path $Main $rel
-		if (Test-SameFile $src $dst) { $same++; continue }
-		$tag = if (Test-Path -LiteralPath $dst) { 'update' } else { 'new' }
+		$tag = if ($mainExists) { 'update' } else { 'new' }
 		Write-Host "  $tag $rel"
-		if (-not $DryRun) { if (-not (Copy-One $src $dst)) { $failed++; continue } }
+		if (-not $DryRun) {
+			if (-not (Copy-One $src $dst)) { $failed++; continue }
+			if ($null -ne $base) { $base[$rel] = $laneHash; $baseChanged = $true }
+		}
 		$copied++
 	}
 	# the lane's own owned list
@@ -286,15 +369,25 @@ function Invoke-Sync([string]$k) {
 			$owner = $null
 			foreach ($o in $others) { if (Test-Match $o.rx $rel) { $owner = $o.key; break } }
 			if ($owner -and -not $Force) { Write-Host "  KEEP $rel (claimed by '$owner')"; continue }
+			if ($null -ne $base -and -not $Force) {
+				# delete only what this lane had and removed, and only if main still holds that same version
+				$was = $base[$rel]
+				if (-not $was) { Write-Host "  KEEP $rel (added to main after your lane last looked; -Force to delete)"; continue }
+				if ((Get-Md5 (Join-Path $Main $rel)) -ne $was) { Write-Host "  KEEP $rel (changed in main since your lane last took it; -Force to delete)"; continue }
+			}
 			Write-Host "  delete $rel"
-			if (-not $DryRun) { Remove-Item -LiteralPath (Join-Path $Main $rel) -Force }
+			if (-not $DryRun) {
+				Remove-Item -LiteralPath (Join-Path $Main $rel) -Force
+				if ($null -ne $base -and $base.ContainsKey($rel)) { $base.Remove($rel); $baseChanged = $true }
+			}
 			$deleted++
 		}
 	}
+	if ($baseChanged -and -not $DryRun) { Write-Base $lane $base }
 	$mode = if ($DryRun) { ' (dry run: nothing written)' } else { '' }
-	Write-Host "sync '$k': $copied copied, $same identical, $refused refused, $deleted deleted, $failed failed$mode"
+	Write-Host "sync '$k': $copied copied, $same identical, $stale skipped (unchanged in lane), $conflicts conflicts, $refused refused, $deleted deleted, $failed failed$mode"
 	if ($failed -gt 0) { exit 4 }
-	if ($refused -gt 0) { exit 3 }
+	if ($refused -gt 0 -or $conflicts -gt 0) { exit 3 }
 }
 
 function Invoke-Refresh([string]$k) {
@@ -302,20 +395,53 @@ function Invoke-Refresh([string]$k) {
 	$lane = Get-LaneRoot $k
 	if (-not (Test-Path -LiteralPath $lane)) { Fail "no lane '$k'" }
 	$mine = @(Get-OwnedPatterns $k | ForEach-Object { ConvertTo-GlobRegex $_ })
-	$n = 0; $kept = 0
+	$base = Read-Base $lane
+	if ($null -eq $base) { $base = @{} }   # older lane: start recording from now on
+	$n = 0; $kept = 0; $removed = 0; $ownedNewer = 0
+	$mainSet = @{}
 	foreach ($rel in Get-TreeFiles $Main) {
 		if ($NeverSync -contains $rel) { continue }
 		if ($rel.StartsWith('lanes/', 'OrdinalIgnoreCase')) { continue }
-		if ($mine.Count -gt 0 -and (Test-Match $mine $rel)) { $kept++; continue }
+		$mainSet[$rel] = $true
 		$src = Join-Path $Main $rel
 		$dst = Join-Path $lane $rel
-		if (Test-SameFile $src $dst) { continue }
-		Write-Host "  pull $rel"
-		if (-not $DryRun) { [void](Copy-One $src $dst) }
+		if ($mine.Count -gt 0 -and (Test-Match $mine $rel)) {
+			$kept++
+			if ((Test-Path -LiteralPath $dst) -and -not (Test-SameFile $src $dst)) {
+				if ($base.ContainsKey($rel) -and (Get-Md5 $dst) -eq $base[$rel]) {
+					# yours, but untouched in this lane: main's newer version (a verifier's fix) is safe to take
+					Write-Host "  pull $rel (owned, unchanged in your lane)"
+					if (-not $DryRun) { if (Copy-One $src $dst) { $base[$rel] = Get-Md5 $src } }
+					$n++
+				}
+				else { Write-Host "  owned, changed in your lane and main differs (not pulled; sync reports a CONFLICT): $rel"; $ownedNewer++ }
+			}
+			continue
+		}
+		if (Test-SameFile $src $dst) {
+			if (-not $base.ContainsKey($rel)) { $base[$rel] = Get-Md5 $src }
+			continue
+		}
+		$note = ''
+		if ((Test-Path -LiteralPath $dst) -and $base.ContainsKey($rel) -and (Get-Md5 $dst) -ne $base[$rel]) { $note = ' (overwrites your local edit of a file you do not own)' }
+		Write-Host "  pull $rel$note"
+		if (-not $DryRun) { if (Copy-One $src $dst) { $base[$rel] = Get-Md5 $src } }
 		$n++
 	}
+	# files main deleted (or renamed) since the lane took them: remove the lane's untouched copies, so a
+	# rename in main does not leave two definitions of the same class in the lane
+	foreach ($rel in @($base.Keys)) {
+		if ($mainSet.ContainsKey($rel) -or ($NeverSync -contains $rel)) { continue }
+		$dst = Join-Path $lane $rel
+		if (-not (Test-Path -LiteralPath $dst)) { if (-not $DryRun) { $base.Remove($rel) }; continue }
+		if ((Get-Md5 $dst) -ne $base[$rel]) { Write-Host "  KEEP $rel (main deleted it but you changed it)"; continue }
+		Write-Host "  remove $rel (deleted in main)"
+		if (-not $DryRun) { Remove-Item -LiteralPath $dst -Force; $base.Remove($rel) }
+		$removed++
+	}
+	if (-not $DryRun) { Write-Base $lane $base }
 	$mode = if ($DryRun) { ' (dry run)' } else { '' }
-	Write-Host "refresh '$k': $n files pulled from main, $kept owned files left alone$mode"
+	Write-Host "refresh '$k': $n files pulled from main, $removed removed (deleted in main), $kept owned files kept ($ownedNewer changed in both)$mode"
 }
 
 function Invoke-Status([string]$k) {
@@ -326,12 +452,17 @@ function Invoke-Status([string]$k) {
 	Write-Host "lane '$k': $lane"
 	Write-Host "owned patterns: $($pats -join ', ')"
 	$mine = @($pats | ForEach-Object { ConvertTo-GlobRegex $_ })
+	$base = Read-Base $lane
 	$all = @(@(Get-TreeFiles $lane) + @(Get-TreeFiles $Main) | Where-Object { (Test-Match $mine $_) -and ($NeverSync -notcontains $_) } | Sort-Object -Unique)
 	foreach ($rel in $all) {
 		$a = Join-Path $lane $rel; $b = Join-Path $Main $rel
 		$ea = Test-Path -LiteralPath $a; $eb = Test-Path -LiteralPath $b
 		$st = if ($ea -and -not $eb) { 'lane only' } elseif ($eb -and -not $ea) { 'main only' } elseif (Test-SameFile $a $b) { 'same' } else { 'differs' }
-		Write-Host ("  {0,-10} {1}" -f $st, $rel)
+		if ($st -eq 'differs' -and $null -ne $base -and $base[$rel]) {
+			$laneSame = (Get-Md5 $a) -eq $base[$rel]; $mainSame = (Get-Md5 $b) -eq $base[$rel]
+			$st = if ($laneSame) { 'main newer' } elseif ($mainSame) { 'yours' } else { 'both changed' }
+		}
+		Write-Host ("  {0,-12} {1}" -f $st, $rel)
 	}
 }
 
@@ -369,9 +500,16 @@ switch ($Command.ToLowerInvariant()) {
 		& powershell -NoProfile -ExecutionPolicy Bypass -File $b
 		exit $LASTEXITCODE
 	}
+	'scaffold' {
+		Test-Key $Key
+		$lane = Get-LaneRoot $Key
+		if (-not (Test-Path -LiteralPath $lane)) { Fail "no lane '$Key'" }
+		Write-LaneBuild $lane $Key
+		Write-Host "lane '$Key': build.ps1 rewritten"
+	}
 	'list'    { Invoke-List }
 	'remove'  { Invoke-Remove $Key }
 	default   {
-		Get-Content -LiteralPath $PSCommandPath | Select-Object -Skip 1 -First 28 | ForEach-Object { $_ -replace '^# ?', '' }
+		Get-Content -LiteralPath $PSCommandPath | Select-Object -Skip 1 -First 30 | ForEach-Object { $_ -replace '^# ?', '' }
 	}
 }

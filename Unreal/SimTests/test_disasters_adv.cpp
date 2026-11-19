@@ -691,6 +691,7 @@ DM_TEST("disasters adv: natural plague on an immune city is not witnessed") {
 
 DM_TEST("disasters adv: writes only lava, wet, fert, farm, urban, seaLevel (genesis), the disaster list and flags") {
 	stub::Guard g(false);   // neutral collaborators: anything else that changes was written by Disasters
+	if (!advAllStubbed()) return;   // with the real modules (run.ps1 all) Terrain, Life, Civ, Units write too
 	auto w = makeWorld({ .L = 5, .seed = 6 });
 	const int land = bestHab(*w);
 	int sea = -1, shallow = -1;

@@ -96,7 +96,35 @@ const KeyRow kKeys[] = {
 	{ "economy.gate.3", &setA<EconomyTune, 5, &EconomyTune::gate, 3> },
 	{ "economy.gate.4", &setA<EconomyTune, 5, &EconomyTune::gate, 4> },
 	{ "economy.radius.0", &setAI<EconomyTune, 5, &EconomyTune::radius, 0> },
+	{ "economy.radius.1", &setAI<EconomyTune, 5, &EconomyTune::radius, 1> },
+	{ "economy.radius.2", &setAI<EconomyTune, 5, &EconomyTune::radius, 2> },
+	{ "economy.radius.3", &setAI<EconomyTune, 5, &EconomyTune::radius, 3> },
 	{ "economy.radius.4", &setAI<EconomyTune, 5, &EconomyTune::radius, 4> },
+	// (integration) more economy / civ keys
+	{ "economy.ownDistMin", &setI<EconomyTune, &EconomyTune::ownDistMin> },
+	{ "economy.ownDistCap", &setI<EconomyTune, &EconomyTune::ownDistCap> },
+	{ "economy.destHops", &setI<EconomyTune, &EconomyTune::destHops> },
+	{ "economy.sizeBase", &setD<EconomyTune, &EconomyTune::sizeBase> },
+	{ "economy.sizeRef", &setD<EconomyTune, &EconomyTune::sizeRef> },
+	{ "economy.sizeMin", &setD<EconomyTune, &EconomyTune::sizeMin> },
+	{ "economy.sizeMax", &setD<EconomyTune, &EconomyTune::sizeMax> },
+	{ "economy.traitBase", &setD<EconomyTune, &EconomyTune::traitBase> },
+	{ "economy.traitK", &setD<EconomyTune, &EconomyTune::traitK> },
+	{ "economy.farmK", &setD<EconomyTune, &EconomyTune::farmK> },
+	{ "economy.forageK", &setD<EconomyTune, &EconomyTune::forageK> },
+	{ "economy.fishK", &setD<EconomyTune, &EconomyTune::fishK> },
+	{ "economy.launchDelay", &setD<EconomyTune, &EconomyTune::launchDelay> },
+	{ "economy.drownedFrac", &setD<EconomyTune, &EconomyTune::drownedFrac> },
+	{ "economy.failBack", &setD<EconomyTune, &EconomyTune::failBack> },
+	{ "economy.partyMin", &setD<EconomyTune, &EconomyTune::partyMin> },
+	{ "economy.partyMax", &setD<EconomyTune, &EconomyTune::partyMax> },
+	{ "economy.expandEdict", &setD<EconomyTune, &EconomyTune::expandEdict> },
+	{ "civ.maxSettlements", &setI<CivTune, &CivTune::maxSettlements> },
+	{ "civ.crowdHops", &setI<CivTune, &CivTune::crowdHops> },
+	{ "civ.siteLow", &setD<CivTune, &CivTune::siteLow> },
+	{ "civ.siteLowH", &setD<CivTune, &CivTune::siteLowH> },
+	{ "civ.siteCoast", &setD<CivTune, &CivTune::siteCoast> },
+	{ "civ.siteRoom", &setD<CivTune, &CivTune::siteRoom> },
 	// society
 	{ "society.baseline.0", &setA<SocietyTune, 7, &SocietyTune::baseline, 0> },
 	{ "society.baseline.1", &setA<SocietyTune, 7, &SocietyTune::baseline, 1> },
@@ -120,6 +148,23 @@ const KeyRow kKeys[] = {
 	{ "society.maxCultures", &setI<SocietyTune, &SocietyTune::maxCultures> },
 	{ "society.arkYears", &setD<SocietyTune, &SocietyTune::arkYears> },
 	{ "society.arkPopRef", &setD<SocietyTune, &SocietyTune::arkPopRef> },
+	{ "society.arkMin", &setD<SocietyTune, &SocietyTune::arkMin> },
+	{ "society.arkMax", &setD<SocietyTune, &SocietyTune::arkMax> },
+	{ "society.loveDrift", &setD<SocietyTune, &SocietyTune::loveDrift> },
+	{ "society.jadedDecay", &setD<SocietyTune, &SocietyTune::jadedDecay> },
+	{ "society.devotionDrift", &setD<SocietyTune, &SocietyTune::devotionDrift> },
+	{ "society.pietyA", &setD<SocietyTune, &SocietyTune::pietyA> },
+	{ "society.pietyB", &setD<SocietyTune, &SocietyTune::pietyB> },
+	{ "society.incomeBase", &setD<SocietyTune, &SocietyTune::incomeBase> },
+	{ "society.incomeK", &setD<SocietyTune, &SocietyTune::incomeK> },
+	{ "society.sCamp", &setD<SocietyTune, &SocietyTune::sCamp> },
+	{ "society.sShrine", &setD<SocietyTune, &SocietyTune::sShrine> },
+	{ "society.sTemple", &setD<SocietyTune, &SocietyTune::sTemple> },
+	{ "society.witnessLove", &setD<SocietyTune, &SocietyTune::witnessLove> },
+	{ "society.witnessJaded", &setD<SocietyTune, &SocietyTune::witnessJaded> },
+	{ "society.apartLove", &setD<SocietyTune, &SocietyTune::apartLove> },
+	{ "society.secedeAng", &setD<SocietyTune, &SocietyTune::secedeAng> },
+	{ "society.fearBonus", &setD<SocietyTune, &SocietyTune::fearBonus> },
 	// diplomacy
 	{ "diplomacy.relax", &setD<DiplomacyTune, &DiplomacyTune::relax> },
 	{ "diplomacy.tradeK", &setD<DiplomacyTune, &DiplomacyTune::tradeK> },
@@ -135,6 +180,13 @@ const KeyRow kKeys[] = {
 	{ "diplomacy.truceYears", &setD<DiplomacyTune, &DiplomacyTune::truceYears> },
 	{ "diplomacy.tradeEvery", &setD<DiplomacyTune, &DiplomacyTune::tradeEvery> },
 	{ "diplomacy.nukeP", &setD<DiplomacyTune, &DiplomacyTune::nukeP> },
+	{ "diplomacy.relTarget", &setD<DiplomacyTune, &DiplomacyTune::relTarget> },
+	{ "diplomacy.aggrBase", &setD<DiplomacyTune, &DiplomacyTune::aggrBase> },
+	{ "diplomacy.tradeDecay", &setD<DiplomacyTune, &DiplomacyTune::tradeDecay> },
+	{ "diplomacy.tradeStep", &setD<DiplomacyTune, &DiplomacyTune::tradeStep> },
+	{ "diplomacy.tradeArriveV", &setD<DiplomacyTune, &DiplomacyTune::tradeArriveV> },
+	{ "diplomacy.contactHops", &setI<DiplomacyTune, &DiplomacyTune::contactHops> },
+	{ "diplomacy.lostShare", &setD<DiplomacyTune, &DiplomacyTune::lostShare> },
 	// powers / disasters
 	{ "powers.awakenAwe", &setD<PowersTune, &PowersTune::awakenAwe> },
 	{ "powers.awakenMaxCost", &setD<PowersTune, &PowersTune::awakenMaxCost> },
@@ -169,10 +221,71 @@ const KeyRow kKeys[] = {
 } // namespace
 
 void apply(World& w) {
-	// balance overrides (simulation integrator): e.g.
-	//   w.tune<EconomyTune>().growthR = 0.032;
-	// Must be idempotent and deterministic. Empty until integration.
-	(void)w;
+	// Balance overrides (simulation integrator, 2026-11-19), verified with simrun on 6+ seeds x 4,000
+	// years against SPEC-SIM 4. Idempotent and deterministic (constants only).
+	//
+	// Expansion. With the spec's 25-year settler cooldown the home continent filled up by year ~800
+	// (48-84 live settlements at year 1,000 against 8-40, population 5-13x the reference curve), and
+	// the big leading culture then researched at 1.3-1.7 progress-years per year (sizeF at its 1.25
+	// cap), so Industry .. Space and the Ark came 400-700 years early. A settlement now sends a party
+	// at most every 180 years (90 under the expand edict, the spec's ratio of about one half): 14-26
+	// settlements at 1,000, 94-110 at 3,000 (with the spacing below); population 0.7-1.3x the reference
+	// at 500 / 1,000, 2-3.4x at 2,000, 0.8-1.9x at 3,000 / 3,500.
+	EconomyTune& E = w.tune<EconomyTune>();
+	E.expandCooldown = 180;
+	E.expandEdict = 90;
+	// Research. Progress needed per age scaled to the rates a real leading culture reaches (0.8 in the
+	// Stone age rising to about 1.6 in the Atomic age). 10 passive seeds: Bronze 505-549, Iron
+	// 1,041-1,124, Sail 1,591-1,805, Industry 2,239-2,490, Atomic 2,784-3,059, Space 3,230-3,519, Ark
+	// 3,449-3,738 (spec nominal 520 / 1,000 / 1,550 / 2,200 / 2,750 / 3,200, Ark 3,300-4,500).
+	E.ageNeed = { 375, 520, 750, 1015, 935, 767 };
+	// New sites at least 8 hops from owned land (spec 7; crowdHops of canSettle and the owned-distance
+	// field follow): with 7 the late world held up to 124 settlements at year 3,000 (target 25-120);
+	// now 94-110.
+	E.ownDistMin = 8;
+	E.ownDistCap = 9;
+	// Factory CO2 0.002 x sqrt(pop / 1000) per year (spec 0.0025): the passive anomaly peaked at
+	// +4.3..+5.0 (co2 155-193), at the very top of the +2..+5 target and above the spec's "+2..+4.5 by
+	// the Ark"; now +3.6..+4.1 (co2 ~150-175), sea rise 0.25-0.38.
+	E.factoryCo2 = 0.002;
+
+	// Founders shun ground barely above the sea. About a third of all settlements sat within 0.1 of
+	// the sea and over half within 0.3, so the +0.3 sea rise of the industrial ages drowned 90-145
+	// settlements per passive world (half of everything ever founded). The low-ground penalty of
+	// siteScore (A7: 0.2 fading to 0 at +0.3) is raised to 1.0 fading at +0.6: 21-44 drowned.
+	CivTune& C = w.tune<CivTune>();
+	C.siteLow = 1.0;
+	C.siteLowH = 0.6;
+	C.crowdHops = 8;
+
+	// Awe. With the spec formula (0.6 + 0.9 ln(1 + S)) late income was ~5 / yr: a great miracle (150)
+	// every ~14 s at 1x against the target 25-60 s, while the Stone-age small one (40) took 14-16 s
+	// (target 5-15 s). A flatter curve, 1.25 + 0.31 ln(1 + S): Stone age ~1.5 / yr (a small miracle
+	// every ~13 s), later ~2.8 / yr (small every ~7 s, great every ~27 s).
+	SocietyTune& S = w.tune<SocietyTune>();
+	S.incomeBase = 1.25;
+	S.incomeK = 0.31;
+	// Endings. With 1 %/yr love fading toward 0, a kind god who blooms, heals and answers prayers every
+	// year held the Ark culture's love at +0.12..0.16 and a tyrant at -0.16..-0.23: 'beloved' (love >=
+	// 0.2) was never reached (0 of 6 seeds). Love now fades 0.25 %/yr (half-life ~280 years: people
+	// remember what their god did for generations). The late ages were also too secular for any god to
+	// be beloved (devotion >= 0.35) on the smaller income: the Atomic / Space baselines rise from 0.18 /
+	// 0.10 to 0.26 / 0.20 (x piety), and a living prophet adds 0.20 (spec 0.15). Result: kind ends beloved
+	// on 9 of 10 seeds, cruel feared on 9 of 10, passive parting on 10 of 10 (its love stays 0).
+	S.loveDrift = 0.0025;
+	S.baseline[5] = 0.26;
+	S.baseline[6] = 0.20;
+	S.prophetBonus = 0.2;
+
+	// Relations. With the spec's numbers trade alone held every pair of cultures at v ~ +0.4..+0.7 and
+	// 5 of 6 passive worlds never saw a war in 3,500 years. Weaker trade bonus (0.015, spec 0.04), a
+	// cooler resting point (-0.05, spec +0.1) and more yearly noise (0.05, spec 0.03): every passive
+	// world but one of 10 now sees wars (0-99 declarations, median ~5; the warlike seeds are pairs of
+	// aggressive neighbours that fight again soon after each 40-year truce).
+	DiplomacyTune& D = w.tune<DiplomacyTune>();
+	D.tradeK = 0.015;
+	D.relTarget = -0.05;
+	D.noise = 0.05;
 }
 
 bool set(World& w, std::string_view key, double value) {

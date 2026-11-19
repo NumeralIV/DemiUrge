@@ -120,14 +120,19 @@ void FDmScenarios::Register(const FDmScenario& S)
 const FDmScenario* FDmScenarios::Find(const FString& Name)
 {
 	for (const FDmScenario& E : Registry()) if (E.Name.Equals(Name, ESearchCase::IgnoreCase)) return &E;
-	// fall back to the longest registered '-'-prefix ("orbit-night" -> "orbit"; "ue-orbit" -> "orbit")
-	FString N = Name;
-	if (N.StartsWith(TEXT("ue-"))) N = N.RightChop(3);
+	// fall back to the longest registered name that is a run of whole '-'-separated words of it,
+	// preferring a prefix ("orbit-night" -> "orbit", "planet-coast-2" -> "planet-coast",
+	// "bridge-orbit-night" -> "orbit")
+	const FString N = TEXT("-") + Name.ToLower() + TEXT("-");
 	const FDmScenario* Best = nullptr;
+	int32 BestScore = -1;
 	for (const FDmScenario& E : Registry())
 	{
-		if (N.Equals(E.Name, ESearchCase::IgnoreCase) || N.StartsWith(E.Name + TEXT("-"), ESearchCase::IgnoreCase))
-			if (!Best || E.Name.Len() > Best->Name.Len()) Best = &E;
+		const FString Tok = TEXT("-") + E.Name.ToLower() + TEXT("-");
+		const int32 At = N.Find(Tok);
+		if (At == INDEX_NONE) continue;
+		const int32 Score = E.Name.Len() * 2 + (At == 0 ? 1 : 0);
+		if (Score > BestScore) { BestScore = Score; Best = &E; }
 	}
 	return Best;
 }
@@ -192,6 +197,11 @@ void FDmScenarioContext::Shot(const FString& Suffix)
 void FDmScenarioContext::Finish()
 {
 	if (Mode) Mode->HarnessFinish();
+}
+
+void FDmScenarioContext::SetExitCode(int32 Code)
+{
+	if (Mode) Mode->HarnessSetExitCode(Code);
 }
 
 void FDmScenarioContext::HoldExit()

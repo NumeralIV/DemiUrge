@@ -52,6 +52,12 @@ std::optional<Meta> readMeta(const std::string& path) {
 }
 std::string slotPath(const std::string& dir, std::string_view slot) {
 	DM_STUB(save_slotPath, dir, slot);
+	// Same refusals as the real slotPath (bad slot name, empty folder or a NUL byte: ""); the real one
+	// joins with the platform separator ('\' on Windows), the stub always with '/'.
+	bool good = !slot.empty() && slot.size() <= 64 && !dir.empty() && dir.find('\0') == std::string::npos;
+	for (char ch : slot)
+		good = good && ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '-');
+	if (!good) return std::string();
 	return dir + "/" + std::string(slot) + kExt;
 }
 bool writeSlot(const World& w, const std::string& dir, std::string_view slot, const EncodeOpts& opts, std::string* why) {

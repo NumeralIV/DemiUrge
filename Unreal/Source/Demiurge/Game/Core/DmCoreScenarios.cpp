@@ -2,8 +2,9 @@
 //
 //   play      every registered part (world, control, UI, audio), default orbit camera; the default
 //             when no -scenario is given
-//   orbit     the fixture's whole planet from orbit over its most settled region, sun ~55 degrees to
-//             the east (day side with a terminator and city lights); later engineers start here
+//   orbit     the fixture's whole planet from orbit over its most settled region, the sun 55 degrees
+//             of longitude west of it: day side on the left, terminator and city lights on the right;
+//             later engineers start here
 //   picktest  cell picking accuracy at orbit and near the ground (logs DmPickTest lines)
 //   simtest   a real sim world through the subsystem: every speed, pause, fixed-step catch-up,
 //             OnSimEvent vs the world's bus, dirty routing, save / load round trip (DmSimTest lines)
@@ -18,6 +19,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Misc/Paths.h"
 
+#include <algorithm>
 #include <map>
 #include <type_traits>
 #include <string>
@@ -194,7 +196,9 @@ static FDmScenarioRegistrar GDmScenarioPickTest(TEXT("picktest"), TEXT("core"),
 		const double Lon = FMath::RadiansToDegrees(double(W->geo->lon[size_t(Mountain)]));
 		auto Timed = [&](const TCHAR* Label, int32 Samples, uint32 Seed, int32 Hops)
 		{
-			LogPick(Ctx, Label, RunPickTest(Ctx, Samples, Seed, Hops > 0 ? Mountain : -1, Hops));
+			const FPickStats St = RunPickTest(Ctx, Samples, Seed, Hops > 0 ? Mountain : -1, Hops);
+			LogPick(Ctx, Label, St);
+			if (St.Visible == 0 || St.RayExact < St.Visible * 99 / 100) Ctx.SetExitCode(1);   // picking itself must be exact
 		};
 		switch (Ctx.Frame)
 		{
@@ -362,13 +366,21 @@ static FDmScenarioRegistrar GDmScenarioSimTest(TEXT("simtest"), TEXT("core"),
 		else if (T.Phase == 3)
 		{
 			// events: every bus event reached OnSimEvent, in order, with the same payload
+			// same events with the same payloads; the ORDER may legitimately differ between two
+			// subscribers when a sim handler (Chronicle) emits from inside a handler: nested emits run
+			// to completion first, so a subscriber after it sees the nested event first
 			const bool bCount = T.BusEvents == T.RoutedEvents;
+			int64 Reordered = 0;
+			for (size_t I = 0; I < FMath::Min(T.BusLog.size(), T.RoutedLog.size()); ++I) if (T.BusLog[I] != T.RoutedLog[I]) ++Reordered;
+			std::vector<std::string> SA = T.BusLog, SB = T.RoutedLog;
+			std::sort(SA.begin(), SA.end()); std::sort(SB.begin(), SB.end());
 			int64 Diff = 0;
-			for (size_t I = 0; I < FMath::Min(T.BusLog.size(), T.RoutedLog.size()); ++I) if (T.BusLog[I] != T.RoutedLog[I]) ++Diff;
+			for (size_t I = 0; I < FMath::Min(SA.size(), SB.size()); ++I) if (SA[I] != SB[I]) ++Diff;
+			Diff += int64(SA.size() > SB.size() ? SA.size() - SB.size() : SB.size() - SA.size());
 			FString Types;
 			for (const auto& P : T.Types) Types += FString::Printf(TEXT("%s%s %d"), Types.IsEmpty() ? TEXT("") : TEXT(", "), UTF8_TO_TCHAR(P.first.c_str()), P.second);
-			Ctx.Log(FString::Printf(TEXT("DmSimTest events: bus %lld, OnSimEvent %lld, payload mismatches %lld -> %s; types: %s"),
-				(long long)T.BusEvents, (long long)T.RoutedEvents, (long long)Diff, (bCount && Diff == 0) ? TEXT("OK") : TEXT("FAIL"), *Types));
+			Ctx.Log(FString::Printf(TEXT("DmSimTest events: bus %lld, OnSimEvent %lld, payload mismatches %lld (positions differing by nesting order %lld) -> %s; types: %s"),
+				(long long)T.BusEvents, (long long)T.RoutedEvents, (long long)Diff, (long long)Reordered, (bCount && Diff == 0) ? TEXT("OK") : TEXT("FAIL"), *Types));
 			if (!T.RoutedLog.empty()) Ctx.Log(FString::Printf(TEXT("DmSimTest sample event: %s"), UTF8_TO_TCHAR(T.RoutedLog.back().c_str())));
 			Ctx.Log(FString::Printf(TEXT("DmSimTest dirty: %lld broadcasts, last {%s}"), (long long)T.DirtyBroadcasts, *Sim->Dirty().Last().ToString()));
 			T.bFail |= !(bCount && Diff == 0);
@@ -421,6 +433,7 @@ static FDmScenarioRegistrar GDmScenarioSimTest(TEXT("simtest"), TEXT("core"),
 				(long long)Ran, W->year, (long long)T.RoutedEvents, (long long)T.BusEvents, (Ran > 0 && T.RoutedEvents == T.BusEvents) ? TEXT("OK") : TEXT("FAIL")));
 			T.bFail |= !(Ran > 0 && T.RoutedEvents == T.BusEvents);
 			Ctx.Log(FString::Printf(TEXT("DmSimTest RESULT %s"), T.bFail ? TEXT("FAIL") : TEXT("PASS")));
+			Ctx.SetExitCode(T.bFail ? 1 : 0);
 			T.Phase = 5;
 			Ctx.Finish();
 		}

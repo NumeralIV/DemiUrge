@@ -351,12 +351,14 @@ Score score(const World& w) {
 	double yearsLived = w.ending.has_value() ? w.ending->year : w.year;
 	yearsLived = std::clamp(finiteOr(yearsLived, 0), 0.0, T.scoreYearCap);
 	const double vegCover = std::clamp(finiteOr(life::cover(w).veg, 0), 0.0, 1.0);
-	const double pPop = std::round(T.scorePop * std::log10(1 + peak));
-	const double pAges = std::round(T.scoreAge * std::max(0, w.age));
-	const double pCult = std::round(T.scoreCulture * cultures);
-	const double pWond = std::round(T.scoreWonder * wonders);
-	const double pYears = std::round(T.scoreYear * yearsLived);
-	const double pLife = std::round(T.scoreLife * vegCover);
+	// every part finite even with poisoned tuning (a NaN / infinite weight scores that part 0)
+	auto part = [](double v) { return std::isfinite(v) ? std::round(v) : 0.0; };
+	const double pPop = part(T.scorePop * std::log10(1 + peak));
+	const double pAges = part(T.scoreAge * std::max(0, w.age));
+	const double pCult = part(T.scoreCulture * cultures);
+	const double pWond = part(T.scoreWonder * wonders);
+	const double pYears = part(T.scoreYear * yearsLived);
+	const double pLife = part(T.scoreLife * vegCover);
 	const double base = pPop + pAges + pCult + pWond + pYears + pLife;
 	double mult = 1;
 	if (w.ending.has_value()) {
@@ -370,7 +372,7 @@ Score score(const World& w) {
 		}
 	}
 	mult = finiteOr(mult, 1);
-	sc.total = std::round(base * mult);
+	sc.total = part(base * mult);
 	sc.parts["pop"] = pPop;
 	sc.parts["ages"] = pAges;
 	sc.parts["cultures"] = pCult;

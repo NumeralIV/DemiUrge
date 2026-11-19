@@ -17,6 +17,10 @@
 // client rows); act on the world only through UsePower / SetSpeed / SaveSlot / LoadSlot / Select*.
 // Sim events are delivered synchronously while the sim runs (inside a tick or a power): a handler
 // may read the world and queue visual work, but must not call back into the sim.
+// Events a world emits BEFORE the subsystem adopts it are not routed: CreateWorld with genesis skip
+// (phase, culture:born, settlement:founded, chronicle entries, ...), and sim::use inside LoadSlot /
+// MakeLive. Listeners rebuild from the world itself on OnWorldChanged (and the first dirty flush after
+// a world change reports every flag).
 //
 // Frame order: the subsystem runs at the start of every game-world tick (before actors): powers
 // update, sim ticks, then the dirty flush. So OnSimEvent / OnDirty handlers run before your actor's

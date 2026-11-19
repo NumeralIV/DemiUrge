@@ -50,3 +50,4 @@ shots/ue-*
 Unreal/Tools/**/build*/
 UnrealLab/*/Scripts/__pycache__/
 __pycache__/
+Unreal/lanes/*.owned.bak

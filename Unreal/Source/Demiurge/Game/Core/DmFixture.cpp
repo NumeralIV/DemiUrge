@@ -906,11 +906,15 @@ namespace
 		if (O.bDisasters)
 		{
 			// the warmest open-sea cell in the trade-wind belts, a few hops off a coast
+			std::vector<int32_t> Land;
+			for (int C = 0; C < N; ++C) if (!G.Sea(C)) Land.push_back(C);
+			std::vector<uint8_t> Off;
+			G.Hops(Land, 32, Off, [](int) { return true; });
 			int Best = -1; double BestScore = -1e9;
 			for (int C = 0; C < N; ++C)
 			{
 				const double Lat = std::fabs(double(W.geo->lat[size_t(C)])) * 180.0 / dm::kPi;
-				if (!G.Sea(C) || Lat < 8.0 || Lat > 30.0 || W.coast[size_t(C)] < 3 || W.coast[size_t(C)] > 14 || W.ice[size_t(C)] > 0.05f) continue;
+				if (!G.Sea(C) || Lat < 8.0 || Lat > 30.0 || Off[size_t(C)] < 3 || Off[size_t(C)] > 14 || W.ice[size_t(C)] > 0.05f) continue;
 				const double Score = W.temp[size_t(C)] + 2.0 * Rng.f();
 				if (Score > BestScore) { BestScore = Score; Best = C; }
 			}

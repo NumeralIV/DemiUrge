@@ -5,7 +5,7 @@
 #   e.g.  ... simrun.ps1 --seed 7 --years 4000 --policy passive
 #         ... simrun.ps1 --seeds 1-6 --years 4000 --policy passive --summary --jobs 6
 #         ... simrun.ps1 --build-only
-#         ... simrun.ps1 --tests [filters]   builds SimTests/test_sim.cpp against EVERY real module (no
+#         ... simrun.ps1 --tests [filters]   builds SimTests/test_sim*.cpp and test_integration*.cpp against EVERY real module (no
 #             stubs; like `run.ps1 all` but private to this folder: build-tests/) and runs it
 #         ... simrun.ps1 --stub Chronicle,Save --seed 3     (link those modules' SimTests stubs instead of
 #             the real files, e.g. while one is mid-edit; separate build dir build-stub-<names>; simrun
@@ -64,7 +64,8 @@ $sources.Add((Join-Path $tools 'MapImg.cpp'))
 if ($testMode) {
     $sources.Add((Join-Path $simTests 'TestMain.cpp'))
     $sources.Add((Join-Path $simTests 'TestWorld.cpp'))
-    $sources.Add((Join-Path $simTests 'test_sim.cpp'))
+    foreach ($f in (Get-ChildItem -LiteralPath $simTests -Filter 'test_sim*.cpp' -File)) { $sources.Add($f.FullName) }   # test_sim.cpp + test_sim_adv.cpp
+    foreach ($f in (Get-ChildItem -LiteralPath $simTests -Filter 'test_integration*.cpp' -File)) { $sources.Add($f.FullName) }   # the integrator's cross-module tests
 } else {
     foreach ($f in (Get-ChildItem -LiteralPath $here -Filter '*.cpp' -File)) { $sources.Add($f.FullName) }
 }
@@ -140,14 +141,25 @@ if ($toCompile.Count -gt 0) {
 
 $exe = Join-Path $buildDir $(if ($testMode) { 'simtests.exe' } else { 'simrun.exe' })
 $lrsp = Join-Path $buildDir 'link.rsp'
-[System.IO.File]::WriteAllLines($lrsp, @('/nologo', ('"/OUT:' + $exe + '"')) + @($objs | ForEach-Object { '"' + $_ + '"' }))
-Push-Location -LiteralPath $buildDir
-$lout = @(& link.exe "@link.rsp" 2>&1 | ForEach-Object { "$_" })
-$lcode = $LASTEXITCODE
-Pop-Location
-if ($lcode -ne 0) {
-    foreach ($l in $lout) { Write-Host $l }
-    Fail-Build "link failed"
+$linkLines = @('/nologo', ('"/OUT:' + $exe + '"')) + @($objs | ForEach-Object { '"' + $_ + '"' })
+# Relink only when needed (an object is newer than the exe, or the object list changed): a running
+# simrun.exe is locked by Windows, and relinking it for nothing made a second concurrent run fail.
+$needLink = $toCompile.Count -gt 0 -or -not (Test-Path -LiteralPath $exe) -or -not (Test-Path -LiteralPath $lrsp) -or
+    (([System.IO.File]::ReadAllLines($lrsp) -join "`n") -ne ($linkLines -join "`n"))
+if (-not $needLink) {
+    $exeTime = (Get-Item -LiteralPath $exe).LastWriteTime
+    foreach ($o in $objs) { if ((Get-Item -LiteralPath $o).LastWriteTime -gt $exeTime) { $needLink = $true; break } }
+}
+if ($needLink) {
+    [System.IO.File]::WriteAllLines($lrsp, $linkLines)
+    Push-Location -LiteralPath $buildDir
+    $lout = @(& link.exe "@link.rsp" 2>&1 | ForEach-Object { "$_" })
+    $lcode = $LASTEXITCODE
+    Pop-Location
+    if ($lcode -ne 0) {
+        foreach ($l in $lout) { Write-Host $l }
+        Fail-Build "link failed"
+    }
 }
 if ($buildOnly) { Write-Host "simrun built: $exe"; exit 0 }
 
