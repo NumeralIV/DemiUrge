@@ -1,0 +1,39 @@
+f-trees-lineup : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-trees-lineup.png in 41s
+[2026.11.19-11.47.06:985][  0]LogTemp: Display: LIFESTATS trees total=843960 [Conifer=394595(LOD0 6756 tris) 
+[2026.11.19-11.47.20:870][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 33.28 ms, game 1.62, render 
+f-village-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-mid.png in 37s
+[2026.11.19-11.47.51:049][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.47.57:732][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 18.57 ms, game 1.48, render 
+f-village-close : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-close.png in 41s
+[2026.11.19-11.48.34:874][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.48.39:243][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 17.83 ms, game 0.89, render 
+f-village-golden : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-golden.png in 32s
+[2026.11.19-11.49.05:467][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.49.12:626][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 16.31 ms, game 0.93, render 
+f-village-night : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-night.png in 37s
+[2026.11.19-11.49.46:523][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.49.50:672][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 10.28 ms, game 0.87, render 
+f-town-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-town-mid.png in 28s
+[2026.11.19-11.50.15:263][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.50.18:355][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 6.96 ms, game 0.70, render 
+f-town-close : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-town-close.png in 36s
+[2026.11.19-11.50.50:237][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.50.55:317][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 9.37 ms, game 0.88, render 
+f-town-night : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-town-night.png in 39s
+[2026.11.19-11.51.26:487][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.51.34:886][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 18.32 ms, game 1.45, render 
+f-city-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-mid.png in 34s
+[2026.11.19-11.51.59:712][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.52.06:240][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 22.91 ms, game 0.98, render 
+f-city-close : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-close.png in 41s
+[2026.11.19-11.52.36:849][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.52.48:632][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 38.94 ms, game 0.93, render 
+f-city-night : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-night.png in 30s
+[2026.11.19-11.53.14:644][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.53.19:820][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 16.24 ms, game 0.80, render 
+f-forest-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-forest-mid.png in 28s
+[2026.11.19-11.53.42:137][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.53.47:341][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 14.21 ms, game 0.80, render 
+f-high : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-high.png in 29s
+[2026.11.19-11.54.10:214][  0]LogTemp: Display: LIFESTATS trees total=846069 [Conifer=395825(LOD0 6756 tris) 
+[2026.11.19-11.54.15:997][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 16.41 ms, game 0.97, render 

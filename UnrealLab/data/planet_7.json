@@ -1,0 +1,70 @@
+{
+ "seed": 7,
+ "n": 40962,
+ "nTri": 81920,
+ "R": 100,
+ "seaLevel": 0,
+ "riverT": 5,
+ "layout": [
+  {
+   "name": "pos",
+   "type": "f32",
+   "count": 122886
+  },
+  {
+   "name": "tris",
+   "type": "u32",
+   "count": 245760
+  },
+  {
+   "name": "elev",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "temp",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "moist",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "veg",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "flow",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "ice",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "hab",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "fauna",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "slope",
+   "type": "f32",
+   "count": 40962
+  },
+  {
+   "name": "biome",
+   "type": "u8",
+   "count": 40962
+  }
+ ]
+}

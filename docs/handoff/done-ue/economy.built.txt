@@ -1,0 +1,1 @@
+2026-11-19, economy, run.ps1 economy 23 passed 0 failed (all "economy:" 23 passed 0 failed; link 3 passed); gate K 127/634/2112/15576/105178; yearly 0.9 ms (100+ settlements, L6, stubs) / 1.5 ms (all real)

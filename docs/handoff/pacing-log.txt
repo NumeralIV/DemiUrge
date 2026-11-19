@@ -1,0 +1,5 @@
+2026-11-19 05:36 EST | 5h 18% (resets in 3h54m, hour 2 of window) | weekly 55% | no action: before hour 3; running: sim foundation (1 agent) + graphics lab (3 agents)
+2026-11-19 06:36 EST | 5h 52% (resets in 2h54m) | weekly 60% | foundation verified (8/10); Stage A (6 Opus/Haiku agents) now starting + 3 lab agents: already on pace to exceed the window, so the client workflow (build-client.js) is HELD until the next window (09:30 reset) to avoid cutting agents off mid-work
+2026-11-19 06:36 EST | 5h 52% (resets in 2h54m, hour 3 not yet reached) | weekly 60% | no action: before hour 3 and on pace to fill the window (Stage A + labs running)
+2026-11-19 09:34 EST | 5h 2% (new window, resets 14:30) | weekly 68% | auto-resume: relaunched sim build wf_e01af6ec-163 (12 built modules to verify; chronicle, sim, save to build) and launched client build wf_a22a66fc-b3e (bridge first, limit 4); LifeLab finished its doc before the cutoff, so it was not rerun
+2026-11-19 09:36 EST | 5h 8% (resets in 4h54m, hour 1) | weekly 68% | no action: hour 1 of window; sim (6) + client bridge running

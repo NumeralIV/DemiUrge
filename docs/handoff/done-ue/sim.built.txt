@@ -1,0 +1,1 @@
+2026-11-19, sim (A14), run.ps1 sim 27 passed 0 failed (every other module stubbed); same 27 against every real module (simrun.ps1 --tests) 27 passed 0 failed; link 3 passed 0 failed; simrun 6 seeds x 4000 y passive: no NaN, deterministic --hash

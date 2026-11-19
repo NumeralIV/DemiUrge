@@ -17,3 +17,36 @@ node_modules/
 *.log
 
 # Existing shots/ are intentionally versioned as part of the project history.
+
+# ---- Unreal (added 2026-11-19 when the project moved to Unreal Engine 5.7)
+**/Intermediate/
+**/Binaries/
+**/Saved/
+**/DerivedDataCache/
+**/.vs/
+*.sln
+*.VC.db
+*.opensdf
+*.sdf
+*.suo
+*.pdb
+Unreal/Lanes/
+Unreal/SimTests/build/
+UnrealLab/data/*.bin
+
+# ---- screenshots: only curated Unreal shots are versioned (iteration shots stay local)
+shots/ue-*
+!shots/ue-*final*.png
+!shots/ue-lifelab-f-*.png
+!shots/ue-lab-orbit4.png
+*.obj
+*.exe
+*.ilk
+*.lib
+*.exp
+*.pch
+*.idb
+*.rsp
+Unreal/Tools/**/build*/
+UnrealLab/*/Scripts/__pycache__/
+__pycache__/

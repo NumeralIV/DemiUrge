@@ -1,0 +1,63 @@
+f-trees-lineup : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-trees-lineup.png in 40s
+[2026.11.19-12.11.41:610][  0]LogTemp: Display: LIFESTATS trees total=844271 [Conifer=394609(LOD0 6756 tris) 
+[2026.11.19-12.11.48:174][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 19.00 ms, game 0.69, render 
+f-village-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-mid.png in 26s
+[2026.11.19-12.12.12:771][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.12.15:811][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 6.74 ms, game 0.62, render 
+f-village-close : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-close.png in 30s
+[2026.11.19-12.12.41:017][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.12.44:788][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 9.35 ms, game 0.80, render 
+f-village-golden : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-golden.png in 30s
+[2026.11.19-12.13.09:011][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.13.15:051][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 16.32 ms, game 0.88, render 
+f-village-night : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-village-night.png in 38s
+[2026.11.19-12.13.48:651][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.13.52:810][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 10.85 ms, game 0.79, render 
+f-town-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-town-mid.png in 30s
+[2026.11.19-12.14.19:831][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.14.22:911][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 7.08 ms, game 0.69, render 
+f-town-close : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-town-close.png in 26s
+[2026.11.19-12.14.46:367][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.14.50:098][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 9.37 ms, game 0.78, render 
+f-town-night : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-town-night.png in 42s
+[2026.11.19-12.15.20:709][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.15.31:018][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 8.01 ms, game 1.08, render 
+f-city-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-mid.png in 26s
+[2026.11.19-12.15.55:346][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.15.59:137][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 9.63 ms, game 0.73, render 
+f-city-close : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-close.png in 32s
+[2026.11.19-12.16.21:708][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.16.30:831][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 27.25 ms, game 1.08, render 
+f-city-top : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-top.png in 29s
+[2026.11.19-12.16.56:215][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.16.59:530][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 7.76 ms, game 0.69, render 
+f-city-night : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-city-night.png in 35s
+[2026.11.19-12.17.30:813][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.17.35:196][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 9.05 ms, game 0.75, render 
+f-forest-mid : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-forest-mid.png in 28s
+[2026.11.19-12.17.58:044][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.18.03:227][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 14.08 ms, game 0.69, render 
+f-high : C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-lifelab-f-high.png in 28s
+[2026.11.19-12.18.26:691][  0]LogTemp: Display: LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) 
+[2026.11.19-12.18.32:472][300]LogTemp: Display: LIFESTATS timing over 60 frames: frame 16.45 ms, game 1.02, render 
+f-trees-lineup frame 19.00 ms, game 0.69, render 18.99, rhi 10.45, gpu 18.45 (median 18.52)
+f-village-mid frame 6.74 ms, game 0.62, render 6.74, rhi 4.65, gpu 6.30 (median 6.14)
+f-village-close frame 9.35 ms, game 0.80, render 9.35, rhi 6.11, gpu 8.78 (median 8.87)
+f-village-golden frame 16.32 ms, game 0.88, render 16.31, rhi 9.61, gpu 15.86 (median 15.92)
+f-village-night frame 10.85 ms, game 0.79, render 10.84, rhi 7.50, gpu 10.23 (median 10.21)
+f-town-mid frame 7.08 ms, game 0.69, render 7.08, rhi 4.90, gpu 6.44 (median 6.29)
+f-town-close frame 9.37 ms, game 0.78, render 9.36, rhi 6.04, gpu 8.68 (median 8.59)
+f-town-night frame 8.01 ms, game 1.08, render 8.00, rhi 4.88, gpu 7.42 (median 7.14)
+f-city-mid frame 9.63 ms, game 0.73, render 9.62, rhi 6.41, gpu 8.96 (median 8.91)
+f-city-close frame 27.25 ms, game 1.08, render 27.24, rhi 14.63, gpu 26.73 (median 26.63)
+f-city-top frame 7.76 ms, game 0.69, render 7.76, rhi 5.33, gpu 7.18 (median 7.00)
+f-city-night frame 9.05 ms, game 0.75, render 9.05, rhi 6.30, gpu 8.44 (median 8.29)
+f-forest-mid frame 14.08 ms, game 0.69, render 14.08, rhi 10.14, gpu 13.62 (median 13.43)
+f-high frame 16.45 ms, game 1.02, render 16.44, rhi 9.62, gpu 15.79 (median 15.89)
+f-savanna frame 12.30 ms, game 0.82, render 12.29, rhi 7.97, gpu 11.69 (median 11.84)
+f-palms frame 9.77 ms, game 0.68, render 9.77, rhi 6.29, gpu 9.28 (median 9.18)
+LifeTown: town built: 830 buildings, 1018 specs, 692892 tris, 7 chunks
+LifeTown: village built: 104 buildings, 104 specs, 31638 tris, 8 chunks
+LIFESTATS build: fields 0.02s, tex+plan 0.68s, terrain+water 8.94s, trees 0.67s, towns+landuse 5.75s
+LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) Broadleaf=307074(LOD0 2704 tris) Palm=0(LOD0 1380 tris) Acacia=0(LOD0 1472 tris) Shrub=143467(LOD0 824 tris) ] terrainTris=7772160 waterTris=291176 townBuildings=2318 townTris=2837032
+LIFESTATS trees total=846380 [Conifer=395839(LOD0 6756 tris) Broadleaf=307074(LOD0 2704 tris) Palm=0(LOD0 1380 tris) Acacia=0(LOD0 1472 tris) Shrub=143467(LOD0 824 tris) ] terrainTris=7772160 waterTris=291176 townBuildings=2318 townTris=2837032

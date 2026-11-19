@@ -1,0 +1,1 @@
+2026-11-19 hydro (A4) verified: hydro 33 passed, 0 failed (19 builder + 14 adversarial; real terrain+climate build 33/33; L6 update 2.6 ms, 4.3 ms with the sea above seaBase); quality 8/10

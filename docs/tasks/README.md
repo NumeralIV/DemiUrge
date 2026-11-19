@@ -1,0 +1,15 @@
+# Task board (maintained by the project lead, Claude)
+
+Helpers: read `AGENTS.md` first. Take only `open` tasks assigned to you, one at a time, top to
+bottom. Deliver on branch `helper/<name>/<task-id>` through a pull request. Do not edit this board.
+
+| ID | Title | Assignee | Status | Delivers to |
+|---|---|---|---|---|
+| T-001 | Concept art: settlements through the ages | Grok | open | `docs/concept/settlements/` |
+| T-002 | Concept art: landmarks, wonders and god powers | Grok | open | `docs/concept/landmarks/` |
+| T-003 | Asset sourcing research (close-up 3D assets and licences) | Astra | open | `docs/research/assets.md` |
+| T-004 | Culture and language design proposals | Astra | open | `docs/content/cultures.md` |
+| T-005 | Chronicle voice: sample entries and god epithets | Grok | open | `docs/content/chronicle-voice.md` |
+| T-006 | Design review of the game rules | Astra | open | `docs/reviews/astra-design-review.md` |
+
+Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.

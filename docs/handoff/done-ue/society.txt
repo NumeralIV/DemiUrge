@@ -1,0 +1,1 @@
+2026-11-19, society (A9 belief half) verified: run.ps1 society 37 passed 0 failed (24 builder + 13 adversarial in test_society_adv.cpp), run.ps1 all society 37 passed 0 failed (incl. 1500-year real-sim integration), link 3 passed; 4 fixes (schism no longer resets a valid parent capital/Ark, largest bloc secedes, prophet tries 3 destinations, NaN guards); quality 8/10

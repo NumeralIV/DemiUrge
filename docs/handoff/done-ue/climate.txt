@@ -1,0 +1,1 @@
+2026-11-19, climate, verified: run.ps1 climate 49 passed 0 failed (34 builder + 15 adversarial in test_climate_adv.cpp; 0 warnings), run.ps1 all climate 52 passed 0 failed, run.ps1 link 3 passed; update median 3.2 ms at L = 6; 3 fixes (non-finite seaTempMin, non-finite milestone thresholds, all-mode CO2 test); quality 9/10

@@ -1,0 +1,1 @@
+2026-11-19, civ (A7), verified: run.ps1 civ 34 passed 0 failed (24 builder + 10 adversarial in test_civ_adv.cpp; 0 compiler warnings), run.ps1 all "civ" 38 passed 0 failed, link 3 passed; fuzz 1,400 random ops with invariant / writers / event checks, deterministic incl. save-load; no fixes needed in Civ.cpp; L6 claim 0.006 ms, bestSite 0.5 ms (160 settlements); quality 9/10

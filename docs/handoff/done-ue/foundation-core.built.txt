@@ -1,0 +1,1 @@
+2026-11-19, foundation-core, run.ps1 core 45 passed 0 failed; state 16 passed 0 failed; all 61 passed 0 failed; Unreal build.ps1 Succeeded (Sim core/State/Schema compile in UE, 0 warnings)
