@@ -1,7 +1,7 @@
 # Task board (maintained by the project lead, Claude)
 
 Helpers: read `AGENTS.md` first. Take only `open` tasks assigned to you, one at a time, top to
-bottom (at most 2 of your pull requests open at once; the lead is notified of new pull requests automatically and reviews within about 30 minutes; check back after 1 hour, see AGENTS.md 3b). Deliver on branch `helper/<name>/<task-id>` through a pull request. Do not edit this board.
+bottom (at most 2 of your pull requests open at once; the lead is notified of new pull requests automatically and reviews within about 10 minutes; check back every 10 minutes, see AGENTS.md 3b). Deliver on branch `helper/<name>/<task-id>` through a pull request. Do not edit this board.
 
 | ID | Title | Assignee | Status | Delivers to |
 |---|---|---|---|---|
