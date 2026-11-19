@@ -1,0 +1,251 @@
+LENS: player
+VERDICT: Not ready for a parallel build from the player-experience lens. Two gaps will break the game as designed: touch has no way to disarm a power, open the
+menu or un-hide the HUD, and the witness/devotion scale that drives the whole Awe loop is undefined between two owners. Beyond those, the Awe income
+formula overshoots its own target by 10 to 40 times from the mid-game, the unlock schedule and hotkeys do not exist, the phone camera and HUD do not
+fit by arithmetic, and the player is never shown a goal. Nearly every fix is a paste-in rule, table or small API, so one revision pass before the
+build starts should be enough; the specs are otherwise coherent and the genesis flow, chronicle and ending structure are strong.
+
+[1] BLOCKER — SPEC-UI §2 Input ("Power armed" and keyboard bullets), §4 HUD (top bar, power palette, "hide HUD" button), §5 Screens.pause / Screens.timelapse
+PROBLEM: The phone target cannot be operated. The only ways to disarm a power are "Right-click without dragging, or Escape"; the only way to reach
+Screens.pause (Settings, Save and exit) is Esc; un-hiding the HUD is `H`; the time-lapse says "Esc exits". None of these exist on touch. With a brush
+power armed one finger paints and selection is off, so a touch player who arms Rain is stuck in it for the rest of the game. Three gesture rules are
+also undefined: (a) a primary drag while a CLICK power is armed ("fire on press+release without dragging" says what a tap does, not what the drag
+does), so during genesis, where a comet is armed throughout, one-finger orbit and mouse left-drag do nothing; (b) every two-finger orbit or pinch
+starts as one finger, so a brush power fires (spending Awe, denting terrain) before the second finger lands; (c) touch has no hover, so the hover tip,
+the brush-ring preview and the settlement highlight never appear and the finger hides the target of a 220-Awe volcano.
+FIX: SPEC-UI §4, add: "Clicking the armed power's palette button disarms it (`Game.armPower(null)`). While a power is armed an 'armed chip' shows icon,
+name, cost and a close button. The top bar has a menu button (`gear`) that opens `Screens.pause()`. While `Game.hudHidden`, one 44 px `eye` button
+stays in the top-right corner. Every screen has a visible Back/Close button; Esc is only a shortcut." SPEC-UI §2, add: "With a click power armed, a
+primary drag past 8 px (mouse) or 14 px (touch) orbits and cancels the click; a release inside the threshold fires. With a brush power armed on touch,
+application starts 100 ms after touch-down and only if no second pointer is down; a second pointer at any time ends the stroke and the gesture becomes
+orbit/pinch/twist until all fingers lift. Touch long-press (500 ms, under 10 px of movement, no power armed) shows the hover tip for that cell or
+settlement. On touch the brush ring appears at touch-down and the cost/target tip is drawn 64 px above the finger."
+
+[2] BLOCKER — SPEC-SIM §3.8 `Society.witness(world, cell, ang, { kind, awe, good })`, §3.10 power table and its closing paragraph, §1 Settlement shape, §3.7
+`Civ.found`
+PROBLEM: The faith loop is split between the powers and society engineers with no shared scale. `awe` in `witness` is a devotion delta (devotion is 0..1) but
+carries the name of the currency whose costs are 15 to 220, and no per-power `awe`, `good` or witness radius is written anywhere. A powers author who
+passes cost-like numbers saturates devotion at 1 on the first lightning bolt; one who passes 0.01 makes miracles irrelevant against the 2 %/yr drift.
+There is no novelty decay either, and the spec says "the same meteor watched from far away is pure awe", so a meteor dropped in an empty desert raises
+devotion in every settlement in range at no cost to love. Under the §3.8 income formula, +0.15 devotion on ten templed towns decaying at 2 %/yr
+returns about 285 Awe for 150 spent, so harmless wrath pays for itself and mercy has no reason to exist. Initial devotion and love of a new settlement
+are also unspecified, which decides the whole first five minutes of income.
+FIX: Paste into §3.8: "`awe` is the devotion (0..1 units, NOT Awe currency) gained by a settlement at the centre of the act; `good` is -1..1; falloff is
+smooth 1 to 0 across `ang`. Each settlement has a persisted `jaded` (0..1, default 0, decays 5 %/yr): gain = awe × falloff × (1 − jaded), then jaded
++= 2 × awe × falloff (clamped to 1). love += good × falloff × 0.5. An act with good ≤ 0 gives half devotion to settlements it did not harm." Add
+`jaded` to the Settlement shape. Add three columns to the §3.10 table (witness ang in rad / awe / good): rain 2×brush / 0.02 per s / +0.6 where moist
+< 0.3, burning or in drought, else +0.1; bloom 2×brush / 0.02 per s / +0.5; raise, lower 2×brush / 0.03 per s / −0.5 inside owned territory, else 0;
+lightning 0.10 / 0.05 / −0.6 struck, 0 others; quake 0.20 / 0.12 / −0.8 damaged, −0.2 others; plague 0.12 / 0.05 / −0.7; meteor 0.45 / 0.30 / −1
+damaged, 0 others; volcano 0.40 / 0.30 / −1 damaged, 0 others; heal 0.10 / 0.15 / +1; inspire 0.10 / 0.10 / +0.6; prophet 0.15 / 0.20 / +0.5; peace:
+every settlement of both cultures / 0.10 / +0.8. §3.7: "`Civ.found` sets devotion 0.6 and love 0.3 for an awakened tribe, and copies the parent
+settlement's values for settlers."
+
+[3] MAJOR — SPEC-SIM §3.8 "Awe" (income and aweMax formulas), §4 balance target for Awe, FOUNDATION §5.2 `world.god = { awe: 0, aweMax: 100 }`
+PROBLEM: The income formula is linear in settlements × tier while costs are flat, so Awe goes from starved to meaningless and contradicts the spec's own target
+("a great one every few minutes"). Worked numbers at 1× (2 years per real second): one camp, devotion 0.3: 0.66/yr = 1.3 Awe/s starting from 0, so
+nothing to do for the first ~12 s and a 76 s wait to fill the bar. Three shrined villages: 1.7/yr = 3.4/s, a meteor every 44 s, and aweMax 175 means
+volcano (220) cannot be cast at all. Year 1,000 with 20 settlements (8 villages, 10 towns, 2 cities, devotion 0.35): Σ ≈ 19, so ≈ 39 Awe/s, the 1,200
+cap is hit, and a meteor is affordable every 4 s (every 0.5 s at 8×). Year 3,000 with 70 settlements: ≈ 150 Awe/s. From about minute 6 there is no
+spending decision left in the game.
+FIX: Replace the income line with: "S = Σ devotion × (0.2 + 0.5·shrine + 1.2·temple) × (1 + tier/2) over live settlements. Income per year = 0.6 + 0.9 ×
+ln(1 + S)." That gives ≈ 0.65/yr with one camp, 1.4/yr with three shrined villages, 3.3/yr at year 1,000 and 4.5/yr late (1.3, 2.8, 6.6 and 9 Awe per
+real second at 1×). Replace the §4 Awe bullet with: "At 1×: a small miracle (≤ 40) every 5–15 s in the Stone age and every 3–8 s later; a great one (≥
+150) every 25–60 s from the age it unlocks. An active `kind` or `cruel` policy is below 90 % of aweMax in at least 60 % of years. simrun prints Awe
+income per year and the share of years spent at the cap." Keep aweMax as is, and add to the HUD spec: "when a power's cost exceeds `god.aweMax` its
+tooltip reads 'Your Awe cannot hold this much yet: they must raise more shrines and temples.'"
+
+[4] MAJOR — SPEC-SIM §3.10 power definition (`unlock: { phase, age, awe }`) and power table; SPEC-UI §2 keyboard bullet ("one letter per power (shown on its
+button)"), §4 power palette ("tooltip saying what unlocks them")
+PROBLEM: The unlock schedule, which is the player's main sense of progress for 35 minutes, does not exist: the table has no unlock column, so the powers
+engineer invents it and the HUD engineer has nothing to write tooltips from. The hotkeys are also unassigned and owned by nobody: Input must handle
+them and the HUD must print them, and the natural letters collide with camera keys already bound in §2 (R raise vs zoom, H heal vs hide HUD, Q quake
+vs heading, E vs heading, A awaken vs orbit) and with each other (plague, prophet, peace; lower, lightning). Edicts are equally unclear to the player:
+whether they cost anything, how many can be active and whether they can be changed is not stated.
+FIX: Add `key` to the power definition and two columns to the §3.10 table (unlock: age or aweMax / key): comet, seed, awaken (genesis power of the current
+phase) — / G; raise — from 'water' / U; lower — from 'water' / J; rain — history start / N; lightning — history start / L; heal — history start / C;
+bloom — Bronze or 150 / B; inspire — Bronze or 200 / I; quake — Bronze or 200 / K; prophet — Iron or 300 / P; plague — Iron or 300 / X; peace — Iron
+or 300 / O; meteor — Sail or 450 / M; awaken (history, 250) — Sail or 450 / G; volcano — Industry or 600 / V. State: "Input and HUD read `def.key`; no
+other letters are bound to powers. The HUD builds the lock tooltip from `def.unlock`: 'Wakes in the {age} Age, or when your Awe can hold {awe}.'" Add
+to §3.8: "Edicts are free. One is active per culture; it lasts until the prophet dies and can be changed once every 20 years. The inspector shows one
+line per edict saying what it does."
+
+[5] MAJOR — SPEC-UI §0 `Game.armPower`, §4 "Genesis guide"; SPEC-SIM §3.12 `Sim.genesis.progress(world) → { phase, value, canAdvance, hint }`; SPEC-RENDER §11
+`Renderer.sun`
+PROBLEM: The tutorial's first instruction fails. Nothing says a genesis power is armed on entering its phase, and with no power armed §2 says a click on empty
+ground deselects, so "click to call comets" does nothing until the player finds the palette. Nothing disarms `awaken` after the first tribe either, so
+the player's next click tries a 250-Awe awaken and gets "Not enough Awe". The guide contract is ambiguous between two engineers: `value` has no
+defined meaning per phase, and `hint` may be prose from the sim author while the HUD author also writes "one sentence of instruction", so the copy is
+either duplicated or missing. In the people phase the player cannot tell where land is habitable (the overlay exists but is undiscovered). With the
+default sun 'orbit', half of the green wave in the life phase happens on the night side.
+FIX: SPEC-UI §0, add: "On `phase`, Game arms `comet` (water), `seed` (life), `awaken` (people) and disarms on 'history'. During 'people' Game sets overlay
+5 (habitability) and restores overlay 0 on 'history'. During genesis and the time-lapse the sun mode is 'follow'." SPEC-SIM §3.12, replace the
+progress line with: "`progress` → `{ phase, value, canAdvance, hint, stats: { ocean, veg } }`. value 0..1: molten = 1 − heat; water = sat((seaLevel +
+6.5) / 3); life = sat(cover.veg / 0.25); people = 0. hint is a key, not prose: 'cooling' | 'water-more' | 'water-ok' | 'life-more' | 'life-ok' |
+'people'. stats.ocean = share of cells that are sea." SPEC-UI §4, add the copy (HUD owns it): molten "Your world is cooling. Drag to turn it, scroll
+or pinch to come closer."; water "Call down comets to fill the seas. Raise or lower the land while the clay is soft." plus "Ocean {n} %" with a tick
+at the balanced level; life "Touch the land to seed it. Life cannot cross the sea alone: seed each shore you want green."; people "Choose where your
+people wake. Green ground is kind; the glowing mark is the kindest." FX draws a soft beacon at `Civ.bestSite(world)` during 'people'.
+
+[6] MAJOR — SPEC-SIM §3.10 `comet` row ("large steps at first, smaller as it nears 0"), FOUNDATION §5.2 `world.seaLevel = -9`, SPEC-SIM §3.2 (ocean floor about
+−6.5), §3.5 vegetation rule
+PROBLEM: The first thing the player does shows no result. Sea level starts at −9 and the deepest ocean floor is about −6.5, so the first 2.5 units of rise are
+below every cell: the comet lands, nothing fills, and the step sizes are unspecified so this may last several clicks. The player is also never told
+how much ocean is a good amount: the gate to 'life' is −3.5, where the continental shelves are exposed and climate (sea cells are the only humidity
+source) gives a mostly dry world on which the balance targets were never set. Separately, "vegetation never appears from nothing" means any landmass
+not seeded during the life phase stays bare for the entire game, as does every volcanic island, with no explanation.
+FIX: Replace the comet effect with: "The first comet sets seaLevel to −6.0 (water pools in the deepest basins on impact). Each later comet adds clamp(0.2 ×
+(0.6 − seaLevel), 0.12, 1.0): 4 comets pass the −3.5 gate, about 12 reach 0, hard cap +1.5. Up to 3 comets may be in flight. The renderer eases the
+water surface to the new level over 0.8 s." HUD guide (water): show "Ocean {n} %" and a word: under 35 % "a dry, hard world", 35–75 % "a temperate
+world", over 75 % "a world of islands". Add to §3.5: "Drifting seeds: each year pick 8 random land cells; a plantable cell with veg = 0 that has a
+cell with veg > 0.3 within 12 hops (sea included) gets veg = 0.08."
+
+[7] MAJOR — SPEC-UI §4 HUD top bar and Inspector; SPEC-SIM §3.7 Research, §3.8 The Ark, §3.12 Endings, §4 balance targets
+PROBLEM: The player is never told what they are aiming for or how close they are. The ending is decided by hidden thresholds on the launching culture's mean
+devotion and love (beloved ≥ 0.35 and ≥ 0.2, feared ≤ −0.2, forgotten < 0.2), but the HUD shows devotion and love only for one selected settlement,
+shows no progress toward the next age, and shows the Ark only as a rocket model that grows on one cell of a planet. With the Space-age devotion
+baseline at about 0.1 × piety and 2 %/yr drift, an unprompted game ends 'forgotten' and the player learns the rule only on the ending screen. The
+balance targets do not check that 'beloved' is reachable at all. The inspector also hides why a town is starving: `K` and `growth` exist but are not
+shown.
+FIX: SPEC-SIM, add APIs: "`Civ.ageProgress(world, cultureId) → 0..1` (science toward the next age). `Society.regard(world, cultureId = -1) → { devotion,
+love, mood }`: population-weighted means over the culture's live settlements (−1 = all), mood classified with the same thresholds as §3.12." §4, add:
+"The `kind` policy reaches the 'beloved' ending on at least 6 of 10 seeds; `passive` mostly 'forgotten'; a `cruel` policy that stops short of
+extinction reaches 'feared'." SPEC-UI §4 top bar, add: "A progress ring around the age icon from `Civ.ageProgress` of the leading culture. Under the
+Awe orb, the regard word with an icon (Beloved / Feared / Forgotten / Regarded) from `Society.regard(world)`. From `ark:started`, an Ark bar (largest
+`ark` among live settlements) captioned 'They will leave you {mood}'; clicking it flies to the launch site." Inspector: "population with trend and
+capacity in words: '412 people, growing. The land could feed 520.'"
+
+[8] MAJOR — SPEC-SIM §2 events, §3.10 `Powers.can` / `Powers.use` / `awe:short`; SPEC-UI §2 Input (brush ring), §4 HUD (Awe orb, toasts); SPEC-RENDER §10 FX list
+PROBLEM: The core loop (miracle → witnesses → devotion → Awe) is invisible. `Society.witness` emits nothing, so the player never sees who noticed a miracle or
+whether they took it as grace or terror, and the orb shows a level but no rate. A rejected target gives no feedback: `Powers.can` returns reason
+'target' but the only failure event is `awe:short`, so a player who clicks awaken on ice, plague on empty ground or a land power on sea sees nothing
+happen. And `awe:short` has no rate limit while brush powers call `Powers.use` every frame, so holding Rain with an empty orb fires the "Not enough
+Awe" toast and the deny sound 60 times a second.
+FIX: §2, add event: "`miracle:witnessed` `{ cell, kind, good, ids: [settlement id] }` (at most 16 ids; at most 2 per real second for brush powers), emitted
+by society." FX: gold motes (good > 0) or red (good < 0) rise from each listed settlement. HUD: the selected settlement's devotion bar flashes; the
+orb shows "+{n} / yr" from `Society.aweIncome(world)`. §3.10: "`Powers.can` → `{ ok, reason, why }`, why: 'sea' | 'land' | 'settlement' | 'barren' |
+'crowded' | null. `awe:short` is emitted at most once per press and at most once per 1.5 s per power." SPEC-UI §2: "Input calls `Powers.can` for the
+hover cell at ≤ 10 Hz; when not ok the ring is drawn dashed at 35 % alpha (uBrushCol.a < 0.5 means dashed). A rejected click emits `ui:toast` kind
+'bad' with plain copy per `why` ('Choose open sea', 'Choose a settlement', 'Nothing can live here yet', 'Too close to another people')."
+
+[9] MAJOR — SPEC-UI §4 "Genesis guide" ("This is the whole tutorial"), §5 `Screens.title` ("How to play" has no Screens function), `Screens.setup` Quick start;
+SPEC-SIM §3.10 `awaken`
+PROBLEM: Teaching stops exactly where the game starts. The guide covers only the four genesis phases, so nothing ever explains Awe, devotion, why to cast
+anything or what the ending depends on, and Quick start skips even that. At the hand-off the player has 0 Awe out of 100 and about 1.3 Awe/s: the
+first lightning is 12 s away and the first heal 30 s away, with one camp of 30 people on screen and no prompt. That is dead time at the moment a
+first-time player decides whether the game is interesting. "How to play" is listed on the title screen but no screen is specified for it.
+FIX: §3.10 `awaken`: "the first use sets `god.awe = 60`." SPEC-UI §0: "After the first awaken or a quick start, Game flies to the camp (zoom 0.55, 2 s)
+then eases back to 0.3." SPEC-UI §4, add "First steps": "After 'history' begins the guide card shows one-time hints, each on its first trigger,
+dismissible, never blocking, stored in localStorage 'demiurge.hints.v1', off with setting `hints`: (1) history start: 'Your people are awake. Their
+faith fills the gold orb with Awe. Awe is what miracles cost.' (2) Awe ≥ 20: 'Arm Rain and hold it over dry ground near them. They will notice.' (3)
+first shrine: 'A shrine. Your Awe now holds more and fills faster.' (4) first famine, plague or prayer: 'They are asking for you. Answer or do not;
+they will remember either.' (5) first `war:declared`: 'War. An Omen of Peace ends it; a Prophet can forbid it.' (6) first `culture:age`: 'A new age.
+New powers wake with them.' (7) `ark:started`: 'They are building a ship to leave. How they feel about you now is how the story ends.'" Add
+`Screens.help()` (controls plus those seven lines), reachable from title and pause.
+
+[10] MAJOR — SPEC-SIM §3.10 `awaken` ("free, later 250"), §3.8 aweMax formula, §3.12 Endings (`silence`), §4 ("no extinction on at least 9 seeds out of 10"), §3.10
+`Powers.natural`
+PROBLEM: Losing the first tribe is an unrecoverable dead end. With no settlements aweMax is 100 and income is 0.6/yr, so the 250-Awe `awaken` can never be
+afforded; the player then watches an empty planet for 50 years (25 s) until the `silence` ending fires, possibly at year 60 of a game they spent four
+minutes sculpting. The spec's own target accepts extinction on 1 seed in 10 with no player action, and a first camp of about 30 is destroyed below 3
+people by a single early drought, quake or wildfire.
+FIX: §3.10: "`awaken` costs 0 and is unlocked whenever there are no live settlements and no settler units." §3.12: "`silence` requires `stats.peakPop ≥
+1000`. Below that, sim emits `people:lost` `{ }` once; Game arms `awaken` and the HUD shows the people-phase guide card with 'Your people are gone.
+Wake another.'" Add `people:lost` to §2. §3.10 `Powers.natural`: "No natural event may target a cell within 0.3 rad of a live settlement while
+`stats.pop < 200` or before year 100." §4: change the extinction target to 10 of 10 seeds for `passive` before year 500.
+
+[11] MAJOR — SPEC-SIM §3.10 `raise` / `lower` rows (6/s), `Powers.cost(world, id)`, §3.7 Hazards (`drowned`), FOUNDATION §5.1 (sea iff `elev < seaLevel`); SPEC-UI
+`Game.brushAng`
+PROBLEM: The Shape brush is the cheapest and strongest wrath power in the game and its cost ignores its size. Any cell below sea level is sea by definition and
+a settlement whose centre is under the sea is destroyed, so Lower held on a coastal metropolis at +0.3 kills it in well under a second at any sculpt
+rate fast enough to feel good in genesis: about 2 to 12 Awe against 150 for a meteor, and nothing says the people witness it. Brush cost is per second
+regardless of radius, so the largest brush is always correct, and the radius range is not defined anywhere, so Input, HUD and Powers will each pick
+their own limits.
+FIX: §3.10: "`Powers.cost(world, id, ang = def.ang)`: brush powers cost def.cost × (ang / def.ang)² per second. Brush radius range 0.03–0.15 rad, default
+def.ang = 0.06 (binding for Game.brushAng, Input and HUD)." `raise`/`lower` row: "Sculpt rate at the brush centre: 1.5 units/s during genesis, 0.2
+units/s in history. In history, cost × 4 while the brush centre is on a cell with owner ≥ 0, and the owners witness it per the witness table (the
+ground moving under them)." This makes sinking a +0.4 coastal city about 2 s and 48 Awe plus fear, and lifting a city out of a rising sea a real
+decision at 24 Awe/s.
+
+[12] MAJOR — SPEC-UI §1 Camera ("Altitude ... from 320 (zoom 0: whole planet with margin)", "fov ≈ 35°"), `Camera.view()`, `Camera.orbit(dxPx, dyPx, viewportH)`
+PROBLEM: The planet does not fit on the required 390×844 portrait phone. At altitude 320 the eye is 420 from the centre, so the limb is at asin(100/420) =
+13.8° off axis. Vertical half-fov is 17.5° (fits), but at aspect 0.462 the horizontal half-fov is atan(0.3153 × 0.462) = 8.3°, so only the middle 59 %
+of the planet's width is on screen at maximum zoom-out. The Camera has no aspect input at all, so it cannot correct this.
+FIX: Add `Camera.setViewport(wPx, hPx)` (Game calls it on resize) and replace the altitude sentence with: "fov is vertical. Zoom-0 altitude = R /
+sin(atan(0.78 × tan(fov/2) × min(1, w/h))) − R: about 320 at 16:9 and about 775 at 390×844, so the whole planet is visible with margin in any
+orientation. Altitude runs exponentially from that value to 6 at zoom 1; `far` adapts."
+
+[13] MAJOR — SPEC-UI §0 base.css ("panels collapse into a bottom sheet and a compact top bar", touch targets ≥ 40 px), §4 HUD top bar and power palette
+PROBLEM: The HUD as listed cannot fit 390 px and the one sentence about phones leaves the layout to chance. The top bar holds world name, year, age, Awe meter
+with epithet, people, cultures, temperature, sea level and five time buttons: the time buttons alone are 5 × 40 = 200 px. The palette in history is 14
+powers, "each with icon, name, cost, hotkey": 14 × 46 = 644 px in a row. Inspector, chronicle feed, overlay switch and legend have no stated place on
+a phone, and the hotkey text is useless there.
+FIX: SPEC-UI §4, add "Narrow layout (viewport width < 600 px)": "Top bar row 1 (44 px): menu button, Awe meter with number (flexible width), year with age
+icon, pause button, one speed button that cycles 1× 2× 4× 8×. Row 2 (12 px text): epithet, people, cultures, temperature and sea change when non-zero.
+World name is shown only in the pause screen. Bottom: four group tabs (Shape, Sky, Wrath, Grace, 44 px high) and one row with that group's powers (at
+most 5, each 64×56: icon and cost only; the name appears in the armed chip; no hotkeys). The genesis power replaces the tabs during genesis. Brush
+size is − / + in the armed chip. Chronicle feed is a one-line ticker above the palette (latest entry, 4 s, tap opens the chronicle). Inspector,
+chronicle, overlays and legend open one at a time as a bottom sheet (at most 45 % of the height) with a close button; the palette hides while a sheet
+is open. All edges respect env(safe-area-inset-*)."
+
+[14] MAJOR — SPEC-UI §6 `Save.settings` (`quality: 2`); SPEC-RENDER §0 budget, §11 `Renderer.resize` ("cap by quality"), `Renderer.setQuality`, `Renderer.stats`
+PROBLEM: First launch on a phone or an integrated GPU runs at quality 2: MSAA HDR, bloom, tilt-shift and up to 1.2 M triangles, at a device pixel ratio whose
+cap per quality is not specified (a dpr-3 phone would render about 3 megapixels). The game will open at single-digit frame rates, and the Settings
+screen that fixes it is reachable only through the pause menu. Nothing detects or reacts to a slow frame.
+FIX: SPEC-UI §6: "`quality` defaults to −1 (auto). On first run Game picks 0 when `matchMedia('(pointer: coarse)')` matches and the shorter screen side is
+under 820 px, 1 when `GL.caps.hdr` is false, else 2, and stores it." SPEC-RENDER §11: "Pixel-ratio cap by quality: 1.25, 1.5, 2. Quality 0: no MSAA,
+no tilt-shift, 1 tree per cell, 1024 shadow map. If the 2-second mean of `Renderer.stats.ms` stays above 24 ms for 4 s, Game lowers quality one step
+(at most once per 20 s, never below 0, never raised automatically) and emits `ui:toast` 'Graphics lowered for smoothness'."
+
+[15] MAJOR — SPEC-UI §4 Settlement labels, Chronicle feed; SPEC-SIM §1 Settlement, §2 events (`drought`, `settlement:famine`, `settlement:plague`), §3.8;
+SPEC-RENDER §6 terrain colour, §10 FX
+PROBLEM: The player cannot find the things they are supposed to respond to, and has no prompt to choose mercy. Plague, famine, war and blessing are visible
+only in the inspector of an already selected settlement; half the planet is always hidden; chronicle entries fade. A drought has no visual at all (FX
+lists rain and storms, not drought; terrain colour is driven by biome and vegetation, which change seconds to years later). So the mid-game crisis is
+a line of text scrolling past while the player hunts through up to 120 settlements, and the systems already hold everything needed for the people to
+ask for help.
+FIX: SPEC-UI §4 labels: "each label carries up to two status glyphs with the name: plague, famine, war, blessed, praying, and 'sea rising' when the centre
+is less than 0.15 above seaLevel." Add "Now strip": "a compact list of active conditions built from world state at 2 Hz: wars (A vs B), settlements
+with plague or famine (count), active disasters, prayers; clicking one flies to it and cycles through its places." SPEC-RENDER §6: "terrain colour
+includes a continuous dryness tint from `moist`; `drought` start and end set need.climate and dirty.color so the land yellows within a second."
+SPEC-SIM, add Prayers: "Settlement gains `prayer: null | { kind, since }`. Yearly, a settlement with devotion ≥ 0.15 prays for 'rain' (famine ≥ 1 or
+inside a drought), 'heal' (plague > 0.2), 'peace' (its culture at war with exhaustion > 0.4) or 'bloom' (mean scorch of its territory > 0.3); at most
+6 at once, largest first. Emit `prayer` `{ id, kind, start }`. If the matching power is witnessed by it while it prays, awe is doubled and good = +1,
+emit `prayer:answered` `{ id, kind }` (chronicle weight 2). Unanswered after 15 years: devotion −0.05 and love −0.05 once." FX: a thin pale-gold
+column above a praying settlement, visible from orbit.
+
+[16] MINOR — SPEC-UI §0 base.css tokens, §4 Inspector ("love ↔ fear indicator"), Overlay switch, §6 `Save.settings`; SPEC-SIM §1 `Culture.color` ("distinct hue per
+culture"); SPEC-RENDER §5 Post tilt-shift, §11 `Renderer.flash`, `Renderer.sun`
+PROBLEM: Accessibility and comfort basics are missing. No font sizes are specified. `--dim` (#9aa0aa) on the 0.72-alpha panel drops to about 3:1 contrast over
+ice caps and sunlit cloud. Love vs fear, good vs bad (`--good` green against `--bad` red-orange) and up to six cultures are told apart by hue alone.
+Lightning, meteor and nuclear flashes plus camera shake have no setting. With the default orbiting sun the area under the brush is in night half the
+time, and at close zoom the tilt-shift blurs everything outside a fixed centre band, which is rarely where the brush is.
+FIX: base.css: "`--fs-small: 13px; --fs-body: 15px; --fs-title: 22px`; no text under 12 px; `--dim: #b3b9c4`; `--panel-bg: rgba(11, 15, 23, 0.84)`; labels
+have a 2 px ink halo." HUD: "No signal is colour-only: statuses are icon plus word; the love/fear indicator is a marker on a labelled scale
+(terrified, wary, indifferent, fond, adoring); good and bad changes carry + or −." SPEC-SIM §1: "culture colours come from a fixed six-entry
+colour-blind-safe palette (#e69f00, #56b4e9, #009e73, #f0e442, #d55e00, #cc79a7) by free slot; labels, legend and banners also show the first letter
+of the culture's name as a sigil." Save.settings: add `flashes: 1` (scales Renderer.flash and Post.set.flash), `shake: 1`, `hints: true`, `autoSlow:
+true`; flashes and shake default to 0.3 under prefers-reduced-motion. SPEC-RENDER: "moonlit terrain keeps at least 30 % of its daylight luminance
+after tone-mapping. `Post.set.focusY` (0..1, default 0.5) sets the tilt-shift focus band; while a power is armed Game sets it to the pointer's y and
+multiplies tilt by 0.35."
+
+[17] MINOR — SPEC-SIM §3.11 `Chronicle.snapshot`, §3.12 Endings; SPEC-UI §0 Game loop, §5 `Screens.ending`, `Screens.timelapse`, `Screens.setup`
+PROBLEM: The payoff moments are undersold and one of them loses data. `ark:launched` sets the ending in the same tick, so the modal ending screen covers the
+rocket launch, the climax of a 35-minute game, or the player is looking at the other hemisphere. Snapshots are taken only every 25 history years, so
+the time-lapse of "the whole history of your world" omits its most dramatic frames: molten ball, seas filling, green spreading. There is one autosave
+slot and Begin on a new world replaces it with no warning.
+FIX: SPEC-UI §0: "On `ending`, before `Screens.ending`: hide the HUD and set 1×. Type 'ark': fly to the launch settlement (zoom 0.6, 2.5 s), hold 6 s while
+FX plays the plume and the camera eases back to zoom 0.15, play the ending stinger, fade, then open the screen. Type 'silence': ease to zoom 0 over 6
+s with ambience only." SPEC-SIM §3.11: "a snapshot is also taken on every `phase` change during genesis and carries `heat`; `Planet.showSnapshot`
+renders heat > 0 as the molten crust." `Screens.timelapse`: "weight-3 chronicle entries appear as captions when the scrub passes their year."
+`Screens.setup`: "if `Save.meta()` is not null, Begin first asks 'This replaces {name}, {year}. Begin anyway?'"
+
+[18] MINOR — SPEC-SIM §3.9 unit speeds, §0.5 TICK; SPEC-RENDER §9 Movers ("at `Units.dirOf`"); SPEC-UI §0 `Game.speed`, §4 Chronicle feed banners
+PROBLEM: Time scale works against the diorama pillar and against following events. At 1× a settler party moves 5 cells per year = 1.25 cells per tick at 8
+ticks/s, about 19 world units per second in 2.4-unit hops. At closest zoom the view is about 13 units wide, so units cross the screen in under a
+second in visible 8 Hz jumps, and there is no speed slower than 1× in which to watch the miniature world. At 4× and 8× (8 to 16 years per second) a
+war can be declared and three cities lost while the weight-3 banner is still fading in.
+FIX: SPEC-RENDER §9: "Movers are drawn at a position damped toward `Units.dirOf` (`DM.U.damp`, lambda 10 per second), never snapped." SPEC-UI §0:
+"`Game.speed` is 0.25 | 1 | 2 | 4 | 8; 0.25× ('linger', key `0`, 2 ticks/s) is offered in the time controls. With setting `autoSlow`, when a weight-3
+chronicle entry arrives at speed ≥ 4 Game drops to 1× for 6 s and then restores the previous speed unless the player changed it; the banner is
+clickable (fly to cell) for those 6 s."
+

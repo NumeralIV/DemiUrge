@@ -1,0 +1,264 @@
+LENS: interfaces
+VERDICT: Not ready for a parallel build from the interface lens. There are two blockers: the genesis-to-history hand-off has no owner (no phase setter, and
+nobody writes `vars.seaBase` / `vars.iceRef`, so sea level goes NaN in the first year of history), and `world.rivers` has three different shapes
+across the documents. Most of the twelve majors share one root cause: state, events and uniforms with several writers and no named owner (capitals,
+plague, witness memory, dirty flags, the Frame block, the ending object). All of it is fixable in the documents before the build starts: about ten
+small functions (`Sim.setPhase`, `Climate.baseline`, `Life.fill`, `Life.rebuild`, `Civ.rebuild`, `Civ.infect`, `Civ.cure`, `Civ.setCulture`,
+`Civ.electCapital`, `Renderer.setSnapshot`, `GL.frame.setComp`), three ownership tables (entity fields, Frame block, dirty flags) and an explicit tick
+schedule. I also checked the existing shell (`C:/Users/Relly/Documents/Fable5.2 Test/demiurge/js/game.js`, `tools/load.js`, `tests/helpers/world.js`);
+it confirms several of these, and `game.js` and `load.js` need small matching edits if the fixes for headless powers, the time-lapse and Node loading
+are adopted.
+
+[1] BLOCKER — SPEC-SIM §2 (`phase` row), §3.3 (`vars.seaBase`, `vars.iceRef`), §3.10 (`awaken`, `comet`), §3.12 (Sim API, Phases, Tick order); FOUNDATION §5.2
+(`world.vars`, `seaLevel`)
+PROBLEM: The genesis-to-history hand-off has no owner. (a) `awaken` is in powers.js and "the first use starts 'history'", but Sim exposes no phase setter
+(`genesis.next` only covers water->life and life->people) and `phase` is listed as emitted by sim. Powers will write `world.phase` directly, so no
+`phase` event fires: game.js `armForPhase`, the HUD genesis card and Audio never hear it. (b) `vars.seaBase` and `vars.iceRef` are read by
+`Climate.yearly` (and by the HUD's sea-level change) but no module is told to write them. tests/helpers/world.js sets `seaBase` by hand, which hides
+this in unit tests. In the real game the first yearly computes `undefined + ...` = NaN, `seaLevel` becomes NaN, every `elev < seaLevel` is false and
+the oceans vanish; `iceRef` 0 or undefined gives 0/0. (c) The tick order is given for 'history' only. "The environment runs in every phase after
+molten" does not say whether `Climate.yearly`, `Powers.natural`, `Civ/Society.yearly` or snapshots run in genesis. If `Climate.yearly` runs in 'water'
+it fights the comet for `seaLevel` (two writers); if `Powers.natural` runs, the tutorial gets random eruptions. (d) `Sim.create` does not say it calls
+`Sim.use`, and game.js calls only `Sim.create` for new worlds, so Chronicle is never attached for them.
+FIX: Add to §3.12: `Sim.setPhase(world, phase) -> bool` - the ONLY writer of `world.phase`; runs entry actions, then emits `phase {phase, prev}`. Entry
+actions: 'water': heat = 0. 'life': vars.lifeBoost = TUNE.sim.lifeBoost (about 25). 'people': vars.lifeBoost = 1. 'history': vars.lifeBoost = 1;
+`Climate.baseline(world)`; year = 0. `genesis.next`, `genesis.skip` and the `awaken` power (after its first successful `Civ.found` while phase ===
+'people') all go through it. Add to §3.3: `Climate.baseline(world)` - sets ice to its equilibrium in one step, then `vars.seaBase = seaLevel` and
+`vars.iceRef = max(1e-3, land-ice volume)`. `Climate.yearly` leaves `seaLevel` alone while `vars.seaBase` is undefined. Add to §3.5: `Life.fill(world,
+frac = 1)` - set veg = frac x capacity and fauna to capacity on all plantable land (used by `genesis.skip`; budget for `Sim.create` + `skip` is 600 ms
+at L 6 because the title screen runs it at boot). Per-phase tick table: molten = heat only. water/life/people = Powers.tick, Life.burn, Life.step,
+Climate.stepIce and the flag-driven derive/climate/hydro/classify/habitability passes; NOT Units.step, Civ.yearly, Society.yearly, Climate.yearly,
+Powers.natural, snapshots or checkEnding. history/ended = full order. `seaLevel` writers: Powers (comet) and `genesis.skip` before history,
+`Climate.yearly` only in history/ended. "`Sim.create` ends by calling `Sim.use(world)`." Also compute the lapse rate from height above `max(seaLevel,
+-3.5)`; with the -9 start every land cell is about 50 C colder and the planet ices over before the first comet.
+
+[2] BLOCKER — FOUNDATION §5.2 (`world.rivers`) vs SPEC-SIM §3.4 (Hydro) vs SPEC-RENDER §6 (rivers) and §11 (Fixtures)
+PROBLEM: Three shapes for one field. FOUNDATION: "array of Int32Array cell polylines, source -> mouth". SPEC-SIM §3.4: array of `{ cells: Int32Array, flow:
+Float32Array }`. SPEC-RENDER: ribbons "width from flow" along `world.rivers`. Hydro, Planet and Fixtures authors each read a different document.
+Either `rivers[i].cells` is undefined and Planet.sync throws, or `rivers[i].length` is undefined and no river is ever drawn. A throw inside
+`Renderer.frame` is caught by game.js's per-frame try/catch every frame, so nothing renders at all.
+FIX: FOUNDATION §5.2 line becomes: `world.rivers = []   derived: array of { cells: Int32Array, flow: Float32Array } (equal length, source -> mouth, flow =
+discharge at each cell); see SPEC-SIM §3.4`. Add to SPEC-RENDER §6 and the Fixtures paragraph: "River shape is the one in SPEC-SIM §3.4. Fixtures must
+produce exactly that shape. Planet treats a missing or empty list as no rivers and never throws on it."
+
+[3] MAJOR — SPEC-SIM §2 (`ending`, `ark:launched`, `nuke` rows), §3.12 (Endings, `Sim.checkEnding`); FOUNDATION §5.2 (`world.ending`); SPEC-UI §5
+(`Screens.ending`), §7 (ending stingers)
+PROBLEM: The ending has no agreed shape or data path. §2 says the `ending` payload is `{ type, culture }`; §3.12 says `{ type: 'ark', mood }` and `{ type:
+'silence' }` with `mood: 'ash'` only in one case (otherwise undefined). `Screens.ending(ending)` picks text "by type/mood" and Audio plays "ending
+(one per mood)", but an Audio handler on the `ending` event gets no mood, and Screens gets no culture. `Sim.checkEnding` is polled yearly, yet Ark
+completion is signalled only by the Bus event `ark:launched` from Society, and "a nuclear exchange in the last 200 years" is recorded nowhere. Nothing
+stops `ark:launched` re-firing every year once `ark >= 1`, or a second ending during Keep playing.
+FIX: Paste into §3.12 and FOUNDATION §5.2: `world.ending = { type: 'ark' | 'silence', mood: 'beloved' | 'feared' | 'forgotten' | 'parting' | 'quiet' |
+'ash', culture: id | -1, settlement: id | -1, year }`. The `ending` event payload is exactly this object (replace `{ type, culture }` in §2). Society
+writes `world.vars.ark = { culture, settlement, year }` when it emits `ark:launched`, and does so only once per world (while `vars.ark` is undefined).
+Society writes `world.vars.lastNuke = world.year` with every `nuke`. `Sim.checkEnding` reads those two vars (no Bus subscription) and returns null
+when `world.ending` is already set. 'quiet' = silence with no nuke in the last 200 years. Mean devotion and love are population-weighted over the
+launching culture's live settlements.
+
+[4] MAJOR — SPEC-SIM §3.12 (Tick order, `Sim.rederive`), §0.8 (budget), §3.2 (`Terrain.touched`); FOUNDATION §5.2 (`world.need`)
+PROBLEM: The tick order breaks a dependency and stacks every heavy pass on one tick. (a) `Hydro.update` runs after `Life.classify` and `Life.habitability`, and
+nothing re-runs them afterwards. Biomes and `hab` are therefore computed from the previous `fresh` and `water`. After `Sim.create` or a load those are
+the defaults (`fresh` = 255, `water` = 0): WETLAND and "fresh water within 2 hops makes a desert liveable" fail, and `Civ.bestSite` inside
+`genesis.skip` picks the first tribe's home from that `hab`. `Sim.rederive`'s order is not given at all. (b) At tick % 40 === 0 the schedule runs the
+yearly group, `stepIce`, `Climate.update` (up to 12 ms), classify, habitability and possibly `Hydro.update` (up to 15 ms) together, against "any
+single tick <= 30 ms" and "must not all land on the same tick"; game.js budgets 6 ms of sim per frame. (c) `Terrain.touched` sets all three need flags
+on every frame the sculpt brush is held, and unlike hydro, `Climate.update` has no minimum interval, so it runs every tick while sculpting.
+FIX: FOUNDATION: `world.need = { derive, climate, hydro, life }`. `Climate.update` and `Hydro.update` set `need.life` when they finish; `Life.habitability`
+clears it. `Sim.rederive` order (binding): Terrain.derive -> Climate.update -> Hydro.update -> Life.classify -> Life.habitability -> Life.rebuild ->
+Civ.rebuild. Replace the tail of the tick order with: "... -> when tick % 4 === 0: the yearly group -> when tick % 20 === 10: Climate.stepIce -> then,
+on ticks where tick % 4 !== 0, at most ONE heavy pass, the first that is due: (1) need.derive: Terrain.derive; (2) need.climate and at least 8 ticks
+since the last Climate.update, or 40 ticks since the last one: Climate.update; (3) need.hydro and at least 8 ticks since the last: Hydro.update; (4)
+need.life: Life.classify on this tick and Life.habitability on the next."
+
+[5] MAJOR — SPEC-SIM §1 (`Settlement.capital`, `Culture.capital`, `Culture.pop/towns/dead`), §2 (`culture:died` row "society / civ"), §3.7 (Civ.found, launch
+"capital only"), §3.8 (New cultures, The Ark)
+PROBLEM: Nobody owns capitals or culture membership. `Settlement.capital` and `Culture.capital` duplicate each other and no function is told to set either:
+`Civ.found` does not mention it, and nothing re-elects after `Civ.destroy`, `Civ.capture` or a schism. `b.launch` is "capital only" and the Ark needs
+the capital, so once a culture's first capital is drowned, cratered or captured, that culture can never reach the 'ark' ending. For a schism Society
+must move settlements to the daughter culture, but the only API is `Civ.capture`, which emits `settlement:captured` (Chronicle will narrate a
+conquest). `culture:died` is listed as "society / civ": both will emit it or neither will. `Culture.pop` and `towns` are "refreshed yearly" by an
+unnamed module, and Society's war logic and the HUD read them.
+FIX: Add to §3.7: `Civ.setCulture(world, s, cultureId)` - change membership without conquest (schisms); no `settlement:captured`; sets dirty.objects and
+dirty.color. `Civ.electCapital(world, cultureId) -> settlement id | -1` - the most populous live settlement; writes `culture.capital` and `s.capital`
+for every settlement of that culture. Rules: "Civ is the only writer of `s.culture`, `s.capital`, `culture.capital`, `culture.pop`, `culture.towns`,
+`culture.dead`. `Civ.found` makes a culture's first settlement its capital. `Civ.destroy`, `Civ.capture` and `Civ.setCulture` call `electCapital` for
+every culture they affect. `b.launch` and `ark` do not move with the capital: a new capital builds its own launch site and `ark` restarts at 0. At the
+end of `Civ.yearly`: refresh `culture.pop` and `culture.towns`; a culture with no live settlement and no settler unit of its own gets `dead = true`
+and Civ emits `culture:died`, exactly once." In §2 split the row: `culture:died`, `culture:age`, `world:age` are all emitted by civ.
+
+[6] MAJOR — SPEC-SIM §1 (Settlement `plague`, `immune`, `blessed`, `inspire`, `b`), §2 (`settlement:plague`, `settlement:building`), §3.7 (Growth, Buildings),
+§3.8 (Trade, Ark), §3.10 (plague, heal, natural outbreaks); FOUNDATION §5.2 (`world.stats`, `world.god`)
+PROBLEM: Settlement status fields have several writers and no owner. `plague` is written by Powers (`plague = 0.6`, heal, natural outbreaks), by Society
+(trader arrival: "plague may hop") and by Civ (neighbour spread, fading; Civ's text also claims spread "along trade"). `settlement:plague {id, start}`
+is emitted "by civ" only, so miracle plagues and cures produce no event (no chronicle line, no miasma, no toll), and direct writers bypass `immune`.
+The countdowns `blessed`, `inspire`, `immune` ("years remaining") have no decrementer: Civ reads them, Powers sets them, and either both yearly passes
+decrement or neither does (permanent blessing). `b.launch` is claimed by both §3.7 and §3.8. `b.wonder` is set by Society with no
+`settlement:building`. `stats.wars`, `stats.miracles`, `stats.believers`, `god.mercy`, `god.wrath` and `god.epithet` have no named writer, yet the HUD
+shows the epithet.
+FIX: Add to §3.7: `Civ.infect(world, s, severity = 0.6) -> bool` - false if dead or `immune > 0`; `plague = max(plague, severity)`; emits
+`settlement:plague {id, start: true}` when plague was 0. `Civ.cure(world, s, immuneYears = 30) -> bool` - `plague = 0`, `immune = immuneYears`; emits
+`{id, start: false}` if it was above 0. "Powers (plague, heal, natural outbreaks) and Society (traders) must call these and never write `plague` or
+`immune`." Ownership table: Civ.yearly owns pop, K, growth, tier, radius, famine, plague fading (calls `cure` below 0.05) and spread to settlements
+within 8 hops; decrements `blessed`, `inspire`, `immune` by 1 per year (floor 0); owns every `b.*` except wonder and emits `settlement:building` for
+each, launch included. Society owns devotion, love, `b.wonder` (emits both `wonder:built` and `settlement:building {building: 'wonder'}`), `ark`
+(advances only while `b.launch === 1`), prophet, edict, exhaustion, relations, `road`; `stats.wars++` in `declareWar`. Powers.use does
+`stats.miracles++` and `god.deeds[id]++` once per `power:used` emission and may set `blessed` and `inspire`. Sim.refreshStats owns `stats.pop`,
+`peakPop`, `believers` (sum of pop x devotion). `Chronicle.updateEpithets` writes `culture.epithet` and `god.epithet` (the epithet of the most
+populous living culture). `Society.witness` adds `max(0, good) x faith` to `god.mercy` and `max(0, -good) x faith` to `god.wrath`.
+
+[7] MAJOR — SPEC-SIM §3.8 (`Society.witness`), §3.10 (`Powers.use`, brush powers), §2 (`awe:short`, `power:used`); SPEC-UI §4 (Toasts), §7 (deny sound)
+PROBLEM: The witness contract has no units, and brush powers call it per frame. `Society.witness(world, cell, ang, { kind, awe, good })` does `devotion += awe
+x falloff`. That `awe` is a devotion delta on a 0..1 scale, but it carries the name of the Awe currency, whose costs run 5 to 250. A Powers author
+passing the cost (150 for a meteor) sets every witness's devotion to 1 on every use. `kind` is undefined. Brush powers call `Powers.use` every frame,
+so as written `witness` runs every frame (devotion gain scales with frame rate, 60 vs 144 fps), `god.deeds[id]` counts frames rather than "times used"
+(epithets read it), and `awe:short` fires every frame while the button is held with an empty meter: 60 "Not enough Awe" toasts and deny sounds per
+second.
+FIX: Rename and define: `Society.witness(world, cell, ang, { kind, faith, good })` - `kind` = power id (or 'nuke'); `faith` = devotion gained at the
+centre, 0..0.3, already multiplied by elapsed seconds for brush powers; `good` in -1..1. Starting table (TUNE.powers.faith): rain 0.02/s, bloom
+0.02/s, raise and lower 0.01/s, lightning 0.03, quake 0.06, plague 0.04, meteor 0.12, volcano 0.15, heal 0.08, inspire 0.06, prophet 0.10, peace 0.06.
+Add to §3.10: "For brush powers, Powers accumulates dt and, on the same cadence as `power:used` (at most 4 per real second), calls `Society.witness`
+once with the accumulated faith and counts one deed. `awe:short` is emitted at most once per 1.5 real seconds per power id, timed with a clock
+advanced in `Powers.update`."
+
+[8] MAJOR — FOUNDATION §5.2 (Transient caches); SPEC-SIM §1 (`_cells`, `_n`), §3.5 (`world._fires`), §3.7 (`Civ.claim`), §3.11 (`culture._seen`), §3.12
+(`Sim.rederive`); SPEC-RENDER §10 (fires); SPEC-UI §7 (fire ambience)
+PROBLEM: Transient caches have no rebuild contract. (a) Chronicle is told to track what each culture witnessed in `culture._seen` "or world.vars". Underscore
+fields are never serialized and must be rebuildable from persisted state; this one is not, so epithets reset on every Continue. No module is assigned
+to write it either: Chronicle only hears `power:used {id, cell, ang, brush}` and would have to redo Powers' decision of who witnessed. (b)
+`Sim.rederive` must rebuild "every transient cache" but the owners expose nothing to call. `world._fires` (Life) has no stated format, yet FX ("flames
+and smoke on burning cells") and Audio ("crackle near fires") need the burning cells and may not scan the planet per frame. `settlement._cells/_n` can
+only be rebuilt through `Civ.claim`, which re-decides ownership ("not owned by another settlement" is order-dependent) and rewrites the persisted
+`owner[]`, so a loaded world diverges from the one that was saved. (c) Module-level scratch (Path heap and stamps, Hydro buffers) will be sized once,
+but the title world is L 6 and tests use L 4.
+FIX: Add `seen: {}` to Culture in §1 (persisted; kind -> accumulated faith witnessed) and to §3.8: "`Society.witness` adds `faith x falloff` to
+`culture.seen[kind]` for the culture of each witnessing settlement." In §3.11 replace "tracked in `culture._seen` or `world.vars`" with "read from
+`culture.seen` and `god.deeds`". Add to §3.5: "`world._fires = { cells: Int32Array, n }` (binding; `cells[0..n-1]` have `fire > 0`).
+`Life.rebuild(world)` rebuilds it from `fire[]`." Add to §3.7: "`Civ.rebuild(world)` rebuilds `_cells/_n` of every live settlement from `owner[]`
+without changing `owner`." `Sim.rederive` calls both after the derived passes. Add to §0: "Consumers treat a missing `_fires` or `_cells` as empty.
+Module-level scratch buffers are keyed by `world.n` and re-allocated when it changes."
+
+[9] MAJOR — SPEC-SIM §3.10 (`Powers.update`, `Powers.use`), §3.12 (Sim.tick, Headless tools), §4 (cruel policy); SPEC-UI §0 (`debug.ff`, `debug.use`)
+PROBLEM: Comets and meteors never land outside the frame loop. `Powers.update(world, realDt)` advances their flight and is called only by Game's
+requestAnimationFrame loop; `Sim.tick` does not call it. `tools/simrun.js` policies call `Powers.use('meteor')` and the impact never happens, so the
+`cruel` balance target cannot be measured. `DM.debug.ff(years)` in game.js runs only `Sim.tick`, so the documented test recipe (`debug.use('meteor',
+cell)` then `debug.ff`) fast-forwards with the meteor frozen in the sky. Impact tick also depends on frame timing, which breaks "same inputs at the
+same ticks give an identical world".
+FIX: Add to §3.10: "`Powers.use(world, id, cell, { ang, dt, instant = false })` - with `instant`, comet and meteor impact immediately (no flight, no
+`meteor:launched`)." Add to §3.12: "`Sim.tick` never calls `Powers.update`. Any caller that ticks without the frame loop (tools/simrun.js,
+tools/policies.js, `DM.debug.ff`, `Sim.genesis.skip`, tests) calls `Powers.update(world, 0.125)` after every `Sim.tick` (one tick is 0.125 real
+seconds at 1x), or uses `instant: true`." The lead updates `D.ff` in game.js to match.
+
+[10] MAJOR — FOUNDATION §5.2 (`world.dirty`); SPEC-SIM §0.7, §3.2 (`Terrain.touched`), §3.5 (dirty.objects); SPEC-RENDER §4 step 1, §6 (`Planet.sync`), §9
+(`Objects.sync`)
+PROBLEM: Dirty flags are cleared by the first consumer, and trees do not follow the ground. Objects places trees and buildings on `Planet.groundAt` and
+rebuilds only on `dirty.objects`. `Terrain.touched` sets `dirty.elev/water/color` but not `objects`. `Planet.sync` runs before `Objects.sync` and
+clears `dirty.elev` ("clear what you handled"), so Objects can never see an elevation change. After raise, lower, quake, crater or cone, trees and
+houses stay at their old radius: floating over craters, buried in raised land. Separately, Life must set `dirty.objects` when veg crosses "visibility
+thresholds" that exist only inside objects.js.
+FIX: Add to FOUNDATION §5.2: "Each dirty flag has exactly one consumer, which clears it: Planet owns `elev`, `color`, `water`, `rivers`, `roads`; Objects
+owns `objects`." Change §3.2: "`Terrain.touched` sets dirty.elev/water/color/objects and need.hydro/climate/derive." Add to §3.3: a sea-level move of
+more than 0.03 also sets `dirty.objects`. Add to FOUNDATION §5.3: `DM.State.VEG_T = [0.22, 0.5, 0.78]` (veg levels at which a cell shows 1, 2, 3
+trees). Life sets `dirty.objects` when a cell crosses one of them; Objects uses the same array. Add to SPEC-RENDER §9: "On `dirty.objects`, Objects
+re-reads `Planet.groundAt` for every static instance."
+
+[11] MAJOR — SPEC-RENDER §1 (`GL.frame.set`), §2 (Frame block: `uFx`, `uWorld`, `uPlanet`, `uTime`), §4 step 1, §6 (`Planet.setOverlay`), §7 (`Sky.update`), §10
+(`FX.update`), §11 (Renderer)
+PROBLEM: The Frame block has no write ownership. `GL.frame.set(name, x, y, z, w)` writes whole vec4s. `uFx` mixes a camera-derived value (x: cloud opacity that
+fades as the camera descends) with values `Sky.update` is told to set (y cloudiness, z ocean fraction), and `Sky.update(dt, world)` is not given the
+view. Renderer and Sky will both call `frame.set('uFx', ...)` and zero each other's components: clouds either vanish or never fade. `uWorld.w`
+(overlay mode) is known only to Planet, because game.js calls `Planet.setOverlay` directly, while the Renderer fills `uWorld`. `uWorld.z` (night-light
+level), `uPlanet.z/w` (shell radii) and `uTime.z` (cloud drift) have no values and no owner. The four step-1 calls also have two argument orders:
+`Planet.sync(world, dt)` and `Objects.sync(world, dt)` but `Sky.update(dt, world)` and `FX.update(dt, world)`; a swap fails silently with NaN.
+FIX: Add to §1: `frame.setComp(name, index, value)` (write one component). Add to §2: "Ownership. `Renderer.frame` writes, before `Sky.update`: the four
+matrices, uCamPos, uSunDir, uSunCol, uTime (z = real seconds x 0.01), uScreen, uPlanet = (DM.R, world.seaLevel, DM.R + 13, DM.R + 20), uBrush,
+uBrushCol, uFlash, uFlashCol, uWorld = (world.heat, world.dust, night, DM.Planet ? DM.Planet.overlay : 0) with night = [0, 0.15, 0.3, 0.45, 0.75, 1,
+1][world.age], uFx = (1 - smoothstep(0.55, 0.9, zoom01), 0.5, 0.7, 0), and all uStorms zeroed. `Sky.update` then overwrites only uFx.y and uFx.z (via
+`setComp`) and uStorms (via `setStorm`). No other module writes the Frame block. Renderer uploads after step 1." Add to §6: `Planet.overlay`
+(read-only current mode). Change the signatures to `Sky.update(world, dt)` and `FX.update(world, dt)`.
+
+[12] MAJOR — SPEC-SIM §3.10 (power definition `ang`, `Powers.use({ang, dt})`, meteor "~0.05 rad"); SPEC-UI §0 (`Game.usePower`, `Game.brushAng`), §2 (brush ring;
+"one letter per power"), §4 (hotkey on button)
+PROBLEM: The power definition is missing two things Input, HUD, Game and Powers must agree on. Radius: the definition has `ang (default radius)` and
+`Powers.use` accepts `{ ang }`. game.js passes `ang: G.brushAng` (0.025 to 0.14) for every power, and Input sizes the ring by `Game.brushAng` for
+every non-settlement power. The Powers author cannot tell whether a click power honours it. If it does, the brush-size keys scale a 150-Awe meteor
+from the specified 0.05 rad crater to 0.14 rad, with "heavy damage to 2.5x" = 0.35 rad, at the same price. Hotkeys: Input handles "one letter per
+power" and HUD shows it on the button, but there is no table and no `key` field, and W A S D Q E R F H are taken. The two engineers will pick
+different letters, so the button advertises a key that arms another power.
+FIX: Add `key` to the power definition in §3.10 and this rule: "`ang` passed to `Powers.use` is honoured only for brush powers and `seed` (clamped 0.025 to
+0.14). Every other click power always uses its definition's `ang`." SPEC-UI §2: "The ring radius is `Game.brushAng` for brush powers and `seed`,
+otherwise `Powers.byId[id].ang`. Hotkeys come from `Powers.byId[id].key`; Input and HUD never define their own." Keys (binding): comet C, seed G,
+awaken K, raise T, lower Y, rain N, bloom B, lightning L, quake U, plague X, meteor M, volcano V, heal J, inspire I, prophet P, peace O.
+
+[13] MAJOR — SPEC-UI §5 (`Screens.open`), §2 (Input: "Ignore input when ... a screen is open")
+PROBLEM: `Screens.close()        Screens.open -> name of the open screen or null` has no parentheses, so it reads as a property, while every other `->` in
+these documents is a function return. Input must test it. If Input writes `if (DM.Screens.open) return;` and Screens ships a function, the test is
+always truthy and the game accepts no input at all. If Input writes `DM.Screens.open()` and Screens ships a string, it throws inside `Input.update`,
+which is the first call in game.js's frame try block: everything after it, including `Renderer.frame`, is skipped every frame and the screen stays
+black.
+FIX: Rename to `Screens.current` and state: "`Screens.current` is a property, never a function: 'title' | 'setup' | 'pause' | 'settings' | 'help' |
+'ending' | 'timelapse' | 'card' | null." SPEC-UI §2: "Input ignores pointer and key input while `DM.Screens && DM.Screens.current` is truthy, and
+ignores keys while `document.activeElement` is an input or textarea."
+
+[14] MAJOR — SPEC-SIM §3.3 (`Climate.emit`, `Climate.addDust`, yearly globals), §3.7 (factory), §3.8 (Awe income, nukes), §3.10 (costs, meteor/volcano dust), §4
+(Awe target)
+PROBLEM: Three feedback loops are split between two authors with no agreed scale. CO2: Civ calls `Climate.emit(world, amount)` per factory, and Climate turns
+`co2` into `3 x log2(1 + co2/100)` and "relaxes toward 0 slowly". Neither the unit of `amount` nor the uptake rate is given, so the integrated result
+is either no warming or runaway, and the late-game climate arc is a pillar. Dust: `Climate.addDust` is called by Powers (meteor, ash) and Society
+(nukes) with no amounts, against -9 C per unit. Awe: Society's income is per sim year and linear in settlements. With 30 shrine settlements (devotion
+0.5, mean tier 1.5) it is 0.6 + 30 x 0.5 x 0.7 x 1.75 = about 19 Awe/yr, i.e. 38 Awe per real second at 1x: a 150-Awe meteor every 4 seconds, where §4
+wants a great miracle "every few minutes". Late game is worse. Powers owns the costs and cannot fix it.
+FIX: Paste as starting values with the owner named. §3.7: "A settlement with a factory emits `0.6 x pop / 1e6` co2 units per year (x0.5 in the Space age)."
+§3.3: "Uptake is `0.5 % x (0.5 + mean veg)` of co2 per year. Target, verified in simrun and owned by the Climate author: an undisturbed world reaches
+co2 60 to 200 (globalTemp +2 to +4.5) by the Ark." Dust amounts: meteor +0.25, volcano +0.02 per year of eruption, each nuke +0.12. §3.8: "Income per
+year = `0.6 + 0.45 x sqrt(sum)`, with the sum as before" (one camp: about 0.7/yr; 30 shrine settlements: about 2.5/yr; 100 templed cities: about
+6/yr). "The Society author owns the Awe target in §4 and may change income, never the costs in §3.10."
+
+[15] MINOR — SPEC-SIM §1 (Unit), §2 (`unit:*` rows), §3.8 (`Society.onArrive`, prophets), §3.9 (Units)
+PROBLEM: Gaps in the Units contract. `Units.spawn` takes `naval` but Unit has no such field, so the one allowed re-path, and any unit after a load, cannot know
+whether it may sail. `unit:spawned/arrived/died` carry only `{id, type}`, and `unit:died` fires when the unit has left `world.units`, so FX, Audio and
+Chronicle cannot place it. Type 'prophet' has a model and an arrival route but no module spawns one, and `onArrive` is documented for "traders and
+armies" only. "Units standing in a meteor crater, lava, or a tsunami die" sits in §3.9, but `Units.step` cannot see instantaneous impacts, so Powers
+and Units will both do the kill or neither will. `spawn` at the 300 cap is undefined; a caller that deducts 12 % of a town first loses those people.
+FIX: Unit gains `naval: bool`. Unit event payloads become `{ id, type, culture, cell }` (plus `cause` on died). §3.8: "`raiseProphet` puts the prophet in
+`s`. About every 10 years `Society.yearly` sends him as a 'prophet' unit to another settlement of his culture; `onArrive` adds 0.15 devotion there and
+sets `culture.prophet.settlement`; if the unit dies, the prophet dies (`prophet:died`)." §3.9: "Powers kills units for lightning, meteor, quake and
+tsunami with `Units.near` + `Units.kill`. `Units.step` kills only for `lava > 0.2` under the unit or a failed re-path. `Units.spawn` also returns null
+at the cap; callers remove people from the source settlement only after a non-null return."
+
+[16] MINOR — SPEC-SIM §1 (Disaster), §3.3 (drought), §3.10 (tsunami, storms, volcano); SPEC-RENDER §7 (`uStorms`), §10 (tsunami front, volcano column)
+PROBLEM: Disaster fields mean different things per type and nobody says which. Sky (storms), Climate (droughts), FX (tsunami front, volcano column) and Audio
+all read `cell`, `ang` and `power` that Powers writes. For a tsunami, is `ang` the current front radius or the maximum reach? Does a storm's `cell`
+move as it makes landfall? What is `power` for a volcano? Three consumers will guess.
+FIX: Paste under Disaster in §1: "comet/meteor: cell = target, ang = crater radius, data.eta = real seconds to impact, data.flight = total flight seconds.
+volcano: cell = vent, ang = cone radius, power = current intensity 0..1. tsunami: cell = source, ang = CURRENT front radius (grows every tick),
+data.maxAng = reach, power = wave height in world units. storm: cell = current centre (moves at most one hop per tick; consumers smooth it), ang =
+radius, power 0..1. drought: cell and ang fixed. A disaster is removed when t >= dur; storm and drought emit their event with start: false at
+removal."
+
+[17] MINOR — SPEC-RENDER §6 (`Planet.showSnapshot`), §9, §11; SPEC-UI §5 (`Screens.timelapse`); SPEC-SIM §3.11 (snapshot), §3.12 ("snapshot when due")
+PROBLEM: The time-lapse only recolours terrain. `Planet.showSnapshot(snap)` changes cell colours, but `Objects.draw` still draws today's cities, forests,
+rockets and units on the year-0 planet, FX keeps running, and the ocean is drawn at the live `world.seaLevel` (Renderer fills `uPlanet.y`) instead of
+`snap.seaLevel`. No module is responsible for hiding them. Separately, Sim takes a "snapshot when due" while the interval logic (`vars.snapEvery`,
+halving at 200) is described in Chronicle: two owners of one schedule.
+FIX: Add to SPEC-RENDER §11: "`Renderer.setSnapshot(snap | null)` - calls `Planet.showSnapshot`; while a snapshot is shown the renderer skips
+`Objects.draw/drawDepth` and `FX.draw` and writes `snap.seaLevel` to `uPlanet.y`." Screens and Game call only `Renderer.setSnapshot` (the lead
+replaces the three direct `Planet.showSnapshot` calls in game.js). SPEC-SIM: "Sim calls `Chronicle.snapshot(world)` in every yearly group; Chronicle
+alone decides whether a frame is due, using `vars.snapEvery` and `vars.snapLast`."
+
+[18] MINOR — FOUNDATION §4 (`geo.lon`), §2 (`V3.basis`), §6 (tools/load.js); SPEC-SIM §0.1, §2 (`battle`), §3.8 (`Society.rel`); SPEC-RENDER §8 (Models); SPEC-UI
+§1 (Camera), §3 (Icons), §4 (Inspector), §7 (`Audio.play`)
+PROBLEM: Small mismatches, each cheap to fix now. (1) Models and Camera "must also load in Node", but tools/load.js lists only core and sim files, so their
+tests cannot use the documented loader. (2) The call-time lookup rule is stated for sim modules only, yet fx.js loads before renderer.js and calls
+`Renderer.flash`, and hud.js loads before save.js. (3) The inspector shows "buildings as small icons" but Icons has a name for only one of the 12
+buildings (`temple`), and the result for an unknown name is undefined. (4) `Audio.play(name)` has no list of names for HUD and Screens to call. (5)
+`battle { attacker, defender, won, settlement }` does not say whether these are culture or settlement ids. (6) `Society.rel` creates and persists a
+relation on demand, so the HUD inspector mutates sim state by reading. (7) `geo.lon = atan2(z, x)` increases toward +z, while `V3.basis` east at
+(1,0,0) is cross(Y, n) = (0,0,-1): longitude grows opposite to "east". Climate winds and the <clouds> drift can end up opposed.
+FIX: (1) Lead appends `js/render/models.js` and `js/ui/camera.js` to FILES in tools/load.js. (2) Add to FOUNDATION §0: "Every module looks up other modules
+as `DM.X.fn` at call time and does no GL calls or Bus subscriptions at load time, only in its init/attach." (3) Icons adds `shrine, granary, walls,
+port, market, mine, factory, academy, plant, launch, wonder`; an unknown name returns a small neutral dot and never throws. (4) Binding one-shot
+names: `hover, click, arm, deny, unlock, thunder, impact, rumble, wave, chime, choir, horn, toll, roar`. (5) "`attacker` and `defender` are culture
+ids, `settlement` is the defending settlement id, `won` is true when the attacker won." (6) Add `Society.peek(world, a, b) -> relation | null` (never
+creates); HUD uses only `peek`. (7) Add to FOUNDATION §4: "Longitude increases toward -east of `basis`. Use `basis` for all directions (winds, drift,
+headings). lat/lon to direction is (cos lat cos lon, sin lat, cos lat sin lon)."
+

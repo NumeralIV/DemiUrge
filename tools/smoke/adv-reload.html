@@ -1,0 +1,13 @@
+<!doctype html>
+<!-- adversarial rig fixture: reloads itself twice (150 ms apart, counted in sessionStorage), then sets window.READY.
+     Open it over http:// or file://. ?reset=1 clears the counter first. -->
+<html><head><meta charset="utf-8"><title>adv-reload</title></head>
+<body style="background:#013;color:#fff;font:16px monospace">adv-reload: <span id="n"></span>
+<script>
+if (/reset=1/.test(location.search)) { sessionStorage.removeItem('advReloads'); history.replaceState(null, '', location.pathname); }
+const n = +(sessionStorage.getItem('advReloads') || 0);
+document.getElementById('n').textContent = n;
+if (n < 2) { sessionStorage.setItem('advReloads', n + 1); setTimeout(() => location.reload(), 150); }
+else { sessionStorage.removeItem('advReloads'); setTimeout(() => { window.READY = 'after ' + n + ' reloads'; }, 150); }
+</script>
+</body></html>

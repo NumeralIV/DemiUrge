@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- DEMIURGE — tools/smoke/rig.html : input/event recorder used by tools/smoke/rigtest.js -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rig test page</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #204060; color: #fff; font: 14px sans-serif; overflow: hidden; }
+  #pad { position: absolute; left: 0; top: 0; width: 100%; height: 100%; touch-action: none; }
+  #name { position: absolute; left: 20px; top: 20px; width: 200px; }
+  #box { position: absolute; left: 400px; top: 300px; width: 100px; height: 100px; background: rgb(255, 128, 0); }
+</style>
+</head>
+<body>
+<div id="pad"></div>
+<div id="box"></div>
+<input id="name" type="text">
+<script>
+(function () {
+  'use strict';
+  const EV = window.EV = [];
+  const pad = document.getElementById('pad');
+  const rec = (e, extra) => EV.push(Object.assign({ t: e.type }, extra));
+  for (const t of ['mousedown', 'mouseup', 'mousemove', 'click', 'dblclick', 'contextmenu']) {
+    pad.addEventListener(t, e => { if (t === 'contextmenu') e.preventDefault(); rec(e, { x: e.clientX, y: e.clientY, b: e.button, bs: e.buttons, d: e.detail, shift: e.shiftKey }); });
+  }
+  pad.addEventListener('wheel', e => { e.preventDefault(); rec(e, { x: e.clientX, y: e.clientY, dy: e.deltaY, dx: e.deltaX }); }, { passive: false });
+  for (const t of ['pointerdown', 'pointerup', 'pointermove', 'pointercancel']) {
+    pad.addEventListener(t, e => rec(e, { x: Math.round(e.clientX), y: Math.round(e.clientY), pt: e.pointerType, id: e.pointerId, b: e.button, bs: e.buttons }));
+  }
+  for (const t of ['touchstart', 'touchmove', 'touchend', 'touchcancel']) {
+    pad.addEventListener(t, e => {
+      e.preventDefault();
+      rec(e, { n: e.touches.length, ch: Array.from(e.changedTouches, q => [q.identifier, Math.round(q.clientX), Math.round(q.clientY)]), all: Array.from(e.touches, q => q.identifier) });
+    }, { passive: false });
+  }
+  for (const t of ['keydown', 'keyup', 'keypress']) {
+    window.addEventListener(t, e => rec(e, { code: e.code, key: e.key, kc: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, rep: e.repeat, loc: e.location }));
+  }
+  window.READY = true;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+LENS: rendering
+VERDICT: Not ready for a parallel build from the rendering lens. The individual module APIs are sound (the Frame block is all mat4/vec4, 576 bytes with no
+std140 traps; attributes are float-only; depth precision is fine once near/far are pinned; Post needs no depth texture), but the contracts between
+render modules are missing: who writes and uploads the Frame block, who binds the shadow map and what a depth program is, how modules see the camera,
+quality level and each other's data, and the `world.rivers` shape. Those three blockers plus the Objects re-instancing and budget numbers will each be
+built several incompatible ways. The three decisions most likely to make it look cheap are the undetailed 300 px ground triangles and sparse trees at
+close zoom, the bloom/exposure calibration that makes the whole day side glow pastel, and the atmosphere split across two authors that will leave a
+seam on the planet's edge (with 6 px shadow texels at close zoom a close fourth). All 18 fixes are paste-in text; with them applied the documents are
+ready.
+
+[1] BLOCKER — SPEC-RENDER §1 `GL.frame`, §2 Frame block (`uFx`, `uWorld`, `uPlanet`, `uTime`, `uViewProj`), §6 `Planet.setOverlay`, §7 `Sky.update`
+PROBLEM: `frame.set(name, x, y, z, w)` writes a whole vec4, but several vec4s have split owners. `uFx` = cloud opacity (camera-dependent, owner unnamed) +
+cloudiness and ocean fraction (Sky.update). `uWorld` = heat and dust (world), night-light level (owner unnamed), overlay mode (Planet.setOverlay).
+`uTime.z` is cloud drift. `uPlanet.z/.w` are shell radii whose values appear nowhere in any document. Whoever writes last zeroes the other's
+components (clouds at radius 0, overlay reset every frame). Nobody is named as the caller of `upload()`, although the block must be uploaded twice per
+frame because `uViewProj` is the light matrix during the shadow pass. A renderer that uploads once, or a module that uploads from its own sync,
+renders the shadow map with the camera matrix.
+FIX: Add `frame.setc(name, i, value)` (one component) to §1 and this paragraph to §2: "Only renderer.js calls `frame.upload()`: once after step 1 with
+uViewProj = light matrix, once before the scene pass with uViewProj = camera. Writers: renderer.js writes all matrices, uCamPos, uSunDir, uSunCol,
+uTime.x/y/w, uScreen, uPlanet (x = DM.R, y = displayed sea level, z = GL.CLOUD_R, w = GL.ATMO_R), uBrush, uBrushCol, uFlash, uFlashCol, uWorld.x/y
+(heat, dust), uWorld.z = [0.12, 0.2, 0.35, 0.5, 0.8, 1, 1][world.age], uWorld.w = Planet's current overlay mode. Sky.update writes, with setc only:
+uFx.x (cloud opacity = smoothstep(14, 40, altitude)), uFx.y, uFx.z, uTime.z, and uStorms. No other module writes the frame." Add constants to gl.js:
+`GL.CLOUD_R = DM.R + 11`, `GL.ATMO_R = DM.R + 17`.
+
+[2] BLOCKER — SPEC-RENDER §1 `GL.program` (uShadowMap on unit 7), §3 `<lighting>`, §4 step 2 (shadow pass), §6 and §9 `drawDepth`
+PROBLEM: Nobody is assigned to bind the shadow texture to unit 7, and nothing says how depth-pass programs differ from colour programs. "Colour writes off,
+polygon offset on" plus Objects' "one shared instanced program" invites reusing the colour program in drawDepth. That program has an active
+`uShadowMap` sampler on unit 7 while the same texture is the draw framebuffer's depth attachment: WebGL2 raises INVALID_OPERATION (rendering feedback
+loop) on every draw, so the shadow map stays empty and the console floods. In the other direction, if unit 7 has no texture (first frame, shadows off
+at quality 0, dev viewer) every `sunShadow` returns 0 and the planet is black. Polygon-offset values and who sets pass state are unspecified, and a
+drawDepth that obeys §4 literally ("colour mask all true" on exit) undoes the pass state.
+FIX: Add to §4: "Shadow contract. renderer.js owns the shadow target and is the only code that touches texture unit 7: `GL.bindTex(7, null)` before the
+shadow pass, `GL.bindTex(7, shadow.depthTex)` before the scene pass. Units 6 and 7 are reserved; modules use 0-5. Every `drawDepth()` uses a dedicated
+depth program: the same vertex position code as the colour program (yaw, sway, far-side cull), fragment body `void main(){}`, and it must not include
+`<lighting>` or `<clouds>`. For the shadow pass the renderer sets colorMask(false x4), POLYGON_OFFSET_FILL with polygonOffset(1.5, 4.0), cull off, and
+clears depth; drawDepth must not change colour mask, polygon offset or cull. When shadows are off the renderer binds a 1x1 depth texture cleared to
+1.0 to unit 7 and sets uShadowMat so every point maps to (0.5, 0.5, 0)." Add to §1: "The shadow depth texture is DEPTH_COMPONENT24 with
+TEXTURE_COMPARE_MODE = COMPARE_REF_TO_TEXTURE, COMPARE_FUNC = LEQUAL, LINEAR filtering, CLAMP_TO_EDGE. `sunShadow` returns 1 when the shadow
+coordinate is outside 0..1 and fades to 1 over the outer 8 % of the map."
+
+[3] BLOCKER — FOUNDATION §5.2 `world.rivers`; SPEC-SIM §3.4 `Hydro.update`; SPEC-RENDER §6 (rivers) and §11 `DM.Fixtures`
+PROBLEM: FOUNDATION says `world.rivers` is an "array of Int32Array cell polylines". SPEC-SIM §3.4 says it is an array of `{ cells: Int32Array, flow:
+Float32Array }`. The Planet ribbon builder ("width from flow") and Fixtures are written from RENDER + FOUNDATION, Hydro from SPEC-SIM. One side will
+index `river[i]`, the other `river.cells[i]`; rivers either vanish silently or Planet.sync throws inside the frame loop every time `dirty.rivers` is
+set. It is also unstated whether the last point is the sea or lake cell, so ribbons may stop up to one cell (1.9 units) short of the shore.
+FIX: Change FOUNDATION §5.2 to: "`world.rivers = []` derived: array of `{ cells: Int32Array, flow: Float32Array }` (equal length; `flow[i]` = discharge at
+`cells[i]`), ordered source to mouth. The last cell is the first sea cell, the first lake cell, or the confluence cell (inclusive), so a ribbon always
+ends under a water surface or on another river." Repeat the same sentence in SPEC-SIM §3.4 and SPEC-RENDER §6; state in §11 that Fixtures produces
+this shape.
+
+[4] MAJOR — SPEC-RENDER §9 `Objects.sync`, §6 `Planet.groundAt` / `surfaceAt`, §4 step 1; SPEC-SIM §0.7 `dirty.objects`, §3.2 `Terrain.touched`, §3.5
+`Life.classify`
+PROBLEM: (a) Cost. `dirty.objects` is one global boolean and the sim sets it almost continuously during history (vegetation crossing thresholds on every
+Life.step, 25-120 settlements changing). Each time, Objects rebuilds every tree on the planet: about 16,000 land cells x 1-3 trees = 15-30 k
+`Planet.groundAt` calls, each a hint-less `geo.cellAt` (up to 10 us) plus a barycentric lookup, i.e. roughly 50-300 ms, allowed at 2 Hz. That is a
+visible hitch twice a second for the whole game. The ~300 movers plus decorative life call `surfaceAt` every frame, another 1-4 ms without a hint. (b)
+Correctness. `Terrain.touched` sets dirty.elev/water/color but not dirty.objects, and Planet.sync clears dirty.elev before Objects.sync runs. Objects
+are only re-grounded through the parenthetical "(+ dirty.objects)" in Life.classify on a later tick. While paused (meteor impacts resolve in real time
+even when paused) trees and houses hang in the air over the new crater until the sim resumes.
+FIX: SPEC-SIM §3.2: "`Terrain.touched` also sets `dirty.objects`." §3.3: "A sea-level change that sets dirty.water also sets dirty.objects." SPEC-RENDER
+§6: "`Planet.groundAt(dir, hint = -1)`, `Planet.surfaceAt(dir, hint = -1)`: hint is a cell id near dir (the cell being populated, or the unit's
+current cell from Units.dirOf)." §9: "Objects.sync never rebuilds the planet's trees in one frame. Trees are re-instanced by a rolling sweep over
+cells (at least 500 cells per frame, at most 1.5 ms, whole planet in about 1.5 s) into a back buffer that is swapped in when the sweep completes.
+dirty.objects only (re)starts a sweep and is cleared immediately. Each settlement keeps its own instance range and is rebuilt individually on
+`settlement:founded | tier | building | destroyed | captured` and whenever a sweep passes its cell. Movers pass their current cell as the hint."
+
+[5] MAJOR — SPEC-RENDER §0 (budget line), §8 (model triangle limits), §9 (trees "1-3 per cell", settlements, far-side cull); SPEC-SIM §4 (25-120 settlements, 1-10
+M people)
+PROBLEM: The numbers do not add up. Trees: about 9-10 k vegetated cells x up to 3 x "under ~40 triangles" is about 1.1 M triangles. Late-game settlements
+(mostly cities and metropolises when the world holds 1-10 M people) x hundreds of houses x "under ~150 triangles" is another 1-2 M. All of it is drawn
+twice (scene + shadow), and because culling happens in the vertex shader every instance on the planet is vertex-shaded in both passes at every zoom.
+That is 3-5 M triangles against a stated 1.2 M; 45 models x 2 passes is already 90 draw calls against "about 60". Each engineer will cut differently.
+Separately, a naive far-side cull (`dot(dir, camDir) < R/d`) removes mountain-top trees that are still above the horizon at close zoom and casters
+that still shadow the terminator.
+FIX: Replace the budget line in §0 with: "Budget at quality 2: scene pass at most 1.2 M triangles, shadow pass at most 1.0 M, at most 150 draw calls." §8:
+"Trees, shrub, cactus, rock: at most 20 triangles. Homes: at most 48. Civic and movers: at most 150." §9: "Instance caps for quality 0 / 1 / 2: trees
+6,000 / 14,000 / 24,000 (thin deterministically by cell hash when over). Building instances 2,500 / 5,000 / 8,000 planet-wide; per settlement at most
+6 / 14 / 40 / 110 / 260 by tier, scaled down uniformly when the planet-wide cap is reached. `Objects.drawDepth()` draws nothing when `GL.view.zoom01 <
+0.3` (a tree is under 5 px there) and nothing at quality 0. Far-side cull, both passes: hide an instance only when angle(instance direction, camera
+direction) > acos(p/|cam|) + acos(p/|pos|) + 0.05, with p = uPlanet.x + min(uPlanet.y, 0.0) - 1.0."
+
+[6] MAJOR — SPEC-RENDER §0 Look, §6 Terrain, §8 Models, §9 trees; SPEC-UI §1 (altitude 6 at zoom 1)
+PROBLEM: This is the decision most likely to make the game look cheap. A cell is 1.9 units and the only terrain signal is one interpolated vertex colour per
+cell. At zoom 1 (eye about 11 units from the focus, fov 35 deg, 1080p) one unit is about 150 px, so the near field is a few dozen triangles, each
+roughly 300 px of linear colour gradient with one flat normal, with 45 px houses standing on them. Biome borders are straight 300 px gradients.
+Forests are "1-3 trees per cell": three crowns about 0.4 wide on 3 square units is roughly 12-15 % cover, an orchard of lollipops rather than a
+canopy. Houses with a radial up axis float on their downhill side on any slope. The pillar "seamless zoom from orbit down to individual houses"
+depends on exactly this view.
+FIX: Add to §6 Terrain: "Fragment detail is binding, not optional. Using `<noise>` on world position: albedo variation of +/-12 % at three scales (about 6,
+1 and 0.15 units); a detail normal from the noise gradient whose strength rises with `uScreen.z`; biome borders broken up by perturbing the
+interpolated vertex colour with noise so they are ragged, not linear; steep facets (face normal against the radial up) shift toward rock; grass, sand
+and snow each get their own fine pattern. All detail fades out below zoom01 = 0.3 so it cannot alias from orbit." Add to §8: "Every model extends 0.15
+below y = 0 (foundation or trunk) so it never floats on a slope. Add `grove_broadleaf, grove_conifer, grove_jungle`: 3-4 trunks in one mesh, footprint
+about 1 unit, at most 40 triangles." Add to §9: "Cells with veg > 0.6 in FOREST, RAINFOREST or TAIGA use grove models so three instances close the
+canopy." Add to §6: "Ground colour under vegetation darkens with veg so the forest reads from orbit without the trees."
+
+[7] MAJOR — SPEC-RENDER §4 step 1, §7 `Sky.update(dt, world)`, §9 `Objects.sync(world, dt)`, §10 `FX.update(dt, world)` and `FX.spawn`; SPEC-SIM §3.5
+`world._fires`, §1 `Disaster`
+PROBLEM: The per-frame update functions receive no camera and no quality level, yet the spec asks FX for effects "by world state near the camera" and "campfire
+smoke at close zoom", Sky for opacity that "fades out as the camera descends", and Objects for "villagers (close zoom only)" and tree density "by
+quality". Each engineer will invent a different back door (DM.Camera.state, a private renderer field), and these will not match. FX also has no
+defined data source: `world._fires` has no layout, so FX must scan 40,962 cells of `fire` per frame, which §0 forbids; chimney, campfire and rocket
+positions exist only inside Objects' private layout; the position of a tsunami front is not in `Disaster`; `FX.spawn` types are "yours to define", so
+no engineer working in parallel can call it; and nobody is told to call `FX.attach()`.
+FIX: Add to §1: "`GL.view`: set by Renderer.frame before step 1; the Camera.view() object plus `viewProj` (Float32Array(16)), `aspect` and `focusDir`
+(unit). `GL.quality`: 0 | 1 | 2. Any render module may read both; treat a null view as far orbit." SPEC-SIM §3.5: "`world._fires = { cells:
+Int32Array, n }`; the burning cells are `cells[0 .. n-1]`." SPEC-SIM §1 Disaster: "tsunami: `data.front` = current angular radius of the wave front,
+`ang` = its final reach." SPEC-RENDER §9: "`Objects.anchors(kind) -> Float32Array` of world xyz triples for kind 'chimney' | 'campfire' | 'gantry' |
+'pier', rebuilt together with the settlement instances." §10: "Binding spawn types: 'smoke', 'dust', 'sparks', 'splash', 'steam', 'motes'; opts `{
+count = 8, size = 1, color = null, rise = 1 }`; unknown types are ignored." §11: "Renderer.init calls FX.attach()."
+
+[8] MAJOR — SPEC-RENDER §4 step 2 ("orthographic box fitted around what the camera can see"), §1 `GL.depthTarget(size)`, §2 `uShadowMat`, §3 `sunShadow`
+PROBLEM: The fit is not defined, and the literal reading fails where it matters. At zoom 1 the camera (altitude 6, tilt 58 deg) sees to the horizon 35-80 units
+away. A box around all of that on a 2048 map is about 0.04 units per texel while the screen shows about 150 px per unit: one shadow texel covers 6 px
+and a 0.3-unit house casts a shadow 7 texels wide. "Crisp sun shadows" fails exactly where the diorama is inspected. Also unspecified: the map size;
+that casters outside the view frustum (a mountain behind the camera near the terminator) must still be inside the box; texel snapping, without which
+every shadow edge crawls when the camera moves; and how grazing-angle acne at the terminator is handled on a sphere where a whole band of terrain is
+nearly parallel to the light.
+FIX: Replace the last sentence of step 2 with: "Fit: centre c = `GL.view.target`; radius r = clamp(1.6 x |eye - target|, 12, DM.R + 22). Light space: z
+along uSunDir, x and y from a basis built from world +Y (from +X when the sun is within 5 deg of a pole). The ortho box is [c.x - r, c.x + r] x [c.y -
+r, c.y + r] with c.x and c.y snapped to multiples of 2r / size. The z range always spans the whole planet (from -(DM.R + 22) to +(DM.R + 22) measured
+from the planet centre), so every caster between the sun and the box is included. Map size for quality 0 / 1 / 2: 1024 / 2048 / 4096 (2048 when
+`caps.maxTex` < 8192). Above an eye-to-target distance of 76 the box is the whole planet. `sunShadow` offsets the lookup along the normal by 1.5
+texels (texel size in world units is derivable from uShadowMat) and `shade` multiplies the result into N.L, so acne at the terminator is hidden by the
+lighting falloff."
+
+[9] MAJOR — SPEC-RENDER §0 ("Sun-lit white about 2.5; emissive about 3-10"), §5 Post ("threshold about 1.2", `exposure: 1`)
+PROBLEM: The three numbers contradict each other, and every module author will shade against them. With sun-lit white at 2.5 and a bloom threshold of 1.2,
+every sun-lit surface with albedo above 0.48 blooms: ice caps, clouds, beaches, deserts, foam. The day side gets a permanent milky glow, and emissives
+at 3-10 barely separate from snow at 2.1. With exposure 1 through an ACES curve, a mid albedo of 0.3 x 2.5 = 0.75 lands at about 87 % display
+brightness after gamma, so the "saturated biome colours" are pushed into the shoulder and come out pastel. Emitters are also sub-pixel from orbit (a
+window is about 0.05 units; a pixel is 0.19 units at zoom 0), so after the MSAA resolve "3-10" averages to nothing and night cities will not glitter.
+FIX: Replace those lines with a binding calibration block in §0: "Albedos are linear and at most 0.85 (snow and cloud 0.85, sand 0.45, grass 0.10-0.18,
+deep water 0.03). Sun-lit white = 2.5 scene units. `Post.set.exposure` defaults to 0.6. Bloom uses a soft-knee threshold of 3.0 scene units (knee
+1.0): nothing diffuse blooms; only emissive surfaces, specular glint and the sun do. Emissive scale: lava and fire 4-8; windows and the terrain's
+urban night lights 8-20 (they are sub-pixel from orbit); lightning and impact flashes 20-40; the sun disc 40." §5: "Bloom: soft-knee threshold 3.0;
+clamp the bloom input to 64 to stop fireflies; 4-5 level down/up chain." Change `Post.set` default to `exposure: 0.6`.
+
+[10] MAJOR — SPEC-RENDER §3 `atmosphere()` (gl.js author), §7 `Sky.drawAtmosphere` and `Sky.drawClouds` (sky author), §4 steps 3.5-3.6
+PROBLEM: Two different engineers each implement half of one effect. `atmosphere()` adds haze "toward the limb" on every surface; `drawAtmosphere` is an
+"additive halo; depth test on", which for a shell mesh also covers the whole planet disc. Either the disc gets haze twice, or the two halves disagree
+in colour and intensity at the silhouette and the planet shows a dark outline or a bright step exactly on its edge, which is the first thing the eye
+lands on in every orbit screenshot. The cloud shell has the same class of problem: with cull face off, its far-side back faces show in the ring
+between the planet's limb and the shell's limb, blended twice in arbitrary order.
+FIX: Add to §3 `<lighting>`: "`vec3 inscatter(vec3 rayOrigin, vec3 rayDir, float tMax)`: sunlight scattered into a view ray over [0, tMax] inside the shell
+of radius `uPlanet.w` (blue by day, orange near the terminator, faint at night, scaled by `uFx.z`). `atmosphere(color, worldPos)` is defined as color
+x transmittance + inscatter(uCamPos.xyz, dir, distance to worldPos)." Change §7: "`Sky.drawAtmosphere` draws the shell sphere at `GL.ATMO_R` with
+FRONT faces culled and outputs inscatter(camera, dir, distance to the shell's far side). With depth test on it is therefore visible only outside the
+planet's silhouette, and it matches `atmosphere()` at the limb by construction. Haze over the disc comes only from `atmosphere()`. `Sky.drawClouds`
+passes its colour through `atmosphere()` and culls BACK faces when the camera is outside the cloud shell, FRONT faces when inside."
+
+[11] MAJOR — SPEC-RENDER §4 steps 3.5-3.7, §10 `FX.draw`, §3 `<lighting>`
+PROBLEM: All particles are drawn after the cloud shell and are tested only against opaque depth. From orbit, everything below the cloud layer (forest-fire
+smoke, rain streaks, battle puffs, quake dust at radius about 101) is painted on top of clouds at radius about 111 that should hide it: rain appears
+in front of its own storm. Moving FX before the clouds breaks the opposite case (meteor trails, eruption columns, mushroom caps and the Ark plume
+above the clouds). Separately, "soft additive and soft alpha variants" drawn as two batches cannot interleave, so smoke is always entirely over or
+entirely under fire, and nothing makes unlit particles follow day and night, so grey smoke glows on the night side.
+FIX: Change §4 step 3 to: "... 4. `Planet.drawWater()`; 5. `FX.draw(0)`: particles whose radius is below `GL.CLOUD_R`; 6. `Sky.drawClouds()`; 7.
+`Sky.drawAtmosphere()`; 8. `FX.draw(1)`: particles at or above `GL.CLOUD_R`, plus bolts, trails and rings." §10: "`FX.draw(layer)`. A particle's layer
+is decided each frame from its radius. All FX fragments output premultiplied alpha under one blend state, `blendFunc(ONE, ONE_MINUS_SRC_ALPHA)`
+(additive = alpha 0), so one instanced draw per layer holds both kinds in spawn order. Non-emissive particles multiply their colour by
+`lightAt(worldPos)`." §3: "`vec3 lightAt(vec3 worldPos)`: unshadowed light for volumes = sun colour x dayAt x cloudShade + night ambient + the uFlash
+light. Used by particles and by the cloud shell."
+
+[12] MAJOR — SPEC-UI §1 `Camera.update`, `Camera.view` (altitude 320 to 6, fov 35 deg, "near/far adapt to altitude"); SPEC-RENDER §0 ("terrain -6.5 ... +8.5"), §11
+`Renderer.frame`; FOUNDATION §5.3 `ELEV_MAX = 20`
+PROBLEM: (a) Portrait. The 35 deg fov is vertical. At 390x844 the horizontal half-angle is atan(tan 17.5 deg x 0.462) = 8.3 deg, but the planet subtends 13.8
+deg from altitude 320: at zoom 0 a phone shows a cropped middle strip and never the whole world. (b) "near/far adapt to altitude" has no numbers and
+is written by a UI engineer who does not know the cloud and atmosphere shells exist. A far plane at the terrain horizon clips the halo and clouds at
+close zoom; a fixed small near (say 0.1) at orbit gives about 0.1 units of depth resolution at 400 units, and the shoreline, lakes, rivers and roads
+(offsets of 0.02-0.05) z-fight. With an adaptive near, 24-bit depth is comfortable at every zoom, so this is purely a contract gap. (c) Render assumes
+terrain tops out at +8.5, but sculpting and volcano cones clamp at ELEV_MAX = 20, and "altitude 6 above the datum" is inside any mountain higher than
++6.
+FIX: SPEC-UI §1: "`Camera.update(dt, groundAt, aspect = 16/9)`; `Camera.view()` also returns `aspect`. Distance from the planet centre at zoom 0 = 1.08 x
+(DM.R + 17) / sin(atan(tan(fov/2) x min(1, aspect))), which is 420 in landscape and about 880 on a 390x844 phone. At zoom 1 the eye is 6 units above
+`groundAt` under the eye, not above the datum, and it stays at least 1.5 above the ground everywhere. `near = clamp(0.05 x height of the eye above the
+ground, 0.25, 150)`. `far = sqrt(d*d - 93*93) + 75` with d = |eye|, which reaches the far limb of the atmosphere shell." SPEC-RENDER §0: "Typical
+terrain is -6.5 ... +8.5 but may reach +20; peaks above `GL.CLOUD_R` rise through the clouds by design. The shadow box and all bounds use DM.R + 22.
+Ribbon and shoreline offsets rely on the near rule in SPEC-UI §1."
+
+[13] MAJOR — SPEC-RENDER §6 `Planet.showSnapshot`; SPEC-UI §5 `Screens.timelapse`; SPEC-SIM §3.11 snapshot shape
+PROBLEM: Only Planet knows about snapshots. During the finale the terrain is recoloured to year 0 while Objects still draws today's forests, cities, ports and
+rocket; the night side still glitters at the final age; FX keeps smoking; the ocean stays at today's level (the snapshot's `seaLevel` has no
+consumer); and `Planet.sync` overwrites the snapshot colours the next time `dirty.color` is set (the sim "keeps working if ticked" in 'ended'). The
+player will watch Stone Age continents covered in tower blocks. The scale of the snapshot's `urban: Uint8Array` is also not stated.
+FIX: Add to §11: "`Renderer.showSnapshot(snap | null)` is the only entry point (Screens.timelapse calls this, not Planet). It calls
+`Planet.showSnapshot(snap)` and `Objects.showSnapshot(snap)`, sets `uPlanet.y = snap.seaLevel`, sets `uWorld.z` from the fraction of land cells with
+`snap.urban > 0`, and skips FX.update and FX.draw while a snapshot is shown." §6: "While a snapshot is shown, Planet.sync leaves every dirty flag set
+and touches nothing. Colour = biome base colour (snapshots carry no vegetation), blended toward the owning culture's colour where `owner >= 0`, grey
+where `urban > 0`. `showSnapshot(null)` restores live colours and forces a full rebuild." §9: "`Objects.showSnapshot(snap | null)`: hide all trees,
+buildings and movers; draw one culture-tinted marker (`hut` where urban < 128, `townhouse` otherwise) on each cell with `snap.urban > 0`, at most
+2,000; `null` restores." SPEC-SIM §3.11: "snapshot `urban` = round(urban x 255)."
+
+[14] MAJOR — SPEC-RENDER §0 (performance targets), §3 `shade` / `cloudShade` / `cloudCover`, §5 `Post.resize(w, h, quality)`, §11 `Renderer.setQuality`,
+`Renderer.resize`
+PROBLEM: "Quality 0 | 1 | 2" changes behaviour in six modules, but only two effects are pinned down (MSAA at quality >= 1, tree count "by quality"). Six
+engineers will pick six meanings, and quality 0 will not be usable on integrated graphics: every lit fragment runs `shade` = PCF shadow + `cloudShade`
+(procedural 3D fbm, up to 40 hash evaluations for fbm5) + `atmosphere`, on the terrain, again on the water over it, and then the cloud shell runs fbm5
+full-screen. Phones add three failures: devicePixelRatio 3 (a 4x MSAA RGBA16F + depth target at 1170x2532 is about 140 MB); GL context loss when the
+tab is backgrounded, for which the spec has no restore path (black canvas on return); and about 20 programs, each including `<lighting>`, compiled on
+first use, which is seconds of stall under ANGLE/D3D.
+FIX: Add a binding table to §0, values for quality 0 / 1 / 2: pixel-ratio cap 1.0 / 1.5 / 2.0 and at most 1.6 / 3 / 5 megapixels (scale the drawing buffer
+down, CSS size unchanged); MSAA off plus FXAA in the final Post pass / 4x / 4x; shadow map 1024 terrain-only with 1 hardware-PCF tap / 2048 with 4
+taps / 4096 with 9 taps; `cloudCover` octaves 3 / 5 / 5, and `cloudShade` never more than 3 octaves; bloom levels 3 / 5 / 5; tilt-shift off / on / on;
+particle cap 2,000 / 4,000 / 6,000; tree and building caps as in §9. Add: "Shaders branch on `uScreen.w`; CPU code reads `GL.quality`;
+`Renderer.setQuality` sets dirty.objects. If the 2-second mean of `Renderer.stats.ms` exceeds 26, the renderer drops one quality level (once per
+level) and emits `ui:toast`. The renderer handles `webglcontextlost` (preventDefault, stop drawing) and `webglcontextrestored` (GL.init, every
+module's init(), then setWorld(world)); every module's init() must be callable twice. Renderer.init creates every program before the first frame."
+
+[15] MINOR — SPEC-RENDER §4 (GL state rule), §1 `GL.mesh`, `GL.instances`
+PROBLEM: "Leave GL state as it found it" for five flags is not enough to stop eight independently written modules corrupting each other, and state cannot be
+cheaply read back in WebGL anyway. Not covered: the bound VAO (the ELEMENT_ARRAY_BUFFER binding is VAO state, so a `mesh.setIndex` or any index upload
+while another module's VAO is still bound silently rewires that VAO's indices: the terrain turns into spikes after a river rebuild); polygon offset
+(rivers and roads will enable it); cull mode and front face; depth func; scissor; blend func. The constants for disabled attributes ("normal (0,1,0),
+colour (1,1,1,1)") are context state, not VAO state, so they leak from one mesh to the next unless set at draw time.
+FIX: Replace the rule with: "Canonical state on entry to and exit from every draw function: DEPTH_TEST on, depthFunc(LEQUAL), depthMask(true), BLEND off,
+CULL_FACE off with cullFace(BACK) and frontFace(CCW), SCISSOR_TEST off, no VAO bound, and colour mask and POLYGON_OFFSET_FILL as the renderer set them
+for the pass (a scene-pass draw that enables polygon offset disables it again). Whoever enables BLEND sets blendFunc first. Only `target.bind()` and
+`GL.toScreen()` change the framebuffer and viewport. The gl.js helpers bind their own VAO for every draw and every buffer operation and call
+`bindVertexArray(null)` afterwards; `mesh.draw()` and `inst.draw()` call `vertexAttrib4f` for each disabled attribute on every draw. The renderer
+re-asserts the canonical state before each numbered step of §4."
+
+[16] MINOR — SPEC-RENDER §6 Ocean, Lakes, rivers, roads, brush ring; §4 step 3.4 ("depth write on")
+PROBLEM: Four details will be built wrong as written. (1) "The same triangles on a sphere at DM.R + seaLevel" with per-vertex depth "seaLevel - elev" bakes sea
+level into two vertex buffers, so every comet step and every climate change forces a 40,962-vertex rebuild and the sea jumps instead of rising. (2)
+"Lakes at elev + water" per vertex makes boundary triangles slope from the lake level down onto the dry neighbour's ground, coplanar with the terrain
+there: z-fighting around every lake. (3) River and road polylines run cell to neighbour, i.e. exactly along mesh edges where the two adjacent
+triangles slope differently; "slightly above the ground" with depth write on gives ribbons half buried and half floating, in 60 deg zigzags. (4) The
+brush ring is drawn only by the terrain shader, so it disappears under deep water, exactly when the player raises land from the sea or aims a comet.
+FIX: §6: "Ocean vertices are sea-level independent: aPos = unit direction, aData = (elev, sea ice, 0, 0). The vertex shader places the vertex at radius
+`uPlanet.x + uPlanet.y` (plus waves) and computes depth = `uPlanet.y - aData.x`. The renderer eases `uPlanet.y` toward `world.seaLevel` at about 1
+unit per second. The ocean index buffer may be all of `geo.tris`: it is drawn after the terrain, so land triangles are depth-rejected, and with no sea
+(level -9) the sphere is entirely underground. Lakes: emit every triangle that has at least one lake vertex, with all three corners at that lake's
+surface radius, so the shore is a depth-buffer intersection like the ocean's. Rivers and roads: smooth the cell polyline (two Chaikin passes), sample
+it every 0.5 units or less, put each ribbon vertex at `groundAt + 0.03`, draw with polygonOffset(-2, -2) and depth write OFF. Only the ocean writes
+depth in drawWater. The brush ring is drawn by both the terrain and the water shaders."
+
+[17] MINOR — SPEC-RENDER §1 `GL.program`, `GL.target`, `GL.mesh`, `GL.instances`, `GL.caps`; §5 Post (HDR fallback)
+PROBLEM: Small WebGL2 traps that only the gl.js author can fix for everyone. The default `sampler2D` precision is lowp; on mobile GPUs that honour it, HDR
+texture reads (scene resolve, bloom chain) are clamped to about +/-2. RGBA16F is renderable and multisample-able only after `EXT_color_buffer_float`
+or `EXT_color_buffer_half_float` is enabled, and its sample limit is not MAX_SAMPLES. A multisampled colour buffer needs a depth renderbuffer with the
+same sample count or the FBO is incomplete. A multisample resolve blit needs identical formats and identical rectangles and cannot target the canvas.
+`uniformBlockBinding` on a program that uses no Frame member (blur passes) gets INVALID_INDEX. `mesh` cannot draw a sub-range or grow, but rivers,
+roads and bolts change size. The terrain needs more than one vec4 of per-vertex data. The RGBA8 fallback clamps "sun-lit white 2.5" to pure white
+everywhere. Checking link status inside `GL.program` forces serial shader compilation.
+FIX: Add to §1: "The prepended header also contains `precision highp sampler2D; precision highp samplerCube;`. `caps.hdr`: enable EXT_color_buffer_float,
+else EXT_color_buffer_half_float, then verify with a 4x4 RGBA16F framebuffer. `caps.maxSamples` = min(4, largest value of
+`getInternalformatParameter(RENDERBUFFER, <colour format>, SAMPLES)`). `GL.target` with samples > 0 allocates colour and depth renderbuffers with the
+same sample count; `depthTex` with samples > 0 throws. `blitTo(dst)`: dst is single-sample with the same size and colour format, never the canvas. The
+Frame binding is skipped when the block index is INVALID_INDEX. `mesh.draw(mode = TRIANGLES, count = mesh.count, first = 0)`; `mesh.update` and
+`mesh.setIndex` reallocate when given a larger array and update `mesh.count`; `inst.upload(first = 0, count = inst.count)`. `GL.mesh` also accepts
+`aI0 ... aI3` as extra per-vertex vec4 attributes for meshes that are never instanced. Link status is checked on the first `prog.use()`, not inside
+`GL.program`." Add to §5: "When `!caps.hdr` the renderer sets `uSunDir.w = 0.4` (`shade` scales sun, ambient and emissive by it), and Post divides
+exposure by 0.4 and skips bloom."
+
+[18] MINOR — SPEC-RENDER §6 Terrain ("face normal from screen-space derivatives")
+PROBLEM: Derivative normals are the right call here: an indexed mesh of 40,962 vertices cannot give 81,920 triangles a unique provoking vertex each, and `flat`
+varyings hit ANGLE's slow provoking-vertex path on D3D11 (Windows). But three rules are missing. If the world-position varying is declared `centroid`,
+the derivatives are garbage along every triangle edge under MSAA. From orbit a triangle is about 10 px and at the limb it is sub-pixel; the 2x2
+derivative quad then straddles several triangles and the normal is noise, which shows as sparkling snow, flickering specular and a shimmering
+terminator. And nothing says the ocean must not use them.
+FIX: Add to §6: "The world-position varying is plain `smooth` (never `centroid`). No shader in the project uses `flat` varyings. Facet weight = 0.85 x
+smoothstep(2.0, 8.0, 1.9 / length(fwidth(worldPos))): fully faceted when a cell edge spans 8 px or more, pure smooth vertex normal below 2 px and
+toward the limb. The ocean, lakes and cloud shell use the analytic sphere normal plus procedural waves, never derivative normals."
+

@@ -1,0 +1,625 @@
+<!doctype html>
+<!--
+  DEMIURGE — tools/smoke/webgl.html : WebGL2 capability smoke test.
+  Driven by tools/smoke/smoke.js (node tools/smoke/smoke.js); also works when opened by hand in a browser.
+  Exposes window.SMOKE:
+    SMOKE.done      true once every check has run and the rAF rate has been measured
+    SMOKE.ok        true if every check passed
+    SMOKE.report    plain-JSON capability report (see docs/TOOLS.md)
+    SMOKE.frames    number of frames drawn so far
+    SMOKE.freeze(a) pin the triangle's rotation to `a` radians (null = spin again)
+    SMOKE.solid(c)  fill the canvas with [r, g, b] (0..255) instead of the triangle and hide the HUD (null = back)
+    SMOKE.bench(instances, frames) → { instances, frames, msPerFrame, … }  draws instanced triangles through an
+                    MSAA RGBA16F target + resolve, synchronously, and times it (GPU throughput, not vsync)
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>DEMIURGE WebGL2 smoke test</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05070d; overflow: hidden; }
+  #c { display: block; width: 100vw; height: 100vh; }
+  #hud { position: fixed; left: 18px; top: 14px; color: #d9cba0; font: 13px/1.6 Georgia, 'Times New Roman', serif;
+         white-space: pre; text-shadow: 0 1px 3px #000; pointer-events: none; }
+  #hud b { color: #fff0c0; font-size: 15px; letter-spacing: 0.2em; }
+  #hud .ok { color: #9fe0a0; }
+  #hud .bad { color: #ff8a70; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">running…</div>
+<script>
+(function () {
+  'use strict';
+  const hud = document.getElementById('hud');
+  const canvas = document.getElementById('c');
+  const report = { ok: false, webgl2: false, renderer: null, vendor: null, version: null, glsl: null, software: null,
+    limits: {}, extensions: {}, checks: {}, raf: null, bench: null, supportedExtensions: [] };
+  const SMOKE = window.SMOKE = { done: false, ok: false, report, frames: 0 };
+
+  const gl = canvas.getContext('webgl2', { antialias: true, alpha: false, depth: true, stencil: false, powerPreference: 'high-performance' });
+  if (!gl) {
+    report.error = 'canvas.getContext("webgl2") returned null';
+    hud.innerHTML = '<span class="bad">WebGL2 is not available</span>';
+    SMOKE.done = true;
+    return;
+  }
+  report.webgl2 = true;
+  canvas.addEventListener('webglcontextlost', () => { report.contextLost = true; });
+
+  // ---- identity, limits, extensions ----------------------------------------------------------
+  const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+  report.renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  report.vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+  report.version = gl.getParameter(gl.VERSION);
+  report.glsl = gl.getParameter(gl.SHADING_LANGUAGE_VERSION);
+  report.software = /swiftshader|llvmpipe|software|basic render|warp/i.test(String(report.renderer));
+  for (const name of ['MAX_TEXTURE_SIZE', 'MAX_SAMPLES', 'MAX_RENDERBUFFER_SIZE', 'MAX_CUBE_MAP_TEXTURE_SIZE', 'MAX_3D_TEXTURE_SIZE',
+    'MAX_ARRAY_TEXTURE_LAYERS', 'MAX_DRAW_BUFFERS', 'MAX_COLOR_ATTACHMENTS', 'MAX_VERTEX_ATTRIBS', 'MAX_TEXTURE_IMAGE_UNITS',
+    'MAX_VERTEX_TEXTURE_IMAGE_UNITS', 'MAX_COMBINED_TEXTURE_IMAGE_UNITS', 'MAX_UNIFORM_BUFFER_BINDINGS', 'MAX_UNIFORM_BLOCK_SIZE',
+    'MAX_VERTEX_UNIFORM_VECTORS', 'MAX_FRAGMENT_UNIFORM_VECTORS', 'MAX_VARYING_VECTORS', 'MAX_ELEMENT_INDEX']) {
+    report.limits[name] = gl.getParameter(gl[name]);
+  }
+  report.limits.MAX_VIEWPORT_DIMS = Array.from(gl.getParameter(gl.MAX_VIEWPORT_DIMS));
+  for (const name of ['EXT_color_buffer_float', 'OES_texture_float_linear', 'EXT_color_buffer_half_float', 'WEBGL_debug_renderer_info',
+    'EXT_float_blend', 'EXT_texture_filter_anisotropic', 'EXT_disjoint_timer_query_webgl2', 'KHR_parallel_shader_compile',
+    'OES_draw_buffers_indexed', 'WEBGL_multi_draw', 'WEBGL_lose_context', 'EXT_texture_norm16', 'WEBGL_provoking_vertex']) {
+    report.extensions[name] = !!gl.getExtension(name);
+  }
+  report.supportedExtensions = gl.getSupportedExtensions() || [];
+
+  // ---- helpers -------------------------------------------------------------------------------
+  function program(vs, fs) {
+    const p = gl.createProgram();
+    for (const [type, src] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]]) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error('shader compile: ' + gl.getShaderInfoLog(s));
+      gl.attachShader(p, s);
+    }
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error('program link: ' + gl.getProgramInfoLog(p));
+    return p;
+  }
+  function target8(w, h) {
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, w, h);
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) throw new Error('RGBA8 target incomplete');
+    gl.viewport(0, 0, w, h);
+    return { fb, tex, w, h };
+  }
+  function px8(x, y) {
+    const b = new Uint8Array(4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, b);
+    return Array.from(b);
+  }
+  const near = (a, b, eps) => a.length === b.length && a.every((v, i) => Math.abs(v - b[i]) <= eps);
+  const fbName = st => ({ [gl.FRAMEBUFFER_COMPLETE]: 'COMPLETE', [gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT]: 'INCOMPLETE_ATTACHMENT',
+    [gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT]: 'INCOMPLETE_MISSING_ATTACHMENT', [gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS]: 'INCOMPLETE_DIMENSIONS',
+    [gl.FRAMEBUFFER_UNSUPPORTED]: 'UNSUPPORTED', [gl.FRAMEBUFFER_INCOMPLETE_MULTISAMPLE]: 'INCOMPLETE_MULTISAMPLE' }[st] || '0x' + st.toString(16));
+  function resetState() {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindVertexArray(null);
+    gl.useProgram(null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+    gl.depthMask(true);
+    gl.colorMask(true, true, true, true);
+  }
+  function check(name, fn) {
+    let r;
+    while (gl.getError() !== gl.NO_ERROR) { /* drain */ }
+    try { r = fn() || {}; if (r.ok === undefined) r.ok = true; } catch (e) { r = { ok: false, error: String(e && e.message || e) }; }
+    const err = gl.getError();
+    if (err !== gl.NO_ERROR) { r.ok = false; r.glError = '0x' + err.toString(16); }
+    resetState();
+    report.checks[name] = r;
+  }
+
+  // unit quad as a triangle strip; its first three vertices are the lower-left triangle
+  const quadVbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadVbo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const quadVao = gl.createVertexArray();
+  gl.bindVertexArray(quadVao);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  gl.bindVertexArray(null);
+
+  const flat = program(`#version 300 es
+    layout(location = 0) in vec2 aPos;
+    uniform vec4 uXf;   // scale.xy, offset.xy
+    uniform float uZ;
+    void main() { gl_Position = vec4(aPos * uXf.xy + uXf.zw, uZ, 1.0); }`,
+  `#version 300 es
+    precision highp float;
+    uniform vec4 uColor;
+    out vec4 o;
+    void main() { o = uColor; }`);
+  const flatU = { xf: gl.getUniformLocation(flat, 'uXf'), z: gl.getUniformLocation(flat, 'uZ'), color: gl.getUniformLocation(flat, 'uColor') };
+
+  // ---- check: multisampled RGBA16F renderbuffer, complete, blit-resolved to a texture ---------
+  check('msaaRgba16fResolve', () => {
+    const W = 64, H = 64;
+    const samples = Math.min(4, gl.getParameter(gl.MAX_SAMPLES));
+    const rbC = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, rbC);
+    gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.RGBA16F, W, H);
+    const gotSamples = gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_SAMPLES);
+    const rbD = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, rbD);
+    gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.DEPTH_COMPONENT24, W, H);
+    const fbMS = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbMS);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbC);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rbD);
+    const stMS = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA16F, W, H);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    const fbR = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbR);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    const stR = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    const r = { ok: false, samplesRequested: samples, samples: gotSamples, msaaFramebuffer: fbName(stMS), resolveFramebuffer: fbName(stR) };
+    if (stMS !== gl.FRAMEBUFFER_COMPLETE || stR !== gl.FRAMEBUFFER_COMPLETE) return r;
+
+    // an HDR-coloured triangle (values far above 1.0) with a diagonal edge, depth-tested
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbMS);
+    gl.viewport(0, 0, W, H);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clearDepth(1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.useProgram(flat);
+    gl.uniform4f(flatU.xf, 1, 1, 0, 0);
+    gl.uniform1f(flatU.z, 0);
+    gl.uniform4f(flatU.color, 4.0, 2.0, 0.5, 1.0);
+    gl.bindVertexArray(quadVao);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, fbMS);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fbR);
+    gl.blitFramebuffer(0, 0, W, H, 0, 0, W, H, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbR);
+    const px = new Float32Array(W * H * 4);
+    gl.readPixels(0, 0, W, H, gl.RGBA, gl.FLOAT, px);
+    const at = (x, y) => Array.from(px.subarray((y * W + x) * 4, (y * W + x) * 4 + 4));
+    let partial = 0;
+    for (let i = 0; i < W * H; i++) { const v = px[i * 4]; if (v > 0.2 && v < 3.8) partial++; }
+    r.inside = at(8, 8);
+    r.outside = at(56, 56);
+    r.edgePixelsPartiallyCovered = partial;
+    r.hdrPreserved = near(r.inside, [4, 2, 0.5, 1], 0.01);
+    r.antialiased = gotSamples > 1 ? partial > 0 : null;
+    r.ok = r.hdrPreserved && near(r.outside, [0, 0, 0, 1], 0.01) && (gotSamples <= 1 || partial > 0);
+    return r;
+  });
+
+  // ---- check: instanced drawing (drawArraysInstanced + vertexAttribDivisor) --------------------
+  check('instancing', () => {
+    const N = 8;
+    const prog = program(`#version 300 es
+      layout(location = 0) in vec2 aPos;
+      layout(location = 1) in float aSlot;   // per instance
+      layout(location = 2) in vec3 aColor;   // per instance
+      out vec3 vColor;
+      void main() {
+        vColor = aColor;
+        float cx = (aSlot + 0.5) / ${N}.0 * 2.0 - 1.0;
+        gl_Position = vec4(cx + aPos.x * 0.8 / ${N}.0, aPos.y * 0.8, 0.0, 1.0);
+      }`,
+    `#version 300 es
+      precision highp float;
+      in vec3 vColor;
+      out vec4 o;
+      void main() { o = vec4(vColor, 1.0); }`);
+    const t = target8(N * 8, 8);
+    const inst = new Float32Array(N * 4);
+    const expected = [];
+    for (let i = 0; i < N; i++) {
+      const c = [i * 32, 255 - i * 32, i % 2 ? 255 : 0];
+      expected.push(c.concat(255));
+      inst.set([i, c[0] / 255, c[1] / 255, c[2] / 255], i * 4);
+    }
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadVbo);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    const ibo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, ibo);
+    gl.bufferData(gl.ARRAY_BUFFER, inst, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 1, gl.FLOAT, false, 16, 0);
+    gl.vertexAttribDivisor(1, 1);
+    gl.enableVertexAttribArray(2);
+    gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 16, 4);
+    gl.vertexAttribDivisor(2, 1);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(prog);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, N);
+    const got = [];
+    for (let i = 0; i < N; i++) got.push(px8(i * 8 + 4, 4));
+    const gap = px8(0, 0);
+    return { ok: got.every((g, i) => near(g, expected[i], 1)) && near(gap, [0, 0, 0, 0], 0), instances: N, got, expected, gap };
+  });
+
+  // ---- check: uniform block, std140 ----------------------------------------------------------
+  check('uniformBlockStd140', () => {
+    const prog = program(`#version 300 es
+      layout(location = 0) in vec2 aPos;
+      layout(std140) uniform Frame { mat4 uViewProj; vec3 uSunDir; float uTime; vec4 uTint; vec2 uRes; float uExposure; };
+      void main() { gl_Position = uViewProj * vec4(aPos, 0.0, 1.0); }`,
+    `#version 300 es
+      precision highp float;
+      layout(std140) uniform Frame { mat4 uViewProj; vec3 uSunDir; float uTime; vec4 uTint; vec2 uRes; float uExposure; };
+      out vec4 o;
+      void main() { o = vec4(uSunDir.x * uExposure * uTint.r, uSunDir.y * uExposure * uTint.g, uTime * uExposure + uRes.y, 1.0); }`);
+    const names = ['uViewProj', 'uSunDir', 'uTime', 'uTint', 'uRes', 'uExposure'];
+    const idx = gl.getUniformIndices(prog, names);
+    const offsets = Array.from(gl.getActiveUniforms(prog, idx, gl.UNIFORM_OFFSET));
+    const block = gl.getUniformBlockIndex(prog, 'Frame');
+    const size = gl.getActiveUniformBlockParameter(prog, block, gl.UNIFORM_BLOCK_DATA_SIZE);
+    const data = new Float32Array(28); // 112 bytes
+    data.set([0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], 0); // scale x,y by 0.5
+    data.set([0.25, 0.5, 0.75], 16);  // uSunDir  @ 64
+    data[19] = 0.125;                 // uTime    @ 76
+    data.set([1, 0.5, 0.25, 1], 20);  // uTint    @ 80
+    data.set([640, 0.25], 24);        // uRes     @ 96
+    data[26] = 2;                     // uExposure@ 104
+    const ubo = gl.createBuffer();
+    gl.bindBuffer(gl.UNIFORM_BUFFER, ubo);
+    gl.bufferData(gl.UNIFORM_BUFFER, data, gl.DYNAMIC_DRAW);
+    gl.uniformBlockBinding(prog, block, 3);
+    gl.bindBufferBase(gl.UNIFORM_BUFFER, 3, ubo);
+    const t = target8(32, 32);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(prog);
+    gl.bindVertexArray(quadVao);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    const centre = px8(16, 16), corner = px8(2, 2);
+    // update one member in place and draw again
+    gl.bufferSubData(gl.UNIFORM_BUFFER, 80, new Float32Array([0.5, 1, 0.25, 1]));
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    const updated = px8(16, 16);
+    gl.bindBuffer(gl.UNIFORM_BUFFER, null);
+    const wantOffsets = [0, 64, 76, 80, 96, 104];
+    return {
+      ok: near(offsets, wantOffsets, 0) && size >= 108 && size <= 112 && near(centre, [128, 128, 128, 255], 1) && near(corner, [0, 0, 0, 0], 0) && near(updated, [64, 255, 128, 255], 1),
+      offsets, expectedOffsets: wantOffsets, blockSize: size, blockSizeNote: 'std140 needs 108 bytes; drivers may report it rounded up to 112', centre, corner, afterBufferSubData: updated,
+    };
+  });
+
+  // ---- check: DEPTH_COMPONENT24 depth texture sampled through sampler2DShadow -----------------
+  check('depthTextureShadowSampler', () => {
+    const S = 64;
+    const depthTex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, depthTex);
+    gl.texStorage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT24, S, S);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_MODE, gl.COMPARE_REF_TO_TEXTURE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_COMPARE_FUNC, gl.LEQUAL);
+    const fbD = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbD);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTex, 0);
+    gl.drawBuffers([gl.NONE]);
+    gl.readBuffer(gl.NONE);
+    const st = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    const r = { ok: false, depthFramebuffer: fbName(st) };
+    if (st !== gl.FRAMEBUFFER_COMPLETE) return r;
+    // depth pass: left half holds an occluder at window depth 0.25, right half stays at the far plane (1.0)
+    gl.viewport(0, 0, S, S);
+    gl.clearDepth(1);
+    gl.clear(gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LESS);
+    gl.useProgram(flat);
+    gl.uniform4f(flatU.xf, 0.5, 1, -0.5, 0);
+    gl.uniform1f(flatU.z, -0.5);
+    gl.uniform4f(flatU.color, 1, 1, 1, 1);
+    gl.bindVertexArray(quadVao);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.disable(gl.DEPTH_TEST);
+    // lookup pass
+    const prog = program(`#version 300 es
+      layout(location = 0) in vec2 aPos;
+      out vec2 vUv;
+      void main() { vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }`,
+    `#version 300 es
+      precision highp float;
+      precision highp sampler2DShadow;
+      uniform sampler2DShadow uShadow;
+      uniform float uRef;
+      uniform vec2 uFixedUv;   // x < 0: use the interpolated uv
+      in vec2 vUv;
+      out vec4 o;
+      void main() {
+        vec2 uv = uFixedUv.x < 0.0 ? vUv : uFixedUv;
+        float lit = texture(uShadow, vec3(uv, uRef));
+        o = vec4(lit, lit, lit, 1.0);
+      }`);
+    const t = target8(S, S);
+    gl.useProgram(prog);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, depthTex);
+    gl.uniform1i(gl.getUniformLocation(prog, 'uShadow'), 0);
+    const uRef = gl.getUniformLocation(prog, 'uRef'), uFixed = gl.getUniformLocation(prog, 'uFixedUv');
+    gl.bindVertexArray(quadVao);
+    const run = (ref, fx, fy) => { gl.uniform1f(uRef, ref); gl.uniform2f(uFixed, fx, fy); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+    run(0.5, -1, 0);
+    r.ref050 = { behindOccluder: px8(16, 32)[0], openSide: px8(48, 32)[0] };   // expect 0 (shadowed) and 255 (lit)
+    run(0.1, -1, 0);
+    r.ref010 = { inFrontOfOccluder: px8(16, 32)[0], openSide: px8(48, 32)[0] }; // expect 255 and 255
+    run(0.5, 0.5, 0.5);
+    r.pcfAtBoundary = px8(32, 32)[0];   // bilinear percentage-closer filtering gives ~128 exactly on the shadow edge
+    r.hardwarePcf = r.pcfAtBoundary > 32 && r.pcfAtBoundary < 224;
+    r.ok = r.ref050.behindOccluder === 0 && r.ref050.openSide === 255 && r.ref010.inFrontOfOccluder === 255 && r.ref010.openSide === 255;
+    return r;
+  });
+
+  // ---- benchmark: instanced lit triangles → MSAA RGBA16F + depth → resolve ---------------------
+  let benchState = null;
+  SMOKE.bench = function (instances, frames) {
+    instances = instances || 100000;
+    frames = frames || 30;
+    const W = 1280, H = 720;
+    while (gl.getError() !== gl.NO_ERROR) { /* drain */ }
+    if (!benchState) {
+      const prog = program(`#version 300 es
+        layout(location = 0) in vec2 aPos;
+        layout(location = 1) in vec4 aInst;   // xyz offset, w = seed
+        uniform float uTime;
+        out vec3 vColor;
+        out vec3 vNormal;
+        void main() {
+          float a = aInst.w * 6.2831853 + uTime;
+          vec2 p = mat2(cos(a), -sin(a), sin(a), cos(a)) * aPos * 0.012;
+          vNormal = normalize(vec3(sin(a) * 0.5, cos(a) * 0.5, 0.8));
+          vColor = 0.5 + 0.5 * cos(6.2831853 * (aInst.w + vec3(0.0, 0.33, 0.67)));
+          gl_Position = vec4(aInst.xy + p * vec2(${(H / W).toFixed(6)}, 1.0), aInst.z, 1.0);
+        }`,
+      `#version 300 es
+        precision highp float;
+        in vec3 vColor;
+        in vec3 vNormal;
+        out vec4 o;
+        void main() {
+          float d = max(dot(normalize(vNormal), normalize(vec3(0.4, 0.6, 0.7))), 0.0);
+          o = vec4(vColor * (0.2 + 2.5 * d), 1.0);
+        }`);
+      const samples = Math.min(4, gl.getParameter(gl.MAX_SAMPLES));
+      const rbC = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, rbC);
+      gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.RGBA16F, W, H);
+      const rbD = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, rbD);
+      gl.renderbufferStorageMultisample(gl.RENDERBUFFER, samples, gl.DEPTH_COMPONENT24, W, H);
+      const fbMS = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbMS);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbC);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rbD);
+      const tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA16F, W, H);
+      const fbR = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbR);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      const vao = gl.createVertexArray();
+      gl.bindVertexArray(vao);
+      gl.bindBuffer(gl.ARRAY_BUFFER, quadVbo);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+      const ibo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, ibo);
+      gl.enableVertexAttribArray(1);
+      gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribDivisor(1, 1);
+      benchState = { prog, fbMS, fbR, vao, ibo, samples, count: 0, uTime: gl.getUniformLocation(prog, 'uTime') };
+    }
+    const b = benchState;
+    if (b.count !== instances) {
+      const data = new Float32Array(instances * 4);
+      let s = 12345;
+      const rnd = () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
+      for (let i = 0; i < instances; i++) data.set([rnd() * 2 - 1, rnd() * 2 - 1, rnd() * 1.8 - 0.9, rnd()], i * 4);
+      gl.bindBuffer(gl.ARRAY_BUFFER, b.ibo);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      b.count = instances;
+    }
+    const sync = new Float32Array(4);
+    const frame = i => {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, b.fbMS);
+      gl.viewport(0, 0, W, H);
+      gl.clearColor(0.01, 0.01, 0.02, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LESS);
+      gl.useProgram(b.prog);
+      gl.uniform1f(b.uTime, i * 0.05);
+      gl.bindVertexArray(b.vao);
+      gl.drawArraysInstanced(gl.TRIANGLES, 0, 3, instances);
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, b.fbMS);
+      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, b.fbR);
+      gl.blitFramebuffer(0, 0, W, H, 0, 0, W, H, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, b.fbR);
+      gl.readPixels(W >> 1, H >> 1, 1, 1, gl.RGBA, gl.FLOAT, sync); // forces the GPU to finish the frame
+    };
+    frame(0); // warm-up: shader compile, buffer upload
+    const t0 = performance.now();
+    frame(1);
+    const first = performance.now() - t0;
+    if (first > 250) frames = Math.min(frames, 3);
+    const t1 = performance.now();
+    for (let i = 0; i < frames; i++) frame(i + 2);
+    const ms = (performance.now() - t1) / frames;
+    const err = gl.getError();
+    resetState();
+    return { instances, frames, target: W + 'x' + H + ' RGBA16F + DEPTH24, ' + b.samples + 'x MSAA, blit resolve, 1-pixel readback',
+      msPerFrame: +ms.toFixed(3), trianglesPerSecond: Math.round(instances / ms * 1000), glError: err === gl.NO_ERROR ? null : '0x' + err.toString(16) };
+  };
+  try { report.bench = SMOKE.bench(100000, 30); } catch (e) { report.bench = { error: String(e && e.message || e) }; }
+
+  // ---- the lit rotating triangle --------------------------------------------------------------
+  let tri = null, triError = null;
+  try {
+    const prog = program(`#version 300 es
+      layout(location = 0) in vec3 aPos;
+      layout(location = 1) in vec3 aCol;
+      uniform mat4 uProj;
+      uniform mat4 uView;
+      uniform mat4 uModel;
+      out vec3 vCol;
+      out vec3 vWorld;
+      void main() {
+        vCol = aCol;
+        vec4 w = uModel * vec4(aPos, 1.0);
+        vWorld = w.xyz;
+        gl_Position = uProj * uView * w;
+      }`,
+    `#version 300 es
+      precision highp float;
+      in vec3 vCol;
+      in vec3 vWorld;
+      uniform vec3 uNormal;
+      uniform vec3 uLight;
+      uniform vec3 uEye;
+      out vec4 o;
+      void main() {
+        vec3 n = normalize(uNormal);
+        vec3 v = normalize(uEye - vWorld);
+        if (dot(n, v) < 0.0) n = -n;                      // lit from both sides
+        vec3 l = normalize(uLight);
+        float diff = max(dot(n, l), 0.0);
+        float spec = pow(max(dot(n, normalize(l + v)), 0.0), 40.0);
+        vec3 c = vCol * (0.25 + 0.75 * diff) + vec3(1.0, 0.95, 0.8) * spec * 0.5;
+        o = vec4(pow(c, vec3(1.0 / 2.2)), 1.0);
+      }`);
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      0.0, 0.95, 0, 1.0, 0.78, 0.25,     // gold
+      -0.9, -0.65, 0, 0.15, 0.75, 0.70,  // teal
+      0.9, -0.65, 0, 0.85, 0.20, 0.30,   // crimson
+    ]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
+    gl.bindVertexArray(null);
+    const u = {};
+    for (const n of ['uProj', 'uView', 'uModel', 'uNormal', 'uLight', 'uEye']) u[n] = gl.getUniformLocation(prog, n);
+    tri = { prog, vao, u };
+  } catch (e) { triError = String(e && e.message || e); }
+  report.checks.litTriangle = tri ? { ok: true } : { ok: false, error: triError };
+
+  let frozen = null, solid = null;
+  SMOKE.freeze = a => { frozen = a === null || a === undefined ? null : +a; return frozen; };
+  SMOKE.solid = c => { solid = c ? [c[0] / 255, c[1] / 255, c[2] / 255] : null; hud.style.display = solid ? 'none' : ''; return !!solid; };
+
+  function perspective(fovy, aspect, n, f) {
+    const t = 1 / Math.tan(fovy / 2);
+    return new Float32Array([t / aspect, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0]);
+  }
+  const view = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -3.2, 1]);
+  const t0 = performance.now();
+
+  function draw() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, w, h);
+    if (solid) {
+      gl.clearColor(solid[0], solid[1], solid[2], 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    } else {
+      gl.clearColor(0.02, 0.03, 0.055, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      if (tri) {
+        const a = frozen !== null ? frozen : (performance.now() - t0) * 0.0012;
+        const c = Math.cos(a), s = Math.sin(a);
+        gl.enable(gl.DEPTH_TEST);
+        gl.useProgram(tri.prog);
+        gl.uniformMatrix4fv(tri.u.uProj, false, perspective(0.75, w / h, 0.1, 20));
+        gl.uniformMatrix4fv(tri.u.uView, false, view);
+        gl.uniformMatrix4fv(tri.u.uModel, false, new Float32Array([c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1])); // rotation about Y
+        gl.uniform3f(tri.u.uNormal, s, 0, c);
+        gl.uniform3f(tri.u.uLight, 0.45, 0.55, 0.7);
+        gl.uniform3f(tri.u.uEye, 0, 0, 3.2);
+        gl.bindVertexArray(tri.vao);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindVertexArray(null);
+        gl.disable(gl.DEPTH_TEST);
+      }
+    }
+    SMOKE.frames++;
+  }
+
+  // ---- frame loop, rAF measurement, verdict ---------------------------------------------------
+  const tick = [];
+  let measured = false;
+  function loop() {
+    const now = performance.now();
+    draw();
+    if (!measured) {
+      tick.push(now);
+      const span = now - tick[0];
+      if (span >= 1000 && tick.length > 2) {
+        measured = true;
+        let max = 0;
+        for (let i = 1; i < tick.length; i++) max = Math.max(max, tick[i] - tick[i - 1]);
+        const frames = tick.length - 1;
+        report.raf = { frames, ms: +span.toFixed(1), fps: +(frames * 1000 / span).toFixed(1), meanMs: +(span / frames).toFixed(2), maxMs: +max.toFixed(2) };
+        finish();
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function finish() {
+    const err = gl.getError();
+    if (err !== gl.NO_ERROR) report.strayGlError = '0x' + err.toString(16);
+    const required = ['EXT_color_buffer_float', 'OES_texture_float_linear', 'EXT_color_buffer_half_float', 'WEBGL_debug_renderer_info'];
+    report.missingExtensions = required.filter(n => !report.extensions[n]);
+    report.ok = Object.keys(report.checks).every(k => report.checks[k].ok) && report.raf.fps > 20 && !report.strayGlError && !report.contextLost;
+    SMOKE.ok = report.ok;
+    const mark = ok => ok ? '<span class="ok">✔</span>' : '<span class="bad">✘</span>';
+    const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const lines = [
+      '<b>DEMIURGE</b>   WebGL2 smoke test',
+      esc(report.renderer) + (report.software ? '   <span class="bad">(software)</span>' : ''),
+      esc(report.version) + ' · max texture ' + report.limits.MAX_TEXTURE_SIZE + ' · max samples ' + report.limits.MAX_SAMPLES,
+      '',
+    ];
+    const labels = { msaaRgba16fResolve: 'MSAA RGBA16F renderbuffer → blit resolve', instancing: 'instanced drawing', uniformBlockStd140: 'uniform block (std140)',
+      depthTextureShadowSampler: 'DEPTH_COMPONENT24 + sampler2DShadow', litTriangle: 'lit rotating triangle' };
+    for (const k of Object.keys(report.checks)) lines.push(mark(report.checks[k].ok) + ' ' + (labels[k] || k));
+    lines.push(mark(!report.missingExtensions.length) + ' extensions' + (report.missingExtensions.length ? ' — missing ' + report.missingExtensions.join(', ') : ': float + half-float colour buffers, float linear, renderer info'));
+    lines.push(mark(report.raf.fps > 20) + ' requestAnimationFrame ' + report.raf.fps + ' fps');
+    if (report.bench && report.bench.msPerFrame !== undefined) lines.push('   100k instanced triangles, 4x MSAA HDR: ' + report.bench.msPerFrame + ' ms / frame');
+    hud.innerHTML = lines.join('\n');
+    SMOKE.done = true;
+  }
+
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

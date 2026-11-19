@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- DEMIURGE — tools/smoke/throws.html : a page that misbehaves on purpose (used by tools/smoke/rigtest.js) -->
+<html>
+<head><meta charset="utf-8"><title>throws</title></head>
+<body style="background:#400">
+<script>
+console.log('before the error', { a: 1, list: [1, 2, 3] });
+console.warn('a warning');
+console.error('console.error output', 42);
+function inner() { throw new Error('deliberate uncaught error'); }
+function outer() { inner(); }
+setTimeout(outer, 0);
+Promise.reject(new Error('deliberate unhandled rejection'));
+</script>
+<script src="does-not-exist.js"></script>
+<script>
+  const gl = document.createElement('canvas').getContext('webgl2');
+  if (gl) gl.drawArrays(gl.TRIANGLES, 0, 3); // INVALID_OPERATION: no program
+  undefinedFunctionCall();
+</script>
+</body>
+</html>

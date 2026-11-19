@@ -1,0 +1,289 @@
+LENS: sim-dynamics
+VERDICT: Not ready from the simulation-dynamics lens: the module APIs and event list are sound, but the rules that decide how a world actually unfolds are
+either missing a number, missing an owner, or (in four places) contradict each other. Two items will break integration outright (climate datum and
+seaBase/iceRef initialisation; who sets and repairs a culture's capital and declares it dead), and the cross-module quantities (K per cell, science
+pacing, Awe income, witness units, CO2 and dust amounts, sea-level amplitude) are set by engineers who cannot talk, so the first assembled world will
+either stall, peg, or drown. Every fix above is a paste-in sentence or number rather than a restructuring; with them merged into SPEC-SIM.md (plus
+need.bio and the determinism lines in FOUNDATION.md) the documents are fit for a parallel build, with the caveat that my numbers are hand-derived
+estimates, not simulated, and still need a simrun pass on several seeds.
+
+[1] BLOCKER — C:/Users/Relly/Documents/Fable5.2 Test/demiurge/docs/SPEC-SIM.md §3.3 Climate (Temperature, Ice, Yearly globals: vars.seaBase, vars.iceRef) and §3.12
+Phases / Sim.genesis.skip; FOUNDATION.md §5.2 (seaLevel = -9)
+PROBLEM: Three linked failures from the rules as written. (a) Snowball genesis: temperature is 'minus 5.5 per world unit of height above sea level' and
+seaLevel starts at -9, so in the 'water' phase no cell is sea and elev 0 is 9 units up = 49.5 C colder. Equilibrium ice is 1 almost everywhere;
+stepIce (6 % per call, one call per 2.5 real seconds in genesis) whitens the planet while the player throws comets, and it then needs tens of seconds
+to melt below the ICE biome threshold before anything can be seeded. (b) Nobody is told who sets vars.seaBase / vars.iceRef, or when. Undefined gives
+'seaBase + ...' = NaN, so seaLevel becomes NaN and isSea is false everywhere. If the climate author captures them lazily on the first Climate.yearly,
+and 'the environment runs in every phase after molten', seaBase is captured at -9 and the yearly rule drains the comet-filled ocean (0.01/yr = 0.02
+units per real second in genesis, then for the first centuries of history). With genesis.skip, ice has not equilibrated, so iceRef is about 0
+(division by zero, or 'ice doubled' and the sea drops 0.6); if iceRef is captured while ice is still inflated from (a), the melt reads as 'ice volume
+falling' and the sea rises up to +0.9 in the first 90 years, drowning the first coastal tribe. (c) Because the lapse is relative to the live sea
+level, every 0.1 of sea rise warms all land by 0.55 C, which melts more ice and raises the sea further (positive loop, gain roughly 0.4-0.5).
+FIX: Add to §3.3: (1) 'Climate.datum(world) -> max(0, vars.seaBase) when vars.seaBase is a number, else max(0, world.seaLevel). The lapse term is 5.5 x
+max(0, elev - datum).' (2) 'Climate.calibrate(world): run Climate.update, set ice directly to its equilibrium (4 fixed-point passes with the albedo
+term), then vars.seaBase = seaLevel and vars.iceRef = max(50, sum of ice over land cells). Sim calls it exactly once, on the people -> history
+transition, and inside genesis.skip; Sim.use calls it if vars.seaBase is missing.' (3) 'Climate.yearly changes seaLevel, co2 and globalTemp only in
+phases history/ended; in genesis phases it only decays dust.' (4) 'In genesis phases stepIce moves 30 % per call.' (5) Add to §3.12 an explicit
+genesis tick list: Powers.tick, Life.burn, Life.step, stepIce and the derive/climate/hydro pipeline only; no Civ, Society, Climate.yearly sea logic or
+Powers.natural.
+
+[2] BLOCKER — SPEC-SIM.md §1 (Settlement.capital, Culture.capital, Unit), §2 (culture:died, culture:age listed as 'society / civ'), §3.7 Civ.found/destroy/capture,
+§3.8 newCulture / The Ark, §3.10 awaken, §3.12 Endings
+PROBLEM: Culture lifecycle has no owner. awaken is 'new culture + camp', but neither Society.newCulture, Civ.found nor Powers is told to set culture.capital /
+settlement.capital; three engineers will each assume another does it. The launch site is 'capital only' and the Ark is built by 'the culture's
+capital', so capital = -1 means no Ark and no 'ark' ending in any world. Nothing says what happens when the capital is destroyed or captured (the
+oldest settlement is usually coastal, so it is the likeliest to drown late): the culture keeps pointing at a dead or foreign settlement forever.
+Nobody is assigned to mark a culture dead (both 'society / civ' may emit culture:died, or neither), so ghost cultures keep their wars, count toward
+the 6-culture cap and keep units marching. Units whose culture died, or whose target was razed or captured, have no rule. Schisms have no way to move
+settlements except Civ.capture, which emits settlement:captured and will be chronicled as a conquest. The status timers (plague, immune, inspire,
+blessed) have no owner, so they get decremented twice or never. The Ark ending is described as an event (ark:launched) but checkEnding takes only
+world.
+FIX: Add a 'Lifecycle ownership' subsection to §1: (1) 'Civ.found: if the culture's capital is -1 or points at a dead or foreign settlement, set s.capital
+= true and culture.capital = s.id.' (2) 'Civ.destroy and Civ.capture: if s.capital, clear it, set the old culture's capital = -1, s.ark = 0,
+s.b.launch = 0.' (3) 'Civ.capture(world, s, cultureId, how = 'war'); settlement:captured payload becomes { id, from, to, how: 'war'|'schism' };
+Society uses 'schism' for splits.' (4) 'Society.yearly starts with housekeeping in culture-id order: refresh pop/towns; if capital is -1 and towns > 0
+the most populous live settlement becomes capital; if towns = 0 and the culture has no live settler unit: dead = true, emit culture:died once,
+makePeace on every war (victor = the other side), Units.kill(unit, 'disbanded') for all its units, prophet = null.' (5) 'Units.step: an army or trader
+whose to-settlement is dead, or (army) no longer belongs to a culture it is at war with, dies with cause 'disbanded'; settlers never depend on from.'
+(6) 'plague, immune, inspire, blessed, famine are advanced only by Civ.yearly; prophet.until, edictUntil and truces only by Society.yearly. Research,
+culture:age and world:age belong to Civ only; culture:born/died to Society only.' (7) 'On completion Society sets world.vars.ark = { culture,
+settlement, year } as well as emitting ark:launched; Sim.checkEnding reads vars.ark (never the Bus) and returns null once world.ending is set.'
+
+[3] MAJOR — SPEC-SIM.md §3.7 Civ (Territory radius 2,3,4,5,6; Food and capacity K; yields x1, 2.5, 5, 10, 40, 120, 300; Tier gates 60 / 400 / 3,000 / 40,000) and
+§4 (population 1-10 million, 25-120 settlements)
+PROBLEM: No base yield per cell is given, and the numbers that are given cannot all hold. Territory is 19/37/61/91/127 cells for radius 2..6. To pass each gate
+at its gate age, the yield per territory cell at Stone must be: village 60/19 = 3.2; town 400/(37 x 2.5) = 4.3; city 3,000/(61 x 5) = 9.8; metropolis
+40,000/(91 x 40) = 11.0. At 11 per cell, a Space-age settlement holds 127 x 11 x 300 = 419,000, so 25-120 settlements give 10-50 million (target 1-10
+million). At 3.2 per cell (population target met) no town can become a city before Industry and no metropolis exists before Space. fert defaults to
+0.5 and a coastal territory is half sea, so real yields are well under the ideal. Every other target (science, Awe, CO2) hangs off K, and the civ
+author cannot tune it alone because the other modules do not exist yet.
+FIX: Replace the yield and tier lines with explicit starting numbers. 'techYield = [1, 2.5, 5, 10, 25, 60, 120]. Per territory land cell: farmPot = 22 x
+min(fert, 1.2) x suit(temp, moist) x techYield[age] on arable cells (hab > 0.15, not lake, not ice/rock); forage = 3 x (0.6 veg + 0.4 fauna), not
+multiplied by tech; fish = 4 x fauna per sea cell bordering the territory x (1 + port) x sqrt(min(techYield, 10)). K = sum over territory of
+max(farmPot, forage) + fish.' 'Tier gates: village 60; town 400 (Bronze+); city 1,500 (Iron+); metropolis 12,000 (Industry+).' Check with a typical
+site (fert 0.6, suit 0.8, 65 % arable = 6.9 per cell): camp K 131; village at Bronze 638; town at Iron 2,104; city at Industry 15,700; metropolis at
+Space 105,000; 25-120 settlements at about 90 unshared cells each = 1.9-8.9 million. Add a test in civ.test.js that asserts these five gate checks on
+a synthetic uniform territory.
+
+[4] MAJOR — SPEC-SIM.md §3.7 Civ: 'converts its best territory cells to farmland as it grows ... lets farms lapse when it shrinks', 'Growth: logistic toward K',
+'above capacity people starve', Settlement.K 'computed last year'
+PROBLEM: Wrong-signed feedback and a numeric trap. If K is computed from the current farm[] and farms follow population, then a drought or fire that halves K
+starves people, farms lapse, K falls again, and the settlement spirals down to forager level or below 3 people after the first famine, even when the
+land has recovered. Separately, logistic growth r x P x (1 - P/K) divides by K: K is undefined in the founding year ('computed last year') and is 0
+when the territory is burnt, flooded, lava-covered or entirely owned by neighbours, giving NaN or -Infinity population that then poisons stats.pop,
+culture.pop and science. The starvation rate is not specified at all, so two engineers will produce anything from a gentle decline to instant death.
+FIX: Add: 'K is computed from potential yields (see Food) and never depends on farm[] or on the current population. After K is known, farm[] is set for
+display and ecology: the best cells by farmPot are farmed until their summed farmPot reaches 1.15 x pop; the others relax toward 0 by 0.1 per year.'
+'Civ.found claims territory and computes K immediately. Keff = max(K, 1). If pop <= Keff: pop += r x pop x (1 - pop/Keff), r = 0.03 x (1 + 0.3 granary
++ 0.3 if blessed + 0.2 x max(0, love)), famine = 0. Else: pop -= min(0.12 x pop, 0.5 x (pop - Keff)), famine += 1 (settlement:famine when famine
+reaches 3). Then plague deaths. pop is clamped to >= 0 and the settlement is destroyed below 3.' With these numbers a halved K costs at most 12 % per
+year and the settlement stabilises at the new K instead of collapsing.
+
+[5] MAJOR — SPEC-SIM.md §3.7 Research ('science from its settlements, approx pop^0.6 ... Thresholds are tuned so a typical undisturbed world reaches Bronze around
+year 300-700 ...') and §4
+PROBLEM: Science is extensive (a sum of pop^0.6 over a culture's settlements) but the targets are narrow time windows. Between worlds the sum varies by more
+than 10x: 25 versus 120 settlements, one culture versus six sharing them, and a x2 to x4 population jump at each age that feeds back into science.
+Fixed thresholds that put a 60-settlement single-culture world in the windows put a four-culture world 3-4x late (Space after year 6,000, no Ark by
+4,500) and a large world early. The civ author also cannot tune thresholds, because nothing else exists to run against. This is the rule that decides
+whether the game ends in 35 minutes or never.
+FIX: Replace the research rule with an intensive one measured in 'progress years': 'Each culture gains rate per year: rate = sizeF x buildF x traitF x
+inspireF x catchUp, clamped to 0.4..2.0. sizeF = clamp(0.5 + 0.5 x sqrt(liveSettlements / 12), 0.5, 1.25); buildF = 1 + 0.15 x (share of its
+settlements with an academy) + 0.10 x (share with a market) + 0.10 x (share with a factory); traitF = 0.85 + 0.3 x curiosity; inspireF = 1 + 0.25 x
+(share of its people in inspired settlements); catchUp = 1.5 if a culture in contact is at least one age ahead. Needed to leave each age: [420, 500,
+600, 750, 620, 520].' A nominal culture then reaches Bronze about 520, Iron 1,000, Sail 1,550, Industry 2,200, Atomic 2,750, Space 3,200. Also pin the
+Ark: 'the launch site appears 20 years after Space; ark += (1/250) x clamp(culture pop / 1.5 million, 0.8, 1.25) per year', giving launches around
+3,450-3,800, inside 3,300-4,500 (the current 150-250 years after a year-3,000 Space age can launch at 3,150, before the target window opens).
+
+[6] MAJOR — SPEC-SIM.md §3.8 Awe ('Income per year = 0.6 + sum devotion x (0.2 + 0.5 shrine + 1.2 temple) x (1 + tier/2)', aweMax cap 1,200), §3.10 costs (awaken
+'later 250'), §4 Awe target
+PROBLEM: Income is linear in settlement count and tier while costs are fixed, so Awe pegs at the cap. Mid game (10 towns with temples, 20 villages with
+shrines, devotion 0.5): 10 x 0.5 x 1.9 x 2 + 20 x 0.5 x 0.7 x 1.5 = about 30 Awe/yr = 60 Awe per real second at 1x: a meteor every 2.5 s, the 1,200
+cap refilled in 20 s, brush costs (5-6/s) irrelevant. Late game is about 80/yr. The target itself is inconsistent: 'a small miracle every few seconds'
+needs about 5 Awe/s, at which a 150-Awe meteor comes every 30 s, not 'every few minutes'. Separately, awaken costs 250 after genesis, but aweMax is
+100 with no shrines and awe is clamped to aweMax, so after an extinction (exactly when it is needed) the rescue power can never be afforded and the
+world can only run out the 50-year silence clock.
+FIX: Replace the income line with: 'S = sum over live settlements of devotion x (0.2 + 0.5 shrine + 1.2 temple) x (1 + tier/2). Income per year = min(8,
+0.6 + 0.9 x sqrt(S)).' Add to §3.10: 'Powers.cost for click powers in the wrath and grace groups is the table cost x (1 + 0.25 x world.age). awaken
+costs 0 while there are no live settlements, otherwise min(250, god.aweMax).' Restate the §4 target: 'with three shrines (about 3.5 Awe per real
+second at 1x) lightning is affordable every 4-5 s and a meteor every 40-60 s; in the late game income is capped at 16 Awe per real second, so a great
+miracle is never available more often than about once per 20 s at 1x.' (Check: S = 1.6 gives 1.74/yr; S = 30 gives 5.5/yr; S = 84 hits the cap.)
+
+[7] MAJOR — SPEC-SIM.md §3.8 Society.witness ('devotion += awe x falloff; love += good x falloff x 0.5'), Belief (2 %/yr drift), §3.10 last paragraph (who
+witnessed what, natural events)
+PROBLEM: The unit of the awe argument is not defined and no per-power values exist. The powers author can reasonably pass the Awe cost (15, 150) or a 0..1
+number; the society author adds it straight to a 0..1 devotion. Even with small values there is no saturation: the only restoring force is 2 %/yr
+toward the baseline, so one witnessed miracle of 0.1 every five years holds devotion a full 1.0 above baseline, i.e. pegged at 1 for any active
+player. That in turn raises Awe income, which pays for more miracles (positive loop), and makes the 'beloved' devotion >= 0.35 test trivial. It is
+also unspecified whether natural disasters call witness: if they do with negative 'good', every passive world drifts to love <= -0.2 and ends 'feared'
+instead of 'forgotten'.
+FIX: Add to §3.8: 'awe is in devotion units (0..0.25) and good is -1..1. Society applies devotion += awe x falloff x (1 - devotion) and love += 0.5 x good
+x falloff x (1 - |love|); both stay clamped. A settlement that witnessed the same power id within the last 5 years receives half.' Add to §3.10 a
+witness table (awe / good): rain 0.01 per second of brush, +0.3 only on dry or burning inhabited land; bloom 0.01 per second, +0.2; lightning 0.04,
+-0.3 if it hurt them else 0; quake 0.08, -0.6; plague 0.05, -0.7; meteor 0.20, -1 inside the damage radius, 0 outside; volcano 0.20, -0.8 within lava
+reach, 0 outside; heal 0.08, +0.8; inspire 0.06, +0.4; prophet 0.10, +0.3; peace 0.08, +0.5. 'Natural events call witness with a quarter of the awe
+and good = 0.' Add to Belief: 'baseline = table x (0.6 + 0.8 x piety)' so piety 0 does not zero devotion and income.
+
+[8] MAJOR — SPEC-SIM.md §3.3 Climate.emit / addDust / Yearly globals ('co2 relaxes toward 0 slowly', globalTemp = 3 x log2(1 + co2/100), temp minus 9 x dust),
+§3.7 factory 'emits CO2 via Climate.emit', §3.10 meteor/volcano dust, §3.8 nuclear winter
+PROBLEM: The climate outcome is the ratio of numbers owned by engineers who cannot talk: emissions per factory (civ), uptake rate (climate), and dust per event
+(powers, society). Equilibrium co2 = emissions / uptake. With 50 factories at 1 unit/yr and 1 % uptake, co2 = 5,000 and the anomaly is +17 C: the
+equator sits at 46 C against a habitable band of 8-26 and everyone starves. With 0.01 per factory the anomaly is under +0.2 C for the whole game and
+the late-game climate pillar does nothing. The same holds for dust: at 9 C per unit, a volcano author who adds 0.5 per eruption plus natural eruptions
+every 50 years leaves the world 2-3 C colder permanently. Also co2 has no bounds, and a negative value below -100 makes log2 return NaN.
+FIX: Put the cross-module numbers in §3.3 as binding starting values: 'Each settlement with a factory calls Climate.emit(world, 0.0025 x sqrt(pop / 1000))
+per year (x 0.5 in the Space age). Uptake per year = co2 x 0.005 x (0.5 + Life.cover(world).veg). co2 is clamped to 0..300.' (40 industrial cities of
+20,000 give equilibrium co2 about 80 = +2.6 C; 60 Atomic cities of 50,000 about 190 = +4.6 C, approached with a 180-year time constant; the clamp
+bounds the anomaly at +6.) 'Dust additions: meteor 0.25; volcano 0.03 per year while erupting; nuclear strike 0.10 each; natural twins the same;
+addDust clamps to 0..1 and sets need.climate.' Add to §3.12 simrun output: peak globalTemp and peak dust, with the target 'a passive world peaks
+between +2 and +5 C'.
+
+[9] MAJOR — SPEC-SIM.md §3.3 Yearly globals (sea level: +0.9 for ice, -0.6, 0.08 x globalTemp), §3.2 Terrain ('at least a quarter of land below +0.6'), §3.7
+Hazards ('centre cell under the sea -> destroyed')
+PROBLEM: The sea-level amplitudes are sized to drown the world. At +4 C the target is 0.32 (thermal) plus roughly a third of the 0.9 ice term, about +0.6
+before the lapse feedback noted in the first issue, and up to +1.2 with all ice gone, while Terrain is required to put at least a quarter of all land
+below +0.6. Settlements prefer exactly that land (flat, fertile, coastal bonus, ports), so a passive late game loses a quarter to a half of its land
+and likely most of its large cities, including capitals with half-built Arks, just before the 3,300-4,500 Ark window. Everyone in a drowned settlement
+dies instantly even though the sea rises 0.01 per year. In the other direction, a dust event that grows ice pulls the sea down 0.6 and strands every
+port. The formula is also only described in prose ('up to', 'if ice doubles').
+FIX: Replace the sea-level sentence with: 'r = (sum of ice over land cells) / vars.iceRef. iceTerm = 0.35 x (1 - r) for r <= 1, else -0.25 x min(1, r - 1).
+target = clamp(vars.seaBase + iceTerm + 0.04 x globalTemp, vars.seaBase - 0.3, vars.seaBase + 0.6). seaLevel moves toward target by at most 0.005 per
+year.' (A +4 C world then rises about 0.3: roughly a tenth of the land, coastal towns below +0.3.) Add to §3.7 Hazards: 'When the centre cell is under
+the sea because seaLevel rose (not a wave): before Civ.destroy(s, 'drowned'), spawn a settler unit with 60 % of the people heading for the best valid
+site within 12 hops (it joins the nearest settlement of its culture if none).' Keep the instant death for sculpting and tsunamis.
+
+[10] MAJOR — SPEC-SIM.md §3.12 Tick order, §0.7 need flags ('climate: elevation, sea level or globals changed'), §0.8 budget (mean 2.5 ms, max 30 ms), §3.7
+Expansion (Path.reach), §3.8 armies and traders (Path.find <= 25 ms)
+PROBLEM: The cadences as written collide and the triggers are too eager. Yearly (every 4th), stepIce (every 20th) and climate+classify+habitability (every
+40th) all fall on tick % 40 = 0. Terrain.touched and every sea-level step set derive, climate and hydro together, and the tick order runs all three in
+one tick: about 4 + 12 + 5 + 15 ms = over the 30 ms cap before any yearly work. Climate.yearly changes globalTemp and dust every year, and §0.7 says
+'globals changed' sets need.climate, so a literal reading reruns the 12 ms climate pass plus classify and habitability every 4 ticks (over 4 ms per
+tick mean against a 2.5 ms budget). classify and habitability run before Hydro.update and nothing reruns them after, so fresh-water habitability and
+wetlands are up to 10 years stale. A sculpt brush held at 8x sets all flags every frame. Finally the yearly tick has unbounded path searches: every
+settlement near capacity runs a planet-wide naval Path.reach (up to 25 ms each), and with no rule that a failed search starts the cooldown, a full
+continent retries every year: 30 settlements = 750 ms in one tick.
+FIX: Replace the tick-order tail with a one-stage-per-tick pipeline and add need.bio to FOUNDATION §5.2 (world.need = { hydro, climate, derive, bio }):
+'Yearly work runs when (tick - vars.t0) % 4 === 0 (vars.t0 = tick at which history began), so it lands on whole years. stepIce runs when tick % 20 ===
+10. On every tick that is not a yearly tick, run at most ONE of, in this order: need.derive -> Terrain.derive; (need.climate and at least 8 ticks
+since the last climate pass) or 40 ticks since it -> Climate.update, which sets need.hydro and need.bio; need.hydro and at least 8 ticks since the
+last -> Hydro.update, which sets need.bio; need.bio -> Life.classify + Life.habitability.' 'Climate.yearly sets need.climate only when globalTemp - 9
+x dust has changed by 0.25 C, or seaLevel by 0.03, since the last Climate.update.' 'Per yearly tick at most 2 expansion searches (longest-waiting
+settlement first, ties by id; Path.reach maxCost 45 on land, 120 naval) and at most 4 Units.spawn path searches for armies and traders; trade paths
+are cached per settlement pair in world._routes. Any expansion search, successful or not, sets lastExpand.'
+
+[11] MAJOR — SPEC-SIM.md §3.10 Powers.update ('real-time pieces ... runs even while the sim is paused'; comet 1.4 s, meteor 1.6 s; data.eta in real seconds), §3.12
+simrun / policies, SPEC-UI.md §0 debug.ff / debug.use; FOUNDATION.md §0 Determinism; SPEC-SIM §3.11 culture._seen
+PROBLEM: Comets and meteors only land inside Powers.update(realDt), which only the browser game loop calls. Sim.tick never calls it, so in tools/simrun.js the
+cruel and chaotic policies launch meteors that never arrive (the 'cruel player can drive a world to silence' target cannot be verified), debug.use
+followed by debug.ff never produces an impact, and a headless genesis cannot fill the sea with comets. In the browser the impact tick depends on frame
+timing and game speed (1.6 s is 13 ticks at 1x and 102 ticks = 25 years at 8x), so 'same seed + same inputs at the same ticks' does not hold unless
+the mapping is defined. Smaller divergence sources: render, audio and FX Bus handlers are not forbidden from drawing on world.rng (the headless run
+has no such handlers, so its stream differs); the 'at most 4 per real second' rate limits need a clock that sim files may not read; the per-culture
+witnessed-deeds record may live in culture._seen, which is transient and not rebuildable, so epithets change after a reload.
+FIX: Add to §3.10: 'Flight time is counted only by the dt passed to Powers.update. Headless drivers (simrun, debug.ff, Sim.genesis.skip, tests) must call
+Powers.update(world, 0.125) once after every Sim.tick, which is the 1x mapping of 8 ticks per real second. Impacts are resolved inside Powers.update
+using world.rng. Real-second rate limits are measured by accumulating that dt, never a clock.' Add to FOUNDATION §0 Determinism: 'Only js/sim/* may
+draw from world.rng or any fork of it; render, audio, UI and FX use their own generators. Determinism is guaranteed for an uninterrupted run with the
+same sequence of Sim.tick, Powers.update and Powers.use calls; a save/load boundary may diverge because fields are quantized and derived fields are
+refreshed.' In §3.11 replace 'culture._seen or world.vars' with a persisted field 'culture.seen: { powerId: count }' and add it to the Culture shape
+in §1. Snapshots are due when year >= vars.snapNext, not on a modulo of a float year.
+
+[12] MAJOR — SPEC-SIM.md §3.7 Expansion ('12 % of its people ... best reachable unclaimed site ... at least ~7 hops from any other territory. Cooldown 25 years'),
+Tier, Hazards ('population < 3 -> destroyed'); FOUNDATION §5.1 owner i16
+PROBLEM: Several holes that only show up when run forward. (1) A camp of 30 near its capacity sends 12 % = 3.6 people; Civ.found creates a settlement that dies
+at the next hazard check or the first bad year. Dead settlements are never removed, so churn of this kind (up to one founding per settlement per 25
+years for 4,000 years) can push ids toward the i16 limit of owner and bloat every save. (2) Tier has no hysteresis: a village of 62 sends settlers,
+drops to 55, is demoted to camp, its radius shrinks 3 -> 2, K halves, people starve, then it regrows and is promoted again, emitting settlement:tier
+and chronicle lines each cycle. (3) A target site is not reserved, so during the 2-4 years a party walks, every neighbour picks the same best site,
+loses 12 % and gets nothing. (4) 'Near capacity' and the distance test (from territory, which needs a ring scan per candidate cell inside a Dijkstra
+flood) are undefined. For reference the rules as written give a settlement doubling time of about 70 years (130 years to mature, then one party per
+30), so the home continent is full by year 500-700: fine for the 8-40 target, but only if these holes are closed.
+FIX: Rewrite the Expansion bullet: 'A settlement with pop >= 0.85 K, pop >= 40 and year - lastExpand >= 25 (12 under the expand edict) may send settlers.
+Party size = clamp(0.12 x pop, 12, 500), removed from the origin. Candidate sites must have Civ.canSettle ok, an estimated camp K >= 60, be at least 7
+hops from every owned cell (use world._ownDist, a multi-source BFS distance field capped at 8, rebuilt once per year) and at least 9 hops from the
+dest of any live settler unit. The best by siteScore minus 0.01 x path cost wins. If none exists, lastExpand = year - 15 (retry in 10 years).' Tier:
+'Promote when pop reaches the gate; demote only when pop < 0.5 x the gate of the current tier.' Add: 'Civ.found returns null when there are 160 live
+settlements or world.settlements.length >= 30,000.' Territory: 'When two settlements re-claim in the same year, a contested unowned cell goes to the
+nearer centre (ties: lower id).'
+
+[13] MAJOR — SPEC-SIM.md §3.8 Relations, war, battles, Atomic age, New cultures; §4 (living cultures at year 2,000: 2-6; passive worlds launch an Ark; no
+extinction on 9 of 10 seeds)
+PROBLEM: No numbers anywhere in the diplomacy loop, and several dead ends. (1) Wars may never start (baseline positive, trade improves) or never stop: 'ends by
+exhaustion' is undefined, and if exhaustion only rises from battles, two cultures separated by sea before the Sail age can never reach each other
+(Units.spawn returns null), so the war flag and trade ban last forever. (2) The battle formula compares an army's size with the defender's whole
+population times walls: an army of 6 % of a city can never beat a peer, so the '40 % of settlements lost' end condition is unreachable. Whether the
+army's people leave the source is unspecified. (3) Nuclear exchange has no probability; with 700-1,000 years spent in Atomic+ and a war per pair every
+couple of centuries, any per-year risk above a few percent makes an exchange near-certain in passive worlds, hitting the largest cities (the capitals
+building Arks) with a 9 C dust winter. (4) Culture splits have no thresholds; before Sail there is no 'overseas', so a compact home continent can
+still be one culture at year 2,000, missing the 2-6 target.
+FIX: Add starting numbers to §3.8. Relations, yearly per pair in contact: 'v += 0.03 x (0.1 - v) + 0.04 x trade - 0.02 x border - 0.03 x max(0, aggrA +
+aggrB - 0.9) - 0.03 x |loveA - loveB| + 0.03 x rng.gauss(), clamped to -1..1. War when v < -0.5, year >= truce and the more aggressive side has at
+least 0.6 of the other's population x tech.' War: 'exhaustion += 0.015 per year at war, + 0.08 per lost battle, + 0.15 per settlement lost; peace when
+either side reaches 1, after 60 years regardless, or at 40 % settlements lost; then v = -0.1, truce = year + 40, exhaustion decays 0.03 per year. Each
+side sends one army every 8 years from its largest settlement within path cost 60 of an enemy settlement: size = 6 % of that settlement's people
+(removed). Battle: size x tech[a] x rng.range(0.7, 1.3) versus 0.05 x pop x (1 + walls) x tech[d], tech = [1, 1.5, 2.2, 3, 5, 8, 10]; win -> capture
+(raze if pop < 100) and the defender loses 15 %; lose -> army dies.' Nuclear: '1.5 % per year per warring pair with both sides Atomic+; at most one
+exchange per war: 2 strikes per side on the largest cities (30 % survive, rad 0.8 within 2 hops, dust per the climate table), then immediate peace
+with a 100-year truce.' Splits: 'A settlement is estranged while it is more than 30 hops (0.57 rad) from its capital or on another landmass, or its
+love differs from the culture mean by more than 0.6; after 120 consecutive estranged years (persist as s.apart) two or more estranged settlements
+within 15 hops of each other secede together. At most one birth per parent per 150 years; at most 6 living cultures.'
+
+[14] MAJOR — SPEC-SIM.md §3.5 Fire ('spreads to neighbours with probability rising with their vegetation and dryness'), §3.10 Powers.natural ('wildfire lightning',
+droughts, quakes, eruptions, plague), §4 (no extinction on 9 of 10 seeds)
+PROBLEM: Fire on this grid is a percolation process with a sharp threshold. The cell graph is a triangular lattice (6 neighbours), whose bond-percolation
+threshold is 0.347: if a burning cell's lifetime chance of igniting a given neighbour is above about 0.35, one strike burns the entire connected
+forest; below it, fires stay small. With no number given, the life author lands on one side or the other by accident: either lightning is cosmetic, or
+every natural strike strips a continent of the veg and fauna that Stone-age foraging lives on. This matters most in the first 130 years, when the
+whole species is a single camp of 30-150 people. One natural fire, quake (15-35 %), eruption or drought on that one camp ends the game, and
+Powers.natural rolls every year with no rates given. Hitting 9 of 10 seeds needs this to be bounded by rule, not luck.
+FIX: Add to §3.5 Fire: 'A cell burns for exactly 2 ticks and makes one ignition attempt per neighbour, on its first tick, with P = 0.55 x veg x dry, dry =
+sat(1.2 - 1.6 x (moist + wet)); never onto sea, ice, lake, or veg < 0.15. (Wet forest P < 0.05; dry savanna and forest about 0.28, sub-critical; only
+drought on dense vegetation exceeds 0.35.) No new ignitions while world._fires holds more than 1,500 cells. Burning removes 80 % of veg and sets
+scorch.' Add to §3.10: 'Natural events per century at calamity 1: lightning fires 6, storms 3, droughts 2, quakes 1, plague 1 (only where a city
+exists), eruptions 0.4; a drought lasts 6-12 years. While the world has fewer than 4 live settlements, or before year 150, no natural event is centred
+within 0.15 rad of a settlement.' Add simrun output: largest single fire (cells) and count of extinctions before year 300 over 10 seeds.
+
+[15] MAJOR — SPEC-SIM.md §3.4 Hydro (lakes: 'water = filled - elev where that exceeds 0.03, capped at 2.5'), §3.5 Habitability and capacity, §3.6 Path, §3.7
+Territory / Hazards / 'ruins that decay slowly'; FOUNDATION §5.1 farm, urban, owner
+PROBLEM: Lake cells have no rules outside hydro. They are land by definition, so they are habitable, farmable, claimable, walkable, plantable and valid
+settlement sites; a lake that forms under a town (after a crater, a lowered basin, or Terrain.roughen, which makes many one-cell pits per quake)
+drowns nothing while the renderer draws water over the houses. Priority-flood also turns every one-cell pit in the noise into a lake, so fresh water
+is within 2 hops of almost everything and 'a desert made liveable by fresh water' applies everywhere. Related state is never cleaned up: when a
+settlement dies its cells become unowned but nobody decays farm[] or urban[] (Civ only visits live settlements), and vegetation capacity is multiplied
+by (1 - farm), so abandoned farmland is bare forever. Cells that flood when the sea rises keep owner, farm, veg, road and lake water.
+FIX: Add to §3.4: 'A depression becomes a lake only if it has at least 3 cells or a maximum depth of 0.25; smaller ones are treated as filled ground (water
+= 0) and drain through. A lake cell is a land cell with water > 0.03.' Add one line to each consumer: Life: 'capacity and hab are 0 on lake cells; on
+any cell with owner = -1, farm decays 5 % per year and urban 1 % per year; on sea cells veg, farm, urban, road, water, fire and scorch are set to 0
+(fauna and ice keep their sea meaning).' Path: 'a lake step costs +2 on foot.' Civ: 'lake cells are never farmed and are not valid sites (canSettle
+reason 'sea'); a centre cell with water > 0.3 is destroyed as 'drowned'; claim drops sea cells.' Objects (SPEC-RENDER §9): 'no trees on lake cells.'
+
+[16] MAJOR — SPEC-SIM.md §3.7 Civ.bestSite / Expansion ('naval from the Sail age if it has a port'), §3.6 Path naval, §3.10 awaken; CONCEPT 'choose where the first
+tribe wakes'
+PROBLEM: Expansion can simply never happen. Nothing crosses water before Sail (year 1,200-2,000). If the first tribe wakes on an island or a small continent
+(the player may choose it, and bestSite ranks single cells by habitability with no regard for how much land is around them), the world holds 1-6
+settlements for a millennium and a half; science then crawls, Sail arrives late or never, and the Ark window is missed while nothing visibly changes
+for 20 minutes of play. Even on a good continent the map is static from about year 600 (continent full) until Sail. 'Overseas' in the culture-split
+rule also needs a landmass test that no module provides except by running Path.find.
+FIX: Add to §3.2 Terrain.derive: 'also labels connected land components into world._landId (Int16Array, -1 on sea) and world._landHab (habitable cell count
+per component).' Change §3.7: 'Civ.bestSite only considers cells on the landmass with the largest _landHab (falling back to any land).' Change §3.10
+awaken: 'Powers.can returns { ok: true, reason: 'small' } when the target landmass has fewer than 600 habitable cells, so the HUD can warn.' Change
+§3.6: 'naval is false | 'coastal' | true. 'coastal' allows sea steps only on cells shallower than 0.6 (SHALLOWS), cost 0.6 each.' Change Expansion:
+'from the Bronze age a settlement with a sea cell in its territory searches with naval = 'coastal' (canoes along shelves and between near islands);
+from the Sail age with a port, naval = true.'
+
+[17] MINOR — SPEC-SIM.md §3.3 Moisture ('normalized annual rainfall 0..1 plus wet[c], minus 0.25 inside active droughts'), §3.4 runoff = moist + wet, §3.3
+Temperature ('sea cells never below -2') versus Ice ('sea ice where a sea cell is below about -2.5'), milestones (globalTemp <= -2, -4), §3.5
+Vegetation / Life.step, §3.12 'life' phase
+PROBLEM: A cluster of small contradictions, each inside one or two modules. (1) wet is counted twice in river runoff, and moist only changes when
+Climate.update runs (every 10 years), so a rain miracle or a 6-year drought has no effect unless someone sets need.climate at its start and end;
+nobody is told to. (2) 'Normalized' rainfall is ambiguous: normalizing by the planet's current maximum means one new mountain dries the whole world.
+(3) Sea temperature is clamped at -2 but sea ice needs below -2.5, so SEAICE can never form. (4) Cooling milestones use globalTemp, which is driven
+only by co2 >= 0, so 'cooling' and 'ice-age' can never fire and the HUD anomaly ignores a nuclear winter. (5) Life.step is not told its time step;
+treating a call as one tick instead of parts x TICK makes regrowth 8x slow. (6) The green wave can advance at most one hop per visit of a cell (one
+visit per real second at parts = 8), so 20-30 s per continent is at the edge of possible; and because vegetation 'never appears from nothing', any
+landmass the player did not touch stays bare for the whole game.
+FIX: Paste: (1) 'Hydro runoff = moist[c]. Powers sets need.climate when a drought starts or ends and when the rain brush or a tsunami has raised wet (the
+scheduler rate-limits it).' (2) 'moist = sat(rain / RAIN_REF) with a fixed constant chosen so a wet equatorial coast is about 0.9.' (3) 'Sea ice
+equilibrium uses the unclamped sea temperature: 0 at -2.5 ramping to 1 at -6.' (4) 'Climate.anomaly(world) = globalTemp - 9 x dust; milestones and the
+HUD use it.' (5) 'Each Life.step call advances its cells by dt = parts x Sim.TICK years.' (6) 'In the life phase Sim calls Life.step(tick % 2, 2).
+While Life.cover(world).veg > 0.1, an empty plantable cell sprouts (veg = 0.02) with probability 0.0003 per year.'
+

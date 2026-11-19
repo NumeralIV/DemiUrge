@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>DEMIURGE — render viewer</title>
+<!--
+  dev/view.html : the render test bed (SPEC-RENDER §12). Loads every core, sim and render file plus js/ui/camera.js and
+  dev/fixtures.js, creates a world and renders it with whatever render modules exist. Runs from file://.
+
+  URL parameters
+    seed=7            world seed                          L=6              icosphere level
+    fixture=1         use DM.Fixtures.world (falls back to the built-in noise planet when it is not built yet)
+    years=300         advance the sim with Sim.advance (when DM.Sim is loaded and fixture is not set)
+    phase=molten|water|life|history     strip the world back to an earlier genesis phase (default: history)
+    zoom=0..1  lat=  lon=  (degrees)    camera; heading=degrees
+    sun=orbit|follow  sunAngle=degrees  (default: follow)
+    overlay=0..5      Planet.setOverlay                   q=0|1|2          quality (default 2)
+    only=planet,sky   use only these render modules of planet, sky, objects, fx; only=none uses none of them
+    t=5               freeze time at t seconds: two runs with the same URL give the same picture
+    size=1280x720     fixed canvas size in CSS pixels (default: fill the window)
+  Extras
+    world=noise       always use the viewer's own noise planet (no sim, no fixtures: fastest, and independent of both)
+    nohdr=1           pretend the GPU has no float render targets (the RGBA8 fallback)
+    shadows=0         skip the shadow pass                 debug=1          DM.GL.debug: GL errors and GL-state checks per module call
+    hud=0|1           the text overlay (default: on, off when t is set)
+    cam=builtin       ignore DM.Camera and use the viewer's own orbit camera
+    live=1            run the sim in real time (8 ticks per second)
+    stand=test|terrain|none    what stands in for the planet while DM.Planet is missing (or excluded by only=):
+                      test = a grey sphere of radius 100 with boxes on it (default when no render module is active),
+                      terrain = the world's elevation in flat biome colours with a plain sea (default otherwise)
+    clouds=0..1       stand-in cloudiness when DM.Sky is missing (default 0: no clouds, no cloud shadows)
+    halo=0            hide the stand-in atmosphere halo that is drawn when DM.Sky is missing
+    brush=0.06        show a brush ring of that angular radius at the camera focus (brush=-0.06: dashed)
+
+  Page API for tools/shot.js:  window.DV = { world, ready, cam(latDeg, lonDeg, zoom), tick(n), settle(frames = 3) → Promise,
+    find(what), pick(x, y), stats(), freeze(t), frameMs() } and more; see the top of dev/view.js.
+  Mouse: drag orbits, wheel zooms, right-drag turns. Keys: H overlay text, Q quality, S sun mode, [ ] sun angle, F freeze, O overlay.
+-->
+<style>
+  html, body { margin: 0; height: 100%; background: #05070b; overflow: hidden; }
+  #view { display: block; width: 100vw; height: 100vh; touch-action: none; outline: none; cursor: grab; }
+  #dv-hud { position: fixed; left: 8px; top: 8px; margin: 0; padding: 6px 10px; font: 12px/1.45 Consolas, 'Courier New', monospace;
+            color: #e9e4d6; background: rgba(11, 15, 23, 0.72); border: 1px solid rgba(232, 205, 150, 0.22); border-radius: 6px;
+            white-space: pre; pointer-events: none; max-width: 70vw; overflow: hidden; }
+  #dv-hud.hidden { display: none; }
+  #dv-msg { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; color: #e8cd96;
+            font: 18px Georgia, serif; text-align: center; }
+</style>
+</head>
+<body>
+<canvas id="view" tabindex="0"></canvas>
+<pre id="dv-hud" class="hidden"></pre>
+<div id="dv-msg"></div>
+
+<!-- core -->
+<script src="../js/core/util.js"></script>
+<script src="../js/core/vec.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/geo.js"></script>
+<!-- simulation -->
+<script src="../js/sim/state.js"></script>
+<script src="../js/sim/schema.js"></script>
+<script src="../js/sim/names.js"></script>
+<script src="../js/sim/terrain.js"></script>
+<script src="../js/sim/climate.js"></script>
+<script src="../js/sim/hydro.js"></script>
+<script src="../js/sim/life.js"></script>
+<script src="../js/sim/path.js"></script>
+<script src="../js/sim/civ.js"></script>
+<script src="../js/sim/economy.js"></script>
+<script src="../js/sim/society.js"></script>
+<script src="../js/sim/diplomacy.js"></script>
+<script src="../js/sim/units.js"></script>
+<script src="../js/sim/powers.js"></script>
+<script src="../js/sim/disasters.js"></script>
+<script src="../js/sim/chronicle.js"></script>
+<script src="../js/sim/sim.js"></script>
+<script src="../js/sim/balance.js"></script>
+<!-- rendering -->
+<script src="../js/render/gl.js"></script>
+<script src="../js/render/models.js"></script>
+<script src="../js/render/towns.js"></script>
+<script src="../js/render/post.js"></script>
+<script src="../js/render/planet.js"></script>
+<script src="../js/render/sky.js"></script>
+<script src="../js/render/objects.js"></script>
+<script src="../js/render/fx.js"></script>
+<script src="../js/render/renderer.js"></script>
+<!-- camera (pure math), fixtures, the viewer -->
+<script src="../js/ui/camera.js"></script>
+<script src="fixtures.js"></script>
+<script src="view.js"></script>
+</body>
+</html>

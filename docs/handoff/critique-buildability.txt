@@ -1,0 +1,313 @@
+LENS: buildability
+VERDICT: Not ready for a single flat parallel wave. The sim leaf modules (names, terrain, climate, hydro, life, path) are buildable and provable alone today,
+but the render and UI layers and the civ, society, units, powers, chronicle cluster have no harness, fixture, stub kit or acceptance criteria. Three
+contract defects (the rivers shape, ownership of the step into 'history' with seaBase/iceRef, and nothing staged ahead of its dependants) would each
+break integration. About an hour of lead work on Stage 0/1 (state.js with entity factories and the event table, placeholder files, a Node-loadable
+fixture with stubs, the viewer and UI harness skeletons, a per-process test runner) plus the pasted fixes to the first six issues would make the
+documents ready for a parallel build.
+
+[1] BLOCKER — SPEC-RENDER §0/§1/§3/§11 (gl.js, renderer.js, dev/view.html, dev/fixtures.js); SPEC-UI §0 (game.js, index.html, css/base.css, DM.debug); FOUNDATION
+§5/§6 (state.js, tools/server.js, docs/TOOLS.md, tools/load.js)
+PROBLEM: There is no build order, but the dependency graph is not flat. Planet, Sky, Objects, FX and Post cannot compile a shader without GL.program, the Frame
+block and the <lighting>/<clouds> chunks (gl.js). They cannot be seen without renderer.js, dev/view and fixtures, and the viewer needs a
+DM.Camera.view() that lives in the UI spec. HUD, Screens and Input cannot run without DM.Game, index.html and base.css ("written by the lead", not on
+disk). Every sim test needs DM.State.create, yet js/sim/state.js, tools/server.js and docs/TOOLS.md do not exist in the tree today (only util, vec,
+events, geo, load, t, test, shot). All of these are scheduled in the same wave as their dependants, so roughly 14 of 20 engineers start blocked and
+will improvise private harnesses and GL helpers. Second-order: dev/view.html must "load every existing source file, skipping missing ones", but from
+file:// a missing <script> is logged as a failed resource load, which tools/shot.js counts as a page error (exit 1). Everyone will run with
+--allow-errors and mask real shader/GL errors. Also tools/load.js omits js/render/models.js and js/ui/camera.js although both "must also load in
+Node", so two engineers must edit one shared file.
+FIX: Add FOUNDATION §8 "Build stages" (binding). Stage 0 (lead, before the wave): state.js with tests; tools/server.js; docs/TOOLS.md (shot.js CLI and page
+API); index.html; css/base.css; game.js as a stub exposing every Game/debug signature; a placeholder for EVERY file named in the three specs
+containing only the header comment and the empty IIFE wrapper (no page or loader ever references a missing file; `DM.X === undefined` means "not built
+yet"; each engineer overwrites only their own placeholder and adds no other file); tools/load.js FILES extended with 'js/render/models.js',
+'js/ui/camera.js', 'dev/fixtures.js'. Stage 1 (walking skeleton, committed before Stage 2 or within the first 15 minutes, polished afterwards): gl.js
+with the full §1 API, Frame block and plain-but-correct §3 chunks (shade = Lambert + ambient, sunShadow = 1, cloudCover = fbm); renderer.js + dev/view
+with the §4 draw order, a built-in orbit camera when DM.Camera is undefined, and fallbacks when DM.Planet is undefined (pick = ray-sphere at DM.R +
+geo.cellAt; groundAt = State.groundR of the nearest cell); dev/fixtures.js; camera.js. Gate: `node tools/shot.js "dev/view.html?fixture=1" --wait-for
+"window.DV && DV.ready === true"` exits 0. Stage 2: all remaining modules in parallel. Stage 3 (sim.js author + lead): Sim/simrun integration, real
+game.js, balance, full-game scenario. Add to SPEC-SIM §3.12: "Sim.tick skips any step whose namespace is undefined (the only place such guards are
+allowed), so a partial tree still ticks."
+
+[2] BLOCKER — FOUNDATION §5.2 `world.rivers` vs SPEC-SIM §3.4 (Hydro) vs SPEC-RENDER §6 (Planet rivers) and §11 (fixtures)
+PROBLEM: Two binding documents define different shapes. FOUNDATION: `world.rivers = []  derived: array of Int32Array cell polylines`. SPEC-SIM §3.4:
+`world.rivers` = array of `{ cells: Int32Array, flow: Float32Array }`. SPEC-RENDER tells render engineers to read only §0-2 of SPEC-SIM, so the Planet
+and fixtures authors will build against the FOUNDATION shape (`rivers[i].length`, `rivers[i][k]`) while the Hydro author produces objects. At
+integration rivers either vanish or throw inside Planet.sync on every dirty.rivers. Each side passes its own tests.
+FIX: FOUNDATION §5.2, replace the line with: `world.rivers = []   derived: array of { cells: Int32Array, flow: Float32Array } (equal lengths, source →
+mouth; flow[i] is world.flow[cells[i]] when built; a tributary's last cell is the confluence cell)`. SPEC-RENDER §6: "rivers as ribbons along
+`world.rivers[i].cells`, width from `world.rivers[i].flow[k] / maxFlow`, where maxFlow is the largest flow value in world.rivers (do not call
+DM.Hydro)". SPEC-RENDER §11: fixtures build rivers in this shape. Add `tests/fixtures.test.js`: every river has cells.length === flow.length ≥ 2 and
+consecutive cells are neighbours.
+
+[3] BLOCKER — SPEC-SIM §2 (`phase` "emitted by sim"), §3.3 (`vars.seaBase`, `vars.iceRef`), §3.10 (`awaken`: "the first use starts 'history'"), §3.12
+(Sim.genesis.next, Phases)
+PROBLEM: The step into 'history' has two owners and its side effects have none. Powers is told the first `awaken` "starts 'history'"; the event table says
+`phase` is emitted by sim; Sim.genesis.next only covers water→life and life→people. Nobody is told to set `vars.seaBase` ("the level when history
+began"), `vars.iceRef`, or to reset `vars.lifeBoost`. Likely outcome: Powers writes `world.phase = 'history'` directly, Sim never sees a transition,
+no `phase` event reaches HUD/audio/chronicle, and on the first yearly tick Climate.yearly computes `undefined + ...` = NaN. Then `seaLevel` is NaN,
+`elev[c] < NaN` is false for every cell, and the oceans vanish. Fixture and test worlds that begin in 'history' hit the same NaN.
+FIX: Add to SPEC-SIM §3.12: `Sim.setPhase(world, phase) → bool` — "the ONLY code that assigns world.phase. Returns false if unchanged. Performs the entry
+actions, then emits `phase` { phase, prev }. → 'water': heat = 0. → 'life': vars.lifeBoost = TUNE.sim.lifeBoost. → 'people': vars.lifeBoost = 1. →
+'history': vars.lifeBoost = 1; vars.seaBase = world.seaLevel; vars.iceRef = max(1e-6, Σ ice[c] over land cells); world.year = 0. → 'ended': none."
+§3.10 `awaken`: "after the first successful Civ.found in phase 'people', call DM.Sim.setPhase(world, 'history'); powers.js never writes world.phase".
+§3.12: Sim.checkEnding and Sim.genesis.next/skip also go through setPhase. §3.3: "If vars.seaBase or vars.iceRef is not a finite number,
+Climate.yearly initialises it from the current world with the same formulas before use." Acceptance (climate test): a world created with phase
+'history' and empty vars survives 400 Climate.yearly calls with a finite seaLevel.
+
+[4] MAJOR — SPEC-SIM §3.10 `Powers.update(world, realDt)`, §3.12 tick order, simrun/policies, §4 (`cruel` target); SPEC-UI §0 `debug.ff`, `debug.use`; FOUNDATION
+§0 Determinism
+PROBLEM: Comet and meteor impacts happen only inside Powers.update, which is driven by the Game loop with wall-clock dt and is not in the tick order. Every
+headless driver (tools/simrun.js, policies, debug.ff, DV.tick, Node tests) calls Sim.tick, so a meteor launched by the `cruel` policy or by
+`debug.use('meteor', cell)` followed by `debug.ff(10)` never lands. The balance target "a cruel player can drive a world to silence" cannot be
+verified. Brush cost is "per real second" and `power:used` is limited to "4 per real second", yet sim files may not read clocks and policies are given
+no dt. The contract "same seed + same inputs at the same ticks ⇒ identical world" is also false in the live game, because impact time relative to
+ticks depends on frame rate.
+FIX: Add to SPEC-SIM §3.12: `Sim.REAL_PER_TICK = 0.125` (real seconds per tick at 1×) and `Sim.advance(world, ticks = 1)` — "for each tick:
+Powers.update(world, Sim.REAL_PER_TICK); Sim.tick(world). The only way headless code advances time: simrun, policies, debug.ff, DV.tick and tests call
+Sim.advance, never Sim.tick. Policies apply brush powers with dt = Sim.REAL_PER_TICK. Only Game's loop calls Powers.update with wall-clock dt." §3.10:
+"All rate limits and per-second costs are computed from the accumulated dt arguments, never from a clock." SPEC-UI debug.use: "synchronous: brush
+powers loop Powers.use and Powers.update with dt = 1/60 for `seconds`; click powers then call Powers.update(world, 3) so the comet or meteor has
+landed before it returns." FOUNDATION §0: "Determinism is guaranteed for headless runs driven by Sim.advance; in the live game impact timing is
+frame-dependent by design." Acceptance (powers test): use meteor on a settlement, Sim.advance(16), expect `meteor:impact` and `settlement:destroyed`.
+
+[5] MAJOR — tools/test.js + tools/load.js (FOUNDATION §6/§7); SPEC-SIM §0.1 ("test stubs do not matter"), §0.2 (DM.world), §3.11 `Chronicle.attach()`; SPEC-RENDER
+§10 `FX.attach()`
+PROBLEM: tools/test.js `require`s every test file into one Node process and load.js loads the sources once, so all files share one `globalThis.DM`. The spec
+invites stubbing (`DM.Society.witness = ...`), but stubs, Bus handlers, TUNE edits and DM.world leak into later files. `node tools/test.js powers`
+passes alone and the full run fails at integration with no single author at fault. Two further traps. (1) `attach()` is "idempotent"; the obvious
+boolean-flag implementation subscribes nothing after a test calls DM.Bus.clear(), so chronicle tests silently see no entries. (2) Chronicle handlers
+"use DM.world" and Sim.create "becomes DM.world", so a determinism test (create A, create B, tick A, tick B, compare) writes A's chronicle into B and
+fails.
+FIX: (a) Lead changes tools/test.js to run each test file in its own process (`child_process.spawnSync(process.execPath, [file])`; t.js prints a one-line
+JSON summary on exit) and aggregates. (b) Add to t.js `T.stub(obj, name, value)`, auto-restored at the end of the current T.test; FOUNDATION §7:
+"never assign onto DM.* in a test except through T.stub". (c) FOUNDATION §3 and both attach() specs: "attach() keeps the unsubscribe functions
+returned by Bus.on, calls them, then subscribes again; it must leave exactly one subscription per handler and must work after DM.Bus.clear(). Do not
+guard with a boolean flag." (d) SPEC-SIM §0.2: "Sim.tick, Sim.advance, Powers.use and Powers.update assign DM.world = world on entry (no rederive), so
+Bus handlers always see the emitting world." Required test in tests/sim.test.js: two worlds with the same seed advanced alternately produce identical
+JSON.stringify(State.serialize(w)).
+
+[6] MAJOR — SPEC-SIM §0.1, §1 (entity shapes), §2 (events), §3.7-§3.12 (civ, society, units, powers, chronicle, sim); FOUNDATION §5.2; SPEC-RENDER §11 (fixtures)
+PROBLEM: Civ, Society, Units, Powers, Chronicle and Sim call each other in a cycle (Units.step → Civ.found / Society.onArrive; Civ.yearly → Units.spawn,
+Path.reach, Climate.emit; Powers.use → Society.witness, Civ.damage, Life.*, Terrain.*; Society → Civ.capture, Units.spawn, Chronicle.updateEpithets).
+The spec says stubs are possible but supplies none. Six engineers will each hand-write their own fake Settlement/Culture/Unit literals and their own
+fake Civ.found. Shapes drift (a missing `immune`, `b.walls`, `lastExpand`), and the render fixtures hand-build a third copy. Nothing checks event
+payloads or API names by machine, so `settlement:destroyed` without `culture`, or `Civ.canSettle` returning a bool, surfaces only at integration. Unit
+has no `naval` field, though Units must re-path naval units.
+FIX: (a) FOUNDATION §5.5, in state.js: `DM.State.newSettlement(world, fields)`, `newCulture(world, fields)`, `newUnit(world, fields)`, `newDisaster(world,
+fields)` — each fills every field of SPEC-SIM §1 with defaults, assigns the id, pushes into the world list and returns the entity. Add `naval: false`
+to Unit. `DM.BUILDINGS = ['shrine','temple','granary','walls','port','market','mine','factory','academy','plant','launch','wonder']`. Rule:
+"Civ.found, Society.newCulture, Units.spawn, Powers and fixtures create entities only through these factories." (b) `DM.EVENTS` in state.js: the §2
+table as data (`{ 'settlement:founded': ['id','cell','culture','by'], ... }`), plus `T.watchEvents(DM)` that fails the current test on an unknown
+event type or a payload whose keys differ. Every sim test file enables it. (c) dev/fixtures.js is Node-loadable and is the one fixture for tests,
+viewer and UI: `DM.Fixtures.world({ seed = 7, L = 6, populate = true }) → world` (uses real modules when loaded, closed-form fallbacks for
+temp/moist/biome/hab/slope/coast/fresh otherwise); `DM.Fixtures.stubs() → callLog` installs recording stubs with spec-correct return values for every
+binding function of each sim namespace that is undefined. (d) Lead writes tests/api.test.js: for each loaded namespace, every function named in the
+specs exists. Everyone runs `node tools/test.js api`. (e) §0.4: "Tests use the cached L = 6 fixture world; runs longer than 200 years belong in
+simrun, not in tests/."
+
+[7] MAJOR — SPEC-RENDER §1, §5-§11 and SPEC-UI §1-§7 (no acceptance criteria anywhere); FOUNDATION §7 (Node tests only)
+PROBLEM: Sim modules have numeric targets; render and UI modules have only "yours to make beautiful" and "must look good". FOUNDATION defines no convention for
+browser tests: where scenario scripts live, how they run, what they assert, how shots are named. Each of roughly 14 engineers will "prove" their
+module with an ad hoc screenshot that nobody can re-run at integration. Mechanical regressions (GL errors, NaN matrices at the poles, pick/project
+mismatch, HUD overflow at 390×844, silent audio) are all checkable by machine with the existing rig (page.errors, decodePng().stats(), Renderer.stats,
+Audio.renderTest).
+FIX: FOUNDATION §7 add: "Browser scenarios live in tests/browser/<module>.scn.js exporting `async (page, browser, args) => result`. Run with `node
+tools/shot.js --run tests/browser/<module>.scn.js`. They throw on failure, never use --allow-errors, and save shots as shots/<module>-<view>.png."
+Minimum checks per module (add to each section):
+- gl: a program including every chunk compiles; mesh/instances/target round trip; a failing shader's error contains numbered source.
+- models (Node): every required name exists; triangle limits; unit normals; indices in range; min y ≥ 0; height = max y; colours in 0..1.
+- post: a value-5 quad on black blooms outside its edge; fade = 1 gives mean < 2; non-HDR fallback renders.
+- planet: fixture shots at zoom 0 / 0.5 / 0.9, day and night; day-side zoom-0 stats lit ≥ 0.25 and colors ≥ 500; groundAt(geo.dir(c)) = DM.R + elev[c]
+± 1e-3; for 200 visible cells Renderer.project then Renderer.pick returns the cell or a neighbour; each overlay changes the mean colour; a sculpt
+shows up in groundAt on the next frame.
+- sky / objects / fx: shot with only that module plus planet; Renderer.stats.instances within budget; emitting every §2 event with a valid payload
+gives zero errors and ≤ 6,000 particles.
+- renderer: draws ≤ 60 and tris ≤ 1.2 M on the fixture at q2; q0/q1/q2 all render; capture returns > 10 kB.
+- camera (Node): altitude 320 / 6 at zoom 0 / 1 (± 1 %); no NaN in 10,000 random orbit/zoom/turn steps across both poles; the direction under the
+cursor is preserved by a drag (± 2 px) at zoom 0.2 / 0.6 / 0.9; eye never below groundAt + margin.
+- hud / screens / input: at 1280×720, 1920×1080 and 390×844, no element outside the viewport and touch targets ≥ 40 px; each control produces the
+expected Game call.
+- save: write → reload → read gives an equal serialize JSON; corrupt data → null.
+- audio: all 10 renderTest scenarios have nan = false, clipped = false, rms > 0.005, sub/total < 0.25.
+Every final report lists commands run, pass counts, shot names, measured numbers and deviations.
+
+[8] MAJOR — SPEC-RENDER §11: dev/view.html, `window.DV = { world, ready, cam, tick, frameMs }`, dev/fixtures.js; Renderer.sun; Post grain; FX
+PROBLEM: The viewer contract is too thin for automated proof. (1) `DV.ready` has no type. The rig's --wait-for polls for a truthy value: a boolean works, a
+Promise resolving to undefined or a function never satisfies it. (2) Nothing freezes time. The sun orbits on wall-clock time (dayLength 150 s), clouds
+drift with uTime.z, and stars twinkle, grain and particles animate. Two runs of one scenario give different PNGs and "is the city lit" depends on when
+the shot fires, so pixel assertions and before/after comparisons are impossible. (3) Fixtures are render-centric: no chronicle entries, snapshots,
+relations, prophet/edict, status effects or ending, which HUD, Screens.ending, Screens.timelapse and Planet.showSnapshot need. (4) The fixture is the
+critical path for six engineers yet is owned by the renderer core author, who also owns renderer.js and the viewer.
+FIX: SPEC-RENDER §11 add: "`DV.ready` is a boolean, false until the world is built and two frames have rendered with every dirty flag consumed. Extra API:
+`DV.settle(frames = 3) → Promise`, `DV.find(what)` (same keys as debug.find), `DV.pick(x, y)`, `DV.stats()` (= Renderer.stats), `DV.freeze(t)`.
+DV.tick(n) calls Sim.advance. URL parameters: `t=<seconds>` freezes time (uTime.x and uTime.z pinned, grain off, FX stepped at a fixed 1/60, RAF loop
+stopped after settle), `sunAngle=<deg>`, `only=planet,sky` (skip other modules), `size=WxH`. With `t` set, two runs must give PNGs whose mean absolute
+difference is < 1/255. DM.debug gains the same freeze(t)." §0 add: "Static content (stars, tree jitter, settlement layouts, model geometry) uses
+DM.U.hashf or DM.U.rng(constant), never Math.random; FX uses an Rng that is reseeded on freeze." Fixtures add: ≥ 40 chronicle entries across weights
+1-3, ≥ 12 snapshots, a living prophet with an active edict, one war and one trade relation, settlements with plague / famine / blessed / inspire,
+god.awe 180 of aweMax 400, and `DM.Fixtures.ending(world, 'ark-beloved'|'ark-feared'|'ark-forgotten'|'ark-parting'|'silence'|'silence-ash')`. Assign
+dev/fixtures.js to its own Stage 1 engineer.
+
+[9] MAJOR — SPEC-UI §0 (Game, DM.debug, "DOM ids ... are binding"), §2 Input, §4 HUD, §5 Screens
+PROBLEM: HUD, Screens and Input depend on DM.Game, Renderer.project/pick/setBrush/capture, Powers.LIST/can/cost/unlocked, Sim.genesis.progress,
+Chronicle.yearStr/tale, Civ.at, Society.rel and Icons. None of these exist while they are being written, and there is no page to load them in, since
+index.html and game.js arrive with or after them. The spec says DOM ids are binding but lists only the five root containers. An integration scenario
+cannot click "the meteor button" or read the Awe number, and HUD and Screens can collide on ids such as #settings.
+FIX: Lead ships in Stage 0 `dev/ui.html` + `dev/stubs.js`. It loads css, core, state, fixtures and whichever UI files are real, then installs: a `DM.Game`
+stub with every field and method of §0 (each method updates its field, emits the matching ui:* event and appends to `DU.calls`); a `DM.Renderer` stub
+(project = fixed orthographic projection, pick = ray-sphere + geo.cellAt, setBrush no-op, capture = small data URL); `DM.Icons.svg` placeholder when
+undefined; `DM.Fixtures.stubs()` for missing sim namespaces. URL parameters: `screen=title|setup|pause|settings|ending|timelapse|card`, `phase=`,
+`select=<id>`, `power=<id>`, `ending=<kind>`. Exposes `window.DU = { ready: boolean, calls: [] }`. Add a binding selector table to SPEC-UI: HUD ids
+are prefixed `hud-`, screen ids `scr-`. `#hud-year`, `#hud-age`, `#hud-awe`, `#hud-pop`, `[data-speed="0|1|2|4|8"]`, `[data-power="<id>"]` with state
+classes `locked` / `poor` / `armed`, `#hud-genesis-next`, `#hud-inspector`, `[data-edict="<edict>"]`, `[data-overlay="0..5"]`, `#hud-chronicle-open`,
+`.hud-entry[data-entry="<id>"]`, `.hud-label[data-settlement="<id>"]`. One `#scr-<name>` root per screen,
+`[data-action="continue|new|settings|how|begin|resume|exit|timelapse|card|keep|close"]`, `#scr-name`, `#scr-seed`.
+
+[10] MAJOR — FOUNDATION §5.2 `world.dirty` ("the renderer clears each flag after rebuilding"); SPEC-RENDER §4 step 1, §6 Planet.sync ("clear what you handled"), §9
+Objects.sync; SPEC-SIM §3.2 Terrain.touched
+PROBLEM: Dirty flags are single-consumer booleans with two consumers. Planet.sync runs first and clears dirty.elev. Objects places trees and buildings on
+Planet.groundAt but rebuilds only on dirty.objects, which Terrain.touched does not set. After the sculpt brush, a crater rim, a volcano cone or a
+quake, trees and towns float above or sink into the new terrain until some unrelated veg threshold flips dirty.objects. Charred or snowy trees need
+dirty.color, which Planet has also already cleared. Each module is correct alone; the bug exists only when both are loaded. Throttling ("colour
+rebuilds ~6 Hz", "trees ≤ 2 Hz") makes "clear what you handled" ambiguous as well.
+FIX: FOUNDATION §5.2: replace the sentence with "Renderer.frame copies world.dirty into `DM.Renderer.dirty` (same keys) and sets every world.dirty flag to
+false, once per frame, before any sync() call. Render modules read the copy and never write world.dirty. A module that throttles keeps its own pending
+flags." SPEC-RENDER §6/§9 signatures become `Planet.sync(world, dt, dirty)` and `Objects.sync(world, dt, dirty)`. §9: "On dirty.elev, re-seat existing
+instances (recompute the radius from Planet.groundAt; no re-layout), at most 10 Hz. On dirty.objects, rebuild. On dirty.color, refresh burn/snow."
+Planet scenario acceptance: sculpt +3 under a forested fixture cell, settle; every tree instance within the brush has |length(aI0.xyz) −
+Planet.groundAt(dir)| < 0.05.
+
+[11] MAJOR — SPEC-SIM §1, §2 ("society / civ"), §3.3-§3.12; FOUNDATION §5.1 (`rad`, `wet`, `fert`), §5.2 (`world.vars`, transient caches)
+PROBLEM: Shared state has no single-writer table, so some things have two owners and some have none. `rad` is raised by Society nukes and decayed by nobody
+(Life.step lists veg, fauna, fert, wet, scorch), so nuked land is dead forever. `culture:died`, `culture:age` and `world:age` are emitted by "society
+/ civ": twice or never. Nobody is told to set `culture.dead`, or to refresh `culture.pop` / `towns`. `world.vars` is a free-form bag written by six
+modules with no key registry; the 'ash' ending needs "a nuclear exchange in the last 200 years" but no module is told to record it. Chronicle may keep
+witnessed deeds in `culture._seen`, which is transient and not rebuildable, so epithets reset on every load. `world._fires` is transient with no
+rebuild hook, so after loading a save with a burning forest the fire[] cells never advance or go out. Sim.rederive has no stated order although Hydro
+lakes need moist and Life.classify/habitability need fresh.
+FIX: Add SPEC-SIM §1.1 "Writers" (binding):
+- elev: Terrain.* only.
+- slope, coast: Terrain.derive.
+- temp, moist, ice, co2, dust, globalTemp: Climate.
+- seaLevel: Powers (comet), Climate.yearly, Sim.genesis.skip.
+- water, flow, down, fresh, rivers: Hydro.update.
+- veg, fauna, fire, scorch, biome, hab: Life (Civ may lower veg when it creates farmland).
+- wet: Powers raises, Life.step decays.
+- fert: Terrain.generate, Life.step/bloom, Powers.
+- lava: Powers.tick.
+- rad: Society raises, Life.step decays 1.5 %/yr.
+- owner, farm, urban: Civ.
+- road: Society.
+- culture.age, culture.science, world.age, `culture:age`, `world:age`: Civ.yearly.
+- culture.pop, towns, dead, `culture:died`: Society.yearly.
+- god.awe: Society adds, Powers.use spends.
+- stats.wars: Society.declareWar. stats.miracles: Powers.use. Other stats: Sim.refreshStats.
+vars registry: seaBase, iceRef, lifeBoost (Sim.setPhase); rel, lastNuke (Society; Sim.checkEnding reads lastNuke); snapEvery, lastSnap, seen
+(Chronicle; `seen[cultureId][powerId]` replaces `culture._seen`). Any other key is prefixed with its module name (`civ_...`).
+Transient caches: "each module rebuilds its own underscore caches lazily when they are missing (Life.burn scans fire[] > 0; Civ.claim rebuilds _cells;
+Climate rebuilds _up)".
+Sim.rederive order: Terrain.derive → Climate.update → Hydro.update → Life.classify → Life.habitability → Civ.claim for each live settlement.
+
+[12] MAJOR — SPEC-SIM §3.7 civ.js, §3.8 society.js, §3.10 powers.js; SPEC-UI §4 hud.js, §7 audio.js + music.js; SPEC-RENDER §9 objects.js
+PROBLEM: Module sizes differ by about 4×, so a parallel wave finishes when the largest module does. names, path, hydro and icons are one sitting each.
+powers.js is 16 powers plus comet flight, eruptions with lava flow, tsunami fronts, storms, droughts and six natural-event generators. society.js is
+belief, Awe, relations, war with armies and battles, trade, schisms, prophets and edicts, nuclear exchange and the Ark. civ.js is the lifecycle API
+five other modules call, plus food, growth, plague, tiers, 12 buildings, expansion and research. hud.js is nine widgets plus a phone layout.
+objects.js is the instancing program plus trees plus settlement layouts for 5 tiers × 7 ages × 12 buildings plus movers. Audio is two files under one
+namespace with no interface between them.
+FIX: Split each into two files with the binding namespace unchanged; the lead adds the files to the load order in Stage 0.
+- powers.js (LIST, byId, unlocked, cost, can, use, instant effects) + js/sim/disasters.js (extends DM.Powers with tick, update, natural and new
+`Powers.start(world, type, cell, { power, ang, natural, data }) → disaster`; `use` and `natural` create comet/meteor/volcano/tsunami/storm/drought
+only through start).
+- society.js (newCulture, yearly, witness, raiseProphet, setEdict, aweIncome, belief, schism, Ark) + js/sim/diplomacy.js (extends DM.Society with rel,
+atWar, declareWar, makePeace, onArrive and new `Society.diplomacy(world)`, called once from Society.yearly: relations, wars, armies, battles, trade,
+nukes).
+- civ.js (found, claim, destroy, damage, capture, at, near, live, canSettle, siteScore, bestSite, TIERS) + js/sim/economy.js (extends DM.Civ with
+yearly).
+- hud.js (top bar, palette, genesis guide, toasts, overlay switch, hover tip) + js/ui/panels.js → `DM.Panels.init()`, `DM.Panels.update(dt)`
+(inspector, chronicle feed and full chronicle, labels) with css/panels.css.
+- objects.js + js/render/towns.js → `DM.Towns.layout(world, settlement, out) → count`: pure, no GL, Node-testable; fills out with `{ model, dir:
+[x,y,z], scale, yaw, tint: [r,g,b,a], emissive }`.
+- audio: music.js exposes `DM.Music = { init(ctx, outNode), update(dt, ctx), stinger(name) }`; audio.js owns the context, the limiter and
+`DM.Audio.buses = { music, sfx, ambience, ui }`.
+
+[13] MAJOR — SPEC-SIM §0.3 (TUNE), §3.7 (age windows), §4 Balance targets, §3.12 simrun
+PROBLEM: Every §4 target (ages in their windows, 8-40 settlements at year 1,000, Ark between 3,300 and 4,500, 9 of 10 seeds surviving, Awe pacing) is a
+property of civ + society + life + climate + powers together. No engineer can verify any of them alone, the numbers live in six TUNE blocks owned by
+six people, and nobody is named to balance after integration. The simrun author cannot run it until every module exists. Civ is told to tune science
+thresholds to hit age windows without a reference population curve, so the thresholds will be tuned against a private guess and be wrong by an order
+of magnitude once real growth exists.
+FIX: SPEC-SIM §4 add: "Balance owner = the sim.js author, in Stage 3. Add `js/sim/balance.js`, loaded last in the sim order, as the only file the balance
+owner edits: `Object.assign(DM.TUNE.civ, { ... })`. Module authors do not retune after Stage 2." Add reference anchors for isolated tuning: world
+population ≈ 30 at year 0, 2,000 at 500, 20,000 at 1,000, 200,000 at 2,000, 2 M at 3,000, 5 M at 3,500; settlements 1, 6, 20, 45, 70, 90. Module-level
+proxies:
+- civ: "on the fixture world a lone Stone-age camp of 30 at Civ.bestSite reaches 60 within 60-200 years and plateaus below 400; fed the reference
+population curve, research crosses each age inside its §3.7 window".
+- society: "one camp with a shrine at devotion 0.55 yields 0.6 + 0.55 × 0.7 × 1 ≈ 0.99 Awe/yr".
+- life: "with TUNE.sim.lifeBoost, one seeded cell at the centre of the largest fixture continent brings that continent's mean veg/capacity to ≥ 0.25
+within 240 ticks on the Life.step(t % 8, 8) schedule".
+simrun adds `--hash` (FNV-1a of JSON.stringify(State.serialize(world)); two runs must match) and `--seeds 1-10 --summary` printing a pass/fail table
+against §4.
+
+[14] MINOR — SPEC-SIM §1 Relation (`Society.rel` "created on demand"), `world.god.deeds`, `settlement.b`; SPEC-UI §4 Inspector ("relations with other cultures");
+FOUNDATION §0 Determinism
+PROBLEM: The inspector will call Society.rel(world, a, b) for every culture pair, and that call creates relation objects inside world.vars.rel. Opening a panel
+therefore changes the save file and the insertion order of vars.rel. If Society.yearly iterates that object and draws rng per relation, a UI session
+and a headless run of the same seed diverge, and a bug seen in the game will not reproduce in simrun. The same hazard exists for `for...in` over
+god.deeds and settlement.b (fixture-built and Civ-built settlements may have different key order) and for unstable sort ties in Civ.near and "largest
+cities".
+FIX: Add SPEC-SIM §0.9 "Determinism rules": "(1) Never drive sim decisions from object key order. Iterate cultures and settlements by ascending id,
+buildings via DM.BUILDINGS, deeds via Powers.LIST. (2) Every sort comparator tie-breaks on id. (3) UI and render code call only read-only sim
+functions. Add `Society.peek(world, a, b) → relation | null` (never creates) for the inspector; Society.rel is sim-only. (4) Chronicle wording draws
+from `world.rng.fork('chron:' + entry.id)`. (5) No rng draw may depend on wall-clock time or on whether a renderer, HUD or audio module is attached."
+Acceptance in tests/sim.test.js: advance 300 years calling Society.peek for all pairs and Chronicle.tale every 10 years; the hash equals that of a run
+without those calls.
+
+[15] MINOR — SPEC-RENDER §2 Frame block, §3 chunks ("registered by gl.js, used by everyone"), §4, §7 Sky.update, §6 Planet.setOverlay
+PROBLEM: Only some Frame fields have a named writer (uBrush via Renderer.setBrush, uStorms and uFx.y/z via Sky.update). uPlanet.z/w (cloud and atmosphere
+radii), uWorld.z (night-light level), uWorld.w (overlay), uFx.x and the moment of GL.frame.upload() have none. Fields will be written twice or left at
+0: with Sky absent cloudiness is 0, and with nobody setting uPlanet.z the cloud shell sits at radius 0. The look of clouds and of all lighting lives
+in gl.js chunks, so the Sky and Planet engineers will need to edit another engineer's file to tune their own visuals. A depth-pass program that
+includes <lighting> samples the shadow map while rendering into it.
+FIX: SPEC-RENDER §2 add: "Renderer.frame writes every Frame field each frame except uFx.y, uFx.z and uStorms, which Sky.update writes (Renderer writes
+defaults 0.5, the sea-cell fraction and zeros when DM.Sky is undefined). Constants: `Renderer.CLOUD_R = DM.R + 12`, `Renderer.ATMO_R = DM.R + 18`.
+uWorld.z = sat((world.age − 1) / 4). uWorld.w = `DM.Planet.overlay` (set by Planet.setOverlay). uFx.x = 1 − smoothstep(0.55, 0.8, zoom01). Renderer
+calls GL.frame.upload() after step 1, with the light matrix for the shadow pass, and again with the camera matrix for the scene pass." §3 add: "Chunk
+bodies belong to the gl.js author and are frozen after Stage 1. Other engineers do not edit gl.js; they request changes in their report or wrap the
+functions locally. drawDepth programs must not include <lighting>, and Renderer unbinds texture unit 7 during the shadow pass."
+
+[16] MINOR — SPEC-SIM §3.10 power definition and table; SPEC-UI §2 ("one letter per power (shown on its button)", `[` `]` brush size), §4 Power palette
+PROBLEM: The power definition names fields (name, ang, target, unlock { phase, age, awe }, desc) but the table gives only id, group, kind, cost and effect. The
+HUD engineer needs names, costs, targets and unlock text before powers.js exists, and the Input and HUD engineers each need the hotkey: three people
+will invent three tables. The definition has no `key` field at all, and nine letters are already taken (W A S D Q E R F H). The brush size limits for
+`[` `]` are unspecified.
+FIX: Add `key` to the power definition and paste the full table into SPEC-SIM §3.10 as data (mirrored by Fixtures.stubs so stub and real module are
+identical). Keys: comet C, seed G, awaken K, raise U, lower J, rain N, bloom B, lightning L, quake X, plague Y, meteor M, volcano V, heal T, inspire
+I, prophet P, peace O. target: comet / raise / lower / rain / lightning / quake / meteor = 'any'; seed / awaken / bloom / volcano = 'land'; plague /
+heal / inspire / prophet / peace = 'settlement'. Default ang in radians: comet 0.03, seed 0.12, raise / lower 0.06, rain 0.10, bloom 0.08, quake 0.08,
+meteor 0.05, volcano 0.04, others 0. Fill in unlock { phase, age, awe } and a one-line desc for each. SPEC-UI §0: "Game.brushAng is clamped to
+0.02-0.20; `[` and `]` multiply it by 0.8 and 1.25." Input and HUD read `Powers.byId[id].key`; neither hard-codes letters.
+
+[17] MINOR — FOUNDATION §6 (tools/server.js on 127.0.0.1:5174, `POST /__save` → shots/), §4 and SPEC-SIM §0.8 / SPEC-RENDER §0 performance targets; tools/shot.js
+default output
+PROBLEM: Twenty engineers share one machine. The second `node tools/server.js` fails with EADDRINUSE on the fixed port, or an engineer kills "their" server
+while others use it. shots/ is one flat directory (names are sanitised to [A-Za-z0-9._-], so no subfolders) and two people will overwrite each other's
+`test.png`. Timing budgets (tick ≤ 2.5 ms mean, cellAt < 2 µs, 60 fps at 1080p) measured while 20 Node processes and up to a dozen headless Edge
+instances compete for CPU and GPU will fail at random if asserted in tests.
+FIX: FOUNDATION §6: "tools/server.js: if the port is in use and `GET /__ping` answers `demiurge`, print 'reusing' and exit 0. Nobody stops a server they
+did not start. Prefer file:// paths with tools/shot.js; the server is needed only for /__save. Every file written to shots/ starts with the module
+name (`planet-zoom0.png`)." §7: "Tests never assert wall-clock budgets tighter than 5× the stated target. Exact timings are reported from
+`T_VERBOSE=1` output or simrun, not asserted. Render performance is accepted on Renderer.stats (draws ≤ 60, tris ≤ 1.2 M, instances) at 1280×720, q =
+1 in the rig; fps is measured once, by the lead, at Stage 3."
+
+[18] MINOR — FOUNDATION §5.1 (persisted fields) and §5.3 ("Target size at L = 6 with an empty entity list: under 900 kB of JSON")
+PROBLEM: The size target contradicts the specified encoding. Persisted bytes per cell: elev 2, water 2, wet 1, veg 1, fert 1, ice 1, fire 1, scorch 1, lava 2,
+fauna 1, rad 1, owner 2, farm 1, urban 1, road 1 = 19. 19 × 40,962 = 778,278 bytes, which is 1,037,704 characters as base64. That is over 900 kB
+before any scalar or entity is written. The state.js author will either fail an acceptance check that cannot pass or invent an undocumented
+compression scheme that Save and the tests do not expect.
+FIX: FOUNDATION §5.3: "Each persisted field is quantized, then zero-run-length encoded (byte pairs: a 0x00 byte followed by a run length 1-255; other bytes
+literal), then base64-encoded. The serialized object records `enc: 'rle1'`. Target at L = 6 with an empty entity list on a freshly generated world:
+under 700 kB." If no compression is wanted, change the target to "under 1.1 MB". Add a round-trip test on a world with random non-zero data in every
+field.
+

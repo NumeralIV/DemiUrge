@@ -1,0 +1,12 @@
+<!doctype html>
+<!-- adversarial rig fixture: one console.error and one uncaught exception (plus harmless log/warn output) -->
+<html><head><meta charset="utf-8"><title>adv-errors</title></head>
+<body style="background:#311;color:#fff;font:16px monospace">adv-errors
+<script>
+console.log('adv-errors: plain log');
+console.warn('adv-errors: a warning');
+console.error('adv-errors: console.error message', { code: 42 });
+setTimeout(function later() { throw new Error('adv-errors: uncaught exception'); }, 30);
+window.ADV_ERR_READY = true;
+</script>
+</body></html>

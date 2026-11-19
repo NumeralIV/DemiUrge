@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f17">
+<title>DEMIURGE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.9'%3E%3Cstop offset='0' stop-color='%239fe3ff'/%3E%3Cstop offset='.45' stop-color='%232b7fb8'/%3E%3Cstop offset='1' stop-color='%23081a33'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' fill='%230b0f17'/%3E%3Ccircle cx='32' cy='32' r='22' fill='url(%23g)'/%3E%3Cpath d='M18 30c5-7 12-6 15-1s9 3 12-2c1 9-5 17-13 17s-14-6-14-14z' fill='%2362b56a' opacity='.9'/%3E%3Ccircle cx='32' cy='32' r='25' fill='none' stroke='%23e8cd96' stroke-opacity='.6'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/hud.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+<canvas id="view" tabindex="0"></canvas>
+<div id="labels"></div>
+<div id="ui"></div>
+<div id="screens"></div>
+<div id="nogl"><div>DEMIURGE needs WebGL2.<br>Please open it in a current version of Chrome, Edge or Firefox with hardware acceleration enabled.</div></div>
+
+<!-- core -->
+<script src="js/core/util.js"></script>
+<script src="js/core/vec.js"></script>
+<script src="js/core/events.js"></script>
+<script src="js/core/geo.js"></script>
+<!-- simulation -->
+<script src="js/sim/state.js"></script>
+<script src="js/sim/schema.js"></script>
+<script src="js/sim/names.js"></script>
+<script src="js/sim/terrain.js"></script>
+<script src="js/sim/climate.js"></script>
+<script src="js/sim/hydro.js"></script>
+<script src="js/sim/life.js"></script>
+<script src="js/sim/path.js"></script>
+<script src="js/sim/civ.js"></script>
+<script src="js/sim/economy.js"></script>
+<script src="js/sim/society.js"></script>
+<script src="js/sim/diplomacy.js"></script>
+<script src="js/sim/units.js"></script>
+<script src="js/sim/powers.js"></script>
+<script src="js/sim/disasters.js"></script>
+<script src="js/sim/chronicle.js"></script>
+<script src="js/sim/sim.js"></script>
+<script src="js/sim/balance.js"></script>
+<!-- rendering -->
+<script src="js/render/gl.js"></script>
+<script src="js/render/models.js"></script>
+<script src="js/render/towns.js"></script>
+<script src="js/render/post.js"></script>
+<script src="js/render/planet.js"></script>
+<script src="js/render/sky.js"></script>
+<script src="js/render/objects.js"></script>
+<script src="js/render/fx.js"></script>
+<script src="js/render/renderer.js"></script>
+<!-- interface, audio, shell -->
+<script src="js/ui/camera.js"></script>
+<script src="js/ui/input.js"></script>
+<script src="js/ui/icons.js"></script>
+<script src="js/ui/hud.js"></script>
+<script src="js/ui/panels.js"></script>
+<script src="js/ui/screens.js"></script>
+<script src="js/audio/audio.js"></script>
+<script src="js/audio/music.js"></script>
+<script src="js/save.js"></script>
+<script src="js/game.js"></script>
+<script>window.addEventListener('load', function () { DM.Game.boot(); });</script>
+</body>
+</html>

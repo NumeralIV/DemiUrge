@@ -1,0 +1,9 @@
+<!doctype html>
+<!-- adversarial rig fixture: ?load=1 blocks the main thread during load; otherwise ADV_HANG() blocks it on demand -->
+<html><head><meta charset="utf-8"><title>adv-hang</title></head>
+<body style="background:#220;color:#fff;font:16px monospace">adv-hang
+<script>
+window.ADV_HANG = function () { for (;;) { /* never returns */ } };
+if (/load=1/.test(location.search)) window.ADV_HANG();
+</script>
+</body></html>

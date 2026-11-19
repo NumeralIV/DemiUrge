@@ -1,0 +1,19 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+
+# OS and editor scratch files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Future local dependencies and transient logs
+node_modules/
+*.log
+
+# Existing shots/ are intentionally versioned as part of the project history.

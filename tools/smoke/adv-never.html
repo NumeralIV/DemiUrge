@@ -1,0 +1,9 @@
+<!doctype html>
+<!-- adversarial rig fixture: animates forever and never sets its ready flag -->
+<html><head><meta charset="utf-8"><title>adv-never</title></head>
+<body style="background:#123;color:#fff;font:16px monospace">adv-never: <span id="n">0</span>
+<script>
+let n = 0;
+(function tick() { document.getElementById('n').textContent = ++n; requestAnimationFrame(tick); })();
+</script>
+</body></html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>DEMIURGE (dev shell)</title>
+<!--
+  Development copy of index.html. Differences:
+    * also loads dev/fixtures.js (DM.Fixtures) so UI work can run against a populated world before the sim is finished
+    * does not boot into the title screen when the URL has ?bare=1 (call DM.debug.* yourself)
+    * every script is loaded tolerant of missing files (a missing module is skipped)
+  Useful from tools/shot.js:
+      await page.goto('<root>/dev/play.html?bare=1');
+      await page.waitFor('window.DEV_READY');
+      await page.eval('DM.debug.fixture({ seed: 5 })');      // populated mid-history world, no sim needed
+      await page.eval('DM.debug.new({ seed: 5, years: 300 })'); // real sim
+      await page.eval('DM.debug.settle(5)');
+-->
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/hud.css">
+<link rel="stylesheet" href="../css/panels.css">
+<link rel="stylesheet" href="../css/screens.css">
+</head>
+<body>
+<canvas id="view" tabindex="0"></canvas>
+<div id="labels"></div>
+<div id="ui"></div>
+<div id="screens"></div>
+<div id="nogl"><div>DEMIURGE needs WebGL2.</div></div>
+<script>
+(function () {
+  var files = [
+    'js/core/util.js', 'js/core/vec.js', 'js/core/events.js', 'js/core/geo.js',
+    'js/sim/state.js', 'js/sim/schema.js', 'js/sim/names.js', 'js/sim/terrain.js', 'js/sim/climate.js', 'js/sim/hydro.js', 'js/sim/life.js',
+    'js/sim/path.js', 'js/sim/civ.js', 'js/sim/economy.js', 'js/sim/society.js', 'js/sim/diplomacy.js', 'js/sim/units.js', 'js/sim/powers.js',
+    'js/sim/disasters.js', 'js/sim/chronicle.js', 'js/sim/sim.js', 'js/sim/balance.js',
+    'js/render/gl.js', 'js/render/models.js', 'js/render/towns.js', 'js/render/post.js', 'js/render/planet.js', 'js/render/sky.js', 'js/render/objects.js',
+    'js/render/fx.js', 'js/render/renderer.js',
+    'js/ui/camera.js', 'js/ui/input.js', 'js/ui/icons.js', 'js/ui/hud.js', 'js/ui/panels.js', 'js/ui/screens.js',
+    'js/audio/audio.js', 'js/audio/music.js', 'js/save.js', 'dev/fixtures.js', 'js/game.js'
+  ];
+  window.DEV_MISSING = [];
+  window.DEV_ERRORS = [];
+  window.addEventListener('error', function (e) { window.DEV_ERRORS.push(String(e.message) + ' @ ' + String(e.filename || '').split('/').pop() + ':' + e.lineno); });
+  var i = 0;
+  function next() {
+    if (i >= files.length) return done();
+    var f = files[i++], s = document.createElement('script');
+    s.src = '../' + f;
+    s.onload = next;
+    s.onerror = function () { window.DEV_MISSING.push(f); next(); };
+    document.head.appendChild(s);
+  }
+  function done() {
+    var bare = /[?&]bare=1/.test(location.search);
+    try {
+      if (window.DM && DM.Game) {
+        // dev-only helper: a populated world without running the sim
+        DM.debug.fixture = function (o) {
+          o = o || {};
+          var world = DM.Fixtures.world({ seed: o.seed === undefined ? 7 : o.seed, L: o.L || 6, populate: o.populate !== false });
+          DM.world = world;
+          if (DM.Chronicle && DM.Chronicle.attach) DM.Chronicle.attach();
+          DM.Game._adoptForDev(world);
+          return DM.debug.info();
+        };
+        if (bare) DM.Game.bootBare(); else DM.Game.boot();
+      }
+    } catch (e) { window.DEV_ERRORS.push('boot: ' + (e && e.stack || e)); }
+    window.DEV_READY = true;
+  }
+  next();
+})();
+</script>
+</body>
+</html>

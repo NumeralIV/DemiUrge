@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- adversarial rig fixture: a full-window canvas that records every input event it receives in window.EV -->
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>adv-input</title>
+<style>html, body { margin: 0; height: 100%; overflow: hidden; background: #000; } canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }</style></head>
+<body><canvas id="c"></canvas>
+<script>
+'use strict';
+const EV = window.EV = [];
+const c = document.getElementById('c');
+c.width = innerWidth; c.height = innerHeight;
+const g = c.getContext('2d');
+g.fillStyle = '#143'; g.fillRect(0, 0, c.width, c.height);
+const dotAt = (x, y, col) => { g.fillStyle = col; g.fillRect(x - 3, y - 3, 6, 6); };
+for (const t of ['mousedown', 'mousemove', 'mouseup', 'click', 'dblclick', 'contextmenu', 'pointerdown', 'pointermove', 'pointerup', 'pointercancel']) {
+  c.addEventListener(t, e => {
+    EV.push({ t, x: e.clientX, y: e.clientY, button: e.button, buttons: e.buttons, shift: e.shiftKey, ctrl: e.ctrlKey, pointerType: e.pointerType || null, trusted: e.isTrusted });
+    if (t === 'contextmenu') e.preventDefault();
+    if (t === 'mousemove') dotAt(e.clientX, e.clientY, e.buttons ? '#fd4' : '#4af');
+  });
+}
+c.addEventListener('wheel', e => { e.preventDefault(); EV.push({ t: 'wheel', x: e.clientX, y: e.clientY, deltaX: e.deltaX, deltaY: e.deltaY, deltaMode: e.deltaMode, buttons: e.buttons, ctrl: e.ctrlKey, trusted: e.isTrusted }); }, { passive: false });
+for (const t of ['touchstart', 'touchmove', 'touchend', 'touchcancel']) {
+  c.addEventListener(t, e => {
+    e.preventDefault();
+    const pts = l => Array.from(l, p => ({ id: p.identifier, x: Math.round(p.clientX), y: Math.round(p.clientY) }));
+    EV.push({ t, touches: pts(e.touches), changed: pts(e.changedTouches), trusted: e.isTrusted });
+    for (const p of e.touches) dotAt(p.clientX, p.clientY, '#f6a');
+  }, { passive: false });
+}
+for (const t of ['keydown', 'keyup', 'keypress']) {
+  window.addEventListener(t, e => { EV.push({ t, code: e.code, key: e.key, keyCode: e.keyCode, repeat: e.repeat, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, location: e.location, trusted: e.isTrusted }); if (e.code === 'F5' || e.code === 'Tab' || e.code === 'Space') e.preventDefault(); });
+}
+window.addEventListener('resize', () => EV.push({ t: 'resize', w: innerWidth, h: innerHeight }));
+window.ADV_INPUT_READY = true;
+</script>
+</body></html>
