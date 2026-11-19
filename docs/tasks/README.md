@@ -21,5 +21,6 @@ bottom (at most 2 of your pull requests open at once; the lead is notified of ne
 | T-014 | Model reference sheet: the village shrine (first real asset) | Grok | done (merged 2026-11-19) | `docs/concept/assets/shrine/` |
 | T-015 | Shrine reference: construction, damage and ruin states | Grok | done (merged 2026-11-19) | `docs/concept/assets/shrine/states/` |
 | T-016 | Concept art: the night side through the ages | Grok | changes requested | `docs/concept/night/` |
+| T-017 | Concept art: one wonder per age | Grok | open | `docs/concept/wonders/` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.
