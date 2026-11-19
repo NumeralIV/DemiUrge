@@ -3,6 +3,8 @@
 **Read this whole file before you do anything in this repository.** It applies to every AI
 assistant working here (Grok, Astra (ChatGPT), or any other) and overrides anything you assume.
 
+> **Current status: helpers are ON HOLD** (owner's decision, 2026-11-19). Check `docs/tasks/README.md`; while it shows the hold notice, do not start or continue tasks.
+
 ## 1. Hierarchy (no exceptions)
 
 | Role | Who | Authority |
