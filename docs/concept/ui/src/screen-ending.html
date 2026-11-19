@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script>
+<style>.st{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(232,205,150,.1);font-size:15px}.st b{font-family:var(--sans);font-weight:600;color:var(--text)}
+.eb{display:flex;align-items:center;gap:8px;height:48px;padding:0 20px;font-size:16px}</style></head>
+<body><div class="stage" style="background-image:url(bg/ending.jpg)"></div>
+<div class="abs" style="inset:0;background:linear-gradient(90deg,rgba(11,15,23,.88) 0%,rgba(11,15,23,.72) 50%,rgba(11,15,23,.25) 78%,rgba(11,15,23,.1))"></div>
+<script>
+h(`<div class="abs" id="scr-ending" style="left:120px;top:96px;width:820px">
+<div class="small-caps" style="font-size:14px">The ending of Ithe · Year 3,214</div>
+<div class="serif" style="font-size:84px;font-weight:500;color:var(--gold-hi);line-height:1.05;margin-top:8px">Beloved</div>
+<div class="body" style="font-size:23px;line-height:1.48;color:var(--text);margin-top:20px">In the 3,214th year the Umari rose from Tel Asha on a pillar of light. They carried seed, and songs, and a carved stone bearing the name of Ashtavai, whom they called the Rain-Giver. Before the clouds closed below them, they looked back at Ithe and wept, not from grief, but because they had been loved, and knew it, and were taking that with them too. Wherever they land, there will be a shrine before there is a house.</div>
+<div class="rule" style="margin:30px 0 22px"></div>
+<div class="small-caps" style="margin-bottom:10px">The tale</div>
+<div class="body" style="color:#cfcabd;font-size:18px;line-height:1.5;columns:2;column-gap:40px">In the beginning the world was fire and then stone, and the Sower called ice down out of the dark. Where it fell, the hollows filled, and that was the first sea. Then green came out of the wet places, slowly at first, as if it were not sure it was allowed. In the first year, before there was counting, the Sower touched the ground at Tel Asha, and the Umari woke. From the Umari came the Vesh, as a branch comes from a tree: the same wood, pointing elsewhere.</div></div>
+<div class="panel abs" style="left:1490px;top:330px;width:390px;padding:20px 24px">
+<div class="small-caps" style="margin-bottom:8px">The reckoning</div>
+<div class="st"><span class="dim">Years</span><b>3,214</b></div>
+<div class="st"><span class="dim">Ages reached</span><b>Space</b></div>
+<div class="st"><span class="dim">People at the end</span><b>2.43 M</b></div>
+<div class="st"><span class="dim">Peoples who lived</span><b>4</b></div>
+<div class="st"><span class="dim">Wonders raised</span><b>3</b></div>
+<div class="st"><span class="dim">Wars</span><b>11</b></div>
+<div class="st"><span class="dim">Warming</span><b>+1.2 °C</b></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px"><span class="small-caps">Score</span><span class="num" style="font-size:34px;color:var(--awe);font-weight:600">8,460</span></div>
+<div class="rule" style="margin:14px 0 12px"></div>
+<div class="small-caps" style="margin-bottom:8px">What they last called you</div>
+${[['U','the Umari','the Rain-Giver'],['V','the Vesh','the Patient One'],['Q','the Qoruun','the Green Hand'],['T','the Telessi','the Lightning-Handed']].map(([k,n,e])=>`<div style="display:flex;align-items:center;gap:10px;padding:5px 0"><span class="sigil" style="background:${C[k]}">${k}</span><span style="font-size:15px;width:96px">${n}</span><span class="body" style="font-style:italic;font-size:18px;color:var(--gold)">${e}</span></div>`).join('')}
+</div>
+<div class="abs" style="left:120px;bottom:64px;display:flex;gap:12px">
+<div class="btn primary eb" data-action="timelapse">${svg('play',18)}Watch the ages</div>
+<div class="btn eb" data-action="card">${svg('camera',18)}Planet card</div>
+<div class="btn eb" data-action="keep">${svg('linger',18)}Keep playing</div>
+<div class="btn eb" data-action="new">${svg('plus',18)}New world</div></div>`);
+</script></body></html>

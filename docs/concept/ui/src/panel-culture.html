@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script><script src="insp.js"></script></head>
+<body><div class="stage" style="background-image:url(bg/orbit.jpg)"></div>
+<script>
+// cultures overlay: soft territory tints (the engine would tint owned cells)
+const blobs=[[760,370,170,95,'U',-18],[700,215,120,60,'U',0],[655,735,70,90,'Q',10],[1300,265,130,85,'V',20],[1385,430,55,100,'V',0],[610,250,80,50,'T',-10]];
+h(blobs.map(([x,y,rx,ry,c,r])=>`<svg class="abs" style="left:${x-rx-20}px;top:${y-ry-20}px;mix-blend-mode:screen" width="${2*rx+40}" height="${2*ry+40}"><defs><radialGradient id="b${x}"><stop offset=".55" stop-color="${C[c]}" stop-opacity=".34"/><stop offset="1" stop-color="${C[c]}" stop-opacity="0"/></radialGradient></defs><ellipse cx="${rx+20}" cy="${ry+20}" rx="${rx}" ry="${ry}" fill="url(#b${x})" transform="rotate(${r} ${rx+20} ${ry+20})"/><ellipse cx="${rx+20}" cy="${ry+20}" rx="${rx*.8}" ry="${ry*.8}" fill="none" stroke="${C[c]}" stroke-opacity=".7" stroke-width="1.2" stroke-dasharray="3 4" transform="rotate(${r} ${rx+20} ${ry+20})"/></svg>`).join(''));
+label(735,395,'Tel Asha','U',{big:true,cap:true});
+label(830,342,'Vornhal','U');
+label(655,722,'Qe-Luun','Q',{glyphs:['praying']});
+label(1292,262,'Dar Imen','V',{big:true,glyphs:['war']});
+
+label(610,250,'Iru Sel','T');
+topbar({world:'Ithe',year:'Year 3,212',age:'Space Age',ageIcon:'age6',ageP:1,
+  stats:[['people','2.41 M','people'],['culture','4','living cultures'],['thermometer','+1.2 °C','temperature'],['rising-sea','+0.6 m','sea level']],
+  awe:'186',aweMax:'1,040',inc:'4.4',epithet:'the Rain-Giver',regard:'Beloved',regardIcon:'heart',ark:[38,'beloved'],speed:'2'});
+palette({state:{volcano:'poor',awaken:'poor'}});
+// overlay switch with Cultures active + legend
+h(`<div class="panel abs" style="left:24px;top:600px;width:236px;padding:12px 14px">
+<div class="small-caps" style="margin-bottom:8px">Cultures</div>
+${[['U','the Umari'],['V','the Vesh'],['Q','the Qoruun'],['T','the Telessi']].map(([k,n])=>`<div style="display:flex;align-items:center;gap:10px;height:26px;font-family:var(--body);font-size:17px"><span class="sigil" style="background:${C[k]};width:16px;height:16px;font-size:10px">${k}</span>${n}</div>`).join('')}
+<div style="display:flex;align-items:center;gap:10px;height:24px;font-size:13px" class="dim"><span style="width:16px;height:16px;border-radius:50%;border:1px dashed var(--dim)"></span>Unclaimed land</div></div>
+<div class="panel abs" style="left:24px;top:794px;width:236px;padding:10px 10px 8px">
+<div style="display:flex;align-items:center;gap:8px;padding:0 6px 6px" class="gold">${svg('layers',18)}<span class="small-caps">Overlay</span></div>
+${['None','Cultures','Temperature','Rainfall','Devotion','Habitability'].map((t,i)=>`<div data-overlay="${i}" style="height:28px;display:flex;align-items:center;gap:10px;padding:0 8px;border-radius:6px;font-size:14px;${i==1?'background:rgba(232,205,150,.16);color:var(--gold-hi)':'color:var(--dim)'}"><span style="width:8px;height:8px;border-radius:50%;border:1px solid var(--gold);${i==1?'background:var(--gold)':''}"></span>${t}</div>`).join('')}
+<div class="rule" style="margin:6px 0"></div><div style="height:28px;display:flex;align-items:center;gap:10px;padding:0 8px;font-size:14px;color:var(--dim)">${svg('eye',16)}Hide interface <span class="num" style="margin-left:auto;font-size:12px">H</span></div></div>`);
+const trait=(n,v,w)=>`<div style="display:grid;grid-template-columns:96px 1fr 92px;align-items:center;gap:10px;font-size:14px;height:24px"><span class="dim">${n}</span><div class="bar"><i style="width:${v}%"></i></div><span>${w}</span></div>`;
+const rel=(k,n,w,c,extra)=>`<div style="display:flex;align-items:center;gap:10px;height:30px;font-size:15px"><span class="sigil" style="background:${C[k]};width:18px;height:18px;font-size:11px">${k}</span><span class="body" style="font-size:17px">${n}</span><span class="${c}" style="margin-left:auto;display:flex;gap:6px;align-items:center">${extra||''}${w}</span></div>`;
+h(`<div class="panel abs insp" style="left:1476px;top:92px;width:420px;padding:18px 20px 20px">
+<div style="display:flex;align-items:center;gap:12px"><span class="sigil" style="background:${C.U};width:30px;height:30px;font-size:15px">U</span>
+<div style="flex:1"><div class="serif" style="font-size:34px;font-weight:600;line-height:1;color:var(--gold-hi)">The Umari</div>
+<div style="font-size:14px;color:var(--dim);margin-top:4px">Umaran · the first people · capital Tel Asha</div></div>
+<span class="btn icon" data-action="back" style="width:34px;height:34px;min-width:34px">${svg('back',16)}</span></div>
+<div class="rule" style="margin:14px 0 10px"></div>
+<div style="display:flex;gap:18px;font-size:15px"><span class="stat">${svg('people',18)}<span class="num">1.62 M</span></span><span class="stat">${svg('home',18)}<span class="num">14 towns</span></span><span class="stat">${svg('age6',18)}Space Age</span></div>
+<h3>What they call you</h3>
+<div class="serif" style="font-size:26px;font-style:italic;color:var(--gold-hi);line-height:1.1">Ashtavai, the Rain-Giver</div>
+<div class="dim" style="font-size:13px;margin-top:4px">Before: the Green Hand (Year 412), the Sower (Year 1,630)</div>
+<h3>Faith</h3>
+<div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px"><span>Devotion</span><span class="num gold">58 %</span></div><div class="bar"><i style="width:58%"></i></div>
+<div style="font-size:14px;margin:12px 0 8px">How they feel about you</div>${scaleRow(80)}
+<h3>Their nature</h3>
+${trait('Piety',74,'devout')}${trait('Aggression',22,'peaceable')}${trait('Curiosity',81,'restless')}${trait('Seafaring',63,'sea-loving')}
+<h3>Neighbours</h3>
+${rel('V','the Vesh','wary','dim',svg('trade',15))}${rel('Q','the Qoruun','friendly','good',svg('trade',15))}${rel('T','the Telessi','truce, 22 years','dim')}
+<h3>Prophet and edicts</h3>
+<div class="p" style="font-size:16px;margin-bottom:8px">No prophet walks among them now, so no edict can be given.</div><div style="opacity:.5">${edicts('')}</div>
+</div>`);
+</script></body></html>

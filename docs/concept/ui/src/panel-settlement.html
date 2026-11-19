@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script><script src="insp.js"></script></head>
+<body><div class="stage" style="background-image:url(bg/near.jpg)"></div>
+<script>
+label(956,347,'Vornhal','U');
+label(1312,840,'Ashkel','U',{glyphs:['praying']});
+// selection ring on Tel Asha
+h(`<svg class="abs" style="left:925px;top:550px" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#fff1c9" stroke-width="2"/><circle cx="50" cy="50" r="46" fill="none" stroke="#fff1c9" stroke-opacity=".35" stroke-width="1"/><path d="M50 4v8M50 88v8M4 50h8M88 50h8" stroke="#fff1c9" stroke-width="2" stroke-linecap="round"/></svg>`);
+label(975,600,'Tel Asha','U',{big:true,cap:true,glyphs:['praying','blessed']});
+topbar({world:'Ithe',year:'Year 1,284',age:'Iron Age',ageIcon:'age2',ageP:.64,
+  stats:[['people','18,400','people'],['culture','2','living cultures']],
+  awe:'96',aweMax:'340',inc:'1.9',epithet:'the Green Hand',regard:'Regarded',regardIcon:'eye',speed:'1'});
+palette({state:{meteor:'locked',volcano:'locked',awaken:'locked',prophet:'poor',peace:'poor'}});
+h(`<div class="panel abs insp" id="pan-inspector" style="left:1476px;top:92px;width:420px;padding:18px 20px 20px">
+<div style="display:flex;align-items:center;gap:12px"><span class="sigil" style="background:${C.U};width:26px;height:26px;font-size:14px">U</span>
+<div style="flex:1"><div class="serif" style="font-size:34px;font-weight:600;line-height:1;color:var(--gold-hi)">Tel Asha</div>
+<div style="font-size:14px;color:var(--dim);margin-top:4px">City of the Umari · capital · Iron Age</div></div>
+<span class="btn icon" data-action="close" style="width:34px;height:34px;min-width:34px">${svg('close',16)}</span></div>
+<div class="rule" style="margin:14px 0 4px"></div>
+<div class="p"><span class="num" style="font-size:16px">7,940</span> people, growing. The land could feed <span class="num" style="font-size:16px">9,600</span>.</div>
+<h3>Buildings</h3>
+<div style="display:flex;gap:8px;color:var(--gold)">${['shrine','temple','granary','walls','port','market','mine'].map(b=>`<div style="width:44px;height:44px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center" title="${b}">${svg(b,22)}</div>`).join('')}</div>
+<h3>Faith</h3>
+<div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px"><span>Devotion</span><span class="num gold">72 %</span></div><div class="bar"><i style="width:72%"></i></div>
+<div style="font-size:14px;margin:14px 0 8px">How they feel about you</div>${scaleRow(71)}
+<h3>Now</h3>
+<div><span class="chip" style="color:var(--gold)">${svg('praying',16)}<span style="color:var(--text)">Praying for rain</span></span><span class="chip" style="color:var(--good)">${svg('blessed',16)}<span style="color:var(--text)">Blessed, 12 more years</span></span></div>
+<div class="rule" style="margin:8px 0 2px"></div>
+<h3>The Umari</h3>
+<div class="p" style="font-size:16px">Devout and curious, slow to anger, at home on the sea. They call you <i class="gold">Ashtavai, the Green Hand</i>.</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px;font-size:14px">
+<div style="display:flex;align-items:center;gap:8px"><span class="sigil" style="background:${C.V};width:16px;height:16px;font-size:10px">V</span>the Vesh<span class="dim" style="margin-left:auto">wary · trading</span></div>
+<div style="display:flex;align-items:center;gap:8px;color:var(--gold)">${svg('prophet',16)}<span style="color:var(--text)">Dovak the prophet lives here, 41 more years</span></div></div>
+<h3>Edicts of the prophet</h3>${edicts('build')}
+</div>`);
+</script></body></html>

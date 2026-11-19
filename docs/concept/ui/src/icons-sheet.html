@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script>
+<style>
+body{background:radial-gradient(ellipse at 50% 40%,#131a26,#0b0f17 70%)}
+h1{position:absolute;left:80px;top:46px;font-family:var(--caps);font-weight:500;font-size:30px;letter-spacing:.2em;color:var(--gold)}
+.sub{position:absolute;left:82px;top:92px;font-family:var(--body);font-style:italic;font-size:17px;color:var(--dim)}
+.sec{position:absolute;left:80px;width:1760px}
+.sec h2{font-family:var(--caps);font-size:14px;letter-spacing:.24em;color:var(--gold);font-weight:500;margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.grid{display:flex;flex-wrap:wrap;gap:8px 0}
+.cell{width:110px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gold)}
+.cell .box{width:68px;height:68px;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(19,26,38,.6)}
+.cell span{font-size:13px;color:var(--dim)}
+.sizes{position:absolute;right:80px;top:48px;display:flex;gap:18px;align-items:flex-end;color:var(--gold)}
+.sizes div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--dim)}
+</style></head><body>
+<h1>DEMIURGE · ICONS</h1><div class="sub">One line style: 24 × 24 grid, 1.6 px stroke, round caps and joins, stroke = current colour.</div>
+<div class="sizes" id="sizes"></div>
+<div id="root"></div>
+<script>
+const sets=[
+ ['Powers',['comet','seed','awaken','raise','lower','rain','bloom','lightning','quake','plague','meteor','volcano','heal','inspire','prophet','peace']],
+ ['Ages',['age0','age1','age2','age3','age4','age5','age6']],
+ ['Buildings',['shrine','temple','granary','walls','port','market','mine','factory','academy','plant','launch','wonder']],
+ ['Statuses',['plague','famine','war','blessed','inspired','praying','rising-sea']],
+ ['Interface',['awe','people','culture','trade','ship','thermometer','sea','pause','play','linger','fast','faster','fastest','eye','layers','scroll','gear','close','back','save','home','camera','sun','moon','lock','check','arrow','plus','minus','heart','skull']]];
+const ageNames=['Stone','Bronze','Iron','Sail','Industry','Atomic','Space'];
+let y=140, html='';
+for(const [t,list] of sets){
+  html+=`<div class="sec" style="top:${y}px"><h2>${t}</h2><div class="grid">`+list.map(n=>`<div class="cell"><div class="box">${svg(n,36)}</div><span>${n}${n.startsWith('age')?' · '+ageNames[+n[3]]:''}</span></div>`).join('')+'</div></div>';
+  const rows=Math.ceil(list.length/16); y+=46+rows*112+18;
+}
+document.getElementById('root').innerHTML=html;
+document.getElementById('sizes').innerHTML=[16,20,24,32,48].map(s=>`<div>${svg('rain',s)}${s} px</div>`).join('');
+</script></body></html>

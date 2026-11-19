@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script>
+<style>.mi{display:flex;align-items:center;gap:14px;height:56px;width:400px;padding:0 20px;border:1px solid var(--line);border-radius:10px;background:rgba(11,15,23,.55);font-family:var(--body);font-size:22px;color:var(--text)} .mi .ic{color:var(--gold)} .mi.primary{border-color:var(--line-hi);background:linear-gradient(90deg,rgba(232,205,150,.16),rgba(232,205,150,.04))}</style></head>
+<body><div class="stage" style="background-image:url(bg/title.jpg)"></div>
+<div class="abs" style="left:0;top:0;width:1100px;height:1080px;background:linear-gradient(90deg,rgba(11,15,23,.7),rgba(11,15,23,.35) 60%,rgba(11,15,23,0))"></div>
+<script>
+h(`<div class="abs" id="scr-title" style="left:160px;top:250px">
+<div class="caps" style="font-size:104px;font-weight:500;letter-spacing:.22em;color:var(--gold-hi);line-height:1;text-shadow:0 0 40px rgba(255,217,138,.25)">DEMIURGE</div>
+<div style="display:flex;align-items:center;gap:16px;margin:18px 0 0 4px"><div style="width:80px;height:1px;background:var(--line-hi)"></div><div class="body" style="font-style:italic;font-size:28px;color:var(--gold)">A world in your hands.</div></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:70px">
+<div class="mi primary" data-action="continue">${svg('play',20)}<div><div style="color:var(--gold-hi)">Continue</div><div style="font:14px var(--sans);color:var(--dim);margin-top:1px">Ithe · Year 3,212 · Space Age</div></div></div>
+<div class="mi" data-action="new">${svg('plus',20)}New world</div>
+<div class="mi" data-action="settings">${svg('gear',20)}Settings</div>
+<div class="mi" data-action="help">${svg('scroll',20)}How to play</div></div></div>
+<div class="abs dim" style="left:164px;bottom:48px;font-size:13px;letter-spacing:.04em">Demiurge · prototype 0.1 · type set in Cinzel, EB Garamond and Inter (SIL Open Font License)</div>`);
+</script></body></html>

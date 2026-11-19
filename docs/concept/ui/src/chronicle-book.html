@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="ui.css"><script src="icons.js"></script><script src="hud.js"></script>
+<style>
+.book{position:absolute;left:300px;top:156px;width:1320px;height:880px;display:flex;border-radius:14px;border:1px solid var(--line-hi);background:linear-gradient(90deg,#10161f 0%,#151d2a 46%,#0c1119 50%,#151d2a 54%,#10161f 100%);box-shadow:0 30px 90px rgba(0,0,0,.7)}
+.page{flex:1;padding:44px 56px 30px 60px;position:relative}
+.page+.page{padding-left:64px}
+.e{display:grid;grid-template-columns:96px 1fr;gap:14px;margin-bottom:22px}
+.e .y{font-family:var(--caps);font-size:12px;letter-spacing:.14em;color:var(--gold);padding-top:6px;line-height:1.5}
+.e .t{font-family:var(--body);font-size:20px;line-height:1.42;color:var(--text)}
+.e.w3 .t{font-size:22px;color:var(--gold-hi)}
+.e.w3 .t::first-letter{font-family:var(--caps);font-size:58px;float:left;line-height:.82;margin:6px 10px 0 0;color:var(--gold)}
+.e .w{display:block;margin-top:4px;color:var(--dim);font-family:var(--sans);letter-spacing:0;font-size:12px}
+.pn{position:absolute;bottom:22px;font-family:var(--caps);font-size:12px;color:var(--dim);letter-spacing:.2em}
+.filt{display:flex;gap:6px;align-items:center}
+.filt .f{height:32px;padding:0 12px;border:1px solid var(--line);border-radius:16px;display:flex;align-items:center;gap:6px;font-size:14px;color:var(--dim)}
+.filt .f.on{border-color:var(--line-hi);color:var(--gold-hi);background:rgba(232,205,150,.12)}
+</style></head>
+<body><div class="stage" style="background-image:url(bg/orbit.jpg);filter:brightness(.6) saturate(.85) blur(1.5px)"></div>
+<script>
+h(`<div class="abs" style="left:300px;top:28px;width:1320px;display:flex;align-items:flex-end;justify-content:space-between">
+<div><div class="small-caps" style="font-size:13px">Year 0 – Year 1,284</div><div class="caps" style="font-size:40px;color:var(--gold-hi);font-weight:500;margin-top:4px">The Chronicle of Ithe</div></div>
+<span class="btn icon" data-action="close">${svg('close',18)}</span></div>
+<div class="abs filt" style="left:300px;top:108px;width:1320px;justify-content:flex-start;top:106px"></div>`);
+document.querySelector('.filt').innerHTML = `<span class="label-sm" style="margin-right:4px">Peoples</span><span class="f on">All</span>`+[['U','the Umari'],['V','the Vesh']].map(([k,n])=>`<span class="f"><span class="sigil" style="background:${C[k]};width:14px;height:14px;font-size:9px">${k}</span>${n}</span>`).join('')+`<span style="width:28px"></span><span class="label-sm" style="margin-right:4px">Show</span><span class="f">Everything</span><span class="f on">Notable and great</span><span class="f">Great only</span>`;
+const E=(y,w,who,t,extra='')=>`<div class="e w${w}"><div class="y">${y}<span class="w">${who}</span></div><div class="t">${t}${extra}</div></div>`;
+h(`<div class="book" id="pan-chronicle"><div class="page">
+${E('Year 0',3,'the Umari','In the first year, before there was counting, the Green Hand touched the ground at Tel Asha, and the Umari woke. They looked up at the sky and did not yet know whom to thank, so they thanked everything.')}
+${E('Year 212',2,'Vornhal','Some of the people of Tel Asha grew tired of their neighbours’ faces. They walked until the faces around them were their own again, and there they built Vornhal.')}
+${E('Year 389',2,'Vornhal','At Vornhal they set stones in a ring and laid the first fruits on them for Ashtavai. It was a small shrine. The Green Hand did not complain.')}
+${E('Year 520',2,'the Umari','In the 520th year the Umari entered the Age of Bronze. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.')}
+${E('Year 744',2,'Vornhal','There was famine in Vornhal. The people looked up and asked the Green Hand for rain, and counted the days, and the days were long.')}
+${E('Year 902',2,'Vornhal','A sickness came to Vornhal by the river road. It went from house to house like a guest no one had invited and no one could turn away.')}
+<div class="pn" style="left:60px">I</div></div>
+<div class="page">
+${E('Year 1,012',3,'the Vesh','From the Umari came the Vesh, as a branch comes from a tree: the same wood, pointing elsewhere.')}
+${E('Year 1,198',2,'the Vesh','The Umari and the Vesh could no longer share the river. They tried to share it with spears instead.')}
+<div class="e w2" style="background:rgba(232,205,150,.07);margin:-8px -14px 14px;padding:8px 14px;border-radius:8px"><div class="y">Year 1,206<span class="w">Dar Imen</span></div><div class="t">At Dar Imen the Vesh won the day. The Umari tell it differently, in their own chronicle, which no one has asked to read.<div style="display:flex;align-items:center;gap:6px;font:13px var(--sans);color:var(--gold);margin-top:6px">${svg('arrow',14)}Fly to Dar Imen</div></div></div>
+${E('Year 1,231',2,'peace','After thirty-three years the Umari asked for peace, and the Vesh granted it, and made them pay for the asking.')}
+${E('Year 1,262',2,'Dovak','Dovak the prophet spoke for the Green Hand: “Build a thing that can be seen from the sky.” And the Umari began to quarry the hills.')}
+${E('Year 1,284',2,'Tel Asha','Tel Asha prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.')}
+<div class="pn" style="right:56px">II</div>
+<div class="abs" style="right:18px;top:40px;width:4px;height:740px;border-radius:2px;background:rgba(232,205,150,.1)"><div style="position:absolute;bottom:0;width:4px;height:120px;border-radius:2px;background:var(--line-hi)"></div></div>
+</div></div>`);
+</script></body></html>
