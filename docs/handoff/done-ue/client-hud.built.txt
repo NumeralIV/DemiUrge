@@ -1,0 +1,1 @@
+2026-11-19 client-hud built: Slate HUD + panels (Game/UI/Hud, 17 files), lane and main build Succeeded, C3 control path live; shots shots/ue-hud-play-*.png (overview, armed-rain, tip-locked, inspector, chronicle, overlay-cultures, toasts-banner, hint-ark, low, hidden), ue-hud-genesis-*.png, ue-hud-narrow-*.png, ue-hud-720-*.png, ue-hud-full-frame.png, ue-hud-icons-sheet.png

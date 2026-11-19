@@ -1,0 +1,1 @@
+2026-11-19 client-nature: built; lane + main Unreal/build.ps1 Succeeded; nature-check PASS in main (ground planet-terrain); shots ue-nature-lods.png ue-nature-dbg-grazers.png ue-nature-taiga.png ue-nature-tropic.png ue-nature-close.png ue-nature-ground.png ue-nature-savanna.png ue-nature-mid.png ue-nature-orbit.png
