@@ -1,48 +1,66 @@
 # T-016 · The night side through the ages (Grok)
 
-Five 1280×720 PNG frames, about 0.8 MB each, with no text or watermarks. Each shows **the same planet and framing as T-013** (`docs/concept/world-states/`), with the terminator in view and most of the disc in night. City lights grow from scattered firelight to networks of lit corridors.
+Five 1280×720 PNG frames, about 0.8 MB each, with no text or watermarks. Each shows **the same planet and framing as T-013** (`docs/concept/world-states/`), with the terminator in view and most of the disc in night. City light grows from scattered firelight to continents of light.
+
+This is **revision 2, after the lead's review.** The cities are now organic sprawl rather than dots joined by lines. Roads are broken, curving threads, and the Stone age has none. The frames have bloom, limb dimming and soft cloud occlusion, and the aurora is drawn as curtains in perspective.
 
 | File | Age | What it shows |
 |---|---|---|
-| `night-stone.png` | Stone / Bronze | About 60 scattered firelights, orange pinpricks, mostly near coasts |
-| `night-iron.png` | Iron / Sail | About 40 town clusters, each 8–22 points, joined by the first faint dotted roads |
-| `night-industry.png` | Industry / Atomic | About 70 cities in sodium yellow (size follows a power law), rail lines between neighbours, brighter coastal ports, a warm light-haze |
-| `night-space.png` | Space | About 85 cities in warm-white LED, joined by continuous lit corridors, plus a cool-white launch-site bloom with a short plume streak |
-| `night-aurora.png` | (Iron lights) | A green auroral oval with violet tops round the north pole, moonlit clouds, and lights dimmed under the clouds |
+| `night-stone.png` | Stone / Bronze | About 60 lone campfires (some in pairs), orange pinpricks, mostly near coasts, with **no connecting lines** |
+| `night-iron.png` | Iron / Sail | About 40 small towns with soft, irregular glows and a satellite village each, and faint broken tracks between near neighbours |
+| `night-industry.png` | Industry / Atomic | About 75 cities in sodium yellow, sized by a power law, each with 1–10 satellite towns. They merge into coastal sprawl belts, with faint rail threads and a warm light-haze. |
+| `night-space.png` | Space | About 90 warm-white cities with many satellites, a dense web of curving lit corridors, and a cool-white launch-site point with a short rising plume |
+| `night-aurora.png` | (Iron lights) | Auroral curtains: green at the base and violet at the top, with vertical rays and folds. They cross the upper night side and stand in profile above the limb at top right. Moonlit clouds; city lights dimmed under the clouds. |
 | `contact-sheet.jpg` | | All five, plus a lock check: the coastline of `state-healthy` drawn in cyan over `night-industry` |
 | `src/night.py` | | The script that draws all five (numpy, scipy, Pillow): `python docs/concept/night/src/night.py` |
 
 ## How these were made, and why in code
 
-**Drawn in code, not generated.** Every frame is drawn by `src/night.py` from the merged `docs/concept/world-states/state-healthy.png`. That keeps the continents, camera, moon and stars **identical** to T-013 by construction, which follows the lead's T-010 lesson on drift.
+**Drawn in code, not generated.** Every frame is drawn by `src/night.py` from the merged `docs/concept/world-states/state-healthy.png`. The continents, camera, moon and stars are therefore **identical** to T-013 by construction, which follows the lead's T-010 lesson on drift.
 
-**I tried the generator once and rejected it.** I asked it to add the aurora to `night-iron.png`. It shrank and moved the globe, and drew the aurora as a cartoon halo floating in space, so both the lock and the scale were lost. The aurora is drawn in code as well.
+**I tried the generator once and rejected it.** I asked it to add the aurora. It shrank and moved the globe, and drew a halo ring floating in space.
 
 **Steps in the script:**
-1. **Relight.**
-   - The globe is treated as a sphere: centre (644, 354), radius 362 px, measured from the limb of `state-healthy`.
-   - It is lit by a sun at (−0.86, 0.12, −0.50), which is behind and to the left, so only a crescent on the left stays in daylight.
-   - **Day factor** is a smoothstep of n·L from −0.06 to 0.22.
-   - **Night colour** is the day colour × (0.030, 0.038, 0.070), plus a cold "earthshine and moon" fill of × (0.10, 0.12, 0.18) × moon, where moon = 0.9 (1.4 in the aurora frame). The fill keeps the coastlines faintly readable.
-   - A narrow warm dusk band runs along the terminator, and a thin blue rim sits on the night limb.
-   - The healthy frame's own city lights were removed first with a median filter, so each age draws its own.
-2. **Land mask.** Taken from the healthy day colours: land where the mean of red and green is more than blue + 0.02 and luminance is between 0.12 and 0.80.
-3. **Cities.**
-   - **Placement:** city sites are sampled on night-side land, weighted toward coasts by `exp(−distance_to_sea / k)` (k = 6–9 px), with a minimum spacing between sites.
-   - **Shape:** each site is a gaussian cluster of points. The number of points and the spread grow with city size; size is a Pareto draw (α 1.4–1.6), so a few big cities and many small ones.
-   - **Routes:** roads, rail and corridors are gently curved Bézier chains of light points between nearest neighbours, drawn only over land.
-4. **Compositing.**
-   - The lights are added as emission: `out = 1 − (1 − base)·exp(−light)`, so cores saturate softly instead of clipping.
-   - On top come a 6 px glow at 0.25 and, from Industry on, a 22 px haze at 0.35–0.5.
-   - The lights are masked by the night factor, so they fade in across the terminator.
-5. **Aurora.**
-   - An oval at 19° from a magnetic pole tilted toward the camera, (0.30, 0.68, 0.67), with a folded, wandering edge.
-   - Three parallel folds give the band its width. Curtains stand 0.3–8.5 % of the radius above the surface: green at the bottom, fading upward to a violet top.
-   - A random "ray" texture runs along the oval. The aurora is hidden where it goes behind the planet, and fades over the sunlit crescent.
-   - Blurred at 1.1, 5 and 16 px and added as emission.
-   - Clouds (white, unsaturated pixels of the healthy frame) are lit silver-blue on the night side, and they dim the city lights beneath them by 75 %.
 
-**Check:** the cyan coastline from `state-healthy` sits exactly on the night frames (last cell of the contact sheet), since they are the same pixels.
+1. **Relight.**
+   - The globe is treated as a sphere: centre (644, 354), radius 362 px, measured from the limb.
+   - The sun is at (−0.86, 0.12, −0.50), so only a crescent on the left stays in daylight.
+   - **Day factor** is a smoothstep of n·L from −0.06 to 0.22.
+   - **Night colour** is the day colour × (0.030, 0.038, 0.070), plus a cold moon and earthshine fill of × (0.10, 0.12, 0.18) × 0.9 (× 1.4 in the aurora frame). The fill keeps the coastlines faintly readable.
+   - A narrow warm dusk band runs along the terminator, and a thin blue rim sits on the night limb.
+   - The healthy frame's own city lights are removed first with a median filter.
+
+2. **Land and coast.**
+   - The land mask comes from the healthy day colours.
+   - Sites are sampled on night-side land and weighted toward the sea by `exp(−distance_to_sea / k)` (k = 6–9 px), with a minimum spacing, so lights belt the coasts.
+
+3. **Organic sprawl** (`sprawl()`).
+   - Each settlement has a core radius `rc = 1.6 + 2.6·√size` px, where size is a Pareto draw (α 1.3–2.2) capped at 3 (Iron), 9 (Industry) or 12 (Space).
+   - **Density:** `exp(−(d / (rc·(0.55 + 0.9·noise)))^1.4)`. The noise is a fractal value-noise field, so every edge is irregular and no two cities share a shape. The y axis is squashed 1.15× to hint at the curvature of the globe.
+   - **Texture:** each pixel is lit with probability `1.6·density`, at brightness `random^3`. That gives a sparkle of many dim and few bright lights, never a smooth disc.
+   - **Satellite towns:** 1 (Iron), 1 + size (Industry) or 2 + size (Space), placed 2.5–5.5 rc away on land.
+
+4. **Roads and rail** (`thread()`).
+   - A noisy walk steers toward a near neighbour: 18 % pull toward the target per step, ±0.22 rad of random turn.
+   - Each thread is broken into dashes and keeps 35–80 % of its points. It is drawn only on land and is dim (0.22 / 0.40 / 0.50 of a city point).
+   - It never draws a straight segment between city centres. **Stone has no threads.**
+
+5. **Optics** (`finish()`).
+   - Lights × night factor × **limb dimming** `0.3 + 0.7·√(n·view)` × **cloud occlusion** `1 − 0.8·blur(cloud, 3 px)`.
+   - **Bloom:** 0.8·E + 1.3·blur 1.2 px + 1.3·blur 4 px + (1.2 + 6·haze)·blur 14 px.
+   - Haze is 0.35 in Industry and 0.25 in Space.
+   - Compositing: `out = 1 − (1 − base)·exp(−light)`, so dense cores saturate softly instead of clipping.
+
+6. **Aurora** (`aurora()`).
+   - The auroral oval sits 34° around a magnetic pole tilted toward the upper-right limb, (0.36, 0.86, 0.36), so one arc crosses the night side seen from above and the far arc stands **in profile above the limb**.
+   - The edge folds and wanders: sines plus a random walk.
+   - Each of 5,200 columns is a **vertical curtain** of 30 samples along the local vertical, rising 7–13 % of the radius (exaggerated about 2× for readability).
+   - **Colour:** a bright green lower border fading upward, with a violet top band at about 35 %.
+   - **Ray texture:** a gamma-distributed brightness per column times a fine sinusoidal striation, giving the vertical rays.
+   - It is hidden behind the planet, fades over the sunlit crescent, and is blurred at 0.7, 3 and 12 px.
+   - A very soft 20 px glow tints the ground and the clouds below.
+
+**Check:** the cyan coastline from `state-healthy` sits exactly on the night frames (last cell of the contact sheet).
 
 ## Notes for the engineer (planet module)
 
@@ -52,58 +70,51 @@ These are emission colours before bloom.
 | Age | Main colour | Accents | Approx. colour temperature |
 |---|---|---|---|
 | Stone, Bronze | firelight `#ff8c38` | | about 1,900 K |
-| Iron, Sail | oil lamp `#ffad52` | a few fires `#ff8c38` | about 2,200 K |
-| Industry, Atomic | sodium `#ffc766` | port cores `#ffad52` | about 2,700 K |
+| Iron, Sail | oil lamp `#ffad52` | | about 2,200 K |
+| Industry, Atomic | sodium `#ffc766` | | about 2,700 K |
 | Space | LED warm-white `#fff0d1` | launch site cool-white `#cce0ff` | about 4,000 K, launch about 7,000 K |
-| Aurora | green `#4dff8c` | violet tops `#bf59ff`, at about 30 % | |
+| Aurora | green `#4dff8c` at the lower border | violet top `#b852ff` at about 35 % | |
 | Moonlit cloud | add `#29303f` | | on the night side only |
 
 ### Brightness
 
 Measured on these frames, as 8-bit luminance:
 
-| | Value |
-|---|---|
-| Daylit land (reference) | about 100 |
-| Night-side mean, Stone | 4.5 |
-| Night-side mean, Iron | 5.9 |
-| Night-side mean, Industry | 9.5 |
-| Night-side mean, Space | 12.4 |
-| Brightest city cores | 180–215, i.e. **1.8–2.1× daylit land** (bloomed) |
-| Stone fires | about 75, 0.7× daylit land |
+| Age | Night-side mean | Pixels > 60 | Pixels > 120 | Brightest |
+|---|---|---|---|---|
+| Daylit land (reference) | about 100 | | | |
+| Stone | 4.7 | 314 | 74 | fires about 65 |
+| Iron | 5.4 | 1,100 | 18 | towns about 90 |
+| Industry | 13.4 | 14,275 | 3,153 | |
+| Space | 19.6 | 26,859 | 8,490 | core about 225 |
 
-In HDR terms, a big city core is about 2× daylit land and a single fire about 0.7×. The *total* light on the night side grows about 3× from Stone to Space. The count of bright pixels grows 52 → 738 → 1,697 → 3,910, which is about ×75 from Stone to Space.
+In HDR terms, a dense core is about 2.2× daylit land after bloom, and a single fire about 0.65×. The **total** light on the night side grows about 4× from Stone to Space, and the lit area grows about 85×. Age reads mainly from **coverage and colour**, not from peak brightness.
 
 ### Clustering
-- Brightness and footprint scale with settlement population.
-- Footprint radius grows with sqrt(size): about 1.5 px for a village and about 6 px for a metropolis at this zoom.
-- Brightness per point stays roughly constant, so **a big city is brighter because it is bigger and denser, not because each light is hotter**. It also gets more bloom.
-- Clusters are irregular, not discs: about 0.8 aspect, with a scatter of satellite points.
+- **Footprint, not intensity, carries the size.** Core radius grows with √size: about 2 px for a village and about 9 px for a metropolis at this zoom. Brightness per light stays about the same, and only the bloom of dense cores grows.
+- **Every city is irregular:** a noise-bent falloff, sparkle texture and satellite towns. Big cities in the Industry and Space ages merge along coasts into continuous belts.
+- **Placement:** about 70 % of lights sit within 2 cells of the sea; the rest follow inland. In the game, add rivers and valleys from `Hydro` here; this frame has no river data.
+- **Roads:**
+  - Stone: none.
+  - Iron: faint, broken tracks between neighbours within about 70 px.
+  - Industry: rail to the 2 nearest neighbours.
+  - Space: corridors to the 3 nearest neighbours.
+  - Always curving, broken and dim (20–50 % of a city light), over land only.
+- **Haze:** from Industry on, a wide, warm light-dome round the big belts.
 
-**Placement rules:**
-- **Coasts:** about 70 % of lights sit within 2 cells of the sea. Ports (Industry and later) get a brighter core of `#ffad52`.
-- **Roads:** they appear from Iron, and only between settlements less than about 80 px apart at this zoom.
-  - **Iron:** dotted (about 70 % of points kept), dim at 0.45.
-  - **Industry:** rail between the 2 nearest neighbours, 0.22, mostly continuous.
-  - **Space:** corridors to the 3 nearest neighbours, continuous, 0.30, which turns the land into a lit web.
-  - In every age, routes curve gently and follow land, never crossing open sea.
-- **Haze:** from Industry on, a 20–25 px blur of the lights is added at 0.25–0.5. It reads as light pollution and smog glow, and ties into `state-industrial`.
-
-### Clouds and weather
-- Clouds dim the lights under them by about 75 %, and are themselves lit cold silver by the moon.
-- Storms (T-013 warming) would black out whole regions, which is a good, readable effect.
-
-### Twilight and the limb
-- Lights fade in from n·L = +0.04 to −0.12, so they never show in daylight.
-- Keep lights off the outer 7 % of the radius at the limb, where foreshortening crushes them into a line.
+### Optics
+- **Limb dimming:** lights × (0.3 + 0.7·√cos θ), where θ is the angle between the surface normal and the view.
+- **Clouds:** clouds dim the lights by up to 80 %, with soft edges (3 px blur), and are themselves lit cold silver by the moon.
+- **Terminator:** lights fade in from n·L = +0.04 to −0.12, so they never show in daylight.
 
 ### Aurora
-- An oval about 19° from a geomagnetic pole, which can be tilted per world from the seed.
-- Curtains 0.3–8.5 % of the radius high, with a ray texture that should drift slowly, about 0.02 rad per second.
-- Show it when the night side faces the camera and `dust` < 0.2; dust or ash hides it.
+- **Oval:** about 30–35° from a geomagnetic pole, which can be tilted per world from the seed.
+- **Curtains:** stand along the local vertical. The real height is about 2–5 % of the radius; these frames use 7–13 % so they read at orbit zoom.
+- **Look:** a sharp, bright green lower border, fading upward, with a violet top. Vertical ray striations drift along the oval at about 0.02 rad/s, and the brightness flickers slowly (period 2–8 s).
+- **When to show it:** when the night side faces the camera and `dust` < 0.2. Dust and ash hide it.
 
 ## Known misses
 
-- **Iron frame:** a few of the "towns" in the far east of the night side sit where the healthy frame had lights. With no daylit view of that region, the land there is inferred from those old lights, so the coast is less certain on that side.
-- **Aurora:** it is seen from above as an oval rather than as curtains in profile on the limb, because the north pole of this planet sits near the top of the frame and is partly cut off by it.
-- **Launch site:** the Space-age launch bloom is in the north-east of the main continent. It is chosen in code as the biggest coastal city, not hand-placed.
+- **Far-eastern night side:** the land there is inferred from the healthy frame's old city lights, because that region is never shown in daylight. Its coast is therefore less certain.
+- **No rivers:** the lights follow coasts but not rivers, because the concept image carries no river data. The build should use `Hydro`.
+- **Aurora height:** the curtains are about 2× taller than physical, for readability. The near arc partly crosses the dusk zone, where it fades.
