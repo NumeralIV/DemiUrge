@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><script src="sil.js"></script>
+<style>
+html,body{margin:0;width:1920px;height:1080px;background:#0b0f17;color:#e9e4d6;font-family:Inter,sans-serif;overflow:hidden}
+h1{position:absolute;left:40px;top:22px;margin:0;font:500 26px Cinzel;letter-spacing:.18em;color:#e8cd96}
+.sub{position:absolute;left:42px;top:60px;font-size:14px;color:#b3b9c4}
+.grid{position:absolute;left:40px;top:96px;display:grid;grid-template-columns:120px repeat(6,236px);gap:6px}
+.rowh{display:flex;flex-direction:column;justify-content:center;font:500 13px Cinzel;letter-spacing:.14em;color:#e8cd96}
+.rowh small{font:12px Inter;letter-spacing:0;color:#b3b9c4;margin-top:4px}
+.colh{font:500 12px Cinzel;letter-spacing:.16em;color:#e8cd96;text-align:center;padding-bottom:2px}
+.cell{position:relative;height:172px;border-radius:6px;overflow:hidden;background-size:cover;background-position:center}
+.cell .u{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%)}
+.cell .z{position:absolute;right:0;top:0;bottom:0;width:30%;background:rgba(11,15,23,.78);display:flex;align-items:center;justify-content:center}
+.cell .lab{position:absolute;left:0;right:0;bottom:0;padding:4px 8px;font-size:12px;background:linear-gradient(transparent,rgba(11,15,23,.85));color:#e9e4d6}
+.cell.empty{background:#131a26}
+.colours{position:absolute;left:1626px;top:96px;width:276px}
+.colours h2{font:500 12px Cinzel;letter-spacing:.16em;color:#e8cd96;margin:0 0 6px}
+.sw{height:84px;border-radius:6px;margin-bottom:6px;background-size:cover;position:relative;display:flex;align-items:center;justify-content:space-around;padding:0 4px}
+.sw span{position:absolute;left:6px;top:3px;font-size:12px;color:#fff;text-shadow:0 0 3px #000}
+</style></head><body>
+<h1>DEMIURGE · UNITS AT GAME SCALE</h1>
+<div class="sub">Every silhouette is drawn at 1:1 (20–66 px tall) on real terrain from our concept art. Nothing is magnified: what you see is what the camera sees at mid zoom. Culture colours are DM.CULTURE_COLORS.</div>
+<div class="grid" id="g"></div>
+<div class="colours" id="c"></div>
+<script>
+const CC=['#e69f00','#56b4e9','#009e73','#f0e442','#d55e00','#cc79a7'];
+const cols=['Settlers','Traders','Army','Prophet','At sea','Air and other'];
+const rows=[
+ ['Stone · Bronze','ancient',[['settlerAncient','grass','Settler band + ox cart'],['traderAncient','grass','Pack-animal traders'],['armyAncient','grass','Warband, pennant'],['prophetAll','grass','Prophet + followers'],['boatAncient','sea','Reed boat'],null],CC[0]],
+ ['Iron · Sail','classical',[['settlerClassical','grass','Covered wagon + walkers'],['traderClassical','sand','Camel caravan'],['armyClassical','grass','Formation, 3 banners'],['prophetAll','sand','Prophet + followers'],['sailship','sea','Sailing ship'],['galley','sea','Galley']],CC[1]],
+ ['Industry · Atomic','modern',[['settlerModern','grass','Bus convoy'],['train','grass','Freight train'],['trucks','grass','Truck column'],['prophetAll','grass','Prophet + followers'],['freighter','sea','Container freighter'],['aircraft','grass','Aircraft + shadow']],CC[2]],
+ ['Space','space',[['transport','grass','Aerial transport'],['maglev','grass','Maglev'],['gunship','sand','Armed transport'],['prophetAll','grass','Prophet + followers'],['seaSpace','sea','Fast sea freighter'],['rocket','grass','Launch · Ark at pad']],CC[5]],
+ ['Wildlife','wild',[['herd','savanna','Herd crossing'],['deer','grass','Deer'],['flock','shallows','Murmuration + V'],null,['whale','shallows','Whale'],['shoal','shallows','Fish shoal']],null],
+];
+let g='<div></div>'+cols.map(c=>`<div class="colh">${c.toUpperCase()}</div>`).join('');
+for(const [name,key,cells,A] of rows){
+  g+=`<div class="rowh">${name.toUpperCase()}<small>${A?'culture '+A:'no culture'}</small></div>`;
+  for(const c of cells){
+    if(!c){g+='<div class="cell empty"></div>';continue;}
+    const [fn,bg,lab]=c; const [w,h]=U[fn](A||'#e69f00');
+    let extra = (key==='space'&&fn==='rocket') ? `<div style="position:absolute;left:56%;top:44%;transform:translate(0,-50%)">${svgOf('ark',A)}</div>` : '';
+    g+=`<div class="cell" style="background-image:url(bg/${bg}.jpg)"><div class="u" style="${extra?'left:32%':''}">${svgOf(fn,A||'#e69f00')}</div>${extra}<div class="lab">${lab} · ${h} px</div></div>`;
+  }
+}
+document.getElementById('g').innerHTML=g;
+let c='<h2>COLOUR CHECK · FAR ZOOM</h2>';
+for(const [bg,l] of [['grass','meadow'],['savanna','savanna'],['sand','dunes'],['sea','deep sea'],['shallows','shallows']]){
+  c+=`<div class="sw" style="background-image:url(bg/${bg}.jpg)"><span>${l}</span>${CC.map(A=>`<div style="margin-top:10px;position:relative"><svg width="34" height="10" style="position:absolute;left:1px;bottom:-3px"><ellipse cx="17" cy="5" rx="16" ry="4" fill="none" stroke="${A}" stroke-width="2.2"/></svg>${bg==='sea'||bg==='shallows'?svgOf('sailship',A,.36):svgOf('armyAncient',A,.36)}</div>`).join('')}</div>`;
+}
+c+=`<div style="font-size:12px;color:#b3b9c4;line-height:1.45;margin-top:6px">Six culture colours on each ground, at the far end of the zoom (units about 16 px). A pennant alone is too small to carry colour here, so each unit also gets a culture-coloured ground ring (2 px). Yellow #f0e442 is weak on savanna and dunes, and orange #e69f00 / vermilion #d55e00 are weak on dunes: there, rely on the ring plus the dark silhouette. Green #009e73 is weak on deep sea and shallows, and sky blue #56b4e9 on shallows.</div>`;
+document.getElementById('c').innerHTML=c;
+</script></body></html>
