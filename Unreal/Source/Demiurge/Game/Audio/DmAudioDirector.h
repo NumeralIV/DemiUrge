@@ -63,6 +63,8 @@ public:
 	void Suspend(bool bSuspend);
 
 	bool HasDevice() const { return bDevice; }
+	/** Cues started since BeginPlay (rate-limited repeats not counted). */
+	int32 CuesPlayed = 0;
 	FDmAudioEngine* GetEngine() const { return Engine.Get(); }
 	const FDmAudioContext& GetContext() const { return Ctx; }
 	int64 GetCuesRequested() const { return CuesRequested; }

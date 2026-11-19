@@ -1,0 +1,231 @@
+== seed 2  policy chaotic  world "Raelthia"  L 6  calamity 1.00  create 125 ms  start 22 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     788     2    1 Stone    +0.00 -0.00   0.0 0.000   31/150   1.52   13    0     1     0     0     0     0     0    14     0   171     0
+    500    2271     4    1 Stone    +0.00 -0.00   0.0 0.000    7/200   1.65   12    0     2     0     0     0     0     0    58     0   188     0
+    750   13.9k     8    1 Bronze   -0.00 -0.00   0.0 0.000   40/720   2.21    9    0     4     0     0     0     1     0    17     0   124     0
+   1000   22.0k    16    2 Bronze   -0.00 -0.00   0.0 0.000   60/1200  2.42    8    0     8     0     0     0     7     0    27     0   136     1
+   1250   87.6k    24    3 Iron     -0.08 -0.01   0.0 0.008   67/1200  2.59    8    0     8     0     0     0     7     6    16     0   112     1
+   1500   97.7k    29    5 Iron     +0.00 -0.00   0.0 0.000   42/1200  2.63    8    0     6     1     1     2    10    10    21     0   127     2
+   1750  186.6k    39    6 Sail     -0.90 -0.00   0.0 0.100   44/1200  2.70    7    0    10     0     0     0    17     4    53     0   156     1
+   2000  447.9k    83    6 Sail     -0.09 -0.01   0.0 0.010   12/1200  2.93    7    0    44     0     0     0    27     3    63     0   115     0
+   2250  689.4k   106    6 Sail     +0.00 -0.00   0.0 0.000   50/1200  3.01    7    0    23     0     2    14    10     9    12     0   142     0
+   2500   1.58M   106    6 Industry +1.63 +0.11  54.3 0.000   48/1200  2.97    7    0    11    11     2     7    91     8    28     0   128     0
+   2750   1.65M   104    6 Industry +2.80 +0.21  92.9 0.000   32/1200  2.95    7    0     9    11     4    20    87    14    49     0   146     1
+   3000   3.24M   102    6 Atomic   +2.89 +0.23 118.7 0.048   15/1200  2.93    7    0     5     7     0     0    84     6    12     0   147     0
+   3250   4.21M    99    6 Atomic   +2.93 +0.28 151.7 0.115   39/1200  2.91    7    0     6     9     2    11    61     6    17     0   130     0
+   ENDING year 3483: ark / parting (culture 0, settlement 0)
+   3483   7.32M    99    6 Space    +2.39 +0.28 136.0 0.154   16/1200  2.89    7    0     1     1     0     3    23     4    10     0   151     0
+   result: 3483 years, ending ark / parting in 3483; ages: Bronze 505 Iron 1033 Sail 1641 Industry 2286 Atomic 2823 Space 3264; ark 3483
+   peaks: pop 7.32M, settlements 109, cultures 6; anomaly +3.94 (min -1.72), co2 152.5, dust 0.191, sea +0.285 / -0.007 vs seaBase; largest fire 15 cells (year 1955)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.52/yr (a 40-Awe miracle every 13.2 s at 1x), later 2.73/yr (7.3 s), 150 Awe every 27 s once meteors unlock
+   events: founded 138, destroyed 40 ( drowned(sea) 37 lava 3 ), cultures born 6 / died 1, wars 11, battles 57, nukes 0, prophets 0, wonders 0, trade routes 538, famines 425, plagues 70, fires 397, storms 216, droughts 138, quakes 38, volcanoes 14, impacts 0, people:lost 0, chronicle 1998
+   policy: 152 clicks, 460 strokes, 0 refused, 0 edicts; bloom 120 heal 38 inspire 7 lightning 99 lower 112 plague 2 quake 6 rain 130 raise 98
+   timing: 13932 ticks, wall mean 1.828 ms, max 82.99 ms (year 2945); thread CPU mean 1.681 ms, max 19.21 ms, p99.9 15.05 ms; score 4274; non-finite: none
+   regard now: everyone devotion 0.368 love +0.034 (parting); Nuyollnus* 0.356/+0.045 age Space pop 4.35M; Oulidia 0.373/+0.030 age Space pop 1.04M; Oloi 0.412/+0.010 age Atomic pop 226.3k; Lothroul 0.359/-0.014 age Space pop 985.5k; Miarri 0.425/+0.074 age Atomic pop 485.2k; Mio 0.445/+0.004 age Atomic pop 228.4k
+== seed 1  policy chaotic  world "Embervale"  L 6  calamity 1.00  create 114 ms  start 20 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     690     2    1 Stone    -1.49 -0.00   0.0 0.165   13/150   1.51   13    0     1     0     0     0     0     0    19     0   162     0
+    500    2336     4    1 Stone    -0.00 -0.00   0.0 0.000   31/200   1.62   12    0     2     0     0     0     0     0    27     0   132     0
+    750   17.5k     8    1 Bronze   -0.83 -0.01   0.0 0.093   16/780   2.21    9    0     4     0     0     0     1     0    18     0    99     0
+   1000   28.9k    25    2 Bronze   -0.25 -0.00   0.0 0.028   30/1200  2.45    8    0    17     0     0     0     1     0    20     0   118     1
+   1250  106.9k    32    4 Iron     -0.58 -0.01   0.0 0.064   66/1200  2.66    8    0     8     1     1     6    21     4    70     0   150     2
+   1500  135.6k    37    5 Iron     +0.00 -0.01   0.0 0.000   22/1200  2.68    7    0     7     2     3    15    10     8    37     0   140     1
+   1750  296.9k    58    6 Sail     -0.47 -0.01   0.0 0.052   70/1200  2.80    7    0    21     0     7    23    13     4    27     0   140     2
+   2000  621.8k   103    6 Sail     +0.00 -0.00   0.0 0.000   39/1200  2.97    7    0    45     0     5    22     5     8    14     0   161     1
+   2250  655.8k   109    6 Sail     +0.00 -0.00   0.0 0.000   42/1200  2.98    7    0     6     0     3    25    36     4    29     0   138     0
+   2500   1.49M   101    6 Industry +1.85 +0.11  59.0 0.000   19/1200  2.93    7    0     9    17     6    31    94     7    31     0   187     0
+   2750   1.57M    95    6 Industry +2.73 +0.17  89.5 0.000   17/1200  2.90    7    0     4    10     6    27    72    13    17     0   135     0
+   3000   3.90M    95    6 Atomic   +3.42 +0.22 125.6 0.000   61/1200  2.89    7    0     6     6     3    12    26    10    17     0   151     1
+   3250   4.21M    91    6 Atomic   +3.84 +0.25 145.0 0.001   26/1200  2.87    7    0     4     8     4    14    77     6    35     0   142     1
+   ENDING year 3486: ark / parting (culture 0, settlement 0)
+   3486   7.92M    90    6 Space    +3.39 +0.22 119.1 0.004    9/1200  2.84    7    0     1     2     2     9    33    10    48     0   148     0
+   result: 3486 years, ending ark / parting in 3486; ages: Bronze 517 Iron 1036 Sail 1624 Industry 2275 Atomic 2821 Space 3267; ark 3486
+   peaks: pop 7.92M, settlements 109, cultures 6; anomaly +3.87 (min -1.72), co2 145.6, dust 0.389, sea +0.250 / -0.010 vs seaBase; largest fire 8 cells (year 3426)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.50/yr (a 40-Awe miracle every 13.3 s at 1x), later 2.73/yr (7.3 s), 150 Awe every 27 s once meteors unlock
+   events: founded 135, destroyed 46 ( drowned(sea) 44 lava 1 war 1 ), cultures born 9 / died 4, wars 40, battles 184, nukes 4, prophets 0, wonders 0, trade routes 517, famines 389, plagues 74, fires 409, storms 207, droughts 136, quakes 39, volcanoes 13, impacts 0, people:lost 0, chronicle 2204
+   policy: 155 clicks, 493 strokes, 0 refused, 0 edicts; bloom 111 heal 33 inspire 9 lightning 107 lower 123 plague 1 quake 5 rain 137 raise 122
+   timing: 13944 ticks, wall mean 1.959 ms, max 94.67 ms (year 2816); thread CPU mean 1.793 ms, max 16.32 ms, p99.9 14.82 ms; score 4290; non-finite: none
+   regard now: everyone devotion 0.331 love +0.027 (parting); Roosses* 0.334/+0.057 age Space pop 3.14M; Nelmu 0.359/+0.173 age Atomic pop 111.3k; Sitpotri 0.430/-0.026 age Atomic pop 435.5k; Slanert 0.309/+0.005 age Space pop 3.05M; Susla 0.345/-0.006 age Space pop 757.6k; Lezul 0.327/+0.039 age Space pop 428.8k
+== seed 7  policy chaotic  world "Mere Glen"  L 6  calamity 1.00  create 146 ms  start 27 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     924     2    1 Stone    -0.00 -0.00   0.0 0.000    2/150   1.46   14    0     1     0     0     0     0     0    17     0   173     0
+    500    2046     3    1 Stone    +0.00 -0.00   0.0 0.000    3/175   1.53   13    0     1     0     0     0     0     0    17     0   191     0
+    750   12.5k     5    1 Bronze   -1.27 -0.00   0.0 0.141   15/525   2.03   10    0     2     0     0     0     2     0    39     0   177     0
+   1000   19.0k    12    2 Bronze   +0.00 -0.00   0.0 0.000   28/1060  2.26    9    0     7     0     0     0     1     0    24     0   105     1
+   1250   65.4k    22    3 Iron     -1.72 -0.00   0.0 0.191   38/1200  2.46    8    0    10     0     1     4     5     1   112     0   172     1
+   1500   88.7k    25    4 Iron     -0.43 -0.01   0.0 0.048   22/1200  2.52    8    0     3     0     1     6    17     9    23     0   142     1
+   1750   90.7k    26    4 Iron     +0.00 -0.00   0.0 0.000   27/1200  2.52    8    0     2     1     6    26     6     6    16     0   110     1
+   2000  202.7k    40    5 Sail     +0.00 -0.00   0.0 0.000   43/1200  2.63    8    0    15     1     1     7     8    13    19     0   131     1
+   2250  474.6k    80    6 Sail     -0.01 -0.01   0.0 0.001   19/1200  2.85    7    0    40     0    14    41    19     9    40     0   131     2
+   2500  595.9k   100    6 Sail     -0.21 -0.01   0.0 0.023   12/1200  2.90    7    0    22     2    12    38    33    10    33     0   136     0
+   2750   1.48M   100    6 Industry -0.18 +0.08  46.5 0.176    7/1200  2.88    7    0     7     7     7    27    51     6    33     0   133     0
+   3000   1.60M    99    6 Industry +1.26 +0.17  88.2 0.159   37/1200  2.86    7    0    12    13     9    35    96    10    24     0   102     0
+   3250   3.11M   101    6 Atomic   +3.12 +0.20 109.8 0.000   63/1200  2.85    7    0     2     0     6    40    28     6    14     0   160     0
+   3500   3.88M   100    6 Atomic   +1.71 +0.23 146.9 0.239   29/1200  2.84    7    0     2     3    12    38    90     8    33     0   142     1
+   3750   6.48M    99    6 Space    +3.82 +0.25 140.3 0.000   10/1200  2.82    7    0     2     3     8    28    37     6    15     0   134     0
+   ENDING year 3813: ark / parting (culture 0, settlement 0)
+   3813   7.80M    99    6 Space    +3.70 +0.24 130.6 0.000   11/1200  2.81    7    0     1     1     2    10     1     1     2     0    30     0
+   result: 3813 years, ending ark / parting in 3813; ages: Bronze 542 Iron 1147 Sail 1845 Industry 2556 Atomic 3132 Space 3594; ark 3813
+   peaks: pop 7.80M, settlements 101, cultures 6; anomaly +3.92 (min -1.72), co2 153.3, dust 0.459, sea +0.248 / -0.007 vs seaBase; largest fire 9 cells (year 747)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.46/yr (a 40-Awe miracle every 13.7 s at 1x), later 2.62/yr (7.6 s), 150 Awe every 28 s once meteors unlock
+   events: founded 129, destroyed 31 ( drowned(sea) 30 lava 1 ), cultures born 8 / died 3, wars 79, battles 300, nukes 12, prophets 0, wonders 0, trade routes 479, famines 394, plagues 85, fires 461, storms 218, droughts 149, quakes 43, volcanoes 16, impacts 0, people:lost 0, chronicle 2402
+   policy: 152 clicks, 535 strokes, 0 refused, 0 edicts; bloom 116 heal 34 inspire 8 lightning 103 lower 127 plague 1 quake 6 rain 156 raise 136
+   timing: 15252 ticks, wall mean 1.841 ms, max 97.57 ms (year 3072); thread CPU mean 1.684 ms, max 19.83 ms, p99.9 15.41 ms; score 4352; non-finite: none
+   regard now: everyone devotion 0.300 love -0.001 (parting); Tilinlen* 0.296/+0.013 age Space pop 3.56M; Tonunvur 0.290/-0.044 age Space pop 1.38M; Votu 0.290/+0.141 age Space pop 812.0k; Rou 0.357/-0.051 age Atomic pop 231.5k; Nukutu 0.322/-0.032 age Space pop 955.2k; Neriji 0.305/-0.079 age Space pop 861.3k
+== seed 8  policy chaotic  world "Amberwake"  L 6  calamity 1.00  create 129 ms  start 22 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     827     2    1 Stone    +0.00 +0.00   0.0 0.000    6/150   1.51   13    0     1     0     0     0     0     0    15     0   188     0
+    500    2044     4    1 Stone    -0.06 -0.00   0.0 0.007    6/200   1.63   12    0     2     0     0     0     0     0    90     0   183     0
+    750   11.2k     6    1 Bronze   -0.00 -0.00   0.0 0.000   14/610   2.13    9    0     2     0     0     0     2     0    16     0   145     0
+   1000   19.7k    15    2 Bronze   +0.00 -0.00   0.0 0.000   29/1195  2.37    8    0     9     0     0     0     3     0    53     0   133     1
+   1250   88.0k    22    3 Iron     +0.00 -0.00   0.0 0.000   54/1200  2.58    8    0     7     0     0     0     1     4    64     0   131     1
+   1500  128.4k    34    5 Iron     +0.00 -0.00   0.0 0.000   28/1200  2.67    7    0    12     0     0     0    10     4    41     0   124     2
+   1750  169.7k    52    6 Iron     +0.00 -0.00   0.0 0.000   10/1200  2.79    7    0    19     1     2     6    23    10    19     0   140     1
+   2000  539.6k    89    6 Sail     -0.00 -0.00   0.0 0.000   21/1200  2.95    7    0    37     0     1     5    10     8    22     0   135     0
+   2250  647.6k   102    6 Sail     +0.00 -0.00   0.0 0.000   24/1200  2.98    7    0    14     1     1     6    40    10    16     0   129     0
+   2500   1.02M   103    6 Industry +0.28 +0.01  11.9 0.000   21/1200  2.98    7    0     2     1     3    15    55    12    42     0   140     0
+   2750   1.69M    97    6 Industry +2.32 +0.16  76.6 0.000   30/1200  2.93    7    0     5    11     3     9    63     4    23     0   134     0
+   3000   1.68M    94    6 Industry +2.84 +0.19  93.6 0.000   36/1200  2.92    7    0     5     8     1     2    42     8    14     0   124     1
+   3250   4.51M    94    6 Atomic   +3.59 +0.24 134.9 0.000   21/1200  2.90    7    0     3     3     5    12    36     6    19     0   123     0
+   3500   5.42M    93    6 Space    +2.62 +0.27 153.1 0.159   11/1200  2.89    7    0     2     3     3    11    56    12    39     0   146     2
+   ENDING year 3684: ark / parting (culture 0, settlement 48)
+   3684   9.20M    94    6 Space    +3.67 +0.25 129.9 0.000   84/1200  2.86    7    0     2     1     3    11    19     2    14     0    98     0
+   result: 3684 years, ending ark / parting in 3684; ages: Bronze 528 Iron 1098 Sail 1765 Industry 2441 Atomic 3007 Space 3465; ark 3684
+   peaks: pop 9.20M, settlements 103, cultures 6; anomaly +4.07 (min -1.72), co2 157.2, dust 0.279, sea +0.273 / -0.006 vs seaBase; largest fire 12 cells (year 834)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.51/yr (a 40-Awe miracle every 13.3 s at 1x), later 2.74/yr (7.3 s), 150 Awe every 27 s once meteors unlock
+   events: founded 122, destroyed 29 ( drowned(sea) 24 lava 5 ), cultures born 8 / died 3, wars 22, battles 77, nukes 3, prophets 0, wonders 0, trade routes 489, famines 360, plagues 80, fires 487, storms 214, droughts 148, quakes 43, volcanoes 15, impacts 0, people:lost 0, chronicle 2028
+   policy: 147 clicks, 515 strokes, 0 refused, 0 edicts; bloom 111 heal 35 inspire 8 lightning 98 lower 135 plague 1 quake 5 rain 126 raise 143
+   timing: 14736 ticks, wall mean 1.995 ms, max 88.40 ms (year 2630); thread CPU mean 1.752 ms, max 19.04 ms, p99.9 15.29 ms; score 4341; non-finite: none
+   regard now: everyone devotion 0.351 love +0.011 (parting); Rajapa* 0.339/+0.016 age Space pop 3.02M; Lekit 0.362/+0.008 age Space pop 3.46M; Kous 0.341/-0.006 age Space pop 2.10M; Ansa 0.434/+0.145 age Atomic pop 134.9k; Enimers 0.365/-0.001 age Space pop 156.7k; Hikkhers 0.370/+0.056 age Space pop 330.0k
+== seed 4  policy chaotic  world "Umber Sound"  L 6  calamity 1.00  create 136 ms  start 28 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     754     2    1 Stone    -0.00 -0.00   0.0 0.000   15/150   1.52   13    0     1     0     0     0     0     0    27     0   188     0
+    500    1798     3    1 Stone    +0.00 -0.00   0.0 0.000    2/175   1.60   13    0     1     0     0     0     0     0    16     0   178     0
+    750   14.1k    10    1 Bronze   +0.00 -0.00   0.0 0.000   40/950   2.31    9    0     7     0     0     0     0     0    21     0   115     0
+   1000   31.4k    18    1 Bronze   -0.25 -0.00   0.0 0.028   57/1200  2.48    8    0     8     0     0     0     2     0    42     0   157     0
+   1250  124.6k    28    3 Iron     +0.00 -0.00   0.0 0.000   20/1200  2.67    7    0    10     0     0     0     7     4    59     0   160     2
+   1500  144.6k    41    5 Iron     +0.00 -0.00   0.0 0.000   47/1200  2.77    7    0    14     1     0     0    15     5    51     0   123     2
+   1750  226.6k    41    6 Sail     +0.00 -0.00   0.0 0.000   71/1200  2.75    7    0     2     2     0     0    19     7    17     0   111     1
+   2000  455.4k    98    6 Sail     +0.00 -0.00   0.0 0.000   12/1200  2.99    7    0    58     1     0     0    16     8    22     0   159     0
+   2250  659.9k   116    6 Sail     +0.00 -0.00   0.0 0.000    8/1200  3.04    7    0    20     2     2    11    41     6    30     0   142     0
+   2500   1.42M   112    6 Industry +1.13 +0.05  38.2 0.002   17/1200  3.00    7    0     6    10     1    10    91     4    43     0   152     0
+   2750   1.65M   107    6 Industry +0.77 +0.15  82.4 0.191   19/1200  2.98    7    0     9    14     0     0    69     6    42     0   154     0
+   3000   3.09M   105    6 Atomic   +2.89 +0.18 103.5 0.010   27/1200  2.96    7    0     2     4     1     6    58     6    20     0   119     0
+   3250   3.76M   102    6 Atomic   +3.18 +0.23 134.1 0.052   49/1200  2.95    7    0     4     7     0     0    53     4    31     0   128     0
+   3500   7.42M   102    6 Space    +3.88 +0.25 142.4 0.000   19/1200  2.93    7    0     6     6     0     0    21     4    14     0   150     0
+   ENDING year 3648: ark / parting (culture 0, settlement 0)
+   3648   7.74M   102    6 Space    +3.72 +0.24 138.3 0.005   20/1200  2.92    7    0     1     1     0     0    31     3    12     0    86     0
+   result: 3648 years, ending ark / parting in 3648; ages: Bronze 551 Iron 1105 Sail 1680 Industry 2370 Atomic 2953 Space 3429; ark 3648
+   peaks: pop 7.84M, settlements 117, cultures 6; anomaly +3.96 (min -1.72), co2 152.4, dust 0.191, sea +0.253 / -0.010 vs seaBase; largest fire 10 cells (year 2431)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.51/yr (a 40-Awe miracle every 13.3 s at 1x), later 2.79/yr (7.2 s), 150 Awe every 27 s once meteors unlock
+   events: founded 149, destroyed 48 ( drowned(sea) 46 lava 2 ), cultures born 5 / died 0, wars 4, battles 27, nukes 0, prophets 0, wonders 0, trade routes 591, famines 423, plagues 57, fires 447, storms 230, droughts 146, quakes 42, volcanoes 15, impacts 0, people:lost 0, chronicle 1955
+   policy: 132 clicks, 518 strokes, 0 refused, 0 edicts; bloom 123 heal 28 inspire 10 lightning 88 lower 134 quake 6 rain 136 raise 125
+   timing: 14592 ticks, wall mean 2.112 ms, max 203.42 ms (year 2921); thread CPU mean 1.697 ms, max 17.34 ms, p99.9 15.57 ms; score 4322; non-finite: none
+   regard now: everyone devotion 0.385 love +0.001 (parting); Sheisyava* 0.365/-0.004 age Space pop 5.87M; Lessis 0.465/+0.027 age Atomic pop 377.2k; Sushilak 0.466/-0.006 age Atomic pop 191.3k; Estfusha 0.457/+0.034 age Atomic pop 552.0k; Suthle 0.416/-0.029 age Atomic pop 362.0k; Shauha 0.429/+0.032 age Atomic pop 379.5k
+== seed 3  policy chaotic  world "Nulias"  L 6  calamity 1.00  create 128 ms  start 19 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     838     2    1 Stone    +0.00 -0.00   0.0 0.000    7/150   1.50   13    0     1     0     0     0     0     0    16     0   146     0
+    500    1822     4    1 Stone    +0.00 -0.01   0.0 0.000    2/200   1.63   12    0     2     0     0     0     1     0    18     0   173     0
+    750   11.1k     6    1 Bronze   +0.00 -0.01   0.0 0.000    4/610   2.15    9    0     2     0     0     0     0     0    39     0   158     0
+   1000   20.7k    16    2 Bronze   -0.01 -0.02   0.0 0.001    3/1200  2.36    8    0    10     0     0     0     4     0    36     0   127     1
+   1250   73.7k    22    4 Iron     -0.77 -0.02   0.0 0.086   10/1200  2.55    8    0     6     0     1     2    11     5    29     0   133     2
+   1500  106.7k    29    6 Iron     +0.00 -0.01   0.0 0.000   10/1200  2.63    8    0     7     0     0     0    10    10    27     0   174     2
+   1750  174.6k    44    6 Sail     +0.00 -0.01   0.0 0.000    7/1200  2.73    7    0    15     0     0     0    12     6    23     0   164     0
+   2000  466.9k    86    6 Sail     +0.00 -0.01   0.0 0.000   10/1200  2.93    7    0    42     0     1     4    16     7    43     0   149     0
+   2250  617.6k   108    6 Sail     +0.00 -0.01   0.0 0.000   40/1200  2.99    7    0    22     0     0     0    35     6    39     0   169     0
+   2500   1.44M   105    6 Industry +1.38 +0.13  46.5 0.000   21/1200  2.96    7    0     6     9     0     0    66     6    13     0   154     0
+   2750   1.42M   107    6 Industry +2.57 +0.27  83.7 0.000   16/1200  2.95    7    0    12    10     0     0    98     4    35     0   165     0
+   3000   3.34M   105    6 Atomic   +2.87 +0.32 110.2 0.023    8/1200  2.93    7    0     3     5     2     4    35     8    19     0   117     1
+   3250   3.72M   104    6 Atomic   +3.79 +0.38 141.5 0.000   10/1200  2.92    7    0    10    11     1     2    32     8    10     0   122     1
+   3500   7.03M   104    6 Space    +3.54 +0.37 123.6 0.000   30/1200  2.89    7    0     2     2     0     0    51     6    31     0   190     0
+   ENDING year 3566: ark / parting (culture 0, settlement 0)
+   3566   7.18M   104    6 Space    +3.44 +0.36 119.3 0.000   31/1200  2.89    7    0     0     0     0     0     3     4     3     0    33     0
+   result: 3566 years, ending ark / parting in 3566; ages: Bronze 517 Iron 1066 Sail 1686 Industry 2348 Atomic 2898 Space 3347; ark 3566
+   peaks: pop 7.18M, settlements 109, cultures 6; anomaly +3.85 (min -1.72), co2 145.2, dust 0.191, sea +0.386 / -0.024 vs seaBase; largest fire 9 cells (year 1379)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.50/yr (a 40-Awe miracle every 13.3 s at 1x), later 2.73/yr (7.3 s), 150 Awe every 27 s once meteors unlock
+   events: founded 140, destroyed 37 ( drowned(sea) 35 lava 2 ), cultures born 7 / died 2, wars 5, battles 12, nukes 0, prophets 0, wonders 0, trade routes 562, famines 374, plagues 70, fires 381, storms 212, droughts 148, quakes 37, volcanoes 12, impacts 0, people:lost 0, chronicle 1896
+   policy: 132 clicks, 535 strokes, 0 refused, 0 edicts; bloom 127 heal 26 inspire 5 lightning 96 lower 133 plague 1 quake 4 rain 131 raise 144
+   timing: 14264 ticks, wall mean 2.180 ms, max 184.59 ms (year 2848); thread CPU mean 1.755 ms, max 20.45 ms, p99.9 16.53 ms; score 4312; non-finite: none
+   regard now: everyone devotion 0.345 love -0.012 (parting); Vao* 0.338/-0.007 age Space pop 4.30M; Vadongath 0.354/-0.039 age Space pop 2.04M; Therwosa 0.391/+0.054 age Atomic pop 172.3k; Mewomia 0.372/+0.041 age Atomic pop 156.9k; Isem 0.361/+0.018 age Space pop 143.9k; Waveanan 0.341/+0.007 age Space pop 365.2k
+== seed 6  policy chaotic  world "Umbercrest"  L 6  calamity 1.00  create 134 ms  start 22 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     833     2    1 Stone    +0.00 +0.00   0.0 0.000   14/150   1.49   13    0     1     0     0     0     0     0    19     0   198     0
+    500    2298     4    1 Stone    -1.29 -0.00   0.0 0.143   13/200   1.62   12    0     2     0     0     0     0     0    63     0   157     0
+    750   20.8k    14    1 Bronze   -1.49 -0.00   0.0 0.165   58/1200  2.36    8    0    10     0     0     0     2     0    32     0   113     0
+   1000   43.9k    24    1 Bronze   +0.00 -0.00   0.0 0.000   17/1200  2.52    8    0    10     0     0     0     2     0    35     0   141     0
+   1250  154.4k    34    3 Iron     -0.02 -0.00   0.0 0.002   23/1200  2.68    7    0    10     0     0     0     9     3    53     0   129     2
+   1500  182.7k    45    5 Iron     -0.35 -0.01   0.0 0.039   32/1200  2.76    7    0    11     0     0     0    15     9    40     0   167     2
+   1750  408.0k    75    6 Sail     -0.01 -0.00   0.0 0.001   25/1200  2.88    7    0    30     0     1     1    13     6    53     0   136     1
+   2000  665.0k   101    6 Sail     -0.25 -0.00   0.0 0.028   56/1200  2.96    7    0    27     1     0     0    16     6    16     0   131     0
+   2250  641.6k   100    6 Sail     -0.00 -0.00   0.0 0.000   67/1200  2.96    7    0     2     3     3     6    72     7    27     0   149     0
+   2500   1.40M    94    6 Industry +1.42 +0.09  45.3 0.000   28/1200  2.93    7    0     6    12     0     4    57     5    65     0   114     0
+   2750   1.54M    94    6 Industry +2.55 +0.17  82.9 0.001   31/1200  2.90    7    0     6     6     1     5    66     6    34     0   112     1
+   3000   3.00M    93    6 Atomic   +2.13 +0.19 100.0 0.086   11/1200  2.89    7    0     5     6     1     6    54    12    50     0   138     0
+   3250   3.96M    96    6 Atomic   +3.55 +0.24 130.2 0.000   26/1200  2.88    7    0     7     4     2     8    42     4    10     0   117     0
+   3500   6.56M    96    6 Space    +3.64 +0.25 129.1 0.000   37/1200  2.86    7    0     1     1     0     0    43     8    39     0   150     0
+   ENDING year 3629: ark / parting (culture 0, settlement 0)
+   3629   6.87M    95    6 Space    +3.51 +0.25 124.6 0.000   15/1200  2.85    7    0     0     1     0     0     3     2     8     0    77     0
+   result: 3629 years, ending ark / parting in 3629; ages: Bronze 549 Iron 1074 Sail 1647 Industry 2342 Atomic 2931 Space 3410; ark 3629
+   peaks: pop 6.87M, settlements 102, cultures 6; anomaly +3.81 (min -1.72), co2 142.2, dust 0.191, sea +0.260 / -0.007 vs seaBase; largest fire 10 cells (year 2379)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.50/yr (a 40-Awe miracle every 13.4 s at 1x), later 2.77/yr (7.2 s), 150 Awe every 27 s once meteors unlock
+   events: founded 128, destroyed 34 ( drowned(sea) 32 lava 2 ), cultures born 6 / died 1, wars 8, battles 30, nukes 0, prophets 0, wonders 0, trade routes 461, famines 394, plagues 68, fires 544, storms 220, droughts 142, quakes 45, volcanoes 14, impacts 0, people:lost 0, chronicle 1847
+   policy: 150 clicks, 494 strokes, 0 refused, 0 edicts; bloom 113 heal 34 inspire 7 lightning 97 lower 140 plague 2 quake 10 rain 121 raise 120
+   timing: 14516 ticks, wall mean 2.142 ms, max 194.50 ms (year 2839); thread CPU mean 1.749 ms, max 17.17 ms, p99.9 15.67 ms; score 4323; non-finite: none
+   regard now: everyone devotion 0.340 love -0.010 (parting); Yuanehe* 0.320/-0.011 age Space pop 5.21M; Melala 0.399/-0.032 age Atomic pop 106.2k; Yennen 0.426/-0.036 age Atomic pop 624.7k; Noolsal 0.412/+0.023 age Atomic pop 316.9k; Laneos 0.360/-0.019 age Atomic pop 441.4k; Sollmouso 0.413/+0.075 age Atomic pop 165.6k
+== seed 5  policy chaotic  world "Silvercairn"  L 6  calamity 1.00  create 129 ms  start 27 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     699     2    1 Stone    -0.02 -0.01   0.0 0.002    9/150   1.52   13    0     1     0     0     0     0     0    34     0   191     0
+    500    2254     4    1 Stone    -0.05 -0.01   0.0 0.005   29/200   1.67   12    0     2     0     0     0     0     0    45     0   157     0
+    750   17.5k    12    1 Bronze   -0.20 -0.01   0.0 0.022    6/940   2.32    9    0     8     0     0     0     0     0    58     0   151     0
+   1000   25.7k    20    1 Bronze   -0.37 -0.01   0.0 0.042   44/1200  2.52    8    0     8     0     0     0     6     0    13     0   180     0
+   1250   94.7k    28    3 Iron     +0.00 -0.00   0.0 0.000   29/1200  2.67    7    0     8     0     0     0     4     3    56     0    96     2
+   1500  112.8k    31    5 Iron     -1.60 -0.00   0.0 0.178   51/1200  2.70    7    0     3     0     0     0     8     7    58     0   118     2
+   1750  178.4k    38    6 Sail     +0.00 -0.00   0.0 0.000   33/1200  2.75    7    0     7     0     0     0     6     6    14     0   165     1
+   2000  406.6k    75    6 Sail     -0.02 -0.01   0.0 0.003   32/1200  2.93    7    0    38     1     0     0    14     4    40     0   131     0
+   2250  569.9k   103    6 Sail     -0.70 -0.00   0.0 0.078   49/1200  3.02    7    0    29     1     0     0    16    10    13     0   122     0
+   2500   1.10M   101    6 Industry +0.55 +0.03  19.7 0.000    8/1200  3.01    7    0     1     3     0     0    48    10    17     0   149     0
+   2750   1.29M   100    6 Industry +2.21 +0.18  69.9 0.000   35/1200  2.98    7    0     6     7     0     0    76     4    12     0   139     0
+   3000   1.44M   102    6 Atomic   +2.60 +0.22  83.5 0.000   40/1200  2.97    7    0     7     5     0     0    59     8    14     0   112     0
+   3250   3.36M   100    6 Atomic   +3.36 +0.27 120.9 0.000    8/1200  2.95    7    0     7     9     0     0    52     8     9     0   141     0
+   3500   4.63M    99    6 Space    +3.59 +0.30 127.1 0.000   12/1200  2.94    7    0     3     4     0     0    45    10    26     0   171     0
+   ENDING year 3686: ark / parting (culture 0, settlement 0)
+   3686   6.79M    99    6 Space    +3.30 +0.28 112.3 0.000   25/1200  2.92    7    0     1     1     0     0    31     6     7     0   104     0
+   result: 3686 years, ending ark / parting in 3686; ages: Bronze 547 Iron 1079 Sail 1709 Industry 2412 Atomic 2993 Space 3467; ark 3686
+   peaks: pop 6.79M, settlements 104, cultures 6; anomaly +3.62 (min -1.72), co2 131.9, dust 0.191, sea +0.300 / -0.009 vs seaBase; largest fire 13 cells (year 1495)
+   awe: at cap 0% of years, below 90% 100%; income stone 1.53/yr (a 40-Awe miracle every 13.0 s at 1x), later 2.80/yr (7.1 s), 150 Awe every 27 s once meteors unlock
+   events: founded 129, destroyed 31 ( drowned(sea) 28 lava 3 ), cultures born 5 / died 0, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 473, famines 365, plagues 76, fires 416, storms 218, droughts 138, quakes 44, volcanoes 15, impacts 0, people:lost 0, chronicle 1921
+   policy: 141 clicks, 540 strokes, 0 refused, 0 edicts; bloom 126 heal 39 inspire 6 lightning 88 lower 147 quake 8 rain 142 raise 125
+   timing: 14744 ticks, wall mean 2.122 ms, max 176.02 ms (year 2914); thread CPU mean 1.717 ms, max 17.79 ms, p99.9 15.76 ms; score 4325; non-finite: none
+   regard now: everyone devotion 0.396 love +0.024 (parting); Nothis* 0.378/+0.022 age Space pop 3.84M; Soedi 0.454/-0.107 age Atomic pop 73.0k; Ousnonri 0.412/-0.027 age Atomic pop 118.3k; Nusarrel 0.415/+0.004 age Space pop 1.07M; Roner 0.414/+0.039 age Space pop 1.41M; Thaele 0.452/+0.123 age Atomic pop 280.2k
+
+seed policy  | Bronze  Iron  Sail Indus Atom Space   Ark | ending           | pop@500 @1000 @2000 @3000 @3500 | settl@1000 @3000 | cult@2000 | anom+  sea+   | lost<500 | awe<90% cap% | ms mean  max  cpu | nan | hash
+   1 chaotic |    517  1036  1624  2275 2821  3267  3486 | ark/parting 3486 |    2336 28.9k 621.8k 3.90M     - |         25    95 |         6 | +3.87 +0.250 |       no |     100    0 |   1.959 94.7 16.3 |  ok | 8c925fea
+   2 chaotic |    505  1033  1641  2286 2823  3264  3483 | ark/parting 3483 |    2271 22.0k 447.9k 3.24M     - |         16   102 |         6 | +3.94 +0.285 |       no |     100    0 |   1.828 83.0 19.2 |  ok | 3d60ce07
+   3 chaotic |    517  1066  1686  2348 2898  3347  3566 | ark/parting 3566 |    1822 20.7k 466.9k 3.34M 7.03M |         16   105 |         6 | +3.85 +0.386 |       no |     100    0 |   2.180 184.6 20.4 |  ok | 2171dfe9
+   4 chaotic |    551  1105  1680  2370 2953  3429  3648 | ark/parting 3648 |    1798 31.4k 455.4k 3.09M 7.42M |         18   105 |         6 | +3.96 +0.253 |       no |     100    0 |   2.112 203.4 17.3 |  ok | 3725424d
+   5 chaotic |    547  1079  1709  2412 2993  3467  3686 | ark/parting 3686 |    2254 25.7k 406.6k 1.44M 4.63M |         20   102 |         6 | +3.62 +0.300 |       no |     100    0 |   2.122 176.0 17.8 |  ok | 88a317bf
+   6 chaotic |    549  1074  1647  2342 2931  3410  3629 | ark/parting 3629 |    2298 43.9k 665.0k 3.00M 6.56M |         24    93 |         6 | +3.81 +0.260 |       no |     100    0 |   2.142 194.5 17.2 |  ok | 15be1024
+   7 chaotic |    542  1147  1845  2556 3132  3594  3813 | ark/parting 3813 |    2046 19.0k 202.7k 1.60M 3.88M |         12    99 |         5 | +3.92 +0.248 |       no |     100    0 |   1.841 97.6 19.8 |  ok | 8b76cb47
+   8 chaotic |    528  1098  1765  2441 3007  3465  3684 | ark/parting 3684 |    2044 19.7k 539.6k 1.68M 5.42M |         15    94 |         6 | +4.07 +0.273 |       no |     100    0 |   1.995 88.4 19.0 |  ok | 448c685c
+
+targets (SPEC-SIM 4), policy chaotic, 8 seeds:
+  PASS  no non-finite value                                            8/8  []
+  PASS  small miracle (40 Awe) every N s, Stone age in 5..15           8/8  [13.32 13.2 13.34 13.27 13.03 13.37 13.72 13.29]
+  PASS  small miracle (40 Awe) every N s, later ages in 3..8           8/8  [7.313 7.322 7.334 7.164 7.141 7.215 7.628 7.301]
+  PASS  great miracle (150 Awe) every N s once meteors unlock in 25..60 8/8  [27.22 27.28 27.31 26.78 26.77 27.05 28.23 27.19]
+  PASS  Awe below 90% of aweMax in >= 60% of years                     8/8  [100% 100% 100% 100% 100% 100% 100% 100%]
+  PASS  mean tick <= 2.5 ms (thread CPU time)                          8/8  [1.79 1.68 1.75 1.70 1.72 1.75 1.68 1.75]
+  PASS  max tick <= 30 ms (thread CPU time)                            8/8  [16.3 19.2 20.4 17.3 17.8 17.2 19.8 19.0]
+  info  max tick, wall clock (informational: includes descheduled time) 0/0  [94.7 83.0 184.6 203.4 176.0 194.5 97.6 88.4]
+
+note: tick timings were measured with --jobs 8 (threads contend for the heap and memory): use --jobs 1 for the performance targets
+
+simrun: 8 run(s) in 31.6 s wall, no non-finite values

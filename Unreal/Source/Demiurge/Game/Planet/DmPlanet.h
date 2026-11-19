@@ -273,6 +273,7 @@ private:
 	bool bWorldPending = true;
 	bool bTerrainDirty = false, bColorDirty = false, bOverlayDirty = false, bRiverMapDirty = false;
 	double LastColorTime = -1e9;
+	double LastTerrainStart = -1e9, LastRiverStart = -1e9;   // (integration) throttles, see PumpData
 	int32 Overlay = 0;
 	bool bSnapshot = false;
 	int32 DebugMode = 0;

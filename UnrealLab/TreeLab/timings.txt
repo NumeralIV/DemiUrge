@@ -1,0 +1,4 @@
+temperate-50-gold | trees 943139 | frame 85.02 ms, game 1.46, render 85.01, rhi 60.10, gpu 32.40 (median 32.85)
+temperate-300-gold | trees 943139 | frame 25.92 ms, game 1.72, render 25.91, rhi 16.45, gpu 21.07 (median 20.50)
+temperate-50-gold-gen | trees 943139 | frame 55.31 ms, game 1.53, render 55.30, rhi 37.58, gpu 34.66 (median 35.68)
+temperate-300-gold-gen | trees 943139 | frame 23.30 ms, game 1.28, render 23.29, rhi 16.33, gpu 18.83 (median 18.73)

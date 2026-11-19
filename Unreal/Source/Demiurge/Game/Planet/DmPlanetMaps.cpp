@@ -35,7 +35,7 @@ namespace
 				if (!Deg) return;
 				double S = 0; for (int32 K = 0; K < Deg; ++K) S += Tmp[G.Nbr[6 * C + K]];
 				F[C] = 0.5f * Tmp[C] + 0.5f * float(S / Deg);
-			});
+			}, EParallelForFlags::BackgroundPriority);
 		}
 	}
 
@@ -159,7 +159,7 @@ void FDmPlanetMaps::Init(const TSharedPtr<const FDmGeoLocator, ESPMode::ThreadSa
 			for (int32 K = 0; K < 3; ++K) { C.Warped[I].C[K] = Cc[K]; C.Warped[I].W[K] = float(Wt[K]); }
 			C.Wob[I] = float(0.06 * Fbm(Dir * 25.0 + FVector3d(9.1), 3));
 		}
-	});
+	}, EParallelForFlags::BackgroundPriority);
 	Cache = Nc;
 	InitMs = (FPlatformTime::Seconds() - T0) * 1000.0;
 }
@@ -176,6 +176,7 @@ void FDmPlanetMaps::CaptureInputs(const dm::World& W, int32 Overlay, FDmMapInput
 		for (int32 C = 0; C < N; ++C) Dst[C] = Fin(Src[size_t(C)]);
 	};
 	In.N = N; In.SeaLevel = float(W.seaLevel); In.Overlay = Overlay;
+	In.Barren = W.phase == dm::Phase::Molten ? 1.f : W.phase == dm::Phase::Water ? 0.85f : W.phase == dm::Phase::Life ? 0.55f : 0.f;
 	Copy(W.veg, In.Veg); Copy(W.moist, In.Moist); Copy(W.temp, In.Temp); Copy(W.ice, In.Ice); Copy(W.urban, In.Urban);
 	Copy(W.water, In.Water); Copy(W.elev, In.Elev); Copy(W.wet, In.Wet); Copy(W.farm, In.Farm); Copy(W.scorch, In.Scorch);
 	Copy(W.lava, In.Lava); Copy(W.fire, In.Fire); Copy(W.rad, In.Rad); Copy(W.hab, In.Hab);
@@ -284,6 +285,8 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 					Tundra(0.42f, 0.40f, 0.34f), MarshC(0.19f, 0.25f, 0.15f), Scrub(0.40f, 0.38f, 0.26f), BarrenC(0.37f, 0.34f, 0.31f);
 				FVector3f Bare = Lerp3(Sand, Steppe, Mo * 1.8 + Wob_);
 				Bare = Lerp3(Bare, Scrub, Mo * 2.0 - 0.6);
+				// (integration) a lifeless world is dark basalt and ash (docs/concept/genesis 2-4), not desert sand
+				Bare = Lerp3(Bare, FVector3f(0.15f, 0.14f, 0.13f) + FVector3f(0.05f, 0.04f, 0.03f) * float(Wob_ + 0.5), In.Barren);
 				FVector3f Green = Lerp3(Grass, Forest, Vg * 1.4 - 0.35 + Wob_);
 				Green = Lerp3(Green, Jungle, Sat((Tm - 20.0) / 8.0) * Sat(Mo * 1.5 - 0.5));
 				Green = Lerp3(Green, Taiga, (4.0 - Tm) / 8.0);
@@ -314,7 +317,7 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 				// ---- damage
 				Mip0[3][I] = FColor(Q8(La(In.Scorch)), Q8(Sat(La(In.Lava) / 0.6)), Q8(La(In.Fire)), Q8(La(In.Rad)));
 			}
-		});
+		}, EParallelForFlags::BackgroundPriority);
 		Out.Mask |= 0xF;
 	}
 
@@ -383,7 +386,7 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 					}
 					O[I] = FColor(Q8(Col.X), Q8(Col.Y), Q8(Col.Z), Q8(A));
 				}
-			});
+			}, EParallelForFlags::BackgroundPriority);
 		}
 		Out.Mask |= 0x10;
 	}
@@ -456,7 +459,7 @@ void FDmPlanetMaps::ComputeSnapshot(const dm::World& W, const dm::Snapshot& Sn)
 			Cpu[2][I] = FColor(0, Q8(Urb), 0, Q8(Urb));
 			Cpu[3][I] = FColor(0, 0, 0, 0);
 		}
-	});
+	}, EParallelForFlags::BackgroundPriority);
 }
 
 void FDmPlanetMaps::UploadMips(UObject* Outer, int32 M, TArray<TArray<FColor>>& Mips)
@@ -661,4 +664,28 @@ void FDmPlanetMaps::BuildRiverMipData(const FDmPlanetTerrain& T, const TArray<FD
 UTexture2D* FDmPlanetMaps::MakeRiverTexture(UObject* Outer, const TArray<TArray<FColor>>& Mips)
 {
 	return NewTexture(Outer, RiverSize, Mips, TEXT("DmPlanetRiverMap"));
+}
+
+bool FDmPlanetMaps::UpdateRiverTexture(UTexture2D* T, TArray<TArray<FColor>>& Mips)
+{
+	// (integration, performance) a new 4096^2 texture per river change cost the game thread 30 ms plus 5-17 ms
+	// destroying the old one (hitch dumps at 8x): the same in-place, buffer-handover upload as the state maps
+	if (!T || T->GetSizeX() != RiverSize || !T->GetResource() || Mips.Num() == 0 || T->GetNumMips() < Mips.Num()) return false;
+	for (int32 L = 0; L < Mips.Num(); ++L)
+	{
+		const int32 S = FMath::Max(RiverSize >> L, 1);
+		if (Mips[L].Num() != S * S) return false;
+	}
+	for (int32 L = 0; L < Mips.Num(); ++L)
+	{
+		const int32 S = FMath::Max(RiverSize >> L, 1);
+		FUpdateTextureRegion2D* Region = new FUpdateTextureRegion2D(0, 0, 0, 0, uint32(S), uint32(S));
+		TArray<FColor>* Owned = new TArray<FColor>(MoveTemp(Mips[L]));
+		T->UpdateTextureRegions(L, 1, Region, uint32(S * 4), 4, reinterpret_cast<uint8*>(Owned->GetData()), [Owned](uint8*, const FUpdateTextureRegion2D* Regions)
+		{
+			delete Owned;
+			delete Regions;
+		});
+	}
+	return true;
 }

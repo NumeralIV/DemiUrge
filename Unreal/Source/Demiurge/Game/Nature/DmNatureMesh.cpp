@@ -136,7 +136,11 @@ UStaticMesh* DmNature::MakeStaticMesh(UObject* Outer, const FString& Name, const
 	for (int32 S = 0; S < Mats.Num(); ++S)
 	{
 		const FName Slot(*FString::Printf(TEXT("S%d"), S));
+#if WITH_EDITORONLY_DATA
 		SM->GetStaticMaterials().Add(FStaticMaterial(Mats[S], Slot, Slot));
+#else
+		SM->GetStaticMaterials().Add(FStaticMaterial(Mats[S], Slot));   // (integration) the game target has no imported slot name
+#endif
 	}
 	TUniquePtr<FStaticMeshRenderData> RD = MakeUnique<FStaticMeshRenderData>();
 	RD->AllocateLODResources(NumLODs);

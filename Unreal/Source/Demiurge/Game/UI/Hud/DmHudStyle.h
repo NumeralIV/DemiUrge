@@ -5,11 +5,9 @@
 // numbers and controls. Colours are the old CSS tokens, given in sRGB and converted to linear here.
 // Sizes are CSS pixels at UI scale 1 (FDmHudStyle::Font takes pixels; Slate's point size is px x 0.75).
 //
-// Fonts are loaded at runtime from C:/Windows/Fonts (pala*.ttf, segoeui*.ttf / seguisb.ttf) through
-// FCompositeFont, no font assets. SHIPPING NEEDS AN OPEN FONT: Palatino and Segoe UI are Windows system
-// fonts and may not be redistributed; swap the file names in DmHudStyle.cpp for an open serif (EB
-// Garamond, Cormorant) and sans (Inter, Source Sans) placed under the project when assets arrive.
-// When a file is missing the engine's default font (Roboto) is used, so nothing breaks.
+// Fonts (integration, C10): the shipped SIL OFL families through Game/UI/DmFonts.h: EB Garamond (serif
+// body), Cormorant Garamond (serif display text of 20 px and up), Inter (sans). When a file is missing the
+// engine's default font (Roboto) is used, so nothing breaks.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -72,6 +70,7 @@ public:
 private:
 	struct FFace { TSharedPtr<const FCompositeFont> Font; bool bSystem = false; };
 	FFace Faces[5];
+	TSharedPtr<const FCompositeFont> DisplaySerif, DisplayItalic;
 	mutable TMap<uint32, TSharedPtr<FSlateBrush>> DotCache;
 };
 

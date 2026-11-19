@@ -127,7 +127,9 @@ float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, 
 	// blue light, so islands and coasts sit in a turquoise halo from orbit (strongest in warm water).
 	float warm = saturate((tempC - 6.0) / 16.0);
 	float shelf = (1.0 - Smooth01((depth - 6.0 - 20.0 * warm) / (40.0 + 40.0 * warm))) * (1.0 - lake) * saturate(0.55 + 0.6 * nBig) * lerp(0.35, 1.0, warm);
-	float3 scatDeep = lerp(float3(0.00002, 0.00007, 0.00010), float3(0.00008, 0.00042, 0.00048), shelf);
+	// (integration) a touch more blue in the open ocean: from orbit the deep sea read grey-navy once the aerial
+	// perspective was thinned so the forests keep their green
+	float3 scatDeep = lerp(float3(0.00002, 0.00009, 0.00019), float3(0.00008, 0.00042, 0.00048), shelf);
 	Scat = lerp(scatDeep, float3(0.0016, 0.0014, 0.0008), plume);
 	Absorb = lerp(float3(0.0040, 0.00065, 0.00025), float3(0.0045, 0.0016, 0.0012), plume);
 	Scat = lerp(Scat, float3(0.00003, 0.00008, 0.00007), lake);

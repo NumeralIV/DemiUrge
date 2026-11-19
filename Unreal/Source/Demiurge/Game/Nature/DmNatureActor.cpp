@@ -79,6 +79,13 @@ void ADmNature::BeginPlay()
 	{ double Sd = ShadowDistM; if (FDmShotArgs::Value(TEXT("-natureshadow="), Sd)) ShadowDistM = FMath::Max(0.0, Sd); }
 	double Cs = 1.0;
 	if (FDmShotArgs::Value(TEXT("-canopystrength="), Cs)) { CanopyStrength = float(Cs); bCanopyStrengthArg = true; }
+	{ double Cf = CanopyFarStrength; if (FDmShotArgs::Value(TEXT("-canopyfar="), Cf)) CanopyFarStrength = float(Cf); }
+	{
+		FString Ft;
+		TArray<FString> P;
+		if (FDmShotArgs::Value(TEXT("-canopyfartint="), Ft) && Ft.ParseIntoArray(P, TEXT(",")) == 3)
+			CanopyFarTint = FLinearColor(FCString::Atof(*P[0]), FCString::Atof(*P[1]), FCString::Atof(*P[2]));
+	}
 
 	Factory = NewObject<UDmNatureFactory>(this);
 	Factory->Build();
@@ -109,7 +116,11 @@ void ADmNature::EndPlay(const EEndPlayReason::Type Reason)
 void ADmNature::OnDirty(const FDmDirtyFlags& F)
 {
 	if (F.bColor || F.bObjects || F.bWater || F.bElev) bFieldsDirty = true;
-	if (F.bElev || F.bWater) GroundSig ^= 0x9E3779B97F4A7C15ull;   // re-check (and rebuild) the ground
+	if (F.bElev || F.bWater)
+	{
+		++GroundEpoch;   // the ground is rebuilt once the changes settle (a counter, not a parity: two changes in a row must still rebuild)
+		LastEpochTime = FPlatformTime::Seconds();
+	}
 }
 
 void ADmNature::OnWorldChanged(const dm::World* W)
@@ -203,7 +214,7 @@ void ADmNature::UpdateFields(const dm::World& W)
 		bForceFields = false;
 		LastFields = Now;
 		TSharedPtr<FDmNatureFields, ESPMode::ThreadSafe> F = FDmNatureFields::Copy(W, FieldsVersion + 1);
-		FieldsTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [F]() { F->Bake(); return F; });
+		FieldsTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [F]() { F->Bake(); return F; }, UE::Tasks::ETaskPriority::BackgroundNormal);
 		bFieldsTask = true;
 	}
 }
@@ -220,17 +231,19 @@ void ADmNature::UpdateGround(const dm::World& W)
 		UE_LOG(LogDmNature, Display, TEXT("DmNature: ground v%u from %s (%d triangles, %.0f ms)"), GroundVersion, Ground->SourceName(), Ground->Triangles, Ground->BuildMs);
 	}
 	if (bGroundTask || Now - LastGroundCheck < 0.5) return;
+	// elevation changes that keep coming (a volcano, a brush) rebuild the ground once they settle, not every tick
+	if (Ground && uint32(GroundSig & 0xFFFFFFFFull) != GroundEpoch && Now - LastEpochTime < 1.0) return;
 	LastGroundCheck = Now;
 
 	// 1. a registered provider wins
 	if (FDmNatureGround::HasProvider())
 	{
-		const uint64 Sig = 0x1000 ^ (GroundSig & 0xFFFF0000ull);
-		if (!Ground || Ground->GetSource() != FDmNatureGround::ESource::Provider || GroundSig == 0)
+		const uint64 Sig = (uint64(1) << 32) | GroundEpoch;
+		if (!Ground || Ground->GetSource() != FDmNatureGround::ESource::Provider || GroundSig != Sig)
 		{
-			PendingGroundSig = Sig | 1;
+			PendingGroundSig = Sig;
 			FDmNatureGroundPtr G = FDmNatureGround::FromProvider(W);
-			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; });
+			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; }, UE::Tasks::ETaskPriority::BackgroundNormal);
 			bGroundTask = true;
 		}
 		return;
@@ -242,11 +255,11 @@ void ADmNature::UpdateGround(const dm::World& W)
 			if (It->GetClass()->GetName() == TEXT("DmPlanet")) { bPlanet = true; break; }
 		if (bPlanet)
 		{
-			const uint64 Sig = (GroundSig & ~0xFull) | 4;
-			if (Ground && Ground->GetSource() == FDmNatureGround::ESource::PlanetTerrain && Sig == GroundSig && GroundSig != 0) return;
-			PendingGroundSig = Sig == 0 ? 4 : Sig;
+			const uint64 Sig = (uint64(2) << 32) | GroundEpoch;
+			if (Ground && Ground->GetSource() == FDmNatureGround::ESource::PlanetTerrain && Sig == GroundSig) return;
+			PendingGroundSig = Sig;
 			TSharedPtr<FDmNatureGround, ESPMode::ThreadSafe> Shell = FDmNatureGround::PlanetShell(W);
-			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Shell]() -> FDmNatureGroundPtr { return FDmNatureGround::FinishPlanet(Shell); });
+			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Shell]() -> FDmNatureGroundPtr { return FDmNatureGround::FinishPlanet(Shell); }, UE::Tasks::ETaskPriority::BackgroundNormal);
 			bGroundTask = true;
 			return;
 		}
@@ -267,7 +280,7 @@ void ADmNature::UpdateGround(const dm::World& W)
 				const FVector& P = S->ProcVertexBuffer[(int64(K) * 7919 * 131) % NV].Position;
 				Sig = (Sig ^ uint64(int64(P.X * 7.0) ^ int64(P.Y * 11.0) ^ int64(P.Z * 13.0))) * 0x100000001B3ull;
 			}
-			Sig |= 2;
+			Sig = (uint64(3) << 32) | (Sig & 0xFFFFFFFFull);
 			if (Sig == GroundSig && Ground && Ground->GetSource() == FDmNatureGround::ESource::PlaceholderMesh) return;
 			TArray<FVector3f> Verts; Verts.SetNumUninitialized(NV);
 			for (int32 I = 0; I < NV; ++I) Verts[I] = FVector3f(S->ProcVertexBuffer[I].Position);
@@ -280,18 +293,19 @@ void ADmNature::UpdateGround(const dm::World& W)
 			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Shell, Vp, Ip]() -> FDmNatureGroundPtr
 			{
 				return FDmNatureGround::FromMeshShell(Shell, MoveTemp(*Vp), MoveTemp(*Ip));
-			});
+			}, UE::Tasks::ETaskPriority::BackgroundNormal);
 			bGroundTask = true;
 			return;
 		}
 	}
 	// 4. the sim surface
-	const uint64 Sig = (GroundSig == 0 || !Ground) ? 3 : GroundSig;
-	if (!Ground || Ground->GetSource() != FDmNatureGround::ESource::SimSurface || Sig != GroundSig || GroundSig == 0)
+	// (it used to compare a signature with itself, so the sim-surface fallback never followed an elevation change)
+	const uint64 Sig = (uint64(4) << 32) | GroundEpoch;
+	if (!Ground || Ground->GetSource() != FDmNatureGround::ESource::SimSurface || Sig != GroundSig)
 	{
-		PendingGroundSig = 3;
+		PendingGroundSig = Sig;
 		FDmNatureGroundPtr G = FDmNatureGround::FromSim(W);
-		GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; });
+		GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; }, UE::Tasks::ETaskPriority::BackgroundNormal);
 		bGroundTask = true;
 	}
 }
@@ -316,7 +330,9 @@ void ADmNature::UploadCanopy()
 			for (TActorIterator<AActor> It(GetWorld()); It; ++It)
 				if (It->GetClass()->GetName() == TEXT("DmPlanet")) { Strength *= PlanetCanopyScale; break; }
 		M->SetScalarParameterValue(TEXT("Strength"), Strength);
-		UE_LOG(LogDmNature, Display, TEXT("DmNature: canopy decal strength %.2f"), Strength);
+		M->SetScalarParameterValue(TEXT("FarStrength"), CanopyFarStrength);
+		M->SetVectorParameterValue(TEXT("FarTint"), CanopyFarTint);
+		UE_LOG(LogDmNature, Display, TEXT("DmNature: canopy decal strength %.2f (seen from high up %.2f, tint %.2f %.2f %.2f)"), Strength, CanopyFarStrength, CanopyFarTint.R, CanopyFarTint.G, CanopyFarTint.B);
 	}
 	CanopyDecal->SetVisibility(bCanopy && Factory->GetCanopyMaterial() != nullptr);
 }
@@ -419,7 +435,7 @@ void ADmNature::UpdateStreaming(const FVector& Cam)
 		FDmNatureFieldsPtr Fp = Fields;
 		FDmNatureGroundPtr Gp = Ground;
 		const FDmTileKey Key = Wn.Key;
-		Pd.Task = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Fp, Gp, Key, S]() { return DmNatureScatter::BuildTile(*Fp, *Gp, Key, S); });
+		Pd.Task = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Fp, Gp, Key, S]() { return DmNatureScatter::BuildTile(*Fp, *Gp, Key, S); }, UE::Tasks::ETaskPriority::BackgroundNormal);
 	}
 
 	// drop tiles nobody wants any more (after a grace period)
@@ -431,6 +447,7 @@ void ADmNature::UpdateStreaming(const FVector& Cam)
 
 void ADmNature::ApplyResults()
 {
+	const double T0 = FPlatformTime::Seconds();
 	int32 Applied = 0;
 	TArray<uint64> Done;
 	TSet<uint64> WantSet;
@@ -446,8 +463,13 @@ void ADmNature::ApplyResults()
 		if (bLog) UE_LOG(LogDmNature, Display, TEXT("DmNature: tile L%d f%d %d,%d level %d: %d of %d candidates in %.1f ms"), R->Key.Layer, R->Key.Face, R->Key.X, R->Key.Y, Kv.Value.Level, R->Instances, R->Candidates, R->Ms);
 		if (WantSet.Contains(Kv.Key) && R->FieldsVersion == FieldsVersion && Kv.Value.GroundVersion == GroundVersion)
 		{
+			const double A0 = FPlatformTime::Seconds();
 			ApplyTile(*R, Kv.Value.Level, Kv.Value.GroundVersion);
-			if (++Applied >= MaxAppliesPerFrame) break;
+			const double A1 = FPlatformTime::Seconds();
+			MaxApplyMs = FMath::Max(MaxApplyMs, (A1 - A0) * 1000.0);
+			// a count AND a time budget: a near tile at level 0 registers up to ~10 HISM components (~5 ms), so three
+			// of them in one frame was a 15 ms game-thread hitch; the rest stay completed in Pending for later frames
+			if (++Applied >= MaxAppliesPerFrame || (A1 - T0) * 1000.0 >= ApplyBudgetMs) break;
 		}
 	}
 	for (uint64 K : Done) Pending.Remove(K);
@@ -588,7 +610,7 @@ void ADmNature::UpdateFauna(const FVector& Cam)
 	FDmNatureFieldsPtr Fp = Fields;
 	FDmNatureGroundPtr Gp = Ground;
 	const float Ds = Density;
-	FaunaTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Fp, Gp, Sub, Ds]() { return DmNatureFauna::Build(*Fp, *Gp, Sub, 5.5, FMath::Min(Ds, 1.5f)); });
+	FaunaTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Fp, Gp, Sub, Ds]() { return DmNatureFauna::Build(*Fp, *Gp, Sub, 5.5, FMath::Min(Ds, 1.5f)); }, UE::Tasks::ETaskPriority::BackgroundNormal);
 	bFaunaTask = true;
 }
 
@@ -646,17 +668,30 @@ void ADmNature::Tick(float DeltaSeconds)
 	const dm::World* W = Sim ? Sim->Sim() : nullptr;
 	if (!W || !W->geo || !Factory) return;
 	if (W != SeenWorld) OnWorldChanged(W);
+	// game-thread time per stage: a tick over 12 ms is logged with its breakdown (hitch hunting)
+	double Ts[7] = { FPlatformTime::Seconds() };
 	FollowPlanet();
 	UpdateFields(*W);
+	Ts[1] = FPlatformTime::Seconds();
 	UpdateGround(*W);
+	Ts[2] = FPlatformTime::Seconds();
 	if (!Fields || !Ground) return;
 	FVector Cam;
 	if (CameraPlanet(Cam))
 	{
 		UpdateStreaming(Cam);
+		Ts[3] = FPlatformTime::Seconds();
 		ApplyResults();
+		Ts[4] = FPlatformTime::Seconds();
 		UpdateShadows(Cam);
+		Ts[5] = FPlatformTime::Seconds();
 		UpdateFauna(Cam);
+		Ts[6] = FPlatformTime::Seconds();
+		const double TickMs = (Ts[6] - Ts[0]) * 1000.0;
+		MaxTickMs = FMath::Max(MaxTickMs, TickMs);
+		if (TickMs > 12.0)
+			UE_LOG(LogDmNature, Display, TEXT("DmNature: slow tick %.1f ms (fields %.1f ground %.1f streaming %.1f apply %.1f shadows %.1f fauna %.1f)"), TickMs,
+				(Ts[1] - Ts[0]) * 1e3, (Ts[2] - Ts[1]) * 1e3, (Ts[3] - Ts[2]) * 1e3, (Ts[4] - Ts[3]) * 1e3, (Ts[5] - Ts[4]) * 1e3, (Ts[6] - Ts[5]) * 1e3);
 	}
 	if (bLineup && LineupComps.Num() == 0) BuildLineup(LineupDir);
 	if (Now - LastLog > 10.0)
@@ -708,9 +743,9 @@ FString ADmNature::Describe() const
 		const int32 N = CountInstances(EDmNatureMesh(I));
 		if (N) Kinds += FString::Printf(TEXT(" %s=%d"), UDmNatureFactory::Name(EDmNatureMesh(I)), N);
 	}
-	return FString::Printf(TEXT("tiles %d+%d+%d+%d grass %d pending %d comps %d instances %d fauna %d [%s ] fields v%u %.0f ms ground %s v%u tiles built %lld avg %.1f ms%s"),
+	return FString::Printf(TEXT("tiles %d+%d+%d+%d grass %d pending %d comps %d instances %d fauna %d [%s ] fields v%u %.0f ms ground %s v%u tiles built %lld avg %.1f ms apply max %.1f ms tick max %.1f ms%s"),
 		Lv[0], Lv[1], Lv[2], Lv[3], NGrass, Pending.Num(), NumComponents(), Inst, FaunaInstances, *Kinds, FieldsVersion, Fields ? Fields->BuildMs : 0.0,
-		Ground ? Ground->SourceName() : TEXT("none"), GroundVersion, TilesBuilt, TilesBuilt ? TileMsTotal / TilesBuilt : 0.0, IsSettled() ? TEXT(" SETTLED") : TEXT(""));
+		Ground ? Ground->SourceName() : TEXT("none"), GroundVersion, TilesBuilt, TilesBuilt ? TileMsTotal / TilesBuilt : 0.0, MaxApplyMs, MaxTickMs, IsSettled() ? TEXT(" SETTLED") : TEXT(""));
 }
 
 // ---------------------------------------------------------------- scene part

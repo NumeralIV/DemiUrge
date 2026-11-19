@@ -55,9 +55,12 @@ public:
 	double RebakeEvery = 4.0;        // seconds between field rebakes on a live world
 	int32 MaxTasks = 6;              // tile builds in flight
 	int32 MaxAppliesPerFrame = 3;    // finished tiles turned into components per frame
+	double ApplyBudgetMs = 4.0;      // ... and at most this much game-thread time per frame on it (at least one tile)
 	float CanopyStrength = 1.f;
 	float PlanetCanopyScale = 0.6f;  // canopy decal opacity over the real planet, which paints a forest tint itself
 	bool bCanopyStrengthArg = false;
+	FLinearColor CanopyFarTint = FLinearColor(0.80f, 1.20f, 0.55f);   // canopy colour multiplier seen from high up (-canopyfartint=r,g,b)
+	float CanopyFarStrength = 1.0f;  // canopy decal opacity seen from high up, over any planet (-canopyfar=)
 	double WpoDistM = 0.0;           // trees: WPO (wind, camera-facing far cards) disabled beyond this; 0 = never (-naturewpo=)
 	double ShadowDistM = 700.0;      // tree tiles nearer than this cast shadows (-natureshadow=<m>)
 
@@ -76,6 +79,9 @@ public:
 	void SetCanopyVisible(bool bVisible);
 	/** Force a full rebuild (fields, ground, tiles). */
 	void RequestRebuild() { bFieldsDirty = true; bForceFields = true; GroundSig = 0; }
+	/** Count of ground builds adopted (tests: an elevation / water change must rebuild the ground once it settles). */
+	uint32 GetGroundVersion() const { return GroundVersion; }
+	bool IsGroundBuilding() const { return bGroundTask; }
 
 private:
 	struct FTileState
@@ -139,7 +145,11 @@ private:
 	FDmNatureGroundPtr Ground;
 	UE::Tasks::TTask<FDmNatureGroundPtr> GroundTask;
 	bool bGroundTask = false;
-	uint64 GroundSig = 0, PendingGroundSig = 0;
+	uint64 GroundSig = 0, PendingGroundSig = 0;   // what the built ground was made from: (source << 32) | key
+	uint32 GroundEpoch = 0;                       // bumped by every elevation / water change (a counter: a parity flag misses two changes in a row)
+	double LastEpochTime = -1e9;                  // when the last elevation / water change came in (the ground waits for them to settle)
+	double MaxApplyMs = 0;                        // worst game-thread time of one tile apply (HISM registration), since start
+	double MaxTickMs = 0;                         // worst game-thread time of one nature tick, since start
 	double LastGroundCheck = -1e9;
 	uint32 GroundVersion = 0;
 	double FirstTickTime = -1;

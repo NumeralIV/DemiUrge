@@ -157,6 +157,10 @@ ADmSky::ADmSky()
 	Sun->SetMobility(EComponentMobility::Movable);
 	Sun->SetAtmosphereSunLight(true);
 	Sun->SetAtmosphereSunLightIndex(0);
+	// (integration) per-pixel atmosphere transmittance: without it one transmittance (the one at the planet
+	// centre's view) tints every land and sea pixel seen from orbit pink / tan under a low sun
+	Sun->bPerPixelAtmosphereTransmittance = true;
+	Sun->ForwardShadingPriority = 1;   // (integration) the sun wins forward shading over the moonlight (on-screen warning)
 	Sun->SetCastShadows(true);
 	Sun->SetLightSourceAngle(0.53f);
 	Sun->bCastCloudShadows = true;
@@ -288,6 +292,12 @@ void ADmSky::BeginPlay()
 		if (FDmShotArgs::Value(TEXT("-cloudshadow="), Cs)) { Sun->CloudShadowOnSurfaceStrength = float(Cs); Sun->bCastCloudShadows = Cs > 0.0; Sun->MarkRenderStateDirty(); }
 	}
 	Atmosphere->SetAtmosphereHeight(float(60.0 * S));
+	{
+		// (integration) aerial perspective strength: the scaled atmosphere's full aerial perspective turned every
+		// forest teal-grey from orbit (verified against docs/concept/nature/descent-1-400km.png); -apscale= tunes it
+		FDmShotArgs::Value(TEXT("-apscale="), ApScale);
+		Atmosphere->SetAerialPespectiveViewDistanceScale(float(ApScale));
+	}
 	Atmosphere->SetRayleighExponentialDistribution(float(8.0 * S));
 	Atmosphere->SetMieExponentialDistribution(float(1.2 * S));
 	UpdateAtmosphere(nullptr);
@@ -727,7 +737,9 @@ void ADmSky::UpdateAtmosphere(const dm::World* W)
 	const double Heat = MoltenHeat(W);
 	const double Dust = W ? FMath::Clamp(W->dust, 0.0, 1.0) : 0.0;
 	// Earth's coefficients times 1/S; a molten world or a dusty one gets a thick, reddish haze
-	const double Haze = 1.0 + 5.0 * Heat + 3.0 * Dust;
+	// (integration) the molten haze was 1 + 5 x heat: a pale peach veil over the whole lit disc that drowned the
+	// glowing seams (docs/concept/genesis: dark slag, bright cracks); a thin smoky haze keeps the seams readable
+	const double Haze = 1.0 + 1.2 * Heat + 3.0 * Dust;
 	Atmosphere->SetRayleighScatteringScale(float(0.0331 / S * (1.0 - 0.45 * Heat)));
 	Atmosphere->SetMieScatteringScale(float(0.003996 / S * Haze));
 	Atmosphere->SetMieAbsorptionScale(float(0.000444 / S * (1.0 + 10.0 * Heat + 4.0 * Dust)));
@@ -755,15 +767,35 @@ void ADmSky::UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos)
 	const dm::World* W = Sim->Sim();
 	const double Dust = W ? FMath::Clamp(W->dust, 0.0, 1.0) : 0.0;
 	Sun->SetWorldRotation((-SunWorld).Rotation());
-	Sun->SetIntensity(float(Tune.SunLux * (1.0 - 0.45 * Dust)));
+	// (integration) a molten world sits under a pall of smoke: the sun is dimmed so the glowing seams carry the
+	// picture (docs/concept/genesis 1-2: dark slag), and comes back as the world cools
+	Sun->SetIntensity(float(Tune.SunLux * (1.0 - 0.45 * Dust) * (1.0 - 0.8 * MoltenHeat(W))));
 
 	// cloud shadow map: centred under the camera, sized by altitude (blurred and displaced if too wide near the ground)
 	const double Alt = FMath::Max(0.0, CameraAltKm(CamPos));
+	// (integration) aerial perspective: 0.6 near the ground (depth, horizon haze), ApScale from orbit, where the
+	// full strength washed forests teal-grey; the ocean keeps the blue of the air above it
+	{
+		// near the ground 0.6: the 6x-thick scaled air hazed a town 3 km below into flat blue-grey (village / city views)
+		const float Ap = float(FMath::Lerp(0.6, ApScale, FMath::Clamp((Alt - 40.0) / 200.0, 0.0, 1.0)));
+		if (FMath::Abs(Ap - LastAp) > 0.01f) { LastAp = Ap; Atmosphere->SetAerialPespectiveViewDistanceScale(Ap); }
+	}
 	const float Ext = float(FMath::Clamp(Alt * 1.2 + 8.0, 12.0, 130.0));
 	// from orbit the shadows are a few pixels wide: half the shadow-map resolution and ray samples there
 	// (above 200 km a 512^2 map with half the rays: 2.2 -> 0.4 ms at the terminator, mean image change 0.5 grey levels)
-	const float ResScale = Alt > 200.0 ? float(OrbitShadow[0]) : (Alt > 80.0 ? 2.f : 4.f);
-	const float RayScale = Alt > 200.0 ? float(OrbitShadow[1]) : (Alt > 80.0 ? 1.f : 2.f);
+	// (integration, performance) below 80 km the 2048^2 map with 2x rays cost 9.4 ms of GPU at a 15 km view (ProfileGPU,
+	// RTX 3060), the largest pass in the frame; 1024^2 with 1x rays costs about a quarter and the soft cloud shadows
+	// read the same at these sizes. Below 4 km the clouds have thinned to wisps (UpdateClouds): no cloud shadows at all.
+	const float ResScale = Alt > 200.0 ? float(OrbitShadow[0]) : (Alt > 80.0 ? 2.f : 1.5f);
+	const float RayScale = Alt > 200.0 ? float(OrbitShadow[1]) : 1.f;
+	{
+		double CsArg = 1.0;
+		FDmShotArgs::Value(TEXT("-cloudshadow="), CsArg);
+		const bool bWantCloudShadow = (Alt > 4.0 || FDmShotArgs::Param(TEXT("keepclouds"))) && CsArg > 0.0;
+		if (Sun->bCastCloudShadows != bWantCloudShadow) { Sun->bCastCloudShadows = bWantCloudShadow; Sun->MarkRenderStateDirty(); }
+		const bool bWantClouds = Alt > 2.5 || FDmShotArgs::Param(TEXT("keepclouds"));
+		if (Clouds->IsVisible() != bWantClouds) Clouds->SetVisibility(bWantClouds);
+	}
 	if (LastShadowExtent < 0.f || FMath::Abs(Ext - LastShadowExtent) > 0.05f * LastShadowExtent || ResScale != Sun->CloudShadowMapResolutionScale || RayScale != Sun->CloudShadowRaySampleCountScale)
 	{
 		LastShadowExtent = Ext;
@@ -820,6 +852,10 @@ void ADmSky::UpdateClouds(const dm::World* W, const FVector& CamPos, double Real
 	double Cover = 1.0;
 	if (bGenesis) Cover = FMath::Lerp(0.3, 1.0, Smooth(0.1, 0.6, double(SeaFraction)));
 	if (W && W->phase == dm::Phase::Molten) Cover = FMath::Lerp(Cover, 0.75, Heat);
+	// (integration) the god looks through the weather: the thin scaled cloud layer (0.25 - 1.85 km) sits right where
+	// the close views are (a village at 2.6 km was all cloud), so the cover thins as the camera comes down, to a
+	// few wisps by 3 km; from 28 km up the weather is whole (old SPEC-RENDER: clouds fade on zoom)
+	if (!FDmShotArgs::Param(TEXT("keepclouds"))) Cover *= FMath::Lerp(0.08, 1.0, Smooth(3.0, 28.0, Alt));
 	CloudScalar(TEXT("Yaw"), float(Yaw));
 	CloudScalar(TEXT("SkyTime"), float(FMath::Fmod(SkyTime, 86400.0)));
 	CloudScalar(TEXT("Blend"), float(Blend));

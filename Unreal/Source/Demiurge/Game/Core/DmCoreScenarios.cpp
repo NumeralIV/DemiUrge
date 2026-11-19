@@ -13,6 +13,7 @@
 #include "Game/Core/DmGameMode.h"
 #include "Game/Core/DmScenario.h"
 #include "Game/Core/DmSimSubsystem.h"
+#include "Game/Flow/DmFlow.h"
 
 #include "Engine/World.h"
 #include "HAL/PlatformTime.h"
@@ -66,9 +67,18 @@ namespace
 // ------------------------------------------------------------------ play
 
 static FDmScenarioRegistrar GDmScenarioPlay(TEXT("play"), TEXT("core"),
-	TEXT("every registered part, default orbit camera (the default scenario)"),
+	TEXT("the game: the title over a real sim world, then the whole flow (integration: Game/Flow); with -fixture= or -seed= the old harness view"),
 	[](FDmScenarioContext& Ctx)
 	{
+		// (integration) the game itself: no world from the command line -> the flow's title world and the title
+		if (!Ctx.Sim->HasWorld())
+		{
+			ADmFlow::PrepareTitleWorld(Ctx.Sim);
+			Ctx.BuildScene(DmPartsAll);
+			if (ADmFlow* F = Ctx.World->SpawnActor<ADmFlow>()) F->StartTitle();
+			Ctx.UseHarnessCamera(false);
+			return;
+		}
 		Ctx.BuildScene(DmPartsAll);
 		double Lat, Lon;
 		SettledCentre(Ctx.Sim ? Ctx.Sim->Sim() : nullptr, Lat, Lon);

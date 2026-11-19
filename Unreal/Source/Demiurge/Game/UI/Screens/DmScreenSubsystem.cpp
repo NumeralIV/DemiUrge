@@ -207,6 +207,7 @@ void UDmScreenSubsystem::ShowTimelapse()
 void UDmScreenSubsystem::ShowCard()
 {
 	if (Current() == EDmScreen::Card || bCardCapturePending) return;
+	Message.Empty();   // (integration) the save page's last line ("Saved to ...") showed under the card
 	// The photograph is the viewport's own capture of the planet with the interface left out (bShowUI false:
 	// the screens stay up, Slate is not drawn into the picture). The card opens when the pixels arrive
 	// (OnPlanetCaptured), or after a timeout (240 frames) without a photograph.

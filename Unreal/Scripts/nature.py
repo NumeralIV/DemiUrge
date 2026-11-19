@@ -443,7 +443,7 @@ finish(m)
 # ---------------------------------------------------------------- canopy decal (the forests from orbit)
 CANOPY = r'''
 float3 Canopy(float3 wp, float3 ctr, float3 ax, float3 ay, float3 az, float seaR, float strength, Texture2D Tex, SamplerState TexSampler,
-              Texture2D Clim, SamplerState ClimSampler, out float opacity, out float rough)
+              Texture2D Clim, SamplerState ClimSampler, float3 farTint, float farStrength, out float opacity, out float rough)
 {
     float3 rel = wp - ctr;
     float r = length(rel);
@@ -473,13 +473,26 @@ float3 Canopy(float3 wp, float3 ctr, float3 ax, float3 ay, float3 az, float seaR
     col *= lerp(1.0, 0.8 + 0.4 * (0.5 + 0.5 * clump), smoothstep(25.0, 4.0, fp));
     float crown = VNoise3(pm / 6.5);
     col *= lerp(0.86, 0.62 + 0.72 * (0.5 + 0.5 * crown), smoothstep(5.0, 0.8, fp));
-    // close up the instanced trees are the canopy: the decal becomes the shaded forest floor under them
+    // close up the instanced trees are the canopy: the decal becomes the shaded forest floor under them. The tree
+    // tiles thin to 1/2, 1/4, 1/8 beyond 1.5, 3 and 5 km (a pixel is ~0.55 m per km of distance at 1080p), so the
+    // decal must be canopy again by then: floor below ~1 km, canopy from ~4.5 km (it was floor out to ~16 km, so
+    // thinned forests read as scattered dots on bare ground in the 5 km view)
     float3 floorC = float3(0.052, 0.050, 0.030) * (0.8 + 0.4 * (0.5 + 0.5 * Fbm3(pm / 2.5 + 2.0, 2)));
-    col = lerp(floorC, col, smoothstep(1.2, 9.0, fp));
+    col = lerp(floorC, col, smoothstep(0.6, 2.5, fp));
     // snow on the crowns of cold forests (taiga in winter)
     col = lerp(col, float3(0.40, 0.42, 0.46), K.b * 0.55);
+    // seen from high up (a pixel over ~30-120 m: about 60 km and beyond) the decal IS the forest: the planet's own forest
+    // tint is a lighter, bluer green that the scaled atmosphere's haze turns teal-grey; there the decal takes over at
+    // farStrength with a sap-green farTint (less blue) so canopy reads as dark green forest, as in descent-1
+    float far = smoothstep(30.0, 120.0, fp);
+    col *= lerp(float3(1.0, 1.0, 1.0), farTint, far);
+    // where the tree tiles are thinned (beyond ~1.5 km) the decal stands in for the missing crowns: full strength
+    // over the planet's own (lighter) forest tint, and the shade between crowns (the instanced trees read darker
+    // than a flat canopy albedo, so a lighter decal made them look like dots on a lawn)
+    float own = smoothstep(0.6, 2.5, fp);
+    col *= lerp(1.0, 0.78, own * (1.0 - far));
     float above = saturate((r - seaR - 60.0) / 140.0);
-    opacity = saturate(can * strength * 0.92 * above);
+    opacity = saturate(can * lerp(strength, farStrength, max(own, far)) * 0.92 * above);
     rough = 0.9;
     return col;
 }
@@ -489,11 +502,12 @@ m.set_editor_property('material_domain', unreal.MaterialDomain.MD_DEFERRED_DECAL
 m.set_editor_property('blend_mode', unreal.BlendMode.BLEND_TRANSLUCENT)
 # decal blend mode: the default (DBM_Translucent; the property is protected from Python)
 g = G(m)
-can = g.custom(nat(CANOPY, 'return N.Canopy(WP, Ctr, AX, AY, AZ, SeaR, Strength, Tex, TexSampler, Clim, ClimSampler, Opacity, Rough);'),
+can = g.custom(nat(CANOPY, 'return N.Canopy(WP, Ctr, AX, AY, AZ, SeaR, Strength, Tex, TexSampler, Clim, ClimSampler, FarTint, FarStrength, Opacity, Rough);'),
                [('WP', g.wpos(), ''), ('Ctr', g.vparam('PlanetCenter', 0, 0, 0), ''),
                 ('AX', g.vparam('PlanetX', 1, 0, 0), ''), ('AY', g.vparam('PlanetY', 0, 1, 0), ''), ('AZ', g.vparam('PlanetZ', 0, 0, 1), ''),
                 ('SeaR', g.scalar('SeaRadius', 1.0e7), ''), ('Strength', g.scalar('Strength', 1.0), ''),
-                ('Tex', g.texobj('CanopyTex', False), ''), ('Clim', g.texobj('ClimateTex', False), '')],
+                ('Tex', g.texobj('CanopyTex', False), ''), ('Clim', g.texobj('ClimateTex', False), ''),
+                ('FarTint', g.vparam('FarTint', 1, 1, 1), ''), ('FarStrength', g.scalar('FarStrength', 1.0), '')],
                F3, [('Opacity', F1), ('Rough', F1)])
 g.out(can, '', MP.MP_BASE_COLOR)
 g.out(can, 'Opacity', MP.MP_OPACITY)

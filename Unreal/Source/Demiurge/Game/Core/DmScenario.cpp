@@ -74,7 +74,7 @@ const FDmShotArgs& FDmShotArgs::Get()
 	A.bCam = List(TEXT("-cam="), A.Cam, 6) >= 3;
 	A.bSun = List(TEXT("-sun="), A.Sun, 2) >= 2;
 	A.bYear = Value(TEXT("-year="), A.Year);
-	Value(TEXT("-fixture="), A.Fixture);
+	A.bFixtureArg = Value(TEXT("-fixture="), A.Fixture);
 	{
 		int32 S = 0;
 		if (Value(TEXT("-seed="), S)) { A.bSeed = true; A.Seed = uint32(S); }
@@ -187,6 +187,11 @@ void FDmScenarioContext::UseHarnessCamera(bool bUse)
 void FDmScenarioContext::SetSubsolar(double LatDeg, double LonDeg)
 {
 	if (Sim) Sim->PinSunAt(LatDeg, LonDeg);
+}
+
+void FDmScenarioContext::ShotPath(const FString& Path, bool bWithUI)
+{
+	if (Mode) Mode->HarnessShotPath(Path, bWithUI);
 }
 
 void FDmScenarioContext::Shot(const FString& Suffix)

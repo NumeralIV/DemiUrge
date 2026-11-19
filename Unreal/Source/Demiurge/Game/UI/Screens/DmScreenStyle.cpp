@@ -1,6 +1,7 @@
 // DEMIURGE — Game/UI/Screens/DmScreenStyle.cpp : see DmScreenStyle.h. Owner: C8 screens.
 
 #include "Game/UI/Screens/DmScreenStyle.h"
+#include "Game/UI/DmFonts.h"
 
 #include "Brushes/SlateColorBrush.h"
 #include "Engine/Engine.h"
@@ -33,33 +34,28 @@ namespace
 		return Face == EFace::Serif || Face == EFace::SerifBold || Face == EFace::SerifItalic;
 	}
 
-	TSharedPtr<const FCompositeFont> Family(bool bSerif)
+	// The shipped OFL families (Game/UI/DmFonts.h; integration replaced the Windows stand-ins): one composite
+	// per family whose typefaces are the files. Serif: EB Garamond (Regular, Medium as Bold, Italic); display
+	// serif (20 px and up): Cormorant Garamond (SemiBold as Regular and Bold, Italic); sans: Inter (Regular,
+	// SemiBold as Bold, Regular as Light); the logo: Cinzel.
+	TSharedPtr<const FCompositeFont> Family(int32 I)
 	{
-		const int32 I = bSerif ? 0 : 1;
-		if (GFamilyTried[I]) return GFamilies[I];
-		GFamilyTried[I] = true;
-		const FString Dir = TEXT("C:/Windows/Fonts/");
+		static TSharedPtr<const FCompositeFont> GFam[3];
+		static bool GTried[3] = { false, false, false };
+		if (GTried[I]) return GFam[I];
+		GTried[I] = true;
 		TSharedPtr<FCompositeFont> F;
-		auto Add = [&F, &Dir](const TCHAR* TypefaceName, const TCHAR* File)
+		auto Add = [&F](const TCHAR* TypefaceName, EDmFontFile File)
 		{
-			const FString Path = Dir + File;
-			if (!FPaths::FileExists(Path)) return;
+			const FString Path = DmFonts::Path(File);
+			if (Path.IsEmpty()) return;
 			if (!F.IsValid()) F = MakeShared<FCompositeFont>();
 			F->DefaultTypeface.AppendFont(FName(TypefaceName), Path, EFontHinting::Default, EFontLoadingPolicy::LazyLoad);
 		};
-		if (bSerif)
-		{
-			Add(TEXT("Regular"), TEXT("pala.ttf"));
-			Add(TEXT("Bold"), TEXT("palab.ttf"));
-			Add(TEXT("Italic"), TEXT("palai.ttf"));
-		}
-		else
-		{
-			Add(TEXT("Regular"), TEXT("segoeui.ttf"));
-			Add(TEXT("Bold"), TEXT("segoeuib.ttf"));
-			Add(TEXT("Light"), TEXT("segoeuil.ttf"));
-		}
-		GFamilies[I] = F;
+		if (I == 0) { Add(TEXT("Regular"), EDmFontFile::Garamond); Add(TEXT("Bold"), EDmFontFile::GaramondMedium); Add(TEXT("Italic"), EDmFontFile::GaramondItalic); }
+		else if (I == 1) { Add(TEXT("Regular"), EDmFontFile::Inter); Add(TEXT("Bold"), EDmFontFile::InterSemi); Add(TEXT("Light"), EDmFontFile::Inter); }
+		else { Add(TEXT("Regular"), EDmFontFile::CormorantSemi); Add(TEXT("Bold"), EDmFontFile::CormorantSemi); Add(TEXT("Italic"), EDmFontFile::CormorantItalic); }
+		GFam[I] = F;
 		return F;
 	}
 
@@ -171,7 +167,12 @@ float FitWidth(float BaseWidth, float GutterBase)
 FSlateFontInfo Font(EFace Face, float BasePx)
 {
 	const float Size = Px(BasePx);
-	TSharedPtr<const FCompositeFont> Fam = Family(IsSerif(Face));
+	// the logo (bold serif of 50 px and up) is Cinzel; serif display text of 20 px and up is Cormorant Garamond
+	if (Face == EFace::SerifBold && BasePx >= 50.f)
+		if (TSharedPtr<const FCompositeFont> Logo = DmFonts::Face(EDmFontFile::Cinzel)) return FSlateFontInfo(Logo, Size * 0.92f);
+	const bool bDisplay = IsSerif(Face) && BasePx >= 20.f;
+	TSharedPtr<const FCompositeFont> Fam = Family(bDisplay ? 2 : (IsSerif(Face) ? 0 : 1));
+	if (bDisplay && Fam.IsValid()) return FSlateFontInfo(Fam, Size * 1.08f, TypefaceOf(Face));
 	if (!Fam.IsValid())
 	{
 		// no Windows fonts on this machine: the engine's own face

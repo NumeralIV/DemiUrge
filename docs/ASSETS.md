@@ -49,3 +49,8 @@ The towns, nature and units modules select meshes through their factory function
 `Unreal/Source/Demiurge/Game/Towns`, `Nature` and the units code; do not edit them). Your
 manifest is what the integration agent uses to map sim building types, ages, tiers and cultures
 to your meshes, so make it complete.
+
+## 5. What goes into git
+Only the generator scripts, `manifest.json` and `README.md` of each family are versioned. Everything
+the scripts produce (`.blend`, exports, textures, previews) is rebuilt from them and ignored by git, so
+keep every script runnable from a clean checkout.

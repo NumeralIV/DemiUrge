@@ -215,6 +215,8 @@ private:
 	double NightAmbGain = 14.0;       // night cloud ambient per unit of moonlight / sunlight (-nightamb=)
 	double OrbitScale = 0.45;         // cloud view samples from 250 km out (-cloudorbitscale=; 0.6 cost ~1.5 ms more at the terminator)
 	double ForceViewScale = -1.0;     // -cloudviewscale= forces the view sample scale (tests)
+	double ApScale = 0.38;             // aerial perspective from orbit (-apscale=; 1 near the ground)
+	float LastAp = -1.f;
 	double AtmoDropKm = 0.0;          // the atmosphere's ground sits this far below the sea
 	double TickMsMax = 0.0;           // slowest game-thread tick of the sky so far
 	bool bTrace = false;              // -skytrace: log the sky clock and map swaps every 15 frames

@@ -1,6 +1,7 @@
 // DEMIURGE — Sim/Names.h : procedural languages and names (SPEC-SIM 3.1, DM.Names).
-// Owner: names engineer (A1, key "names"). Files: Names.h, Names.cpp, SimTests/test_names.cpp,
+// Owner: names engineer (A1, key "names"). Files: Names.h, Names.cpp, SimTests/test_names*.cpp,
 // SimTests/stubs/Names_stub.cpp. Header written by foundation-api; the owner may add, never rename.
+// Design: docs/content/cultures.md (eight culture families, their sounds, naming patterns and drift).
 //
 // No runtime AI: pure combinatorics on an rng. A language is an OPAQUE std::string (stored as
 // Culture::lang and saved as is): Names alone defines its encoding and parses it back. Names keeps
@@ -10,6 +11,11 @@
 // Every returned name: 3..14 characters, never empty, pronounceable, never an obvious English
 // profanity (re-roll on hit). Different languages look and sound clearly different (inventory size,
 // vowel harmony or not, clusters or not, apostrophes / hyphens, typical length).
+//
+// Every language belongs to one of eight culture families (docs/content/cultures.md); a daughter
+// language stays in its mother's family and drifts by regular sound laws. Places, people and peoples
+// are also spelled so that no two of them, in any language, differ by a single letter (an invisible
+// check sum over the letters), so one world never holds near-twins like "Girtdimton" / "Girtdemton".
 #pragma once
 
 #include <string>
@@ -58,6 +64,16 @@ std::string god(const std::string& lang, Rng& rng);
 std::string planet(Rng& rng);
 // Names.cap: first letter upper case (ASCII), the rest unchanged.
 std::string cap(const std::string& s);
+
+// Added by the names-cultures track (2026-11-19). Titled phrases rather than bare names, so they may be
+// longer than 14 characters (at most 24); otherwise the same rules (pronounceable, blocklisted, never empty).
+// Names.ruler: a ruler's style in the culture's own tongue: title and name, 'Ossaro Teodo', 'Qadun Zahirun'.
+std::string ruler(const std::string& lang, Rng& rng);
+// Names.epithet: a ruler's byname as the chronicle translates it, flavoured by the culture's family:
+// 'the Tide-Born', 'the Star-Reader'.
+std::string epithet(const std::string& lang, Rng& rng);
+// Names.ship: a ship or caravan name in the culture's tongue, 'Ondessa Tavarra', 'Brimra Hald'.
+std::string ship(const std::string& lang, Rng& rng);
 
 } // namespace names
 } // namespace dm

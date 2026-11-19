@@ -211,6 +211,10 @@ void ADmTowns::AdoptGround(const FDmTownsGroundPtr& G, uint64 NewSig, const TCHA
 	for (TPair<int32, FTown>& T : Towns)
 	{
 		FTown& Tw = T.Value;
+		// (integration) a town without a plan yet is already waiting for one (planned against the newest ground when
+		// its task starts); marking it and bumping its generation threw away every in-flight plan on each re-capture,
+		// so under a rising sea at 8x the ~100 towns were planned over and over (30-230 ms game-thread frames)
+		if (!Tw.Plan.IsValid() && Old.IsValid() && Old->GetSource() == G->GetSource()) continue;
 		bool bMoved = !Old.IsValid() || !Tw.Plan.IsValid() || Old->GetSource() != G->GetSource();
 		if (!bMoved)
 		{
@@ -218,14 +222,20 @@ void ADmTowns::AdoptGround(const FDmTownsGroundPtr& G, uint64 NewSig, const TCHA
 			FVector E, N;
 			DmTownsPlan::Frame(U, E, N);
 			const double Rr[3] = { 0.0, FMath::Max(double(Tw.Plan->RadiusM) * 0.6, 40.0), FMath::Max(double(Tw.Plan->ExtentM) * 0.7, 120.0) };
+			double MinR = 1e30;
 			for (int32 Ri = 0; Ri < 3 && !bMoved; ++Ri)
 				for (int32 K = 0; K < (Ri == 0 ? 1 : 8) && !bMoved; ++K)
 				{
 					const double A = K * UE_DOUBLE_TWO_PI / 8.0 + Ri * 0.39;
 					const FVector D = (U * 1.0e7 + (E * FMath::Cos(A) + N * FMath::Sin(A)) * Rr[Ri] * 100.0).GetSafeNormal();
-					if (FMath::Abs(Old->Radius(D) - G->Radius(D)) > 5.0) bMoved = true;   // 5 cm
+					const double Rn = G->Radius(D);
+					MinR = FMath::Min(MinR, Rn);
+					if (FMath::Abs(Old->Radius(D) - Rn) > 5.0) bMoved = true;   // 5 cm
 				}
-			if (FMath::Abs(Old->SeaRadiusUU - G->SeaRadiusUU) > 5.0) bMoved = true;
+			// (integration) a rising sea moves the planet's sea level in 0.5 m steps several times a second at 8x in the
+			// late ages; re-planning every town for it (it was all ~100 each time) cost 30-230 ms game-thread frames.
+			// Only towns whose ground comes within 30 m of the new sea are re-planned (shore, docks, piers)
+			if (!bMoved && FMath::Abs(Old->SeaRadiusUU - G->SeaRadiusUU) > 5.0 && MinR - G->SeaRadiusUU < 3000.0) bMoved = true;
 		}
 		if (bMoved) { Tw.bDirty = true; ++Tw.GroundGen; ++Moved; }
 	}
@@ -381,7 +391,7 @@ void ADmTowns::LaunchPlans(const dm::World& W)
 			DmTownsPlan::PlanTown(In, *SnapP, *GroundP, *KitP, *Plan);
 			Plan->Sig = Sig;
 			return Plan;
-		});
+		}, UE::Tasks::ETaskPriority::BackgroundNormal);
 		Pending.Add(O.Value, MoveTemp(P));
 	}
 }

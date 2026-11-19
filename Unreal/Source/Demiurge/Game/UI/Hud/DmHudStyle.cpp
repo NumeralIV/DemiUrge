@@ -6,19 +6,13 @@
 #include "Brushes/SlateRoundedBoxBrush.h"
 #include "Brushes/SlateColorBrush.h"
 #include "Fonts/CompositeFont.h"
+#include "Game/UI/DmFonts.h"
 #include "HAL/PlatformMisc.h"
 #include "Misc/Paths.h"
 #include "Styling/CoreStyle.h"
 
 namespace
 {
-	FString FontDir()
-	{
-		FString Win = FPlatformMisc::GetEnvironmentVariable(TEXT("WINDIR"));
-		if (Win.IsEmpty()) Win = TEXT("C:/Windows");
-		return FPaths::Combine(Win, TEXT("Fonts"));
-	}
-
 	FSlateBrush Rounded(const FLinearColor& Fill, float Radius, const FLinearColor& Outline, float OutlineWidth)
 	{
 		return FSlateRoundedBoxBrush(Fill, Radius, Outline, OutlineWidth);
@@ -62,25 +56,15 @@ FDmHudStyle::FDmHudStyle()
 	PanelBg = Hex(TEXT("0b0f17"), 0.84f);
 	Shadow = Hex(TEXT("000000"), 0.45f);
 
-	// ---- fonts from the system (see the header: shipping needs open fonts)
-	const FString Dir = FontDir();
-	struct FFile { const TCHAR* Name; const TCHAR* File; };
-	const FFile Files[5] = {
-		{ TEXT("DmSerif"), TEXT("pala.ttf") },
-		{ TEXT("DmSerifBold"), TEXT("palab.ttf") },
-		{ TEXT("DmSerifItalic"), TEXT("palai.ttf") },
-		{ TEXT("DmSans"), TEXT("segoeui.ttf") },
-		{ TEXT("DmSansSemi"), TEXT("seguisb.ttf") },
-	};
-	for (int32 I = 0; I < 5; ++I)
-	{
-		const FString Path = FPaths::Combine(Dir, Files[I].File);
-		if (FPaths::FileExists(Path))
-		{
-			Faces[I].Font = MakeShared<FCompositeFont>(FName(Files[I].Name), Path, EFontHinting::Default, EFontLoadingPolicy::LazyLoad);
-			Faces[I].bSystem = true;
-		}
-	}
+	// ---- fonts: the shipped OFL families (Game/UI/DmFonts.h; integration replaced the Windows stand-ins)
+	Faces[int32(EDmFont::Serif)].Font = DmFonts::Face(EDmFontFile::Garamond);
+	Faces[int32(EDmFont::SerifBold)].Font = DmFonts::Face(EDmFontFile::GaramondMedium);
+	Faces[int32(EDmFont::SerifItalic)].Font = DmFonts::Face(EDmFontFile::GaramondItalic);
+	Faces[int32(EDmFont::Sans)].Font = DmFonts::Face(EDmFontFile::Inter);
+	Faces[int32(EDmFont::SansSemi)].Font = DmFonts::Face(EDmFontFile::InterSemi);
+	for (FFace& F : Faces) F.bSystem = F.Font.IsValid();
+	DisplaySerif = DmFonts::Face(EDmFontFile::CormorantSemi);
+	DisplayItalic = DmFonts::Face(EDmFontFile::CormorantItalic);
 
 	// ---- brushes
 	NoBrush = FSlateNoResource();
@@ -148,6 +132,9 @@ FSlateFontInfo FDmHudStyle::Font(EDmFont Face, float Px, int32 OutlinePx, const 
 		Outline.OutlineColor = OutlineColor;
 		Outline.bSeparateFillAlpha = true;
 	}
+	// display text of 20 px and up is Cormorant Garamond (T-007 roles): SemiBold for upright serif, Italic for italic
+	if (Px >= 20.f && (Face == EDmFont::Serif || Face == EDmFont::SerifBold) && DisplaySerif.IsValid()) return FSlateFontInfo(DisplaySerif, Pt * 1.08f, NAME_None, Outline);
+	if (Px >= 18.f && Face == EDmFont::SerifItalic && DisplayItalic.IsValid()) return FSlateFontInfo(DisplayItalic, Pt * 1.1f, NAME_None, Outline);
 	const FFace& F = Faces[int32(Face)];
 	if (F.Font.IsValid()) return FSlateFontInfo(F.Font, Pt, NAME_None, Outline);
 	const bool bBold = Face == EDmFont::SerifBold || Face == EDmFont::SansSemi;

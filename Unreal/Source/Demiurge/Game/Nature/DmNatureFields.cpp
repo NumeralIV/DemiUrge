@@ -154,6 +154,6 @@ void FDmNatureFields::Bake()
 			Climate[K] = FColor(Q8((T + 40.f) / 80.f), Q8(Mo), Q8(Snow), Q8(Sc));
 			Land[K] = FColor(Q8(Farm), Q8(Urb), Q8(Lake), Q8(Fa));
 		}
-	});
+	}, EParallelForFlags::BackgroundPriority);
 	BuildMs = (FPlatformTime::Seconds() - T0) * 1000.0;
 }

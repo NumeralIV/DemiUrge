@@ -378,6 +378,7 @@ bool ADmAudioDirector::PlayCue(EDmCue Cue, int32 Cell, float Vol, float Param)
 	const int32 K = int32(Cue);
 	if (Now - CueLast[K] < MinGap[K] && CueLast[K] > 0) return false;
 	CueLast[K] = Now;
+	++CuesPlayed;   // (integration) checks count the cues a power or an event produced
 	FDmCueParams P;
 	P.Vol = FMath::Clamp(Vol, 0.f, 2.f);
 	P.Param = Param;
@@ -563,6 +564,18 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 		PlayStinger(S);
 		return;
 	}
+	// (integration) the sim events that had no sound yet (audio report: drought; and the quieter history beats)
+	if (const EvDrought* X = E.as<EvDrought>()) { if (X->start) PlayCue(EDmCue::Crackle, X->cell, 0.35f); return; }
+	if (const EvWarEnded* X = E.as<EvWarEnded>()) { PlayCue(EDmCue::Chime, -1, 0.45f); return; }
+	if (const EvSettlementCaptured* X = E.as<EvSettlementCaptured>())
+	{
+		if (const UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))
+			if (const Settlement* S = Sim->Sim() ? state::settlement(*Sim->Sim(), X->id) : nullptr) PlayCue(EDmCue::Horn, S->cell, 0.55f);
+		return;
+	}
+	if (const EvCultureBorn* X = E.as<EvCultureBorn>()) { PlayCue(EDmCue::Chime, X->cell, 0.5f); return; }
+	if (E.as<EvCultureDied>()) { PlayCue(EDmCue::Toll, -1, 0.7f); return; }
+	if (E.as<EvProphetDied>()) { PlayCue(EDmCue::Toll, -1, 0.35f); return; }
 	if (E.as<EvAweShort>()) { PlayCue(EDmCue::Deny); return; }
 	if (const EvUiPower* X = E.as<EvUiPower>()) { PlayCue(X->id.empty() ? EDmCue::Click : EDmCue::Arm); return; }
 	if (E.as<EvUiSelect>() || E.as<EvUiSpeed>() || E.as<EvUiOverlay>() || E.as<EvUiState>()) { PlayCue(EDmCue::Click); return; }

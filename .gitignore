@@ -51,3 +51,18 @@ Unreal/Tools/**/build*/
 UnrealLab/*/Scripts/__pycache__/
 __pycache__/
 Unreal/lanes/*.owned.bak
+dist/
+
+# ---- art: versioned = scripts, manifests, READMEs; generated outputs are rebuilt by the scripts
+art/**/export/
+art/**/textures/
+art/**/source/
+*.blend
+*.blend1
+*.fbx
+*.glb
+art/**/*.png
+!art/**/README*.png
+__pycache__/
+*.pyc
+shots/asset-*

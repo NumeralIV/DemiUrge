@@ -126,9 +126,13 @@ void ADmPlanet::CheckMaterials()
 		UMaterial* Base = Mid ? Mid->GetMaterial() : nullptr;
 		const FMaterialResource* Res = Base ? Base->GetMaterialResource(GetWorld()->Scene->GetShaderPlatform()) : nullptr;
 		if (!Res) continue;
+#if WITH_EDITOR
 		const TArray<FString>& Errs = Res->GetCompileErrors();
 		if (Errs.Num() == 0) UE_LOG(LogDmPlanet, Display, TEXT("DmPlanet: material %s compiled"), *Base->GetName());
 		for (const FString& E : Errs) UE_LOG(LogDmPlanet, Error, TEXT("DmPlanet: material %s: %s"), *Base->GetName(), *E);
+#else
+		UE_LOG(LogDmPlanet, Display, TEXT("DmPlanet: material %s ready (cooked)"), *Base->GetName());   // (integration) compile errors are an editor-only query
+#endif
 	}
 }
 
@@ -276,8 +280,13 @@ void ADmPlanet::PumpData()
 		TerrainJob.Reset();
 		ApplyTerrain(NewT);
 	}
-	if (bTerrainDirty && !TerrainJob.IsValid())
+	// (integration, performance) at 8x a rising sea or a stream of edits dirtied the terrain several times a second, and
+	// each re-capture costs the game thread a few ms plus a towns / nature re-probe: at most one capture per 0.4 s
+	// (the visible ground lags a sim change by at most that much)
+	const double NowT = FPlatformTime::Seconds();
+	if (bTerrainDirty && !TerrainJob.IsValid() && NowT - LastTerrainStart >= 0.4)
 	{
+		LastTerrainStart = NowT;
 		bTerrainDirty = false;
 		TSharedPtr<FDmTerrainJob, ESPMode::ThreadSafe> Job = MakeShared<FDmTerrainJob, ESPMode::ThreadSafe>();
 		Job->T = MakeShared<FDmPlanetTerrain, ESPMode::ThreadSafe>();
@@ -290,12 +299,15 @@ void ADmPlanet::PumpData()
 	// river / road map
 	if (RiverJob.IsValid() && RiverJob->bDone.load())
 	{
-		RiverTex = FDmPlanetMaps::MakeRiverTexture(this, RiverJob->Mips);
+		const bool bInPlace = FDmPlanetMaps::UpdateRiverTexture(RiverTex, RiverJob->Mips);
+		if (!bInPlace) RiverTex = FDmPlanetMaps::MakeRiverTexture(this, RiverJob->Mips);
 		LastRiverMapMs = RiverJob->Ms;
 		RiverJob.Reset();
-		SetMaterialTextures();
+		if (!bInPlace) SetMaterialTextures();
 	}
-	if (bRiverMapDirty && !RiverJob.IsValid() && !TerrainJob.IsValid()) StartRiverMap();
+	// (integration, performance) the river map is a new 4096^2 texture with mips made on the game thread (31 ms plus
+	// 16 ms destroying the old one in a hitch dump at 8x, where rivers change every few ticks): at most every 3 s
+	if (bRiverMapDirty && !RiverJob.IsValid() && !TerrainJob.IsValid() && NowT - LastRiverStart >= 3.0) { LastRiverStart = NowT; StartRiverMap(); }
 
 	// colour maps (throttled to ColorEvery): the world's per-cell fields are copied here (~1 ms), the maps and
 	// their mips are computed on a worker (~25 ms), and the result is handed to the render thread. (Computing

@@ -1,0 +1,126 @@
+== seed 7  policy doom  world "Mere Glen"  L 6  calamity 1.00  create 119 ms  start 28 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     858     2    1 Stone    -0.00 -0.00   0.0 0.000  150/150   1.46   14   74     1     0     0     0     0     0    40     0     0     0
+   ENDING year 364: silence / quiet (culture -1, settlement -1)
+    364       0     0    0 Stone    +0.00 -0.00   0.0 0.000   37/100   0.00    0   35     0     2     0     0     0     0     7     0    54     0
+   result: 364 years, ending silence / quiet in 364; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1000, settlements 2, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.004 vs seaBase; largest fire 6 cells (year 149)
+   awe: at cap 62% of years, below 90% 33%; income stone 1.21/yr (a 40-Awe miracle every 16.5 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 1, destroyed 2 ( drowned(sea) 2 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 47, storms 19, droughts 16, quakes 4, volcanoes 1, impacts 0, people:lost 0, chronicle 18
+   policy: 2 clicks, 2 strokes, 0 refused, 0 edicts; lightning 2 lower 2
+   timing: 1456 ticks, wall mean 0.722 ms, max 7.07 ms (year 94); thread CPU mean 0.720 ms, max 7.06 ms, p99.9 6.22 ms; score 439; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 4  policy doom  world "Umber Sound"  L 6  calamity 1.00  create 128 ms  start 25 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     772     2    1 Stone    -0.00 -0.00   0.0 0.000  150/150   1.51   13   75     1     0     0     0     0     0    64     0     0     0
+   ENDING year 388: silence / quiet (culture -1, settlement -1)
+    388       0     0    0 Stone    +0.00 -0.00   0.0 0.000   34/100   0.00    0   45     0     2     0     0     0     0    11     0    56     0
+   result: 388 years, ending silence / quiet in 388; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1000, settlements 2, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.005 vs seaBase; largest fire 8 cells (year 151)
+   awe: at cap 64% of years, below 90% 31%; income stone 1.26/yr (a 40-Awe miracle every 15.9 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 1, destroyed 2 ( drowned(sea) 2 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 75, storms 20, droughts 16, quakes 3, volcanoes 1, impacts 0, people:lost 0, chronicle 19
+   policy: 2 clicks, 2 strokes, 0 refused, 0 edicts; lightning 2 lower 2
+   timing: 1552 ticks, wall mean 0.681 ms, max 6.29 ms (year 98); thread CPU mean 0.679 ms, max 6.23 ms, p99.9 6.14 ms; score 441; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 2  policy doom  world "Raelthia"  L 6  calamity 1.00  create 118 ms  start 28 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     736     2    1 Stone    +0.00 -0.00   0.0 0.000  150/150   1.51   13   75     1     0     0     0     0     0    13     0     0     0
+   ENDING year 468: silence / quiet (culture -1, settlement -1)
+    468       0     0    0 Stone    -0.00 -0.00   0.0 0.000    0/100   0.00    0   53     2     4     0     0     0     0    12     0    82     0
+   result: 468 years, ending silence / quiet in 468; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1050, settlements 4, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.005 vs seaBase; largest fire 4 cells (year 68)
+   awe: at cap 64% of years, below 90% 31%; income stone 1.30/yr (a 40-Awe miracle every 15.4 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 3, destroyed 4 ( drowned(sea) 4 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 25, storms 28, droughts 16, quakes 6, volcanoes 1, impacts 0, people:lost 0, chronicle 28
+   policy: 1 clicks, 6 strokes, 0 refused, 0 edicts; lower 6 quake 1
+   timing: 1872 ticks, wall mean 0.657 ms, max 6.30 ms (year 370); thread CPU mean 0.655 ms, max 6.21 ms, p99.9 5.86 ms; score 446; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 5  policy doom  world "Silvercairn"  L 6  calamity 1.00  create 119 ms  start 21 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     622     2    1 Stone    -0.02 -0.00   0.0 0.002  150/150   1.52   13   75     1     0     0     0     0     0    21     0     0     0
+   ENDING year 464: silence / quiet (culture -1, settlement -1)
+    464       0     0    0 Stone    -0.03 -0.01   0.0 0.003   31/100   0.00    0   54     2     4     0     0     0     0    25     0    73     0
+   result: 464 years, ending silence / quiet in 464; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1006, settlements 4, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.007 vs seaBase; largest fire 4 cells (year 142)
+   awe: at cap 65% of years, below 90% 31%; income stone 1.31/yr (a 40-Awe miracle every 15.2 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 3, destroyed 4 ( drowned(sea) 4 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 46, storms 28, droughts 14, quakes 5, volcanoes 2, impacts 0, people:lost 0, chronicle 29
+   policy: 1 clicks, 4 strokes, 0 refused, 0 edicts; lower 4 quake 1
+   timing: 1856 ticks, wall mean 0.688 ms, max 6.26 ms (year 378); thread CPU mean 0.685 ms, max 6.26 ms, p99.9 5.74 ms; score 444; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 1  policy doom  world "Embervale"  L 6  calamity 1.00  create 113 ms  start 20 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     654     2    1 Stone    -1.49 -0.00   0.0 0.165  150/150   1.49   13   75     1     0     0     0     0     0    18     0     0     0
+   ENDING year 457: silence / quiet (culture -1, settlement -1)
+    457       0     0    0 Stone    -0.03 -0.01   0.0 0.003    3/100   0.00    0   55     2     4     0     0     0     0    28     0    74     0
+   result: 457 years, ending silence / quiet in 457; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1004, settlements 4, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.006 vs seaBase; largest fire 4 cells (year 363)
+   awe: at cap 66% of years, below 90% 30%; income stone 1.28/yr (a 40-Awe miracle every 15.6 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 3, destroyed 4 ( drowned(sea) 4 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 46, storms 26, droughts 16, quakes 6, volcanoes 2, impacts 0, people:lost 0, chronicle 27
+   policy: 1 clicks, 4 strokes, 0 refused, 0 edicts; lower 4 quake 1
+   timing: 1828 ticks, wall mean 0.709 ms, max 6.22 ms (year 183); thread CPU mean 0.706 ms, max 6.18 ms, p99.9 6.15 ms; score 444; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 6  policy doom  world "Umbercrest"  L 6  calamity 1.00  create 138 ms  start 29 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     763     2    1 Stone    +0.00 +0.00   0.0 0.000  150/150   1.48   14   75     1     0     0     0     0     0    14     0     0     0
+   ENDING year 458: silence / quiet (culture -1, settlement -1)
+    458       0     0    0 Stone    -1.20 -0.00   0.0 0.133    0/100   0.00    0   55     2     4     0     0     0     0    65     0    76     0
+   result: 458 years, ending silence / quiet in 458; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1001, settlements 4, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.005 vs seaBase; largest fire 6 cells (year 446)
+   awe: at cap 66% of years, below 90% 30%; income stone 1.28/yr (a 40-Awe miracle every 15.6 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 3, destroyed 4 ( drowned(sea) 4 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 79, storms 26, droughts 18, quakes 4, volcanoes 2, impacts 0, people:lost 0, chronicle 27
+   policy: 1 clicks, 4 strokes, 0 refused, 0 edicts; lower 4 quake 1
+   timing: 1832 ticks, wall mean 0.771 ms, max 6.40 ms (year 92); thread CPU mean 0.768 ms, max 6.39 ms, p99.9 6.24 ms; score 440; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 8  policy doom  world "Amberwake"  L 6  calamity 1.00  create 122 ms  start 28 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     726     2    1 Stone    +0.00 +0.00   0.0 0.000  150/150   1.49   13   75     1     0     0     0     0     0    17     0     0     0
+   ENDING year 483: silence / quiet (culture -1, settlement -1)
+    483       0     0    0 Stone    +0.00 -0.00   0.0 0.000    0/100   0.00    0   50     2     4     0     0     0     0    14     0    91     0
+   result: 483 years, ending silence / quiet in 483; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1031, settlements 4, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.000 / -0.004 vs seaBase; largest fire 3 cells (year 80)
+   awe: at cap 63% of years, below 90% 32%; income stone 1.30/yr (a 40-Awe miracle every 15.4 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 3, destroyed 4 ( drowned(sea) 4 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 31, storms 28, droughts 22, quakes 7, volcanoes 1, impacts 0, people:lost 0, chronicle 30
+   policy: 1 clicks, 7 strokes, 0 refused, 0 edicts; lower 7 quake 1
+   timing: 1932 ticks, wall mean 0.743 ms, max 6.32 ms (year 234); thread CPU mean 0.740 ms, max 6.32 ms, p99.9 6.30 ms; score 446; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+== seed 3  policy doom  world "Nulias"  L 6  calamity 1.00  create 111 ms  start 20 ms
+   year     pop settl cult age       anom   sea   co2  dust  awe/max    inc s/40 cap% found  lost  wars battl famin plagu fires impac power cultb
+      0      30     1    1 Stone    +0.00 +0.00   0.0 0.000   60/100   1.29   16    0     0     0     0     0     0     0     0     0     0     0
+    250     771     2    1 Stone    +0.00 +0.00   0.0 0.000  150/150   1.49   13   75     1     0     0     0     0     0    13     0     0     0
+    500       0     0    0 Stone    +0.00 -0.01   0.0 0.000    1/100   0.00    0   46     2     4     0     0     0     0    15     0    82     0
+   ENDING year 503: silence / quiet (culture -1, settlement -1)
+    503       0     0    0 Stone    +0.00 -0.01   0.0 0.000    1/100   0.00    0    0     0     0     0     0     0     0     0     0     0     0
+   result: 503 years, ending silence / quiet in 503; ages: Bronze - Iron - Sail - Industry - Atomic - Space -; ark -
+   peaks: pop 1004, settlements 4, cultures 1; anomaly +0.00 (min -1.72), co2 0.0, dust 0.191, sea +0.001 / -0.020 vs seaBase; largest fire 4 cells (year 308)
+   awe: at cap 60% of years, below 90% 35%; income stone 1.31/yr (a 40-Awe miracle every 15.3 s at 1x), later 0.00/yr (0.0 s), 150 Awe every - s once meteors unlock
+   events: founded 3, destroyed 4 ( drowned(sea) 4 ), cultures born 0 / died 1, wars 0, battles 0, nukes 0, prophets 0, wonders 0, trade routes 0, famines 0, plagues 0, fires 28, storms 28, droughts 22, quakes 7, volcanoes 1, impacts 0, people:lost 0, chronicle 31
+   policy: 2 clicks, 11 strokes, 0 refused, 0 edicts; lower 11 quake 2
+   timing: 2012 ticks, wall mean 0.769 ms, max 8.55 ms (year 258); thread CPU mean 0.766 ms, max 8.54 ms, p99.9 8.02 ms; score 448; non-finite: none
+   regard now: everyone devotion 0.000 love +0.000 (forgotten)
+
+seed policy  | Bronze  Iron  Sail Indus Atom Space   Ark | ending           | pop@500 @1000 @2000 @3000 @3500 | settl@1000 @3000 | cult@2000 | anom+  sea+   | lost<500 | awe<90% cap% | ms mean  max  cpu | nan | hash
+   1 doom    |      -     -     -     -    -     -     - | silence/quiet 457 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y407 |      30   66 |   0.709  6.2  6.2 |  ok | 1427f2fe
+   2 doom    |      -     -     -     -    -     -     - | silence/quiet 468 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y418 |      31   64 |   0.657  6.3  6.2 |  ok | 1852fd58
+   3 doom    |      -     -     -     -    -     -     - | silence/quiet 503 |       0     -     -     -     - |          -     - |         - | +0.00 +0.001 |     y453 |      35   60 |   0.769  8.6  8.5 |  ok | 38ad03a2
+   4 doom    |      -     -     -     -    -     -     - | silence/quiet 388 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y338 |      31   64 |   0.681  6.3  6.2 |  ok | d08b7764
+   5 doom    |      -     -     -     -    -     -     - | silence/quiet 464 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y414 |      31   65 |   0.688  6.3  6.3 |  ok | 87712352
+   6 doom    |      -     -     -     -    -     -     - | silence/quiet 458 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y408 |      30   66 |   0.771  6.4  6.4 |  ok | 2d3359e4
+   7 doom    |      -     -     -     -    -     -     - | silence/quiet 364 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y314 |      33   62 |   0.722  7.1  7.1 |  ok | a9aa2d9c
+   8 doom    |      -     -     -     -    -     -     - | silence/quiet 483 |       -     -     -     -     - |          -     - |         - | +0.00 +0.000 |     y433 |      32   63 |   0.743  6.3  6.3 |  ok | b2d64dfa
+
+targets (SPEC-SIM 4), policy doom, 8 seeds:
+  PASS  no non-finite value                                            8/8  []
+  PASS  doom drives the world to silence                               8/8  [quiet quiet quiet quiet quiet quiet quiet quiet]
+  PASS  mean tick <= 2.5 ms (thread CPU time)                          8/8  [0.71 0.65 0.77 0.68 0.69 0.77 0.72 0.74]
+  PASS  max tick <= 30 ms (thread CPU time)                            8/8  [6.2 6.2 8.5 6.2 6.3 6.4 7.1 6.3]
+  info  max tick, wall clock (informational: includes descheduled time) 0/0  [6.2 6.3 8.6 6.3 6.3 6.4 7.1 6.3]
+
+note: tick timings were measured with --jobs 8 (threads contend for the heap and memory): use --jobs 1 for the performance targets
+
+simrun: 8 run(s) in 1.7 s wall, no non-finite values

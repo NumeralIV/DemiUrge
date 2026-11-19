@@ -1,0 +1,26 @@
+$ErrorActionPreference = 'Continue'
+$proj = 'C:\Users\Relly\Documents\Fable5.2 Test\demiurge\Unreal'
+$sim = Join-Path $proj 'Source\Demiurge\Sim'
+$tools = Join-Path $proj 'Tools'
+$simrun = Join-Path $tools 'simrun'
+$simTests = Join-Path $proj 'SimTests'
+$here = $PSScriptRoot
+$bd = Join-Path $here 'build'
+New-Item -ItemType Directory -Force -Path $bd | Out-Null
+$envLines = [System.IO.File]::ReadAllLines((Join-Path $simrun 'build\vcvars.env'))
+foreach ($line in $envLines) { $eq = $line.IndexOf('='); if ($eq -gt 0) { [Environment]::SetEnvironmentVariable($line.Substring(0,$eq), $line.Substring($eq+1), 'Process') } }
+$src = @()
+$src += (Get-ChildItem -LiteralPath (Join-Path $sim 'Core') -Filter *.cpp).FullName
+$src += (Get-ChildItem -LiteralPath $sim -Filter *.cpp).FullName
+$src += (Join-Path $simrun 'Policies.cpp')
+$src += (Join-Path $here 'review.cpp')
+$guard = Join-Path $simTests 'UeMacroGuard.h'
+$fl = @('/nologo','/c','/std:c++20','/permissive-','/W3','/fp:precise','/Zc:preprocessor','/O2','/GR-','/EHsc','/MP','/utf-8','/Zc:__cplusplus','/D_CRT_SECURE_NO_WARNINGS',"/FI$guard","/I$sim","/I$tools","/I$simrun","/I$simTests")
+$rsp = Join-Path $bd 'cl.rsp'
+[IO.File]::WriteAllLines($rsp, @($fl | % { '"' + $_ + '"' }) + @($src | % { '"' + $_ + '"' }))
+Push-Location $bd
+& cl.exe '@cl.rsp' 2>&1 | Where-Object { $_ -match 'error' }
+$objs = (Get-ChildItem -Filter *.obj).Name
+& link.exe /nologo /OUT:review.exe $objs 2>&1 | Where-Object { $_ -match 'error' }
+Pop-Location
+Write-Host "built: $(Test-Path (Join-Path $bd 'review.exe'))"

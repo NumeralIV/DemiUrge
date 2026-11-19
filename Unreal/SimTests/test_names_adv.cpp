@@ -278,7 +278,8 @@ DM_TEST("names-adv: a daughter chain of 40 generations stays valid, keeps its go
 	for (int g = 1; g <= 40; g++) {
 		Rng r(seedOf(g) + 99);
 		const std::string next = names::language(r, lang);
-		if (next.rfind("dm1", 0) != 0) { t.add("record", next, "no dm1 header"); }
+		// (names-cultures track: records are "dm2"; the check is that the text is a Names record at all)
+		if (next.rfind("dm2;", 0) != 0) { t.add("record", next, "no dm2 header"); }
 		if (next == lang) t.add("record", next, "daughter identical to parent");
 		lang = next;
 		Rng q(seedOf(g) + 100);

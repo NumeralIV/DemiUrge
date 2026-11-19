@@ -37,5 +37,10 @@ public class Demiurge : ModuleRules
 			"Slate",
 			"SlateCore",
 		});
+
+		// (integration) the engine's unit timers (GGameThreadTime, GRenderThreadTime, RHIGetGPUFrameCycles) for the
+		// harness's DmStats and the perf scenarios, also in the monolithic packaged game (the DLL lookup the bridge used
+		// as a stopgap only works in the editor build)
+		PrivateDependencyModuleNames.AddRange(new string[] { "RenderCore", "RHI" });
 	}
 }

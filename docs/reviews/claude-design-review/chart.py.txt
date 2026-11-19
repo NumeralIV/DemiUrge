@@ -1,0 +1,46 @@
+import csv
+from PIL import Image, ImageDraw, ImageFont
+W,H=1600,1000
+img=Image.new('RGB',(W,H),'#fcfcfb'); d=ImageDraw.Draw(img)
+def font(sz,bold=False):
+    for f in (['C:/Windows/Fonts/segoeuib.ttf'] if bold else [])+['C:/Windows/Fonts/segoeui.ttf','C:/Windows/Fonts/arial.ttf']:
+        try: return ImageFont.truetype(f,sz)
+        except: pass
+    return ImageFont.load_default()
+T,S,M=font(30,True),font(20),font(17)
+series=[('kind (30 min of blessings + prophets)','out2/kind-s1.csv','#2a78d6'),
+        ('blessings for 1,000 years, then nothing','out2/blessonly-1000-1000-s1.csv','#1baf7a'),
+        ('nothing, then kind once the Ark starts','out3/late-kind-s1.csv','#eb6834'),
+        ('passive (never acts)','out2/passive-s1.csv','#52514e')]
+data=[]
+for name,f,c in series:
+    rows=list(csv.DictReader(open(f,encoding='utf-8')))
+    data.append((name,c,[(float(r['year']),float(r['loveLead']),float(r['devLead'])) for r in rows]))
+d.text((60,24),'Seed 1: the leading culture\'s feelings, year by year, under four players',fill='#0b0b0b',font=T)
+d.text((60,66),'All four reach the Ark within 53 years of each other. Only the last ~200 years decide the ending (kind and late-kind: beloved; the other two: parting).',fill='#52514e',font=S)
+panels=[('Love (ending: beloved needs >= +0.20, feared <= -0.20)',1,-0.4,1.0,[0.2,-0.2],130,440),
+        ('Devotion (ending: beloved needs >= 0.35; forgotten < 0.20)',2,0.0,1.0,[0.35,0.2],560,870)]
+X0,X1=120,1180; YMAX=3700
+for title,idx,lo,hi,thr,y0,y1 in panels:
+    d.text((X0,y0-34),title,fill='#0b0b0b',font=S)
+    ys=lambda v:y1-(v-lo)/(hi-lo)*(y1-y0)
+    xs=lambda yr:X0+yr/YMAX*(X1-X0)
+    v=lo
+    while v<=hi+1e-9:
+        d.line([(X0,ys(v)),(X1,ys(v))],fill='#ebeae6',width=1); d.text((X0-60,ys(v)-10),f'{v:+.1f}' if idx==1 else f'{v:.1f}',fill='#52514e',font=M); v+=0.2
+    for t in thr:
+        for x in range(X0,X1,14): d.line([(x,ys(t)),(x+7,ys(t))],fill='#8a8984',width=2)
+    for yr in range(0,3701,500):
+        d.text((xs(yr)-18,y1+8),str(yr),fill='#52514e',font=M)
+    d.line([(X0,y1),(X1,y1)],fill='#8a8984',width=1)
+    for name,c,pts in data:
+        p=[(xs(y),ys(max(lo,min(hi,vv[idx-1])))) for y,*vv in [(a,b,cc) for a,b,cc in pts]]
+        d.line(p,fill=c,width=3,joint='curve')
+d.text((X0+(X1-X0)//2-60,y1+36),'year of history (120 years = 1 real minute at 1x)',fill='#52514e',font=M)
+# legend
+ly=150
+for name,c,_ in data:
+    d.rounded_rectangle([1220,ly+4,1250,ly+18],radius=4,fill=c); d.text((1262,ly-2),name,fill='#0b0b0b',font=M); ly+=40
+d.text((1220,ly+10),'dashed lines: ending thresholds',fill='#52514e',font=M)
+d.text((1220,ly+40),'(SPEC-SIM 3.12, Balance.cpp)',fill='#52514e',font=M)
+img.save(r'C:/Users/Relly/Documents/Fable5.2 Test/demiurge/docs/reviews/claude-design-review/regard-by-player.png')

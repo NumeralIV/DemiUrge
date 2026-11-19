@@ -514,7 +514,8 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 		float seamP = (1.0 - Smooth01(((pc.y - pc.x) - 0.015) / 0.09)) * AAW(9000.0, fp * 0.25);
 		float seamQ = (1.0 - Smooth01(((qc.y - qc.x) - 0.02) / 0.10)) * AAW(2500.0, fp * 0.5);
 		float prov = saturate(0.5 + 0.9 * NoiseAA(Pm, 30000.0, fp * 0.1, float3(2.2, 8.1, 4.6)) + 0.5 * NoiseAA(Pm, 8000.0, fp * 0.2, float3(6.6, 1.3, 9.9)));
-		float farCrack = (0.03 + 0.07 * prov) + 0.45 * max(seamP, 0.6 * seamQ) * (0.4 + 0.6 * prov);
+		// (integration) the plates themselves barely glow: dark slag, light only in the seams (docs/concept/genesis)
+		float farCrack = (0.004 + 0.016 * prov * prov) + 0.5 * max(seamP, 0.55 * seamQ) * (0.25 + 0.75 * prov);
 		crack = lerp(farCrack, max(vein * AAW(38.0, fp), big), AAW(420.0, fp));
 		float flick = 0.75 + 0.25 * sin(Tm * 2.3 + 40.0 * r2);
 		float lv = saturate(lava * 1.4) * Smooth01((h + 0.5) / 1.0);   // lava under the sea is quenched
@@ -524,7 +525,8 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 		float hm = saturate(Heat);
 		float dryCrust = Smooth01((h + 2.0) / 2.0);
 		col = lerp(col, float3(0.05, 0.04, 0.035), saturate(hm * 1.5));
-		Emis += hm * (0.02 + 0.98 * crack) * float3(1.0, 0.26, 0.045) * 9.0 * (0.6 + 0.4 * hm) * dryCrust;
+		// (integration) deeper red-orange and about a third of the old gain: the old 9x blew the lit disc to peach
+		Emis += hm * (0.005 + 0.995 * crack) * float3(1.0, 0.2, 0.03) * 3.2 * (0.35 + 0.65 * hm * hm) * dryCrust;
 	}
 	if (fire > 0.01)
 	{

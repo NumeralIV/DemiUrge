@@ -122,6 +122,9 @@ public:
 	/** Run n ticks now through sim::advance (tests, scenarios). Returns ticks run. */
 	int32 StepTicks(int32 N);
 	int32 MaxTicksPerFrame = 16;
+	/** (integration) Called before every sim tick (RunFrame and StepTicks): scripted players act here, as
+	 *  Tools/simrun's policies do. Empty in normal play. */
+	TFunction<void(dm::World&)> BeforeTick;
 	float SimBudgetMs = 12.f;
 	int32 GetTicksLastFrame() const { return TicksLastFrame; }
 	double GetSimMsPerTick() const { return SimMsPerTick; }

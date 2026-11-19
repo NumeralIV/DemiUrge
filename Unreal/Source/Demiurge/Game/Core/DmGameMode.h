@@ -32,6 +32,9 @@ public:
 	void HarnessSetView(const FVector& Loc, const FRotator& Rot, double FovDeg);
 	void HarnessUseCamera(bool bUse) { bHarnessView = bUse; }
 	void HarnessShot(const FString& Suffix);
+	void HarnessShotPath(const FString& Path, bool bWithUI);
+	/** <root>/shots (the folder the harness writes into). */
+	FString ShotsDir() const;
 	void HarnessFinish() { bFinishRequested = true; }
 	void HarnessHoldExit() { bHoldExit = true; }
 	void HarnessSetExitCode(int32 Code) { ExitCode = Code; }
@@ -40,10 +43,12 @@ public:
 	void AddSceneActors(const TArray<AActor*>& Actors) { SceneActors.Append(Actors); }
 	/** Path of the main shot (-shot) or shots/ue-<scenario>.png when none was given. */
 	FString ShotBase() const;
+	/** (integration) The last frame's engine unit timers in ms (what "stat unit" shows): game, render, RHI, GPU. */
+	void GetLastUnitMs(double& OutGame, double& OutRender, double& OutRhi, double& OutGpu) const;
 
 private:
 	void SetupWorld(UDmSimSubsystem* Sim);
-	void QueueShot(const FString& Path);
+	void QueueShot(const FString& Path, bool bWithUI = false);
 	void PumpShots();
 	void LogStats();
 	void Quit(const TCHAR* Why);
@@ -65,6 +70,7 @@ private:
 
 	struct FPendingShot { FString Path; int32 RequestedFrame = -1; };
 	TArray<FString> ShotQueue;
+	TSet<FString> UiShots;   // queued paths taken with the interface
 	TArray<FPendingShot> InFlight;
 	int32 ShotsTaken = 0, ShotsExpected = 0;
 	bool bStatsLogged = false;

@@ -15,6 +15,8 @@
 #include "Misc/Paths.h"
 #include "HAL/PlatformProcess.h"
 #include "UnrealClient.h"
+#include "RenderTimer.h"
+#include "DynamicRHI.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDmMode, Log, All);
 
@@ -23,28 +25,19 @@ namespace
 	// The engine's per-frame unit timers (what "stat unit" shows) live in RenderCore and RHI, which
 	// Demiurge.Build.cs does not link (the file is not C0's; adding "RenderCore", "RHI" there is
 	// requested in the bridge report). Until then they are looked up in the loaded editor DLLs.
+	// The engine's per-frame unit timers (what "stat unit" shows), from RenderCore and RHI (Demiurge.Build.cs lists them
+	// since the integration; this works in the editor and in the packaged game alike)
 	struct FUnitTimers
 	{
-		const uint32* Game = nullptr;
-		const uint32* Render = nullptr;
-		const uint32* Rhi = nullptr;
-		uint32 (*GpuCycles)(uint32) = nullptr;
+		const uint32* Game = &GGameThreadTime;
+		const uint32* Render = &GRenderThreadTime;
+		const uint32* Rhi = &GRHIThreadTime;
+		uint32 (*GpuCycles)(uint32) = &RHIGetGPUFrameCycles;
 		bool bInit = false;
 
 		void Init()
 		{
 			bInit = true;
-#if PLATFORM_WINDOWS && !IS_MONOLITHIC
-			void* RC = FPlatformProcess::GetDllHandle(TEXT("UnrealEditor-RenderCore.dll"));
-			void* RH = FPlatformProcess::GetDllHandle(TEXT("UnrealEditor-RHI.dll"));
-			if (RC)
-			{
-				Game = static_cast<const uint32*>(FPlatformProcess::GetDllExport(RC, TEXT("?GGameThreadTime@@3IA")));
-				Render = static_cast<const uint32*>(FPlatformProcess::GetDllExport(RC, TEXT("?GRenderThreadTime@@3IA")));
-				Rhi = static_cast<const uint32*>(FPlatformProcess::GetDllExport(RC, TEXT("?GRHIThreadTime@@3IA")));
-			}
-			if (RH) GpuCycles = reinterpret_cast<uint32 (*)(uint32)>(FPlatformProcess::GetDllExport(RH, TEXT("?RHIGetGPUFrameCycles@@YAII@Z")));
-#endif
 			UE_LOG(LogDmMode, Display, TEXT("DmStats: unit timers game=%d render=%d rhi=%d gpu=%d"), Game != nullptr, Render != nullptr, Rhi != nullptr, GpuCycles != nullptr);
 		}
 		static double Ms(const uint32* P) { return P ? FPlatformTime::ToMilliseconds(*P) : 0.0; }
@@ -83,6 +76,10 @@ void ADmGameMode::SetupWorld(UDmSimSubsystem* Sim)
 	if (A.bSeed)
 	{
 		Sim->CreateWorld(A.Seed, FString(), A.bSkip, 0.0);
+	}
+	else if (!A.bFixtureArg && (A.Scenario.IsEmpty() || A.Scenario.Equals(TEXT("play"), ESearchCase::IgnoreCase) || A.Scenario.StartsWith(TEXT("playthrough")) || A.Scenario.StartsWith(TEXT("flow"))))
+	{
+		// (integration) the game itself runs the real simulation: the flow makes the title's world (no fixture)
 	}
 	else if (!A.Fixture.Equals(TEXT("none"), ESearchCase::IgnoreCase))
 	{
@@ -187,11 +184,23 @@ void ADmGameMode::HarnessShot(const FString& Suffix)
 	QueueShot(Path);
 }
 
-void ADmGameMode::QueueShot(const FString& Path)
+void ADmGameMode::QueueShot(const FString& Path, bool bWithUI)
 {
 	IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);
 	IFileManager::Get().Delete(*Path, false, true, true);
 	ShotQueue.Add(Path);
+	if (bWithUI) UiShots.Add(Path);
+}
+
+void ADmGameMode::HarnessShotPath(const FString& Path, bool bWithUI)
+{
+	++ShotsExpected;
+	QueueShot(Path, bWithUI);
+}
+
+FString ADmGameMode::ShotsDir() const
+{
+	return FPaths::GetPath(ShotBase());
 }
 
 void ADmGameMode::PumpShots()
@@ -218,9 +227,18 @@ void ADmGameMode::PumpShots()
 		if (!bStatsLogged) LogStats();
 		const FString Path = ShotQueue[0];
 		ShotQueue.RemoveAt(0);
-		FScreenshotRequest::RequestScreenshot(Path, false, false);
+		FScreenshotRequest::RequestScreenshot(Path, UiShots.Contains(Path), false);
+		UiShots.Remove(Path);
 		InFlight.Add({ Path, Frame });
 	}
+}
+
+void ADmGameMode::GetLastUnitMs(double& OutGame, double& OutRender, double& OutRhi, double& OutGpu) const
+{
+	OutGame = GameMs.Num() ? GameMs.Last() : 0.0;
+	OutRender = RenderMs.Num() ? RenderMs.Last() : 0.0;
+	OutRhi = RhiMs.Num() ? RhiMs.Last() : 0.0;
+	OutGpu = GpuMs.Num() ? GpuMs.Last() : 0.0;
 }
 
 void ADmGameMode::LogStats()
@@ -269,7 +287,8 @@ void ADmGameMode::Tick(float DeltaSeconds)
 	Push(GpuMs, GUnit.GpuCycles ? FPlatformTime::ToMilliseconds(GUnit.GpuCycles(0)) : 0.0);
 
 	if (A.Seq.Contains(Frame)) QueueShot(FPaths::Combine(FPaths::GetPath(ShotBase()), FPaths::GetBaseFilename(ShotBase()) + FString::Printf(TEXT("-f%d.png"), Frame)));
-	if (!A.Shot.IsEmpty() && Frame == A.Warm && !A.Seq.Contains(A.Warm)) QueueShot(ShotBase());
+	// -shotui: the main shot keeps the interface (the title screen of a packaged build, the HUD)
+	if (!A.Shot.IsEmpty() && Frame == A.Warm && !A.Seq.Contains(A.Warm)) QueueShot(ShotBase(), FDmShotArgs::Param(TEXT("shotui")));
 	PumpShots();
 
 	if (Frame == A.Warm && !bStatsLogged) LogStats();

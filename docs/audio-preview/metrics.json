@@ -1,0 +1,2994 @@
+{
+ "generated": "2026-11-19",
+ "sample_rate": 48000,
+ "bits": 16,
+ "total_bytes": 169707224,
+ "files": {
+  "music-age-0-stone": {
+   "kind": "music",
+   "target_lufs": -30.0,
+   "info": {
+    "tempo_bpm": 64.3,
+    "mode": "penta_major",
+    "voice_silence": 0.582,
+    "notes": 80,
+    "stem_lufs": {
+     "voice": -21.3,
+     "ground": -32.9,
+     "pulse": -40.0
+    },
+    "stem_gain_db": {
+     "ground": 5.6,
+     "pulse": 10.7
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -29.993,
+    "lufs_st_max": -26.4868,
+    "lufs_st_median": -31.6236,
+    "lufs_momentary_max": -25.7609,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -13.2729,
+    "sample_peak_dbfs": -13.3538,
+    "dc_dbfs": -157.2314,
+    "nan": false,
+    "sub60": 0.0026,
+    "low60_250": 0.5156,
+    "mid250_2k": 0.4766,
+    "presence2k_5k": 0.0043,
+    "high4k": 0.0013,
+    "air12k": 0.0001,
+    "centroid_hz": 434.7419,
+    "harsh_max": 0.0129,
+    "air_max": 0.0006,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -40.9998,
+    "rms_dbfs": -32.0727,
+    "clipped": 0,
+    "trim_db": -7.67,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -30 +/- 1",
+     "ok": true,
+     "value": -29.99
+    },
+    {
+     "check": "short-term median -30 +/- 3",
+     "ok": true,
+     "value": -31.62
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.582
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -13.27
+    },
+    {
+     "check": "sample peak <= -10 dBFS (5.5)",
+     "ok": true,
+     "value": -13.35
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -157.2
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.3
+    },
+    {
+     "check": "energy > 4 kHz < 15 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 1.3
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -41.0
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 19.7
+  },
+  "music-age-1-bronze": {
+   "kind": "music",
+   "target_lufs": -29.0,
+   "info": {
+    "tempo_bpm": 69.4,
+    "mode": "penta_major",
+    "voice_silence": 0.523,
+    "notes": 156,
+    "stem_lufs": {
+     "voice": -20.8,
+     "colour": -35.3,
+     "ground": -31.6,
+     "pulse": -41.1
+    },
+    "stem_gain_db": {
+     "colour": 10.5,
+     "ground": 3.8,
+     "pulse": 11.3
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -28.997,
+    "lufs_st_max": -25.5006,
+    "lufs_st_median": -29.0048,
+    "lufs_momentary_max": -24.517,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -11.7241,
+    "sample_peak_dbfs": -11.7708,
+    "dc_dbfs": -166.4907,
+    "nan": false,
+    "sub60": 0.0031,
+    "low60_250": 0.4115,
+    "mid250_2k": 0.5702,
+    "presence2k_5k": 0.0131,
+    "high4k": 0.0038,
+    "air12k": 0.0002,
+    "centroid_hz": 555.6855,
+    "harsh_max": 0.189,
+    "air_max": 0.0006,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -40.2271,
+    "rms_dbfs": -31.4141,
+    "clipped": 0,
+    "trim_db": -7.45,
+    "glue_max_gr_db": 0.05,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -29 +/- 1",
+     "ok": true,
+     "value": -29.0
+    },
+    {
+     "check": "short-term median -29 +/- 3",
+     "ok": true,
+     "value": -29.0
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.523
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -11.72
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -166.5
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.3
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.4
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 18.9
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -40.2
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 16.2
+  },
+  "music-age-2-iron": {
+   "kind": "music",
+   "target_lufs": -28.0,
+   "info": {
+    "tempo_bpm": 65.9,
+    "mode": "mixolydian",
+    "voice_silence": 0.521,
+    "notes": 135,
+    "stem_lufs": {
+     "voice": -23.1,
+     "colour": -32.1,
+     "ground": -26.1,
+     "pulse": -33.8
+    },
+    "stem_gain_db": {
+     "colour": 13.0,
+     "ground": 8.0,
+     "pulse": 10.7,
+     "voice": -1.2
+    },
+    "reed_vs_ground_colour_lu": -6.5
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -27.9747,
+    "lufs_st_max": -26.2925,
+    "lufs_st_median": -27.9442,
+    "lufs_momentary_max": -23.4759,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -11.839,
+    "sample_peak_dbfs": -11.9013,
+    "dc_dbfs": -150.7039,
+    "nan": false,
+    "sub60": 0.0009,
+    "low60_250": 0.7845,
+    "mid250_2k": 0.1989,
+    "presence2k_5k": 0.0144,
+    "high4k": 0.0025,
+    "air12k": 0.0,
+    "centroid_hz": 283.591,
+    "harsh_max": 0.0596,
+    "air_max": 0.0001,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -42.2614,
+    "rms_dbfs": -30.0089,
+    "clipped": 0,
+    "trim_db": -10.66,
+    "glue_max_gr_db": 0.52,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -28 +/- 1",
+     "ok": true,
+     "value": -27.97
+    },
+    {
+     "check": "short-term median -28 +/- 3",
+     "ok": true,
+     "value": -27.94
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.521
+    },
+    {
+     "check": "reed <= -6 dB re ground + colour",
+     "ok": true,
+     "value": -6.5
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -11.84
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -150.7
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.2
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 6.0
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -42.3
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 19.8
+  },
+  "music-age-3-sail": {
+   "kind": "music",
+   "target_lufs": -28.0,
+   "info": {
+    "tempo_bpm": 70.4,
+    "mode": "mixolydian",
+    "voice_silence": 0.525,
+    "notes": 105,
+    "stem_lufs": {
+     "voice": -19.7,
+     "colour": -31.3,
+     "ground": -23.4,
+     "pulse": -49.8
+    },
+    "stem_gain_db": {
+     "colour": 7.6,
+     "ground": -2.2
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -27.9765,
+    "lufs_st_max": -24.755,
+    "lufs_st_median": -27.9884,
+    "lufs_momentary_max": -23.6113,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -15.6218,
+    "sample_peak_dbfs": -15.6274,
+    "dc_dbfs": -152.8239,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.1677,
+    "mid250_2k": 0.8015,
+    "presence2k_5k": 0.03,
+    "high4k": 0.003,
+    "air12k": 0.0,
+    "centroid_hz": 748.1399,
+    "harsh_max": 0.1783,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -37.1888,
+    "rms_dbfs": -30.9712,
+    "clipped": 0,
+    "trim_db": -8.03,
+    "glue_max_gr_db": 0.11,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -28 +/- 1",
+     "ok": true,
+     "value": -27.98
+    },
+    {
+     "check": "short-term median -28 +/- 3",
+     "ok": true,
+     "value": -27.99
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.525
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -15.62
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -152.8
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.3
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 17.8
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -37.2
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 32.1
+  },
+  "music-age-4-industry": {
+   "kind": "music",
+   "target_lufs": -26.0,
+   "info": {
+    "tempo_bpm": 88.8,
+    "mode": "dorian",
+    "voice_silence": 0.552,
+    "notes": 231,
+    "stem_lufs": {
+     "voice": -28.6,
+     "colour": -29.9,
+     "ground": -26.2,
+     "pulse": -54.3
+    },
+    "stem_gain_db": {
+     "colour": -3.7,
+     "ground": -9.4
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -26.0059,
+    "lufs_st_max": -22.2387,
+    "lufs_st_median": -26.0042,
+    "lufs_momentary_max": -19.5612,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -10.8616,
+    "sample_peak_dbfs": -10.8668,
+    "dc_dbfs": -133.3077,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.1987,
+    "mid250_2k": 0.7905,
+    "presence2k_5k": 0.0106,
+    "high4k": 0.0008,
+    "air12k": 0.0,
+    "centroid_hz": 562.2186,
+    "harsh_max": 0.0209,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -36.2638,
+    "rms_dbfs": -28.6329,
+    "clipped": 0,
+    "trim_db": 4.46,
+    "glue_max_gr_db": 2.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -26 +/- 1",
+     "ok": true,
+     "value": -26.01
+    },
+    {
+     "check": "short-term median -26 +/- 3",
+     "ok": true,
+     "value": -26.0
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.552
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -10.86
+    },
+    {
+     "check": "sample peak <= -8 dBFS (5.5)",
+     "ok": true,
+     "value": -10.87
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -133.3
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 2.1
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -36.3
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 32.6
+  },
+  "music-age-5-atomic": {
+   "kind": "music",
+   "target_lufs": -26.0,
+   "info": {
+    "tempo_bpm": 88.8,
+    "mode": "dorian",
+    "voice_silence": 0.617,
+    "notes": 186,
+    "stem_lufs": {
+     "voice": -27.1,
+     "colour": -27.9,
+     "ground": -23.4,
+     "pulse": -54.2
+    },
+    "stem_gain_db": {
+     "colour": -5.2,
+     "ground": -10.7
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -26.0197,
+    "lufs_st_max": -22.4259,
+    "lufs_st_median": -26.6231,
+    "lufs_momentary_max": -19.4891,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -10.7944,
+    "sample_peak_dbfs": -10.7958,
+    "dc_dbfs": -135.7668,
+    "nan": false,
+    "sub60": 0.002,
+    "low60_250": 0.2466,
+    "mid250_2k": 0.7387,
+    "presence2k_5k": 0.0125,
+    "high4k": 0.001,
+    "air12k": 0.0,
+    "centroid_hz": 533.5564,
+    "harsh_max": 0.0405,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -33.6317,
+    "rms_dbfs": -28.6023,
+    "clipped": 0,
+    "trim_db": 2.34,
+    "glue_max_gr_db": 1.86,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -26 +/- 1",
+     "ok": true,
+     "value": -26.02
+    },
+    {
+     "check": "short-term median -26 +/- 3",
+     "ok": true,
+     "value": -26.62
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.617
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -10.79
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -135.8
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.2
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 4.0
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -33.6
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 29.6
+  },
+  "music-age-6-space": {
+   "kind": "music",
+   "target_lufs": -30.0,
+   "info": {
+    "tempo_bpm": 63.8,
+    "mode": "lydian",
+    "voice_silence": 0.58,
+    "notes": 93,
+    "stem_lufs": {
+     "voice": -21.5,
+     "colour": -22.4,
+     "ground": -36.0,
+     "pulse": -49.2
+    },
+    "stem_gain_db": {
+     "colour": -3.2,
+     "ground": 4.5
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -30.0003,
+    "lufs_st_max": -24.5117,
+    "lufs_st_median": -32.5663,
+    "lufs_momentary_max": -23.6958,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -18.1598,
+    "sample_peak_dbfs": -18.1642,
+    "dc_dbfs": -178.9092,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.1383,
+    "mid250_2k": 0.8592,
+    "presence2k_5k": 0.0025,
+    "high4k": 0.0001,
+    "air12k": 0.0,
+    "centroid_hz": 715.6238,
+    "harsh_max": 0.0131,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -38.845,
+    "rms_dbfs": -32.8285,
+    "clipped": 0,
+    "trim_db": -12.23,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -30 +/- 1",
+     "ok": true,
+     "value": -30.0
+    },
+    {
+     "check": "short-term median -30 +/- 3",
+     "ok": true,
+     "value": -32.57
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.58
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -18.16
+    },
+    {
+     "check": "sample peak <= -10 dBFS (5.5)",
+     "ok": true,
+     "value": -18.16
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -178.9
+    },
+    {
+     "check": "energy < 60 Hz < 15 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 1.3
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -38.8
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 116.8
+  },
+  "music-mood-peace": {
+   "kind": "music",
+   "target_lufs": -28.0,
+   "info": {
+    "tempo_bpm": 73.9,
+    "mode": "mixolydian",
+    "voice_silence": 0.536,
+    "notes": 111,
+    "stem_lufs": {
+     "voice": -19.9,
+     "colour": -30.7,
+     "ground": -23.9,
+     "pulse": -49.6
+    },
+    "stem_gain_db": {
+     "colour": 6.7,
+     "ground": -2.0
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -27.9999,
+    "lufs_st_max": -24.2094,
+    "lufs_st_median": -27.9066,
+    "lufs_momentary_max": -22.4048,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -16.12,
+    "sample_peak_dbfs": -16.1236,
+    "dc_dbfs": -159.5491,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.1691,
+    "mid250_2k": 0.8014,
+    "presence2k_5k": 0.0289,
+    "high4k": 0.0017,
+    "air12k": 0.0,
+    "centroid_hz": 751.1082,
+    "harsh_max": 0.1001,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -40.0397,
+    "rms_dbfs": -31.0178,
+    "clipped": 0,
+    "trim_db": -7.8,
+    "glue_max_gr_db": 0.2,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -28 +/- 1",
+     "ok": true,
+     "value": -28.0
+    },
+    {
+     "check": "short-term median -28 +/- 3",
+     "ok": true,
+     "value": -27.91
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.536
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -16.12
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -159.5
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.2
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 10.0
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -40.0
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 42.2
+  },
+  "music-mood-war": {
+   "kind": "music",
+   "target_lufs": -27.0,
+   "info": {
+    "tempo_bpm": 79.8,
+    "mode": "dorian",
+    "voice_silence": 0.698,
+    "notes": 131,
+    "stem_lufs": {
+     "voice": -18.9,
+     "colour": -31.1,
+     "ground": -23.6,
+     "pulse": -34.7,
+     "fx": -26.4
+    },
+    "stem_gain_db": {
+     "colour": 8.2,
+     "ground": -1.3,
+     "fx": 0.4
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -26.9952,
+    "lufs_st_max": -23.3233,
+    "lufs_st_median": -28.5608,
+    "lufs_momentary_max": -21.2883,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -14.471,
+    "sample_peak_dbfs": -14.4766,
+    "dc_dbfs": -134.0647,
+    "nan": false,
+    "sub60": 0.0001,
+    "low60_250": 0.4532,
+    "mid250_2k": 0.5244,
+    "presence2k_5k": 0.0218,
+    "high4k": 0.0015,
+    "air12k": 0.0,
+    "centroid_hz": 514.4071,
+    "harsh_max": 0.073,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -34.1768,
+    "rms_dbfs": -29.5078,
+    "clipped": 0,
+    "trim_db": -7.31,
+    "glue_max_gr_db": 0.71,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -27 +/- 1",
+     "ok": true,
+     "value": -27.0
+    },
+    {
+     "check": "short-term median -27 +/- 3",
+     "ok": true,
+     "value": -28.56
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.698
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -14.47
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -134.1
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 7.3
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -34.2
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 40.9
+  },
+  "music-mood-plague": {
+   "kind": "music",
+   "target_lufs": -29.0,
+   "info": {
+    "tempo_bpm": 66.5,
+    "mode": "mixolydian",
+    "voice_silence": 0.525,
+    "notes": 31,
+    "stem_lufs": {
+     "voice": -19.9,
+     "colour": -31.4,
+     "ground": -26.9,
+     "toll": -27.1
+    },
+    "stem_gain_db": {
+     "colour": 7.5,
+     "ground": 1.0,
+     "toll": -2.2
+    },
+    "toll": {
+     "music_lufs": -20.515200798204063,
+     "toll_st_max_re_music": -10.0
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -28.9894,
+    "lufs_st_max": -25.3687,
+    "lufs_st_median": -29.5474,
+    "lufs_momentary_max": -23.529,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -15.6756,
+    "sample_peak_dbfs": -15.6772,
+    "dc_dbfs": -155.0373,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.2922,
+    "mid250_2k": 0.678,
+    "presence2k_5k": 0.0292,
+    "high4k": 0.0015,
+    "air12k": 0.0,
+    "centroid_hz": 676.7668,
+    "harsh_max": 0.1012,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -37.9654,
+    "rms_dbfs": -31.8422,
+    "clipped": 0,
+    "trim_db": -8.57,
+    "glue_max_gr_db": 0.06,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -29 +/- 1",
+     "ok": true,
+     "value": -28.99
+    },
+    {
+     "check": "short-term median -29 +/- 3",
+     "ok": true,
+     "value": -29.55
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.525
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -15.68
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -155.0
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.2
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 10.1
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -38.0
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 24.1
+  },
+  "music-mood-golden-age": {
+   "kind": "music",
+   "target_lufs": -27.0,
+   "info": {
+    "tempo_bpm": 77.6,
+    "mode": "mixolydian",
+    "voice_silence": 0.556,
+    "notes": 140,
+    "stem_lufs": {
+     "voice": -19.9,
+     "colour": -26.1,
+     "ground": -22.2,
+     "pulse": -49.7,
+     "fx": -45.8
+    },
+    "stem_gain_db": {
+     "colour": 2.2,
+     "ground": -3.7
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -26.994,
+    "lufs_st_max": -23.086,
+    "lufs_st_median": -26.8971,
+    "lufs_momentary_max": -21.1957,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -15.7067,
+    "sample_peak_dbfs": -15.7127,
+    "dc_dbfs": -146.7771,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.168,
+    "mid250_2k": 0.7977,
+    "presence2k_5k": 0.0334,
+    "high4k": 0.0025,
+    "air12k": 0.0,
+    "centroid_hz": 768.7373,
+    "harsh_max": 0.2338,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -38.7009,
+    "rms_dbfs": -30.0534,
+    "clipped": 0,
+    "trim_db": -7.33,
+    "glue_max_gr_db": 0.49,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -27 +/- 1",
+     "ok": true,
+     "value": -26.99
+    },
+    {
+     "check": "short-term median -27 +/- 3",
+     "ok": true,
+     "value": -26.9
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.556
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -15.71
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -146.8
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.2
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 23.4
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -38.7
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 41.3
+  },
+  "music-mood-doom": {
+   "kind": "music",
+   "target_lufs": -29.0,
+   "info": {
+    "tempo_bpm": 74.2,
+    "mode": "dorian",
+    "voice_silence": 0.595,
+    "notes": 94,
+    "stem_lufs": {
+     "voice": -28.0,
+     "colour": -29.5,
+     "ground": -38.7,
+     "pulse": -63.4,
+     "fx": -30.2
+    },
+    "stem_gain_db": {
+     "colour": -4.5,
+     "ground": 1.7,
+     "fx": -3.8
+    }
+   },
+   "metrics": {
+    "seconds": 60.0,
+    "lufs_integrated": -29.0153,
+    "lufs_st_max": -26.0722,
+    "lufs_st_median": -29.4785,
+    "lufs_momentary_max": -21.9887,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -12.7614,
+    "sample_peak_dbfs": -12.765,
+    "dc_dbfs": -155.7014,
+    "nan": false,
+    "sub60": 0.002,
+    "low60_250": 0.6239,
+    "mid250_2k": 0.3653,
+    "presence2k_5k": 0.0087,
+    "high4k": 0.0003,
+    "air12k": 0.0,
+    "centroid_hz": 348.1577,
+    "harsh_max": 0.0374,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -35.0239,
+    "rms_dbfs": -31.3258,
+    "clipped": 0,
+    "trim_db": 0.94,
+    "glue_max_gr_db": 0.59,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 11520044
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -29 +/- 1",
+     "ok": true,
+     "value": -29.02
+    },
+    {
+     "check": "short-term median -29 +/- 3",
+     "ok": true,
+     "value": -29.48
+    },
+    {
+     "check": "voice silent >= 50 %",
+     "ok": true,
+     "value": 0.595
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -12.76
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -155.7
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.2
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 3.7
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -35.0
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 17.8
+  },
+  "ambience-space": {
+   "kind": "ambience",
+   "target_lufs": -38.0,
+   "info": {
+    "layers": "space hum",
+    "loop_seconds": 10.0
+   },
+   "metrics": {
+    "seconds": 10.0,
+    "lufs_integrated": -38.0002,
+    "lufs_st_max": -36.9755,
+    "lufs_st_median": -38.4927,
+    "lufs_momentary_max": -35.5694,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -30.0741,
+    "sample_peak_dbfs": -30.0776,
+    "dc_dbfs": -147.8238,
+    "nan": false,
+    "sub60": 0.1671,
+    "low60_250": 0.8327,
+    "mid250_2k": 0.0002,
+    "presence2k_5k": 0.0,
+    "high4k": 0.0,
+    "air12k": 0.0,
+    "centroid_hz": 81.0702,
+    "harsh_max": 0.0,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -39.1669,
+    "rms_dbfs": -38.5068,
+    "clipped": 0,
+    "trim_db": -31.73,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1920044,
+    "seam_step_ratio": 0.1538,
+    "seam_level_db": -0.5391
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -38 +/- 1",
+     "ok": true,
+     "value": -38.0
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -30.07
+    },
+    {
+     "check": "sample peak <= -12 dBFS (5.5)",
+     "ok": true,
+     "value": -30.08
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -147.8
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 16.7
+    },
+    {
+     "check": "energy > 4 kHz < 10 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "loop seam: no step at the wrap",
+     "ok": true,
+     "value": 0.15
+    },
+    {
+     "check": "loop seam: level across the wrap (0.2 s each side) within 3 dB",
+     "ok": true,
+     "value": -0.54
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -39.2
+    },
+    {
+     "check": "RMS -45 .. -30 dBFS (5.5)",
+     "ok": true,
+     "value": -38.5
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 3.7
+  },
+  "ambience-orbit": {
+   "kind": "ambience",
+   "target_lufs": -36.0,
+   "info": {
+    "layers": "space hum -6 dB + high air",
+    "loop_seconds": 10.0
+   },
+   "metrics": {
+    "seconds": 10.0,
+    "lufs_integrated": -36.0003,
+    "lufs_st_max": -35.5268,
+    "lufs_st_median": -36.2106,
+    "lufs_momentary_max": -34.4876,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -25.4993,
+    "sample_peak_dbfs": -25.513,
+    "dc_dbfs": -152.2021,
+    "nan": false,
+    "sub60": 0.0707,
+    "low60_250": 0.5827,
+    "mid250_2k": 0.3227,
+    "presence2k_5k": 0.0202,
+    "high4k": 0.0059,
+    "air12k": 0.0004,
+    "centroid_hz": 372.6688,
+    "harsh_max": 0.0291,
+    "air_max": 0.0006,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -38.4772,
+    "rms_dbfs": -37.6536,
+    "clipped": 0,
+    "trim_db": -29.65,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1920044,
+    "seam_step_ratio": 0.1644,
+    "seam_level_db": -0.1499
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -36 +/- 1",
+     "ok": true,
+     "value": -36.0
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -25.5
+    },
+    {
+     "check": "sample peak <= -12 dBFS (5.5)",
+     "ok": true,
+     "value": -25.51
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -152.2
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 7.1
+    },
+    {
+     "check": "energy > 4 kHz < 10 %",
+     "ok": true,
+     "value": 0.6
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 2.9
+    },
+    {
+     "check": "loop seam: no step at the wrap",
+     "ok": true,
+     "value": 0.16
+    },
+    {
+     "check": "loop seam: level across the wrap (0.2 s each side) within 3 dB",
+     "ok": true,
+     "value": -0.15
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -38.5
+    },
+    {
+     "check": "RMS -45 .. -30 dBFS (5.5)",
+     "ok": true,
+     "value": -37.7
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 4.7
+  },
+  "ambience-landscape": {
+   "kind": "ambience",
+   "target_lufs": -32.0,
+   "info": {
+    "layers": "wind -8 dB, forest birds + leaves, coast surf, open-sea swell -6 dB",
+    "loop_seconds": 14.0
+   },
+   "metrics": {
+    "seconds": 14.0,
+    "lufs_integrated": -31.9987,
+    "lufs_st_max": -28.3795,
+    "lufs_st_median": -31.9764,
+    "lufs_momentary_max": -25.4064,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -15.7881,
+    "sample_peak_dbfs": -15.881,
+    "dc_dbfs": -150.1172,
+    "nan": false,
+    "sub60": 0.0188,
+    "low60_250": 0.1685,
+    "mid250_2k": 0.5574,
+    "presence2k_5k": 0.1838,
+    "high4k": 0.104,
+    "air12k": 0.0084,
+    "centroid_hz": 1643.0945,
+    "harsh_max": 0.2145,
+    "air_max": 0.0098,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -41.5316,
+    "rms_dbfs": -35.906,
+    "clipped": 0,
+    "trim_db": -18.25,
+    "glue_max_gr_db": 0.03,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 2688044,
+    "seam_step_ratio": 0.0897,
+    "seam_level_db": -0.3674
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -32 +/- 1",
+     "ok": true,
+     "value": -32.0
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -15.79
+    },
+    {
+     "check": "sample peak <= -8 dBFS (5.5)",
+     "ok": true,
+     "value": -15.88
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -150.1
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 1.9
+    },
+    {
+     "check": "energy > 4 kHz 10-30 %",
+     "ok": true,
+     "value": 10.4
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 21.5
+    },
+    {
+     "check": "loop seam: no step at the wrap",
+     "ok": true,
+     "value": 0.09
+    },
+    {
+     "check": "loop seam: level across the wrap (0.2 s each side) within 3 dB",
+     "ok": true,
+     "value": -0.37
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -41.5
+    },
+    {
+     "check": "RMS -36 .. -24 dBFS (5.5)",
+     "ok": true,
+     "value": -35.9
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 9.6
+  },
+  "ambience-town": {
+   "kind": "ambience",
+   "target_lufs": -32.0,
+   "info": {
+    "layers": "biome beds -4 dB + Sail-age town",
+    "loop_seconds": 18.0
+   },
+   "metrics": {
+    "seconds": 18.0,
+    "lufs_integrated": -31.9879,
+    "lufs_st_max": -29.2157,
+    "lufs_st_median": -31.7106,
+    "lufs_momentary_max": -24.1134,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -14.1859,
+    "sample_peak_dbfs": -14.1976,
+    "dc_dbfs": -151.423,
+    "nan": false,
+    "sub60": 0.0038,
+    "low60_250": 0.0855,
+    "mid250_2k": 0.6581,
+    "presence2k_5k": 0.1853,
+    "high4k": 0.0983,
+    "air12k": 0.0077,
+    "centroid_hz": 1684.9662,
+    "harsh_max": 0.2226,
+    "air_max": 0.0126,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -42.7014,
+    "rms_dbfs": -35.9892,
+    "clipped": 0,
+    "trim_db": -13.1,
+    "glue_max_gr_db": 0.2,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 3456044,
+    "seam_step_ratio": 0.0787,
+    "seam_level_db": 0.3501
+   },
+   "checks": [
+    {
+     "check": "integrated LUFS -32 +/- 1",
+     "ok": true,
+     "value": -31.99
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -14.19
+    },
+    {
+     "check": "sample peak <= -8 dBFS (5.5)",
+     "ok": true,
+     "value": -14.2
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -151.4
+    },
+    {
+     "check": "energy < 60 Hz < 20 %",
+     "ok": true,
+     "value": 0.4
+    },
+    {
+     "check": "energy > 4 kHz 5-25 %",
+     "ok": true,
+     "value": 9.8
+    },
+    {
+     "check": "2-5 kHz < 30 % in every 3 s window",
+     "ok": true,
+     "value": 22.3
+    },
+    {
+     "check": "loop seam: no step at the wrap",
+     "ok": true,
+     "value": 0.08
+    },
+    {
+     "check": "loop seam: level across the wrap (0.2 s each side) within 3 dB",
+     "ok": true,
+     "value": 0.35
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no 1 s window below -60 dBFS RMS",
+     "ok": true,
+     "value": -42.7
+    },
+    {
+     "check": "RMS -36 .. -24 dBFS (5.5)",
+     "ok": true,
+     "value": -36.0
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 10.6
+  },
+  "cue-comet": {
+   "kind": "cue",
+   "target_lufs": -28.0,
+   "info": {
+    "recipe": "roar (comet, high) + wave (comet water)",
+    "re_music_db": 0.0,
+    "distance_d": 0.2,
+    "rain": false,
+    "nominal_seconds": 9.0,
+    "sounding_seconds": 12.6
+   },
+   "metrics": {
+    "seconds": 13.2579,
+    "lufs_integrated": -31.7489,
+    "lufs_st_max": -27.9777,
+    "lufs_st_median": -35.6916,
+    "lufs_momentary_max": -24.8805,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -16.9078,
+    "sample_peak_dbfs": -16.9078,
+    "dc_dbfs": -157.5967,
+    "nan": false,
+    "sub60": 0.0047,
+    "low60_250": 0.1653,
+    "mid250_2k": 0.6479,
+    "presence2k_5k": 0.1488,
+    "high4k": 0.0571,
+    "air12k": 0.0012,
+    "centroid_hz": 1252.4727,
+    "harsh_max": 0.2955,
+    "air_max": 0.0019,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -64.3058,
+    "rms_dbfs": -37.1955,
+    "clipped": 0,
+    "trim_db": -19.07,
+    "glue_max_gr_db": 0.02,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 2545564,
+    "dropout_db": -39.5832,
+    "harsh_in_mix_max": 0.1248
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -28 +/- 1",
+     "ok": true,
+     "value": -27.98
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -16.91
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -157.6
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 0.5
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 5.7
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 12.5
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.6
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -37.2
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 6.5
+  },
+  "cue-meteor": {
+   "kind": "cue",
+   "target_lufs": -20.0,
+   "info": {
+    "recipe": "roar (meteor fall) + impact",
+    "re_music_db": 8.0,
+    "distance_d": 0.15,
+    "rain": false,
+    "nominal_seconds": 8.5,
+    "sounding_seconds": 12.1
+   },
+   "metrics": {
+    "seconds": 12.4184,
+    "lufs_integrated": -22.1752,
+    "lufs_st_max": -19.7666,
+    "lufs_st_median": -26.2094,
+    "lufs_momentary_max": -18.2515,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -6.7757,
+    "sample_peak_dbfs": -6.7878,
+    "dc_dbfs": -122.4152,
+    "nan": false,
+    "sub60": 0.0382,
+    "low60_250": 0.6651,
+    "mid250_2k": 0.2894,
+    "presence2k_5k": 0.0066,
+    "high4k": 0.0013,
+    "air12k": 0.0001,
+    "centroid_hz": 283.9646,
+    "harsh_max": 0.0194,
+    "air_max": 0.0002,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -56.9749,
+    "rms_dbfs": -26.5477,
+    "clipped": 0,
+    "trim_db": -7.5,
+    "glue_max_gr_db": 3.76,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 2384372,
+    "dropout_db": -39.8808,
+    "harsh_in_mix_max": 0.019
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -20 +/- 1",
+     "ok": true,
+     "value": -19.77
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -6.78
+    },
+    {
+     "check": "sample peak <= -1 dBFS (5.5)",
+     "ok": true,
+     "value": -6.79
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -122.4
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 3.8
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 1.9
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.9
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -26.5
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 7.7
+  },
+  "cue-volcano": {
+   "kind": "cue",
+   "target_lufs": -24.0,
+   "info": {
+    "recipe": "rumble (eruption) + crackle",
+    "re_music_db": 4.0,
+    "distance_d": 0.2,
+    "rain": false,
+    "nominal_seconds": 11.0,
+    "sounding_seconds": 14.8
+   },
+   "metrics": {
+    "seconds": 15.6198,
+    "lufs_integrated": -24.805,
+    "lufs_st_max": -23.9369,
+    "lufs_st_median": -24.8787,
+    "lufs_momentary_max": -23.0976,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -11.4877,
+    "sample_peak_dbfs": -11.4877,
+    "dc_dbfs": -134.4807,
+    "nan": false,
+    "sub60": 0.0621,
+    "low60_250": 0.8621,
+    "mid250_2k": 0.0727,
+    "presence2k_5k": 0.0022,
+    "high4k": 0.0013,
+    "air12k": 0.0,
+    "centroid_hz": 152.6067,
+    "harsh_max": 0.0033,
+    "air_max": 0.0001,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -58.8124,
+    "rms_dbfs": -28.0816,
+    "clipped": 0,
+    "trim_db": -19.65,
+    "glue_max_gr_db": 0.3,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 2999040,
+    "dropout_db": -39.774,
+    "harsh_in_mix_max": 0.0146
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -24 +/- 1",
+     "ok": true,
+     "value": -23.94
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -11.49
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -134.5
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 6.2
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 1.5
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.8
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -28.1
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 7.8
+  },
+  "cue-lightning": {
+   "kind": "cue",
+   "target_lufs": -22.0,
+   "info": {
+    "recipe": "thunder (lightning, close)",
+    "re_music_db": 6.0,
+    "distance_d": 0.1,
+    "rain": false,
+    "nominal_seconds": 6.0,
+    "sounding_seconds": 7.4
+   },
+   "metrics": {
+    "seconds": 7.9418,
+    "lufs_integrated": -23.4705,
+    "lufs_st_max": -22.0277,
+    "lufs_st_median": -32.9961,
+    "lufs_momentary_max": -18.8334,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -2.321,
+    "sample_peak_dbfs": -2.5321,
+    "dc_dbfs": -112.6541,
+    "nan": false,
+    "sub60": 0.0375,
+    "low60_250": 0.7304,
+    "mid250_2k": 0.2248,
+    "presence2k_5k": 0.0024,
+    "high4k": 0.0058,
+    "air12k": 0.0008,
+    "centroid_hz": 243.1655,
+    "harsh_max": 0.0005,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -57.3047,
+    "rms_dbfs": -27.8284,
+    "clipped": 0,
+    "trim_db": 1.28,
+    "glue_max_gr_db": 2.64,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1524872,
+    "dropout_db": -39.5031,
+    "harsh_in_mix_max": 0.0904
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -22 +/- 1",
+     "ok": true,
+     "value": -22.03
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -2.32
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -112.7
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 3.8
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.6
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 9.0
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.5
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -27.8
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 6.7
+  },
+  "cue-earthquake": {
+   "kind": "cue",
+   "target_lufs": -25.0,
+   "info": {
+    "recipe": "rumble (earthquake, held 6 s)",
+    "re_music_db": 3.0,
+    "distance_d": 0.2,
+    "rain": false,
+    "nominal_seconds": 8.0,
+    "sounding_seconds": 10.4
+   },
+   "metrics": {
+    "seconds": 11.1721,
+    "lufs_integrated": -25.7679,
+    "lufs_st_max": -24.9961,
+    "lufs_st_median": -26.5334,
+    "lufs_momentary_max": -23.9919,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -13.3019,
+    "sample_peak_dbfs": -13.3047,
+    "dc_dbfs": -140.3542,
+    "nan": false,
+    "sub60": 0.0255,
+    "low60_250": 0.818,
+    "mid250_2k": 0.1543,
+    "presence2k_5k": 0.0017,
+    "high4k": 0.0007,
+    "air12k": 0.0,
+    "centroid_hz": 170.6735,
+    "harsh_max": 0.014,
+    "air_max": 0.0001,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -62.5833,
+    "rms_dbfs": -29.5413,
+    "clipped": 0,
+    "trim_db": -16.91,
+    "glue_max_gr_db": 0.08,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 2145084,
+    "dropout_db": -39.4572,
+    "harsh_in_mix_max": 0.0209
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -25 +/- 1",
+     "ok": true,
+     "value": -25.0
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -13.3
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -140.4
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 2.5
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 2.1
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.5
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -29.5
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 8.7
+  },
+  "cue-rain": {
+   "kind": "cue",
+   "target_lufs": -30.0,
+   "info": {
+    "recipe": "rainfall (brush held 4 s)",
+    "re_music_db": -2.0,
+    "distance_d": 0.15,
+    "rain": true,
+    "nominal_seconds": 5.5,
+    "sounding_seconds": 7.3
+   },
+   "metrics": {
+    "seconds": 7.9746,
+    "lufs_integrated": -30.486,
+    "lufs_st_max": -30.0002,
+    "lufs_st_median": -32.4575,
+    "lufs_momentary_max": -29.5511,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -11.9988,
+    "sample_peak_dbfs": -12.3126,
+    "dc_dbfs": -145.7097,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.0032,
+    "mid250_2k": 0.2893,
+    "presence2k_5k": 0.4499,
+    "high4k": 0.3788,
+    "air12k": 0.0183,
+    "centroid_hz": 3810.7622,
+    "harsh_max": 0.4566,
+    "air_max": 0.0192,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -72.7887,
+    "rms_dbfs": -38.6975,
+    "clipped": 0,
+    "trim_db": -14.31,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1531160,
+    "dropout_db": -39.202,
+    "harsh_in_mix_max": 0.1376
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -30 +/- 1",
+     "ok": true,
+     "value": -30.0
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -12.0
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -145.7
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.2
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -38.7
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 5.6
+  },
+  "cue-bloom": {
+   "kind": "cue",
+   "target_lufs": -31.0,
+   "info": {
+    "recipe": "shimmer (bloom brush, two uses)",
+    "re_music_db": -3.0,
+    "distance_d": 0.15,
+    "rain": false,
+    "nominal_seconds": 4.4,
+    "sounding_seconds": 7.3
+   },
+   "metrics": {
+    "seconds": 7.6406,
+    "lufs_integrated": -32.1961,
+    "lufs_st_max": -31.0003,
+    "lufs_st_median": -36.5278,
+    "lufs_momentary_max": -27.7609,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -20.2733,
+    "sample_peak_dbfs": -20.2933,
+    "dc_dbfs": -154.5142,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.0006,
+    "mid250_2k": 0.6333,
+    "presence2k_5k": 0.3573,
+    "high4k": 0.0194,
+    "air12k": 0.0003,
+    "centroid_hz": 1943.0018,
+    "harsh_max": 0.5807,
+    "air_max": 0.0006,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -72.1753,
+    "rms_dbfs": -39.6909,
+    "clipped": 0,
+    "trim_db": -9.48,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1467032,
+    "dropout_db": -39.5896,
+    "harsh_in_mix_max": 0.1006
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -31 +/- 1",
+     "ok": true,
+     "value": -31.0
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -20.27
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -154.5
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 1.9
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 10.1
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.6
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -39.7
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 5.7
+  },
+  "cue-plague": {
+   "kind": "cue",
+   "target_lufs": -32.0,
+   "info": {
+    "recipe": "toll (plague)",
+    "re_music_db": -4.0,
+    "distance_d": 0.35,
+    "rain": false,
+    "nominal_seconds": 6.5,
+    "sounding_seconds": 5.2
+   },
+   "metrics": {
+    "seconds": 5.7654,
+    "lufs_integrated": -31.5717,
+    "lufs_st_max": -31.9842,
+    "lufs_st_median": -44.9039,
+    "lufs_momentary_max": -25.5959,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -17.3496,
+    "sample_peak_dbfs": -17.3516,
+    "dc_dbfs": -149.6953,
+    "nan": false,
+    "sub60": 0.0004,
+    "low60_250": 0.3006,
+    "mid250_2k": 0.6988,
+    "presence2k_5k": 0.0002,
+    "high4k": 0.0,
+    "air12k": 0.0,
+    "centroid_hz": 492.9834,
+    "harsh_max": 0.0002,
+    "air_max": 0.0,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -68.4659,
+    "rms_dbfs": -37.0061,
+    "clipped": 0,
+    "trim_db": -11.73,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1107004,
+    "dropout_db": -39.4091,
+    "harsh_in_mix_max": 0.0488
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -32 +/- 1",
+     "ok": true,
+     "value": -31.98
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -17.35
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -149.7
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 4.9
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.4
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -37.0
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 3.5
+  },
+  "cue-blessing": {
+   "kind": "cue",
+   "target_lufs": -30.0,
+   "info": {
+    "recipe": "chime (heal / bless)",
+    "re_music_db": -2.0,
+    "distance_d": 0.15,
+    "rain": false,
+    "nominal_seconds": 4.5,
+    "sounding_seconds": 7.0
+   },
+   "metrics": {
+    "seconds": 7.4047,
+    "lufs_integrated": -30.9333,
+    "lufs_st_max": -29.9937,
+    "lufs_st_median": -39.9567,
+    "lufs_momentary_max": -26.2034,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -19.221,
+    "sample_peak_dbfs": -19.2338,
+    "dc_dbfs": -149.9365,
+    "nan": false,
+    "sub60": 0.0,
+    "low60_250": 0.0417,
+    "mid250_2k": 0.8907,
+    "presence2k_5k": 0.0676,
+    "high4k": 0.0007,
+    "air12k": 0.0,
+    "centroid_hz": 632.8074,
+    "harsh_max": 0.0636,
+    "air_max": 0.0001,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -70.3568,
+    "rms_dbfs": -36.5901,
+    "clipped": 0,
+    "trim_db": -13.53,
+    "glue_max_gr_db": 0.0,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 1421740,
+    "dropout_db": -39.2791,
+    "harsh_in_mix_max": 0.0977
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -30 +/- 1",
+     "ok": true,
+     "value": -29.99
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -19.22
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -149.9
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 9.8
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.3
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -36.6
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 5.6
+  },
+  "cue-ark-launch": {
+   "kind": "cue",
+   "target_lufs": -22.0,
+   "info": {
+    "recipe": "roar (launch)",
+    "re_music_db": 6.0,
+    "distance_d": 0.25,
+    "rain": false,
+    "nominal_seconds": 15.0,
+    "sounding_seconds": 21.9
+   },
+   "metrics": {
+    "seconds": 22.6907,
+    "lufs_integrated": -22.8583,
+    "lufs_st_max": -21.5611,
+    "lufs_st_median": -22.6739,
+    "lufs_momentary_max": -21.2947,
+    "st_above_m18_s": 0.0,
+    "true_peak_dbtp": -10.0938,
+    "sample_peak_dbfs": -10.2148,
+    "dc_dbfs": -137.379,
+    "nan": false,
+    "sub60": 0.0361,
+    "low60_250": 0.5757,
+    "mid250_2k": 0.3843,
+    "presence2k_5k": 0.0034,
+    "high4k": 0.0008,
+    "air12k": 0.0,
+    "centroid_hz": 285.6184,
+    "harsh_max": 0.0054,
+    "air_max": 0.0001,
+    "hf12_longest_s": 0.0,
+    "rms_min_1s_dbfs": -54.222,
+    "rms_dbfs": -26.3245,
+    "clipped": 0,
+    "trim_db": -16.02,
+    "glue_max_gr_db": 1.26,
+    "limiter_max_gr_db": 0.0,
+    "bytes": 4356652,
+    "dropout_db": -39.2631,
+    "harsh_in_mix_max": 0.09
+   },
+   "checks": [
+    {
+     "check": "peak short-term LUFS -22 +/- 1",
+     "ok": true,
+     "value": -21.56
+    },
+    {
+     "check": "true peak <= -1.0 dBTP",
+     "ok": true,
+     "value": -10.09
+    },
+    {
+     "check": "no clipped samples",
+     "ok": true,
+     "value": 0
+    },
+    {
+     "check": "no NaN",
+     "ok": true,
+     "value": false
+    },
+    {
+     "check": "DC offset < -70 dBFS",
+     "ok": true,
+     "value": -137.4
+    },
+    {
+     "check": "energy < 60 Hz < 25 %",
+     "ok": true,
+     "value": 3.6
+    },
+    {
+     "check": "energy > 4 kHz < 25 %",
+     "ok": true,
+     "value": 0.1
+    },
+    {
+     "check": "2-5 kHz < 30 % of the mix (cue over music) in every 3 s window",
+     "ok": true,
+     "value": 9.0
+    },
+    {
+     "check": "no > 12 kHz sound longer than 100 ms",
+     "ok": true,
+     "value": 0.0
+    },
+    {
+     "check": "no dropout inside the cue",
+     "ok": true,
+     "value": -39.3
+    },
+    {
+     "check": "file RMS above -60 dBFS",
+     "ok": true,
+     "value": -26.3
+    },
+    {
+     "check": "short-term never above -18 LUFS for 20 s",
+     "ok": true,
+     "value": 0.0
+    }
+   ],
+   "passed": true,
+   "render_seconds": 14.5
+  }
+ }
+}

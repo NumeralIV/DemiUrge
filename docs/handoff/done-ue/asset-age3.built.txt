@@ -1,0 +1,12 @@
+date: 2026-11-19
+family: age3 (Sail Age kit, Age3)
+assets: 13 (Townhouse_A/B/C/D, Warehouse_A/B, Quay_Straight, Quay_Corner, Quay_Stairs, Pier, PortCrane, Lighthouse, CivicDome)
+meshes: 48 (asset x state; buildings Intact/Construction/Damaged/Ruin, docks Intact/Damaged/Ruin), each an FBX with LOD0-LOD3
+triangles, all 48 meshes summed: LOD0 71911, LOD1 51761, LOD2 25880, LOD3 5918
+triangles, Intact LOD0: Townhouse_A 1466, Townhouse_B 2594, Townhouse_C 1478, Townhouse_D 2290, Warehouse_A 1369, Warehouse_B 1524, Quay_Straight 312, Quay_Corner 258, Quay_Stairs 500, Pier 782, PortCrane 1148, Lighthouse 814, CivicDome 5126
+materials: M_Age3_Structure / M_Age3_Roof / M_Age3_Detail; culture instances Base, CultureA, CultureB, CultureC (parameters in manifest)
+textures: art/age3/textures (3 sets, 1024^2, D/N/ORM + M for Structure and Detail)
+exports: art/age3/export/*.fbx; manifest: art/age3/manifest.json; source: art/age3/source/age3.blend
+script: art/age3/build_age3.py (previews: art/age3/preview_age3.py via tools/render_slot.py)
+previews: shots/asset-age3-*.png (55 images)
+notes: see art/age3/README.md (known gaps: tris at or below budget floors, LOD1 ratio high on small dock pieces, culture B is material-only)

@@ -8,12 +8,16 @@
 // default of shot.ps1) the harness also shoots at -warm; the settled shot overwrites it.
 #include "Game/Nature/DmNatureActor.h"
 #include "Game/Nature/DmNatureFactory.h"
+#include "Game/Nature/DmNatureFauna.h"
 #include "Game/Nature/DmNatureMesh.h"
 #include "Game/Nature/DmNatureScatter.h"
 #include "Game/Core/DmCoords.h"
 #include "Game/Core/DmScenario.h"
 #include "Game/Core/DmSimSubsystem.h"
 
+#include "Components/DirectionalLightComponent.h"
+#include "Components/SkyLightComponent.h"
+#include "Engine/SkyLight.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/VolumetricCloudComponent.h"
 #include "EngineUtils.h"
@@ -110,7 +114,9 @@ namespace
 	};
 	FRun GRun;
 
-	void Frame(FDmScenarioContext& Ctx, ADmNature* N, FRun& R)
+	/** Places the camera on the visible ground; bFull also sets the sun and the atmosphere (once: moving the sun again
+	 *  re-renders every virtual shadow page and recaptures the sky, a 100-200 ms frame that polluted the frame stats). */
+	void Frame(FDmScenarioContext& Ctx, ADmNature* N, FRun& R, bool bFull = true)
 	{
 		const FDmNatureGroundPtr G = N->GetGround();
 		const FTransform P2W = Ctx.Sim->GetPlanetToWorld();
@@ -134,6 +140,7 @@ namespace
 		const FVector F2 = (Target - Loc).GetSafeNormal();
 		const FRotator Rot = FRotationMatrix::MakeFromXZ(P2W.TransformVectorNoScale(F2), P2W.TransformVectorNoScale(CamUp)).Rotator();
 		Ctx.SetView(P2W.TransformPosition(Loc), Rot, R.Fov);
+		if (!bFull) return;
 		// sun: by default the bridge's orbit rule (subsolar at lat/2 + 8, lon + 55: mid-morning light from the
 		// west); -sunel= / -sunaz= (degrees, azimuth clockwise from north) place it relative to the site instead.
 		// Note: with the placeholder planet some sun directions shadow all low land (it turns ocean-blue);
@@ -166,6 +173,38 @@ namespace
 				if (It->GetWorld() == Ctx.World) It->SetVisibility(false);
 		for (TObjectIterator<USkyAtmosphereComponent> It; It; ++It)
 			if (It->GetWorld() == Ctx.World) It->SetAerialPespectiveViewDistanceScale(float(Ap));
+		// -pptrans: per-pixel atmosphere transmittance on the sun (what the planet scenarios' lighting assist does).
+		// Without it the sun's colour is one transmittance for the whole planet, so a low sun tints every land and sea
+		// pixel seen from orbit pink / tan (a C2 sky setting, reported; scenario-only here to judge the canopy).
+		if (FDmShotArgs::Param(TEXT("pptrans")))
+			for (TObjectIterator<UDirectionalLightComponent> It; It; ++It)
+				if (It->GetWorld() == Ctx.World && !It->bPerPixelAtmosphereTransmittance)
+				{
+					It->bPerPixelAtmosphereTransmittance = true;
+					It->MarkRenderStateDirty();
+				}
+		// -naturefill: a real-time captured sky light at the camera (what the planet scenarios add for the placeholder
+		// sky). The C2 sky has no sky light, so Lumen has no sky fill and every shadow under a low sun is black
+		// (reported to C2; scenario-only here, to judge the foliage shading with the fill it will have)
+		if (FDmShotArgs::Param(TEXT("naturefill")))
+		{
+			bool bHas = false;
+			for (TObjectIterator<USkyLightComponent> It; It; ++It) if (It->GetWorld() == Ctx.World) bHas = true;
+			if (!bHas)
+			{
+				const FVector CamW = P2W.TransformPosition(Up * (Rg + 30.0 * 100.0));
+				if (ASkyLight* SL = Ctx.World->SpawnActor<ASkyLight>(CamW, FRotator::ZeroRotator))
+					if (USkyLightComponent* C = SL->GetLightComponent())
+					{
+						C->SetMobility(EComponentMobility::Movable);
+						C->bRealTimeCapture = true;
+						C->SourceType = ESkyLightSourceType::SLS_CapturedScene;
+						C->SetIntensity(1.0f);
+						C->MarkRenderStateDirty();
+						Ctx.Log(TEXT("DmNatureShot: -naturefill: real-time sky light added at the site"));
+					}
+			}
+		}
 		double La, Lo;
 		DmCoords::DirToLatLon(Up, La, Lo);
 		const double SeaM = N->GetFields() ? (N->GetFields()->SeaRadiusUU - DmCoords::RadiusUU) / 100.0 : 0.0;
@@ -190,9 +229,37 @@ namespace
 		Ctx.LookAt(20.0, 30.0, 700.0, 0.0, 90.0, 30.0);
 	}
 
-	void Tick(FDmScenarioContext& Ctx, float)
+	/** Aims the herd view at the grazer nearest to the site: the fauna pass puts herds up to ~0.6 km from their
+	 *  cell centre, so the cell centre alone is usually empty grass (the first herd shot showed no animals). */
+	void FrameHerd(FDmScenarioContext& Ctx, ADmNature* N, FRun& R)
+	{
+		const FDmNatureFieldsPtr F = N->GetFields();
+		const FDmNatureGroundPtr G = N->GetGround();
+		if (!F || !G) return;
+		const TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> Fa = DmNatureFauna::Build(*F, *G, R.Site, 5.5, 1.f);
+		const FVector SiteP = R.Site * F->SeaRadiusUU;
+		double Best = 1e300;
+		FVector BestP = FVector::ZeroVector;
+		int32 Count = 0;
+		for (const FDmTileBatch& B : Fa->Batches)
+			if (B.Id == EDmNatureMesh::Grazer)
+				for (const FTransform& X : B.Xf)
+				{
+					++Count;
+					const FVector P = Fa->Center + X.GetLocation();
+					const double D = FVector::DistSquared(P, SiteP);
+					if (D < Best) { Best = D; BestP = P; }
+				}
+		if (Count == 0) { Ctx.Log(TEXT("DmNatureShot: no grazers within 5.5 km of the site (herd framed on the site)")); return; }
+		R.Site = BestP.GetSafeNormal();
+		Ctx.Log(FString::Printf(TEXT("DmNatureShot: %d grazers within 5.5 km; framed on the one nearest the site, %.0f m away"), Count, FMath::Sqrt(Best) / 100.0));
+	}
+
+	void Tick(FDmScenarioContext& Ctx, float Dt)
 	{
 		FRun& R = GRun;
+		// every long frame after framing, with its frame number (hitch hunting: the frame stats only give the max)
+		if (R.Phase >= 1 && Dt > 0.06f) Ctx.Log(FString::Printf(TEXT("DmNatureShot: long frame %d: %.0f ms"), Ctx.Frame, Dt * 1000.f));
 		ADmNature* N = FindNature(Ctx.World);
 		if (!N) { if (Ctx.Frame == 30) { Ctx.Log(TEXT("DmNatureShot: no nature actor")); Ctx.Shot(TEXT("")); Ctx.Finish(); } return; }
 		if (R.Phase == 0)
@@ -201,6 +268,7 @@ namespace
 			FString Site = R.View.Site;
 			FDmShotArgs::Value(TEXT("-site="), Site);
 			if (!FindSite(*N->GetFields(), Site, R.Site)) R.Site = DmCoords::LatLonToDir(20.0, 30.0);
+			if (FString(R.View.Name) == TEXT("herd")) FrameHerd(Ctx, N, R);
 			if (FString(R.View.Name) == TEXT("lineup")) N->BuildLineup(R.Site);
 			Frame(Ctx, N, R);
 			R.Phase = 1;
@@ -209,7 +277,7 @@ namespace
 		}
 		if (R.Phase == 1)
 		{
-			if (Ctx.Frame % 30 == 0) Frame(Ctx, N, R);   // re-frame (the ground may have been refined)
+			if (Ctx.Frame % 30 == 0) Frame(Ctx, N, R, false);   // re-frame the camera (the ground may have been refined)
 			const bool bSettled = N->IsSettled();
 			if (bSettled && R.SettledFrame < 0) { R.SettledFrame = Ctx.Frame; R.SettleSeconds = FPlatformTime::Seconds() - R.FramedAt; }
 			if (!bSettled) R.SettledFrame = -1;
@@ -250,6 +318,7 @@ namespace
 	{
 		int32 Phase = 0, Fails = 0;
 		double T0 = 0;
+		uint32 GroundV0 = 0, MaxDuring = 0;
 		FVector Site = FVector::ZeroVector;
 	};
 	FCheck GCheck;
@@ -374,8 +443,50 @@ static FDmScenarioRegistrar GDmNatureCheck(TEXT("nature-check"), TEXT("nature"),
 				int32 Inst = 0;
 				for (int32 I = 0; I < int32(EDmNatureMesh::Num); ++I) Inst += N->CountInstances(EDmNatureMesh(I));
 				Expect(Ctx, Inst == 0 && N->NumComponents() == 0, FString::Printf(TEXT("orbit view releases every tile (%d instances, %d components left)"), Inst, N->NumComponents()));
+				// ground follows elevation changes: two elevation flushes in one frame (a parity flag cancelled
+				// them), then a stream of changes (rebuilt once they settle, not on every flush)
+				C.GroundV0 = N->GetGroundVersion();
+				FDmDirtyFlags F; F.bElev = true;
+				Ctx.Sim->Dirty().OnDirty.Broadcast(F);
+				Ctx.Sim->Dirty().OnDirty.Broadcast(F);
+				C.T0 = FPlatformTime::Seconds();
+				C.Phase = 3;
+				// the placeholder planet's ground follows its mesh (a hash of it), not the flags: nothing to rebuild there
+				if (N->GetGround() && N->GetGround()->GetSource() == FDmNatureGround::ESource::PlaceholderMesh) { Ctx.Log(TEXT("DmCheck INFO ground follows the placeholder mesh: elevation-flag rebuild not tested")); C.Phase = 9; }
+			}
+			return;
+		}
+		if (C.Phase == 3)
+		{
+			const double Dt = FPlatformTime::Seconds() - C.T0;
+			if (N->GetGroundVersion() > C.GroundV0 && !N->IsGroundBuilding())
+			{
+				Expect(Ctx, true, FString::Printf(TEXT("two elevation changes in one frame rebuild the ground (v%u -> v%u in %.1f s)"), C.GroundV0, N->GetGroundVersion(), Dt));
+				C.GroundV0 = N->GetGroundVersion();
+				C.T0 = FPlatformTime::Seconds();
+				C.Phase = 4;
+			}
+			else if (Dt > 10.0) { Expect(Ctx, false, FString::Printf(TEXT("two elevation changes in one frame rebuild the ground within 10 s (still v%u)"), N->GetGroundVersion())); C.Phase = 9; }
+			return;
+		}
+		if (C.Phase == 4)
+		{
+			// 3 s of elevation changes on every frame: the ground waits for them to settle
+			const double Dt = FPlatformTime::Seconds() - C.T0;
+			if (Dt < 3.0)
+			{
+				FDmDirtyFlags F; F.bElev = true;
+				Ctx.Sim->Dirty().OnDirty.Broadcast(F);
+				C.MaxDuring = N->GetGroundVersion() - C.GroundV0;
+				return;
+			}
+			if (N->GetGroundVersion() > C.GroundV0 + C.MaxDuring && !N->IsGroundBuilding())
+			{
+				const uint32 Builds = N->GetGroundVersion() - C.GroundV0;
+				Expect(Ctx, C.MaxDuring <= 1 && Builds <= 2, FString::Printf(TEXT("a stream of elevation changes rebuilds the ground once they settle (%u builds during 3 s of changes, %u in all, %.1f s after the last)"), C.MaxDuring, Builds, Dt - 3.0));
 				C.Phase = 9;
 			}
+			else if (Dt > 13.0) { Expect(Ctx, false, TEXT("the ground rebuilt within 10 s after a stream of elevation changes")); C.Phase = 9; }
 			return;
 		}
 		if (C.Phase == 9)

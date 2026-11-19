@@ -1,0 +1,1 @@
+2026-11-19 wave2-design-review built: player-experience design review in docs/reviews/claude-design-review.md (13 ranked findings, top-10 changes, 5 strengths) from 198 headless histories (simrun + review driver with curious/late-kind/late-cruel/prayers/sculptor policies); evidence in docs/reviews/claude-design-review/; no code changed.

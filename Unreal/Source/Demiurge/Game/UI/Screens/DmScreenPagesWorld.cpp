@@ -22,6 +22,14 @@
 #include "Widgets/Layout/SSpacer.h"
 #include "Widgets/Text/STextBlock.h"
 
+// (integration) people counts reach tens of millions: "10,547,547" overran the next stat column on the ending
+// page; above a million they read "10.5M" (below, grouped digits as before)
+static FString DmCompactCount(double N)
+{
+	if (N >= 1.0e6) return FString::Printf(TEXT("%.1fM"), N / 1.0e6);
+	return FString::FormatAsNumber(int32(FMath::RoundToInt(N)));
+}
+
 using namespace DmPagesCommon;
 
 namespace
@@ -119,7 +127,7 @@ namespace
 		const int64 ScoreTotal = FMath::RoundToInt64(Sc.total);
 		TSharedRef<SHorizontalBox> Stats = SNew(SHorizontalBox);
 		Stats->AddSlot().FillWidth(1.f)[ DmUi::Stat(T(TEXT("score")), FText::AsNumber(ScoreTotal), 34.f) ];
-		Stats->AddSlot().FillWidth(1.f)[ DmUi::Stat(T(TEXT("peak people")), FText::AsNumber(FMath::RoundToInt64(W->stats.peakPop)), 30.f) ];
+		Stats->AddSlot().FillWidth(1.f)[ DmUi::Stat(T(TEXT("peak people")), TS(DmCompactCount(W->stats.peakPop)), 30.f) ];
 		Stats->AddSlot().FillWidth(1.f)[ DmUi::Stat(T(TEXT("years")), FText::AsNumber(FMath::FloorToInt64(W->year)), 30.f) ];
 		AddBlock(Left, Stats, 14.f);
 		TSharedRef<SHorizontalBox> Stats2 = SNew(SHorizontalBox);
@@ -333,7 +341,7 @@ namespace
 		D.Name = FS(W->name);
 		D.When = FString::Printf(TEXT("%s  ·  %s Age"), *FS(dm::chronicle::yearStr(*W)), *DmCopy::AgeName(W->age));
 		D.Epithet = GodEpithetOf(*W);
-		D.People = FString::FormatAsNumber(FMath::RoundToInt(W->stats.pop));
+		D.People = DmCompactCount(W->stats.pop);
 		D.Cultures = FString::FromInt(CountLiving(*W, true));
 		D.Settlements = FString::FromInt(CountLiving(*W, false));
 		D.Score = FString::FormatAsNumber(FMath::RoundToInt(dm::sim::score(*W).total));

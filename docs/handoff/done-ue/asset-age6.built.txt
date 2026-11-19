@@ -1,0 +1,15 @@
+date: 2026-11-19
+family: age6 (Age6, Space Age kit)
+assets: 19 asset types (ArcologyTower A-E, GreenBlock A-D, MaglevStation_A, MaglevTrack Straight/Curve, SolarArray A/B, LaunchPad, Rocket, AssemblyHall, ControlBunker, Crawlerway)
+meshes: 70 FBX files in art/age6/export, each an FBX LodGroup with LOD0-LOD3; Intact/Construction/Damaged/Ruin for every building, track, solar and pad piece (Rocket and Crawlerway Intact only)
+triangles (sum over all 70 meshes): LOD0 207426, LOD1 82180, LOD2 23522, LOD3 6210
+triangles, Intact LOD0: ArcologyTower_A 4816, B 4424, C 4096, D 4288, E 12650; GreenBlock_A 5308, B 4288, C 4990, D 4728; MaglevStation_A 4712; MaglevTrack_Straight 176, Curve 568; SolarArray_A 4824, B 864; LaunchPad 6340; Rocket 1486; AssemblyHall 696; ControlBunker 330; Crawlerway 156
+materials: M_Age6_Facade, M_Age6_GreenRoof, M_Age6_Tech, M_Age6_Concrete, M_Age6_Hull, M_Age6_Cladding, M_Age6_RoofMetal (max 3 slots per mesh: Structure/Roof/Detail, mapping per mesh in the manifest)
+textures: art/age6/textures, 6 sets at 1024^2 (Facade, GreenRoof, Tech with D/N/ORM/M; Concrete, Hull, Cladding with D/N/ORM)
+cultures: Default + MI_Age6_{Facade,Tech,GreenRoof}_{CliffTerrace,LagoonWeaver,RingBuilder} (tint/accent parameters in the manifest)
+sockets: tower crown, pad rocket_mount (0,0,9) and crawlerway, track/station/crawlerway start/end, hall doors; suggested launch-site layout in the manifest
+manifest: art/age6/manifest.json; source: art/age6/source/age6.blend
+script: art/age6/build_age6.py (+ age6_tex.py, age6_kit.py, age6_assets.py); previews: art/age6/preview_age6.py via tools/render_slot.py
+previews: shots/asset-age6-*.png (21 images)
+licence: original
+notes: see art/age6/README.md (known gaps: not yet imported into Unreal; most meshes below their budget floor, detail carried by texture; one facade trim for all city buildings; culture variation is tint only; no rocket vapour FX, train, turbines or temple)

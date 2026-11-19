@@ -1,0 +1,11 @@
+date: 2026-11-19
+family: age0 (Age0, Stone Age kit)
+assets: 17 asset types (Hut A-C, LeanTo A, Longhouse A-B, FirePit A, DryingRack A-B, Palisade Seg, Palisade Gate, StoragePit A-B, StandingStones A, StandingStone A, Ornament Pennant/Totem)
+meshes: 51 FBX files in art/age0/export (LOD0-LOD3 under an FBX LodGroup); Intact/Construction/Damaged/Ruin/Burnt for huts, lean-to, longhouses, palisade segment and gate; Intact/Ruin for the stones
+triangles: LOD0 104008, LOD1 50082, LOD2 15931, LOD3 3340 (sum over all 51 meshes); every LOD0 within its ASSETS.md budget
+textures: 3 trim sheets x 1024^2 (Structure, Roof, Detail; D/N/ORM/M each; M = R night, G culture paint, B moss, A fire)
+cultures: MI_Age0_*_{Temperate,Arid,Tropical,Cold} + per-instance CultureColor via M.G (pennant, banner, painted hides, totem); Burnt via MI
+manifest: art/age0/manifest.json (footprints, heights, tris per LOD, slots, states, kit mapping to EDmTownMesh)
+script: art/age0/build_age0.py (+ a0_geo.py, a0_assets.py, a0_tex.py, render_age0.py)
+previews: shots/asset-age0-*.png (41 images: per-asset 40m, states-40m, close, camp 40m/300m/1km, variants, lineup)
+licence: original

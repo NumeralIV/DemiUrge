@@ -1,0 +1,11 @@
+date: 2026-11-19
+family: age1 (Age1, Bronze Age kit)
+assets: 14 asset types (House A-D, Granary, Temple, TempleCourt, Palisade, Rampart Straight/End, Gate, Field, Landing, ReedBoat, Ornament)
+meshes: 56 FBX files in art/age1/export (LOD0-LOD2, plus LOD3 for anything over 10 m, under an FBX LodGroup); 4 damage states per building
+triangles: LOD0 89034, LOD1 35258, LOD2 9649, LOD3 1175 (sum over all 56 meshes)
+textures: 7 sets x 1024^2 (Mudbrick, Render, Thatch, Earth, Soil, Crop, Trim + Trim_M night mask)
+cultures: Valley, CliffTerrace, LagoonWeaver, RingBuilder (material instances + 2 ornament meshes); Burnt via MI
+manifest: art/age1/manifest.json
+script: art/age1/build_age1.py (+ age1_tex.py, age1_geo.py, age1_assets.py, preview_age1.py)
+previews: shots/asset-age1-*.png (27 images)
+licence: original

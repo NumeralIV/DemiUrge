@@ -5,3 +5,5 @@
 2026-11-19 09:36 EST | 5h 8% (resets in 4h54m, hour 1) | weekly 68% | no action: hour 1 of window; sim (6) + client bridge running
 2026-11-19 10:36 EST | 5h 67% (resets in 3h54m, hour 2) | weekly 76% | no action: hour 2 and already on pace to exceed the window. Progress: 14 of 15 sim modules verified (chronicle built, verifying), client bridge built. WARNING: weekly all-models at 76% with 4d7h left
 2026-11-19 12:25 EST | owner upgraded the plan: no 5-hour window, weekly reset to 0% | pacing cron deleted; relaunched sim integration verify (wf_50363f21-9ac) and all nine client modules at once (wf_e3e367b0-3eb, limit 9)
+2026-11-19 17:20 EST | weekly 14% | owner lifted limits to ~75% weekly; helpers on hold; wave 2 launched (5 tracks) alongside C10
+2026-11-19 17:41 EST | weekly 18% | ~25 agents running (C10, wave 2, trees, 14 asset families); no new launches: machine at its limits (CPU 80-82 %, GPU 97 % at 17:35-17:40, mostly lab and integration Unreal runs that predate the slot rule)

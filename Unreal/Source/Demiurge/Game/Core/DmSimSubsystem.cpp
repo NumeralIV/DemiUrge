@@ -217,7 +217,15 @@ int32 UDmSimSubsystem::StepTicks(int32 N)
 		return 0;
 	}
 	const double T0 = FPlatformTime::Seconds();
-	dm::sim::advance(*SimWorld, N);
+	if (BeforeTick)
+	{
+		for (int32 I = 0; I < N && SimWorld; ++I)
+		{
+			BeforeTick(*SimWorld);
+			if (SimWorld) dm::sim::advance(*SimWorld, 1);
+		}
+	}
+	else dm::sim::advance(*SimWorld, N);
 	TicksRun += N;
 	const double Ms = (FPlatformTime::Seconds() - T0) * 1000.0 / N;
 	SimMsPerTick = SimMsPerTick > 0 ? SimMsPerTick + (Ms - SimMsPerTick) * 0.2 : Ms;
@@ -242,6 +250,7 @@ void UDmSimSubsystem::RunFrame(float DeltaTime)
 			int32 N = 0;
 			while (Accum >= 1.0)
 			{
+				if (BeforeTick) BeforeTick(W);
 				dm::sim::tick(W);
 				Accum -= 1.0;
 				++N;

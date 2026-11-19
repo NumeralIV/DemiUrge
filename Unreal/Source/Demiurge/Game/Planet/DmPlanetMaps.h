@@ -47,6 +47,7 @@ struct FDmMapInputs
 	int32 N = 0;
 	float SeaLevel = 0.f;
 	int32 Overlay = 0;
+	float Barren = 0.f;             // (integration) before life: bare land is dark basalt, not sand (1 molten / water .. 0 history)
 	TArray<float> Veg, Moist, Temp, Ice, Urban, Water, Elev, Wet, Farm, Scorch, Lava, Fire, Rad, Hab, Lights;
 	TArray<uint8> Biome, Road;
 	TArray<int32> Culture;          // overlay 1 / 4: culture of the cell's owner (-1 none)
@@ -107,6 +108,8 @@ public:
 	/** River + road map (pure function of the terrain's river polylines and the road segments; any thread). */
 	static void BuildRiverMipData(const FDmPlanetTerrain& T, const TArray<FDmRoadSeg>& Roads, TArray<TArray<FColor>>& OutMips, int32& OutNear);
 	static UTexture2D* MakeRiverTexture(UObject* Outer, const TArray<TArray<FColor>>& Mips);
+	/** (integration) Refresh an existing river texture in place (render-thread upload, no new object); false if it cannot. */
+	static bool UpdateRiverTexture(UTexture2D* T, TArray<TArray<FColor>>& Mips);
 	static void CaptureRoads(const dm::World& W, TArray<FDmRoadSeg>& Out);
 	/** 8-bit encoding of a signed distance (m) for the river map; decoded by land.hlsl DecodeSigned. */
 	static uint8 EncodeSigned(double D);

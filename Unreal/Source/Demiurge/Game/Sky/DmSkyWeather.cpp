@@ -537,7 +537,7 @@ void FDmSkyWeather::BuildFine(int32 W, int32 H, uint32 Seed, TArray<FColor>& Out
 			const double Nb = DmSkyNoise::Fbm(Pw * 40.0 + FVector(12.0), 3);        // rain-band roughness (segments: B at an offset)
 			Out[Y * W + X] = FColor(Enc(NA), Enc(NB), Enc(Nw), Enc(Nb));
 		}
-	});
+	}, EParallelForFlags::BackgroundPriority);
 }
 
 // ---------------------------------------------------------------------------------------------- textures
@@ -708,7 +708,7 @@ namespace
 			for (int32 Y = 0; Y < Size; ++Y)
 				for (int32 X = 0; X < Size; ++X)
 					Val[(Z * Size + Y) * Size + X] = FVector4f(Fn(FVector((X + 0.5) / Size, (Y + 0.5) / Size, (Z + 0.5) / Size)));
-		});
+		}, EParallelForFlags::BackgroundPriority);
 		for (int32 Ch = 0; Ch < 4; ++Ch)
 		{
 			if (!(EqualizeMask & (1u << Ch))) continue;

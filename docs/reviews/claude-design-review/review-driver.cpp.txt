@@ -1,0 +1,301 @@
+// Design-review driver (scratchpad only; not project code). Links every real Sim module and the
+// project's Tools/simrun/Policies.cpp (read-only) and adds "new player" policies. Writes one CSV row
+// per year and a summary line per run, plus the chronicle as text.
+//
+// review --seed N --policy P [--bless Y] [--wrath Y] [--years Y] [--set k=v]... --out <dir>
+//   policies: passive kind cruel chaotic (built-in), curious, prayers, repent, blessonly, sculptor
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "Balance.h"
+#include "Chronicle.h"
+#include "Civ.h"
+#include "Climate.h"
+#include "Policies.h"
+#include "Powers.h"
+#include "Sim.h"
+#include "Society.h"
+#include "State.h"
+
+using namespace dm;
+
+namespace {
+
+struct Opts {
+	uint32_t seed = 1;
+	std::string policy = "passive";
+	double bless = 900, wrath = 1100, years = 4500;
+	std::vector<std::pair<std::string, double>> sets;
+	std::string out = ".";
+};
+
+std::vector<int> byPop(const World& w) {
+	std::vector<int> ids = civ::live(w);
+	std::stable_sort(ids.begin(), ids.end(), [&](int a, int b) {
+		const double pa = w.settlements[size_t(a)].pop, pb = w.settlements[size_t(b)].pop;
+		if (pa != pb) return pa > pb;
+		return a < b;
+	});
+	return ids;
+}
+
+struct NewPlayer {
+	std::string kind;
+	double bless, wrath;
+	uint32_t rs;
+	std::map<std::string, int> uses;
+	std::string strokeId;
+	int strokeCell = -1, strokeLeft = 0;
+	bool first = true;
+	double nextYear = 0;
+	double spentGood = 0, spentBad = 0;
+
+	uint32_t rnd() { rs ^= rs << 13; rs ^= rs >> 17; rs ^= rs << 5; return rs; }
+	double u01() { return (rnd() & 0xffffff) / double(0x1000000); }
+
+	bool click(World& w, const char* id, int cell, bool good) {
+		if (!powers::can(w, id, cell).ok) return false;
+		const double c = powers::cost(w, id, -1, cell);
+		if (powers::use(w, id, cell, {})) { uses[id]++; (good ? spentGood : spentBad) += c; return true; }
+		return false;
+	}
+	bool stroke(World& w, const char* id, int cell, int ticks) {
+		if (!strokeId.empty() || !powers::can(w, id, cell).ok) return false;
+		strokeId = id; strokeCell = cell; strokeLeft = ticks; first = true; uses[id]++;
+		return true;
+	}
+	void cont(World& w) {
+		if (strokeId.empty()) return;
+		powers::UseOpts o;
+		o.dt = first ? 0.0 : sim::kRealPerTick;
+		first = false;
+		const double before = w.god.awe;
+		const bool ok = powers::use(w, strokeId, strokeCell, o);
+		const double spent = std::max(0.0, before - w.god.awe);
+		(strokeId == "lower" || strokeId == "raise" ? spentBad : spentGood) += spent;
+		if (--strokeLeft <= 0 || !ok) strokeId.clear();
+	}
+	void answerPrayers(World& w, int maxN) {
+		int n = 0;
+		for (int sid : byPop(w)) {
+			if (n >= maxN) break;
+			const Settlement& s = w.settlements[size_t(sid)];
+			if (!s.prayer) continue;
+			bool did = false;
+			switch (s.prayer->kind) {
+			case PrayerKind::Heal: did = click(w, "heal", s.cell, true); break;
+			case PrayerKind::Peace: did = click(w, "peace", s.cell, true); break;
+			case PrayerKind::Rain: did = stroke(w, "rain", s.cell, 8); break;
+			case PrayerKind::Bloom: did = stroke(w, "bloom", s.cell, 8) || stroke(w, "rain", s.cell, 8); break;
+			}
+			if (did) n++;
+		}
+	}
+	void smallBlessings(World& w) {
+		answerPrayers(w, 2);
+		for (int sid : byPop(w)) {
+			const Settlement& s = w.settlements[size_t(sid)];
+			if (s.plague > 0.2 && click(w, "heal", s.cell, true)) break;
+		}
+		std::vector<int> ids = civ::live(w);
+		if (ids.empty()) return;
+		// a new player dabs rain / bloom on a random town about every other year
+		if (u01() < 0.5) {
+			const int sid = ids[rnd() % ids.size()];
+			const int cell = w.settlements[size_t(sid)].cell;
+			if (!stroke(w, "bloom", cell, 4)) stroke(w, "rain", cell, 4);
+		}
+		if (w.god.awe > 100 && u01() < 0.2) {
+			const int sid = ids[rnd() % ids.size()];
+			click(w, "inspire", w.settlements[size_t(sid)].cell, true);
+		}
+	}
+	void wrathBurst(World& w) {
+		// a curious player wants to see the big ones: save for the greatest unlocked wrath the Awe can
+		// hold, throwing the odd lightning while waiting
+		std::vector<int> ids = byPop(w);
+		if (ids.empty()) return;
+		const char* great = nullptr;
+		for (const char* id : { "meteor", "volcano", "quake", "plague" }) {
+			if (powers::unlocked(w, id) && powers::cost(w, id) <= w.god.aweMax) { great = id; break; }
+		}
+		const int cell = w.settlements[size_t(ids[rnd() % std::min<size_t>(3, ids.size())])].cell;
+		if (great && click(w, great, cell, false)) return;
+		for (const char* id : { "meteor", "volcano", "quake", "plague" }) if (click(w, id, cell, false)) return;
+		if (!great || u01() < 0.25) click(w, "lightning", cell, false);
+	}
+	void reawaken(World& w) {
+		bool any = !civ::live(w).empty();
+		for (const Unit& u : w.units) if (u.type == UnitType::Settler) any = true;
+		if (any) return;
+		const int site = civ::bestSite(w);
+		if (w.valid(site)) click(w, "awaken", site, true);
+	}
+	void before(World& w) {
+		if (w.phase != Phase::History) { strokeId.clear(); return; }
+		cont(w);
+		if (w.year + 1e-9 < nextYear) return;
+		nextYear = std::floor(w.year) + 1;
+		const double y = w.year;
+		if (kind == "curious") {
+			if (y < bless) smallBlessings(w);
+			else if (y < wrath) wrathBurst(w);
+		} else if (kind == "blessonly") {
+			if (y < bless) smallBlessings(w);
+		} else if (kind == "prayers") {
+			reawaken(w);
+			answerPrayers(w, 3);
+		} else if (kind == "repent") {
+			if (y < wrath) wrathBurst(w);
+			else { answerPrayers(w, 2); smallBlessings(w); }
+		} else if (kind == "sculptor") {
+			// a curious player who plays with Raise / Lower Land near the people every ~15 years
+			std::vector<int> ids = civ::live(w);
+			if (!ids.empty() && u01() < 1.0 / 15) {
+				const int sid = ids[rnd() % ids.size()];
+				const Settlement& s = w.settlements[size_t(sid)];
+				const int nb = w.valid(s.cell) ? s.cell : -1;
+				if (nb >= 0) stroke(w, u01() < 0.5 ? "raise" : "lower", nb, 8);   // one second of brush
+			}
+			reawaken(w);
+		}
+	}
+};
+
+bool parse(int argc, char** argv, Opts& o) {
+	for (int i = 1; i < argc; i++) {
+		std::string k = argv[i];
+		auto val = [&]() -> std::string { return i + 1 < argc ? argv[++i] : ""; };
+		if (k == "--seed") o.seed = uint32_t(std::atoi(val().c_str()));
+		else if (k == "--policy") o.policy = val();
+		else if (k == "--bless") o.bless = std::atof(val().c_str());
+		else if (k == "--wrath") o.wrath = std::atof(val().c_str());
+		else if (k == "--years") o.years = std::atof(val().c_str());
+		else if (k == "--out") o.out = val();
+		else if (k == "--set") {
+			std::string v = val();
+			size_t eq = v.find('=');
+			if (eq == std::string::npos) return false;
+			o.sets.push_back({ v.substr(0, eq), std::atof(v.c_str() + eq + 1) });
+		} else return false;
+	}
+	return true;
+}
+
+} // namespace
+
+int main(int argc, char** argv) {
+	Opts o;
+	if (!parse(argc, argv, o)) { std::fprintf(stderr, "bad args\n"); return 1; }
+	sim::WorldOpts wo;
+	wo.seed = o.seed;
+	std::unique_ptr<World> wp = sim::create(wo);
+	for (auto& kv : o.sets) if (!balance::set(*wp, kv.first, kv.second)) std::fprintf(stderr, "unknown key %s\n", kv.first.c_str());
+	sim::genesis::SkipOpts so;
+	sim::genesis::skip(*wp, so);
+	World& w = *wp;
+
+	std::unique_ptr<simrun::Policy> builtin;
+	simrun::PolicyKind pk;
+	if (simrun::policyFromStr(o.policy, pk)) builtin = std::make_unique<simrun::Policy>(pk, o.seed);
+	// late-kind / late-cruel: do nothing until the Ark is being built, then play kind / cruel
+	std::unique_ptr<simrun::Policy> late;
+	if (o.policy == "late-kind") late = std::make_unique<simrun::Policy>(simrun::PolicyKind::Kind, o.seed);
+	if (o.policy == "late-cruel") late = std::make_unique<simrun::Policy>(simrun::PolicyKind::Cruel, o.seed);
+	double lateFrom = -1;
+	NewPlayer np{ o.policy, o.bless, o.wrath, 0x9e3779b9u ^ (o.seed * 2654435761u) };
+
+	std::string tag = o.policy;
+	if (o.policy == "curious" || o.policy == "blessonly" || o.policy == "repent") tag += "-" + std::to_string(int(o.bless)) + "-" + std::to_string(int(o.wrath));
+	for (auto& kv : o.sets) { char b[96]; std::snprintf(b, sizeof b, "_%s=%g", kv.first.c_str(), kv.second); tag += b; }
+	char fn[512];
+	std::snprintf(fn, sizeof fn, "%s/%s-s%u.csv", o.out.c_str(), tag.c_str(), o.seed);
+	FILE* csv = std::fopen(fn, "w");
+	std::snprintf(fn, sizeof fn, "%s/%s-s%u-chron.txt", o.out.c_str(), tag.c_str(), o.seed);
+	FILE* chr = std::fopen(fn, "w");
+	if (!csv || !chr) { std::fprintf(stderr, "cannot write to %s\n", o.out.c_str()); return 1; }
+	std::fprintf(csv, "year,age,pop,settl,cult,awe,aweMax,inc,unlocked,devAll,loveAll,mood,devLead,loveLead,moodLead,prayers,plague,famine,wars,w1,w2,w3,epithet,eventsNotable\n");
+
+	int people_lost = 0, epithetChanges = 0;
+	std::map<std::string, int> chronTypes;
+	std::string lastEpithet;
+	size_t chronDone = 0;
+	int notable = 0;   // events a player would want to see this year (wars, founding cultures, tier ups...)
+	w.bus.onAll([&](const Event& e) {
+		switch (e.type) {
+		case Ev::PeopleLost: people_lost++; break;
+		case Ev::WarDeclared: case Ev::CultureBorn: case Ev::SettlementDestroyed: case Ev::Nuke: case Ev::WonderBuilt:
+		case Ev::ProphetRisen: case Ev::Prayer: case Ev::SettlementPlague: case Ev::SettlementFamine: case Ev::VolcanoStart: case Ev::Quake:
+		case Ev::Storm: case Ev::Drought: case Ev::CultureAge: case Ev::Battle: notable++; break;
+		default: break;
+		}
+	});
+	int ageYear[7] = { 0, -1, -1, -1, -1, -1, -1 };
+	double popAt[5] = { -1, -1, -1, -1, -1 };
+	const double cps[5] = { 500, 1000, 2000, 3000, 3500 };
+	int cpi = 0;
+	std::string phaseRegard[3];
+	const int64_t maxTicks = int64_t(o.years * 4) + 8;
+	for (int64_t i = 0; i < maxTicks; i++) {
+		if (w.ending && w.year - w.ending->year > 0.5) break;
+		if (late) {
+			if (lateFrom < 0) for (const Settlement& s : w.settlements) if (!s.dead && s.ark > 0) { lateFrom = w.year; break; }
+			if (lateFrom >= 0) late->before(w);
+		} else if (builtin) builtin->before(w); else np.before(w);
+		sim::advance(w, 1);
+		if (!sim::isYearlyTick(w)) continue;
+		int w1 = 0, w2 = 0, w3 = 0;
+		for (; chronDone < w.chronicle.size(); chronDone++) {
+			const ChronicleEntry& c = w.chronicle[chronDone];
+			(c.weight >= 3 ? w3 : c.weight == 2 ? w2 : w1)++;
+			chronTypes[c.type]++;
+			std::fprintf(chr, "[%5.0f w%d %s] %s\n", c.year, c.weight, c.type.c_str(), c.text.c_str());
+		}
+		int prayers = 0, plague = 0, famine = 0, settl = 0, cult = 0, wars = 0, unl = 0;
+		for (const Settlement& s : w.settlements) {
+			if (s.dead) continue;
+			settl++;
+			if (s.prayer) prayers++;
+			if (s.plague > 0) plague++;
+			if (s.famine > 0) famine++;
+		}
+		int lead = -1;
+		for (const Culture& c : w.cultures) {
+			if (c.dead) continue;
+			cult++;
+			if (lead < 0 || c.age > w.cultures[size_t(lead)].age || (c.age == w.cultures[size_t(lead)].age && c.pop > w.cultures[size_t(lead)].pop)) lead = c.id;
+			if (c.age > 0 && ageYear[c.age] < 0) ageYear[c.age] = int(w.year);
+		}
+		for (const auto& kv : w.vars.rel) if (kv.second.war) wars++;
+		for (const powers::PowerDef& d : powers::kPowers) if (d.group != powers::Group::Genesis && powers::unlocked(w, d.id)) unl++;
+		const society::Regard ra = society::regard(w, -1);
+		const society::Regard rl = lead >= 0 ? society::regard(w, lead) : society::Regard{};
+		if (w.god.epithet != lastEpithet) { epithetChanges++; lastEpithet = w.god.epithet; }
+		std::fprintf(csv, "%.0f,%d,%.0f,%d,%d,%.1f,%.0f,%.3f,%d,%.3f,%.3f,%s,%.3f,%.3f,%s,%d,%d,%d,%d,%d,%d,%d,\"%s\",%d\n",
+			w.year, w.age, w.stats.pop, settl, cult, w.god.awe, w.god.aweMax, society::aweIncome(w), unl, ra.devotion, ra.love, toStr(ra.mood),
+			rl.devotion, rl.love, toStr(rl.mood), prayers, plague, famine, wars, w1, w2, w3, w.god.epithet.c_str(), notable);
+		notable = 0;
+		while (cpi < 5 && w.year + 1e-9 >= cps[cpi]) popAt[cpi++] = w.stats.pop;
+		auto snapRegard = [&](int k) { char b[96]; std::snprintf(b, sizeof b, "%.0f:%.2f/%+.2f", w.year, rl.devotion, rl.love); phaseRegard[k] = b; };
+		if (std::fabs(w.year - o.bless) < 0.5) snapRegard(0);
+		if (std::fabs(w.year - o.wrath) < 0.5) snapRegard(1);
+	}
+	const society::Regard rf = w.ending ? society::regard(w, w.ending->culture) : society::regard(w, -1);
+	std::printf("RESULT seed=%u policy=%s bless=%.0f wrath=%.0f | ending=%s/%s year=%.0f | ages B%d I%d S%d In%d A%d Sp%d | pop500=%.0f pop1000=%.0f pop2000=%.0f pop3000=%.0f | final dev=%.2f love=%+.2f | atBless=%s atWrath=%s | epithet='%s' changes=%d | lost=%d | spentGood=%.0f spentBad=%.0f |",
+		o.seed, o.policy.c_str(), o.bless, o.wrath, w.ending ? toStr(w.ending->type) : "none", w.ending ? toStr(w.ending->mood) : "-", w.ending ? w.ending->year : w.year,
+		ageYear[1], ageYear[2], ageYear[3], ageYear[4], ageYear[5], ageYear[6], popAt[0], popAt[1], popAt[2], popAt[3], rf.devotion, rf.love,
+		phaseRegard[0].c_str(), phaseRegard[1].c_str(), w.god.epithet.c_str(), epithetChanges, people_lost, np.spentGood, np.spentBad);
+	for (auto& kv : np.uses) std::printf(" %s:%d", kv.first.c_str(), kv.second);
+	if (late) { std::printf(" lateFrom=%.0f", lateFrom); for (auto& kv : late->stats().byPower) std::printf(" %s:%d", kv.first.c_str(), kv.second); }
+	std::printf("\n");
+	std::fclose(csv);
+	std::fclose(chr);
+	return 0;
+}

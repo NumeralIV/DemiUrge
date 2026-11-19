@@ -1,0 +1,18 @@
+asset-units-land built 2026-11-19
+family: Unit (art/units-land)
+assets: 21 meshes, each exported as one FBX with LOD0-LOD3 (art/units-land/export/SM_Unit_*.fbx)
+  settlers  : SM_Unit_Settlers_Ancient / _Classical / _Modern / _Space   (ox cart band, covered wagon, bus convoy, aerial transport)
+  traders   : SM_Unit_Traders_Ancient / _Classical / _Modern / _Space    (donkey train, camel caravan, freight train, maglev)
+  army      : SM_Unit_Army_Ancient / _Classical / _Modern / _Space       (warband, banner formation, truck column, hover transport)
+  prophet   : SM_Unit_Prophet_A (all ages)
+  air       : SM_Unit_Aircraft_Prop, SM_Unit_Aircraft_Jet, SM_Unit_GroundRing_A (ring for flying units)
+  launch    : SM_Unit_Rocket_A_Pad, SM_Unit_Rocket_A_Launch
+  ark       : SM_Unit_Ark_A_Construction / _Intact / _Damaged
+triangles (sum over all 21 meshes): LOD0 41,903 / LOD1 18,043 / LOD2 7,866 / LOD3 2,320
+largest LOD0: SM_Unit_Ark_A_Construction 4,924; largest unit: SM_Unit_Army_Ancient 3,910 (vehicle budget 1-4k)
+materials: M_Unit_Structure / M_Unit_Roof / M_Unit_Detail (one master M_Unit_Trim), MI_Unit_Detail_<Amber|Sky|Teal|Yellow|Vermilion|Rose>
+textures: T_Unit_Trim_D / _N (OpenGL, flip green) / _ORM / _M (R night windows, G culture mask, B glow), 1024^2, procedural
+manifest: art/units-land/manifest.json (sim mapping per unit type and age, suggested_unit_scale per mesh to match the silhouette sheet)
+previews: shots/asset-units-land-<asset>-{40m,300m,1km}.png (63 images; 1km shows all six culture colours)
+regenerate: python tools/render_slot.py -- blender -b --factory-startup --python art/units-land/build_units-land.py -- --build [--render]
+licence: original (script-generated, no external inputs)

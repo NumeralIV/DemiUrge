@@ -37,6 +37,7 @@
 //   -res=WxH             render resolution (default 1920x1080)
 //   -parts=a,b / -noparts=a,b   which scene parts to spawn (DmScene.h)
 //   -exitafter=<frames>  quit after this many frames even without a shot
+//   -shotui              the -shot picture keeps the interface (HUD, screens)
 // The harness logs "DmStats" (frame / game / render / GPU ms averaged over the 60 frames before the
 // first shot) and "DmShot <path>" for each screenshot written.
 #pragma once
@@ -59,6 +60,7 @@ struct DEMIURGE_API FDmShotArgs
 	bool bSun = false;           double Sun[2] = { 0, 0 };
 	bool bYear = false;          double Year = 0;
 	FString Fixture = TEXT("planet_7");
+	bool bFixtureArg = false;    // -fixture= was given (the game itself, "play", runs the real sim unless it was)
 	bool bSeed = false;          uint32 Seed = 1;
 	bool bSkip = false;
 	int32 FixtureAge = -1, FixtureTowns = -1, FixtureSeed = -1;
@@ -102,6 +104,8 @@ public:
 	void SetSubsolar(double LatDeg, double LonDeg);
 	/** Screenshot this frame: <shot base>-<Suffix>.png (or shots/ue-<scenario>-<Suffix>.png). */
 	void Shot(const FString& Suffix);
+	/** Screenshot this frame to an absolute path; bWithUI keeps the HUD and screens in the picture. */
+	void ShotPath(const FString& Path, bool bWithUI);
 	/** Exit once pending screenshots are written. */
 	void Finish();
 	/** Do not exit when the shots are written; wait for Finish() (tests that run longer). */

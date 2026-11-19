@@ -13,7 +13,7 @@
 namespace DmStyle
 {
 	/** Serif faces (Palatino Linotype) for names and headings; sans (Segoe UI) for controls and numbers.
-	 *  Loaded from C:/Windows/Fonts at runtime (shipping needs an open font: see the report). */
+	 *  The shipped OFL fonts (Game/UI/DmFonts.h): EB Garamond, Cormorant Garamond (display), Inter, Cinzel (logo). */
 	enum class EFace : uint8 { Serif, SerifBold, SerifItalic, Sans, SansBold, SansLight };
 
 	/** Button looks: Ghost (default), Primary (the one action), Chip (off / on: option pickers),
