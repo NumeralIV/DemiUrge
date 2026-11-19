@@ -50,6 +50,22 @@ struct ChronicleTune {
 	double bigTierGap = 20;          // a culture's cities / metropolises after its first: one entry per this many years
 	double dustFamine = 0.05;        // w.dust at or above this: famines are told as the darkened sun's doing
 	double forgetDeeds = 0.5;        // a deed-named god falls back to a plain name only below forgetDeeds x minDeeds
+	// --- chronicle voice (docs/content/chronicle-voice.md, 2026-11-19) ---
+	double plagueTold = 30;          // a plague's end is told only if its coming was written down within this many years
+	double kindShare = 0.8;          // 'Kind' / 'Cruel' epithets: one side of the memory is at least this share of it ...
+	double kindSpread = 0.45;        // ... no single deed is this share of that side or more (many kinds of deed) ...
+	double kindHold = 0.6;           // ... (a people already using the name keeps it until one deed reaches this share) ...
+	double kindLove = 0.2, cruelLove = -0.2;   // ... and regard love is at least kindLove (Kind) / at most cruelLove (Cruel)
+	double dustFamineGap = 3;        // famines under a darkened sky: one entry in the whole world per this many years
+	double prayerWorldGap = 3;       // prayers begun (minor): at most one entry in the whole world per this many years
+	double tradeGap = 20, tradeWorldGap = 5;   // later trade routes (minor): per culture / in the whole world (was minorGap x 2 per culture)
+	double answerWorldGap = 4;       // answered prayers (told): at most one in the whole world per this many years (verifier 2026-11-19)
+	// --- voice review 2 (2026-11-19) ---
+	double answerQuiet = 5;          // years after a town's answered prayer is told in which its new prayers and the god's rain / bloom over it go untold
+	double prayerTownGap = 12;       // a town's prayers begun (minor): at most one entry per this many years
+	double prayerHeard = 25;         // a people whose prayers were answered (told) within this many years expects the answer: its new prayers are not news (the answer line tells them)
+	double brushTownGap = 30;        // rain / bloom / sculpting over the same town (minor): one entry per this many years (the early book was Nara's rain every 13 years)
+	double firstCluster = 4;         // a people's "first of its kind" buildings: one notable entry per this many years, the rest are ordinary buildings
 };
 
 namespace chronicle {

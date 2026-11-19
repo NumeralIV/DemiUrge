@@ -161,9 +161,36 @@ int remoteCell(const World& w, double minAng, bool sea) {
 
 // ------------------------------------------------------------------ prose checks
 
-std::string badText(const std::string& t) {
+
+// (voice) "In the 312th year": the only digits an entry may hold are a year written as an English
+// ordinal right before " year" (312th, 1st, 22nd, 103rd, 111th). Returns the text with each such
+// ordinal masked as "Nth"; a wrong suffix ("312st") is reported in `fault`.
+std::string maskOrdinals(const std::string& t, std::string& fault) {
+	std::string out;
+	size_t i = 0;
+	while (i < t.size()) {
+		if (!std::isdigit(static_cast<unsigned char>(t[i]))) { out.push_back(t[i++]); continue; }
+		size_t j = i;
+		while (j < t.size() && std::isdigit(static_cast<unsigned char>(t[j]))) j++;
+		const bool prevOk = i == 0 || !std::isalnum(static_cast<unsigned char>(t[i - 1]));
+		if (!prevOk || j + 2 > t.size() || t.compare(j + 2, 5, " year") != 0) { out.append(t, i, j - i); i = j; continue; }
+		const std::string num = t.substr(i, j - i), sfx = t.substr(j, 2);
+		const long long n = std::stoll(num);
+		const long long tt = n % 100, u = n % 10;
+		const char* want = (tt >= 11 && tt <= 13) ? "th" : u == 1 ? "st" : u == 2 ? "nd" : u == 3 ? "rd" : "th";
+		if (sfx != want || num[0] == '0') { if (fault.empty()) fault = "bad ordinal '" + num + sfx + "'"; out.append(t, i, j + 2 - i); i = j + 2; continue; }
+		out += "Nth";
+		i = j + 2;
+	}
+	return out;
+}
+
+std::string badText(const std::string& t0) {
+	std::string ordFault;
+	const std::string t = maskOrdinals(t0, ordFault);
+	if (!ordFault.empty()) return ordFault;
 	if (t.size() < 12) return "too short";
-	if (t.size() > 460) return "too long";
+	if (t.size() > 600) return "too long";        // (voice) the ending passages are one paragraph
 	if (!(std::isupper(static_cast<unsigned char>(t[0])) || t[0] == '"')) return "no capital";
 	const char last = t.back();
 	if (last != '.' && last != '!' && last != '?' && last != '"') return "no end punctuation";
@@ -305,7 +332,9 @@ std::map<std::string, int> emitEverything(Fx& f, Cast& k) {
 	run("settlement:building second shrine", [&] { p.build(k.towns[5], Building::SHRINE); });
 	run("settlement:famine", [&] { w.settlements[size_t(t2)].famine = 3; w.bus.emit(EvSettlementFamine{ t2 }); });
 	run("settlement:plague start", [&] { w.settlements[size_t(t1)].plague = 0.6; w.bus.emit(EvSettlementPlague{ t1, true }); });
-	run("settlement:plague end", [&] { w.settlements[size_t(t1)].plague = 0; w.bus.emit(EvSettlementPlague{ t1, false }); });
+	// (voice review 2) a plague's end and a drawn war are held back until the tick is over (a Heal or an Omen of
+	// Peace in the same tick tells them instead); the yearly group's updateEpithets writes them
+	run("settlement:plague end", [&] { w.settlements[size_t(t1)].plague = 0; w.bus.emit(EvSettlementPlague{ t1, false }); chronicle::updateEpithets(w); });
 	run("prayer start", [&] { w.bus.emit(EvPrayer{ t2, PrayerKind::Rain, true }); });
 	run("prayer:answered", [&] { w.bus.emit(EvPrayerAnswered{ t2, PrayerKind::Rain }); });
 	run("prayer start", [&] { w.bus.emit(EvPrayer{ t1, PrayerKind::Heal, true }); });
@@ -319,10 +348,13 @@ std::map<std::string, int> emitEverything(Fx& f, Cast& k) {
 	run("prayer:answered", [&] { w.bus.emit(EvPrayerAnswered{ k.towns[3], PrayerKind::Peace }); });
 	// the god's acts (miracle:witnessed carries the brush and grace powers)
 	run("miracle rain thirst", [&] { p.miracle(t2, "rain", 0.6, 0.1); });
+	w.year += 20;                                        // (voice review 2) one brush miracle per town per brushTownGap (30) years
 	run("miracle rain soft", [&] { p.miracle(t2, "rain", 0.1, 0.1); });
 	run("miracle bloom", [&] { p.miracle(k.towns[4], "bloom", 0.4, 0.1); });
 	run("miracle raise harm", [&] { p.miracle(t1, "raise", -0.5, 0.05); });
+	w.year += 20;                                        // (voice review 2) one brush miracle per town per brushTownGap (30) years
 	run("miracle raise", [&] { p.miracle(t1, "raise", 0, 0.05); });
+	w.year += 20;                                        // (voice review 2) one brush miracle per town per brushTownGap (30) years
 	run("miracle lower", [&] { p.miracle(t1, "lower", 0, 0.05); });
 	run("miracle heal", [&] { p.miracle(t1, "heal", 1, 0.12); });
 	run("miracle inspire", [&] { p.miracle(k.towns[0], "inspire", 0.6, 0.08); });
@@ -364,7 +396,7 @@ std::map<std::string, int> emitEverything(Fx& f, Cast& k) {
 	run("settlement:captured war", [&] { p.capture(k.towns[5], k.teshki, CaptureHow::War); });
 	run("war:ended victor", [&] { w.bus.emit(EvWarEnded{ k.teshki, k.umari, k.teshki }); });
 	run("war:declared", [&] { w.bus.emit(EvWarDeclared{ k.umari, k.vaeli }); });
-	run("war:ended draw", [&] { w.bus.emit(EvWarEnded{ k.umari, k.vaeli, -1 }); });
+	run("war:ended draw", [&] { w.bus.emit(EvWarEnded{ k.umari, k.vaeli, -1 }); chronicle::updateEpithets(w); });
 	run("trade:route same", [&] { w.bus.emit(EvTradeRoute{ k.towns[0], k.towns[2] }); });
 	run("trade:route foreign", [&] { w.bus.emit(EvTradeRoute{ k.towns[0], k.towns[1] }); });
 	run("prophet:risen", [&] {
@@ -432,7 +464,7 @@ std::map<std::string, int> emitEverything(Fx& f, Cast& k) {
 // labels that must stay silent (told by another event, or not news)
 bool silentLabel(const std::string& l) {
 	static const char* const kSilent[] = { "power:used", "awe:short", "meteor:launched", "tsunami:start", "storm end",
-		"settlement:plague end", "prayer end early", "miracle silent kinds", "battle won", "culture:born awaken",
+		"prayer end early", "miracle silent kinds", "battle won", "culture:born awaken",
 		"settlement:building wonder", "unit:spawned", "unit:arrived", "unit:died army", "unit:died disbanded",
 		"chronicle:entry (foreign)", "lightning far" };
 	for (const char* s : kSilent) if (l == s) return true;
@@ -1002,14 +1034,14 @@ DM_TEST("chronicle: epithets follow what a culture has seen") {
 		if (y % 6 == 0) f.w->cultures[size_t(cid)].seen[(y / 6) % 3 == 0 ? "bloom" : "rain"] += 0.06;
 	});
 	say("rain and bloom: " + joined(green.history));
-	ok(among(green.last, { "the Rain-Giver", "the Cloud-Shepherd", "She Who Brings the Rain", "He Who Brings the Rain", "the Wet Wind",
-		"the Green Hand", "the Gardener", "She Who Wakes the Seed", "He Who Wakes the Seed", "the Sower" }), "rain / green epithet: " + green.last);
+	ok(among(green.last, { "the Rain-Giver", "the Cloud-Shepherd", "She Who Opens the Sky", "the Well-Filler",
+		"the Green Hand", "the Sower", "Lord of the Second Spring" }), "rain / green epithet: " + green.last);
 	// only meteors
 	const Career star = runCareer(12, 400, [](Fx& f, int cid, int, int y) {
 		if (y > 50 && y % 30 == 0) f.w->cultures[size_t(cid)].seen["meteor"] += 0.25;
 	});
 	say("meteors: " + joined(star.history));
-	ok(among(star.last, { "She Who Burns the Sky", "He Who Burns the Sky", "the Hammer", "the Star-Thrower", "the Falling Fire" }), "meteor epithet: " + star.last);
+	ok(among(star.last, { "She Who Burns the Sky", "the Hammer", "the Thrower of Stars" }), "meteor epithet: " + star.last);
 	// floods: towns lost to the sea and waves
 	const Career flood = runCareer(13, 400, [](Fx& f, int cid, int sid, int y) {
 		World& w = *f.w;
@@ -1021,11 +1053,11 @@ DM_TEST("chronicle: epithets follow what a culture has seen") {
 		}
 	});
 	say("floods: " + joined(flood.history));
-	ok(among(flood.last, { "the Drowner", "the Sea-Bringer", "She Who Swallows Cities", "He Who Swallows Cities", "the Deep" }), "drowner epithet: " + flood.last);
+	ok(among(flood.last, { "the Drowner", "the Sea's Elbow", "the Deep" }), "drowner epithet: " + flood.last);
 	// silence for 800 years
 	const Career silent = runCareer(14, 800, [](Fx&, int, int, int) {});
 	say("silence: " + joined(silent.history));
-	ok(among(silent.last, { "the Silent One", "the Sleeper", "She Who Does Not Answer", "He Who Does Not Answer", "the Far-Away" }), "silent epithet: " + silent.last);
+	ok(among(silent.last, { "the Silent One", "the Sleeper", "the Empty Chair", "the Rumour" }), "silent epithet: " + silent.last);
 	ok(silent.history.size() == 2, "the waker, then silence (" + std::to_string(silent.history.size()) + " names)");
 	// mixed: blessings and blows alike
 	const Career mixed = runCareer(15, 400, [](Fx& f, int cid, int, int y) {
@@ -1036,7 +1068,7 @@ DM_TEST("chronicle: epithets follow what a culture has seen") {
 		if (y % 40 == 0) c.seen["quake"] += 0.08;
 	});
 	say("mixed: " + joined(mixed.history));
-	ok(among(mixed.last, { "the Giver and Taker", "the Two-Handed", "the Storm and the Harvest", "the Double-Hearted" }), "two-sided epithet: " + mixed.last);
+	ok(among(mixed.last, { "the Two-Handed", "the Laughing Storm", "the Coin-Tosser" }), "two-sided epithet: " + mixed.last);
 	// a career that changes: kind for 300 years, then 300 years of wrath
 	const Career turn = runCareer(16, 1000, [](Fx& f, int cid, int, int y) {
 		Culture& c = f.w->cultures[size_t(cid)];
@@ -1045,7 +1077,7 @@ DM_TEST("chronicle: epithets follow what a culture has seen") {
 	});
 	say("healer turned wrathful: " + joined(turn.history));
 	ok(turn.history.size() >= 3, "the epithet changed as the god changed");
-	ok(among(turn.last, { "the Bringer of Fevers", "the Grey Breath", "She Who Sends the Sickness", "He Who Sends the Sickness", "the Withering" }), "ends as the fever-bringer: " + turn.last);
+	ok(among(turn.last, { "the Sick Wind", "the Grey Breath", "the Bringer of Fevers" }), "ends as the fever-bringer: " + turn.last);
 	// every change was chronicled, once
 	eq(green.entries, int(green.history.size()), "one epithet entry per change (rain)");
 	eq(turn.entries, int(turn.history.size()), "one epithet entry per change (turn)");
@@ -1125,9 +1157,9 @@ DM_TEST("chronicle: with no deed to remember, regard names the god (beloved / dr
 	w.year = 10;
 	chronicle::updateEpithets(w);
 	say("calm: " + epithetOf(w, calm) + "; loving: " + epithetOf(w, loving) + "; fearful: " + epithetOf(w, fearful));
-	ok(among(epithetOf(w, calm), { "the Waker", "She Who Woke Us", "He Who Woke Us", "the First Voice", "the Dawn-Caller" }), "calm: waker");
-	ok(among(epithetOf(w, loving), { "the Beloved", "the Kind One", "She Who Keeps the Hearth", "He Who Keeps the Hearth", "the Shepherd" }), "loving: beloved");
-	ok(among(epithetOf(w, fearful), { "the Dreaded", "the Jealous One", "She Who Must Be Appeased", "He Who Must Be Appeased", "the Terrible" }), "fearful: dreaded");
+	ok(among(epithetOf(w, calm), { "the Maker", "the Waker", "the First Voice", "the Dawn-Caller" }), "calm: waker");
+	ok(among(epithetOf(w, loving), { "the Gentle Hand", "the Kind Sky", "Mother of Harvests", "the Patient One", "He Who Keeps the Lamp Lit" }), "loving: beloved");
+	ok(among(epithetOf(w, fearful), { "the Unkind Sky", "the Hungry One", "the Tyrant Above", "the One We Do Not Name" }), "fearful: dreaded");
 	// a daughter culture with nothing of its own remembers the god of its fathers
 	const int daughter = makeCulture(w, 2, calm);
 	makeTown(f, daughter, 100, 1);

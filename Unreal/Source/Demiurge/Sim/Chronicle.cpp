@@ -23,7 +23,9 @@
 //                 the culture's own variant of that category is fixed by a hash, so an epithet only
 //                 changes when the god's behaviour changes, and is then kept at least epithetHold
 //                 years. Long silence gives 'the Silent One'; with no deed worth remembering,
-//                 society::regard decides ('the Beloved', 'the Dreaded', else 'the Waker').
+//                 society::regard decides (Kind: 'the Gentle Hand', Cruel: 'the Unkind Sky', else 'the Maker').
+//   voice         the prose, epithets and endings follow the approved voice
+//                 (docs/content/chronicle-voice.md); see the "templates" section for the placeholder map.
 //                 Memory lives in w.vars.num under "chronicle_*" keys (persisted, deterministic).
 //   snapshots     time-lapse frames per SPEC-SIM 3.11; past maxFrames every second history frame is
 //                 dropped and the interval doubled.
@@ -31,6 +33,7 @@
 #include "Chronicle.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdint>
 #include <map>
@@ -55,6 +58,7 @@ struct ChronicleScratch {
 	std::vector<EventBus::Token> tokens;           // attach(): one per handler
 	std::map<string, std::vector<int>> bags;       // template shuffle bags per kind
 	std::map<string, int> lastPick;                // last template index per kind
+	std::map<string, std::vector<int>> lastPicks;  // (voice) the last few template indices per kind, newest last
 	int64_t answeredTick = -1;                     // prayer:answered seen on this tick and year ...
 	double answeredYear = -1e9;
 	std::vector<int> answered;                     // ... for these settlements: the miracle:witnessed that
@@ -64,7 +68,30 @@ struct ChronicleScratch {
 	double bornYear = -1e9;
 	std::vector<int> bornCultures;                 // ... for these cultures (their schism captures are part of it)
 	int genesisFrames = -1;                        // leading snapshot frames taken before history (-1 unknown)
+	// (voice) the template bodies of the last entries: a body used in the last kRecentTemplates entries
+	// is skipped when its bag offers another (templates shared between families never meet twice in a row)
+	std::vector<string> recentTpl;
+	// (voice) the battle that took a settlement this tick: names the attacker when it is then razed
+	int64_t wonTick = -1;
+	double wonYear = -1e9;
+	int wonSettlement = -1, wonAttacker = -1;
+	// (voice review 2) endings held back until the tick is over: a click power's effect is emitted before
+	// the miracle that caused it (Powers: effect, power:used, witness), so a plague cured by Heal and a war
+	// ended by the Omen of Peace are told by the miracle instead of "the fever burned itself out" / "neither
+	// could say it had won" first. Written at the next event of a later tick or by updateEpithets (yearly).
+	struct Pending {
+		int64_t tick = -1;
+		double year = 0;
+		bool war = false;      // false: the end of a plague (a = settlement id); true: a war ended in a draw (a, b cultures)
+		int a = -1, b = -1;
+	};
+	std::vector<Pending> pending;
+	// (voice review 2) the omen of peace that named both armies this tick: the other people's omen is that one
+	int64_t omenTick = -1;
+	double omenYear = -1e9;
+	std::vector<int> omenCultures;
 };
+constexpr size_t kRecentTemplates = 10;
 
 // ====================================================================== small helpers
 
@@ -106,8 +133,43 @@ string godOf(const World& w, int cid) {
 	if (!c || c->godName.empty()) return "the god";
 	return c->godName;
 }
-// The culture imagines its god as a woman or a man (fixed per culture and world).
-bool godIsShe(const World& w, int cid) { return hashf(uint32_t(cid + 7), w.seed ^ 0x9e3779b9u) < 0.55; }
+// (voice {god_epithet}) the culture's epithet for its god alone, article included ("the Rain-Giver");
+// before the culture's first updateEpithets the world's epithet, else "the god" (not the god's name:
+// the lines that use {ep} often name {g} too).
+string epithetOf(const World& w, int cid) {
+	const Culture* c = cult(w, cid);
+	if (c && !c->epithet.empty()) return c->epithet;
+	if (!w.god.epithet.empty()) return w.god.epithet;
+	return "the god";
+}
+// "a" / "an" for a common noun
+string withArticle(const string& noun) {
+	if (noun.empty()) return noun;
+	const char ch = noun[0];
+	const bool vowel = ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u' || ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U';
+	return (vowel ? "an " : "a ") + noun;
+}
+// (voice {year_ord}) 312 -> "312th", 1 -> "1st", 11 -> "11th", 22 -> "22nd"; before year 1, "first"
+string yearOrdinal(double year) {
+	const double y = std::floor(fin(year));
+	if (y < 1 || y > 1e9) return "first";
+	const long long n = static_cast<long long>(y);
+	const long long t = n % 100, u = n % 10;
+	const char* sfx = (t >= 11 && t <= 13) ? "th" : u == 1 ? "st" : u == 2 ? "nd" : u == 3 ? "rd" : "th";
+	return std::to_string(n) + sfx;
+}
+// (voice {war_years}) a count of years in words: "a single year", "eleven years", "forty-two years"
+string yearsInWords(double years) {
+	static const char* const kOnes[] = { "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven",
+		"twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
+	static const char* const kTens[] = { "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
+	const int n = int(std::floor(fin(years) + 0.5));
+	if (n <= 1) return "a single year";
+	if (n >= 200) return "many generations";
+	if (n >= 100) return "more than a hundred years";
+	string s = n < 20 ? string(kOnes[n]) : string(kTens[n / 10]) + (n % 10 ? string("-") + kOnes[n % 10] : string());
+	return s + " years";
+}
 string worldName(const World& w) { return w.name.empty() ? string("the world") : w.name; }
 
 bool startsWith(string_view s, string_view p) { return s.size() >= p.size() && s.substr(0, p.size()) == p; }
@@ -192,6 +254,7 @@ string tidy(const string& in) {
 			cap = false;
 		}
 		if ((c == '.' || c == '!' || c == '?') && i + 1 < s.size() && s[i + 1] == ' ') cap = true;
+		if (c == '"' && i >= 2 && s[i - 1] == ' ' && s[i - 2] == ':') cap = true;     // a quoted saying: ... spoke: "Lay down ..."
 	}
 	if (!s.empty() && s.back() != '.' && s.back() != '!' && s.back() != '?' && s.back() != '"') s.push_back('.');
 	return s;
@@ -200,7 +263,26 @@ string tidy(const string& in) {
 struct Tpl { const char* const* t; int n; };
 template <size_t N> Tpl tpl(const char* const (&a)[N]) { return Tpl{ a, int(N) }; }
 
-int pickTemplate(ChronicleScratch& S, const string& key, int n, Rng& r) {
+bool recentlyUsed(const ChronicleScratch& S, const char* body) {
+	for (const string& b : S.recentTpl) if (b == body) return true;
+	return false;
+}
+// position of the body's last use in the ring (larger = more recent), -1 if not in it
+int lastUse(const ChronicleScratch& S, const char* body) {
+	for (size_t i = S.recentTpl.size(); i-- > 0;) if (S.recentTpl[i] == body) return int(i);
+	return -1;
+}
+void markUsed(ChronicleScratch& S, const char* body) {
+	S.recentTpl.push_back(body);
+	if (S.recentTpl.size() > kRecentTemplates) S.recentTpl.erase(S.recentTpl.begin());
+}
+
+// The next template of a family from its shuffle bag. (voice) A body used by one of the last
+// kRecentTemplates entries (the same sentence may sit in two families, e.g. the generic building
+// lines) is passed over: first for another in the bag, then for any line of the family not used
+// lately, and when every line was used lately, for the one used longest ago.
+int pickTemplate(ChronicleScratch& S, const string& key, Tpl t, Rng& r) {
+	const int n = t.n;
 	if (n <= 1) return 0;
 	std::vector<int>& bag = S.bags[key];
 	if (bag.empty()) {
@@ -208,11 +290,35 @@ int pickTemplate(ChronicleScratch& S, const string& key, int n, Rng& r) {
 		r.shuffle(bag);
 		const auto it = S.lastPick.find(key);
 		if (it != S.lastPick.end() && bag.back() == it->second) std::swap(bag.front(), bag.back());
+		// (voice) the lines that closed the last round open the next one last: a line comes back after
+		// about half the family at the least, not two entries later
+		const std::vector<int>& last = S.lastPicks[key];
+		for (int k : last) {
+			const auto at = std::find(bag.begin(), bag.end(), k);
+			if (at != bag.end()) { bag.erase(at); bag.insert(bag.begin(), k); }
+		}
 	}
-	int idx = bag.back();
-	bag.pop_back();
+	int idx = -1;
+	for (size_t k = bag.size(); k-- > 0 && idx < 0;) {
+		const int i = bag[k];
+		if (i >= 0 && i < n && !recentlyUsed(S, t.t[i])) idx = i;
+	}
+	if (idx < 0) {
+		// every line left in the bag was used lately: the family's least recently used line
+		int best = -1, bestUse = int(kRecentTemplates) + 1;
+		for (int i = 0; i < n; i++) {
+			const int u = lastUse(S, t.t[i]);
+			if (u < bestUse) { bestUse = u; best = i; }
+		}
+		idx = best >= 0 ? best : bag.back();
+	}
+	const auto at = std::find(bag.begin(), bag.end(), idx);
+	if (at != bag.end()) bag.erase(at);
 	if (idx < 0 || idx >= n) idx = 0;
 	S.lastPick[key] = idx;
+	std::vector<int>& last = S.lastPicks[key];
+	last.push_back(idx);
+	if (int(last.size()) > std::max(1, n / 2)) last.erase(last.begin());
 	return idx;
 }
 
@@ -331,10 +437,7 @@ void ctxCulture(Ctx& x, const World& w, int cid, const char* sfx = "") {
 		x.set("ge" + s, (c->godName.empty() ? string("the god, ") : c->godName + (article ? " " : ", ")) + c->epithet);
 	}
 	else x.set("ge" + s, g);
-	const bool she = godIsShe(w, cid);
-	x.set("she" + s, she ? "she" : "he");
-	x.set("her" + s, she ? "her" : "his");
-	x.set("herm" + s, she ? "her" : "him");
+	x.set("ep" + s, epithetOf(w, cid));                  // (voice {god_epithet}) the epithet alone
 }
 
 void ctxSettlement(Ctx& x, const World& w, int sid, const char* sfx = "") {
@@ -344,6 +447,14 @@ void ctxSettlement(Ctx& x, const World& w, int sid, const char* sfx = "") {
 	x.set("sn" + s, string("the ") + tierWord(st ? st->tier : 0));
 	x.set("st" + s, tierWord(st ? st->tier : 0));
 	x.set("t" + s, st ? terrainPhrase(w, st->cell) : string("in the wilds"));
+	x.set("ast" + s, withArticle(tierWord(st ? st->tier : 0)));
+	// (voice 4a "by the water") only where there is water: the coast or a river or lake within a hop
+	bool water = false;
+	if (st && w.valid(st->cell)) {
+		const size_t c = size_t(st->cell);
+		water = (c < w.coast.size() && w.coast[c] <= 1) || (c < w.fresh.size() && w.fresh[c] <= 1);
+	}
+	x.set("by" + s, water ? string("by the water") : (st ? terrainPhrase(w, st->cell) : string("in the wilds")));
 }
 
 // ====================================================================== writing entries
@@ -398,15 +509,44 @@ string renameRepeats(const string& t, const Ctx& x) {
 	return out;
 }
 
+// (voice) Time keys every entry may use: {yo} the year as an ordinal ("312th", "first"), and the
+// detachable openers {IN} "In the 312th year " / {IN,} "In the 312th year, ". The openers are empty
+// when one of the last two entries already opened with "In the", so the feed does not drum
+// (style guide 3); templates read as sentences either way.
+void ctxYear(Ctx& x, const World& w) {
+	const string yo = yearOrdinal(w.year);
+	x.set("yo", yo);
+	bool drum = false;
+	for (size_t i = w.chronicle.size(), k = 0; i-- > 0 && k < 2; k++)
+		if (startsWith(w.chronicle[i].text, "In the ")) drum = true;
+	x.set("IN", drum ? string() : "In the " + yo + " year ");
+	x.set("IN,", drum ? string() : "In the " + yo + " year, ");
+}
+
 // One entry from a template family (shuffle bag `key`), optionally followed by a suffix from a second
-// family (bag `sfxKey`). Every draw comes from the entry's own fork of w.rng.
+// family (bag `sfxKey`). (voice) With an `alt` family, the entry is taken from it instead with
+// probability altP (shared voice lines beside an event's own). Every draw comes from the entry's own
+// fork of w.rng.
 ChronicleEntry* writeComposed(World& w, const char* type, int weight, int cell, int culture, Tpl t, const string& key,
-	Tpl sfx, const string& sfxKey, const Ctx& x) {
+	Tpl sfx, const string& sfxKey, const Ctx& x0, Tpl alt = Tpl{ nullptr, 0 }, const string& altKey = string(), double altP = 0,
+	bool altSfx = false) {
 	if (!t.t || t.n <= 0) return nullptr;
 	ChronicleScratch& S = w.scratch<ChronicleScratch>();
 	Rng r = w.rng.fork("chron:" + std::to_string(w.nextId.entry));
-	string body = t.t[pickTemplate(S, key, t.n, r)];
-	if (sfx.t && sfx.n > 0) body += sfx.t[pickTemplate(S, sfxKey, sfx.n, r)];
+	Ctx x = x0;
+	ctxYear(x, w);
+	if (x0.get("noIN")) { x.set("IN", string()); x.set("IN,", string()); }   // (voice review 2) the caller knows the next entry opens with the year
+	if (alt.t && alt.n > 0 && altP > 0 && r.chance(altP)) {
+		// a shared family whose every line was used by one of the last entries gives way to the event's own
+		bool fresh = false;
+		for (int i = 0; i < alt.n; i++) if (!recentlyUsed(S, alt.t[i])) fresh = true;
+		if (fresh) { t = alt; if (!altSfx) sfx = Tpl{ nullptr, 0 }; }
+	}
+	const string& useKey = (t.t == alt.t && alt.t) ? altKey : key;
+	const int idx = pickTemplate(S, useKey, t, r);
+	string body = t.t[idx];
+	markUsed(S, t.t[idx]);
+	if (sfx.t && sfx.n > 0) body += sfx.t[pickTemplate(S, sfxKey, sfx, r)];
 	string raw;
 	expandInto(raw, body, x, r, 0);
 	const string text = tidy(renameRepeats(raw, x));
@@ -446,23 +586,64 @@ bool recentNotable(const World& w, string_view type, int culture, double gap, in
 	return false;
 }
 
+// (voice review 2) An entry of this type at this cell within the last `gap` years?
+bool toldAt(const World& w, string_view type, int cell, double gap) {
+	if (!w.valid(cell)) return false;
+	const double y = fin(w.year);
+	int scanned = 0;
+	for (size_t i = w.chronicle.size(); i-- > 0;) {
+		const ChronicleEntry& e = w.chronicle[i];
+		if (e.year < y - gap - 1e-9) break;
+		if (++scanned > 5000) return false;
+		if (e.cell == cell && e.type == type) return true;
+	}
+	return false;
+}
+
 // ====================================================================== templates
-// Keys: {s} settlement, {st} its size word, {t} terrain phrase at it ("on the plains"), {c} culture plural
-// ("the Umari"), {ca} adjective, {cn} name, {g} the culture's name for the god, {ge} god + epithet,
-// {she} / {her} / {herm} the god's pronouns in that culture, suffix 2 for a second settlement / culture,
-// {w} a place phrase, {W} the world, {n} a person, {x} a thing, {want} what a prayer asks for,
-// {old} / {e} epithets.
+// Keys: {s} settlement, {st} its size word, {ast} the same with its article ("a town"), {t} terrain
+// phrase at it ("on the plains"), {by} "by the water" where there is water (else {t}), {c} culture
+// plural ("the Umari"), {ca} adjective, {cn} name, {g} the culture's name for the god, {ge} god +
+// epithet ("Ashvel the Rain-Giver"), {ep} the epithet alone ("the Rain-Giver"), suffix 2 for a second
+// settlement / culture, {w} a place phrase, {W} the world, {n} a person, {x} a thing, {want} what a
+// prayer asks for, {old} / {e} epithets; every entry also has {yo} (the year as an ordinal) and the
+// detachable openers {IN} / {IN,} (see ctxYear).
+//
+// (voice) The approved voice (docs/content/chronicle-voice.md, sample entries 1-60 and their variants,
+// the two extras, the people:lost line and the six endings) is merged into these families; each voice
+// line carries a "// vN" note with its number in that file. Its placeholders map to these keys:
+//   {year_ord} {yo} (and the {IN} openers)   {culture_plural} {c}      {culture_adj} {ca}
+//   {other_plural} {c2}                      {parent_plural} {c2}      {victor_plural} / {loser_plural} {c} / {c2} or {c2} / {c}
+//   {god_name} {g}                           {god_epithet} {ep}        {new_epithet} / {old_epithet} {e} / {old}
+//   {settlement} {s}                         {origin} {s2}             {other_settlement} {s2}
+//   {tier} / {prev_tier} {ast} / {apt}       {building} {bna}          {wonder} {x}
+//   {age} {age}                              {prophet} {n}             {prayer_kind} {want}
+//   {war_years} {wy}                         {planet} {W}
+// Voice lines are never shown with an empty placeholder: a line whose data may be missing sits in a
+// family that is only used when the data exists (an origin, a war enemy, the razing army, ...).
+// The voice's own rules applied to the older lines: no pronouns for the god (style rule 10), no
+// opener "In the beginning" twice in a row at genesis.
 
 // --- genesis
 const char* const kGenWater[] = {
 	"The fire went out of {W}, and its skin hardened into black stone. [The god waited.|The god looked upon it and was not yet content.]",
 	"{W} cooled. Where there had been a sea of fire there was now only stone, [dry and smoking|cracked and silent], and the god turned to the sky.",
-	"[In the beginning|Before the counting of years] {W} burned. Then it cooled, and the god began [the long work|the patient work] of making it a home.",
+	"Before the counting of years {W} burned. Then it cooled, and the god began [the long work|the patient work] of making it a home.",
 };
 const char* const kGenLife[] = {
 	"The deep places of {W} were filled with water, and the god turned to the bare land.",
 	"There were seas on {W} now, [grey and restless|wide and cold], and the god bent over the shore to plant the first green.",
 	"Water lay upon {W}, and the god said that it was enough, [and it was|and it was nearly].",
+};
+// (voice) once-a-world moments: the voice's own line is told about two times in three
+const char* const kGenPeopleVoice[] = {
+	"Then green came out of the wet places of {W}, slowly at first, as if it were not sure it was allowed.",   // v3
+};
+const char* const kCometFirstVoice[] = {
+	"In the beginning {W} was fire and then stone, and the god called ice down out of the dark. Where it fell, the hollows filled, and that was the first sea.",   // v2
+};
+const char* const kAwakeningVoice[] = {
+	"In the first year, before there was counting, {ep} touched the ground at {s}, and {c} woke. They looked up at the sky and did not yet know whom to thank, so they thanked everything.",   // v1
 };
 const char* const kGenPeople[] = {
 	"Green covered the lands of {W}, and beasts walked in it, but no one yet knew their names.",
@@ -487,10 +668,11 @@ const char* const kCometMore[] = {
 
 // --- the god's acts
 const char* const kMeteor[] = {
+	"{IN}a star came down among {c}, and the sky was dark with dust until the harvest after next. They gave {g} a new name that year, and it was not a kind one.",   // v46
 	"A star fell {w}, and the ground [rang like a bell|split open|became a bowl of fire].",
 	"Fire came down out of a clear sky {w}. [{c} saw it from {s} and fell on their faces.|It was seen as far as {s}.]",
 	"{g} threw down a burning stone {w}, and {c} [did not sleep for many nights|counted the dead and feared the sky].",
-	"[In that year |]the sky opened {w} and spat out a mountain of fire. {c} said it was the anger of {g}.",
+	"The sky opened {w} and spat out a mountain of fire. {c} said it was the anger of {g}.",
 	"A light like a second sun crossed the sky and fell {w}. [After it came thunder, and after the thunder, silence.|The ground shook under every house in {s}.]",
 };
 const char* const kMeteorSea[] = {
@@ -504,12 +686,20 @@ const char* const kMeteorFar[] = {
 	"Far away, {w}, the sky fell. The dust of it reddened the sunsets for many years.",
 };
 const char* const kLightningGod[] = {
-	"{g} struck the ground {w} with lightning[, and the people of {s} hid their faces|; {c} counted it a warning].",
+	"{ep} threw fire from a clear sky at {s}. No one knew why. {c} made more offerings, to be safe.",   // v45
+	"{g} struck the ground {wd} with lightning[, and the people of {s} hid their faces|; {c} counted it a warning].",   // (voice review 2) {wd}: never "struck the ground upon Nish"
 	"Lightning fell {w} out of a clear sky. {c} said {g} was [angry|watching|not pleased].",
 	"A spear of light came down {w}, and the {ca} elders argued for a long time about what it meant.",
 	"There was no cloud in the sky, and still the lightning fell {w}. [{c} knew whose hand had thrown it.|In {s} they spoke of it in whispers.]",
-	"{g} threw fire from heaven {w}, [and the people of {s} brought offerings to the shrine that night|and {c} asked one another what they had done wrong].",
-	"A bolt of white fire struck {w} at noon. {c} said it was {g} clearing {her} throat.",
+	"A bolt of white fire struck {wd} at noon. {c} said it was {g} clearing the throat of heaven.",
+	// (voice review) the cruel god throws a great deal of lightning: three more in the same voice
+	"{g} spoke in fire over {s}. No one understood the word, but everyone heard it.",
+	"Lightning came down at {s} on a windless day. The {ca} priests said it was a warning; the farmers said it was a waste of a good tree.",
+	"Out of a blue sky a white spear fell {w}[, and split the old well-stone|, and the cattle would not graze there after]. {c} said nothing, and brought more bread to the shrine.",
+	// (voice review 2) a cruel god's book is a sixth lightning: three more, so no sentence comes back thirty times
+	"Fire came down from a clear sky {w}[, and the {ca} priests put ashes on their heads|, and no one in {s} slept that night].",
+	"The god's fire fell {w}. In {s} the mothers kept the children indoors, and the dogs hid under the beds.",
+	"The sky struck {s} without a cloud in it, and the old people said the god had a long memory.",
 };
 const char* const kLightningNat[] = {
 	"Lightning struck {w} in a summer storm.",
@@ -521,14 +711,14 @@ const char* const kLightningNat[] = {
 	"The sky over {s} cracked open with fire, [and the rain that followed was warm|and the old oak {wd} burned like a torch].",
 };
 const char* const kWave[] = {
+	"The sea drew back from the shore at {s}, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.",   // v56
 	"A wall of water came out of the sea upon {s}.",
 	"The sea rose up and walked inland at {s}, [taking boats and houses and cattle|and did not ask leave].",
 	"A great wave broke {w}, and the people of {s} [ran for the hills|counted their dead].",
-	"The sea went out from the shore of {s}, very far, and then it came back all at once.",
 	"A grey wave as tall as a temple broke over the fields of {s}, and salt lay on them for years.",
 };
 const char* const kVolcanoGod[] = {
-	"{g} split the earth {w}, and a mountain of fire rose out of it.",
+	"{ep} split the earth near {s}, and a mountain was born in one summer, roaring like a calf. Its smoke stood over the land for twelve years.",   // v47
 	"At the word of {g}, the ground {w} [opened|tore] and bled fire. {c} watched from {s} and were afraid.",
 	"The god built a mountain of fire {w}. [Ash fell on {s} like grey snow.|Its glow lit the nights of {s}.]",
 };
@@ -547,11 +737,11 @@ const char* const kVolcanoEnd[] = {
 	"The mountain {w} stopped smoking, [and {c} gave thanks|though no one trusted it].",
 };
 const char* const kQuakeGod[] = {
+	"The earth shrugged under {s}. Pots fell, then roofs, then the walls. {c} asked what they had done. No answer came, which was itself an answer.",   // v48
 	"{g} shook the earth {w}, and the houses of {s} fell down.",
-	"The ground {w} heaved like the sea. {c} said {g} had stamped {her} foot.",
+	"The ground {w} heaved like the sea. {c} said {g} had stamped upon the earth.",
 	"At the touch of the god the hills {wd} [cracked|shuddered], and {s} [was shaken to its roots|lost many houses].",
 	"{g} struck the earth {w}, and the land rang like a drum. [In {s} the roofs came down.|{c} fell on their faces.]",
-	"The earth opened its mouth {w}, and {c} knew that {g} was angry with them.",
 };
 const char* const kQuakeNat[] = {
 	"The earth shook {w}.",
@@ -570,8 +760,30 @@ const char* const kFire[] = {
 	"Fire walked through {x} {wd}, [and the beasts ran before it|and left only ash behind it|and {c} prayed for rain].",
 	"The old people of {s} said the fire {w} had been started by [a careless shepherd|the god|a falling star], [and argued about it all winter|and kept their buckets full].",
 };
+// (voice review 2) a fire the chronicle has just seen lightning start nearby: no line names a cause again
+// ("lightning set the grass alight" and then "the old people said a falling star had started it")
+const char* const kFireLit[] = {
+	"Fire ran through {x} {wd}.",
+	"The country {w} burned [for many days|until the rain came], and the smoke hung over {s}.",
+	"A wildfire came close to {s}, [and the people beat it back with green branches|and turned only when the wind did|and the children watched it from the roofs].",
+	"{x} {wd} burned, and [{c} watched the glow at night|the herds fled toward {s}|the sky over {s} was brown for days].",
+	"[That summer|In a dry season|In the month of dust] a fire ate {x} {wd}.",
+	"A red night: {x} {wd} burned, and ash fell on {s}.",
+	"Fire walked through {x} {wd}, [and the beasts ran before it|and left only ash behind it|and {c} prayed for rain].",
+};
+// a fire in woods or forest: the voice's line joins the family
+const char* const kFireForest[] = {
+	"Lightning found {x} {wd}, and the forest burned for a season. In the spring, from the ash, it began again.",   // v55
+	"Fire ran through {x} {wd}.",
+	"A wildfire came close to {s}, [and the people beat it back with green branches|and turned only when the wind did|and the children watched it from the roofs].",
+	"{x} {wd} burned, and [{c} watched the glow at night|the herds fled toward {s}|the sky over {s} was brown for days].",
+	"[That summer|In a dry season|In the month of dust] a fire ate {x} {wd}.",
+	"A red night: {x} {wd} burned, and ash fell on {s}.",
+	"Fire walked through {x} {wd}, [and the beasts ran before it|and left only ash behind it|and {c} prayed for rain].",
+	"The old people of {s} said the fire {w} had been started by [a careless shepherd|the god|a falling star], [and argued about it all winter|and kept their buckets full].",
+};
 const char* const kStorm[] = {
-	"A great storm came in from the sea upon {s}.",
+	"A great storm walked in from the sea and stood over {s} for three days, and the roofs learned to fly.",   // v53
 	"Wind and rain beat upon {s} [for three days|for a week], [and the roofs flew|and the rivers rose|and the boats were thrown up on the fields].",
 	"A storm such as the old people had never seen passed over {s}.",
 	"The sea sent a howling wind against {s}, [and it took the thatch from every roof|and the fishermen did not go out for a month].",
@@ -580,8 +792,8 @@ const char* const kStorm[] = {
 	"A storm walked inland over the country of {s}, [and {c} counted their dead and their cattle|and left the fields flattened behind it].",
 };
 const char* const kDroughtStart[] = {
+	"No rain fell on the lands of {s}. The river showed its stones, and the people counted them.",   // v54
 	"The rains failed around {s}.",
-	"No rain fell on the fields of {s} [that year|for a long time], and the wells [grew bitter|ran dry].",
 	"There was drought in the country of {s}, and {c} looked at the sky every morning.",
 	"The river by {s} shrank to a string of muddy pools, [and the frogs were the first to leave|and the cattle stood in it and lowed].",
 	"A hard sun stood over {s} [all that summer|year after year], and the barley died standing.",
@@ -597,6 +809,7 @@ const char* const kDroughtEnd[] = {
 	"Green came back to the fields of {s}, and the wells were sweet again.",
 };
 const char* const kRainThirst[] = {
+	"{ep} drew a hand across the sky above {s}, and the dry fields drank.",   // v42
 	"{g} sent rain on the thirsty fields of {s}.",
 	"Rain fell on {s} out of a clear sky, and {c} danced in it.",
 	"The dry country about {s} drank rain [sent by {g}|that came from nowhere], and turned green again.",
@@ -612,22 +825,32 @@ const char* const kRainSoft[] = {
 	"The god let rain fall on {s}, though it had not been asked for. [The farmers said it was too much.|The children made mud houses.]",
 	"Mist and rain came to {s}, and the hills around it [turned a deeper green|ran with little streams].",
 };
+// (voice review 2) the same where the town has prayed lately: the rain was asked for
+const char* const kRainSoftAsked[] = {
+	"Soft rain fell over {s}.",
+	"[It rained on {s}, gently and for a long time|A long gentle rain came to {s}], and {c} [said it was a blessing|did not complain].",
+	"Rain came to {s}. [The old people said it smelled of the god.|The fields were glad of it.]",
+	"A warm rain fell on {s} [all through the night|for three days], and the roofs leaked, and nobody minded.",
+	"Mist and rain came to {s}, and the hills around it [turned a deeper green|ran with little streams].",
+};
 const char* const kBloom[] = {
+	"Where {ep} passed near {s}, the land went green out of season, and the old women said the trees had heard a rumour.",   // v43
 	"The fields about {s} grew green [overnight|as if in a dream].",
 	"{g} breathed on the land around {s}, and it flowered.",
 	"Around {s} the [grass grew to a man's waist|trees bent with fruit], and {c} said {g} had walked there.",
 	"The land of {s} [bloomed|blossomed] out of season, and the beekeepers grew rich.",
-	"Where the god passed near {s}, [seeds woke in the dry ground|flowers opened in the snow|the orchards fruited twice].",
+	"Near {s}, at the touch of the god, [seeds woke in the dry ground|flowers opened in the snow|the orchards fruited twice].",
 	"The herds about {s} grew fat on grass that had not been there the week before.",
 };
 const char* const kHeal[] = {
-	"{g} laid a hand on {s}, and the sick rose from their beds.",
+	"{ep} laid a hand on {s}, and the sick rose from their beds, puzzled, and asked what there was to eat.",   // v50
 	"The fever left {s} in a single night. {c} said {g} had walked through the streets.",
 	"In {s} the sick were healed, [all at once|between one breath and the next], and the healers lost their trade for a while.",
 	"A cool wind passed through {s}, and in every house the fevered slept and woke well.",
 	"{s} was healed by {g}. [Its people carved a hand on the temple wall.|For a generation no one there feared the sickness.]",
 };
 const char* const kInspire[] = {
+	"At {s} the craftsmen woke with ideas they could not explain, and claimed them as their own.",   // v51
 	"The craftsmen of {s} dreamed the same dream, and woke knowing new things.",
 	"A fire of thought was lit in {s}[, and {c} built things no one had built before|; the scribes could hardly keep up].",
 	"{g} whispered to the wise of {s}, and they [argued about it for years|wrote it all down].",
@@ -639,12 +862,20 @@ const char* const kOmenPeace[] = {
 	"[A white light|A great calm] lay over {s} for a day, and {c} [could not remember why they had been angry|sent envoys instead of armies].",
 	"{g} spoke peace over {s}, and for once {c} listened.",
 };
+// the omen seen by a people at war: {c2} is the enemy they were fighting
+const char* const kOmenPeaceWar[] = {
+	"A sign appeared over the armies of {c} and {c2}, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.",   // v52
+	"An omen of peace was seen over {s}, and {c} and {c2} laid down their spears.",
+	"[A white light|A great calm] lay between the armies of {c} and {c2} for a day, and both sent envoys instead of soldiers.",
+};
 const char* const kShapeHarm[] = {
+	"{ep} took hold of the land near {s} and moved it, the way a sleeper moves a blanket. The farmers measured their fields again and did not like the answer.",   // v44
 	"The ground heaved under {s} at the touch of the god.",
 	"{g} reshaped the land under {s} while its people slept, and they woke to find their fields [tilted|broken].",
 	"The earth moved under {s} like dough under a baker's hand. {c} did not find it amusing.",
 };
 const char* const kRaise[] = {
+	"{ep} took hold of the land near {s} and moved it, the way a sleeper moves a blanket. The farmers measured their fields again and did not like the answer.",   // v44
 	"Hills rose near {s} where there had been none.",
 	"The land near {s} lifted itself up, [and the shepherds had new pastures|and the old maps were wrong].",
 	"{g} raised the ground {w}, and {c} [climbed it to see what the god had made|built a cairn on top].",
@@ -655,6 +886,7 @@ const char* const kLower[] = {
 	"{g} pressed the land {w} down, and {c} watched new water spread where fields had been.",
 };
 const char* const kPlagueSent[] = {
+	"{ep} breathed on {s}, and the breath was sick. The priests said it was a punishment. They were not sure for what, so they punished everything.",   // v49
 	"{c} said the sickness in {s} was sent by {g}, and they were afraid.",
 	"In {s} they whispered that the fever was the god's own breath. [Few went to the temples that year.|Many went to the temples that year.]",
 	"The priests of {s} said {g} had sent the sickness for their sins, though no one could agree which sins.",
@@ -671,22 +903,31 @@ const char* const kAwakeningAgain[] = {
 	"{g} called a new people out of the earth {t}. They were {c}, and their first camp was {s}.",
 	"At {s}, {t}, {c} woke and looked about them, [and found the world already old|and saw the ruins of others].",
 };
+// settlers whose home town is known ({s2}: the settlement the settler band set out from)
 const char* const kFounded[] = {
+	"{IN,}a band went out from {s2} with seed corn and quarrels enough for a new town, and founded {s} {by}.",   // v4a
+	"Some of the people of {s2} grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built {s}.",   // v4b
+	"{s} was founded in the {yo} year. Its founders swore it would one day be greater than {s2}. The chronicle notes that all founders swear this.",   // v4c
 	"Settlers of {c} went out from {s2} and made a new home at {s}.",
-	"[In that year |]a band from {s2} crossed the country and founded {s} {t}.",
+	"A band from {s2} crossed the country and founded {s} {t}.",
 	"Families of {c} who left {s2} built their first fires at {s}, [and called it good|and were not sorry].",
 	"{s} was founded {t} by {c}, who had grown too many for {s2}.",
 	"[It is written that |]{s} began as a ring of tents {t}, raised by wanderers from {s2}.",
 	"Wanderers from {s2} came to {s} [and stayed|and did not go back].",
-	"The young people of {s2} grew tired of their fathers' fields and went out to found {s} {t}.",
 	"A new village of {c}, {s}, was raised {t}, [a few days' walk from {s2}|where the hunters of {s2} had always camped].",
 };
 const char* const kFoundedLone[] = {
 	"{c} founded {s} {t}.",
-	"[In that year |]a new camp of {c} was raised at {s}, {t}.",
+	"{IN}a new camp of {c} was raised at {s}, {t}.",
 	"Wanderers of {c} settled at {s}, {t}.",
 	"Far from their kin, a band of {c} made a home at {s}, {t}.",
 	"{s} was founded {t} by {c}, [who had walked a long way to find it|though no one remembered why there].",
+};
+// (voice 5a-c) growth in any size: drawn instead of the size's own lines about one time in three
+const char* const kTierVoice[] = {
+	"{IN}{s} could no longer call itself {apt}. It was {ast} now, and its people began to walk a little differently.",   // v5a
+	"The houses of {s} reached the old boundary stones and did not stop. From this year {c} call it {ast}.",   // v5b
+	"So many children were born in {s} that the elders gave up learning their names. Thus it became {ast}.",   // v5c
 };
 const char* const kTierVillage[] = {
 	"{s} grew from a camp into a village.",
@@ -723,18 +964,26 @@ const char* const kTierMetro[] = {
 	"{s} became a great city such as the world had not seen, [numberless as ants|lit all night|and the sky over it never grew dark].",
 	"{s} swallowed the villages around it and became a great city of {c}.",
 	"So many people lived in {s} that no one could count them, [though the scribes tried|and so they stopped trying].",
-	"{s} grew into a city of towers, [its lights seen from the next valley|and its noise heard by the god, the priests said].",
+	"{s} grew into a city of towers, [its lights seen from the next valley|so loud that the priests said the god could hear it].",
 	"{s} became a great city, a sea of roofs from one horizon to the other.",
 	"The lamps of {s} drowned out the stars: it had become a great city of {c}.",
 };
 const char* const kTierDown[] = {
-	"{s} dwindled to a {st}.",
-	"Many left {s}, and it was a {st} again.",
-	"{s} grew small and was only a {st}, [and the old people remembered better days|and grass grew in its empty streets].",
-	"Half the houses of {s} stood empty, and it was no more than a {st}.",
-	"{s} shrank to a {st}. [Its young had gone to other places.|Its walls were too big for it now.]",
+	"{s} dwindled to {ast}. Its streets were too wide for the people left in them, and grass came up between the stones.",   // v6
+	"Many left {s}, and it was {ast} again.",
+	"{s} grew small and was only {ast}, [and the old people remembered better days|and the young went away].",
+	"Half the houses of {s} stood empty, and it was no more than {ast}.",
+	"{s} shrank to {ast}. [Its young had gone to other places.|Its walls were too big for it now.]",
+};
+// (voice 7a-c) any ordinary building ({bna}: "a granary", "an academy"): drawn instead of the
+// building's own lines about one time in three
+const char* const kBuildVoice[] = {
+	"{IN}{c} raised {bna} at {s}, and were proud of it for one generation, which is the usual length of pride.",   // v7a
+	"At {s} they built {bna}. It took longer than promised and cost more than was said, as is the way of all building.",   // v7b
+	"{bna} now stands at {s}, where before there was only mud and opinion.",   // v7c
 };
 const char* const kBShrine[] = {
+	"At {s} they set stones in a ring and laid the first fruits on them for {g}. It was a small shrine. {ep} did not complain.",   // v8
 	"The people of {s} raised a shrine to {g}.",
 	"At {s} a shrine of [stones|wood|bones and flowers] was made for {g}.",
 	"{c} set up a shrine at {s}, and left [bread|flowers|small carved birds] there for the god.",
@@ -743,10 +992,18 @@ const char* const kBShrine[] = {
 	"The elders of {s} chose a holy place, and a shrine to {g} was raised there.",
 };
 const char* const kBShrineFirst[] = {
+	"At {s} they set stones in a ring and laid the first fruits on them for {g}. It was a small shrine. {ep} did not complain.",   // v8
 	"At {s}, {c} raised their first shrine to {g}, [a ring of stones|a heap of white stones] where they could speak to the sky.",
 	"{c} made their first shrine at {s}, and gave the god who had woken them a name: {g}.",
 };
+// (voice review 2) a daughter people: the god woke their fathers, and they kept or changed the name ({gk})
+const char* const kBShrineFirstDaughter[] = {
+	"At {s} they set stones in a ring and laid the first fruits on them for {g}. It was a small shrine. {ep} did not complain.",   // v8
+	"At {s}, {c} raised their first shrine to {g}, [a ring of stones|a heap of white stones] where they could speak to the sky.",
+	"{c} made their first shrine at {s}, {gk}",
+};
 const char* const kBTemple[] = {
+	"{c} of {s} built a temple to {g} so tall that the priests must rest twice on the stair, and they said that this was the point.",   // v9
 	"A temple to {g} was built in {s}.",
 	"The priests of {s} built a house for the god [of cut stone|with a golden roof|with a hundred steps].",
 	"{s} raised a temple to {g}, [and the priests grew fat|and its bells could be heard in the fields].",
@@ -761,6 +1018,7 @@ const char* const kBGranary[] = {
 	"The headmen of {s} ordered a tithe of every harvest kept in a great barn, against the bad years.",
 };
 const char* const kBWalls[] = {
+	"{s} built walls. No one said against whom. Everyone knew.",   // v10
 	"{s} raised walls [of stone|of earth and timber], for there was war.",
 	"Walls rose around {s}, and the {ca} watchmen stood upon them at night.",
 	"The people of {s} built a wall and a gate, [and slept behind them|and shut it every night at dusk].",
@@ -804,6 +1062,7 @@ const char* const kBPlant[] = {
 	"At {s} the hidden fire was put to work, and the lamps of a whole country were lit from it.",
 };
 const char* const kBLaunch[] = {
+	"Outside {s}, on flat ground swept clean, the {ca} builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.",   // v11
 	"At {s}, {c} built a tower to throw ships at the stars.",
 	"A launch field was cleared at {s}, and {c} began to speak of leaving.",
 	"{c} built a great tower of fire at {s}. Its makers looked up at night, [and the god could not tell whether they were longing or afraid|and dreamed of other skies].",
@@ -815,10 +1074,12 @@ const char* const kBuildingNoun[Building::COUNT][2] = {
 	{ "power plant", "a power plant" }, { "launch tower", "a launch tower" }, { "wonder", "a wonder" },
 };
 const char* const kFamine[] = {
+	"{IN}the granaries of {s} rang hollow when struck. The people ate the seed corn, and then the stories of better years.",   // v12a
+	"Hunger came to {s} and sat down at every table. Many were carried out to the fields that could no longer feed them.",   // v12b
+	"There was famine in {s}. The people looked up and asked {ep} for rain, and counted the days, and the days were long.",   // v12c
 	"Famine came to {s}.",
 	"The harvest failed at {s}[, and the people ate their seed corn|; the children grew thin].",
 	"At {s} there was hunger, three years running.",
-	"The granaries of {s} stood empty, and its people [went begging to their neighbours|boiled the bark of trees].",
 	"There were too many mouths in {s} and too little bread, [and the old went hungry so the young could eat|and the weak did not see the spring].",
 	"[That winter|In those lean years] {s} ate its oxen, and then its dogs.",
 	"Hunger walked the streets of {s}, [and {c} sold their tools for grain|and the fields were not enough for all of them].",
@@ -830,9 +1091,13 @@ const char* const kFamineDust[] = {
 	"The sky stayed grey over {W} for years. The harvest failed at {s}, and not only there.",
 	"In the dark years the barley would not ripen, and hunger came to {s} and to many towns of {c}.",
 	"The sun was a pale coin behind the dust, and the granaries of {s} stood empty. {c} remembered those years as the hungry ones.",
+	// (voice review) the dark years come to many peoples at once: more ways to tell them
+	"At {s} the summer was only a rumour that year. The barley stood green in the cold until it rotted, and {c} went hungry.",
+	"The dust of the sky fell on the fields of {s} like a second winter, and there was nothing to harvest but straw.",
+	"In {s} they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.",
 };
 const char* const kPlague[] = {
-	"A sickness came to {s}.",
+	"A sickness came to {s} by the river road. It went from house to house like a guest no one had invited and no one could turn away.",   // v13
 	"Fever spread through {s}, [and the priests could do nothing|and many were buried].",
 	"In {s} the people sickened, and the roads to it were empty.",
 	"A coughing sickness came to {s} [with the traders|in the spring], and [lingered|did not leave].",
@@ -840,21 +1105,28 @@ const char* const kPlague[] = {
 	"In {s} they painted marks on the doors of the sick, [and there were many marks|and the marks spread from street to street].",
 	"A grey sickness settled on {s}. [The healers burned herbs day and night.|{c} said it came from the marshes.]",
 };
+// (voice 14) the end of a plague whose coming was written down
+const char* const kPlagueEnd[] = {
+	"The plague left {s} as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.",   // v14
+	"The sickness went out of {s} at last, and the bells rang for the living as well as the dead.",
+	"In {s} the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.",
+};
 
 // destroyed, by cause
 const char* const kDDrowned[] = {
+	"The sea rose at {s} by a hand's width a year, and then by another. In the {yo} year the last of its people rowed away, and the fish moved into the houses.",   // v15
 	"{s} was swallowed by the sea.",
 	"The waters rose over {s}, and its people fled to higher ground.",
 	"Where {s} stood, fish now swim.",
 	"{s} drowned, [and its bells could be heard under the waves, the sailors said|and the sea kept it].",
-	"The sea came up the streets of {s} a little more each year, until the last family rowed away.",
 };
 const char* const kDMeteor[] = {
+	"Fire fell on {s}. Where it stood there is now a round hollow, and {c} do not go near it, and they do not say its name.",   // v16
 	"{s} was struck from the sky and was no more.",
 	"A falling star made {s} into a pit of glass.",
-	"Fire from heaven fell on {s}, and when the smoke lifted there was nothing left to name.",
 };
 const char* const kDLava[] = {
+	"The mountain opened above {s} and its stone ran like honey, though not like honey. The {st} is beneath it. The new ground is very fertile, the chronicle observes, as though that were a comfort.",   // v17
 	"Rivers of fire ran through {s} and buried it.",
 	"{s} was lost beneath the lava, [all but its name|and the black stone kept its shape].",
 	"The fire-mountain came down upon {s} and ate it.",
@@ -866,6 +1138,13 @@ const char* const kDWar[] = {
 	"{s} fell in the war and was razed, [and salt sown in its fields|and the crows grew fat].",
 	"The war came to {s} and did not leave anything standing.",
 	"{s} was put to the torch, and its people were carried off or killed.",
+};
+// razed by an army whose people is known ({c2}: the attackers of the battle that took it)
+const char* const kDWarBy[] = {
+	"{s} was taken by {c2} and burned, and its name was struck from the lists of {c}. The crows kept no lists.",   // v18
+	"The army of {c2} came to {s} and left only smoke.",
+	"{s} fell to {c2} and was razed, [and salt sown in its fields|and the crows grew fat].",
+	"{c2} put {s} to the torch, and its people were carried off or killed.",
 };
 const char* const kDFamine[] = {
 	"{s} starved, and those who lived left it empty.",
@@ -883,19 +1162,32 @@ const char* const kDQuake[] = {
 	"The earth opened under {s}.",
 	"{s} was shaken to rubble, [and the survivors would not rebuild it|and its ruins were left as a warning].",
 };
+// a quake on the coast: the sea follows the shaking
+const char* const kDQuakeCoast[] = {
+	"The ground shook at {s} and the walls lay down. What the shaking spared, the sea came in to take.",   // v19
+	"The earth opened under {s}.",
+	"{s} was shaken to rubble, [and the survivors would not rebuild it|and its ruins were left as a warning].",
+};
 const char* const kDNuke[] = {
 	"{s} vanished in a light brighter than the sun.",
 	"A second sun rose over {s}, and then there was no {s}.",
 	"{s} was burned away in a single breath, [and the shadows of its people stayed on the stones|and the sky rained ash for a year].",
 };
+// the strike itself was just told: only what was left
+const char* const kDNukeAfter[] = {
+	"When the light faded, {s} was gone.",
+	"Nothing of {s} was left standing but shadows on the stones.",
+	"{s} did not rise again from it. The ash fell for a year.",
+};
 const char* const kDAbandoned[] = {
+	"No one destroyed {s}. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.",   // v20
 	"{s} was abandoned.",
 	"The last families left {s}, and grass grew in its streets.",
 	"{c} gave up {s}, [and the wind had it|and the foxes moved in].",
-	"One by one the hearths of {s} went cold, until none were left.",
 	"{s} was left empty. [No one could say exactly when.|Its people had gone to the bigger towns.]",
 };
 const char* const kDWave[] = {
+	"The ground shook at {s} and the walls lay down. What the shaking spared, the sea came in to take.",   // v19
 	"A great wave carried {s} out to sea.",
 	"The sea stood up and fell on {s}, and when it drew back, {s} was gone.",
 };
@@ -904,26 +1196,30 @@ const char* const kDLightning[] = {
 	"{s} burned after a thunderstorm, [roof by roof|in a single night].",
 };
 const char* const kCapturedWar[] = {
+	"{IN}{s} opened its gates to {c2}, having run out of other ideas. It is theirs now, and pays its taxes in their coin.",   // v21
 	"{c2} took {s} from {c}.",
 	"{s} fell to {c2}[, and its people learned new songs|, and its {ca} lords were driven out].",
 	"The banners of {c2} were raised over {s}.",
-	"After a hard siege {s} opened its gates to {c2}.",
-	"{s} was lost by {c} and won by {c2}, [and its temple was given a new god's name|and its market changed hands with it].",
+	"{s} was lost by {c} and won by {c2}, [{tg}|and its market changed hands with it].",   // {tg}: a new god's name for its temple only when the winners call the god otherwise
 	"{c2} marched into {s}, [and the {ca} families who could fled to their kin|and the town paid tribute from that day].",
 };
 const char* const kCapturedSchism[] = {
 	"{s} turned from {c} and joined {c2}.",
 	"The people of {s} no longer called themselves {cn}; they were {c2} now.",
 };
+// a besieged settlement held: {c} the attackers, {c2} the defenders (who won)
 const char* const kBattleLost[] = {
+	"Before {s}, {c} met {c2}. By evening the field belonged to {c2}, and to the birds.",   // v28a
+	"At {s} {c2} won the day. {c} tell it differently, in their own chronicle, which no one has asked to read.",   // v28b
+	"The host of {c} came against {s} and broke on its walls like a wave on rock, and went home fewer.",   // v28c
 	"{c} came against {s} and were thrown back.",
 	"Before {s}, the army of {c} was broken.",
 	"{c2} held {s} against {c}, [and the field was red|and sang about it for a hundred years].",
 	"An army of {c} besieged {s} and went home with nothing [but its wounded|but stories].",
-	"The walls of {s} held, and {c} left their dead before them.",
 	"{c} attacked {s} [at dawn|in the rain|on a holy day] and were beaten [by its farmers|by its old men and boys|in the river mud].",
 };
 const char* const kPrayer[] = {
+	"The people of {s} climbed to the shrine and prayed to {g} for {want}. They prayed loudly, in case {ep} was far away.",   // v39
 	"The people of {s} prayed for {want}.",
 	"In {s} they burned [incense|fat|sweet grass] and asked {g} for {want}.",
 	"The priests of {s} went up to the high places and cried out for {want}.",
@@ -932,14 +1228,16 @@ const char* const kPrayer[] = {
 	"In {s} a [white goat|lamb|jar of honey] was given to {g}, with a prayer for {want}.",
 	"{c} of {s} wrote their prayer for {want} on [clay|bark] and buried it at the shrine.",
 };
+// {py}: how long they prayed, in words ("fifteen years")
 const char* const kPrayerLost[] = {
+	"For {py} {s} prayed for {want}, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.",   // v41
 	"The people of {s} stopped praying for {want}; {g} had not answered them.",
 	"In {s} they said the god was deaf, and [stopped asking|let the shrine fall into ruin].",
-	"For many years {s} prayed for {want}, and no answer came. [The priests had no explanation.|The young stopped going to the shrine.]",
 	"{s} gave up asking {g} for {want}. [Its people grew bitter.|They learned to manage without.]",
-	"The prayers of {s} went up for fifteen years and nothing came down. [{c} began to wonder whether anyone was listening.|The shrine there was left without flowers.]",
+	"The prayers of {s} went up for {py} and nothing came down. [{c} began to wonder whether anyone was listening.|The shrine there was left without flowers.]",
 };
 const char* const kAnsRain[] = {
+	"{s} prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.",   // v40
 	"The people of {s} prayed for rain, and {g} sent it.",
 	"{s} had prayed for rain, and the rain came in the night, [and the priests were proven right|and no one slept for joy].",
 	"{g} heard the dry fields of {s}, and opened the sky.",
@@ -951,6 +1249,7 @@ const char* const kAnsRain[] = {
 	"In {s} they had prayed for rain until their voices broke. Then the sky darkened, and it came.",
 };
 const char* const kAnsHeal[] = {
+	"{s} prayed for healing, and it was given. The priests were as surprised as anyone, but hid it well.",   // v40
 	"{g} heard the sick of {s}, and the fever broke.",
 	"The people of {s} prayed to be healed, and they were, [and the temple was full for a year|and they did not forget it].",
 	"In {s} the sick had prayed, and one morning they woke well.",
@@ -959,6 +1258,7 @@ const char* const kAnsHeal[] = {
 	"The sick of {s} were carried to the shrine, and {g} [walked out of it with them|sent them home on their own feet].",
 };
 const char* const kAnsPeace[] = {
+	"{s} prayed for peace, and it was given. The priests were as surprised as anyone, but hid it well.",   // v40
 	"{c} prayed for peace, and {g} gave it.",
 	"The prayers of {s} for peace were answered, [and the soldiers came home|and the war ended as if a door had closed].",
 	"{s} had prayed for an end to the war, and the god heard. The spears were hung on the walls again.",
@@ -966,6 +1266,7 @@ const char* const kAnsPeace[] = {
 	"{c} had asked {g} to end the war, and the god put a weariness on both armies until they went home.",
 };
 const char* const kAnsBloom[] = {
+	"{s} prayed for green fields, and they were given. The priests were as surprised as anyone, but hid it well.",   // v40
 	"{g} answered {s}, and the burnt fields grew green.",
 	"The people of {s} had prayed over their blackened fields, and now the fields were green, [and they wept|and they sang].",
 	"Where the ground about {s} had been ash, flowers came up in a single week, as the people had prayed.",
@@ -973,20 +1274,33 @@ const char* const kAnsBloom[] = {
 	"Over the black fields of {s} the god breathed, as its people had begged, and the ash turned to grass.",
 };
 const char* const kCultureDistance[] = {
+	"From {c2} came {c}, as a branch comes from a tree: the same wood, pointing elsewhere.",   // v23
 	"Far from their old capital, the people about {s} began to call themselves {c}[, and spoke a tongue {c2} could barely follow|, and paid no more taxes to {c2}].",
 	"In the lands about {s} a new people arose, {c}, [children of {c2}|descended from {c2}] but no longer their subjects.",
 	"The {ca2} settlers about {s} had been apart too long. They took a new name, {cn}, and went their own way.",
 };
 const char* const kCultureSchism[] = {
+	"The people of the far valleys about {s} spoke the old tongue so strangely that the capital laughed at them. In the {yo} year they stopped coming to be laughed at, and called themselves {c}.",   // v22
 	"{c} broke away from {c2}, [saying that the {ca2} priests had forgotten {g2}|over a quarrel about the god].",
 	"There was a schism among {c2}: the faithful of {s} called themselves {c} and would not bow to the old capital.",
 	"{c} were born of a quarrel. They had been {c2}, until they disagreed about {g2}.",
 };
 const char* const kCultureDied[] = {
+	"{c} are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.",   // v24
 	"The last of {c} passed from the world, [and their songs with them|and only their ruins remember them].",
-	"{c} are no more.",
 	"Of {c}, who once held {s}, nothing remained but names.",
 	"{c} [faded|dwindled] and were gone, [and other peoples walked in their streets|and no one spoke their tongue any longer].",
+};
+// (voice 25a-c) any age ({age}: "Iron", "Sail", "the Atom"): drawn instead of the age's own lines
+// about one time in three
+const char* const kAgeVoice[] = {
+	"{IN}{c} entered the Age of {age}. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.",   // v25a
+	"A new thing was learned at {s}, and then everywhere. So the Age of {age} began among {c}.",   // v25b
+	"{c} put down the tools of their mothers and took up the tools of the Age of {age}. {ep} watched, and did not say whether this was wise.",   // v25c
+};
+// (voice 26) the first people of the world to reach an age: drawn instead of the age's line + "first" suffix half the time
+const char* const kAgeWorldFirst[] = {
+	"{IN}the world turned a page: {c}, first of all peoples, came into the Age of {age}, and the others began to hurry.",   // v26
 };
 const char* const kAgeBronze[] = {
 	"{c} learned to marry copper and tin, and the age of bronze began among them.",
@@ -1024,38 +1338,48 @@ const char* const kAgeFirstSfx[] = {
 	" The other peoples of {W} had not yet dreamed of it.",
 };
 const char* const kWarDeclared[] = {
+	"{IN}{c} remembered an old insult from {c2}, and went to war over it.",   // v27a
+	"{c} and {c2} could no longer share the river. They tried to share it with spears instead.",   // v27b
+	"War between {c} and {c2}. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.",   // v27c
 	"{c} made war on {c2}.",
 	"{c} marched against {c2}, [and the fields were left unharvested|and the smiths worked day and night].",
 	"The {ca} kings swore an oath against {c2}, and there was war.",
 	"The long quarrel between {c} and {c2} came to blood.",
-	"{c} and {c2} could no longer share the world, and went to war [over a border|over an insult|over the god, both said].",
 	"Envoys of {c} [threw down their staffs|spat on the threshold] before {c2}, and the war began.",
 	"{c} sharpened their spears and went against {c2}, [saying the god was with them|though no one could remember who had struck first].",
 	"War came between {c} and {c2}, [the old enemies|who had once traded salt and songs].",
 };
 const char* const kWarDraw[] = {
+	"The war of {c} and {c2} ended because both had run out of sons. Each side wrote down that it had won.",   // v30
 	"The war between {c} and {c2} ended, and neither could say it had won.",
-	"{c} and {c2} made peace, being tired of burying their sons.",
 	"After much killing {c} and {c2} agreed that the border was where it had always been.",
-	"The war of {c} and {c2} wore itself out, [like a fire with nothing left to burn|and both sides claimed the victory].",
+	"The war of {c} and {c2} wore itself out, like a fire with nothing left to burn.",
 	"{c} and {c2} laid down their arms. [Nothing had changed but the number of graves.|The poets of both peoples wrote songs of triumph.]",
 };
+// (voice review 2) the beaten people died with the war: no one was left to ask for peace or pay tribute
+const char* const kWarWonGone[] = {
+	"The war ended when there were none of {c2} left to fight it.",
+	"{c} had won: of {c2} there was no one left to ask for peace.",
+	"{c} won their war against {c2}, and there was no one left to pay the tribute.",
+};
+// {c} the victors, {c2} the beaten; {wy} how long the war lasted, in words
 const char* const kWarWon[] = {
+	"After {wy} {c2} asked for peace, and {c} granted it, and made them pay for the asking.",   // v29
 	"{c} won their war against {c2}.",
-	"{c2} sued for peace, and {c} granted it, [at a price|graciously, for once].",
 	"The war ended in victory for {c}. [{c2} paid tribute for a generation.|In {s} there were feasts for a month.]",
-	"{c2} were beaten, and {c} [took their best fields|carried their gods home in carts].",
-	"The banners of {c} came home in triumph to {s}, and {c2} [counted what they had lost|swore to remember].",
+	"{c2} were beaten, and {c} [took their best fields|carried their temple bells home in carts].",
+	"The armies of {c} came home in triumph to {s}, and {c2} [counted what they had lost|swore to remember].",
 };
 const char* const kTrade[] = {
-	"The first caravan went from {s} to {s2}.",
+	"{IN}the first caravan came from {s} to {s2}, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.",   // v31a
+	"The feet of traders wore a road between {s} and {s2}. Along it went pots and coins and, later, fevers.",   // v31b
 	"Merchants began to travel between {s} and {s2}, [and the road between them grew wide|bringing salt and news].",
-	"A road was worn between {s} and {s2} by the feet of traders.",
 	"Ox-carts began to creak along the road from {s} to {s2}, [loaded with grain and gossip|and inns grew up beside it].",
 	"{s} and {s2} began to trade, [cloth for copper|pots for fish|wine for wool], and both grew fat on it.",
 	"The merchants of {s} found a road to {s2}, [and kept the secret of it for a while|and the road found more merchants].",
 };
 const char* const kTradeForeign[] = {
+	"Merchants of {s} reached {s2} and found that the people there were also people. This was thought remarkable, and then useful.",   // v31c
 	"Merchants of {c} reached {s2} of {c2}, and the two peoples traded [salt and stories|cloth for copper|songs and diseases].",
 	"The first caravan from {s} came to {s2}, and {c} and {c2} learned each other's words for 'price'.",
 	"Traders of {c} and {c2} met at {s2}, and each thought they had cheated the other.",
@@ -1070,40 +1394,47 @@ const char* const kTradeForeignMore[] = {
 	"Traders from {s} found their way to {s2} of {c2}, where {ca} coin was already known.",
 };
 const char* const kProphetRisen[] = {
-	"A prophet named {n} arose in {s}, saying that {g} had spoken to [her|him|them].",
+	"{IN}a prophet named {n} stood up in the market of {s} and said that {g} had spoken. Some believed. The rest moved their stalls.",   // v32
+	"A prophet named {n} arose in {s}, saying that {g} had spoken in the night.",
 	"{n} of {s} heard the voice of {g} and began to preach, [and many believed|and some threw stones].",
 	"In {s} a prophet appeared, {n}, [who walked barefoot and spoke of the god|who could not be silenced], and {c} listened.",
 	"{n}, a [shepherd|potter|fisher|scribe] of {s}, came down from the hills with a message from {g}.",
 	"A voice cried out in the market of {s}: it was {n}, who said the god had chosen {c}.",
 };
 const char* const kProphetDied[] = {
-	"{n} the prophet died, and {c} mourned.",
+	"{n} the prophet died, and was buried facing the sunrise. {c} argued over every word {n} had said, which is how they knew the words were holy.",   // v33
 	"The prophet {n} was gathered to {g}.",
 	"{n}, who had spoken for the god among {c}, [was buried with great honour|died, and the disciples quarrelled at once].",
 	"{n} the prophet went into the hills and did not come back. {c} said {g} had taken the prophet home.",
 };
 const char* const kEdictPeace[] = {
+	"{n} spoke for {ep}: \"Lay down the spear.\" And {c} laid it down, though somewhere they could reach it.",   // v34
 	"{n} commanded {c} to lay down their spears.",
 	"By the word of {n}, {c} swore to make no more wars [while the prophet lived|in the name of {g}].",
 };
 const char* const kEdictExpand[] = {
+	"{n} spoke for {ep}: \"Go out and fill the land.\" The young of {c} took this as permission, which it was.",   // v35
 	"{n} told {c} to go out and fill the land.",
 	"At the word of {n}, the young of {c} left their homes to found new ones.",
 };
 const char* const kEdictBuild[] = {
+	"{n} spoke for {ep}: \"Build a thing that can be seen from the sky.\" And {c} began to quarry the hills.",   // v36
 	"{n} commanded {c} to build a wonder worthy of {g}.",
-	"{n} told {c} that {g} wished for a great work, and {c} began to quarry stone.",
+	"{n} told {c} that {g} wished for a great work, and {c} began to cut timber and haul stone.",
 };
+// {c2}: the people the crusade is aimed at (the least devout people in contact), else "their neighbours"
 const char* const kEdictCrusade[] = {
+	"{n} spoke for {ep}: \"{c2} pray badly.\" {c} sharpened their swords to correct them.",   // v37
 	"{n} called {c} to carry the word of {g} to the unbelievers, with fire if need be.",
-	"{n} preached war against those who did not honour {g}, and {c} sharpened their swords.",
+	"{n} preached war against those who did not honour {g}, and {c} sharpened their spears.",
 };
 const char* const kWonder[] = {
-	"{c} finished {x} at {s}, and people came from far away to see it.",
-	"At {s} rose {x}, the greatest work of {c}.",
+	"{IN}{c} finished {x} at {s}. It took three lifetimes. The first did not live to see it; the last complained of the dust.",   // v38
+	"At {s} rose {x}, the greatest work of {c}, and people came from far away to see it.",
 	"{x} was completed at {s}, [and it was said the god came down to look at it|and its builders were remembered for a thousand years].",
 };
 const char* const kNukeFirst[] = {
+	"{IN}{c} lit a second sun over {s}. It rose at noon and did not set gently. Afterwards both peoples were very quiet for a long time.",   // v59
 	"{c} let loose the fire of the sun upon {s} of {c2}. Nothing like it had been done before.",
 	"A light brighter than noon rose over {s}, sent by {c} against {c2}, and the world learned a new fear.",
 };
@@ -1113,15 +1444,16 @@ const char* const kNuke[] = {
 	"The fire of {c} came down on {s}, and the sky over {c2} was black for a season.",
 };
 const char* const kArkStarted[] = {
-	"At {s}, {c} began to build a ship to carry them to the stars.",
+	"At {s} {c} began to build a ship that would not sail on water. The children were told it was for them. It was.",   // extra (ark:started)
 	"{c} laid the keel of a great ship at {s}, a ship for the space between the stars.",
 };
 const char* const kArkLaunched[] = {
+	"{IN,}from {s}, {c} went up into the sky on a pillar of fire, carrying seed and songs and the name of {g}. Those who stayed watched until the light was a star among stars.",   // v60
 	"The great ship of {c} rose from {s} on a pillar of fire and went out among the stars[, carrying the name of {ge}|, and did not come back].",
 	"{c} left {W}. Their ship climbed from {s} into the dark, [and the god watched it go|and its light was the last star of the morning].",
 };
 const char* const kWarm1[] = {
-	"The summers grew longer and hotter, and the old people said it had not been so in their youth.",
+	"{IN}the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.",   // v57
 	"The world was growing warmer, [the wise said|said the scholars, who measured such things].",
 };
 const char* const kWarm2[] = {
@@ -1133,10 +1465,11 @@ const char* const kWarm3[] = {
 	"The heat of the world became a thing every child knew. [The scholars said it was the smoke of the cities.|The priests said it was the god's fever.]",
 };
 const char* const kCool[] = {
-	"The winters grew long, and the snow came early and left late.",
+	"The winters grew long and the summers forgot to come. Snow lay on the high passes all year, and the trade roads closed one by one.",   // v58
 	"A cold age came upon {W}, [and the harvests were thin|and the rivers froze in their beds].",
 };
 const char* const kSeaRise[] = {
+	"{IN}the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.",   // v57
 	"The sea crept up the shores, and the fishermen moved their houses inland.",
 	"The sea was rising. [Old harbours drowned.|Every year the tide came a little higher.]",
 };
@@ -1145,6 +1478,7 @@ const char* const kSeaFall[] = {
 	"The waters went down, and ships were left stranded in the mud of old harbours.",
 };
 const char* const kIceAge[] = {
+	"The winters grew long and the summers forgot to come. Snow lay on the high passes all year, and the trade roads closed one by one.",   // v58
 	"Ice crept down from the poles, [and the northern towns were buried in snow|swallowing fields and forests].",
 	"The great ice came south, and the world grew small and cold.",
 };
@@ -1158,34 +1492,41 @@ const char* const kSettlersLost[] = {
 	"{c} sent out settlers who did not arrive. [Some said the wilds took them.|Their kin waited for years.]",
 	"The settlers of {s} were caught {w}, and none came home to tell of it.",
 };
+// (voice review 2) lost close to home: the place is not named twice ("the settlers of Nish were caught at the town")
+const char* const kSettlersLostHome[] = {
+	"Settlers who had left {s} were never heard from again.",
+	"{c} sent out settlers who did not arrive. [Some said the wilds took them.|Their kin waited for years.]",
+	"Settlers set out from {s}, and [the wilds took them before the town was out of sight|none of them lived to build anything].",
+};
 const char* const kPeopleLost[] = {
 	"And then there was no one left on {W} to remember.",
 	"The last fire on {W} went out. The god was alone again.",
 	"The cities of {W} were empty, and the wind read the inscriptions on their walls.",
 };
-const char* const kEndBeloved[] = {
-	"So {c} went out among the stars, and carried the name of {ge} with them, and sang it in the dark.",
-	"{c} left {W} with love, and the last thing they did was give thanks to {g}.",
+// the last place to fall is known: {s} and its people {c}
+const char* const kPeopleLostLast[] = {
+	"The last fire of {c} went out at {s}. The land kept their footprints for a season, then the grass forgot them too.",   // voice (people:lost)
+	"{c} were the last. When the last hearth of {s} went cold, there was no one left on {W} to remember.",
 };
-const char* const kEndFeared[] = {
-	"{c} fled from {ge} into the dark, and did not look back.",
-	"{c} left {W} as a slave leaves a cruel master, [quietly and for ever|praying that the god would not follow].",
+// (voice, section 4) the endings, one paragraph each, by ending id; {callep} is ", whom they called
+// {ep}" (empty when that is only the god's name again)
+const char* const kEndBeloved[] = {   // ark-beloved
+	"In the {yo} year {c} rose from {s} on a pillar of light. They carried seed, and songs, and a carved stone bearing the name of {g}{callep}. Before the clouds closed below them, they looked back at {W} and wept, not from grief, but because they had been loved, and knew it, and were taking that with them too. Wherever they land, there will be a shrine before there is a house.",
 };
-const char* const kEndForgotten[] = {
-	"{c} left {W} without a prayer. The shrines of {g} were full of dust.",
-	"{c} went to the stars, and did not think to say goodbye to the god.",
+const char* const kEndFeared[] = {   // ark-feared
+	"In the {yo} year {c} fled {W}. They built the ship in secret, as far as anything can be secret from a god, and they launched it at night. They did not pray as they rose. On the new world, the mothers will tell the children of {ep}, who lived in the sky of the old one, and the children will sleep with the lamp lit, and grow up, and build their houses low.",
 };
-const char* const kEndParting[] = {
-	"{c} left, and the god watched them go.",
-	"{c} rose from {W} into the dark, [and the god was not sure what they had thought of {herm}|and the world was quiet behind them].",
+const char* const kEndForgotten[] = {   // ark-forgotten ({s}: a town of theirs with a temple, else the launch site)
+	"In the {yo} year {c} left {W} for the stars. They took their machines, their music and their quarrels. They did not take {g}; no one remembered to. In an old temple at {s} the wind still turns the pages of a book no one reads, and in it, in a hand no one living could read, is a name that once meant everything.",
 };
-const char* const kEndAsh[] = {
-	"Ash fell on {W} for a hundred years, and there was no one to see it.",
-	"The fires the peoples had made burned out at last, and {W} was silent.",
+const char* const kEndParting[] = {   // ark-parting
+	"In the {yo} year {c} went up from {s} to the stars. They were not sure, at the end, what {g} had been to them: a parent, a storm, a story. So they did what grown children do: they said a careful goodbye, and promised to write, and did not say when. Somewhere above the clouds one of them looked back and raised a hand, just in case.",
 };
-const char* const kEndQuiet[] = {
-	"{W} grew quiet. Grass covered the roads.",
-	"The peoples of {W} were gone, and the forests came back over their cities.",
+const char* const kEndAsh[] = {   // silence-ash ({s}: the greatest place that fell)
+	"They had learned at last to make suns, and they made them. Afterwards the sky over {W} was grey for a hundred years, and then blue again, as if nothing had happened. Nothing had: not any more. In the ruins of {s} a green shoot came up through the floor of the great hall, and there was no one to call it a sign.",
+};
+const char* const kEndQuiet[] = {   // silence-quiet ({ep}: the world's last name for the god)
+	"There was no last battle and no last prayer. The towns emptied, one and then another, and the roads went back to grass, and the grass did not ask where everyone had gone. {W} turns in the light as it did before the first fire. The rivers still find the sea. If {ep} is listening, there is nothing now to hear but the wind.",
 };
 const char* const kEpiFirst[] = {
 	"{c} called the one who had woken them {e}.",
@@ -1193,12 +1534,20 @@ const char* const kEpiFirst[] = {
 	"{c} began to speak of {g} as {e}.",
 	"In the first songs of {c}, the god was {e}.",
 };
+// (voice review 2) a daughter people names the god for the first time: the god woke their fathers, not them
+const char* const kEpiFirstDaughter[] = {
+	"{c} called the god who had woken their fathers {e}.",
+	"Among {c} the god was named {e}.",
+	"{c} began to speak of {g} as {e}.",
+	"In the first songs of {c}, the god was {e}.",
+};
 const char* const kEpiChange[] = {
+	"{IN}{c} stopped calling their god {old}. From now on, in the market and at the hearth, it was {e}.",   // extra (epithet change)
 	"{c} no longer called the god {old}; now they said {e}.",
 	"In the songs of {c}, {old} became {e}.",
 	"The {ca} priests gave the god a new name: {e}.",
 	"Among {c} the god was no longer {old} but {e}, and the old name was forgotten.",
-	"{c} had called the god {old}. After what they had seen, they called {herm} {e}.",
+	"{c} had called the god {old}. After what they had seen, they called the god {e}.",
 	"Among {c}, mothers who had once told their children of {old} now told them of {e}.",
 };
 // (integration verifier) the change to the silent names: nothing was seen
@@ -1225,6 +1574,40 @@ int largestOf(const World& w, const std::vector<int>& ids) {
 	return best;
 }
 
+// (voice) one entry from `t`, or from `alt` with probability p
+ChronicleEntry* writeAlt(World& w, const char* type, int weight, int cell, int culture, Tpl t, const string& key, Tpl alt,
+	const string& altKey, double p, const Ctx& x) {
+	return writeComposed(w, type, weight, cell, culture, t, key, Tpl{ nullptr, 0 }, string(), x, alt, altKey, p);
+}
+constexpr double kOwnShare = 0.35;     // a once-a-world moment: its older lines are told this often beside the voice's
+constexpr double kVoiceShare = 0.35;   // a shared voice family (ages) beside an event's own lines
+constexpr double kCommonShare = 0.2;   // the same for the most frequent events (growth, buildings): each shared line stays rare
+
+// (voice {war_years}, {other_plural} for omens and crusades) small reads of the world
+string warKey(int a, int b) { return "chronicle_w." + std::to_string(std::min(a, b)) + "." + std::to_string(std::max(a, b)); }
+// a living people this culture is at war with (lowest id), -1 none
+int enemyOf(const World& w, int cid) {
+	for (const Culture& o : w.cultures) {
+		if (o.dead || o.id == cid) continue;
+		const Relation* r = society::peek(w, cid, o.id);
+		if (r && r->war) return o.id;
+	}
+	return -1;
+}
+// the crusade's mark: the least devout living people in contact (as Diplomacy aims it), -1 none
+int crusadeMark(const World& w, int cid) {
+	int best = -1;
+	double bd = 1e9;
+	for (const Culture& o : w.cultures) {
+		if (o.dead || o.id == cid) continue;
+		const Relation* r = society::peek(w, cid, o.id);
+		if (!r || !r->contact) continue;
+		const double d = fin(society::regard(w, o.id).devotion, 0);
+		if (d < bd) { bd = d; best = o.id; }
+	}
+	return best;
+}
+
 void heardBy(World& w, int cid) {
 	if (!cult(w, cid)) return;
 	w.vars.num["chronicle_h." + std::to_string(cid)] = fin(w.year);
@@ -1236,7 +1619,7 @@ void onPhase(World& w, const EvPhase& e) {
 	switch (e.phase) {
 	case Phase::Water: write(w, "genesis", 3, -1, -1, tpl(kGenWater), "genesis-water", x); break;
 	case Phase::Life: write(w, "genesis", 3, -1, -1, tpl(kGenLife), "genesis-life", x); break;
-	case Phase::People: write(w, "genesis", 3, -1, -1, tpl(kGenPeople), "genesis-people", x); break;
+	case Phase::People: writeAlt(w, "genesis", 3, -1, -1, tpl(kGenPeopleVoice), "genesis-people-v", tpl(kGenPeople), "genesis-people", kOwnShare, x); break;
 	case Phase::History: write(w, "genesis", 3, -1, -1, tpl(kGenHistory), "genesis-history", x); break;
 	default: break;
 	}
@@ -1251,7 +1634,7 @@ void onMeteorImpact(World& w, const EvMeteorImpact& e) {
 		count = fin(count) + 1;
 		const int k = int(count);
 		const int every = T.cometEvery > 0 ? T.cometEvery : 4;
-		if (k == 1) write(w, "comet", 2, e.cell, -1, tpl(kCometFirst), "comet-first", x);
+		if (k == 1) writeAlt(w, "comet", 2, e.cell, -1, tpl(kCometFirstVoice), "comet-first-v", tpl(kCometFirst), "comet-first", kOwnShare, x);
 		else if ((k - 1) % every == 0) write(w, "comet", 1, e.cell, -1, tpl(kCometMore), "comet", x);
 		return;
 	}
@@ -1356,7 +1739,19 @@ void onFireStart(World& w, const EvFireStart& e) {
 	string noun = biomeWord(w, e.cell).noun;
 	if (noun == "the open sea" || noun == "the shallows" || noun == "the frozen sea" || noun == "the ice" || noun == "the shore") noun = "the grass";
 	x.set("x", noun);
-	write(w, "fire", 1, e.cell, cid, tpl(kFire), "fire", x);
+	const bool forest = noun.find("woods") != string::npos || noun.find("forest") != string::npos;
+	// (voice review 2) the bolt that lit it was just told nearby: no second cause
+	bool lit = false;
+	if (w.geo) {
+		for (size_t i = w.chronicle.size(), k = 0; i-- > 0 && k < 6; k++) {
+			const ChronicleEntry& b = w.chronicle[i];
+			if (b.year < fin(w.year) - 1 - 1e-9) break;
+			if (b.type == "lightning" && w.valid(b.cell) && w.geo->angle(b.cell, e.cell) < 0.15) { lit = true; break; }
+		}
+	}
+	if (lit) write(w, "fire", 1, e.cell, cid, tpl(kFireLit), "fire-lit", x);
+	else if (forest) write(w, "fire", 1, e.cell, cid, tpl(kFireForest), "fire-forest", x);
+	else write(w, "fire", 1, e.cell, cid, tpl(kFire), "fire", x);
 }
 
 void onStorm(World& w, const EvStorm& e) {
@@ -1402,13 +1797,20 @@ void onFounded(World& w, const EvSettlementFounded& e) {
 		// the first awakening of the world, or a later one
 		bool earlier = false;
 		for (const Settlement& o : w.settlements) if (o.id != e.id && o.founded <= s->founded && o.id < e.id) { earlier = true; break; }
-		if (!earlier) write(w, "awakening", 3, cell, cid, tpl(kAwakening), "awakening", x);
+		if (!earlier && fin(w.year) < 1) writeAlt(w, "awakening", 3, cell, cid, tpl(kAwakeningVoice), "awakening-v", tpl(kAwakening), "awakening", kOwnShare, x);
+		else if (!earlier) write(w, "awakening", 3, cell, cid, tpl(kAwakening), "awakening", x);
 		else write(w, "awakening", 3, cell, cid, tpl(kAwakeningAgain), "awakening-again", x);
 		return;
 	}
 	if (!minorOk(w, "founded", cid, T.minorGap * 0.6)) return;
-	double a = 0;
-	const int from = nearestLive(w, cell, a, cid, e.id);
+	// (voice {origin}) where the band came from: the settler unit that has just arrived at this cell
+	// (Units founds the settlement before it removes the unit); unknown -> the lines without an origin
+	int from = -1;
+	for (const Unit& u : w.units) {
+		if (u.type != UnitType::Settler || u.culture != cid || u.path.empty() || u.path.back() != cell) continue;
+		const Settlement* o = sett(w, u.from);
+		if (o && !o->dead && o->id != e.id) { from = o->id; break; }
+	}
 	if (from >= 0) {
 		ctxSettlement(x, w, from, "2");
 		write(w, "founded", 1, cell, cid, tpl(kFounded), "founded", x);
@@ -1426,21 +1828,24 @@ void onTier(World& w, const EvSettlementTier& e) {
 	ctxWorld(x, w);
 	ctxSettlement(x, w, e.id);
 	x.set("st", tierWord(e.tier));
-	x.set("sn", string("the ") + tierWord(e.prev));
+	x.set("sn", string("the ") + tierWord(e.tier));
+	x.set("ast", withArticle(tierWord(e.tier)));
+	x.set("apt", withArticle(tierWord(e.prev)));
 	ctxCulture(x, w, cid);
 	if (e.tier < e.prev) {
 		if (!minorOk(w, "decline", cid, T.minorGap)) return;
 		write(w, "decline", 1, s->cell, cid, tpl(kTierDown), "tier-down", x);
 		return;
 	}
+	const Tpl grow = tpl(kTierVoice);
 	switch (e.tier) {
 	case 1:
 		if (!minorOk(w, "tier", cid, T.tierGap, T.tierGap * 0.5)) return;
-		write(w, "tier", 1, s->cell, cid, tpl(kTierVillage), "tier-village", x);
+		writeAlt(w, "tier", 1, s->cell, cid, tpl(kTierVillage), "tier-village", grow, "tier-voice", kCommonShare, x);
 		break;
 	case 2:
 		if (!minorOk(w, "tier", cid, T.tierGap, T.tierGap * 0.5)) return;
-		write(w, "tier", 1, s->cell, cid, tpl(kTierTown), "tier-town", x);
+		writeAlt(w, "tier", 1, s->cell, cid, tpl(kTierTown), "tier-town", grow, "tier-voice", kCommonShare, x);
 		break;
 	case 3: {
 		bool first = true;
@@ -1452,14 +1857,14 @@ void onTier(World& w, const EvSettlementTier& e) {
 		bool cultureFirst = true;
 		for (const Settlement& o : w.settlements) if (o.id != e.id && o.culture == cid && !o.dead && o.tier >= 3) { cultureFirst = false; break; }
 		if (!cultureFirst && recentNotable(w, "tier", cid, T.bigTierGap)) break;
-		write(w, "tier", 2, s->cell, cid, tpl(kTierCity), "tier-city", x);
+		writeAlt(w, "tier", 2, s->cell, cid, tpl(kTierCity), "tier-city", grow, "tier-voice", kCommonShare, x);
 		break;
 	}
 	case 4: {
 		bool cultureFirst = true;
 		for (const Settlement& o : w.settlements) if (o.id != e.id && o.culture == cid && !o.dead && o.tier >= 4) { cultureFirst = false; break; }
 		if (!cultureFirst && recentNotable(w, "tier", cid, T.bigTierGap)) break;
-		write(w, "tier", 2, s->cell, cid, tpl(kTierMetro), "tier-metro", x);
+		writeAlt(w, "tier", 2, s->cell, cid, tpl(kTierMetro), "tier-metro", grow, "tier-voice", kCommonShare, x);
 		break;
 	}
 	default: break;
@@ -1472,13 +1877,24 @@ void onBuilding(World& w, const EvSettlementBuilding& e) {
 	if (int(e.building) < 0 || int(e.building) >= Building::COUNT) return;   // Settlement::has would index out of range
 	const ChronicleTune& T = tuneOf(w);
 	const int cid = s->culture;
+	// (verifier 2026-11-19) "the first of its kind" is the people's first ever, not the first still standing:
+	// a granary built by a town that later fell was built before. vars.num (saved; culture death clears it).
 	bool first = true;
-	for (const Settlement& o : w.settlements)
-		if (o.id != e.id && o.culture == cid && o.has(e.building)) { first = false; break; }
+	if (cult(w, cid)) {
+		const string firstKey = "chronicle_b." + std::to_string(cid) + "." + std::to_string(int(e.building));
+		first = !w.vars.num.count(firstKey);
+		w.vars.num[firstKey] = 1;
+	}
 	Tpl t{ nullptr, 0 };
 	string key;
 	switch (e.building) {
-	case Building::SHRINE: t = first ? tpl(kBShrineFirst) : tpl(kBShrine); key = first ? "b-shrine-first" : "b-shrine"; break;
+	case Building::SHRINE: {
+		const Culture* c = cult(w, cid);
+		const bool daughter = first && c && c->parent >= 0;
+		t = daughter ? tpl(kBShrineFirstDaughter) : first ? tpl(kBShrineFirst) : tpl(kBShrine);
+		key = daughter ? "b-shrine-first-d" : first ? "b-shrine-first" : "b-shrine";
+		break;
+	}
 	case Building::TEMPLE: t = tpl(kBTemple); key = "b-temple"; break;
 	case Building::GRANARY: t = tpl(kBGranary); key = "b-granary"; break;
 	case Building::WALLS: t = tpl(kBWalls); key = "b-walls"; break;
@@ -1491,16 +1907,36 @@ void onBuilding(World& w, const EvSettlementBuilding& e) {
 	case Building::LAUNCH: t = tpl(kBLaunch); key = "b-launch"; break;
 	default: return;
 	}
-	const bool big = e.building == Building::LAUNCH || first;
+	// the first of a kind among a people: "... It was the first academy of the Umari."
+	// (voice review 2) a new people's first town raises shrine, granary, harbour, temple, market and mine
+	// within two years, and six notable "first of the Wanori" lines drummed: one such line per culture per
+	// firstCluster years, the others are told (or not) as ordinary buildings
+	bool sfx = first && e.building != Building::SHRINE && e.building != Building::LAUNCH;
+	if (sfx && cult(w, cid)) {
+		const string fk = "chronicle_bf." + std::to_string(cid);
+		const auto it = w.vars.num.find(fk);
+		if (it != w.vars.num.end() && std::isfinite(it->second) && fin(w.year) - it->second < T.firstCluster - 1e-9) sfx = false;
+		else w.vars.num[fk] = fin(w.year);
+	}
+	const bool big = e.building == Building::LAUNCH || (first && (e.building == Building::SHRINE || sfx));
 	if (!big && !minorOk(w, "building", cid, T.buildingGap, T.buildingGap * 0.5)) return;
 	Ctx x;
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, cid);
-	// the first of a kind among a people: "... It was the first academy of the Umari."
-	const bool sfx = first && e.building != Building::SHRINE && e.building != Building::LAUNCH;
+	if (e.building == Building::SHRINE && first) {
+		const Culture* c = cult(w, cid);
+		const Culture* pc = c ? cult(w, c->parent) : nullptr;
+		const string g = godOf(w, cid);
+		x.set("gk", pc && c && pc->godName == c->godName ? "and kept the name their fathers had given the god: " + g + "."
+			: "and called the god by a name of their own: " + g + ".");
+	}
 	x.set("bn", kBuildingNoun[e.building][0]);
 	x.set("bna", kBuildingNoun[e.building][1]);
-	writeComposed(w, "building", big ? 2 : 1, s->cell, cid, t, key, sfx ? tpl(kBuildFirstSfx) : Tpl{ nullptr, 0 }, "b-first-sfx", x);
+	// (voice 7a-c) the generic building lines for every ordinary building (not shrines, walls or towers,
+	// which have lines of their own)
+	const bool generic = e.building != Building::SHRINE && e.building != Building::WALLS && e.building != Building::LAUNCH;
+	writeComposed(w, "building", big ? 2 : 1, s->cell, cid, t, key, sfx ? tpl(kBuildFirstSfx) : Tpl{ nullptr, 0 }, "b-first-sfx", x,
+		generic ? tpl(kBuildVoice) : Tpl{ nullptr, 0 }, "b-voice", kCommonShare, true);
 }
 
 void onFamine(World& w, const EvSettlementFamine& e) {
@@ -1514,20 +1950,43 @@ void onFamine(World& w, const EvSettlementFamine& e) {
 	// famines wait famineGap years
 	if (!big && !minorOk(w, "famine", cid, T.minorGap)) return;
 	if (big && recentNotable(w, "famine", cid, T.famineGap, s->cell)) return;
+	// (voice review) a darkened sky starves every people at once: one such famine in the world per dustFamineGap years
+	const bool dusty = fin(w.dust, 0) >= T.dustFamine;
+	if (dusty && recent(w, "famine", kAnyCulture, T.dustFamineGap)) return;
 	Ctx x;
 	ctxWorld(x, w);
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, cid);
-	if (fin(w.dust, 0) >= T.dustFamine) write(w, "famine", big ? 2 : 1, s->cell, cid, tpl(kFamineDust), "famine-dust", x);
+	if (dusty) write(w, "famine", big ? 2 : 1, s->cell, cid, tpl(kFamineDust), "famine-dust", x);
 	else write(w, "famine", big ? 2 : 1, s->cell, cid, tpl(kFamine), "famine", x);
 }
 
 void onPlague(World& w, const EvSettlementPlague& e) {
-	if (!e.start) return;                                  // a passing sickness is not news; Heal tells its own story
 	const Settlement* s = sett(w, e.id);
 	if (!s) return;
 	const ChronicleTune& T = tuneOf(w);
 	const int cid = s->culture;
+	if (!e.start) {
+		// (voice 14) a plague ends: told only when its coming was written down here (within plagueTold
+		// years), at most once per culture per minorGap years; a cure by Heal tells its own story
+		bool told = false;
+		const double y = fin(w.year);
+		for (size_t i = w.chronicle.size(); i-- > 0;) {
+			const ChronicleEntry& c = w.chronicle[i];
+			if (c.year < y - T.plagueTold - 1e-9) break;
+			if (c.cell == s->cell && (c.type == "plague-end" || c.type == "miracle-heal" || c.type == "prayer-answered")) break;
+			if (c.cell == s->cell && c.type == "plague") { told = true; break; }
+		}
+		if (!told) return;
+		// (voice review 2) held back: a Heal that cured it tells the story instead (see ChronicleScratch::pending)
+		ChronicleScratch& S = w.scratch<ChronicleScratch>();
+		ChronicleScratch::Pending pe;
+		pe.tick = w.tick;
+		pe.year = fin(w.year);
+		pe.a = e.id;
+		S.pending.push_back(pe);
+		return;
+	}
 	if (!minorOk(w, "plague", cid, T.minorGap)) return;
 	Ctx x;
 	ctxSettlement(x, w, e.id);
@@ -1548,15 +2007,28 @@ void onDestroyed(World& w, const EvSettlementDestroyed& e) {
 	}
 	Tpl t{ nullptr, 0 };
 	string key;
+	Ctx x;
+	// (voice 18) the army that took it this tick names the razers
+	const ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	const bool byArmy = e.cause == Cause::War && S.wonTick == w.tick && S.wonYear == fin(w.year) && S.wonSettlement == e.id &&
+		cult(w, S.wonAttacker) && S.wonAttacker != cid;
+	if (byArmy) ctxCulture(x, w, S.wonAttacker, "2");
+	// (voice 19) a quake by the sea
+	const int at = w.valid(e.cell) ? e.cell : s->cell;
+	const bool coastal = w.valid(at) && size_t(at) < w.coast.size() && w.coast[size_t(at)] <= 1;
+	// the strike that burned it was just told (the nuke entry for this cell, this year)
+	bool struck = false;
+	for (size_t i = w.chronicle.size(), k = 0; i-- > 0 && k < 6; k++)
+		if (w.chronicle[i].type == "nuke" && w.chronicle[i].cell == s->cell && w.chronicle[i].year == fin(w.year)) struck = true;
 	switch (e.cause) {
 	case Cause::Drowned: t = tpl(kDDrowned); key = "d-drowned"; break;
 	case Cause::Meteor: t = tpl(kDMeteor); key = "d-meteor"; break;
 	case Cause::Lava: t = tpl(kDLava); key = "d-lava"; break;
-	case Cause::War: t = tpl(kDWar); key = "d-war"; break;
+	case Cause::War: t = byArmy ? tpl(kDWarBy) : tpl(kDWar); key = byArmy ? "d-war-by" : "d-war"; break;
 	case Cause::Famine: t = tpl(kDFamine); key = "d-famine"; break;
 	case Cause::Plague: t = tpl(kDPlague); key = "d-plague"; break;
-	case Cause::Quake: t = tpl(kDQuake); key = "d-quake"; break;
-	case Cause::Nuke: t = tpl(kDNuke); key = "d-nuke"; break;
+	case Cause::Quake: t = coastal ? tpl(kDQuakeCoast) : tpl(kDQuake); key = coastal ? "d-quake-coast" : "d-quake"; break;
+	case Cause::Nuke: t = struck ? tpl(kDNukeAfter) : tpl(kDNuke); key = struck ? "d-nuke-after" : "d-nuke"; break;
 	case Cause::Wave: t = tpl(kDWave); key = "d-wave"; break;
 	case Cause::Lightning: t = tpl(kDLightning); key = "d-lightning"; break;
 	default: t = tpl(kDAbandoned); key = "d-abandoned"; break;
@@ -1564,7 +2036,6 @@ void onDestroyed(World& w, const EvSettlementDestroyed& e) {
 	const bool quiet = e.cause == Cause::Abandoned || e.cause == Cause::None || e.cause == Cause::Famine;
 	int weight = s->tier >= 3 ? 3 : (quiet && s->tier <= 1 ? 1 : 2);
 	if (weight == 1 && !minorOk(w, "destroyed", cid, T.minorGap)) return;
-	Ctx x;
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, cid);
 	write(w, "destroyed", weight, w.valid(e.cell) ? e.cell : s->cell, cid, t, key, x);
@@ -1578,6 +2049,12 @@ void onCaptured(World& w, const EvSettlementCaptured& e) {
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, e.from);
 	ctxCulture(x, w, e.to, "2");
+	{
+		const Culture* cf = cult(w, e.from);
+		const Culture* ct = cult(w, e.to);
+		const bool renamed = s->has(Building::TEMPLE) && cf && ct && !ct->godName.empty() && cf->godName != ct->godName;
+		x.set("tg", renamed ? "and its temple was given a new god's name" : "and its market changed hands with it");
+	}
 	if (e.how == CaptureHow::War) {
 		write(w, "captured", 2, s->cell, e.to, tpl(kCapturedWar), "captured", x);
 		return;
@@ -1610,7 +2087,13 @@ void onPrayer(World& w, const EvPrayer& e) {
 	x.set("want", wantOf(e.kind));
 	if (e.start) {
 		S.prayerSince[e.id] = fin(w.year);
-		if (!minorOk(w, "prayer", cid, T.minorGap)) return;
+		// (voice review 2) "X prayed for rain, and it was given" followed by "the people of X prayed for rain",
+		// and the same town praying in every other entry of a kind god's book
+		if (toldAt(w, "prayer-answered", s->cell, T.answerQuiet) || toldAt(w, "prayer", s->cell, T.prayerTownGap)) return;
+		// a kind god's book was four parts in ten rain: "they prayed", "it was given", "it rained". Where the god
+		// has been answering, the answer (or, if it does not come, the unanswered prayer) tells the prayer itself
+		if (recent(w, "prayer-answered", cid, T.prayerHeard)) return;
+		if (!minorOk(w, "prayer", cid, T.minorGap, T.prayerWorldGap)) return;
 		write(w, "prayer", 1, s->cell, cid, tpl(kPrayer), "prayer", x);
 		return;
 	}
@@ -1620,6 +2103,7 @@ void onPrayer(World& w, const EvPrayer& e) {
 	S.prayerSince.erase(it);
 	const double limit = fin(w.tune<SocietyTune>().prayerYears, 15);
 	if (fin(w.year) - since < limit - 0.5) return;         // the cause went away: nothing to tell
+	x.set("py", yearsInWords(fin(w.year) - since));
 	if (!minorOk(w, "prayer-unanswered", cid, T.minorGap)) return;
 	write(w, "prayer-unanswered", 1, s->cell, cid, tpl(kPrayerLost), "prayer-lost", x);
 }
@@ -1629,6 +2113,14 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	if (!s) return;
 	ChronicleScratch& S = w.scratch<ChronicleScratch>();
 	S.prayerSince.erase(e.id);
+	// (voice review 2) a healed town: the answer tells the end of its plague
+	if (e.kind == PrayerKind::Heal) {
+		for (size_t i = 0; i < S.pending.size();) {
+			const ChronicleScratch::Pending& pe = S.pending[i];
+			if (!pe.war && pe.a == e.id && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+			else i++;
+		}
+	}
 	if (S.answeredTick != w.tick || S.answeredYear != fin(w.year)) { S.answeredTick = w.tick; S.answeredYear = fin(w.year); S.answered.clear(); }
 	S.answered.push_back(e.id);
 	const int cid = s->culture;
@@ -1638,11 +2130,27 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	ctxCulture(x, w, cid);
 	// (integration verifier) a kind god answering every year made hundreds of notable entries: one
 	// notable answer per culture per minorGap years, the others still written but minor
-	const int wgt = recentNotable(w, "prayer-answered", cid, tuneOf(w).minorGap) ? 1 : 2;
+	// (verifier 2026-11-19) answers are told one at a time in the whole world: one within answerWorldGap years
+	// of another is minor, and the minor rule then drops it (a kind god's answers filled a third of the book
+	// and one rain sentence came back forty times)
+	const int wgt = (recentNotable(w, "prayer-answered", cid, tuneOf(w).minorGap) ||
+		recent(w, "prayer-answered", kAnyCulture, tuneOf(w).answerWorldGap)) ? 1 : 2;
+	// (voice review) the minor ones are rate-limited like every minor entry: a kind god answering ten
+	// towns a year wrote ten near-identical lines a year
+	if (wgt == 1 && !minorOk(w, "prayer-answered", cid, tuneOf(w).minorGap, tuneOf(w).answerWorldGap)) return;
 	switch (e.kind) {
 	case PrayerKind::Rain: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsRain), "ans-rain", x); break;
 	case PrayerKind::Heal: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsHeal), "ans-heal", x); break;
-	case PrayerKind::Peace: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsPeace), "ans-peace", x); break;
+	case PrayerKind::Peace:
+		// (voice review 2) the answer ends the war: a draw held back this tick is told by it
+		if (write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsPeace), "ans-peace", x)) {
+			for (size_t i = 0; i < S.pending.size();) {
+				const ChronicleScratch::Pending& pe = S.pending[i];
+				if (pe.war && (pe.a == cid || pe.b == cid) && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+				else i++;
+			}
+		}
+		break;
 	case PrayerKind::Bloom: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsBloom), "ans-bloom", x); break;
 	}
 }
@@ -1683,7 +2191,7 @@ void onCultureDied(World& w, const EvCultureDied& e) {
 	}
 	Tpl t = tpl(kCultureDied);
 	if (sid >= 0) ctxSettlement(x, w, sid);
-	else x.set("s", "their old lands");
+	else x.set("s", "wide lands");                         // (voice review 2) "who once held wide lands", not "their old lands"
 	write(w, "culture-died", 3, -1, e.id, t, "culture-died", x);
 	// its epithet memory is no longer needed
 	const string id = std::to_string(e.id);
@@ -1723,8 +2231,14 @@ void onCultureAge(World& w, const EvCultureAge& e) {
 	default: t = tpl(kAgeSpace); break;
 	}
 	const string key = string("age-") + std::to_string(e.age);
+	// (voice {age}) "the Age of Iron"; the hidden fire and the stars read as nouns
+	static const char* const kAgeWord[Age::COUNT] = { "Stone", "Bronze", "Iron", "Sail", "Industry", "the Atom", "the Stars" };
+	x.set("age", kAgeWord[e.age]);
+	// (voice 25a-c, 26) the generic age lines beside each age's own; the world's first people to reach
+	// an age is told by v26 half the time
 	writeComposed(w, "age", first ? 3 : 2, sett(w, sid) ? sett(w, sid)->cell : -1, e.id, t, key,
-		first ? tpl(kAgeFirstSfx) : Tpl{ nullptr, 0 }, "age-first-sfx", x);
+		first ? tpl(kAgeFirstSfx) : Tpl{ nullptr, 0 }, "age-first-sfx", x,
+		first ? tpl(kAgeWorldFirst) : tpl(kAgeVoice), first ? "age-world-first" : "age-voice", first ? 0.5 : kVoiceShare);
 }
 
 void onWarDeclared(World& w, const EvWarDeclared& e) {
@@ -1732,12 +2246,22 @@ void onWarDeclared(World& w, const EvWarDeclared& e) {
 	Ctx x;
 	ctxCulture(x, w, e.a);
 	ctxCulture(x, w, e.b, "2");
+	w.vars.num[warKey(e.a, e.b)] = fin(w.year);           // (voice {war_years}) read back at war:ended
 	write(w, "war", 2, -1, e.a, tpl(kWarDeclared), "war", x);
 }
 
 void onWarEnded(World& w, const EvWarEnded& e) {
 	if (!cult(w, e.a) || !cult(w, e.b)) return;
 	Ctx x;
+	// (voice {war_years}) from the declaration this chronicle saw; unknown -> "long fighting"
+	const string wk = warKey(e.a, e.b);
+	const auto began = w.vars.num.find(wk);
+	if (began != w.vars.num.end() && std::isfinite(began->second) && fin(w.year) >= began->second) {
+		x.set("wy", yearsInWords(fin(w.year) - began->second));
+		w.vars.num.erase(began);
+	} else {
+		x.set("wy", "long fighting");
+	}
 	if (e.victor == e.a || e.victor == e.b) {
 		const int loser = e.victor == e.a ? e.b : e.a;
 		ctxCulture(x, w, e.victor);
@@ -1745,16 +2269,32 @@ void onWarEnded(World& w, const EvWarEnded& e) {
 		const Culture* v = cult(w, e.victor);
 		ctxSettlement(x, w, v->capital);
 		if (!sett(w, v->capital)) x.set("s", "their cities");
-		write(w, "peace", 2, -1, e.victor, tpl(kWarWon), "war-won", x);
+		// (voice review 2) the beaten people died with the war (culture:died comes first): nobody asked for peace
+		const Culture* lc = cult(w, loser);
+		if (lc && lc->dead) write(w, "peace", 2, -1, e.victor, tpl(kWarWonGone), "war-won-gone", x);
+		else write(w, "peace", 2, -1, e.victor, tpl(kWarWon), "war-won", x);
 	} else {
-		ctxCulture(x, w, e.a);
-		ctxCulture(x, w, e.b, "2");
-		write(w, "peace", 2, -1, e.a, tpl(kWarDraw), "war-draw", x);
+		// (voice review 2) held back: an Omen of Peace that ended it tells both armies' story instead
+		ChronicleScratch& S = w.scratch<ChronicleScratch>();
+		ChronicleScratch::Pending pe;
+		pe.tick = w.tick;
+		pe.year = fin(w.year);
+		pe.war = true;
+		pe.a = e.a;
+		pe.b = e.b;
+		S.pending.push_back(pe);
 	}
 }
 
 void onBattle(World& w, const EvBattle& e) {
-	if (e.won) return;                                    // a won battle is told as the capture or the razing
+	if (e.won) {                                          // a won battle is told as the capture or the razing
+		ChronicleScratch& S = w.scratch<ChronicleScratch>();
+		S.wonTick = w.tick;
+		S.wonYear = fin(w.year);
+		S.wonSettlement = e.settlement;
+		S.wonAttacker = e.attacker;
+		return;
+	}
 	const Settlement* s = sett(w, e.settlement);
 	if (!s || !cult(w, e.attacker)) return;
 	const ChronicleTune& T = tuneOf(w);
@@ -1788,11 +2328,11 @@ void onTradeRoute(World& w, const EvTradeRoute& e) {
 			write(w, "trade", 2, a->cell, a->culture, tpl(kTradeForeign), "trade-foreign", x);
 			return;
 		}
-		if (!minorOk(w, "trade", a->culture, T.minorGap * 2)) return;
+		if (!minorOk(w, "trade", a->culture, T.tradeGap, T.tradeWorldGap)) return;
 		write(w, "trade", 1, a->cell, a->culture, tpl(kTradeForeignMore), "trade-foreign-more", x);
 		return;
 	}
-	if (!minorOk(w, "trade", a->culture, T.minorGap * 2)) return;
+	if (!minorOk(w, "trade", a->culture, T.tradeGap, T.tradeWorldGap)) return;
 	write(w, "trade", 1, a->cell, a->culture, tpl(kTrade), "trade", x);
 }
 
@@ -1826,7 +2366,14 @@ void onEdict(World& w, const EvEdict& e) {
 	switch (e.edict) {
 	case Edict::Expand: t = tpl(kEdictExpand); key = "edict-expand"; break;
 	case Edict::Build: t = tpl(kEdictBuild); key = "edict-build"; break;
-	case Edict::Crusade: t = tpl(kEdictCrusade); key = "edict-crusade"; break;
+	case Edict::Crusade: {
+		t = tpl(kEdictCrusade);
+		key = "edict-crusade";
+		const int mark = crusadeMark(w, e.culture);
+		if (mark >= 0) ctxCulture(x, w, mark, "2");
+		else x.set("c2", "their neighbours");
+		break;
+	}
 	default: break;
 	}
 	const Settlement* s = c->prophet ? sett(w, c->prophet->settlement) : nullptr;
@@ -1879,6 +2426,9 @@ void onArkLaunched(World& w, const EvArkLaunched& e) {
 	ctxSettlement(x, w, e.settlement);
 	const Settlement* s = sett(w, e.settlement);
 	if (!s) x.set("s", "their capital");
+	// (voice review 2) in history the launch ends the world (Sim.checkEnding), and the ending passage opens
+	// "In the {yo} year": the launch does not open with it too
+	if (w.phase == Phase::History) x.set("noIN", "1");
 	write(w, "ark", 3, s ? s->cell : -1, e.culture, tpl(kArkLaunched), "ark-launched", x);
 }
 
@@ -1913,37 +2463,98 @@ void onUnitDied(World& w, const EvUnitDied& e) {
 	const int home = nearestLive(w, e.cell, a, e.culture);
 	ctxSettlement(x, w, home);
 	if (home < 0) x.set("s", "their homes");
-	write(w, "settlers-lost", 1, e.cell, e.culture, tpl(kSettlersLost), "settlers-lost", x);
+	if (home >= 0 && sid == home) write(w, "settlers-lost", 1, e.cell, e.culture, tpl(kSettlersLostHome), "settlers-lost-home", x);
+	else write(w, "settlers-lost", 1, e.cell, e.culture, tpl(kSettlersLost), "settlers-lost", x);
 }
 
 void onPeopleLost(World& w, const EvPeopleLost&) {
 	Ctx x;
 	ctxWorld(x, w);
+	// (voice, people:lost) the last place to fall: latest deadYear, ties by the higher id
+	int last = -1;
+	for (const Settlement& s : w.settlements)
+		if (s.dead && s.deadYear && std::isfinite(*s.deadYear) && (last < 0 || *s.deadYear >= *w.settlements[size_t(last)].deadYear)) last = s.id;
+	if (last >= 0 && cult(w, w.settlements[size_t(last)].culture)) {
+		ctxSettlement(x, w, last);
+		ctxCulture(x, w, w.settlements[size_t(last)].culture);
+		write(w, "lost", 3, w.settlements[size_t(last)].cell, w.settlements[size_t(last)].culture, tpl(kPeopleLostLast), "people-lost-last", x);
+		return;
+	}
 	write(w, "lost", 3, -1, -1, tpl(kPeopleLost), "people-lost", x);
+}
+
+// (voice, section 4) the ending passage for an ending id: the family, and the keys it needs.
+//   ark-*      {c} {g} {ep} {callep} the departing people; {s} the launch site (ark-forgotten: their
+//              largest live town with a temple, else the launch site); {yo} the ending year
+//   silence-*  {W}; quiet: {ep} the world's last name for the god; ash: {s} the greatest place that fell
+Tpl endingTpl(Mood mood, string& key) {
+	switch (mood) {
+	case Mood::Beloved: key = "end-beloved"; return tpl(kEndBeloved);
+	case Mood::Feared: key = "end-feared"; return tpl(kEndFeared);
+	case Mood::Forgotten: key = "end-forgotten"; return tpl(kEndForgotten);
+	case Mood::Parting: key = "end-parting"; return tpl(kEndParting);
+	case Mood::Ash: key = "end-ash"; return tpl(kEndAsh);
+	case Mood::Quiet: break;
+	}
+	key = "end-quiet";
+	return tpl(kEndQuiet);
+}
+void endingCtx(Ctx& x, const World& w, Mood mood, int culture, int settlement, double year) {
+	ctxWorld(x, w);
+	x.set("yo", yearOrdinal(year));
+	if (cult(w, culture)) ctxCulture(x, w, culture);
+	else {
+		x.set("c", "the last people");
+		x.set("g", "the god");
+		x.set("ep", w.god.epithet.empty() ? string("the god") : w.god.epithet);
+	}
+	const Ctx::Kv* g = x.get("g");
+	const Ctx::Kv* ep = x.get("ep");
+	x.set("callep", g && ep && g->v != ep->v ? ", whom they called " + ep->v : string());
+	int sid = sett(w, settlement) ? settlement : -1;
+	if (mood == Mood::Forgotten && cult(w, culture)) {
+		int best = -1;
+		for (const Settlement& s : w.settlements)
+			if (!s.dead && s.culture == culture && s.has(Building::TEMPLE) && (best < 0 || fin(s.pop) > fin(w.settlements[size_t(best)].pop))) best = s.id;
+		if (best >= 0) sid = best;
+	}
+	if (mood == Mood::Ash || mood == Mood::Quiet) {
+		x.set("ep", w.god.epithet.empty() ? string("the god") : w.god.epithet);
+		sid = -1;
+		for (const Settlement& s : w.settlements) {
+			if (!s.dead) continue;
+			if (sid < 0) { sid = s.id; continue; }
+			const Settlement& b = w.settlements[size_t(sid)];
+			if (s.tier > b.tier || (s.tier == b.tier && fin(s.pop) > fin(b.pop))) sid = s.id;
+		}
+	}
+	if (sid >= 0) ctxSettlement(x, w, sid);
+	else if (cult(w, culture) && sett(w, cult(w, culture)->capital)) ctxSettlement(x, w, cult(w, culture)->capital);
+	else x.set("s", mood == Mood::Ash ? "the last city" : "their old capital");
 }
 
 void onEnding(World& w, const EvEnding& e) {
 	Ctx x;
-	ctxWorld(x, w);
-	ctxCulture(x, w, e.culture);
-	if (!cult(w, e.culture)) x.set("c", "the last people");
-	Tpl t = tpl(kEndQuiet);
-	string key = "end-quiet";
-	switch (e.mood) {
-	case Mood::Beloved: t = tpl(kEndBeloved); key = "end-beloved"; break;
-	case Mood::Feared: t = tpl(kEndFeared); key = "end-feared"; break;
-	case Mood::Forgotten: t = tpl(kEndForgotten); key = "end-forgotten"; break;
-	case Mood::Parting: t = tpl(kEndParting); key = "end-parting"; break;
-	case Mood::Ash: t = tpl(kEndAsh); key = "end-ash"; break;
-	case Mood::Quiet: t = tpl(kEndQuiet); key = "end-quiet"; break;
-	}
+	endingCtx(x, w, e.mood, e.culture, e.settlement, fin(w.year));
+	string key;
+	const Tpl t = endingTpl(e.mood, key);
 	write(w, "ending", 3, -1, cult(w, e.culture) ? e.culture : -1, t, key, x);
 }
 
 void onMiracle(World& w, const EvMiracleWitnessed& e) {
-	if (e.ids.empty()) return;                             // the chronicle is what the people saw
 	const ChronicleTune& T = tuneOf(w);
 	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	// (voice review 2) the god healed it: the plague's end held back this tick is not "burned itself out"
+	if (e.kind == "heal") {
+		for (size_t i = 0; i < S.pending.size();) {
+			const ChronicleScratch::Pending& pe = S.pending[i];
+			const Settlement* ps = pe.war ? nullptr : sett(w, pe.a);
+			const bool here = ps && (ps->cell == e.cell || std::find(e.ids.begin(), e.ids.end(), pe.a) != e.ids.end());
+			if (here && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+			else i++;
+		}
+	}
+	if (e.ids.empty()) return;                             // the chronicle is what the people saw
 	// every culture that saw it heard from its god
 	for (int id : e.ids) if (const Settlement* s = sett(w, id)) heardBy(w, s->culture);
 	// an answered prayer was already told
@@ -1963,9 +2574,19 @@ void onMiracle(World& w, const EvMiracleWitnessed& e) {
 	setWhere(x, w, e.cell, T.nearAng);
 	const string& k = e.kind;
 	const double good = fin(e.good);
+	// (voice review 2) the town's answered prayer already told this rain (the brush goes on for a few more
+	// strokes): "Thovi heard the dry fields of Nawar, and opened the sky" then "Rain fell on Nawar out of a
+	// clear sky"
+	if ((k == "rain" || k == "bloom") && toldAt(w, "prayer-answered", s->cell, T.answerQuiet)) return;
+	// (voice review 2) one brush miracle per town per brushTownGap years
+	if ((k == "rain" && toldAt(w, "miracle-rain", s->cell, T.brushTownGap)) || (k == "bloom" && toldAt(w, "miracle-bloom", s->cell, T.brushTownGap)) ||
+		((k == "raise" || k == "lower") && toldAt(w, "miracle-shape", s->cell, T.brushTownGap))) return;
 	if (k == "rain") {
 		if (!minorOk(w, "miracle-rain", cid, T.brushGap, T.brushGap * 0.35)) return;
+		// a town that has prayed lately asked for it: not "though it had not been asked for"
+		const bool asked = S.prayerSince.count(sid) > 0 || toldAt(w, "prayer", s->cell, 15);
 		if (good >= 0.5) write(w, "miracle-rain", 1, e.cell, cid, tpl(kRainThirst), "rain-thirst", x);
+		else if (asked) write(w, "miracle-rain", 1, e.cell, cid, tpl(kRainSoftAsked), "rain-soft-asked", x);
 		else write(w, "miracle-rain", 1, e.cell, cid, tpl(kRainSoft), "rain-soft", x);
 	} else if (k == "bloom") {
 		if (!minorOk(w, "miracle-bloom", cid, T.brushGap, T.brushGap * 0.35)) return;
@@ -1982,7 +2603,32 @@ void onMiracle(World& w, const EvMiracleWitnessed& e) {
 		if (!minorOk(w, "miracle-inspire", cid, 2)) return;
 		write(w, "miracle-inspire", 2, e.cell, cid, tpl(kInspire), "inspire", x);
 	} else if (k == "peace") {
-		write(w, "miracle-peace", 2, e.cell, cid, tpl(kOmenPeace), "omen-peace", x);
+		// (voice review) one omen per culture per minorGap years: a kind god's omens over twenty towns
+		// in one year wrote twenty entries
+		// (voice review 2) both armies saw one omen: the other people's witness is that entry
+		if (S.omenTick == w.tick && S.omenYear == fin(w.year) && std::find(S.omenCultures.begin(), S.omenCultures.end(), cid) != S.omenCultures.end()) return;
+		if (recentNotable(w, "miracle-peace", cid, T.minorGap)) return;
+		// (voice review 2) the omen has already ended the war (Powers: effect first, then the witness), so the
+		// enemy is the war held back this tick; v52 was unreachable in play before
+		int foe = -1;
+		for (size_t i = 0; i < S.pending.size(); i++) {
+			const ChronicleScratch::Pending& pe = S.pending[i];
+			if (pe.war && (pe.a == cid || pe.b == cid) && pe.tick == w.tick && pe.year == fin(w.year)) {
+				foe = pe.a == cid ? pe.b : pe.a;
+				S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+				break;
+			}
+		}
+		if (foe < 0) foe = enemyOf(w, cid);
+		if (foe >= 0 && cult(w, foe)) {
+			ctxCulture(x, w, foe, "2");
+			write(w, "miracle-peace", 2, e.cell, cid, tpl(kOmenPeaceWar), "omen-peace-war", x);
+			S.omenTick = w.tick;
+			S.omenYear = fin(w.year);
+			S.omenCultures = { cid, foe };
+		} else {
+			write(w, "miracle-peace", 2, e.cell, cid, tpl(kOmenPeace), "omen-peace", x);
+		}
 	} else if (k == "plague" && good < 0) {
 		if (!minorOk(w, "wrath-plague", cid, 2)) return;
 		write(w, "wrath-plague", 2, e.cell, cid, tpl(kPlagueSent), "plague-sent", x);
@@ -1990,9 +2636,45 @@ void onMiracle(World& w, const EvMiracleWitnessed& e) {
 	// lightning, quake, meteor, volcano: told by their own events; prophet: by prophet:risen; nuke: by nuke
 }
 
+// (voice review 2) the endings held back (ChronicleScratch::pending): written once their tick is over
+// (`all`: every one, from updateEpithets at the end of the yearly group)
+void flushPending(World& w, bool all) {
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	if (S.pending.empty()) return;
+	std::vector<ChronicleScratch::Pending> due;
+	for (size_t i = 0; i < S.pending.size();) {
+		const ChronicleScratch::Pending& pe = S.pending[i];
+		if (all || pe.tick != w.tick || pe.year != fin(w.year)) {
+			due.push_back(pe);
+			S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+		} else {
+			i++;
+		}
+	}
+	const ChronicleTune& T = tuneOf(w);
+	for (const ChronicleScratch::Pending& pe : due) {
+		if (pe.war) {
+			if (!cult(w, pe.a) || !cult(w, pe.b)) continue;
+			Ctx x;
+			ctxCulture(x, w, pe.a);
+			ctxCulture(x, w, pe.b, "2");
+			write(w, "peace", 2, -1, pe.a, tpl(kWarDraw), "war-draw", x);
+		} else {
+			const Settlement* s = sett(w, pe.a);
+			if (!s || s->dead) continue;
+			const int cid = s->culture;
+			if (!minorOk(w, "plague-end", cid, T.minorGap)) continue;
+			Ctx x;
+			ctxSettlement(x, w, pe.a);
+			ctxCulture(x, w, cid);
+			write(w, "plague-end", 1, s->cell, cid, tpl(kPlagueEnd), "plague-end", x);
+		}
+	}
+}
+
 template <class T> void sub(World& w, ChronicleScratch& S, void (*fn)(World&, const T&)) {
 	World* wp = &w;
-	S.tokens.push_back(w.bus.on<T>([wp, fn](const T& e) { fn(*wp, e); }));
+	S.tokens.push_back(w.bus.on<T>([wp, fn](const T& e) { flushPending(*wp, false); fn(*wp, e); }));
 }
 
 // ====================================================================== epithets
@@ -2004,26 +2686,53 @@ enum Cat : int {
 	CatBeloved, CatDreaded,          // from society::regard when no deed stands out
 	CatCount
 };
-const char* const kEpithets[CatCount][4] = {
-	{ "the Waker", "{Who} Woke Us", "the First Voice", "the Dawn-Caller" },
-	{ "the God of Our Fathers", "the Old God", "the Remembered One", "the Elder" },
-	{ "the Silent One", "the Sleeper", "{Who} Does Not Answer", "the Far-Away" },
-	{ "the Giver and Taker", "the Two-Handed", "the Storm and the Harvest", "the Double-Hearted" },
-	{ "the Rain-Giver", "the Cloud-Shepherd", "{Who} Brings the Rain", "the Wet Wind" },
-	{ "the Green Hand", "the Gardener", "{Who} Wakes the Seed", "the Sower" },
-	{ "the Healer", "the Cool Hand", "{Who} Breaks Fevers", "the Mender" },
-	{ "the Lamp-Bearer", "the Teacher", "{Who} Kindles Minds", "the Whisperer" },
-	{ "the Peacemaker", "the Oath-Binder", "{Who} Stills Spears", "the Quiet Voice" },
-	{ "the Voice", "the Caller of Prophets", "{Who} Speaks Through Us", "the Mouth of Heaven" },
-	{ "the Shaper", "the Potter", "{Who} Lifts the Hills", "the Mountain-Maker" },
-	{ "the Drowner", "the Sea-Bringer", "{Who} Swallows Cities", "the Deep" },
-	{ "the Thunderer", "the Spear of Heaven", "{Who} Strikes the Oaks", "the Bright Spear" },
-	{ "the Earth-Shaker", "the Breaker of Hills", "{Who} Walks Beneath", "the Restless Ground" },
-	{ "the Bringer of Fevers", "the Grey Breath", "{Who} Sends the Sickness", "the Withering" },
-	{ "{Who} Burns the Sky", "the Hammer", "the Star-Thrower", "the Falling Fire" },
-	{ "the Smith Below", "the Fire-Mountain", "{Who} Opens the Mountains", "the Ash-Maker" },
-	{ "the Beloved", "the Kind One", "{Who} Keeps the Hearth", "the Shepherd" },
-	{ "the Dreaded", "the Jealous One", "{Who} Must Be Appeased", "the Terrible" },
+// (voice, section 3) the god's epithets by the behaviour that earns them. The voice's 40 come first in
+// each group; groups the voice gave fewer than three names keep older ones beside them. The names are
+// fixed titles (the voice keeps "She Who Burns the Sky" and "He Who Moves the Hills" as written).
+//   Waker       nothing distinct seen yet (voice fallback: "the Maker")
+//   Ancestral   a daughter people with nothing of its own seen
+//   Silent      voice "Absent": no deed seen for silentYears
+//   Mixed       voice "Chaotic": mercy and wrath both remembered
+//   Rain / Green / Peace / Drowner                     voice groups of the same name
+//   Healer / Lamp / Voice                              voice "Healing and grace": heal / inspire / prophet
+//   Thunder / Star                                     voice "Fire-throwing": lightning / meteor
+//   Shaper / Shaker / Fire                             voice "Earth-shaking": raise-lower / quake / volcano
+//   Fever                                              voice "Plague-sending"
+//   Beloved     voice "Kind": loved (regard) with no single deed, or kindness of many kinds
+//   Dreaded     voice "Cruel": feared (regard) with no single deed, or wrath of many kinds
+const char* const kEpWaker[] = { "the Maker", "the Waker", "the First Voice", "the Dawn-Caller" };
+const char* const kEpAncestral[] = { "the God of Our Fathers", "the Old God", "the Remembered One", "the Elder" };
+const char* const kEpSilent[] = { "the Silent One", "the Sleeper", "the Empty Chair", "the Rumour" };
+const char* const kEpMixed[] = { "the Two-Handed", "the Laughing Storm", "the Coin-Tosser" };
+const char* const kEpRain[] = { "the Rain-Giver", "the Cloud-Shepherd", "She Who Opens the Sky", "the Well-Filler" };
+const char* const kEpGreen[] = { "the Green Hand", "the Sower", "Lord of the Second Spring" };
+const char* const kEpHealer[] = { "the Physician of Towns", "the Breath That Mends", "the Healer" };
+const char* const kEpLamp[] = { "the Whisperer of Crafts", "the Lamp-Bearer", "the Teacher" };
+const char* const kEpVoice[] = { "the Sender of Prophets", "the Voice", "the Mouth of Heaven" };
+const char* const kEpShaper[] = { "He Who Moves the Hills", "the Potter", "the Shaper" };
+const char* const kEpDrowner[] = { "the Drowner", "the Sea's Elbow", "the Deep" };
+const char* const kEpThunder[] = { "the Lightning-Handed", "the Thunderer", "the Spear of Heaven" };
+const char* const kEpShaker[] = { "the Shaker of Floors", "the Earth-Shaker", "the Restless Ground" };
+const char* const kEpFever[] = { "the Sick Wind", "the Grey Breath", "the Bringer of Fevers" };
+const char* const kEpStar[] = { "She Who Burns the Sky", "the Hammer", "the Thrower of Stars" };
+const char* const kEpFire[] = { "the Mountain-Maker", "the Fire-Mountain", "the Ash-Maker" };
+const char* const kEpPeace[] = { "the Breaker of Spears", "the Quiet Between Armies", "the Peacemaker" };
+const char* const kEpBeloved[] = { "the Gentle Hand", "the Kind Sky", "Mother of Harvests", "the Patient One", "He Who Keeps the Lamp Lit" };
+const char* const kEpDreaded[] = { "the Unkind Sky", "the Hungry One", "the Tyrant Above", "the One We Do Not Name" };
+const Tpl kEpithets[CatCount] = {
+	tpl(kEpWaker), tpl(kEpAncestral), tpl(kEpSilent), tpl(kEpMixed),
+	tpl(kEpRain), tpl(kEpGreen), tpl(kEpHealer), tpl(kEpLamp), tpl(kEpPeace), tpl(kEpVoice), tpl(kEpShaper),
+	tpl(kEpDrowner), tpl(kEpThunder), tpl(kEpShaker), tpl(kEpFever), tpl(kEpStar), tpl(kEpFire),
+	tpl(kEpBeloved), tpl(kEpDreaded),
+};
+// (voice review 2, lead decision) how many names at the head of each group are the approved voice's 40
+// (section 3; "the Maker" is its fallback). They are each people's primary choice: an invented name
+// (kept where it fits the voice) is drawn for about one people in five, and only in groups that have one.
+constexpr int kEpApproved[CatCount] = {
+	1, 0, 4, 3,
+	4, 3, 2, 1, 2, 1, 1,
+	2, 1, 1, 2, 3, 1,
+	5, 4,
 };
 
 // What a culture remembers: kinds of culture.seen plus "drown" (settlements lost to the sea).
@@ -2149,10 +2858,31 @@ int chooseRaw(const World& w, const Culture& c, const Memory& m) {
 		return c.parent >= 0 && s.cat[CatWaker] < 0.5 * T.minDeeds ? CatAncestral : CatWaker;
 	}
 	const double mixedShare = m.cat == CatMixed ? T.mixedShare * 0.67 : T.mixedShare;
-	if (s.benev >= mixedShare * s.total && s.wrath >= mixedShare * s.total) {
+	// (voice review 2) "Two-Handed" needs blows from the god's own hand: towns lost to a rising sea name the
+	// god the Drowner when they dominate, but do not turn a kind god two-handed (a kind god of seed 3 was
+	// 'the Two-Handed' to four peoples for 900 years because the warming sea took their coasts)
+	const double wrathActs = std::max(0.0, s.wrath - m.m[KDrown]);
+	if (s.benev >= mixedShare * s.total && wrathActs >= mixedShare * s.total) {
 		// both hands remembered: a people that has come to hate its god only remembers the blows
 		if (fin(society::regard(w, c.id).love) <= T.dreadLove) return CatDreaded;
 		return CatMixed;
+	}
+	// (voice "Kind" / "Cruel") kindness or wrath of many kinds, none of them dominant, names the god by
+	// how the people feel; a people already calling its god so keeps the name until one deed reaches
+	// kindHold of that side (hysteresis)
+	{
+		double maxB = 0, maxW = 0;
+		for (int k = CatRain; k <= CatVoice; k++) maxB = std::max(maxB, s.cat[k]);
+		for (int k = CatDrowner; k <= CatFire; k++) maxW = std::max(maxW, s.cat[k]);
+		const double spreadB = m.cat == CatBeloved ? T.kindHold : T.kindSpread;
+		const double spreadW = m.cat == CatDreaded ? T.kindHold : T.kindSpread;
+		const bool manyKind = s.benev >= T.kindShare * s.total && maxB < spreadB * s.benev;
+		const bool manyCruel = s.wrath >= T.kindShare * s.total && maxW < spreadW * s.wrath;
+		if (manyKind || manyCruel) {
+			const double love = fin(society::regard(w, c.id).love);
+			if (manyKind && love >= T.kindLove) return CatBeloved;
+			if (manyCruel && love <= T.cruelLove) return CatDreaded;
+		}
 	}
 	int best = CatRain;
 	for (int k = CatRain; k <= CatFire; k++) if (s.cat[k] > s.cat[best]) best = k;
@@ -2166,10 +2896,12 @@ int chooseRaw(const World& w, const Culture& c, const Memory& m) {
 string epithetText(const World& w, int cid, int cat) {
 	if (cat < 0 || cat >= CatCount) cat = CatWaker;
 	const uint32_t h = hash2(uint32_t(cid * 131 + cat * 7 + 1), w.seed);
-	string e = kEpithets[cat][h % 4u];
-	const size_t p = e.find("{Who}");
-	if (p != string::npos) e.replace(p, 5, godIsShe(w, cid) ? "She Who" : "He Who");
-	return e;
+	const Tpl& g = kEpithets[cat];
+	if (g.n <= 0) return string("the Maker");
+	const int approved = std::clamp(kEpApproved[cat], 0, g.n), invented = g.n - approved;
+	const bool useInvented = invented > 0 && (approved == 0 || (h / 7u) % 5u == 0);
+	if (!useInvented) return string(g.t[h % uint32_t(approved)]);
+	return string(g.t[approved + int(h % uint32_t(invented))]);
 }
 
 // Population per living culture from its live settlements (culture.pop may be a year stale).
@@ -2204,9 +2936,16 @@ string countWord(int n) {
 // An entry quoted after "In the year 312, ...": lower-case its first word when it is a common word
 // (never a name).
 string lowerLead(const string& t) {
+	// (verifier) the words that open the templates themselves (every capitalised literal word that starts a
+	// line or an alternative), so no quoted entry keeps a capital in the middle of a sentence
 	static const char* const kCommon[] = { "The", "A", "An", "In", "At", "Here", "Again", "Nowhere", "So", "Thus", "From",
 		"Far", "Fire", "Of", "Where", "Many", "No", "There", "Settlers", "Families", "Wanderers", "Something", "Lightning",
-		"Before", "After", "Among", "Hunger", "War", "Rain", "Green", "Half", "One", "For", "It" };
+		"Before", "After", "Among", "Hunger", "War", "Rain", "Green", "Half", "One", "For", "It",
+		"Ash", "Black", "Caravans", "Children", "Chimneys", "Clouds", "Enemies", "Envoys", "Every", "Famine", "Fearing",
+		"Fever", "Few", "Fishermen", "Generations", "Hills", "Ice", "Its", "Just", "Masts", "Merchants", "Mines", "Mist",
+		"Near", "Nothing", "Old", "Once", "Out", "Outside", "Over", "Ox-carts", "Rivers", "Scholars", "Smoke", "Soft",
+		"Some", "Still", "Ten", "That", "Their", "Then", "They", "Thunder", "Traders", "Walls", "Water", "Weights",
+		"When", "Wind", "Another", "Around", "By", "Each", "Mothers", "Priests", "Women", "Sons", "Stones" };
 	const size_t sp = t.find_first_of(" ,;:");
 	const string first = t.substr(0, sp);
 	for (const char* k : kCommon) {
@@ -2214,6 +2953,35 @@ string lowerLead(const string& t) {
 			string out = t;
 			out[0] = char(out[0] - 'A' + 'a');
 			return out;
+		}
+	}
+	return t;
+}
+
+// (voice) "In the 312th year, a band went out ..." -> "a band went out ...": the tale gives the year itself
+string dropYearOpener(const string& t) {
+	if (!startsWith(t, "In the ")) return t;
+	const size_t sp = t.find(' ', 7);
+	if (sp == string::npos || t.compare(sp, 5, " year") != 0) return t;
+	const string ord = t.substr(7, sp - 7);
+	const bool isOrd = ord == "first" || (ord.size() > 2 && std::isdigit(static_cast<unsigned char>(ord[0])) &&
+		(startsWith(ord.substr(ord.size() - 2), "st") || startsWith(ord.substr(ord.size() - 2), "nd") ||
+		 startsWith(ord.substr(ord.size() - 2), "rd") || startsWith(ord.substr(ord.size() - 2), "th")));
+	if (!isOrd) return t;
+	size_t k = sp + 5;
+	if (k < t.size() && t[k] == ',') k++;
+	while (k < t.size() && t[k] == ' ') k++;
+	if (k >= t.size()) return t;
+	return t.substr(k);                                     // the sentence goes on ("a band went out ...")
+}
+// (voice) the same entry quoted in the tale: a year named inside it ("In the 3284th year the last of
+// its people rowed away") is the quoted year: "In that year ..."
+string thatYear(string t) {
+	for (const char* lead : { "In the ", "in the " }) {
+		for (size_t p = t.find(lead); p != string::npos; p = t.find(lead, p + 1)) {
+			const size_t a = p + 7, sp = t.find(' ', a);
+			if (sp == string::npos || t.compare(sp, 5, " year") != 0 || a >= t.size() || !std::isdigit(static_cast<unsigned char>(t[a]))) continue;
+			t.replace(p, sp + 5 - p, string(lead[0] == 'I' ? "In" : "in") + " that year");
 		}
 	}
 	return t;
@@ -2322,6 +3090,7 @@ std::string epithet(const World& w, int cultureId) {
 }
 
 void updateEpithets(World& w) {
+	flushPending(w, true);                                 // (voice review 2) the year's held-back endings
 	int bestC = -1;
 	double bestP = -1;
 	for (size_t i = 0; i < w.cultures.size(); i++) {
@@ -2342,7 +3111,8 @@ void updateEpithets(World& w) {
 			ctxCulture(x, w, cid);
 			x.set("e", e);
 			x.set("old", old);
-			if (old.empty()) write(w, "epithet", 2, -1, cid, tpl(kEpiFirst), "epithet-first", x);
+			if (old.empty() && w.cultures[i].parent >= 0) write(w, "epithet", 2, -1, cid, tpl(kEpiFirstDaughter), "epithet-first-d", x);
+			else if (old.empty()) write(w, "epithet", 2, -1, cid, tpl(kEpiFirst), "epithet-first", x);
 			else if (cat == CatSilent) write(w, "epithet", 2, -1, cid, tpl(kEpiSilent), "epithet-silent", x);   // (integration verifier) not "after what they had seen"
 			else write(w, "epithet", 2, -1, cid, tpl(kEpiChange), "epithet-change", x);
 		}
@@ -2455,12 +3225,21 @@ Tale tale(const World& w) {
 		int sea = 0;
 		for (int c = 0; c < w.n; c++) if (c < int(w.elev.size()) && state::isSea(w, c)) sea++;
 		const double share = w.n > 0 ? double(sea) / double(w.n) : 0;
-		x.set("seaw", share > 0.75 ? "nearly all" : share > 0.55 ? "the greater part" : share > 0.35 ? "half" : share > 0.05 ? "a little" : "none");
+		x.set("seaw", share > 0.75 ? "nearly all" : share > 0.55 ? "the greater part" : share > 0.35 ? "half" : "a little");
+		// (voice 2, 3) the comets and the first green, as the voice tells them
 		static const char* const kP[] = {
+			"In the beginning {W} was fire and then stone, and the god called ice down out of the dark. Where it fell, the hollows filled, and that was the first sea, and in time it covered {seaw} of the world. Then green came out of the wet places, slowly at first, as if it were not sure it was allowed.",
 			"In the beginning {W} was fire. The god cooled it and called down the ice of heaven, until the sea covered {seaw} of its face. Then green came upon the land, and beasts, and the god looked for a people to wake.",
 			"Before the counting of years, {W} was a ball of molten stone in the dark. The god let it cool, filled its hollows with the water of comets until the sea held {seaw} of the world, and planted the first green on the shores.",
 		};
-		out.paragraphs.push_back(expandOne(kP[r.pickIndex(2)], x, r));
+		static const char* const kDry[] = {
+			"In the beginning {W} was fire and then stone. The god cooled it but called down little water, and no sea ever lay on it. Then green came out of the damp places, slowly at first, as if it were not sure it was allowed.",
+		};
+		if (share <= 0.05) out.paragraphs.push_back(expandOne(kDry[0], x, r));
+		else {
+			const int k = r.pickIndex(4);                      // the voice's telling half the time
+			out.paragraphs.push_back(expandOne(kP[k <= 1 ? 0 : k - 1], x, r));
+		}
 	}
 
 	// ---- 2. the first people
@@ -2477,7 +3256,7 @@ Tale tale(const World& w) {
 			if (home < 0) x.set("s", "a place no one remembers");
 			std::vector<string> others;
 			for (const Culture& c : w.cultures) {
-				if (c.id == first) continue;
+				if (c.id == first || culturePlural(w, c.id) == culturePlural(w, first)) continue;   // not "the Exi ... after them came the Exi"
 				string nm = culturePlural(w, c.id);
 				if (std::find(others.begin(), others.end(), nm) == others.end()) others.push_back(nm);   // distinct names only
 			}
@@ -2501,7 +3280,9 @@ Tale tale(const World& w) {
 		string p = (years >= 1.5 ? "In " + fmtInt(years) + " years" : string("In their first years")) + " the peoples of " + W + " founded " + countWord(founded) + (founded == 1 ? " settlement" : " settlements");
 		p += ", and at their height they numbered " + fmtInt(peak) + " souls.";
 		p += " The greatest of their places was " + settlementName(w, biggest) + ".";
-		if (topAge > 0) p += string(" The furthest of them reached the age of ") + kAgeNames[topAge] + ".";
+		// (voice) the ages as the entries name them: "the Age of Iron", "the Age of the Atom"
+	static const char* const kAgeOf[Age::COUNT] = { "Stone", "Bronze", "Iron", "Sail", "Industry", "the Atom", "the Stars" };
+	if (topAge > 0) p += string(" The furthest of them reached the Age of ") + kAgeOf[topAge] + ".";
 		else p += " None of them ever learned to work metal.";
 		out.paragraphs.push_back(p);
 	}
@@ -2577,8 +3358,11 @@ Tale tale(const World& w) {
 	{
 		std::vector<const ChronicleEntry*> big;
 		// (the Ark and the end are the last paragraph's)
+		// (voice review 2) "In the year 1,723, the Gigasks are no more" / "..., where Sal Worirsian stood, fish now
+		// swim": entries told in the present tense are not quoted after a year
 		for (const ChronicleEntry& e : w.chronicle)
-			if (e.weight >= 3 && e.type != "genesis" && e.type != "ending" && !(w.ending && (e.type == "ark" || e.type == "lost"))) big.push_back(&e);
+			if (e.weight >= 3 && e.type != "genesis" && e.type != "ending" && !(w.ending && (e.type == "ark" || e.type == "lost")) &&
+				e.text.find(" are no more") == string::npos && e.text.find(" now swim") == string::npos) big.push_back(&e);
 		if (big.size() > 4) {
 			// the first, the last and two between, evenly
 			std::vector<const ChronicleEntry*> pickd;
@@ -2590,7 +3374,7 @@ Tale tale(const World& w) {
 			string p = "These things the scribes remembered above all.";
 			for (const ChronicleEntry* e : big) {
 				const double y = fin(e->year);
-				p += " " + string(y < 1 ? "In the first year" : "In the year " + fmtInt(std::floor(y))) + ", " + lowerLead(e->text);
+				p += " " + string(y < 1 ? "In the first year" : "In the year " + fmtInt(std::floor(y))) + ", " + lowerLead(thatYear(dropYearOpener(e->text)));
 			}
 			out.paragraphs.push_back(p);
 		}
@@ -2600,20 +3384,13 @@ Tale tale(const World& w) {
 	{
 		string p;
 		if (w.ending) {
+			// (voice, section 4) the ending passage of this ending id
 			const Ending& en = *w.ending;
-			ctxCulture(x, w, en.culture);
-			if (en.type == EndingType::Ark) {
-				switch (en.mood) {
-				case Mood::Beloved: p = expandOne(inYear(en.year) + ", {c} went out among the stars, and they carried the name of {ge} with them. They were loved, and they loved in return.", x, r); break;
-				case Mood::Feared: p = expandOne(inYear(en.year) + ", {c} fled to the stars. They were glad to leave the god behind, and the god knew it.", x, r); break;
-				case Mood::Forgotten: p = expandOne(inYear(en.year) + ", {c} left for the stars. By then they hardly remembered the god at all.", x, r); break;
-				default: p = expandOne(inYear(en.year) + ", {c} left for the stars, and the god watched them go, not knowing quite what they had been to each other.", x, r); break;
-				}
-			} else if (en.mood == Mood::Ash) {
-				p = inYear(en.year) + ", the last of the peoples died in the ash of their own fires. " + W + " was silent.";
-			} else {
-				p = inYear(en.year) + ", the last of the peoples passed away, and " + W + " grew quiet, and green, and empty.";
-			}
+			Ctx ex;
+			endingCtx(ex, w, en.mood, en.culture, en.settlement, en.year);
+			string key;
+			const Tpl t = endingTpl(en.mood, key);
+			p = expandOne(t.t[r.pickIndex(t.n)], ex, r);
 		} else if (liveIds.empty() && !w.settlements.empty()) {
 			p = "Now no one lives on " + W + ", and the god waits.";
 		} else if (!liveIds.empty()) {

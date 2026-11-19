@@ -53,10 +53,37 @@ struct Lcg {
 
 const char* const kJunk[] = { "undefined", "NaN", "nan", "null", "object", "Object", "inf", "Infinity", "std" };
 
+
+// (voice) "In the 312th year": the only digits an entry may hold are a year written as an English
+// ordinal right before " year" (312th, 1st, 22nd, 103rd, 111th). Returns the text with each such
+// ordinal masked as "Nth"; a wrong suffix ("312st") is reported in `fault`.
+std::string maskOrdinals(const std::string& t, std::string& fault) {
+	std::string out;
+	size_t i = 0;
+	while (i < t.size()) {
+		if (!std::isdigit(static_cast<unsigned char>(t[i]))) { out.push_back(t[i++]); continue; }
+		size_t j = i;
+		while (j < t.size() && std::isdigit(static_cast<unsigned char>(t[j]))) j++;
+		const bool prevOk = i == 0 || !std::isalnum(static_cast<unsigned char>(t[i - 1]));
+		if (!prevOk || j + 2 > t.size() || t.compare(j + 2, 5, " year") != 0) { out.append(t, i, j - i); i = j; continue; }
+		const std::string num = t.substr(i, j - i), sfx = t.substr(j, 2);
+		const long long n = std::stoll(num);
+		const long long tt = n % 100, u = n % 10;
+		const char* want = (tt >= 11 && tt <= 13) ? "th" : u == 1 ? "st" : u == 2 ? "nd" : u == 3 ? "rd" : "th";
+		if (sfx != want || num[0] == '0') { if (fault.empty()) fault = "bad ordinal '" + num + sfx + "'"; out.append(t, i, j + 2 - i); i = j + 2; continue; }
+		out += "Nth";
+		i = j + 2;
+	}
+	return out;
+}
+
 // "" when the entry reads as prose; otherwise what is wrong. digitsOk: tales may print years.
-std::string proseFault(const std::string& t, bool digitsOk = false) {
+std::string proseFault(const std::string& t0, bool digitsOk = false) {
+	std::string ordFault;
+	const std::string t = maskOrdinals(t0, ordFault);
+	if (!ordFault.empty()) return ordFault + ": '" + t0 + "'";
 	if (t.size() < 12) return "too short: '" + t + "'";
-	if (t.size() > 520) return "too long (" + std::to_string(t.size()) + ")";
+	if (t.size() > 600) return "too long (" + std::to_string(t.size()) + ")";   // (voice) endings are one paragraph
 	const unsigned char f = static_cast<unsigned char>(t[0]);
 	if (!(std::isupper(f) || t[0] == '"')) return "no capital: '" + t + "'";
 	const char last = t.back();
@@ -90,7 +117,11 @@ std::string proseFault(const std::string& t, bool digitsOk = false) {
 // Checked on the whole text: no " from ." style gaps, no "of ." etc.
 std::string gapFault(const std::string& t) {
 	static const char* const kEnds[] = { " of.", " to.", " from.", " by.", " at.", " the.", " and.", " a.", " with.", " on.", " for.", " is.", " was." };
-	for (const char* e : kEnds) if (t.find(e) != std::string::npos) return std::string("dangling word '") + e + "': '" + t + "'";
+	// (voice) "It was." and "..., which it was." are whole clauses (the Ark's "The children were told it was for them. It was.")
+	std::string u = t;
+	for (size_t p0; (p0 = u.find(" It was.")) != std::string::npos;) u.erase(p0, 8);
+	for (size_t p0; (p0 = u.find(" which it was.")) != std::string::npos;) u.erase(p0, 14);   // v35
+	for (const char* e : kEnds) if (u.find(e) != std::string::npos) return std::string("dangling word '") + e + "': '" + t + "'";
 	return "";
 }
 
@@ -365,12 +396,13 @@ DM_TEST("chronicle adv: degenerate worlds (no sea, no land, no people, no cultur
 DM_TEST("chronicle adv: each ending closes the tale on its own last paragraph; stats agree with the world") {
 	struct Case { EndingType t; Mood m; const char* must; };
 	const Case cases[] = {
-		{ EndingType::Ark, Mood::Beloved, "carried the name of" },
-		{ EndingType::Ark, Mood::Feared, "fled to the stars" },
-		{ EndingType::Ark, Mood::Forgotten, "hardly remembered the god" },
-		{ EndingType::Ark, Mood::Parting, "not knowing quite what they had been" },
-		{ EndingType::Silence, Mood::Ash, "was silent" },
-		{ EndingType::Silence, Mood::Quiet, "grew quiet" },
+		// (voice, section 4) each ending id closes on its own passage
+		{ EndingType::Ark, Mood::Beloved, "a shrine before there is a house" },
+		{ EndingType::Ark, Mood::Feared, "build their houses low" },
+		{ EndingType::Ark, Mood::Forgotten, "no one remembered to" },
+		{ EndingType::Ark, Mood::Parting, "a careful goodbye" },
+		{ EndingType::Silence, Mood::Ash, "learned at last to make suns" },
+		{ EndingType::Silence, Mood::Quiet, "no last battle and no last prayer" },
 	};
 	for (const Case& cs : cases) {
 		Scene s = scene(4, 21, 0.4, true);
@@ -613,7 +645,7 @@ DM_TEST("chronicle adv: epithets: hold, silence, regard names, god.epithet follo
 	chronicle::updateEpithets(w);
 	const std::string ea = w.cultures[size_t(a)].epithet;
 	ok(!ea.empty(), "epithet set on first update");
-	ok(ea == "the Rain-Giver" || ea == "the Cloud-Shepherd" || ea == "She Who Brings the Rain" || ea == "He Who Brings the Rain" || ea == "the Wet Wind",
+	ok(ea == "the Rain-Giver" || ea == "the Cloud-Shepherd" || ea == "She Who Opens the Sky" || ea == "the Well-Filler",
 		"rain memory names the god as a rain-giver: '" + ea + "'");
 	// god.epithet follows the most populous living culture (b has 900 people)
 	ok(w.god.epithet == w.cultures[size_t(b)].epithet, "god.epithet follows the largest culture (b)");
@@ -631,7 +663,7 @@ DM_TEST("chronicle adv: epithets: hold, silence, regard names, god.epithet follo
 	w.cultures[size_t(a)].seen.clear();
 	chronicle::updateEpithets(w);
 	const std::string es = w.cultures[size_t(a)].epithet;
-	ok(es == "the Silent One" || es == "the Sleeper" || es == "She Who Does Not Answer" || es == "He Who Does Not Answer" || es == "the Far-Away",
+	ok(es == "the Silent One" || es == "the Sleeper" || es == "the Empty Chair" || es == "the Rumour",
 		"300 years of silence: '" + es + "'");
 	// the largest culture dies: god.epithet moves to the next largest, and the dead culture's memory is dropped
 	w.cultures[size_t(b)].dead = true;
@@ -662,21 +694,21 @@ DM_TEST("chronicle adv: regard names the god when there is no deed (Beloved, Dre
 	};
 	mode = 0;
 	const std::string loving = chronicle::epithet(w, a);
-	ok(loving == "the Beloved" || loving == "the Kind One" || loving == "He Who Keeps the Hearth" || loving == "She Who Keeps the Hearth" || loving == "the Shepherd",
-		"loving people name the god 'Beloved' family: '" + loving + "'");
+	ok(loving == "the Gentle Hand" || loving == "the Kind Sky" || loving == "Mother of Harvests" || loving == "the Patient One" || loving == "He Who Keeps the Lamp Lit",
+		"loving people name the god 'Kind' family: '" + loving + "'");
 	mode = 1;
 	const std::string fearful = chronicle::epithet(w, a);
-	ok(fearful == "the Dreaded" || fearful == "the Jealous One" || fearful == "He Who Must Be Appeased" || fearful == "She Who Must Be Appeased" || fearful == "the Terrible",
-		"fearful people name the god 'Dreaded' family: '" + fearful + "'");
+	ok(fearful == "the Unkind Sky" || fearful == "the Hungry One" || fearful == "the Tyrant Above" || fearful == "the One We Do Not Name",
+		"fearful people name the god 'Cruel' family: '" + fearful + "'");
 	mode = 2;
 	const std::string neutral = chronicle::epithet(w, a);
-	ok(neutral == "the Waker" || neutral == "the God of Our Fathers" || neutral == "the Old God" || neutral == "the Dawn-Caller" || neutral == "the First Voice" || neutral == "the Remembered One",
+	ok(neutral == "the Maker" || neutral == "the Waker" || neutral == "the Dawn-Caller" || neutral == "the First Voice" || neutral == "the God of Our Fathers" || neutral == "the Old God" || neutral == "the Remembered One" || neutral == "the Elder",
 		"neutral people with no deed: '" + neutral + "'");
 	// a people with a real deed is not renamed by regard
 	w.cultures[size_t(a)].seen["rain"] = 5.0;
 	mode = 1;
 	const std::string withDeed = chronicle::epithet(w, a);
-	ok(withDeed != "the Dreaded" && withDeed != "the Jealous One", "a deed outweighs the feeling: '" + withDeed + "'");
+	ok(withDeed != "the Unkind Sky" && withDeed != "the Hungry One" && withDeed != "the Tyrant Above" && withDeed != "the One We Do Not Name", "a deed outweighs the feeling: '" + withDeed + "'");
 }
 
 DM_TEST("chronicle adv: a culture with no name gets a god name, an empty language is tolerated") {
