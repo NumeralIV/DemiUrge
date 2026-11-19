@@ -10,10 +10,13 @@ snap() { "$GH" pr list -R NumeralIV/DemiUrge --state open --json number,headRefO
 while true; do
   cur=$(snap) || { sleep "$POLL"; continue; }
   if [ "$cur" != "$(cat "$STATE")" ]; then
-    echo "PR activity on NumeralIV/DemiUrge:"
-    diff <(cat "$STATE") <(echo "$cur") | grep '^>' | cut -c3-
+    new=$(diff <(cat "$STATE") <(echo "$cur") | grep '^>' | cut -c3-)
     echo "$cur" > "$STATE"
-    exit 0
+    if [ -n "$new" ]; then      # opened or updated (a PR that merely closed is not news)
+      echo "PR activity on NumeralIV/DemiUrge:"
+      echo "$new"
+      exit 0
+    fi
   fi
   sleep "$POLL"
 done
