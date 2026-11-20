@@ -1,0 +1,25 @@
+date: 2026-11-19
+family: wonders-a (UE family Wonder; wonders 0-3: Hearth of Many Fires, Great Hive, Seven Who Keep Watch, Sea Gate)
+assets: 4 wonders x 4 states (Intact, Construction, Damaged, Ruin) = 16 meshes, each FBX with LOD0-3 (LodGroup)
+manifest: art/wonders-a/manifest.json  readme: art/wonders-a/README.md  script: art/wonders-a/build_wonders_a.py
+textures: 9 sets at 2048^2 (8 per-wonder D/N/ORM + shared DetailA D/N/ORM/M)
+night: emissive mask T_Wonder_DetailA_M.R + per-mesh lights json in art/wonders-a/export/
+triangles (LOD0 / LOD1 / LOD2 / LOD3):
+  SM_Wonder_Hearth_Intact               58938 /  20192 /  3288 /  400
+  SM_Wonder_Hearth_Construction         20576 /   5954 /  1246 /  476
+  SM_Wonder_Hearth_Damaged              44436 /  14129 /  2194 /  362
+  SM_Wonder_Hearth_Ruin                 15640 /   3464 /   842 /  250
+  SM_Wonder_GreatHive_Intact            22824 /   6768 /  2402 /  766
+  SM_Wonder_GreatHive_Construction      11193 /   3463 /  1291 /  438
+  SM_Wonder_GreatHive_Damaged           22264 /   6438 /  2454 /  976
+  SM_Wonder_GreatHive_Ruin               8672 /   2396 /  1036 /  387
+  SM_Wonder_SevenWatchers_Intact        63328 /  13328 /  3460 / 1160
+  SM_Wonder_SevenWatchers_Construction  28348 /   6844 /  1816 /  538
+  SM_Wonder_SevenWatchers_Damaged       62566 /  13242 /  3544 / 1214
+  SM_Wonder_SevenWatchers_Ruin          22480 /   4970 /  1559 /  482
+  SM_Wonder_SeaGate_Intact              22668 /   6928 /  1948 /  740
+  SM_Wonder_SeaGate_Construction        21776 /   5872 /  1662 /  364
+  SM_Wonder_SeaGate_Damaged             23952 /   7188 /  2094 /  480
+  SM_Wonder_SeaGate_Ruin                22985 /   6013 /  1663 /  324
+  TOTAL                                472646 / 127189 / 32499 / 9357
+previews: shots/asset-wonders-a-wonder-{0-stone,1-bronze,2-iron,3-sail}-{40m,300m,1km,night,states}.png (+ -lods for 2-iron, 3-sail)

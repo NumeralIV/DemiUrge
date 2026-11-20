@@ -1,0 +1,32 @@
+2026-11-19, asset-units-land (family Unit, art/units-land) verified by an independent asset verifier.
+
+Reproducibility. The family was rebuilt twice from build_units-land.py through tools/render_slot.py. The textures and the manifest were byte-identical, and the FBX files differed only in the FBX timestamp. The verifier then re-imported all 21 FBX files into an empty Blender scene:
+- Hierarchy is a LodGroup empty with _LOD0 to _LOD3, and every triangle count matches the manifest.
+- Scale is 1.0 in metres. Each LOD has the three slots M_Unit_Structure, M_Unit_Roof and M_Unit_Detail in that order.
+- UVs are inside 0-1, and there are no n-gons.
+- Pivots: every footprint is centred on 0,0, with the ground at z 0 and the aprons at -0.3. Every mesh faces -Y.
+- Normals were checked after welding, and no closed part is inverted.
+- The 1.8 m figure checks out: people are 1.6-1.76 m, and the oxen, camels, horses, buses, trucks, aircraft and the 101 m ark are all to plausible scale.
+- Every unit is within the vehicle budget of 1-4k (largest 3,910), and the ark is 4.9k. Names follow docs/ASSETS.md. The manifest has every required field, plus sim mapping and suggested_unit_scale.
+
+Fixes, all made in the script and recorded in the README:
+1. The preview rig's 1.8 m reference figure stood 1.56 m underground with only its head showing, so the builder's scale check could not have been seen. It now stands on the ground in every 40 m view.
+2. Fanned bus-end caps produced 12 zero-area triangles. They are dropped, and the manifest now counts the triangles of the exported mesh.
+3. The track strip had hidden end faces at every 4 m segment (30 non-manifold edges). Only the strip ends are capped now.
+4. Truck column LOD1 was 62 % of LOD0. Glass, lamps and the middle axle are now LOD0 only, which brings LOD1 to 39 %.
+5. The damaged ark's breach was a see-through hole. It now has a scorched inner wall, plus the smoke plume that its description promised.
+6. On the launch, the smoke column hid the plume, so the rocket seemed to float over a cloud. About 11 m of white-gold plume now shows.
+7. Manifest text: the ring glow is 0.12 (it said 0.35), and the aircraft entries now give the ground ring's x1.9 scale.
+
+The builder also said that only the ark reports inward faces. That is not true: one tail end cap each in Settlers_Ancient and Traders_Ancient also trips the heuristic. Both are false positives, and the README now documents them.
+
+All 63 previews were re-rendered (shots/asset-units-land-*-{40m,300m,1km}.png) and judged against docs/concept/units/units-silhouettes.png and the age images:
+- Every unit type keeps its shape per age: the settler column with a cart, wagon or bus; traders as a line of bright loads; the army as the only type with spikes and banners; the white prophet with a gold halo; space craft light on dark, with the army craft dark.
+- The culture ring and the culture loads, pennants and banners read in all six colours at 1 km.
+
+Open for others:
+- The FBX LodGroup has to be imported with Import Mesh LODs on, and that is unconfirmed until the first Unreal import. art/tools/ue_import.py expects one FBX per LOD under art/export/, so it cannot import this family as it is.
+- The integration agent must wire the culture tint (six MI_Unit_Detail_* instances or per-instance colour) and the per-mesh suggested_unit_scale.
+- Art limits: the figures and animals are mannequin-grade low-poly. They read at game scale but not in close-ups, which is a long way from near-photoreal. The ark's gantry is a rust-brown lattice that hides much of the hull, there is no crawler convoy, and the aircraft and small craft keep 55-70 % at LOD1 (all under 600 triangles).
+
+quality 7/10

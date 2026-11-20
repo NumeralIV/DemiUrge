@@ -1,0 +1,10 @@
+2026-11-19 asset-culture built (family: Culture - Age2/Age3 culture overlays for the invented cultures A Cliff-Terrace, B Lagoon-Weaver, C Ring-Builder)
+assets: 57 (A 13, B 24, C 20); meshes (asset x state): 195; FBX: 195 in art/culture/export (objects <name>_LOD0..LOD3)
+per-host overlays for the 8 houses in art/age2 + art/age3 manifests (Age2 House_A-D, Age3 Townhouse_A-D): A<age>Roof<Host>, B<age>Roof<Host>, B<age>Stilts<Host>, C<age>Roof<Host>, modelled in host space (same transform as the host)
+other: A2/A3Ornament, ATerraceStair, ACistern, ATempleNiche, BWalkwayStraight/Curve, BBridge, BGardenRaft, BBreakwater, BTempleSpiral, B2/B3Ornament, C2/C3DrumHouse, C2/C3RoofCone, CRingWallCurve/Straight, CSpire, CStandingStone1-3, C2/C3Ornament
+states: Intact/Construction/Damaged/Ruin on every building part; ornaments and props Intact only
+triangles (all meshes, all states): LOD0 267266 / LOD1 109445 / LOD2 32369 / LOD3 11750; Intact LOD0 sum 81356
+textures: 34 PNG (11 sets, 1024^2) in art/culture/textures; MIs on M_Culture_Standard + Age2 wall overrides, all in art/culture/manifest.json
+script: art/culture/build_culture.py (Blender 5.2 headless); previews: art/culture/preview_culture.py via tools/render_slot.py
+shots: shots/asset-culture-{a,b,c}-{40m,300m,1km}.png, shots/asset-culture-states-40m.png, shots/asset-culture-kit-40m.png
+known gaps: see art/culture/README.md (host roofs are enveloped, not removed; no host door sockets; L-shaped hosts' Damaged pairs exceed the 6k house budget)

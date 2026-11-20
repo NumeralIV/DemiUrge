@@ -1,0 +1,69 @@
+2026-11-19, asset-wonders-b (family Wonder, art/wonders-b), verified by an independent asset verifier. The family covers five wonders: wonder-4-industry (the Choir of Chimneys), wonder-5-atomic (the Ear of the Sky), wonder-6-space (the Ladder), wonder-sunwell and wonder-stair-of-rains.
+
+Reproducibility. The verifier removed export/, textures/, source/ and manifest.json, then rebuilt headless from build_wonders-b.py through tools/render_slot.py. All 60 textures (2048²) were byte-identical to the builder's, and the manifest matched apart from the date. Everything shipped comes from the final build of the fixed scripts: one full build, then a Ladder-only rebuild for its last fix.
+
+Every one of the 41 FBX files was re-imported into an empty Blender scene, and none had an issue:
+- Format: binary FBX, with a LodGroup empty and _LOD0..3 children (_LOD0..2 for ornaments and extras) at identity transforms.
+- Triangle counts equal the manifest.
+- Topology: no n-gons, no zero-area faces, and no inverted closed shells (checked by the signed volume of each closed component).
+- UVs: one UVMap, with every face's v inside one atlas band.
+- Materials: three slots in the order Structure, Roof, Detail. The beam uses M_Wonder_LightShaft. The Intact tether and the beam carry the Fade colour.
+- Pivots and orientation: each footprint is centred, Z is up and the front is at −Y. Bases go 0.3 m or more below zero; the Sunwell pit reaches −27 m, and the Ear Ruin rubble −4.45 m.
+- Dimensions match the concept sheets:
+  - Choir: a 94 m dome with its crown at 43.6 m, 12 chimneys 60–98 m tall on a 150 m ring.
+  - Ear: a 254 m bowl with a 41 m rim, 110.6 m pylons and the receiver at 84 m.
+  - Ladder: a 404 m ring, 26 m high and 67 m wide, with a 2 m tether to 3 km and 10 m climbers.
+  - Sunwell: a 202 m pit with a 77 m pillar.
+  - Stair: a 128 m terraced mountain.
+- Scale: checked against a 1.8 m figure in every 40 m view.
+- Emissive masks: checked per band. The Ear cables have M.R = 0, and the light spots cover 0.7 % of their band.
+
+Fixes, all in art/wonders-b scripts and listed in its README under "Independent verification":
+1. Smoothing bug in wb_geo.to_object. Soft-canopy edges were never smoothed, because the face set was invalidated when its layer was removed, so the Stair crowns rendered faceted. Soft blobs now also use a continuous wrap UV instead of a per-face box projection, whose tangents faceted the normal map.
+2. Stair blossoms:
+   - Each crown has a second lump at LOD0, and the side clumps and wall greenery went from 20 to 80 triangles. LOD1 crowns stay rounded.
+   - A new g_blossom texture replaces the hard-edged Voronoi "stained glass" mosaic.
+   - Stair Intact is now 71.8k at LOD0 and 23.9k at LOD1.
+3. Back-face holes found by a back-face render of every state and LOD:
+   - Choir chimney flues were see-through to the ground. They now have a sooted floor.
+   - The Choir Damaged dome had a culled far side. It now has an inner skin.
+   - The Choir LOD3 drum and arcade hull were open. Both are closed.
+   - The Ear rim vanished where dish panels are missing (Construction, Damaged, Ruin). It now has an inner wall and a floor at +1 m.
+   - The Ladder Ruin shell walls were culled from inside. They now have back skins and lids on their broken tops. Some open faces remain around the far courtyard walls, 2 to 4 px at 1 km.
+4. Choir dome glass: there are no dark panes now, and the pane brightness spread is narrower, so the dome no longer reads as a checkerboard.
+5. Sunwell Ruin: the earth/stone split is jittered per ring, so the ruin no longer reads as radial pie wedges.
+6. Previews: the 1.8 m figure was missing from the Ear, Choir and Stair 40 m views (buried in the berm or hidden). Figures are now ray-cast onto visible surfaces in frame.
+7. Manifest and README text: the Ear blink phases now agree (0, 0.667 and 1.334 s), the tether note names Detail band 3, and the socket wording is corrected (Damaged also lists sockets for its unbroken parts). Totals are updated, and the build no longer writes .blend1 files.
+
+New totals:
+- 20 state meshes: 638,279 at LOD0, 258,147 at LOD1, 76,123 at LOD2 and 14,038 at LOD3.
+- Intact at LOD0: Choir 35.8k, Ear 16.0k, Ladder 20.6k, Sunwell 45.3k, Stair 71.8k.
+- All meshes: 652,077 at LOD0, and 1,010,851 across all LODs.
+
+All 30 previews were re-rendered through tools/render_slot.py (shots/asset-wonders-b-<asset id>-{40m,300m,1km,night,states,cultures}.png) and judged against the concepts:
+- The Choir reads as a glowing dome in a crown of brick organ pipes.
+- The Ear reads as a white circle with a cable triangle, and as a black disc with three red lights at night.
+- The Ladder reads as a white and garden ring with a bright vertical line.
+- The Sunwell reads as white terraces, a dark pool and a bronze pillar with its beam.
+- The Stair reads well at 300 m: honey-stone terraces, pink and lilac crowns, a white line of falls and pools, and the pavilion.
+
+Open for others:
+- The Ear (16k) and the Ladder (20.6k) are under the 30–80k wonder range. Their silhouettes do not need more, and this is accepted.
+- Close up, the art is still short of near-photoreal:
+  - Stair crowns are 80-triangle spheres and still look low-poly at 40 m. Foliage cards or instanced trees in UE would fix this, but sub-3 spheres would exceed 80k.
+  - Glass and water are opaque in the previews. The dome needs a translucent or emissive glass material in UE.
+  - The waterfalls are opaque sheets that need a u-panner.
+  - The Ladder ring has no ground-level entrances.
+- Revolve cuts in the broken states leave coplanar down-facing slivers. They are culled from above and harmless.
+- The Stair LOD3 hull is a cake stepped all round, which pops only below 0.04 screen size.
+- A few cap-sized rings appear on the ground in the Choir states preview only. They are not in the meshes or the manifest.
+- The Sunwell and Stair Structure EmissiveNight params are dead, because their M.R mask is empty.
+- Integration still needs:
+  - a terrain cut for the Sunwell (r 101 m, −27 m)
+  - flattening under the Ear (r 178 m) and the Stair skirt
+  - ornaments instanced at the manifest sockets
+  - steam, mist, rainbow, beam pulse and blink from the FX sockets
+  - the FBX LodGroup imported with "Import Mesh LODs"
+- No _Burnt or _Drowned states.
+
+quality 6/10

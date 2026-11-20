@@ -1,0 +1,75 @@
+date: 2026-11-19
+family: age1 (Age1, Bronze Age kit), independent verification
+verdict: holds after fixes; ready for the integration agent
+score: 7/10
+
+summary:
+  Rebuilt the kit from scratch (build_age1.py --textures). The 22 textures and manifest.json came out byte-identical
+  to the builder's, so the build is reproducible. Re-imported all 56 FBX and checked them against docs/ASSETS.md:
+  - Z is up and the front faces -Y.
+  - Pivots are at the footprint centre at Z=0, and every building reaches down to -0.3 m.
+  - LodGroup is present, with LOD0-2 and LOD3 hulls over 10 m.
+  - Each mesh has at most 3 slots, in the order Structure/Roof/Detail.
+  - Naming follows SM_/M_/MI_/T_.
+  - Every mesh has one UV map (tiling and trim, no baked maps) and the Col attribute.
+  - Smoothing, tangents and binormals are in the FBX.
+  - Closed parts face outward.
+  - The manifest lists footprint, height, tris per LOD, slots, textures, sockets, licence, script, states, cultures
+    and sim_mapping.
+  Scale reads correctly against the 1.8 m figure (doors 1.8 m, granary drums 4.1 m across, palisade ~4 m, temple 30 m
+  base and 14 m tall). All renders went through tools/render_slot.py.
+
+fixes (all in art/age1 scripts, recorded in art/age1/README.md "Independent verification"):
+  1. House D (4 states): the roof, the construction roof frame and the damaged rafters sat 2.2 m forward over the yard,
+     and the back 1.6 m of the house was open. thatch_gable and roof_frame now take the body offset cy. This also lines
+     the D ridge sockets up with the roof again; the LagoonWeaver horns had been floating.
+  2. Granary Damaged: the slipped cap was 5.8 m underground: invisible, and it pushed the bounds to z=-5.8. It now sits
+     crooked on its drum.
+  3. recalc_face_normals had turned open parts inside out: the half-built and broken granary drums and both reed boats'
+     end cones. They would look hollow in Unreal. Open parts now keep their built orientation (age1_geo).
+  4. Reed boats were bow +X; they are now bow -Y, per ASSETS.md and the Ship family. The manifest footprint is swapped
+     and the preview placements are compensated.
+  5. Temple court pool cut 5.5 x 2.3 m into the temple's base tier. It moved to (15.5,-17), and socket tree_1 moved off
+     the platform to (-17,-16).
+  6. Temple Ruin LOD2 showed crisp intact-looking tiers with an extra Roof slot. It now uses the eroded mound like
+     LOD0 and LOD1.
+  7. The manifest overstated LOD triangles on 16 meshes, because duplicate and zero-area faces were dropped on import.
+     Meshes are now validated and decimated LODs cleaned, and the manifest matches the FBX exactly (checked by
+     re-import).
+  8. Previews:
+     - The walls set no longer puts the rampart End against the gate flank.
+     - The village has a trodden-earth floor inside the ring.
+     - A new LOD sheet is at shots/asset-age1-lods-near.png.
+     All 28 previews are re-rendered.
+  Totals after fixes: LOD0 89,034 / LOD1 35,258 / LOD2 9,629 / LOD3 1,217 tris.
+
+art direction vs concept (age-1-bronze, building-granary, building-temple):
+  + At 300 m and 1 km the village reads like the concept:
+    - the oval palisade on an earth bank is the strongest line;
+    - the 3-tier stepped temple is the centre anchor;
+    - the granary is a tight cluster of round thatched drums on a dry-stone platform with golden heaps;
+    - the fields are hard-edged golden and green rectangles;
+    - the jetty has reed boats.
+  + The four house types read distinctly from above (gable, hip with porch, flat clay with roof room, yard house), and
+    the damage states are legible.
+  - At 40 m it is clean mid-fidelity game art, not near-photoreal:
+    - the procedural textures are tidy;
+    - walls and thatch share one saturated orange-brown, so the concept's grey weathered timber and greyer straw do
+      not separate;
+    - the temple is plain blocky mudbrick, with no batter and a barely visible painted frieze.
+  - The civic meshes are under the 8-20k range: granary 7.1k, temple 3.4k, court 1.0k. This is fine for performance
+    but leaves the hero temple thin at 40 m.
+
+open (not fixed, for the lead):
+  - Thatch slabs and wall columns leave coincident internal faces, so some meshes have non-manifold edges. Examples:
+    House B LOD0 82, Gate 108, Temple 34. They render fine, but they are not clean "closed parts".
+  - The trim sheet packs a low-roughness water strip between the grain and hide strips, so at far mips grain heaps
+    may catch a little gloss.
+  - The landing's pivot is ~0.9 m off its footprint centre in Y (waterline under the jetty, documented).
+  - Construction and Damaged clutter overhangs some footprints. Fallen logs reach ~1.3 m past the palisade segment
+    end; temple construction rubble reaches 4.7 m past the base.
+  - Temple Ruin LOD0 shows thin bright slivers on its eroded mound.
+  - Nothing has been imported into Unreal yet.
+
+files: art/age1/{build_age1.py, age1_geo.py, age1_assets.py, preview_age1.py, README.md, manifest.json, source/age1.blend,
+       export/*.fbx (56), textures/*.png (22)}; shots/asset-age1-*.png (28)

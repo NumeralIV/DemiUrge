@@ -1,0 +1,24 @@
+asset-age4 built 2026-11-19
+family: Age4 (Industry age kit)
+folder: art/age4/ (README.md, manifest.json, build_age4.py, preview_age4.py, lib/, textures/, blend/, export/)
+
+asset count: 18 base meshes, 57 exported meshes (FBX, each with LOD0..LOD3 in a LOD group + SOCKET_ empties)
+  terraces 4 (Terrace_A..D), factories 2 (Factory_A large mill with 3 stacks + water tower, Factory_B small works),
+  Stack_A, warehouses 2 (Warehouse_A dock warehouse, Warehouse_B goods shed), Station_A (glass-and-iron train shed + clock tower),
+  MineHead_A (lattice headframe colliery), spoil heaps 2 (Spoil_A tip, Spoil_B yard heap; Coal/Ore instances),
+  bridges 2 (Bridge_A 40 m Pratt truss segment, Bridge_B brick arch viaduct segment), culture ornaments 3 (A, B, C)
+states: Intact / Construction / Damaged / Ruin on every building and bridge (13 x 4); heaps and ornaments Intact only
+
+triangles, Intact, summed over the 18 base meshes:
+  LOD0 57,150   LOD1 21,704   LOD2 5,858   LOD3 2,160
+triangles, all 57 meshes x all LODs: 387,452
+per-asset LOD0 (Intact): Terrace_A 3,596  Terrace_B 4,010  Terrace_C 6,228  Terrace_D 5,550  Factory_A 8,364  Factory_B 3,220
+  Stack_A 676  Warehouse_A 8,408  Warehouse_B 2,140  Station_A 7,024  MineHead_A 3,656  Spoil_A 1,542  Spoil_B 250
+  Bridge_A 980  Bridge_B 1,164  Ornament_A 144  Ornament_B 144  Ornament_C 54
+
+materials: M_Age4_Brick, M_Age4_Slate, M_Age4_Stone, M_Age4_Gravel, M_Age4_Trim (slots Structure / Roof / Detail);
+  culture instances MI_Age4_<Set>_<Base|A|B|C>, plus MI_Age4_Gravel_Coal and MI_Age4_Gravel_Ore (params in the manifest)
+textures: 5 sets + BrickBuff_D, 1024^2 PNG, procedural (T_Age4_Trim_M R = night-window emissive mask)
+previews: shots/asset-age4-*.png (40m / 300m / 1km / states / cultures per asset, district-300m / district-1km / district-mills)
+licence: original (script-generated in Blender 5.2, no downloads)
+known gaps: see art/age4/README.md (Terrace_C 4 % over the house budget, truss LOD2 ~60 %, no UCX collision, ornaments socket-only)

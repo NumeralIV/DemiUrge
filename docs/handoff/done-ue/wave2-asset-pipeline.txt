@@ -1,0 +1,44 @@
+date: 2026-11-19
+key: wave2-asset-pipeline, independent adversarial verification
+verdict: holds after fixes; pipeline ready for the towns owner to apply the hook (docs/lab/asset-pipeline.md §8, §13)
+score: 7/10
+
+summary:
+- Reproducible from the scripts alone (copied to a scratch root and rebuilt there):
+  - make_textures.py: 68 of 70 PNGs byte-identical; the other 2 were stale in the repo and are now replaced.
+  - build_asset.py -- shrine: 27 FBX with identical geometry, UVs and masks (hashed after re-import), identical manifest.
+  - render_preview.py runs.
+  - ue_import.py into UnrealLab/AssetLab: "finished without errors", triangle counts match (intact 10346/1970/222).
+  - Every mesh has 3 convex UCX hulls; the front faces -Y.
+  - At runtime AssetShow logs LOD screen sizes 1.0/0.06/0.015 and an intact size of 6.02 x 5.29 m.
+- All 27 FBX checked:
+  - unit scale 1; pivot at the plinth centre, z = 0, with a 1 m skirt;
+  - a Mask colour on every mesh; no degenerate faces;
+  - back-face-culled six-view renders show no holes or inverted parts in any config.
+  - Minor leftovers with no visible effect: 12 loose verts (Damaged), small n-gons on broken wall tops, about 200
+    hidden tris, UVs up to 58.6.
+- New AssetLab views (art/renders/ue/verify-*.png):
+  - back, right side (window on the specified side), eye level, yaw 0 (steps face the requested direction), storm;
+  - night with lit=0 (the fire goes dark); daylight with lit=0 (pixels identical, so no emissive leaks by day);
+  - yellow and vermilion culture colours.
+  - The judged set was re-rendered: hero40, cmp40/300/1k x golden/storm/night, states-golden/night, close-culture-a/b/c.
+- Fixes, each recorded in docs/lab/asset-pipeline.md §13:
+  1. Stale T_PaintCobalt_BC and T_ThatchSodden_BC, plus that set's manifest albedo line.
+  2. Culture-colour cloth brightness followed the culture colour's luminance (yellow 1.9x, vermilion 0.55x the wool):
+     - it is now luminance-normalised with a per-channel cap of 0.7 (ue_import.py);
+     - materials were re-imported and the culture close-ups re-rendered.
+  3. Two stale script comments (AO bake method; delete-then-import).
+  4. contact-closeups.png regenerated, with its command now documented.
+- Held back from a higher score (art direction against shrine-hero.png):
+  - At the 40 m / 25 deg game framing, the eave lip and straw fringe hide the carved zigzag lintel, a signature part.
+  - The masonry and plinth read clean and CG; the standing stones are smooth loaves; the skull is white.
+  - The cloth reads lemon yellow under the lab's golden light.
+  - Size: as specified (6 x 5.3 x 4.6 m), the shrine is smaller than every LifeLab house and than the stand-in. At
+    300 m it reads by its pale plinth and lit door, not by size; this must be checked against the game's house sizes.
+  - The storm look is overcast only (no wetness).
+- For the towns owner:
+  - The hook should set WallPat/RoofPat per culture variant.
+  - The stand-in's runtime LOD screen sizes are reported as 2.0/0.75/0.5625 against the 1/0.006/0.0018 requested.
+    I confirmed the log value in AssetLab, but did not check it in the game.
+- Not re-measurable: frame cost (other agents shared the GPU; 7-55 ms per frame in these runs).
+- Game/ and Config/ untouched.

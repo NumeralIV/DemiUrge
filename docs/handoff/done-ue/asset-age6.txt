@@ -1,0 +1,38 @@
+2026-11-19, asset-age6 (family Age6, Space Age kit, art/age6) verified by an independent asset verifier. Score: 6/10.
+
+Summary. 19 asset types, 70 meshes (ArcologyTower A-E, GreenBlock A-D, MaglevStation_A, MaglevTrack Straight/Curve, SolarArray A/B, LaunchPad, AssemblyHall, ControlBunker in Intact/Construction/Damaged/Ruin; Rocket and Crawlerway Intact only). One FBX per mesh in art/age6/export, with LOD0-LOD3 under an FBX LodGroup node. After seven script fixes the kit holds against docs/ASSETS.md and reads like the concepts' white, cream and pale-gold garden-tower city and launch site at 300 m and 1 km. Up close it is still clean and somewhat toy-like rather than near-photoreal: one facade trim, blobby planting, plain hull and cladding, and tint-only cultures.
+
+Reproducibility. build_age6.py was run from scratch through tools/render_slot.py. All 20 textures came back byte-identical to the builder's, and so did every triangle count. After the fixes, two more full builds produced identical manifests (timestamp aside) and identical textures. Every render went through the slot tool.
+
+Independent audit. New art/age6/verify_age6.py re-imports all 70 FBX files (280 LOD meshes) and writes art/age6/verify_report.json.
+- LodGroup and structure: the LodGroup node is in every file, with 4 LODs named <mesh>_LOD0..3 and parented to it, at unit scale.
+- Materials: at most 3 slots, all known M_Age6_* materials. Every LOD has UVMap and the Col vertex colour.
+- Geometry: no degenerate faces and no inside-out shells. LOD0 has no open edges on any of the 70 meshes.
+- Placement: the plinth is at -0.3 on every LOD0 (the rocket sits at 0). Intact bounds are centred on the pivot, and the manifest heights match.
+- Manifest: it lists all 70 meshes with every field ASSETS.md asks for. Textures are all 1024^2. Triangles match the files on all 280 LODs.
+- Scale: storeys are 3.6 m and windows 2.4 m. The 1.8 m figure stands just under half a storey (shots/asset-age6-verify-scale.png). The rocket is 82 m on a 9 m mount beside a 92 m gantry.
+- Front: -Y everywhere (block B steps down to -Y, the solar rows face -Y, the hall doors face -Y).
+
+Fixes (in the scripts; recorded in art/age6/README.md, "Independent verification"):
+1. Every beam was inside-out. age6_kit.beam built a mirrored frame, which left 254 inverted shells on the pad alone: the whole gantry lattice, masts, pipes and crane. It also hit the solar legs and canopy posts, the dome ribs on block C and every Construction scaffold. This was invisible in Blender, but UE back-face culling would have shown the lattice from the inside. Fixed.
+2. Manifest triangle counts disagreed with the FBX on 34 meshes. Decimation left zero-area and back-to-back duplicate triangles, which importers drop. Every LOD is now cleaned before it is counted.
+3. Far LODs shattered when separate slabs were decimated to 4 % (6 triangles for the crawlerway). The crawlerway turned into dashes at 1 km, and the hall and bunker lost faces. LODs now keep at least about 96 triangles and are never larger than the LOD before them.
+4. The assembly hall was a 124 x 84 x 104 m near-cube that read as a tower block. It is now the concepts' huge low hall, which the rocket stands taller than: 176 x 92 x 58 m, with a hipped roof (UV now plan-projected, where the side mapping had stretched it), three door bays on the long front, pilasters, annexes and a lean-to. The manifest's launch_site_layout now places the hall doors at the end of three crawlerway segments; before, the hall overlapped them.
+5. LOD0 trees and shrubs were 20-face icosahedra, a faceted low-poly read at 40 m. They are now 80-face, which brings towers A (8.7k) and E (19.0k) and block A (8.2k) into the civic band.
+6. In the Damaged states, the gantry core and the hall pilasters and door posts survived the cuts whole, and the core stood as a black monolith above the break. They are now cut with the structure.
+7. The rocket is now budgeted as a vehicle (1.5k against 1-4k). The pad preview is reframed to match the concept, and two verification renders were added (asset-age6-verify-lods/-scale).
+
+New triangle totals: LOD0 253,530 / LOD1 90,915 / LOD2 25,205 / LOD3 7,634. The numbers in asset-age6.built.txt predate the fixes; manifest.json is the reference.
+
+Judged against the concepts (age-6-space.png, building-launch.png):
+- The day district at 1 km reads as white and cream rounded towers with planted terraces, pale-gold rings and glass domes, which is the concept's character.
+- The launch site now has the concept's layout: a white rocket beside a dark lattice gantry on a pale apron, white fuel spheres, a flame trench, straight crawler lanes and a long low hall, with the rocket the tallest thing there.
+
+Open for others or later:
+- Not yet imported into UE. The LodGroup, unit scale and OpenGL normal green flip still need checking on the first import.
+- The FBX slot list is compact (a mesh without Roof has Structure then Detail). Match slots by material name through the manifest.
+- Towers B-D, blocks B-D and the station are at 5-7.5k, a little under civic. The hall is only 1.1k.
+- Decimated slivers leave open edges on 35 far LODs (LOD1-3).
+- One facade trim speckles at 1 km. Planting is still blobby at 40 m. Cultures are tint-only and barely visible.
+- The night preview is flat.
+- Vapour FX, train, wind turbines, temple and roads are outside this family.

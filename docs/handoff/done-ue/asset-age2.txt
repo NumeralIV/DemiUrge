@@ -1,0 +1,47 @@
+2026-11-19, asset-age2 (family Age2, Iron Age kit, art/age2) verified by an independent asset verifier. Score: 7/10.
+
+Summary. 17 assets, 50 FBX (11 buildings x Intact/Construction/Damaged/Ruin + 6 intact props), each a LodGroup with LOD0-LOD3 (props LOD0-LOD2): four stone houses, a 16 m tiling wall segment, two wall towers, a twin-tower gatehouse, the colonnaded market, the peripteral temple, the domed academy, three market stalls and three culture ridge ornaments. They match docs/ASSETS.md after the fixes below. At 300 m and 1 km the walled town reads like age-2-iron.png and building-walls.png: a grey ring of towers round a dense brown roofscape, a pale temple, a red-tiled market and the verdigris dome. The previews show that the builder's report was accurate in its counts but missed real defects. The worst were broken wall LODs and material slot indices that shifted from state to state.
+
+Reproducibility. build_age2.py --textures was rebuilt from scratch through tools/render_slot.py. The 28 textures came out byte-identical to the builder's, and the manifest was identical apart from the date. After the fixes, two consecutive builds gave byte-identical manifests. Before the fixes, the material list order varied from run to run, which is fixed. check_age2.py: 50/50 OK, with the stricter checks added below.
+
+Independent audit (my own scripts over every re-imported FBX and LOD):
+- Hierarchy and transforms: the LodGroup root sits at the origin with an identity transform, and the LOD children have identity transforms.
+- Geometry: no n-gons and no degenerate faces. The triangle counts equal the manifest.
+- Pivots: each building is centred on its footprint at ground level, and every building reaches 0.3-1.2 m below Z=0.
+- Orientation: front faces -Y, with Z up and metres as units.
+- Scale against the 1.8 m figure: doors are 2.05 m, wall walks 7.6 m with 1.05 m crenel and 2 m merlon parapets, towers 15/24.5 m, and the gate arch 4.6 m wide by 6.1 m high.
+- Normals: a ray-cast test from outside counted visible back faces. Intact LOD0-LOD2 meshes are now under 1 % (the builder's WallSeg had 5 %, its LOD1 24 %, and WallTower_A LOD1 16 %). The remaining 1-2 % hits on some damaged and ruined LODs are the ragged tops and burnt holes, inspected and accepted. One exception is Ornament_C LOD2, a 16-triangle ring that is invisible at its size.
+- UVs: trim faces stay inside their bands, and no face has zero-area UVs. World-scaled tiling outside 0-1 is by design (nothing is baked).
+- Budgets: houses are 2.0-5.0k and civic buildings 9.1-12.7k. The wall pieces have no budget line and are light (274-4,230).
+- Manifest: it has every required field plus maps_to, ridge_ends and slots_with_faces.
+
+Fixes (made in art/age2 scripts; listed in art/age2/README.md, "Independent verification"):
+1. Collapse decimation had destroyed the wall LODs. WallSeg LOD2 had lost its whole body and was a floating sliver of parapet, its LOD1 was mangled, and WallTower_A LOD1 and LOD2 were torn. Decimation is now kept only when it preserves surface area (92 %) and the bounding box (3 %); otherwise a milder ratio is tried, then the hand-made LOD is kept. Arrow slits now drop at LOD1.
+2. Material slots: unused slots were omitted, so Detail sat at index 2, 1 or 0 depending on state and kind. Culture instances applied by index would have painted trim with roof material. Now every mesh and LOD has exactly Structure, Roof, Detail at 0, 1, 2, and the manifest records which slots carry faces in slots_with_faces.
+3. The wall crenel floors were holes at LOD0 and LOD1.
+4. Wall segment ends were open, although the planner puts a tower on only every sixth wall corner. Ends are now closed in every state, and the battered base has end caps.
+5. Arch spandrels floated over collapsed walls on the gatehouse ruin and on the academy cloister in the construction and ruin states. They are now clamped and capped.
+6. Trim-sheet caps (barrels, baskets, altar, fountain) sampled other bands, including the night-window mask: a barrel glowed at night. Band-mapped wall tops and reveals had zero-area UVs.
+7. The undersides of the lean-to and cart canopies and the back of the ornament ribbon were silently dropped as duplicate faces. One cart wheel showed its open side.
+8. tube() frames flipped on curves, which twisted the horn and ring ornaments. The horn tip is now capped, and Ornament_A keeps its cobalt knob at LOD2.
+9. check_age2.py now also checks the fixed slot order on every LOD, faces on Detail (and on Roof for houses and civic buildings) on intact meshes, and that intact LOD1 and LOD2 keep 80 % of the LOD0 top and height.
+10. Manifest: the material order is deterministic, the House D description is corrected, and the LOD note matches the meshes.
+
+New totals: LOD0 151,726 / LOD1 60,817 / LOD2 16,665 / LOD3 2,401. Intact LOD0: House A/B/C/D 2018/2290/2410/4954, WallSeg 274, WallTower A/B 594/1728, Gatehouse 4230, Market 12192, Temple 9118, Academy 12716, stalls 124-184, ornaments 82-136. The numbers in asset-age2.built.txt predate the fixes; manifest.json is the reference. All 81 previews were re-rendered through the slot tool (shots/asset-age2-*.png).
+
+Open for others:
+- Import: the FBX LodGroup has to be imported with Import Mesh LODs on, and that is unconfirmed until the first Unreal import. The normal maps are OpenGL convention, so flip green on import.
+- Materials: the vertex colour Col must multiply the base colour in the master material. Culture C's slate swap needs texture parameters exposed on the instance. The towns kit's own slot convention (body, glass, glow) differs from ASSETS.md (Structure, Roof, Detail), so the integration agent has to map them.
+- Footprint orientation: the Temple's long axis runs along Y (6 columns facing -Y), while the stand-in TempleClassic is long along X. The planner footprint (W/D) has to use the manifest's footprint, not the stand-in's.
+- Footprint dressing: manifest footprints are mesh bounds and include dressing (yards, carts, the altar, the road strip).
+- WallSeg texture: the planner scales WallSeg in X, which stretches its texture by 0.8-1.3x.
+- Collision: none is authored.
+
+Art limits behind the 7:
+- Close up, the kit is clean, procedural and low in detail: flat rubble and ashlar tiling with visible repetition, box merlons, no moss or weathering beyond the vertex grime, and thin trim-sheet windows. It is convincing at the game camera (300 m to 1 km) but well short of near-photoreal at 40 m.
+- The market is colourful but its awnings are paler than building-market.png.
+- Houses have only four silhouettes. Across a 200-house town they repeat, and only rotation, tint and the culture ornaments vary them.
+- The academy is a good Sail-age read, but in Age 2 it competes with the temple.
+- There are no smoke, fire or people; that belongs to FX and units.
+
+quality 7/10

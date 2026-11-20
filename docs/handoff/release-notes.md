@@ -7,3 +7,11 @@ Evidence: `dist/DEMIURGE-Win64-Development/Windows/Demiurge/Saved/Logs/Demiurge.
 3. **Frame rate collapsed near the ground:** 6–16 fps at 2–5 km altitude (35–87 fps at orbit) on a machine also running agents. Even on an idle machine close views were 54–59 fps. Near-ground cost must come down with real headroom (target 60 fps at 1080p High, and a Medium preset that holds 60 with the CPU half busy).
 4. **The HUD ignored the shipped fonts:** the log loads the OFL families (`DmFonts`) and then reports `DmHud: up (fonts: serif Palatino Linotype, sans Segoe UI)`.
 5. Minor: transient-texture overwrite hitches on title → play (`Gamethread hitch waiting for resource cleanup` on DmPlanet* textures).
+
+## Determinism alarm from the names verifier (2026-11-19 ~20:45) — must be cleared by wave 3
+
+With the in-progress `Sim/Chronicle.cpp` from the chronicle-budget track and the *original* Names module,
+the same world gave a different chronicle length on every run (seed 1 passive: 159 / 159 / 291 / 170 entries
+with the same rng state). That points to undefined behaviour (uninitialised state, iterator invalidation or
+order-dependent containers) in Chronicle.cpp. The final whole-game check must run simrun --hash and the
+chronicle entry count 3 times per seed for 8 seeds x 4 policies with the final code, and fix any variation.

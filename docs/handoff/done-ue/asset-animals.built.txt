@@ -1,0 +1,13 @@
+2026-11-19 asset-animals: built. Family Animal. 11 assets: Grazer (Wildebeest, Antelope, Bison), Deer (Stag, Doe), BigCat (Lioness, Lion), Bird (Starling, Egret), Whale (Humpback), Fish (Sardine).
+Each asset has 2 FBX in art/animals/export/:
+- SM_Animal_<Asset>_<Variant>.fbx: static, LOD0-LOD2 under a LodGroup (the whale has LOD3); UV1 AnimWeights and vertex colour for M_NatureCreature; shape keys.
+- SK_Animal_<Asset>_<Variant>.fbx: skinned LOD0 + armature + looping actions (Walk/Graze, Walk/Idle, Flap/Glide, Swim).
+Triangles, sum over the 11 meshes: LOD0 6,334 / LOD1 2,462 / LOD2 606 / LOD3 28 (all LODs 9,430).
+LOD0 per mesh: Wildebeest 678, Antelope 688, Bison 712, Stag 758, Doe 630, Lioness 704, Lion 766, Starling 178, Egret 306, Humpback 754, Sardine 160. All quadrupeds and the whale are within the 300-800 animal budget; the birds and the fish are under the floor on purpose (flock and shoal instancing).
+Material: one slot, Structure, per mesh. Textures are baked per asset as T_Animal_<Asset><Variant>_{D,N,ORM} at 1024 (512 for birds and fish). The normal maps are OpenGL, so flip green. Biome coat tints go in material instances (manifest biome_variants). There are no culture variants and no damage states, by design.
+Scripts:
+- art/animals/build_animals.py with species_animals.py (Blender 5.2 headless);
+- run_all.py builds, previews and writes the manifest through tools/render_slot.py;
+- check_animals.py re-imports every FBX: 11/11 OK (LodGroup, tris = manifest, UV1, vertex colour, Structure slot, shape keys, size, bones, actions).
+Manifest art/animals/manifest.json; integration notes and known gaps in art/animals/README.md. Birds and fish need a 90 deg yaw versus the critter stand-ins; flock_scale is in the manifest.
+Shots (all rendered through tools/render_slot.py): shots/asset-animals-<key>-{close,40m,300m,1km,anim}.png for the keys grazer-wildebeest, grazer-antelope, grazer-bison, deer-stag, deer-doe, bigcat-lioness, bigcat-lion, bird-starling, bird-egret, whale-humpback, fish-sardine; plus shots/asset-animals-lineup-close.png (scale lineup with a 1.8 m figure).

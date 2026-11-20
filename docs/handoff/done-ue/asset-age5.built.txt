@@ -1,0 +1,13 @@
+asset-age5 built
+date: 2026-11-19
+family: Age5 (Atomic Age kit)
+folder: art/age5/ (build_age5.py, manifest.json, README.md, export/*.fbx, textures/*.png, source/age5.blend)
+asset count: 100 meshes (15 assets: 6 tower/block types x 3 heights, PowerPlant, CoolingTower, Switchyard,
+  Pylon, University, HighwayInterchange, HighwayViaduct, HighwayGrade, 3 culture crowns; buildings in
+  Intact/Construction/Damaged/Ruin states)
+triangles LOD0 total: 398223
+triangles all LODs total: 727359
+texture sets: T_Age5_Facade (D/N/ORM/M), T_Age5_Roof (D/N/ORM), T_Age5_Detail (D/N/ORM), 1024 px
+materials: M_Age5_Structure, M_Age5_Roof, M_Age5_Detail; culture instances MI_Age5_<Slot>_Culture{A,B,C}
+previews: shots/asset-age5-*.png
+licence: original (procedural)

@@ -1,0 +1,11 @@
+asset-age2 built 2026-11-19
+family: Age2 (Iron Age kit) - art/age2/
+assets: 17 (House_A, House_B, House_C, House_D, WallSeg, WallTower_A, WallTower_B, Gatehouse, Market, Temple, Academy, MarketStall_A/B/C, Ornament_A/B/C)
+meshes: 50 FBX (11 buildings x 4 states Intact/Construction/Damaged/Ruin + 6 intact props), each an LodGroup with LOD0-LOD3 (props LOD0-LOD2)
+triangles, all 50 meshes: LOD0 153940, LOD1 59674, LOD2 16460, LOD3 2401
+triangles, Intact LOD0: House_A 2018, House_B 2290, House_C 2410, House_D 4954, WallSeg 248, WallTower_A 586, WallTower_B 1720, Gatehouse 4214, Market 12172, Temple 9118, Academy 12716, MarketStall_A/B/C 148/122/182, Ornament_A/B/C 120/74/136
+materials: 9 (M_Age2_Rubble, Ashlar, Limestone, Thatch, Shingle, TileClay, TileStone, Slate, Trim) + 21 culture instances (MI_Age2_<Set>_<A|B|C>) in the manifest; 28 textures 1024^2
+manifest: art/age2/manifest.json   readme: art/age2/README.md   source: art/age2/source/age2.blend
+regenerate: python tools/render_slot.py -- "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python art/age2/build_age2.py -- --textures --previews
+check: "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python art/age2/check_age2.py  (50/50 OK)
+previews: shots/asset-age2-*.png (40m, 300m, 1km per asset; states, lods, cultures, night)

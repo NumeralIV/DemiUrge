@@ -606,21 +606,28 @@ DM_TEST("names-adv: performance: 10,000 names under 150 ms, also with a 40-gener
 		Rng d(seedOf(g) + 71);
 		deep = names::language(d, deep);
 	}
-	int made = 0;
-	const double t0 = nowMs();
-	for (int k = 0; k < 5000; k++) {
-		made += int(names::place(lang, r).size() > 0);
-		made += int(names::person(lang, r).size() > 0);
+	// (verifier, 2026-11-19) the best of three equal runs each: one wall-clock run read 110-270 ms while other
+	// processes loaded the machine; the bound is the code's cost
+	int made = 0, made2 = 0;
+	double ms = 1e9, ms2 = 1e9;
+	for (int rep = 0; rep < 3; rep++) {
+		Rng r1(r);
+		made = 0;
+		const double t0 = nowMs();
+		for (int k = 0; k < 5000; k++) {
+			made += int(names::place(lang, r1).size() > 0);
+			made += int(names::person(lang, r1).size() > 0);
+		}
+		ms = std::min(ms, nowMs() - t0);
+		Rng r2(9);
+		made2 = 0;
+		const double t1 = nowMs();
+		for (int k = 0; k < 5000; k++) {
+			made2 += int(names::place(deep, r2).size() > 0);
+			made2 += int(names::person(deep, r2).size() > 0);
+		}
+		ms2 = std::min(ms2, nowMs() - t1);
 	}
-	const double ms = nowMs() - t0;
-	Rng r2(9);
-	int made2 = 0;
-	const double t1 = nowMs();
-	for (int k = 0; k < 5000; k++) {
-		made2 += int(names::place(deep, r2).size() > 0);
-		made2 += int(names::person(deep, r2).size() > 0);
-	}
-	const double ms2 = nowMs() - t1;
 	// the cost of a new language (a culture birth): the probe draws 3 x 600 names, up to 3 rounds
 	Rng lr(4);
 	const double t2 = nowMs();

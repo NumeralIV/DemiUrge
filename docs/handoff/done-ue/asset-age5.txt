@@ -1,0 +1,65 @@
+date: 2026-11-19
+family: age5 (Age5, Atomic Age kit), independent adversarial verification
+verdict: holds after fixes; ready for the integration agent
+score: 7/10
+
+summary:
+- Reproducible: rebuilt from art/age5/build_age5.py --textures (headless, factory startup, about 1 minute).
+  The builder's numbers came back exactly (100 meshes, 398,223 LOD0 triangles). After the fixes, two consecutive
+  builds produced byte-identical textures and the same manifest apart from its date.
+- Checked on all 100 FBX files and all 400 LOD meshes after re-import into an empty Blender scene:
+  - an FBX LodGroup with four meshes named _LOD0.._LOD3;
+  - three slots in the order M_Age5_Structure / Roof / Detail on every LOD;
+  - triangle counts and bounds equal to manifest.json;
+  - no n-gons, zero-area faces or duplicated faces;
+  - positive signed volume (normals out);
+  - one UV map plus the Col attribute;
+  - every facade face inside one trim strip;
+  - Z up, front -Y;
+  - pivot at the footprint centre, with buildings reaching Z = -0.3 or lower;
+  - SM_/M_/MI_/T_ naming;
+  - every LOD0 within budget (largest: OfficeGlass_High_Damaged, 16.2k of 20k).
+- Scale: checked against a 1.8 m figure at exactly 40 m, using a new "close" preview view. Storeys are 4.2 m for
+  shops, 3.0 m for flats and 3.6 m for offices. Towers are 10-32 storeys, the cooling tower is 112 m and the pylon
+  44 m.
+- Totals after fixes: 424,336 triangles at LOD0, 779,622 across all LODs.
+
+fixes (all in art/age5/, recorded in art/age5/README.md "Independent verification"):
+  1. Sockets: the FBX and the manifest carried Blender-suffixed names (SOCKET_Crown_1.033, SOCKET_WarnLight_1.018,
+     ...), so every mesh had a differently named crown socket. They now export as SOCKET_<Kind>_<n>.
+  2. LOD group: the root Empty was a plain Null. It is now an FBX LodGroup (fbx_type), as in age0-age4. The builder's
+     "Blender cannot write a LOD group" gap is closed.
+  3. University lecture hall: the east gable triangle had sheared UVs (244 m per UV). A duplicate coplanar triangle
+     would have z-fought.
+  4. Damage and ruin read as stacked dark voxel cubes. Every broken interior wall now gets a pale torn floor-slab lip
+     at its storey line, so blast holes read as exposed floors (+26k LOD0 triangles across the family).
+  5. Pylon footings now reach Z = -0.3 (they stopped at -0.1).
+  6. Plant tank roofs no longer show the steel row's yellow pie wedges (they use pale concrete).
+  7. Highway asphalt lightened from #4a4946 to #5f5d58, so highways read as the concept's pale ribbons.
+
+previews (all rendered through tools/render_slot.py):
+  - verifier views: shots/asset-age5-<set>-verify-<close|near|mid|far>.png for every set;
+  - the builder's standard previews for the sets the fixes touched were re-rendered: states-*, highway, plant,
+    university, district and district-night.
+
+against the concept:
+  - building-plant.png: at 300 m and 1 km the plant reads right: twin hyperbolic towers dominate, with the dome,
+    stack, turbine hall, switchyard and pylons marching away.
+  - age-5-atomic.png: at 300 m-1 km the district gives the grey and beige mid-century downtown, with flat roofs,
+    stepped beige ribbon towers, slab blocks and long golden-hour shadows.
+  - city-night.png: night windows light as a scattered warm share, not in columns.
+
+held back from a higher score:
+  - Materials are clean and evenly lit. Weathering, rain streaks and roof variety are thin, so close up it is
+    "good game kit" rather than near-photoreal.
+  - Damage is still cell-based: blast edges are stepped, and the ruins' tall remnant is a stack of blocks.
+  - The reactor dome uses the same pale concrete as the rest; the concept's dome is whiter (raise its MI tint).
+  - Windows are texture only (no reveals) at 40 m.
+  - LOD1 is 50-80 % of LOD0 on the cheap towers.
+  - The interchange's four outer ramps close into a near-full ring: a stylised cloverleaf.
+
+untested here (no Unreal):
+  - the LodGroup import and the four screen sizes;
+  - the green flip of the OpenGL normal maps;
+  - the master material described in the README: culture tint (M.G), soot (Col.R), ground occlusion (Col.G) and
+    night windows (M.R rank).

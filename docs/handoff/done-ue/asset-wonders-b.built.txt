@@ -1,0 +1,9 @@
+date: 2026-11-19
+family: wonders-b (art/wonders-b): wonder-4-industry (Choir of Chimneys), wonder-5-atomic (Ear of the Sky), wonder-6-space (The Ladder), wonder-sunwell, wonder-stair-of-rains
+assets: 5 wonders; meshes: 41 FBX in art/wonders-b/export (20 state meshes Intact/Construction/Damaged/Ruin with LOD0-3, 15 culture ornament meshes A/B/C with LOD0-2, 6 extras: 4 Ladder tether states, Ladder climber, Sunwell beam)
+triangles LOD0: intact wonders ChoirOfChimneys 35644, EarOfTheSky 16012, Ladder 20560, Sunwell 45256, StairOfRains 47916 (sum 165388)
+triangles all states LOD0/LOD1/LOD2/LOD3: 566661 / 235127 / 74649 / 13590; ornaments LOD0 12690; extras LOD0 1108; all meshes LOD0 580459; all meshes all LODs 914291
+textures: 15 atlases x D/N/ORM/M at 2048^2 (art/wonders-b/textures); M.R night emissive mask, M.G emissive colour select, M.B culture accent mask
+manifest: art/wonders-b/manifest.json; readme: art/wonders-b/README.md; script: art/wonders-b/build_wonders-b.py (+ wb_*.py)
+previews: shots/asset-wonders-b-<asset id>-{40m,300m,1km,night,states,cultures}.png (30 images, rendered through tools/render_slot.py)
+integration notes: Sunwell needs a terrain cut (r 101 m, floor -27 m); Ear and Stair bring their own berm / mountain; ornaments are instanced at manifest sockets; FX sockets for steam, mist, rainbow, beam, blink lights

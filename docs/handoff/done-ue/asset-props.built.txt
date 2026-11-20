@@ -1,0 +1,11 @@
+asset-props built 2026-11-19
+family: Prop (art/props/)
+assets: 65 meshes (49 base props + 16 state variants), each one FBX with an LOD group in art/props/export/
+  rocks 8, cliff chunks 4, fences 4 (+4 _Damaged), hedgerows 2, crops 3, hay 3, barrels/crates 3, carts 2,
+  market stall 1 (+_Damaged, _Burnt), market goods 3, signposts 4, lamps 7 (one per age), statues 5 (+5 _Damaged, +5 _Ruin)
+triangles: LOD0 total 44,224 (max 2,052 Cart_Wagon; cliffs 2,000 each); all LODs total 69,029
+textures: 10 tiling sets T_Prop_<Set>_D/_N/_ORM (1024) + 12 baked rock/cliff sets T_Prop_<Asset>_N/_ORM (1024)
+manifest: art/props/manifest.json (footprint, height, tris per LOD, slots/materials, MIs per culture/biome/age, states, placement)
+source: art/props/build_props.py (Blender 5.2 headless; rebuild + previews documented in art/props/README.md)
+previews: shots/asset-props-{rocks,farm,village,lamps,statues,night}-{40m,300m,1km}.png, shots/asset-props-lineup-close.png
+over 1k-tri prop budget (documented in README): cliffs (terrain scale), Cart_Wagon (vehicle), Fence_DryStone, Market_Stall_Damaged, Goods_Pots, Crop_Veg (1.0-1.2k)

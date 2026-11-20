@@ -1,0 +1,42 @@
+2026-11-19, asset-ships (family Ship, art/ships) verified by an independent asset verifier. Score: 7/10.
+
+Summary. 8 ships (ReedBoat, Canoe, Galley, Cog, SailShip, Steamship, ContainerShip, FastFreighter) x 3 states (Intact, Damaged, Ruin) = 24 meshes, one FBX each with LOD0-LOD3 under a LodGroup node (art/ships/export/SM_Ship_<Asset>_A_<State>.fbx). They hold up against docs/ASSETS.md and read well against docs/concept/units at 300 m and 1 km. Four real defects were fixed in the scripts. The ships are still clean, low-detail models in close-up, short of near-photoreal.
+
+Reproducibility. build_ships.py --tex was run from scratch. All 12 trim-sheet PNGs came back byte-identical to the builder's, and the manifest was identical too. After the fixes, two more builds produced identical manifests. check_ships.py: 24/24 OK. All renders went through tools/render_slot.py.
+
+Independent audit (my own script, over all 96 LOD meshes in source/ships.blend):
+- Hierarchy: each mesh has a LodGroup root at the origin with an identity transform, and the LODs are parented to it with no offsets.
+- Materials and geometry: 3 slots in the fixed order Structure, Roof, Detail (the boats and wrecks leave Roof unused). No degenerate faces and no n-gons.
+- UVs: V is inside 0-1 on every LOD. U tiles on the trim sheets, as the README documents.
+- Normals: the outward-facing share is 99.1-100 % on every LOD. I traced the remaining hits to rays coming from below the waterline into open container bottoms, plus coplanar transom and end-cap pairs; none is a real flip.
+- LOD ratios: LOD1 36-47 %, LOD2 10-18 %, LOD3 6-15 % (130-380 triangles).
+- Budget: every ship is 3.1-4.8k, inside the 3-15k ship budget. The reed boat (2.1k) and canoe (1.6k) are boat-sized on purpose.
+- Scale: the white 1.8 m reference figure stands in every 40 m view. Crew are now 1.75 m. Bulwarks are 1.0-1.1 m on the big ships, deckhouse storeys are 2.8 m, and containers are 12.2 x 2.44 x 2.6 m. The lengths are plausible: trireme 35 m, cog 29 m, full-rigger 57 m, container feeder 153 m.
+- Pivot: the waterline at Z = 0, centred, with the bow toward -Y. The manifest has every required field, plus draft, deck height, sim ages and the towns-kit slot.
+
+Fixes (made in the scripts; recorded in art/ships/README.md, "Independent verification"):
+1. Decks: the whole beam was stretched over one band. On every tapering deck quad the planks zig-zagged (an affine UV on a trapezoid) and came out about 1.4 m wide, which is plainly visible on the steamship and sailing-ship close views. Decks are now cut into straight strips parallel to the centreline and planar-mapped. The inner bulwark and end caps share the edge vertices, so there are no T-junctions (open-edge counts are unchanged).
+2. Reed boat: the outer lashing rings floated beside the curled bow and stern as black hooks. They now follow the curl.
+3. Torn sails and flags: the damage pass dropped random cells, which left loose squares of sail floating in mid-air. Cloth is now kept only when it connects to the yard (or the hoist), and the torn grid is jittered so the holes look ragged rather than square.
+4. Crew figures stood at 95 % of their nominal height. Body plus head now equals the requested height.
+
+New triangle totals: LOD0 67,355 / LOD1 27,558 / LOD2 9,584 / LOD3 5,845 (the deck strips add 3.5k at LOD0). The intact ships at LOD0: ReedBoat 2,082, Canoe 1,635, Galley 3,731, Cog 2,712, SailShip 4,834, Steamship 3,110, ContainerShip 3,814, FastFreighter 3,207. The numbers in asset-ships.built.txt predate the fixes; manifest.json is the reference. All 37 previews were re-rendered (shots/asset-ships-*.png).
+
+Judged against the concept:
+- The age line reads cleanly: reed crescent, then the plank boat, galley, cog, full-rigger, steamer, container ship and the white space freighter.
+- The galley, cog and canoe carry striped culture sails, shields and parapets, and they read in all six colours.
+- The sailing ship keeps cream #efe6cf sails, with its culture colour on the gun stripe and the pennants, as the concept asks.
+- The container ship and the steamer match units-modern.png.
+- The damaged and ruin states read as clearly different silhouettes.
+
+Open for others:
+- The FBX LodGroup has to be imported with Import Mesh LODs on, and that is unconfirmed until the first Unreal import. art/tools/ue_import.py expects the shrine layout (art/export/<asset>/, one FBX per LOD), so it cannot import this family as it is.
+- The integration agent has to wire CultureTint (MI_Ship_<Slot>_C0..C5) and the M-mask emissive (night windows in R, engine glow in B).
+- The units layer has to exaggerate ship scale. At real scale a galley is about 15 px at 1 km.
+- The concept wants light hulls on deep water. The dark wooden and steel hulls carry little contrast there, so a hull rim or brightening parameter in M_Ship_Structure is recommended.
+- Missing from the meshes: funnel smoke, wakes, and sail, flag and oar motion.
+
+Art limits behind the 7:
+- At 40 m the ships are clean and low in detail: flat painted planes, black-square windows, box castles, and no weathering beyond the trim sheets. They are convincing at game distance but a long way from near-photoreal in close-up.
+- Steel wrecks reuse the wood char band, so they read as brown or rusty rather than sooty.
+- There is one design per ship (_A).

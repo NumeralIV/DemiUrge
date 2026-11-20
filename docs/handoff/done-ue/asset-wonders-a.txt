@@ -1,0 +1,49 @@
+2026-11-19, asset-wonders-a (family Wonder, art/wonders-a: wonders 0-3, the Hearth of Many Fires, Great Hive, Seven Who Keep Watch and Sea Gate) verified by an independent asset verifier.
+
+Reproducibility. The verifier rebuilt everything headless from build_wonders_a.py: all 9 texture sets, 16 meshes and the manifest. Textures, the 16 _lights.json files and the manifest (apart from the date) were byte-identical to the builder's. The FBX bytes differ between runs, but re-importing both sets gave identical geometry: triangle counts, bounds, UV ranges, slots and checks.
+
+Every FBX was re-imported into an empty Blender scene:
+- Hierarchy: an FBX LodGroup empty with _LOD0 to _LOD3, at scale 1.
+- Materials: three slots in the order Structure, Roof, Detail (M_Wonder_<Set>), plus the Col vertex colour and one UV map.
+- Topology and UVs: no n-gons. Detail UVs are inside 0-1, and Structure and Roof are tiling world-scale, as documented.
+- Normals: no inverted closed shells.
+- Triangle counts equal the manifest.
+- Pivots: footprints are centred, the ground is at z 0, and everything reaches 0.3 m or more below it. The Sea Gate is at mean water level, with its islets to -8.6 m. Everything faces -Y.
+- Dimensions match docs/concept/wonders/index.md: the Hearth is 158 m across with a 25 m cone, the Hive is 45 m wide and 55 m tall, the Seven are a 90 x 4 m platform with 35 m figures and bowls at about 22.6 m, and the Sea Gate has a 160 m span, a 45 m soffit and 70 m towers.
+- Names follow docs/ASSETS.md, and the manifest has every required field.
+- Budgets: Hearth Intact LOD0 is 58.9k and the Seven 63.3k. The Hive (22.8k) and Sea Gate (22.7k) are under the 30-80k wonder range, as the builder declared; their silhouettes do not need more.
+- LOD ratios are lower than the ~40 % / ~12 % guide: LOD1 is 21-34 % and LOD2 5-11 %. The LOD sheets still hold their silhouettes, so this was accepted.
+
+Fixes, all in art/wonders-a scripts and recorded in its README:
+1. The builder said "a 1.8 m figure is in every 40 m preview", but it was outside the frame in the Hearth, Seven and Sea Gate views, and only its head showed at the Hive's lower edge. On the Sea Gate it also floated 3 m above the islet. All four now stand on a surface in frame, and the Sea Gate 40 m camera was lowered.
+2. The Seven 40 m view cut off the hood, which is the concept's key feature. It is reframed to show the whole figure.
+3. HearthBank texture: tight single-size Voronoi read as crazy paving. It is now loose two-size river stones in earth.
+4. HivePlaster: the flaked patches read as camouflage. They are now rare, with plaster lifts and grime. The Detail plaster cell was softened the same way.
+5. Fire cell: the flames read as white candles. They are now yellow to orange.
+6. Zero-area triangles are dissolved: the Hearth cone tip and ruin-cut slivers, 48 triangles on Hearth Intact LOD0.
+7. The manifest's emissive formula and day/night ratio now match the README.
+8. README counts were corrected: 228 fire pits (the builder said 229) and 12 Hive doorways (the builder said 13). The extra entry in each lights file is a beacon or glint socket.
+The builder's "no non-manifold edges" holds per part only. After welding, the Sea Gate parapet bases and the Hive's split-sector caps leave coplanar T-joins, which are hidden and harmless. These are now documented.
+
+New totals (LOD0 / LOD1 / LOD2 / LOD3): 472,557 / 127,135 / 32,467 / 9,325.
+
+All 24 previews were re-rendered through tools/render_slot.py (shots/asset-wonders-a-<concept>-{40m,300m,1km,night,states,lods}.png; lods sheets now exist for all four wonders) and judged against the concepts:
+- At 300 m the Hearth reads as two rings of orange dots plus a dark cone.
+- The Hive is a white stepped cone with a bronze tip and a dotted spiral of lamps at night.
+- The Seven are a ring of seven hooded figures holding fires; the hoods are faceless.
+- The Sea Gate is a "Π" with a round arch over water, and its lantern lays a reflection at night.
+
+Open for others:
+- At night the Seven's fire light sits in front of the chest and lights the hood rim from below; the preview lights have no shadows. With shadows on, check that no face-like read appears. If one does, move the light below the bowl lip or darken the hood further.
+- Smoke, flicker, steam, haze and the reflection track are left to Niagara and lights at the _lights.json points.
+- Sites need flattening, and the Sea Gate needs a harbour mouth about 175 m wide.
+- The FBX LodGroup must be imported with "Import Mesh LODs".
+- Art limits, still well short of near-photoreal:
+  - The flames are opaque meshes.
+  - The Seven paving reads as uniform flagstones.
+  - The Hive still reads a little "stacked cake", and its ramp start shows a large flat seam face.
+  - The Seven's hood is a recess with painted shadow.
+  - The damaged Sea Gate's arch halves cantilever unsupported.
+  - There are no _Burnt or _Drowned states and no culture ornament meshes.
+
+quality 6/10

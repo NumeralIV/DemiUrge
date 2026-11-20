@@ -1,0 +1,39 @@
+2026-11-19, asset-age4 (family Age4, art/age4): Industry age kit, checked by an independent asset verifier. Score: 7/10.
+
+Summary. The kit has 18 base meshes: terraces A-D, Factory_A/B, Stack_A, Warehouse_A/B, Station_A, MineHead_A, Spoil_A/B, Bridge_A (truss), Bridge_B (viaduct) and culture ornaments A/B/C. They are exported as 57 FBX files (art/age4/export), each with LOD0-LOD3 under a LodGroup. The kit meets docs/ASSETS.md. It reads close to the age-4 and factory concepts at 300 m and 1 km: terraced rows with rear outshots, sawtooth mills under three stacks taller than everything else, a glass barrel-vault station, quay warehouses, an iron truss bridge and a headframe colliery. The brief said building-mine.png shows an Iron-age open pit, so the Industry-age headframe is a fair choice. Nine defects or weaknesses were fixed in the scripts. Close up, the assets are clean, well-proportioned game models with real window reveals, but they are not yet near-photoreal, because there is no grime layer.
+
+Reproducibility. build_age4.py --textures was rerun from scratch:
+- The 17 textures and manifest.json came back byte-identical to the builder's. The FBX files differ only in the header timestamp and file id.
+- After the fixes, two more full builds gave identical manifests.
+- Every render went through tools/render_slot.py.
+
+Independent audit (my own scripts, on the 57 FBX files re-imported into an empty scene):
+- Hierarchy and counts: each file has a LodGroup with an identity transform and 4 LODs. Every LOD is triangles only, and every triangle count matches the manifest.
+- Materials: 3 slots in Structure/Roof/Detail order. The heaps show 2 because Structure and Roof share a material.
+- Vertex colours and UVs: the Col vertex colours are present, and the trim-sheet V is inside 0-1 on every LOD.
+- Normals: every closed part has positive signed volume. The one exception is a small part on Factory_B_Damaged LOD1.
+- Pivot and ground: footprints are centred, with the ground at Z 0 and the plinths at -0.3/-0.45. Spoil_A (+3.7 m, tipping ramp) and Warehouse_A (-1.15 m, hoist) are off-centre, and the manifest records this in footprint_centre_offset_m.
+- Scale against the 1.8 m figure: storeys are 2.95-3.2 m, doors 1.0 x 2.4 m, windows about 1.05 x 1.5 m and the track gauge is 1.435 m. The stacks are 44-58 m.
+- Manifest: it has every field ASSETS.md requires, plus the sockets, the sim mapping and towns_kit_id.
+
+Fixes (scripts only; each is recorded in art/age4/README.md under "Independent verification"):
+1. Sliver and duplicate triangles are now dropped. Before, the FBX round trip merged duplicates, and 4 files were one triangle off the manifest.
+2. Every _Damaged FBX exported its sockets as SOCKET_*.001 (for example SOCKET_Smoke_0.001), so UE would not have found them under the names in the manifest. The names are now exact.
+3. The smoke sockets over broken stack tops (Stack_A, the MineHead stack) floated 1.3-3 m in the air. They now sit 0.5 m above the break.
+4. Terrace damage was almost invisible: Terrace_A showed one hole, on the rear. The holes are now placed on the roof slopes, plus one in the upper street facade.
+5. Booleans: a result that reaches outside its input part is now rejected, retried with the float solver, or left uncut. This removes a brick lump that stood above the Terrace_D_Damaged parapet.
+6. The MineHead_A ruin had lost its headframe completely. The lattice now lies toppled along the tub track, with a sheave wheel thrown clear.
+7. The Spoil_B yard heap was a dome that looked like a boulder. It is now a cone at the angle of repose.
+8. The Base brick instance is toned to the concepts' soot-darkened red-brown. Base culture_variants now name the MI_*_Base instances, not the bare masters, so UE keeps that tint.
+9. Preview framing: the "40m" and line-up views left the asset at about a third of the frame width. They are now fitted to the asset's box, and a new "close" view puts the camera 40 m from the facade.
+
+The builder's report missed one budget item: Station_A (7.0k) is also under the 8k civic minimum.
+
+Still open (none blocks integration):
+- The damaged and construction terrace meshes run 6.9-7.9k against the 6k house budget.
+- At 40 m the sawtooth glazing reads as brownish streaks.
+- There is no weathering or soot on intact walls.
+- The viaduct's Construction state is boxy.
+- There are no UCX collision hulls and no lightmap UVs; Unreal can generate these.
+
+Previews: shots/asset-age4-*.png (close, 40m, 300m, 1km, states, cultures and lods for every asset; st-<State> close-ups; district-300m, district-1km and district-mills).

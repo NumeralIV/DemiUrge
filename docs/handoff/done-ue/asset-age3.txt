@@ -1,0 +1,36 @@
+2026-11-19, asset-age3 (family Age3, Sail Age kit, art/age3) verified by an independent asset verifier. Score: 7/10.
+
+Summary. 13 assets (Townhouse A-D, Warehouse A-B, Quay Straight/Corner/Stairs, Pier, PortCrane, Lighthouse, CivicDome) in 48 meshes (buildings Intact/Construction/Damaged/Ruin, docks Intact/Damaged/Ruin). Each is one FBX with LOD0-LOD3 under a LodGroup node. The kit now meets docs/ASSETS.md and reads as the Sail-age harbour city of docs/concept/settlements/age-3-sail.png at 300 m and 500 m: terracotta roofs on plastered three- and four-storey blocks, the lead-domed portico temple as the landmark, a stone quay with piers, and a mole ending in the lighthouse. Several real defects were fixed in the scripts, including two that were invisible in the builder's culled previews but would have shipped broken. The kit is still a clean, procedural kit rather than near-photoreal in close-up. Roofs are flat textured slabs, there are no Lagoon-Weaver mesh variants and no bastion walls.
+
+Reproducibility. build_age3.py --textures was run from scratch before any change. All 11 texture PNGs came back byte-identical and manifest.json was identical. After the fixes, two consecutive builds also produced identical manifests (the FBX bytes differ only by their embedded timestamps). A full build takes about 15 s. Every render went through tools/render_slot.py.
+
+Independent audit. My own scripts re-imported all 48 FBX files into empty scenes, ran a ray-cast normal test, rendered back-face-red debug views of every asset and state, and checked for loose geometry:
+- Structure: each file has a LodGroup empty with an identity transform and children <mesh>_LOD0..3, so there are 4 LODs everywhere. Every mesh has 1 UV map ("UVMap"), 1 corner colour ("Col") and at most 3 slots, in the order M_Age3_Structure / Roof / Detail. There are no zero-area faces, and the triangle counts match the manifest exactly.
+- Scale, against the 1.8 m figure: doors are 1.3 x 2.5 m, storeys 2.9-3.6 m, the townhouses 14.6-17.6 m tall, the lighthouse 30.7 m and the temple 38.6 m. Units are metres, Z is up and the front faces -Y. The buildings' foundations reach Z = -0.3. The quay and pier tops are at Z = 0, with water at -1.8.
+- UVs: V is inside 0-1. U tiles on the trim sheets by design. Nothing is baked, so ASSETS.md's 0-1 rule does not apply, and there is no lightmap channel (documented).
+- Manifest: it has every field ASSETS.md requires, plus the culture parameters, the mapping hints to EDmTownMesh and the boundary-edge checks. I added footprint_design_m.
+
+Fixes (in art/age3; listed in art/age3/README.md under "Verification"):
+1. age3_geo.MB.beam put every beam inside out (left-handed frame): scaffolds, crane bracing and jib, rafters, raking cornices, hoists and timbers, so their lighting was inverted in-engine. Winding and caps are reversed.
+2. Civic temple: both lean-to aisle roofs faced down, so with back-face culling the aisles had no roof. They are now oriented explicitly and have soffits.
+3. Civic temple drum: the 12 window cards sat on polygon corners, half buried in the drum. A new drum_window bends each card across its facets.
+4. The bisect passes left loose vertices and edges in 71 of 192 meshes. These inflated the bounds and the manifest heights: Lighthouse_Construction read 23 m instead of 13.6 m, the ruins up to twice their height, and CivicDome_Construction LOD1 read 26.6 m. All are removed.
+5. Pivots: the temple was 1.25 m off its footprint centre. Buildings are now re-centred on their design footprint, and the docks keep their tiling frame.
+6. The Construction and Ruin LOD1 was 89-96 % of LOD0 and LOD2 was 45-74 %. Above LOD0, openings are now dark cards that the wall thickening turns into thin boxes, so they read from both sides. LOD1 is now 36-72 % on the houses, warehouses and temple. The crane, the lighthouse and the dock pieces stay at 0.7-0.92 because they have little to remove.
+7. Under-budget LOD0s. Every house and warehouse gets dressed-stone window architraves, and Townhouse C gets quoins and a band course. The temple gets fluted columns, dentil courses, a pediment sculpture group, a 36-sided drum and dome with 14 rings, and a walkable front flight of 0.167 m risers between cheeks; the 0.5 m podium steps alone were not human scale. Intact LOD0 is now: Townhouse A 2168, B 3282, C 2422, D 3564, Warehouse A 1967, Warehouse B 2486, crane 1200, lighthouse 814, temple 9310 (was 1466/2594/1478/2290/1369/1524/1148/814/5126).
+8. Damaged state: single-sided roofs seen through the burn hole were culled, so you could see through the roof. The hole now has a charred inner lining. On the damaged temple, the roof hole hid under the drum and the building read as intact from 300 m. The dome is now broken on its front-left shoulder, lined and closed at the spring line.
+9. Small culling leaks closed: column base tori, the lighthouse platform moulding (5 cm proud and open), the string courses on the battered tower, and window jamb tops.
+10. Previews: the 1.8 m figure was cut off by the frame edge in every 40 m view. It now stands in front of the facade.
+
+Totals after the fixes (48 meshes): LOD0 97,705 / LOD1 49,015 / LOD2 20,642 / LOD3 5,918. The figures in asset-age3.built.txt predate the fixes; manifest.json is the reference. All 55 previews were re-rendered (shots/asset-age3-*.png): 13 x 40m/300m/1km, 13 state sheets, cultures, town-500m and town-night.
+
+Open for others or later passes:
+- Intact LOD1 is now 26-44 % of LOD0. The LOD0-only additions mean LOD1 pops from framed, recessed windows to flat ones at screen size 0.35.
+- Warehouse A (1967) is just under the 2k house floor.
+- Ruin LOD2/3 silhouettes can be about 1 m taller than LOD0.
+- The construction scaffold boards are double-sided coplanar pairs (fine with culling).
+- Through the damaged roof hole you still see some unlined interior (open shells).
+- Culture B (Lagoon-Weaver) is material-only: no upswept saddle roofs and no pile buildings. Star bastion walls are not built.
+- The normal maps are OpenGL, so flip green in Unreal.
+- The Pier pivot is at its centre, not at the shore end the stand-in uses.
+- The crane's cab-on-trestle design reads as a crane but is not a historical treadwheel crane.

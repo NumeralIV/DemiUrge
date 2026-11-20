@@ -15,10 +15,12 @@
 //  2. Regular sound laws. A daughter language applies one or two of its family's laws to everything it
 //     inherits (sounds, roots, endings, the god's name), so daughters look related but distinct.
 //  3. A spelling code. Every place, person and people name is spelled so that the values of its letters
-//     (a = 1 .. z = 26) sum to kTarget modulo 27. Two such names can never differ by one substitution,
-//     insertion or deletion (that would change the sum by 1..26, never by 27), so no world, whatever its
-//     languages, holds near-twins at edit distance 1. The last syllable of each name is the free slot:
-//     it is drawn among every syllable the language allows whose letters make the sum come out right.
+//     (a = 1 .. z = 26) sum to kTarget modulo 29. Two such names can never differ by one substitution,
+//     insertion or deletion (that would change the sum by 1..26, never by a multiple of 29), so no world,
+//     whatever its languages, holds near-twins at edit distance 1. Names of 10+ letters also carry a second,
+//     position-weighted sum modulo 29, so two of them of one length never differ by two substitutions.
+//     The last syllable of each name is the free slot: it is drawn among every syllable the language allows
+//     whose letters make the sums come out right.
 // Every random draw comes from the Rng argument, and every container is walked in index order.
 #include "Names.h"
 
@@ -44,7 +46,7 @@ bool isLetterCh(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'
 char lowerCh(char c) { return (c >= 'A' && c <= 'Z') ? char(c - 'A' + 'a') : c; }
 bool isSep(char c) { return c == ' ' || c == '-' || c == '\''; }
 
-constexpr int kMod = 27;      // letter values 1..26 are all distinct and non-zero modulo 27
+constexpr int kMod = 29;      // a prime above 26: letter values 1..26 are distinct and non-zero modulo 29
 constexpr int kTarget = 11;   // every coded name's letter sum, modulo kMod
 
 int letterVal(char c) {
@@ -60,6 +62,8 @@ int residOf(std::string_view s) {
 	for (char c : s) t += letterVal(c);
 	return t % kMod;
 }
+
+bool codeOk(std::string_view s);   // the spelling codes (defined with the slot below)
 
 std::string lettersLower(std::string_view s) {
 	std::string r;
@@ -132,9 +136,9 @@ const FamilyDef kFam[kFamilies] = {
 	  "a:5,e:4,i:3,o:4,u:1", "", "", "ia:2,io:1,ea:1",
 	  "l:3,n:3,r:3,s:2", "n:3,l:2,r:2,s:2",
 	  120, 0, 180, 160, 90, 300, "lnrstm", "", false, false, 1,
-	  4, 5, 0, 60, 26, 14, 0, 0, 0, 200,
+	  4, 5, 0, 60, 26, 14, 0, 0, 0, 100,
 	  "aa,ee,ii,oo,uu,ae,ao,au,ei,eu,ie,oa,oe,oi,ou,ua,ue,ui,uo,nr,nl,lr,rl,sr,ml,mr,ln,tl,dl,vt,dt,td,tv,dv,vd,sd,ds,bv,vb,fv,vf,pb,bp,gd,dg,tg,gt,pt,tp,mn,nm,vl,vn,vm,fn,dn,tn,bn,pn,gn,dm,tm,bm,pm,gm,fm,sv,vs,rs,ls,ns,sf,sg,sb,lf,nf,rf,nb,nv,lb,lg,ng,ngr,rtr,ltr,str,spr,nfl,lfl,rfl,sfl,sm,sn,lm",
-	  "essa,ara,enna,ossa,ella,ino,anto,orra,ivia,alle,isca,onde,ora,ile,etta,aro,elia,anne,iro,esca,ovia,arra",
+	  "essa,ara,enna,ossa,ella,ino,anto,orra,ivia,alle,isca,onde,ora,ile,etta,aro,elia,anne,iro,esca,ovia,arra,olla,ianne,essi,orano",
 	  "lusa,sanne,dovra,amme,tella,viro",
 	  "o:3,a:3,io:2,eo:1,ina:2,ano:2,ello:1,ia:2,etto:1,ene:1,ira:1",
 	  "_:2,a:3,e:1", "an:3,ese:2,ine:1", "i",
@@ -142,7 +146,7 @@ const FamilyDef kFam[kFamilies] = {
 	  "ossaro,tavenne,vessaro,doravo",
 	  "the Tide-Born;the Fair-Sailing;the Vine-Crowned;the Golden-Voiced;the Gentle;the Far-Faring;the Lamp-Bearer;the Harbour-Builder;the Laughing;the Sea-Wed",
 	  "lusa,ondessa,silvara,morenna,vellara",
-	  "1,5,13,4,16,30,11", 7, 11 },
+	  "1,5,13,4,16,30,11", 7, 10 },   // (verifier: word cap 11 -> 10; 38 % of places had 11+ letters, "Lefemafanto")
 
 	// 1 KORVAGH: the hard tongues of the steppe and the high passes. Closed syllables, back vowels,
 	// kh gh zh, clusters, initial stress, hyphenated clan compounds. "Durvakh", "Tor-Uzgal", "Ghazmor".
@@ -152,7 +156,7 @@ const FamilyDef kFam[kFamilies] = {
 	  "a:4,o:4,u:4,e:1,i:1", "", "", "",
 	  "r:4,z:1,g:2,k:2,n:2,m:1,d:1,l:1", "k:3,r:3,d:2,g:2,z:1,kh:3,gh:3,n:1,m:1,rk:1,rg:1,rd:1,zd:1,sk:1",
 	  150, 0, 350, 850, 0, 0, "", "", false, false, 0,
-	  3, 5, 0, 58, 24, 0, 18, 0, 0, 200,
+	  3, 5, 0, 58, 24, 0, 18, 0, 0, 100,
 	  "VV,ghk,khg,kgh,gkh,khkh,ghgh,khgh,ghkh,zhz,zzh,ghz,zgh,kk,gg,dd,tt,bb,zz,rr,mm,nn,ll,hk,hg,hd,hb,ht,hz,hm,hn,hl,hv,dh,bh,th,rh,nh,mh,vh,lh,td,dt,gk,kg,bp,pb,db,bd,gb,bg,dg,gd,vz,zv,zs,sz,shk,ghr,zhr,mr,nr,lr,rl,ln,nl,zr,zl,rzh,nzh,mzh,gzh,dzh,kzh,bzh,vzh,zhg,zhk,zhd,zhb,zhm,zhn,zhv",
 	  "dar,mor,ukh,gul,tash,zog,drun,vakh,orn,bod,rak,dum,ghaz,kor,uzd,argh,osk,druk,maz,gat,ubar,oz",
 	  "",
@@ -172,7 +176,7 @@ const FamilyDef kFam[kFamilies] = {
 	  "", "e:3,i:3", "a:4,o:3,u:3,i:1", "aa:3,oo:2,uu:2,ai:2,au:1,ou:1,uo:1,oi:1,ee:2,ii:2,ei:2,ie:1",
 	  "n:3,l:3,r:2,s:2,t:1,k:1", "n:2,s:1,t:1",
 	  180, 0, 260, 120, 330, 350, "ktplnsm", "", true, false, 0,
-	  3, 5, 1, 70, 30, 0, 0, 0, 0, 200,
+	  3, 5, 1, 70, 30, 0, 0, 0, 0, 100,
 	  "hj,jh,vj,jv,ji,lj,sj,tj,kj,pj,nj,mj,nm,mn,ae,ao,ea,eo,eu,ia,io,iu,oa,oe,ua,ue,ui,hk,hp,hs,hv,hl,hn,hm,hr,kh,th,ph,sh,ns,ls,rs,ts,ks,sr,sl,sn,sm,np,mp,nk,tk,kt,pt,tp,lr,rl,nr,nl,ln,rn,mr,ml,rm,km,kn,tn,pn,tm,pm,vk,vt,vp,vs,vm,vn,vl,vr",
 	  "lAnnA,vAntO,rOsti,mAkki,sUlmi,kOrpi,jArvO,lAhtO,hOlmi,pAkkA,nUmmi,sAlO,tOlA,rAntA,vUOtO,kAisU,tAistO,rAvilA,kUUsi,hArjU",
 	  "",
@@ -191,8 +195,8 @@ const FamilyDef kFam[kFamilies] = {
 	  "q:2,kh:2,sh:2,s:2,z:1,h:2,t:2,d:2,r:4,n:3,m:2,b:2,f:1,l:3",
 	  "a:6,i:4,u:3", "", "", "aa:4,ii:1,uu:2",
 	  "r:3,n:2,m:2,sh:2,z:2,b:1,d:1,q:1,h:1", "r:3,n:4,m:2,sh:2,z:2,d:1,q:1,b:1,t:1",
-	  200, 60, 400, 550, 180, 0, "", "", false, true, 2,
-	  3, 5, 0, 55, 30, 15, 0, 0, 0, 200,
+	  140, 60, 400, 550, 180, 0, "", "", false, true, 2,
+	  3, 5, 0, 55, 30, 15, 0, 0, 0, 100,
 	  "e,o,qk,kq,hh,shh,zs,sz,zsh,shz,qq,kk,td,dt,tq,qt,hq,qh,dq,qd,bq,qb,hy,yh,yi,hk,hr,rh,nh,mh,zh,dh,bh,th,jh,fh,lh,shd,shq,shn,shm,shb,shz,shr,shl,rq,nq,mq,zq,dz,zd,tz,zt,nb,mb,nm,mn,bn,bm,db,bd,lr,rl,ln,nl,jq,fq,yq,qj,qf,qy,aaa,iii,uuu",
 	  "arun,isham,udar,aqim,azir,iyun,anuq,ahar,ushta,imar,abir,uzan,irun,aqar,unab,ishan,zuun,tibar,amil,urad",
 	  "qasu,ishad,saru,mahz,tiru,dimar",
@@ -211,10 +215,10 @@ const FamilyDef kFam[kFamilies] = {
 	  "h:2,k:3,l:4,m:3,n:3,p:2,t:3,w:2,ng:1",
 	  "a:5,e:3,i:3,o:4,u:4", "", "", "",
 	  "", "",
-	  200, 160, 0, 0, 0, 0, "", "ai,au,ae,ao,ei,eo,oa,oe,ou,ua,ue,ui,ia,io,iu,eu", false, false, 1,
-	  2, 6, 1, 48, 38, 0, 0, 14, 0, 150,
+	  120, 160, 0, 0, 0, 0, "", "ai,au,ae,ao,ei,eo,oa,oe,ou,ua,ue,ui,ia,io,iu,eu", false, false, 1,
+	  2, 6, 1, 48, 38, 0, 0, 14, 0, 80,
 	  "ngng,wu,hh,ww,uw,ngw,ngh,ngk,ngl,ngm,ngn,ngp,ngt",
-	  "kele,lehu,hiwa,wane,tola,pilo,nahe,mena,hoki,niwa,tewa,pako,wiko,hume,lana,poki,moa,wae",
+	  "kele,lehu,hiwa,wane,tola,pilo,nahe,mena,hoki,niwa,tewa,pako,wiko,hume,lana,poki,moa,wae,wehi,mone,nuka,kipu,toa,lewa",
 	  "",
 	  "a:3,o:2,ewa:1,ono:1,ahi:1,ele:1,ua:1",
 	  "_:1", "an:1", "",
@@ -222,7 +226,7 @@ const FamilyDef kFam[kFamilies] = {
 	  "hekau,pokane,lewahi",
 	  "the Wave-Walker;the Star-Steerer;the Reef-Born;the Many-Islanded;the Child of Fire;the Long-Voyager;the Shell-Crowned;the Laughing;the Wind-Reader;the Net-Mender",
 	  "kalowa,hinemo,tewaha,maheke",
-	  "24,18,25,26,4,11", 0, 10 },
+	  "24,25,26,4,11", 0, 9 },
 
 	// 5 MBENDI: the forest and savanna tongues. Prenasal onsets mb nd ng nj nz (also at the start of a word),
 	// open syllables, bound place prefixes u-, ki-, ma-. "Mbaleko", "Kindembe", "Ndozimba".
@@ -231,10 +235,10 @@ const FamilyDef kFam[kFamilies] = {
 	  "mb:2,nd:2,ng:2,nj:1,nz:1,k:3,t:2,l:4,m:2,n:2,s:2,w:2,y:1,ny:1,z:1,b:1,d:1",
 	  "a:5,e:3,i:4,o:3,u:4", "", "", "",
 	  "", "",
-	  150, 0, 0, 0, 0, 0, "", "", false, false, 1,
-	  2, 6, 0, 54, 30, 0, 0, 4, 12, 200,
+	  100, 0, 0, 0, 0, 0, "", "", false, false, 1,
+	  2, 6, 0, 54, 30, 0, 0, 4, 12, 100,
 	  "mbm,ndn,ngng,ngn,mbmb,ndnd,wu,yi,kwu,gwu,ww,yy,nyi,nyny,ngw",
-	  "ndu,mbe,ngo,lela,mbola,ndaba,ngwe,yenga,zimba,mbuka,tende,njiri,landa,kumbe,ngoli,mbiri,wazi,ndeni",
+	  "ndu,mbe,ngo,lela,mbola,ndaba,ngwe,yenga,zimba,mbuka,tende,njiri,landa,kumbe,ngoli,mbiri,wazi,ndeni,kani,sungu,mbalu,ndari,yumbe,tolo",
 	  "u,ki,ma,e",
 	  "a:3,e:2,o:2,i:2,isa:1,ende:1,ombe:1,ulu:1,ika:1",
 	  "a:2,o:1,i:1", "an:2,i:1", "ni",
@@ -242,19 +246,19 @@ const FamilyDef kFam[kFamilies] = {
 	  "mbaku,ndalo,ngozu",
 	  "the Rain-Caller;the Drum-Voiced;the Lion-Hearted;the Elder;the Many-Herded;the Forest-Born;the Peacemaker;the Ironsmith;the Honey-Tongued;the River-Wise",
 	  "mbeli,ngayo,sumbe,ndowa",
-	  "17,31,25,32,4,11", 3, 10 },
+	  "31,25,32,4,11,35", 3, 10 },
 
 	// 6 THRASK: the fjord tongues of the cold coasts. h- clusters (hr, hl, hv, thr), sk st sv, heavy codas
 	// (rd rn ld nd), initial stress, short compounds. "Skeldvard", "Hrothbrekk", "Ulfheid".
 	{ "thrask",
 	  "hr:2,hl:1,hv:1,thr:2,th:2,sk:3,st:2,sv:2,kn:1,gr:1,br:1,fr:1,fl:1,b:2,d:2,g:2,h:2,k:2,r:1,s:2,t:1,v:2,f:2,m:1,n:1",
 	  "d:2,g:2,k:2,l:3,m:1,n:2,r:3,s:2,t:2,v:2,f:1,th:2,b:1",
-	  "a:4,e:3,i:3,o:3,u:3", "", "", "ei:2,au:2",
+	  "a:4,e:4,i:3,o:3,u:2", "", "", "ei:2,au:2",   // (verifier: a:4,e:3,i:3,o:3,u:3 before, "Dodurkud", "Gubunbask", "Knurguskum")
 	  "r:4,l:3,n:2,s:2,k:1,g:1,d:1", "rd:2,rn:2,ld:2,lf:1,nd:2,rk:1,ng:1,st:2,r:2,n:2,k:1,d:1,m:1,sk:1,rg:1,lm:1",
-	  150, 0, 420, 800, 120, 120, "lnkt", "", false, false, 0,
-	  5, 3, 0, 66, 34, 0, 0, 0, 0, 200,
+	  150, 0, 420, 930, 120, 120, "lnkt", "", false, false, 0,
+	  5, 3, 0, 66, 34, 0, 0, 0, 0, 100,
 	  "ae,ai,ao,ea,eo,eu,ia,ie,io,iu,oa,oe,oi,ou,ua,ue,ui,uo,aa,ee,ii,oo,uu,hrh,thth,sks,dt,td,gk,kg,fv,vf,vth,thv,dth,tth,rdr,ndn,ldl,ngv,ngd,ngt,ngk,ngf,ngth,rnth,ldth,rdth,ndth,lfth,stth,skth,lfv,lmb,lmv,vd,vg,vk,vt,dk,dg,tg,gt,kd,gd,kf,gf,df,tf,mf,nf",
-	  "vard,skel,brekk,heid,rond,skar,fjar,hvarn,eid,staf,ung,irn,osk,hald,seld,thurn,vang",
+	  "vard,skel,brekk,heid,rond,skar,fjar,hvarn,eid,staf,ung,irn,osk,hald,seld,thurn,vang,brun,varp,ey,sund,hlid,nes",
 	  "",
 	  "ar:2,ir:2,a:2,und:1,eld:1,run:1,vi:1,mar:1,dis:1",
 	  "_:1", "ic:1", "ir",
@@ -267,13 +271,13 @@ const FamilyDef kFam[kFamilies] = {
 	// 7 PHERAXI: the old imperial tongue. ph th x, clusters pr tr str, antepenultimate stress, stately place
 	// endings -ion, -eum, -axis, -ostra. "Pheraxis", "Thessalion", "Kalloneum".
 	{ "pheraxi",
-	  "ph:3,th:3,k:3,t:2,d:2,p:2,l:2,m:2,n:2,s:2,x:1,r:1,kl:1,kr:1,pr:2,tr:1,str:1,pl:1,h:1",
+	  "ph:3,th:3,k:3,t:2,d:2,p:2,l:2,m:2,n:2,s:2,r:1,kl:1,kr:1,pr:2,tr:1,str:1,pl:1,h:1",
 	  "ph:2,th:3,k:2,t:2,d:2,p:1,l:3,m:2,n:3,s:2,x:1,r:3,kr:1,tr:1",
 	  "a:4,e:4,i:3,o:4,u:1", "", "", "ai:1,ei:2,oi:1,eu:2,ou:1",
-	  "s:3,n:3,r:2,l:2", "s:4,n:3,x:2,r:1",
+	  "s:3,n:3,r:2,l:2", "s:5,n:4,x:1,r:1",
 	  180, 40, 280, 450, 150, 120, "slnr", "ea,eo,ia,io", false, false, 3,
-	  3, 5, 1, 74, 26, 0, 0, 0, 0, 200,
-	  "xs,sx,xx,phph,thth,php,pph,thx,xth,phx,xph,xm,mx,xn,xr,xl,phth,thph,uu,ii,aa,oo,ee,ae,ao,au,ie,iu,oa,oe,ua,ue,ui,uo,xk,kx,xt,tx,xd,dx,xp,px,sr,lr,rl,nr,nl,ln,ml,mr,lm,nk,np,rk,lk,mk,rp,lp,sp,xax,xex,xix,xox,xux,rnp,nsp,ndr,rkr,nkr",
+	  3, 5, 1, 74, 26, 0, 0, 0, 0, 100,
+	  "xs,sx,xx,phph,thth,php,pph,thx,xth,phx,xph,xm,mx,xn,xr,xl,phth,thph,uu,ii,aa,oo,ee,ae,ao,au,ie,iu,oa,oe,ua,ue,ui,uo,xk,kx,xt,tx,xd,dx,xp,px,sr,lr,rl,nr,nl,ln,ml,mr,lm,nk,np,rk,lk,mk,rp,lp,sp,xax,xex,xix,xox,xux,rnp,nsp,ndr,rkr,nkr,xu$,xo$,xi$,xe$,xa$",
 	  "ion,eum,axis,onos,eira,anthe,ostra,alos,imos,erax,enth,ophor,eron,phane,thalos,mene",
 	  "",
 	  "os:3,ia:2,on:2,ides:1,ax:1,eus:1,ra:1,ine:1,is:2",
@@ -382,31 +386,63 @@ bool tokenTextOk(std::string_view s) {
 }
 
 // "th:2,k:3,m" -> tokens; "_" is the empty token (allowed only when allowEmpty).
+// (verifier, 2026-11-19) one pass per item, the residue taken while the letters are checked, the token built in
+// place: a record is parsed on every call, and parsing was half of a name's cost. Same results as before.
 void parseTokens(std::string_view v, std::vector<Tok>& out, bool allowEmpty = false) {
-	out.reserve(out.size() + size_t(std::count(v.begin(), v.end(), ',')) + 1);
-	eachPiece(v, ',', [&out, allowEmpty](std::string_view item) {
-		if (item.empty()) return;
-		const size_t colon = item.find(':');
-		std::string_view s = item.substr(0, colon);
-		if (s == "_") {
-			if (!allowEmpty) return;
-			s = std::string_view();
-		} else if (s.empty() || !tokenTextOk(s)) {
-			return;
+	size_t commas = 0;
+	for (char c : v) commas += c == ',' ? 1u : 0u;
+	out.reserve(out.size() + commas + 1);
+	const size_t n = v.size();
+	size_t i = 0;
+	while (i <= n) {
+		size_t j = i;
+		size_t colon = std::string_view::npos;
+		while (j < n && v[j] != ',') {
+			if (v[j] == ':' && colon == std::string_view::npos) colon = j;
+			j++;
 		}
-		Tok t;
-		t.s.assign(s);
-		t.w = colon == std::string_view::npos ? 1 : std::clamp(parseInt(item.substr(colon + 1), 1), 1, 99);
-		t.r = residOf(t.s);
-		out.push_back(std::move(t));
-	});
+		const size_t end = colon == std::string_view::npos ? j : colon;
+		const std::string_view s = v.substr(i, end - i);
+		const size_t next = j + 1;
+		if (j > i) {
+			bool okText = true, empty = false;
+			int resid = 0;
+			if (s.size() == 1 && s[0] == '_') {
+				okText = allowEmpty;
+				empty = true;
+			} else if (s.empty() || s.size() > 8) {
+				okText = false;
+			} else {
+				for (char c : s) {
+					if (c >= 'a' && c <= 'z') resid += c - 'a' + 1;
+					else if (c == 'A' || c == 'O' || c == 'U') resid += c - 'A' + 1;
+					else { okText = false; break; }
+				}
+			}
+			if (okText) {
+				Tok& t = out.emplace_back();
+				if (!empty) t.s.assign(s);
+				t.w = colon == std::string_view::npos ? 1 : std::clamp(parseInt(v.substr(colon + 1, j - colon - 1), 1), 1, 99);
+				t.r = resid % kMod;
+			}
+		}
+		i = next;
+	}
 }
 
 void parseStrings(std::string_view v, std::vector<std::string>& out) {
-	out.reserve(out.size() + size_t(std::count(v.begin(), v.end(), ',')) + 1);
-	eachPiece(v, ',', [&out](std::string_view item) {
+	size_t commas = 0;
+	for (char c : v) commas += c == ',' ? 1u : 0u;
+	out.reserve(out.size() + commas + 1);
+	const size_t n = v.size();
+	size_t i = 0;
+	while (i <= n) {
+		size_t j = i;
+		while (j < n && v[j] != ',') j++;
+		const std::string_view item = v.substr(i, j - i);
 		if (!item.empty() && tokenTextOk(item)) out.emplace_back(item);
-	});
+		i = j + 1;
+	}
 }
 
 void parseIntList(std::string_view v, std::vector<int>& out) {
@@ -484,6 +520,11 @@ constexpr std::string_view kFrag[] = {
 	"mordor", "gondor", "sauron", "khazad", "valinor", "numenor", "rivendell", "isengard", "westeros", "dothrak",
 	"valyria", "tatooine", "arrakis", "azeroth", "tamriel", "skyrim", "hogwart", "narnia", "hyrule", "hobbit", "smaug",
 	"frodo", "gandalf", "aragorn", "legolas", "galadriel", "morrowind", "lannister",
+	// (verifier, 2026-11-19) found in 167,000 generated names: "Dimar Nazizun", "Phepedostra", "Omosementh",
+	// "Tittikerente", "Bozomaz", "Pillusova" (Finnish, which Aavik echoes), "Lenyokoye" (Zulu / Swahili, which
+	// Mbendi echoes), "Rumsunu'it", "Khukurvan", "Helvetelenne", "Chingari", "Isanjingo", "Bonero"
+	"nazi", "pedo", "semen", "titt", "bozo", "pillu", "kyrp", "mulkk", "runkk", "perse", "helvet", "saatan", "nyoko",
+	"msunu", "kurva", "chinga", "anjing", "boner", "kanake",
 };
 
 constexpr std::string_view kWhole[] = {
@@ -497,6 +538,7 @@ constexpr std::string_view kWhole[] = {
 	"negro", "gringo", "injun", "beaner", "coolie", "boong", "tranny", "paska", "kusi", "huora", "faen", "chuj",
 	"jebac", "ebat", "mavi", "teke", "tutae", "polack", "pikey", "gyppo", "dong", "bonk", "knob", "bum", "dung", "wank",
 	"isis",
+	"ule", "kohe", "laho", "tiko", "ure", "hika", "gago", "tipene",   // (verifier) Polynesian vulgar words, a given name
 	// real deities and holy names
 	"zeus", "hera", "apollo", "athena", "ares", "hades", "osiris", "amun", "amon", "thor", "odin", "loki", "freya",
 	"frigg", "baal", "allah", "jesus", "christ", "buddha", "vishnu", "shiva", "brahma", "kali", "ganesh", "krishna",
@@ -567,7 +609,96 @@ constexpr std::string_view kWhole[] = {
 	"cyclops", "minotaur", "centaur", "harpy", "chimera", "cerberus", "charon", "styx", "lethe", "elysium", "tartarus",
 	"olympus", "athos", "ida", "ossa", "pelion", "parnassus", "helicon", "arcadia", "utopia", "eden", "zion", "sinai",
 	"golgotha", "jericho", "sodom", "gomorrah", "babel", "ophir", "tarshish", "atlantis", "lemuria", "avalon",
-	"camelot", "eldorado", "shangri", "xanadu", "lilliput",
+	"camelot", "eldorado", "shangri", "xanadu", "lilliput", "santo", "santa", "sancta", "porto", "monte", "villa", "casa",
+	"bella", "dolce", "amore", "vita", "nero", "rosso", "bianco", "terra", "mare", "lago", "rio", "sol", "luna", "oro",
+	// (verifier, 2026-11-19) short common English words: the hyphenated clan names, two-word places and ship names
+	// made "Dad-Vazhuk", "Pig-Vrubuk", "Dovra Same", "Lose Pefas", "Vessa Life" (the planet words are left out)
+	"able", "acid", "aged", "alibi", "all", "alpaca", "also", "amigo", "amino", "ammo", "and", "angel", "anime", "anode", "anorak", "anti",
+	"any", "apple", "are", "arise", "armada", "army", "aside", "atoll", "atone", "attic", "auto", "autumn", "avid", "away", "baba", "babe",
+	"baby", "back", "bad", "bag", "bake", "bale", "bali", "ball", "banal", "band", "bandit", "bane", "banner", "bare", "bark", "barn",
+	"baron", "barrel", "base", "basin", "bat", "bath", "batik", "beacon", "bead", "beam", "bean", "bear", "beat", "bed", "been", "beer",
+	"bell", "belt", "bend", "bent", "berg", "best", "bias", "bid", "big", "bike", "bikini", "bile", "bind", "bird", "bit", "bite", "blade",
+	"bland", "blend", "blind", "blond", "blow", "blue", "blur", "boat", "bode", "body", "bog", "bold", "bolt", "bomb", "bond", "bone",
+	"bonito", "bonsai", "book", "boom", "boot", "border", "bore", "born", "boss", "both", "bottle", "bowl", "box", "boy", "brag", "bran",
+	"brat", "bravo", "bridal", "brim", "brine", "brink", "brisk", "brute", "bubble", "bucket", "bulb", "bulk", "bun", "burn", "bus", "bush",
+	"busy", "but", "butter", "cabin", "cake", "call", "calm", "came", "camp", "can", "canal", "candle", "cane", "canoe", "canyon", "cap",
+	"cape", "car", "card", "care", "cargo", "carpet", "case", "cash", "cast", "castle", "cat", "cattle", "cave", "cell", "cellar", "cereal",
+	"chat", "chip", "circus", "city", "club", "coal", "coat", "cobalt", "cobra", "code", "coffee", "cold", "collar", "come", "comet",
+	"condor", "cone", "cook", "cool", "cope", "copy", "coral", "core", "corn", "cost", "cotton", "cove", "cover", "cow", "cradle", "crew",
+	"crop", "cup", "cure", "cut", "dad", "dada", "dagger", "dam", "dare", "dark", "darn", "date", "dater", "day", "days", "dead", "deal",
+	"dean", "debt", "delta", "demon", "denim", "deny", "depot", "desert", "desk", "deter", "did", "diet", "dig", "dim", "dime", "dine",
+	"diner", "dingo", "dinner", "dire", "disc", "dish", "disk", "divan", "dive", "diver", "dodo", "doe", "does", "dole", "dome", "done",
+	"doom", "dorm", "dose", "dot", "dote", "down", "drab", "drag", "dram", "draw", "drew", "drip", "drone", "droop", "drop", "drove", "dry",
+	"dual", "dug", "dump", "dun", "dusk", "dust", "duty", "each", "eagle", "ear", "earn", "ease", "east", "easy", "eat", "edge", "egg",
+	"else", "emu", "end", "even", "ever", "evil", "exit", "extra", "eye", "fable", "face", "fact", "fad", "fade", "fail", "fair", "falcon",
+	"fame", "fan", "fang", "far", "fare", "farm", "fast", "fat", "fatal", "fate", "fear", "fed", "feed", "feel", "feet", "fell", "felon",
+	"felt", "feral", "fern", "fever", "few", "fiddle", "fig", "file", "fill", "film", "fin", "find", "fine", "fir", "fire", "firm", "fish",
+	"fit", "five", "fix", "flab", "flag", "flak", "flan", "flap", "flat", "flea", "fled", "flip", "flit", "flog", "flop", "flow", "fly",
+	"foe", "fog", "folk", "fond", "font", "food", "fool", "foot", "fop", "for", "ford", "fore", "forest", "fork", "form", "fort", "fossil",
+	"four", "free", "frog", "from", "frond", "fuel", "full", "fume", "fun", "fund", "fur", "fuse", "gad", "gain", "gala", "gale", "game",
+	"gamma", "gander", "gap", "gape", "gar", "garden", "garlic", "gas", "gasp", "gave", "gear", "gecko", "gene", "get", "gift", "gig", "gild",
+	"gilt", "ginger", "gird", "girl", "give", "giver", "glad", "glib", "glide", "glim", "glob", "gloom", "glum", "glut", "gnat", "gnome",
+	"goad", "goal", "goat", "goes", "gold", "golf", "gone", "good", "goof", "gore", "gory", "gown", "grab", "gram", "gravel", "gray", "grew",
+	"grey", "grid", "grim", "grin", "grip", "grit", "grow", "gruff", "gulf", "gulp", "gum", "gun", "guru", "gust", "gusto", "guy", "had",
+	"hag", "hair", "hale", "half", "hall", "halt", "hammer", "hand", "hang", "harbor", "hard", "hare", "hark", "harm", "harp", "has", "hasp",
+	"hat", "hate", "hater", "have", "haze", "hazel", "head", "hear", "heat", "held", "helmet", "help", "hemp", "hen", "her", "herd", "here",
+	"hero", "hide", "high", "hike", "hill", "hilt", "him", "hind", "hint", "hippo", "hire", "his", "hit", "hobo", "hog", "hole", "holy",
+	"home", "honey", "hood", "hoof", "hook", "hop", "hope", "horn", "hose", "host", "hot", "hour", "hover", "how", "hub", "hug", "huge",
+	"hulk", "hull", "hum", "hump", "hung", "hunt", "hurt", "husk", "husky", "hut", "hymn", "ice", "idea", "idol", "igloo", "inch", "ink",
+	"into", "island", "item", "its", "jack", "jacket", "jaguar", "jam", "jane", "jar", "jean", "jet", "job", "jog", "join", "joy", "jug",
+	"jump", "jungle", "jury", "just", "kale", "karate", "kava", "kayak", "keen", "keg", "kelp", "kept", "kettle", "key", "kick", "kid",
+	"kill", "kiln", "kilt", "kimono", "kin", "kind", "kink", "kiss", "kit", "kite", "knee", "knew", "knit", "know", "koala", "lab", "lack",
+	"ladder", "lag", "lagoon", "laid", "lake", "lamb", "lame", "lamp", "land", "lap", "lard", "lass", "lasso", "last", "late", "later", "law",
+	"lead", "led", "left", "leg", "lemur", "less", "let", "lever", "lid", "lie", "life", "lift", "like", "limb", "limp", "link", "lint",
+	"lip", "lire", "lisp", "list", "liter", "live", "liver", "lizard", "load", "loaf", "loan", "lobe", "local", "lock", "locket", "lode",
+	"loft", "log", "loin", "lome", "lone", "long", "look", "loom", "loop", "lop", "lope", "lore", "lose", "loss", "lost", "lot", "lotus",
+	"love", "lover", "low", "loyal", "luck", "lull", "lump", "lunar", "lung", "lure", "lurid", "lurk", "lust", "lute", "mad", "madam", "made",
+	"magi", "magma", "magnet", "mail", "main", "make", "male", "mamba", "mammal", "man", "mane", "mania", "manor", "many", "map", "marble",
+	"mascot", "mass", "mat", "mate", "mater", "matt", "maze", "mead", "meadow", "meal", "mean", "meat", "medal", "meet", "melt", "menu",
+	"mesh", "metal", "meter", "mild", "mile", "milk", "mill", "mime", "mimosa", "mind", "mine", "mink", "minor", "mint", "mire", "mirror",
+	"miss", "miter", "mix", "moan", "moat", "mob", "mocha", "mock", "modal", "mode", "molar", "mole", "molt", "mom", "monk", "monkey", "mood",
+	"moon", "mop", "mope", "moral", "more", "morn", "mortal", "moss", "most", "mote", "moth", "motor", "mound", "mount", "move", "mover",
+	"much", "mud", "muesli", "muffin", "mug", "mule", "mumble", "mural", "murk", "muse", "musk", "must", "mute", "nabu", "nag", "nail",
+	"name", "nap", "nape", "nasal", "natal", "naval", "navy", "near", "neck", "nectar", "need", "needle", "nerd", "net", "never", "new",
+	"news", "next", "nib", "nice", "nick", "nil", "nimble", "nine", "ninja", "nip", "niter", "nod", "node", "nog", "none", "noodle", "nook",
+	"norm", "nose", "not", "note", "now", "numb", "nun", "nut", "oaf", "oak", "oat", "oboe", "odd", "ogre", "oil", "okapi", "okay", "old",
+	"omen", "once", "one", "only", "onto", "opal", "open", "oral", "orange", "orb", "ore", "our", "out", "oven", "over", "ovum", "owl",
+	"pace", "pack", "pact", "pad", "paddle", "page", "pagoda", "paid", "pain", "pair", "pajama", "pal", "palace", "palm", "pamper", "pan",
+	"panda", "pane", "pang", "pant", "papaya", "parade", "pare", "parish", "park", "parka", "parrot", "part", "pass", "past", "pat", "pater",
+	"path", "pave", "pay", "peak", "pebble", "pedal", "peg", "pelt", "pen", "pep", "pepper", "perm", "pest", "pet", "petal", "pick", "pickle",
+	"pie", "pig", "pike", "pile", "pillow", "pimp", "pin", "pine", "pink", "pipe", "pirate", "pit", "plan", "planet", "play", "plot", "plug",
+	"plus", "pocket", "pod", "poem", "poet", "poi", "polar", "pole", "poll", "polo", "pomp", "poncho", "pond", "pong", "pool", "poor", "pop",
+	"pope", "pore", "pork", "port", "pose", "post", "pot", "pour", "pout", "pray", "prim", "prod", "prom", "promo", "prong", "prop", "pub",
+	"puddle", "pug", "pull", "pump", "pun", "punt", "pup", "pure", "purr", "push", "put", "puzzle", "rabbit", "rabid", "race", "radar",
+	"raft", "rag", "rage", "rail", "rain", "rake", "ram", "ramp", "rare", "rasp", "rat", "rate", "rater", "rave", "raven", "raw", "raze",
+	"read", "real", "ream", "reap", "rear", "red", "reef", "reel", "rely", "rend", "rent", "rest", "rib", "ribbon", "rice", "rich", "rid",
+	"riddle", "ride", "rig", "rim", "rind", "ring", "rink", "rip", "ripe", "rise", "risk", "river", "road", "rob", "robe", "rock", "rocket",
+	"rode", "role", "roll", "romp", "roof", "room", "root", "rope", "rose", "rote", "rove", "rover", "row", "rub", "rude", "ruin", "rule",
+	"rum", "rumor", "rump", "run", "rung", "runt", "rural", "ruse", "rush", "rust", "rut", "sad", "saddle", "safe", "sag", "sage", "said",
+	"salad", "sale", "salmon", "same", "sand", "sane", "sap", "sarong", "sash", "sat", "sate", "saucer", "save", "saw", "say", "scab", "scam",
+	"scan", "scar", "scum", "sea", "sedan", "see", "seed", "seek", "seem", "seen", "self", "sell", "send", "senor", "sent", "set", "sever",
+	"sew", "shark", "she", "shed", "shin", "ship", "shod", "shoe", "shop", "shot", "show", "shrub", "shun", "shut", "sick", "side", "sign",
+	"silk", "silo", "sin", "sinew", "sing", "sink", "sip", "sire", "sister", "sit", "site", "six", "size", "ski", "skid", "skim", "skin",
+	"skip", "skit", "sky", "slab", "slag", "slam", "slap", "slat", "sled", "slim", "sling", "slip", "slit", "slob", "slog", "slop", "slot",
+	"slow", "slug", "slum", "slur", "sly", "smog", "smug", "snag", "snap", "snip", "snob", "snog", "snot", "snow", "snub", "snug", "sob",
+	"sod", "soda", "soft", "soil", "solar", "sold", "sole", "some", "son", "sonar", "song", "soon", "soot", "sop", "sore", "sort", "sot",
+	"soul", "soup", "sow", "spa", "spam", "span", "spar", "spat", "spider", "spiral", "spot", "spud", "spun", "spur", "spy", "stab", "stag",
+	"stay", "stem", "step", "stop", "stub", "stud", "stun", "sub", "such", "sugar", "suit", "sum", "summer", "sumo", "sun", "sunset", "sure",
+	"suva", "swab", "swam", "swan", "swat", "swig", "swim", "tab", "tablet", "tad", "tag", "taiga", "take", "tale", "talk", "tall", "tame",
+	"tamp", "tan", "tap", "tapa", "tape", "tapir", "tar", "tare", "taro", "tart", "task", "tat", "tea", "team", "tear", "tech", "teem",
+	"tell", "temple", "ten", "tend", "tenor", "term", "tern", "test", "text", "than", "that", "the", "them", "then", "they", "thin", "this",
+	"thud", "thus", "tidal", "tie", "tiger", "tile", "till", "timber", "time", "timer", "tin", "tine", "tint", "tiny", "tip", "tire", "tod",
+	"toe", "tog", "told", "toll", "tomb", "tome", "ton", "tone", "tony", "too", "took", "tool", "top", "tor", "tore", "torn", "torso", "tot",
+	"total", "tote", "tour", "town", "toy", "tram", "trap", "tree", "trek", "trim", "trip", "trod", "trot", "true", "tub", "tube", "tuck",
+	"tug", "tulip", "tum", "tumor", "tuna", "tune", "tunnel", "turf", "turk", "turn", "turtle", "tusk", "tut", "tutu", "twin", "two",
+	"tycoon", "type", "typo", "unit", "upon", "urn", "use", "used", "user", "vamp", "van", "vane", "vary", "vase", "vast", "vat", "veer",
+	"velvet", "vend", "vent", "verb", "very", "vet", "vice", "view", "vile", "vim", "vine", "violin", "viral", "vital", "vodka", "void",
+	"volt", "vote", "vow", "vulgar", "wad", "wade", "wag", "wage", "wait", "walk", "wall", "walrus", "wan", "wand", "wane", "want", "war",
+	"ward", "warm", "warp", "wart", "was", "wash", "wasp", "water", "wave", "wax", "way", "ways", "weak", "wear", "web", "wed", "week",
+	"weld", "welt", "went", "were", "west", "wet", "wham", "what", "when", "whim", "whip", "who", "whom", "wide", "wife", "wig", "wild",
+	"will", "wilt", "win", "wind", "wine", "wing", "wipe", "wire", "wise", "wish", "wit", "with", "wizard", "woe", "wok", "woke", "womb",
+	"wombat", "wood", "word", "wore", "work", "worm", "yak", "yam", "yap", "yard", "yarn", "yeah", "year", "yellow", "yen", "yes", "yet",
+	"yoga", "yoke", "you", "your", "zap", "zeal", "zebra", "zebu", "zero", "zest", "zig", "zinc", "zip", "zit", "zone", "zoo", "zoom",
 };
 
 // The lists grouped by first letter at compile time (a counting sort), so a lookup scans one letter's group.
@@ -587,14 +718,34 @@ template <size_t N> constexpr Buckets<N> bucketize(const std::string_view (&a)[N
 	for (const std::string_view x : a) b.v[pos[size_t(x[0] - 'a')]++] = x;
 	return b;
 }
-constexpr auto kWholeB = bucketize(kWhole);
+// (verifier, 2026-11-19) Whole words are grouped by first letter AND length (26 x 16 groups), so the longer
+// list (with the short English words) still costs a handful of comparisons per lookup.
+constexpr size_t kLenKeys = 16;
+template <size_t N> struct Buckets2 {
+	std::array<std::string_view, N> v{};
+	std::array<uint16_t, 26 * kLenKeys + 1> start{};
+};
+constexpr size_t keyOf(std::string_view x) { return size_t(x[0] - 'a') * kLenKeys + (x.size() < kLenKeys ? x.size() : kLenKeys - 1); }
+template <size_t N> constexpr Buckets2<N> bucketize2(const std::string_view (&a)[N]) {
+	Buckets2<N> b{};
+	std::array<uint16_t, 26 * kLenKeys> count{};
+	for (const std::string_view x : a) count[keyOf(x)]++;
+	uint16_t acc = 0;
+	for (size_t c = 0; c < 26 * kLenKeys; c++) { b.start[c] = acc; acc = uint16_t(acc + count[c]); }
+	b.start[26 * kLenKeys] = acc;
+	std::array<uint16_t, 26 * kLenKeys> pos{};
+	for (size_t c = 0; c < 26 * kLenKeys; c++) pos[c] = b.start[c];
+	for (const std::string_view x : a) b.v[pos[keyOf(x)]++] = x;
+	return b;
+}
+constexpr auto kWholeB = bucketize2(kWhole);
 constexpr auto kFragB = bucketize(kFrag);
 
 bool isWholeBlocked(std::string_view w) {
 	if (w.empty() || w[0] < 'a' || w[0] > 'z') return false;
-	const size_t c = size_t(w[0] - 'a');
+	const size_t c = keyOf(w);
 	for (size_t i = kWholeB.start[c]; i < kWholeB.start[c + 1]; i++) {
-		if (kWholeB.v[i].size() == w.size() && kWholeB.v[i] == w) return true;
+		if (kWholeB.v[i] == w) return true;
 	}
 	return false;
 }
@@ -636,7 +787,7 @@ bool blocked(std::string_view s) {
 
 // Sequences no family may write: English-looking word endings ("Midelton", "Skifenman") and long vowels
 // pressed against a glottal stop.
-const char* const kForbidAll = "ton$,ham$,wick$,ford$,ville$,burg$,shire$,field$,land$,ing$,son$,man$,ley$,by$,ster$,ness$,hold$,jet$,^iron,aa',ii',uu','aa,'ii,'uu";
+const char* const kForbidAll = "ton$,ham$,wick$,ford$,ville$,burg$,shire$,field$,land$,ing$,son$,man$,ley$,by$,ster$,ness$,hold$,jet$,mark$,port$,town$,wood$,hill$,dale$,^iron,^iraq,aa',ii',uu','aa,'ii,'uu";   // ^iraq: verifier, "Iraqzuun"
 
 // Is `piece` in `low`? A leading ^ ties it to the start of a word, a trailing $ to the end of one.
 bool pieceIn(std::string_view low, std::string_view piece) {
@@ -702,19 +853,20 @@ std::string lowerStr(std::string_view s) {
 	return r;
 }
 
-// Euphony, for every family: no stutter (the same two or three letters twice in a row, "rara", "nene",
+// Euphony, for every family: no stutter (the same two, three or four letters twice in a row, "rara", "nene",
 // "ulul"), except that a family that reduplicates may open a word with one ("Lelemoa"); at most one glottal
-// stop in a word and never between two equal vowels ("u'u"); each word at most `maxWord` letters.
+// stop in a word and never between two equal vowels other than a ("u'u", but "Ma'ad"); each word at most
+// `maxWord` letters.
 bool euphonious(std::string_view s, const FamilyDef& F, int maxWord) {
 	std::string w;
 	int apos = 0;
 	auto wordFine = [&]() -> bool {
 		const size_t n = w.size();
 		if (int(n) > maxWord) return false;
-		for (size_t k = 2; k <= 3; k++) {
+		for (size_t k = 2; k <= 4; k++) {   // (verifier: 4 too, "Rigirigil", "Sutasutaisto", "Qimaqimar")
 			for (size_t i = 0; i + 2 * k <= n; i++) {
 				if (w.compare(i, k, w, i + k, k) != 0) continue;
-				if (k == 2 && i == 0 && F.fRedup > 0) continue;
+				if ((k == 2 || k == 4) && i == 0 && F.fRedup > 0) continue;   // "Lelemoa", "Wihiwihi"
 				return false;
 			}
 		}
@@ -725,7 +877,7 @@ bool euphonious(std::string_view s, const FamilyDef& F, int maxWord) {
 		if (c == '\'') {
 			apos++;
 			if (apos > 1) return false;
-			if (i > 0 && i + 1 < s.size() && lowerCh(s[i - 1]) == lowerCh(s[i + 1])) return false;
+			if (i > 0 && i + 1 < s.size() && lowerCh(s[i - 1]) == lowerCh(s[i + 1]) && lowerCh(s[i - 1]) != 'a') return false;
 			continue;
 		}
 		if (c == ' ' || c == '-') {
@@ -760,6 +912,7 @@ bool wordOk(std::string_view s, const FamilyDef& F, size_t lo, size_t hi) {
 	for (char c : s) plain += (c == 'A' ? 'a' : c == 'O' ? 'o' : c == 'U' ? 'u' : c);
 	if (!pronounceable(plain)) return false;
 	if (forbiddenIn(plain, F)) return false;
+	if (!euphonious(plain, F, 99)) return false;
 	return !blocked(plain);
 }
 
@@ -1044,9 +1197,10 @@ std::string resolveHarm(std::string_view s, int cls) {
 	return out;
 }
 
+// Harmony class of a new word: back (a o u) words are richer, so front (e i) words are the rarer kind.
 int startClass(const Lang& L, Rng& r) {
 	if (!L.F().harmony) return 0;
-	return r.chance(0.45) ? 1 : 2;
+	return r.chance(0.3) ? 1 : 2;
 }
 
 const std::vector<Tok>& vowelsOf(const Lang& L, int cls) {
@@ -1068,7 +1222,7 @@ double h2(const std::vector<Tok>& v, int nonePm) {
 	return s2 > 0 ? -std::log2(s2) : 0.0;
 }
 
-constexpr double kCodeBits = 4.755;   // log2(27): what the spelling code takes from every coded name
+constexpr double kCodeBits = 4.858;   // log2(29): what the spelling code takes from every coded name
 
 // Bits of a fresh part of n syllables of this language (codas between syllables counted, final codas not).
 double partBits(const Lang& L, int cls, int n, bool initial) {
@@ -1093,6 +1247,22 @@ int sylsFor(const Lang& L, int cls, double extra, double target, int lo, int hi)
 }
 
 double listBits(size_t n) { return n > 1 ? std::log2(double(n)) : 0.0; }
+
+double meanLen(const std::vector<Tok>& v) {
+	double sum = 0, len = 0;
+	for (const Tok& t : v) { sum += t.w; len += double(t.w) * double(t.s.size()); }
+	return sum > 0 ? len / sum : 1.0;
+}
+
+// The mean letters of one of this language's syllables (inner onset, vowel, inner coda).
+double sylLetters(const Lang& L, int cls) {
+	return meanLen(L.om) * (1.0 - L.pe1 / 1000.0) + meanLen(vowelsOf(L, cls)) + meanLen(L.cm) * (L.cm.empty() ? 0.0 : L.pcm / 1000.0);
+}
+
+// How many syllables fit in `letters` (at least lo).
+int sylsIn(const Lang& L, int cls, int letters, int lo) {
+	return std::max(lo, int(std::floor(double(letters) / std::max(1.0, sylLetters(L, cls)))));
+}
 
 bool vvOk(const FamilyDef& F, char a, char b) {
 	if (!*F.vv) return false;
@@ -1175,9 +1345,9 @@ int lettersOf(std::string_view s) {
 }
 
 // The second spelling code, for long names: the letters' values weighted by their positions (1, 2, ...)
-// sum to kTarget2 modulo 29. Together with the first code it keeps two long names of the same length from
-// differing by two substitutions (that would need d1 + d2 = 0 mod 27 and i d1 + j d2 = 0 mod 29, impossible
-// for 0 < |d| <= 25 and positions i != j below 29).
+// sum to kTarget2 modulo 29. Together with the first code (also modulo 29) it keeps two long names of the
+// same length from differing by two substitutions: that would need d1 + d2 = 0 and i d1 + j d2 = 0 modulo
+// 29, so (i - j) d1 = 0 modulo the prime 29, impossible for 0 < |d1| <= 25 and positions i != j below 29.
 constexpr int kMod2 = 29;
 constexpr int kTarget2 = 5;
 constexpr int kLongName = 10;   // letters from which a name carries the second code
@@ -1206,6 +1376,23 @@ struct Opt {
 	int len, v, wp;         // letters, letter sum, position-weighted letter sum (positions from 1)
 };
 
+// A fixed-capacity list on the stack (the slot runs for every name: no heap allocation there).
+// (verifier, 2026-11-19) The storage is left uninitialised: only a[0..n) is ever read, and zeroing the
+// 40 KB match list and the coda sets on every slot call was most of a name's cost (10,000 names took
+// 125-165 ms under load and failed the 150 ms contract).
+template <class T, size_t N> struct Small {
+	std::array<T, N> a;
+	size_t n = 0;
+	void push_back(const T& x) { if (n < N) a[n++] = x; }
+	size_t size() const { return n; }
+	bool empty() const { return n == 0; }
+	T& operator[](size_t i) { return a[i]; }
+	const T& operator[](size_t i) const { return a[i]; }
+	const T& back() const { return a[n - 1]; }
+	const T* begin() const { return a.data(); }
+	const T* end() const { return a.data() + n; }
+};
+
 Opt optOf(const std::string* s, double w) {
 	Opt o{ s, w, 0, 0, 0, 0 };
 	if (s) {
@@ -1217,25 +1404,91 @@ Opt optOf(const std::string* s, double w) {
 	return o;
 }
 
-// The free slot: the last syllable of a specific part, drawn among every onset x nucleus x coda the language
-// allows, weighted as the language would draw them, keeping only those that make the whole name satisfy the
-// spelling code (and, when the name reaches kLongName letters, the second code too). out: the word so far
-// (appended to); lead: the name's earlier words; suffix: what follows in this word. follow: 0 the word ends
-// here; 1 the suffix starts with a vowel; 2 with a consonant. Returns false when no syllable fits.
-bool slotInto(const Lang& L, Rng& r, std::string& out, std::string_view lead, bool initial, bool bound, int cls, bool stressed, int follow, std::string_view suffix) {
+// The codas a slot syllable may end in before a suffix of one kind. follow: 0 the word ends; 1 a suffix that
+// starts with a vowel; 2 one that starts with a consonant. The last entry is "none"; the others are grouped
+// by residue (a counting sort over a few dozen codas).
+struct CodaSet {
+	Small<Opt, 96> c;
+	std::array<int, 96> order{};
+	int start[kMod + 1] = {};
+	size_t noneIdx = 0;
+	bool noneOk = false;
+};
+
+void buildCodas(const Lang& L, int follow, CodaSet& cs) {
 	const FamilyDef& F = L.F();
-	const int need = modN(kTarget - residOf(lead) - residOf(out) - residOf(suffix));
+	double noneW = 0;
+	if (follow == 0) {
+		double sum = 0;
+		for (const Tok& t : L.cf) sum += t.w;
+		for (const Tok& t : L.cf) cs.c.push_back(optOf(&t.s, double(t.w) * double(L.pcf)));
+		cs.noneOk = true;
+		noneW = L.cf.empty() ? 1.0 : double(1000 - L.pcf) * sum;
+	} else if (follow == 2) {
+		double sum = 0;
+		for (const Tok& t : L.cm) sum += t.w;
+		for (const Tok& t : L.cm) cs.c.push_back(optOf(&t.s, double(t.w) * double(L.pcm)));
+		cs.noneOk = true;
+		noneW = L.cm.empty() ? 1.0 : double(1000 - L.pcm) * sum;
+	} else {
+		// before a vowel: the syllable closes on a consonant (the suffix takes it as its onset), or, in
+		// families with a glottal stop or hiatus, it may stay open
+		double sum = 0;
+		for (const Tok& t : L.cm) { cs.c.push_back(optOf(&t.s, double(t.w))); sum += t.w; }
+		for (const Tok& t : L.om) {
+			if (t.s.size() != 1) continue;
+			bool dup = false;
+			for (const Tok& c : L.cm) dup = dup || c.s == t.s;
+			if (!dup) { cs.c.push_back(optOf(&t.s, double(t.w))); sum += t.w; }
+		}
+		cs.noneOk = F.apos || *F.vv;
+		noneW = F.apos ? sum * 0.15 : sum * 0.3;
+	}
+	cs.noneIdx = cs.c.size();
+	cs.c.push_back(optOf(nullptr, noneW));
+	for (size_t k = 0; k < cs.noneIdx; k++) cs.start[cs.c[k].r + 1]++;
+	for (int k = 0; k < kMod; k++) cs.start[k + 1] += cs.start[k];
+	int fill[kMod];
+	for (int k = 0; k < kMod; k++) fill[k] = cs.start[k];
+	for (size_t k = 0; k < cs.noneIdx; k++) cs.order[size_t(fill[cs.c[k].r]++)] = int(k);
+}
+
+// A suffix's letter sums.
+struct SufSum {
+	int r = 0, len = 0, v = 0, w = 0;
+	int follow = 0;
+	char first = 0;
+};
+
+// The free slot: the last syllable of a specific part, drawn among every onset x nucleus x coda the language
+// allows (and, given several, every suffix), weighted as the language would draw them, keeping only those
+// that make the whole name satisfy the spelling code (and, from kLongName letters, the second code too).
+// out: the word so far (appended to, without the suffix); lead: the name's earlier words; sufs: the suffix
+// choices (empty: the word ends here). *chosen: the suffix picked. Returns false when nothing fits.
+bool slotInto(const Lang& L, Rng& r, std::string& out, std::string_view lead, bool initial, bool bound, int cls, bool stressed,
+	const std::string* sufs, size_t nSufs, size_t* chosen) {
+	const FamilyDef& F = L.F();
+	const int need0 = modN(kTarget - residOf(lead) - residOf(out));
 	int base = 0, preV = 0, preW = 0;
 	addSums(lead, base, preV, preW);
 	addSums(out, base, preV, preW);
-	int sufLen = 0, sufV = 0, sufW = 0;
-	addSums(suffix, sufLen, sufV, sufW);
-	const char sufFirst = suffix.empty() ? 0 : lowerCh(suffix[0]);
+	Small<SufSum, 32> ss;
+	for (size_t k = 0; k < nSufs && k < 32; k++) {
+		SufSum x;
+		int pos = 0;
+		addSums(sufs[k], pos, x.v, x.w);
+		x.len = pos;
+		x.r = x.v % kMod;
+		x.first = sufs[k].empty() ? 0 : lowerCh(sufs[k][0]);
+		x.follow = sufs[k].empty() ? 0 : (isVowelCh(x.first) ? 1 : 2);
+		ss.push_back(x);
+	}
+	if (ss.empty()) ss.push_back(SufSum{});
 	const bool prevVowel = !out.empty() && isVowelCh(out.back());
 	const bool prevSingle = out.size() < 2 || !isVowelCh(out[out.size() - 2]);
 	static const std::string kApos = "'";
 	// onsets
-	std::vector<Opt> ons;
+	Small<Opt, 64> ons;
 	if (initial) {
 		double sum = 0;
 		for (const Tok& t : L.on) sum += t.w;
@@ -1249,7 +1502,7 @@ bool slotInto(const Lang& L, Rng& r, std::string& out, std::string_view lead, bo
 		if (L.pe1 > 0) ons.push_back(optOf(nullptr, double(L.pe1) * sum));
 	}
 	// nuclei
-	std::vector<Opt> nucs;
+	Small<Opt, 48> nucs;
 	const std::vector<Tok>& vs = vowelsOf(L, cls);
 	double sumV = 0, sumL = 0;
 	for (const Tok& t : vs) if (fitsClass(t.s, cls)) sumV += t.w;
@@ -1264,47 +1517,11 @@ bool slotInto(const Lang& L, Rng& r, std::string& out, std::string_view lead, bo
 			if (fitsClass(t.s, cls)) nucs.push_back(optOf(&t.s, double(t.w) * double(L.pl) * sumV));
 		}
 	}
-	// codas; the last one is "none" (its validity depends on the nucleus)
-	std::vector<Opt> codas;
-	double noneW = 0;
-	bool noneOk = false;
-	if (follow == 0) {
-		double sum = 0;
-		for (const Tok& t : L.cf) sum += t.w;
-		for (const Tok& t : L.cf) codas.push_back(optOf(&t.s, double(t.w) * double(L.pcf)));
-		noneOk = true;
-		noneW = L.cf.empty() ? 1.0 : double(1000 - L.pcf) * sum;
-	} else if (follow == 2) {
-		double sum = 0;
-		for (const Tok& t : L.cm) sum += t.w;
-		for (const Tok& t : L.cm) codas.push_back(optOf(&t.s, double(t.w) * double(L.pcm)));
-		noneOk = true;
-		noneW = L.cm.empty() ? 1.0 : double(1000 - L.pcm) * sum;
-	} else {
-		// before a vowel: the syllable closes on a consonant (the suffix takes it as its onset), or, in
-		// families with a glottal stop or hiatus, it may stay open
-		double sum = 0;
-		for (const Tok& t : L.cm) { codas.push_back(optOf(&t.s, double(t.w))); sum += t.w; }
-		for (const Tok& t : L.om) {
-			if (t.s.size() != 1) continue;
-			bool dup = false;
-			for (const Tok& c : L.cm) dup = dup || c.s == t.s;
-			if (!dup) { codas.push_back(optOf(&t.s, double(t.w))); sum += t.w; }
-		}
-		noneOk = F.apos || *F.vv;
-		noneW = F.apos ? sum * 0.15 : sum * 0.3;
-	}
-	const size_t noneIdx = codas.size();
-	codas.push_back(optOf(nullptr, noneW));
-	// coda indices grouped by residue (a counting sort over at most a few dozen codas)
-	int start[kMod + 1] = {};
-	for (size_t c = 0; c < noneIdx; c++) start[codas[c].r + 1]++;
-	for (int k = 0; k < kMod; k++) start[k + 1] += start[k];
-	std::vector<int> order(noneIdx);
-	{
-		int fill[kMod];
-		for (int k = 0; k < kMod; k++) fill[k] = start[k];
-		for (size_t c = 0; c < noneIdx; c++) order[size_t(fill[codas[c].r]++)] = int(c);
+	// coda sets for the kinds of suffix present
+	CodaSet sets[3];
+	bool built[3] = { false, false, false };
+	for (const SufSum& x : ss) {
+		if (!built[x.follow]) { buildCodas(L, x.follow, sets[x.follow]); built[x.follow] = true; }
 	}
 	auto pairOk = [&](const Opt& o, const Opt& v) -> bool {
 		if (o.s == nullptr && prevVowel) {
@@ -1313,60 +1530,66 @@ bool slotInto(const Lang& L, Rng& r, std::string& out, std::string_view lead, bo
 		}
 		return true;
 	};
-	auto noneFits = [&](const Opt& v) -> bool {
-		if (!noneOk) return false;
-		if (follow != 1) return true;
+	auto noneFits = [&](const Opt& v, const SufSum& x, const CodaSet& cs) -> bool {
+		if (!cs.noneOk) return false;
+		if (x.follow != 1) return true;
 		if (F.apos) return true;
-		return v.s->size() == 1 && vvOk(F, v.s->back(), sufFirst);
+		return v.s->size() == 1 && vvOk(F, v.s->back(), x.first);
 	};
 	// the second code for long names: the whole name's position-weighted sum with this candidate
-	auto secondOk = [&](const Opt& o, const Opt& v, const Opt& c) -> bool {
+	auto secondOk = [&](const Opt& o, const Opt& v, const Opt& c, const SufSum& x) -> bool {
 		const int len = o.len + v.len + c.len;
-		if (base + len + sufLen < kLongName) return true;
+		if (base + len + x.len < kLongName) return true;
 		const int candV = o.v + v.v + c.v;
 		const int candW = o.wp + (v.wp + o.len * v.v) + (c.wp + (o.len + v.len) * c.v);
-		const long long w2 = (long long)preW + (long long)base * candV + candW + sufW + (long long)(base + len) * sufV;
+		const long long w2 = (long long)preW + (long long)base * candV + candW + x.w + (long long)(base + len) * x.v;
 		return int(w2 % kMod2) == kTarget2;
 	};
-	struct Match { int o, v, c; double w; };
-	std::vector<Match> matches;
-	matches.reserve(64);
+	struct Match { int o, v, c, k; double w; };
+	Small<Match, 1024> matches;
 	double total = 0;
 	for (size_t oi = 0; oi < ons.size(); oi++) {
 		const Opt& o = ons[oi];
 		for (size_t vi = 0; vi < nucs.size(); vi++) {
 			const Opt& v = nucs[vi];
 			if (!pairOk(o, v)) continue;
-			const int needC = modN(need - o.r - v.r);
-			for (int k = start[needC]; k < start[needC + 1]; k++) {
-				const Opt& c = codas[size_t(order[size_t(k)])];
-				if (c.w <= 0 || !secondOk(o, v, c)) continue;
-				const double w = o.w * v.w * c.w;
-				matches.push_back({ int(oi), int(vi), order[size_t(k)], w });
-				total += w;
-			}
-			if (needC == 0 && noneFits(v) && noneW > 0 && secondOk(o, v, codas[noneIdx])) {
-				const double w = o.w * v.w * noneW;
-				matches.push_back({ int(oi), int(vi), int(noneIdx), w });
-				total += w;
+			for (size_t ki = 0; ki < ss.size(); ki++) {
+				const SufSum& x = ss[ki];
+				const CodaSet& cs = sets[x.follow];
+				const int needC = modN(need0 - x.r - o.r - v.r);
+				for (int k = cs.start[needC]; k < cs.start[needC + 1]; k++) {
+					const Opt& c = cs.c[size_t(cs.order[size_t(k)])];
+					if (c.w <= 0 || !secondOk(o, v, c, x)) continue;
+					const double w = o.w * v.w * c.w;
+					matches.push_back({ int(oi), int(vi), cs.order[size_t(k)], int(ki), w });
+					total += w;
+				}
+				const Opt& none = cs.c[cs.noneIdx];
+				if (needC == 0 && none.w > 0 && noneFits(v, x, cs) && secondOk(o, v, none, x)) {
+					const double w = o.w * v.w * none.w;
+					matches.push_back({ int(oi), int(vi), int(cs.noneIdx), int(ki), w });
+					total += w;
+				}
 			}
 		}
 	}
 	if (matches.empty() || total <= 0) return false;
-	double x = r.f() * total;
-	const Match* pick = &matches.back();
+	double xr = r.f() * total;
+	const Match* pick = &matches[matches.size() - 1];
 	for (const Match& m : matches) {
-		if (x < m.w) { pick = &m; break; }
-		x -= m.w;
+		if (xr < m.w) { pick = &m; break; }
+		xr -= m.w;
 	}
 	const Opt& po = ons[size_t(pick->o)];
 	const Opt& pv = nucs[size_t(pick->v)];
-	const Opt& pc = codas[size_t(pick->c)];
+	const SufSum& px = ss[size_t(pick->k)];
+	const Opt& pc = sets[px.follow].c[size_t(pick->c)];
 	if (po.s == nullptr) { if (prevVowel && F.apos) out += kApos; }
 	else out += *po.s;
 	out += *pv.s;
 	if (pc.s) out += *pc.s;
-	else if (follow == 1 && F.apos) out += kApos;
+	else if (px.follow == 1 && F.apos) out += kApos;
+	if (chosen) *chosen = size_t(pick->k);
 	return true;
 }
 
@@ -1415,10 +1638,22 @@ bool freshSpec(const Lang& L, Rng& r, int cls, int n, const std::string& bound, 
 	const int total = boundSyl + n + nucleiOf(suffix);
 	const int stressAt = stressIndex(L.F(), total);
 	freshInto(L, r, out, n - 1, bound.empty(), !bound.empty(), cls, stressAt, boundSyl, false);
-	const int follow = suffix.empty() ? 0 : (isVowelCh(lowerCh(suffix[0])) ? 1 : 2);
 	const bool slotInitial = n == 1;
-	if (!slotInto(L, r, out, lead, slotInitial, slotInitial && !bound.empty(), cls, stressAt == boundSyl + n - 1, follow, suffix)) return false;
+	if (!slotInto(L, r, out, lead, slotInitial, slotInitial && !bound.empty(), cls, stressAt == boundSyl + n - 1, &suffix, suffix.empty() ? 0 : 1, nullptr)) return false;
 	out += suffix;
+	return true;
+}
+
+// The same with a choice of suffixes: the slot syllable and the suffix are drawn together (for long names,
+// whose two codes leave a single suffix too few syllables).
+bool freshSpecAny(const Lang& L, Rng& r, int cls, int n, const std::vector<std::string>& sufs, std::string_view lead, std::string& out) {
+	out.clear();
+	const int total = n + (sufs.empty() ? 0 : nucleiOf(sufs[0]));
+	const int stressAt = stressIndex(L.F(), total);
+	freshInto(L, r, out, n - 1, true, false, cls, stressAt, 0, false);
+	size_t k = 0;
+	if (!slotInto(L, r, out, lead, n == 1, false, cls, stressAt == n - 1, sufs.data(), sufs.size(), &k)) return false;
+	if (k < sufs.size()) out += sufs[k];
 	return true;
 }
 
@@ -1430,26 +1665,42 @@ std::string pickGeneric(const Lang& L, Rng& r, int cls) {
 }
 
 // One word ending in a generic: a recurring root (when one fits the code) or a fresh specific part.
-bool genWord(const Lang& L, Rng& r, std::string_view lead, std::string& out) {
-	if (!L.roots.empty() && chancePm(r, L.pRoot)) {
+bool genWord(const Lang& L, Rng& r, std::string_view lead, std::string& out, bool brief = false) {
+	if (!brief && !L.roots.empty() && chancePm(r, L.pRoot)) {
+		// a recurring root: with a place ending when one fits the code ("Vel" + "essa"), else as the first part
+		// of the word before two fresh syllables ("Vel" + "orani"), so a root is never stuck with a few names
 		const std::string& root = *r.pick(L.roots);
 		const int cls = L.F().harmony ? std::max(1, classOf(root)) : 0;
-		const int start = r.pickIndex(int(L.gens.size()));
-		for (size_t k = 0; k < L.gens.size(); k++) {
-			const std::string g = resolveHarm(L.gens[(size_t(start) + k) % L.gens.size()], cls);
-			const std::string cand = fuseWith(L.F(), root, g);
-			if (codeOk(std::string(lead) + cand)) { out = cand; return true; }
+		if (r.chance(0.5)) {
+			const int at = r.pickIndex(int(L.gens.size()));
+			for (size_t k = 0; k < L.gens.size(); k++) {
+				const std::string g = resolveHarm(L.gens[(size_t(at) + k) % L.gens.size()], cls);
+				const std::string cand = fuseWith(L.F(), root, g);
+				if (codeOk(std::string(lead) + cand)) { out = cand; return true; }
+			}
 		}
+		if (freshSpec(L, r, cls, 2, root, "", lead, out)) return true;
 	}
 	const int cls = startClass(L, r);
-	const std::string g = pickGeneric(L, r, cls);
-	const int n = std::max(sylCount(L, r), sylsFor(L, cls, listBits(L.gens.size()), 11.0, 1, 3));
-	return freshSpec(L, r, cls, n, "", g, lead, out);
+	// syllables: enough for variety, few enough to fit the family's word length with the ending
+	const int want = brief ? (r.chance(0.5) ? 2 : 1) : std::max(sylCount(L, r), sylsFor(L, cls, listBits(L.gens.size()), 11.5, 1, 3));
+	for (int t = 0; t < 2; t++) {
+		const std::string g = pickGeneric(L, r, cls);
+		const int n = std::clamp(std::min(want, sylsIn(L, cls, L.F().maxWord - int(g.size()), 1)), 1, 3);
+		if (freshSpec(L, r, cls, n, "", g, lead, out)) return true;
+	}
+	const int n = std::clamp(std::min(want, sylsIn(L, cls, L.F().maxWord - 4, 1)), 1, 3);
+	// no syllable fits this ending (a long name under both codes): let the ending be drawn with the syllable
+	std::vector<std::string> all;
+	all.reserve(L.gens.size());
+	for (const std::string& g : L.gens) all.push_back(resolveHarm(g, cls));
+	return freshSpecAny(L, r, cls, n, all, lead, out);
 }
 
-bool bareWord(const Lang& L, Rng& r, std::string_view lead, std::string& out) {
+bool bareWord(const Lang& L, Rng& r, std::string_view lead, std::string& out, bool brief = false) {
 	const int cls = startClass(L, r);
-	const int n = std::max(std::clamp(sylCount(L, r) + 1, 2, 3), sylsFor(L, cls, 0.0, 11.0, 2, 3));
+	const int room = sylsIn(L, cls, L.F().maxWord, 2);
+	const int n = brief ? 2 : std::min(room, std::max(std::clamp(sylCount(L, r) + 1, 2, 3), sylsFor(L, cls, 0.0, 11.5, 2, 4)));
 	return freshSpec(L, r, cls, n, "", "", lead, out);
 }
 
@@ -1463,7 +1714,7 @@ bool placeOnce(const Lang& L, Rng& r, std::string& name) {
 	case 2: {                                                                // "Lusa Amarenne"
 		const std::string p = *r.pick(L.pres);
 		const std::string lead = p + " ";
-		if (!(r.chance(0.6) ? genWord(L, r, lead, w) : bareWord(L, r, lead, w))) return false;
+		if (!(r.chance(0.6) ? genWord(L, r, lead, w, true) : bareWord(L, r, lead, w, true))) return false;
 		name = capWords(p + " " + w);
 		return true;
 	}
@@ -1472,7 +1723,7 @@ bool placeOnce(const Lang& L, Rng& r, std::string& name) {
 		const int cls = startClass(L, r);
 		freshInto(L, r, first, r.chance(0.75) ? 1 : 2, true, false, cls, 0, 0, true);
 		const std::string lead = first + "-";
-		if (!(r.chance(0.6) ? genWord(L, r, lead, w) : bareWord(L, r, lead, w))) return false;
+		if (!(r.chance(0.6) ? genWord(L, r, lead, w, true) : bareWord(L, r, lead, w, true))) return false;
 		name = capWords(first + "-" + w);
 		return true;
 	}
@@ -1483,7 +1734,7 @@ bool placeOnce(const Lang& L, Rng& r, std::string& name) {
 		syl += pickVowel(L, r, cls, false);
 		const std::string base = syl + syl;
 		const std::string suffix = r.chance(0.3) ? pickGeneric(L, r, cls) : std::string();
-		if (!freshSpec(L, r, cls, suffix.empty() ? r.integer(1, 2) : 1, base, suffix, "", w)) return false;
+		if (!freshSpec(L, r, cls, suffix.empty() ? 2 : 1, base, suffix, "", w)) return false;
 		name = capWords(w);
 		return true;
 	}
@@ -1545,10 +1796,13 @@ bool personOnce(const Lang& L, Rng& r, std::string& name) {
 	if (!L.pends.empty() && r.chance(0.65)) {
 		const Tok* e = pickTok(L.pends, r);
 		const std::string end = e ? resolveHarm(e->s, cls) : std::string();
-		const int n = std::min(4, sylsFor(L, cls, h2(L.pends, 0), 12.5, 1, 3) + (r.chance(0.2) ? 1 : 0));
+		// (verifier) at most the syllables that fit the person cap: before, a third of Korvagh's tries came out
+		// longer than 10 letters (or, past 10, found no slot for both codes) and were thrown away
+		const int n = std::min({ 4, sylsFor(L, cls, h2(L.pends, 0), 12.5, 1, 3) + (r.chance(0.2) ? 1 : 0),
+			sylsIn(L, cls, kPersonMaxLen - int(end.size()), 1) });
 		if (!freshSpec(L, r, cls, n, "", end, "", w)) return false;
 	} else {
-		const int n = std::min(4, sylsFor(L, cls, 0.0, 12.5, 2, 3) + (r.chance(0.2) ? 1 : 0));
+		const int n = std::min({ 4, sylsFor(L, cls, 0.0, 12.5, 2, 3) + (r.chance(0.2) ? 1 : 0), sylsIn(L, cls, kPersonMaxLen, 2) });
 		if (!freshSpec(L, r, cls, n, "", "", "", w)) return false;
 	}
 	name = capWords(w);
@@ -1563,14 +1817,15 @@ std::string personIn(const Lang& L, Rng& r) {
 	return fallbackCoded(L, r, kPersonMaxLen);
 }
 
-bool cultureOnce(const Lang& L, Rng& r, CultureNames& c) {
+bool cultureOnce(const Lang& L, Rng& r, CultureNames& c, bool shorter) {
 	const FamilyDef& F = L.F();
 	const int cls = F.harmony ? (r.chance(0.3) ? 1 : 2) : 0;
 	std::vector<Tok> ends;
 	parseTokens(F.nameEnd, ends, true);
 	const Tok* e = pickTok(ends, r);
 	const std::string end = e ? resolveHarm(e->s, cls) : std::string();
-	const int n = std::min(4, sylsFor(L, cls, h2(ends, 0), 13.0, 1, 4) + (r.chance(0.15) ? 1 : 0));
+	int n = std::min(4, sylsFor(L, cls, h2(ends, 0), 13.0, 1, 4) + (r.chance(0.15) ? 1 : 0));
+	if (shorter) n = std::max(1, n - 1);
 	std::string stem;
 	if (!freshSpec(L, r, cls, n, "", end, "", stem)) return false;
 	const std::string name = stem;
@@ -1578,7 +1833,8 @@ bool cultureOnce(const Lang& L, Rng& r, CultureNames& c) {
 	std::vector<Tok> adjs;
 	parseTokens(F.adjEnd, adjs);
 	const Tok* a = pickTok(adjs, r);
-	const std::string adj = fusePlain(name, a ? resolveHarm(a->s, nc) : std::string("an"));
+	std::string adj = fusePlain(name, a ? resolveHarm(a->s, nc) : std::string("an"));
+	if (adj == name) adj = fusePlain(name, "an");   // "Huqami" + -i would be the name itself: "Huqaman"
 	const std::string plur = *F.plurEnd ? fusePlain(name, resolveHarm(F.plurEnd, nc)) : name;
 	c = CultureNames{ capWords(name), capWords(adj), "the " + capWords(plur) };
 	return true;
@@ -1594,10 +1850,14 @@ bool cultureOk(const CultureNames& c, const Lang& L) {
 CultureNames cultureIn(const Lang& L, Rng& r) {
 	for (int t = 0; t < kNamesTune.tries * 2; t++) {
 		CultureNames c;
-		if (cultureOnce(L, r, c) && cultureOk(c, L)) return c;
+		if (cultureOnce(L, r, c, t >= kNamesTune.tries) && cultureOk(c, L)) return c;
 	}
-	const std::string fb = fallbackCoded(L, r, 7);
-	return CultureNames{ fb, fb + "an", "the " + fusePlain(fb, "i") };
+	for (int t = 0; t < kNamesTune.tries; t++) {
+		const std::string fb = fallbackCoded(L, r, 7);
+		const CultureNames c{ fb, fb + "an", "the " + fusePlain(fb, "i") };
+		if (cultureOk(c, L)) return c;
+	}
+	return CultureNames{ "Kamol", "Kamolan", "the Kamoli" };
 }
 
 // The god's word: a divine root and a divine ending of the family (validated), else a fresh word.
@@ -1641,9 +1901,11 @@ int jitterP(Rng& r, int v) {
 	return std::clamp(v + r.integer(-d, d), 0, 1000);
 }
 
-// Keeps most of an inventory, jitters its weights; at least min(3, size) sounds survive.
+// Keeps most of an inventory, jitters its weights; at least min(3, size) sounds survive, and a small
+// inventory (10 sounds or fewer) loses sounds half as often and never more than a quarter of them.
 void thinTokens(Rng& r, std::vector<Tok>& v, int dropPm) {
-	const size_t goal = std::min<size_t>(3, v.size());
+	if (v.size() <= 10) dropPm /= 2;
+	const size_t goal = std::max(std::min<size_t>(3, v.size()), v.size() - v.size() / 4);
 	std::vector<Tok> kept;
 	for (size_t i = 0; i < v.size(); i++) {
 		const size_t left = v.size() - i;
@@ -1712,7 +1974,7 @@ Lang rootLang(Rng& r, int fam, bool cheap) {
 	const int form[6] = { F.fGen, F.fBare, F.fTwo, F.fHyph, F.fRedup, F.fPre };
 	for (int k = 0; k < 6; k++) L.form[k] = form[k] > 0 ? std::max(1, jitterP(r, form[k] * 10) / 10) : 0;
 	L.pRoot = jitterP(r, F.pRoot);
-	L.gens = takeSome(r, F.gens, 15, 18);
+	L.gens = takeSome(r, F.gens, 16, 20);
 	L.pres = takeSome(r, F.pres, 3, 5);
 	parseTokens(F.pends, L.pends);
 	thinTokens(r, L.pends, 150);
@@ -1839,14 +2101,22 @@ Lang daughterOf(const Lang& parent, Rng& r) {
 	parseIntList(F.laws, pool);
 	std::vector<int> cands;
 	const std::string before = writeLang(D);
+	auto taken = [&D](int id) { return std::find(D.laws.begin(), D.laws.end(), id) != D.laws.end(); };
 	for (int id : pool) {
-		if (std::find(D.laws.begin(), D.laws.end(), id) != D.laws.end()) continue;
+		if (taken(id)) continue;
+		if ((id == 11 && taken(12)) || (id == 12 && taken(11))) continue;   // u > o and o > u would merge the vowels
 		Lang probe = D;
 		applyLaw(probe, id);
 		probe.laws = D.laws;
 		if (writeLang(probe) != before) cands.push_back(id);
 	}
 	r.shuffle(cands);
+	// u > o and o > u never in one generation either
+	for (size_t i = 0; i < cands.size(); i++) {
+		if (cands[i] != 11 && cands[i] != 12) continue;
+		cands.erase(std::remove(cands.begin() + std::ptrdiff_t(i) + 1, cands.end(), cands[i] == 11 ? 12 : 11), cands.end());
+		break;
+	}
 	const int room = kMaxLaws - int(D.laws.size());
 	const int want = std::min({ int(cands.size()), room, std::clamp(r.integer(1, 2), 1, std::max(1, kNamesTune.newShifts)) });
 	for (int i = 0; i < want; i++) applyLaw(D, cands[size_t(i)]);
@@ -1906,12 +2176,13 @@ Lang daughterOf(const Lang& parent, Rng& r) {
 // from the language's own text (so the answer depends on the language alone, never on the caller's rng).
 double varietyOf(const Lang& L) {
 	Rng probe(hashStr(writeLang(L)));
-	const int n = 150;
+	const int n = 150, m = 60;
 	std::set<std::string> ps, qs, cs;
 	for (int k = 0; k < n; k++) ps.insert(placeIn(L, probe));
-	for (int k = 0; k < n; k++) qs.insert(personIn(L, probe));
-	for (int k = 0; k < n; k++) cs.insert(cultureIn(L, probe).name);
-	return double(std::min({ ps.size(), qs.size(), cs.size() })) / double(n);
+	for (int k = 0; k < m; k++) qs.insert(personIn(L, probe));
+	for (int k = 0; k < m; k++) cs.insert(cultureIn(L, probe).name);
+	// (repeats grow with the square of the sample: 96 % distinct of 150 is about 92 % of 300)
+	return std::min(double(ps.size()) / double(n) - 0.03, double(std::min(qs.size(), cs.size())) / double(m));
 }
 
 // ---- reading any text as a language
@@ -2047,7 +2318,8 @@ std::string planet(Rng& rng) {
 	for (int t = 0; t < 40; t++) {
 		const std::string name = planetOnce(rng);
 		const int n = int(name.size());
-		if (n >= kNamesTune.minLen && n <= kNamesTune.maxLen && pronounceable(name) && !blocked(name) && !isRealPlanetName(name)) return name;
+		// a world's name is said often: at least five letters, never a real or famous planet
+		if (n >= 5 && n <= kNamesTune.maxLen && pronounceable(name) && !blocked(name) && !isRealPlanetName(name)) return name;
 	}
 	return "Caelith";
 }
@@ -2082,7 +2354,7 @@ std::string ship(const std::string& lang, Rng& rng) {
 		if (!L.ships.empty() && rng.chance(0.7)) {
 			const std::string first = *rng.pick(L.ships);
 			const std::string lead = first + " ";
-			if (!(rng.chance(0.5) ? genWord(L, rng, lead, w) : bareWord(L, rng, lead, w))) continue;
+			if (!(rng.chance(0.5) ? genWord(L, rng, lead, w, true) : bareWord(L, rng, lead, w, true))) continue;
 			const std::string s = capWords(first + " " + w);
 			if (s.size() <= 24 && pronounceable(s) && !blocked(s)) return s;
 		} else {

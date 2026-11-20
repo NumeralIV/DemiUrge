@@ -1,0 +1,39 @@
+date: 2026-11-19
+family: age0 (Age0, Stone Age kit), independent adversarial verification
+verdict: holds after fixes; ready for integration
+score: 7/10
+
+summary:
+- Reproducible: rebuilt from art/age0/build_age0.py (headless, factory startup). Textures are pixel-identical, the
+  manifest is identical apart from its date, and the FBX files differ only in their embedded timestamps.
+- Checked on all 51 FBX files and all 204 LOD meshes after re-import into Blender:
+  - LodGroup node attribute present (fbx_type, verified in the binary and in Blender's exporter source);
+  - one empty and four meshes named _LOD0..3;
+  - three slots in the order Structure, Roof, Detail;
+  - pivot at the footprint centre, Z = 0, with a 0.3-0.6 m plinth below ground; front toward -Y; unit scale 1;
+  - no n-gons, degenerate faces, loose vertices or inverted closed parts, and consistent winding;
+  - V inside 0-1, so the trim bands hold;
+  - triangle counts equal the manifest; every LOD0 is within its ASSETS.md budget.
+  - Triangle totals: LOD0 104,008, LOD1 50,082, LOD2 15,931, LOD3 3,350.
+- Scale: the 1.8 m figure against huts 2.8-5.4 m, doors about 1.5-1.6 m and longhouses 6.1 m reads right.
+- Fixes, all in art/age0/ and recorded in its README:
+  1. Huge UVs. U reached 343, which breaks Unreal's 16-bit UVs; |U| is now at most 7.4.
+  2. Mint-green hearth and hem stones, which sampled only the moss strip of the stone band.
+  3. Longhouse Ruin and Burnt debris thrown up to 9.4 m off the axis (footprint 16 m deep, now 8.6 m).
+  4. Lean-to LOD3 cover was single-sided, so it vanished from the front.
+  5. Open storage pit inner wall faced into the earth (wrong flip) with inconsistent winding on LOD2.
+  6. 6,588 loose vertices were exported.
+  7. Manifest: textures and pivot added per mesh, and a note on the kit WallSeg length.
+  8. Camp preview: hut doors faced away from the hearth.
+- Previews were re-rendered through tools/render_slot.py (shots/asset-age0-*.png), plus verifier views:
+  - shots/asset-age0-verify-lods-{huts,large,props}.png
+  - shots/asset-age0-verify-back-{small,large}.png
+- Against the concept: at 300 m the camp reads as the age-0 image (a ring of thatched domes round one hearth, racks,
+  stone ring), and the palisaded longhouse hamlet reads clearly.
+- Held back from a higher score:
+  - The thatch courses are very even stepped tiers with dark lips, which gives a slightly toy, layered-cake look at
+    14-40 m against the concept's rougher, ribbed, more conical huts.
+  - Culture paint (gate banner, painted hide) drops out at LOD2, about 300 m.
+  - Damage reads as patches at 40 m.
+- Untested here (no Unreal): the LodGroup import and the green flip of the OpenGL normal maps; tools/ue_import.py
+  flips green.

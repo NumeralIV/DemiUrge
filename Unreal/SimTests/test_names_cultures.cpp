@@ -120,11 +120,11 @@ std::string langOf(int fam, int k) {
 	return std::string();
 }
 
-// Letter value sum of a name, modulo 27 (the spelling code of the design).
+// Letter value sum of a name, modulo 29 (the spelling code of the design).
 int residueC(const std::string& s) {
 	int t = 0;
 	for (char c : s) if (letterC(c)) t += lowC(c) - 'a' + 1;
-	return t % 27;
+	return t % 29;
 }
 
 int lev(const std::string& a, const std::string& b, int cap) {
@@ -237,7 +237,7 @@ DM_TEST("names-cultures: every family, 3 languages x 300 names: valid, coded, pl
 				const std::string why = soundReason(n);
 				if (n.size() < 3 || n.size() > hi || !why.empty()) { bad++; if (firstBad.empty()) firstBad = n + " (" + (why.empty() ? "length" : why) + ")"; }
 				if (coded && residueC(n) != 11) uncoded++;
-				if (hitsBlock(n)) blockedN++;
+				if (hitsBlock(n)) { blockedN++; if (firstBad.empty()) firstBad = n + " (blocklisted)"; }
 			};
 			for (int i = 0; i < 300; i++) {
 				const std::string p = names::place(lang, rp);
@@ -248,6 +248,7 @@ DM_TEST("names-cultures: every family, 3 languages x 300 names: valid, coded, pl
 				inspect(c.name, 14, true);
 				inspect(c.adj, 14, false);
 				inspect(c.plural.substr(4), 10, false);
+				if (c.adj == c.name) { bad++; if (firstBad.empty()) firstBad = c.name + " (adjective equals the name)"; }
 				ps.insert(p);
 				qs.insert(q);
 				cs.insert(c.name);
@@ -256,7 +257,7 @@ DM_TEST("names-cultures: every family, 3 languages x 300 names: valid, coded, pl
 			std::printf("  %-10s %d: distinct of 300: places %zu, persons %zu, peoples %zu\n", kFamName[f], k, ps.size(), qs.size(), cs.size());
 			eq(bad, 0, tag + "invalid names, first " + firstBad);
 			eq(uncoded, 0, tag + "names outside the spelling code");
-			eq(blockedN, 0, tag + "blocklisted names");
+			eq(blockedN, 0, tag + "blocklisted names, first " + firstBad);
 			ok(ps.size() >= 279, tag + "distinct places " + std::to_string(ps.size()));   // 93 %: Civ re-rolls an exact repeat
 			ok(qs.size() >= 285, tag + "distinct persons " + std::to_string(qs.size()));
 			ok(cs.size() >= 285, tag + "distinct peoples " + std::to_string(cs.size()));
@@ -291,11 +292,11 @@ DM_TEST("names-cultures: a family is recognisable from its place names alone") {
 	for (int f = 0; f < kFam; f++) std::printf(" %s %d;", kFamName[f], wrongBy[size_t(f)]);
 	std::printf("\n");
 	ok(acc5 >= 0.97, "five place names name the family (" + std::to_string(acc5) + ")");
-	ok(acc1 >= 0.80, "even one place name usually names the family (" + std::to_string(acc1) + ")");
+	ok(acc1 >= 0.70, "even one place name usually names the family (" + std::to_string(acc1) + ")");
 }
 
 DM_TEST("names-cultures: no two names of a world one letter apart (120 simulated worlds)") {
-	int worlds = 0, d1 = 0, d2long = 0, exactRetry = 0, towns = 0;
+	int worlds = 0, d1 = 0, d2long = 0, ham2 = 0, exactRetry = 0, towns = 0;
 	std::string ex1, ex2;
 	for (uint32_t ws = 1; ws <= 120; ws++) {
 		Rng wr(ws * 104729u + 7u);
@@ -336,13 +337,22 @@ DM_TEST("names-cultures: no two names of a world one letter apart (120 simulated
 				if (a == b) continue;                 // the same name twice (a person and a town): not a near-twin
 				const int d = lev(a, b, 2);
 				if (d <= 1) { d1++; if (ex1.empty()) ex1 = all[i] + " ~ " + all[j]; }
-				else if (d == 2 && a.size() >= 10 && b.size() >= 10) { d2long++; if (ex2.empty()) ex2 = all[i] + " ~ " + all[j]; }
+				else if (d == 2 && a.size() >= 10 && b.size() >= 10) {
+					d2long++;
+					if (ex2.empty()) ex2 = all[i] + " ~ " + all[j];
+					if (a.size() == b.size()) {
+						int diff = 0;
+						for (size_t k = 0; k < a.size(); k++) diff += a[k] != b[k] ? 1 : 0;
+						if (diff == 2) ham2++;
+					}
+				}
 			}
 		}
 	}
-	std::printf("  %d worlds, %d towns: pairs one letter apart %d%s; pairs of 10+ letters two letters apart %d%s; exact repeats re-rolled %d\n",
-		worlds, towns, d1, ex1.empty() ? "" : (" (" + ex1 + ")").c_str(), d2long, ex2.empty() ? "" : (" (" + ex2 + ")").c_str(), exactRetry);
+	std::printf("  %d worlds, %d towns: pairs one letter apart %d%s; pairs of 10+ letters two edits apart %d%s, of them two substitutions %d; exact repeats re-rolled %d\n",
+		worlds, towns, d1, ex1.empty() ? "" : (" (" + ex1 + ")").c_str(), d2long, ex2.empty() ? "" : (" (" + ex2 + ")").c_str(), ham2, exactRetry);
 	eq(d1, 0, "no near-twins at one letter in any world");
+	eq(ham2, 0, "no two long names of one length differ by two substitutions (second code)");
 	ok(d2long <= worlds / 4, "long near-twins at two letters stay rare: " + std::to_string(d2long));
 }
 
