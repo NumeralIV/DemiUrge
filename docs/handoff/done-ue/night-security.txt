@@ -1,0 +1,1 @@
+2026-11-20 night-security: security review written to docs/reviews/security-review.md (1 high, 5 medium, 6 low, 4 info; ranked with file:line refs and safe/small fixes; no code changed)

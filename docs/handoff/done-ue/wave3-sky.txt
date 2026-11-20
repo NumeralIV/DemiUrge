@@ -1,0 +1,72 @@
+2026-11-19 wave3-sky VERIFIED with fixes (independent verifier, lane sky3-verify). Score 7/10 (as built 5/10). NOT YET IN MAIN.
+
+SYNC PENDING: `lane.ps1 sync sky3-verify` refuses all 3 files because lanes/integration.owned claims Source/Demiurge/Game/**.
+The -Force override was blocked by the permission system for the verifier too. The lead must run
+  powershell -NoProfile -ExecutionPolicy Bypass -File Unreal/lane.ps1 sync sky3-verify -Force   then   Unreal/build.ps1
+Sync sky3-verify, NOT sky3: sky3 lacks the fixes below. lanes/sky3-verify.owned lists only the 3 changed files
+(DmSkyActor.cpp/.h, DmSkyLook.cpp), so a forced sync cannot overwrite the aurora3 files that share Game/Sky/.
+`lane.ps1 status sky3-verify`: no conflicts (actor .cpp/.h "yours", DmSkyLook.cpp "lane only"). The lane was refreshed
+from main at about 22:00, including the newest aurora3 files. Lane build: Succeeded. Main build (without these files): Succeeded.
+
+Checks in the lane: sky-lookcheck 17/17 PASS (12 builder checks, plus 5 new: no lift by day or from orbit, low-sun
+lift at golden hour, night lift unchanged, no fill when the frame's dusk is in view). aurora-check 14/14 PASS.
+sky-check 12/12 PASS 3 of 4 runs. The 4th run failed 2 timing checks ("weather maps rebuilt (0 new)" and storm
+overcast 0.09). That is a flake under machine load in DmSkyScenarios/weather, which this wave did not change.
+
+Builder's three causes, re-verified:
+(1) Per-pixel transmittance: on in main (integration), kept. No pink or tan from orbit.
+(2) Sky fill: works by day (floor-day luma 18 -> 28). Off from orbit and at night.
+(3) Haze: works, and better than the builder measured. With the corrected A/B, the teal share of green/cyan pixels
+    falls 0.98 -> 0.71 at 50 km, 0.88 -> 0.51 at 5 km and 0.53 -> 0.21 at 300 m.
+
+Verifier fixes (all in Game/Sky, lane sky3-verify):
+F1 DmSkyLook harness race (evidence bug). Ctx.Shot only queues the picture. Switching the look in the same tick
+   put the next phase's instant settings (haze, grade, exposure, stars) into the previous phase's picture. Every
+   -variants picture was one variant late, and every "-old" picture of -ab carried the new haze and grade. Proof:
+   golden variants 1.2 and 1.8 EV gave identical pictures; true -skyold 5km-golden luma is 63.6, but the -ab "old"
+   showed 54.9. The builder's before/after shots (ue-s3k-*) and haze tuning runs (s3c/s3d/s3i) are therefore
+   contaminated. The switch now waits 12 frames. This also likely explains the builder's "5 km haze jumps between
+   three levels": with the fix, 5km-day new reads 128.6 / 128.6 / 131.3 across runs.
+F2 Golden-hour shade was still black. This was the brief's core case and the fill alone did not fix it:
+   300m-golden luma 25 -> 29, floor-golden 0.1 -> 5. Added a low-sun exposure lift near the ground:
+   GoldenEv 1.0 x Low x Smooth(0.35, 0.06, sun sine). It is max-joined with the night lift so there is no step,
+   is zero from orbit and at the terminator pass, and -goldenev= tunes it.
+   Results (true old -> final): 300m-golden 29 -> 49, 5km-golden 64 -> 86, floor-golden 0.1 -> 9.
+F3 The fill lit the dusk sea (docs/lab/clouds.md pitfall 4 at 50 km). One capture is reflected by the whole frame.
+   In sky-look 50km-golden, the sea beyond the terminator turned pale grey with a hard, cell-stepped edge
+   (luma 21 -> 38). The sky-descent shots d03/d04 show the same. Fix: the fill is gated by the lowest sun at the
+   frame's 4 corners (the ground there, or the horizon when a corner ray misses the planet): full above about
+   -1 deg, off by about -7 deg, easing off below 2 km. Proved by a new check and by shots ue-sv3h-50km-golden and
+   ue-sv3i-new-d03/d04. -nodusk compares against the old behaviour.
+F4 Night near the ground was black (5km-night luma 0.9, 300m-night 1.5, the forest invisible). Moonlight near the
+   ground is now x4 (MoonNear, back to x1 by 60 km, -moonnear= tunes it). Results: 300m-night 1.5 -> 11.9 (forest
+   readable), 5km-night 0.9 -> 5.2 (hills readable, still dark).
+F5 New scenario `sky-descent`: a 400 km -> 1 km golden-hour descent in 600 frames, logging per-frame GPU time and
+   the fill's render-state churn. Run with and without -skyold.
+
+Frame time (budget: within 0.5 ms):
+- Final same-launch A/B over 17 views, quiet machine (sv3j): mean GPU delta +0.04 ms; worst view floor-day
+  +0.43 ms; every other view within +-0.24 ms.
+- Descent: GPU mean 15.71 ms new vs 15.57 ms old. No GPU spikes. 51 fill intensity sets and 2 atmosphere
+  refreshes over 600 frames.
+
+Against the targets:
+- Orbit and terminator: close in limb, clouds and night lights. Land is pale olive, not the green of
+  state-healthy.png. The ocean is dark navy, not blue, and has no glint or shallows. Both are planet albedo and
+  ocean material (planet track), and they are unchanged by this wave.
+- 50 km and 5 km: greener and less teal. Still flatter and paler than the descent-2/3 concepts (planet and nature
+  texture).
+- 300 m: readable by day, golden hour and night.
+
+Reported to other tracks (not fixed here):
+(a) Planet: hard-edged flat lake quads. Inland water polygons near (camera 4 km) show as sky-blue triangles once
+    the sea and lakes reflect a real sky (ue-sv3g-new-d07.png). Also sea LOD patches show as faint lighter
+    polygons at 50 km. Both are latent in the old look too (pixel 40,57,68 -> 81,118,145).
+(b) Bridge: `lane.ps1 refresh` keeps main's old file mtimes, so an incremental lane build can link stale objects.
+    Here that gave LNK2019 on DmTowns::BuildMeshData after the refresh; touching the sources fixed it.
+(c) The sky-check weather/storm timing flake noted above.
+
+Evidence (shots/): ue-sv3h-<view>[-old].png and ue-sv3j-<view>[-old].png are the corrected A/B sweeps (17 views)
+before and after the refresh. ue-sv3d-<view>-v0..3.png are fill and golden variants. ue-sv3g-{old,new}-d01..10 and
+ue-sv3i-new-d01..10 are the descent. ue-sv3e-moon4-* is the moonlight test. ue-sv3a-* is the builder's harness
+(contaminated, kept for reference).

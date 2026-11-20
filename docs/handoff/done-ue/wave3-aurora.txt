@@ -1,0 +1,51 @@
+2026-11-19 wave3-aurora VERIFIED (independent verifier, lane aurora3-verify; synced to main; main build OK). Score 8/10.
+
+Key: wave3-aurora (ADmAurora, scene part "aurora": Game/Sky/DmSkyAurora.h/.cpp, DmSkyAuroraScenarios.cpp,
+Scripts/aurora.py, Scripts/aurora/**, /Game/Sky/Aurora/M_Aurora).
+
+Re-run from a fresh lane: lane build OK (0 errors / warnings), `shot.ps1 aurora-check -noshot` PASS 14/14 in the lane
+before and after my changes and again on main after the sync. Every shot below was looked at.
+
+Brief vs evidence (aurora shot compared with the same camera and sun rendered with -noaurora):
+- Curtains at the poles at night, green base, violet tops, vertical rays: yes. 300 km over the north magnetic pole
+  (ue-aurora3v-pole / -c1-pole / -main-pole), the south pole was never tested by the builder and works too
+  (ue-aurora3v-south: +0.006 mean, 8.2 % of the frame lit), limb (ue-aurora3v-limb, -c1-limb), curtains, and new
+  near-ground views (ue-aurora3v-town, -town5, -c1-ground, -inslab2 with the camera inside the 3..14 km slab).
+- Nothing on the day side: north pole in summer with the sun at 25N over the pole's meridian (ue-aurora3v-polesummer)
+  +0.0000 mean, the only pixels > 0.02 are white cloud noise; 3 km over the oval in daylight (ue-aurora3v-lowday) sky
+  +0.0000, max 0.008; terminator shot: day half +0.0000 (0.03 % px > 0.02), night half +0.0031.
+- Limb: no hard ribbon any more (crop of before/after orbit at the south limb). Curtains at the limb are soft and
+  rayed; their ends along the arc fade over about 10 px (the along-arc patches), not a cut. Debug (-auroradebug) on
+  the limb shot shows the early-outs behave as described (orange = second cap crossing, magenta = daylight segment).
+- Default orbit shot: the aurora is a faint soft glow at the south limb near the terminator (looks right; it is not
+  meant to be prominent from the day-side default view).
+- Surge (-auroraboost=1): full bright ring, no white blow-out.
+- GPU A/B (machine shared with other agents, single 60-frame samples): orbit/pole about +0.1..0.9 ms; near the ground
+  at night with the aurora filling the sky +1.7 ms (5 km up) to +2.7..3.0 ms (3..8 km up, inside the oval); day side 0.
+
+Fixes made here (all in owned files, synced with lane.ps1 sync -Force: integration / sky3 / sky3-verify also claim
+Game/Sky/**, Scripts/** and Content/** by glob; status showed none of these files changed on main meanwhile):
+1. Palette (Scripts/aurora/aurora.hlsl, rebuilt M_Aurora): green (0.10,1,0.30) -> (0.06,1,0.16) (pure 557.7 nm green
+   instead of mint), violet (0.45,0.07,1) -> (0.50,0.04,1), green scale height 1.2+2.2*rays -> 1.1+1.8*rays so the green
+   fades before the violet tops instead of mixing into lavender-grey. Measured on aurora pixels: saturation 0.56 -> 0.61
+   (ground view) and 0.68 -> 0.75 (limb), hue 148..151 -> 142..145 deg; midnight-sector brightness over 300 km +0.047 ->
+   +0.043 (same 33 % coverage). Shots ue-aurora3v-c1-{pole,orbitnight,curtains,limb,town5}.
+2. New scenario aurora-ground (DmSkyAuroraScenarios.cpp): about 5 km up south of the oval looking north at night, the
+   view a player gets when zoomed in (ue-aurora3v-c1-ground). Main build compiled it; aurora-check still PASS.
+3. New Scripts/aurora/mats.ps1: rebuilds M_Aurora headless (UnrealEditor-Cmd pythonscript); fails unless aurora.py
+   reports "no failed links". Run it through tools/render_slot.py.
+
+Open points (not blocking):
+- From orbit the near-side arcs are still thin pale lines (tone-mapper highlights on 2..3 px wide sheets); greener now
+  but not saturated. A footprint-based sheet width or a lower soft-clamp knee would help; it is a look decision.
+- Camera 3 km up directly under the main arc (ue-aurora3v-low20): every ray crosses the curtain bases a few km away,
+  sheets are widened to the uniform march step (about 1.3 km), so the sky becomes a bright, soft mint wall (+0.48 mean).
+  A distance-warped step distribution would sharpen near curtains at the cost of far ones; 40 steps cannot do both.
+- The aurora does not light the ground or ice (no green reflection) and is not occluded by clouds from below; fine
+  from orbit, noticeable only near the ground.
+- Ownership: please make integration, sky3 and sky3-verify stop globbing these files (or list aurora3* as exceptions)
+  so later syncs need no -Force. The sky follow-ups from the builder still stand (delete MakeAuroraRings / M_SkyAurora /
+  AuroraMID, forward ADmSky::BoostAurora to ADmAurora::Boost; until then keep ADmSky::Aurora public and Tune.AuroraGain).
+- Outside the track: the planet's shoreline shows horizontal comb stripes in close night views with or without the
+  aurora (ue-aurora3v-low20-off) -> planet track; the moonlit night clouds have straight-edged triangular blocks
+  (ue-aurora3v-limb) -> sky/cloud track (the builder reported this too).

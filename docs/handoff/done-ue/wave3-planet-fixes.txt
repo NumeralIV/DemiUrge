@@ -1,0 +1,77 @@
+2026-11-20 wave3-planet-fixes VERIFIED with fixes (second independent verifier, lane planet3-verify2; did not build it). Score 6/10 (as built 5/10). IN MAIN.
+
+Synced: lane.ps1 sync planet3-verify2 -Force (integration's blanket Game/** claim; main had no newer version of any owned file),
+then the synced sources were touched and main rebuilt: Unreal/build.ps1 Succeeded. Main run of planet-fixes: volcano started,
+39 scorched cells, sea rise +64 m, exit 0, both materials compiled. (An earlier verifier lane, planet3-verify, stopped mid-work
+on 11-19 and was never synced; its two scenario fixes were re-checked and folded in here. That lane can be removed.)
+
+What holds (re-run from scratch, true pre-wave-3 code rebuilt in a throw-away lane for the A/B):
+- Sea-rise terrain: reproduced exactly. Ground minus sea from the new coast: 1 -0 -8 -14 -21 -27 -34 -41 -47 -52 ... -61 m.
+  Drowned hills stay islands, the new coast keeps the sim outline. Robust at +120 m (the climate's max), with -riseraw
+  (fields, forest and towns not cleared: nothing shows through), and for a -40 m sea fall (old mapping, no crash).
+- Shipped sky (AtmoDropKm 0): the sea looks the same before and after, exactly as the builder said.
+- Farmland: the grey is gone. Pixels with saturation under 0.15: 25% -> 6% at 10 km, 33% -> 11% at 2 km.
+  Hedgerow shadows and balks show at 2 km.
+- Scorch: no hexagon at 60, 15 or 4.5 km. The cone's straight shading creases were there before (old-code shots).
+
+Found and fixed (Game/Planet, Scripts/planet, Content/Planet):
+F1 The scorch views proved nothing on main. Powers past Bronze now unlock by age (sim v3) and the fixture is in the Sail age,
+   so main's run logged "volcano ... REFUSED, 0 scorched cells". The builder's lane run predates that sim change. The scenario
+   now unlocks the volcano for its one call and fails the run if it is still refused. -volcanoticks=N stops the eruption
+   early (lava still out).
+F2 Leopard pattern. Inside the scar, the multi-scale noise drew dense 200-500 m char and ash spots over the whole burnt area
+   at 15-60 km. Now: full noise at the edge and a third inside. The ash core follows only the broad field (near the vent)
+   with wavy edges. Half-burnt drifts are broad. The 45/11 m char flecking is gentler. Result: one coherent dark scar with
+   fingered edges (shots/ue-p3w-cmp-scorch.png rows 2-3). Same ALU count.
+F3 Harness race. A world change reached the colour maps only after the shot: under load the map worker took 4.5-28 s, so the
+   fin run's scorch-60/-15 showed no scar at all, and the builder's own bld run lost the cone. Shots now wait for a map update
+   after each world change. The settle cap is raised from 900 to 2400 frames. A forced shot now logs
+   "forced at the frame cap: planet NOT settled".
+F4 The DmPlanet.h note told the lead to lower the sky's atmosphere ground. That note is now corrected (see the blocker below).
+Also new: -riseapply= (A/B over the unrisen world) and -riseraw.
+
+BLOCKER, not fixed (lead decision; planet water + sky). The builder's diagnosis is right but his remedy is not.
+Lowering AtmoDropKm does expose the water, but the water itself is broken:
+- With -atmodrop=0.5, shelf seas render pale grey at 400 km.
+- With -atmodrop=2, almost the whole ocean renders pale grey. The cheap "never seen" deep floor (M_PlanetSeabed) shows
+  through 150-500 m of water with its polygonal patch edges.
+- A constant red water base colour at Opacity 1 renders navy even at -atmodrop=2. The Single Layer Water surface does not
+  seem lit by the sun, and depth absorption barely acts.
+- The builder's turbid green-teal shallows, silt cover and breakers therefore never show as designed. The drowned band
+  reads as dark slate mud at 60 km. The depth gradient he showed is the land material's silt seabed seen through clear water.
+- Only a sea fall at -atmodrop=0.5 shows a proper turquoise shelf grading to navy.
+- The "nice navy ocean" of the shipped game is the atmosphere's ground, not water. This is probably also the integration
+  report's "flat light-blue water".
+Next step: someone owning both Game/Planet water and Game/Sky must find why SLW gets no sun and no depth extinction here.
+Suspects: per-pixel atmosphere transmittance on water pixels at or below the bottom radius; SLW's flat-Z light-path
+assumption on a sphere. Only then change AtmoDropKm.
+
+Frame time (60-frame GPU medians, old -> builder -> final, ms):
+- farm-10: 13.21/13.14 -> 13.38/13.95 -> 13.27/13.35
+- scorch-15: 12.56/12.43 -> 12.72/12.51 -> 12.44/12.44
+- scorch-4: 13.74/13.53 -> 13.79/13.80 -> 13.40/13.37
+All within 0.5 ms. Single ProfileGPU BasePass captures swing up to 1 ms on this loaded machine (the same code gave
+farm-10 5.81 and 6.76). The builder's scorch-15 BasePass was +0.9 ms over old in both of my captures (5.80/5.95 vs
+5.01/4.94); the final version measured 4.99/5.29.
+
+Left for others:
+(a) The sea and water blocker above.
+(b) Farmland is still a regular brick patchwork of rectangles at 10 km. The concept (descent-3-10km) is wooded country with
+    few fields. The lab's holdings were dropped for cost.
+(c) Lava: the eruption's lava shows about one ring (~2 km) beyond the sim's lava cells (smoothing). It looked the same
+    stylised pale-orange maze before.
+(d) Under heavy load, the terrain round a fresh crater can show without its relief for over 30 s while about 2,000 stale
+    patches rebuild (12 ms per patch per thread). The cone vanished in shots ue-p3w-main2-scorch-15 and ue-p3w-bld-scorch-60.
+(e) At 2 km, the towns module's field slabs still dominate.
+
+Evidence in shots/: ue-p3w-cmp-scorch.png, ue-p3w-cmp-sea.png, ue-p3w-cmp-farm.png. The per-view shots are
+ue-p3w-<run>-<view>.png:
+- old = pre-wave-3 code
+- bld / bld2 = builder
+- fin / fin2 = final
+- ship = shipped sky
+- d05 / d05old / d2 = atmosphere drops
+- wdbg / wdbg2 = water debug
+- hi / raw / fall = stress runs
+- lava / oldlava = 2.5-year eruption
+- main / main2 = main runs

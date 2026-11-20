@@ -1,0 +1,3 @@
+2026-11-20
+night-asset-integration
+docs/ASSET-INTEGRATION.md (sim->mesh mapping by type/tier/age/culture/state, trees per biome, units, animals, LOD/instancing/slot rules, factory changes per owner, per-view budget) + Unreal/Scripts/assets/import_assets.py/.ps1 (plans all 825 meshes with 0 issues; tested in lane assetimport: 61 meshes + skeletal + shrine imported PASS, facing/scale/LOD verified, 8 check renders shots/ue-assetcheck-*.png); lane not synced.

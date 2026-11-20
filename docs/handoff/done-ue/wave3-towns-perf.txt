@@ -1,0 +1,54 @@
+2026-11-20 wave3-towns-perf verified (key wave3-towns-perf, track "towns-perf"; fresh lane towns3-v2 from main, owned Source/Demiurge/Game/Towns/**; synced with lane.ps1 sync towns3-v2 -Force (only over integration's blanket Game/** claim, 0 conflicts; 4 files: DmTownsActor.h/.cpp, DmTownsPerf.h/.cpp); main Unreal/build.ps1 Succeeded; towns-hitch city on main RESULT PASS).
+Note: the older lane towns3-verify holds an earlier, unfinished verification attempt (2026-11-19 22:19, never synced). It was not used; its ideas were re-derived and re-measured here.
+
+MACHINE: shared and heavily loaded the whole time (another verifier's game, planet3-verify2, ran alongside; CPU 40-73 % before any of my runs). 10-45 % of frames were over 33 ms in every run, with or without towns. Absolute frame times are noise; the proofs below are towns' own CPU time and a with/without comparison.
+
+RE-MEASURED (builder's claims)
+- towns-hitch city on main's code, run right after the no-towns baseline: with towns 518 of 5088 frames over 33 ms (10.2 %), max towns tick 2.6 ms, 0 attributed. Baseline -noparts=towns: 509 of 4696 (10.8 %). Towns add no measurable long frames. Static view: 11 vs 3 long frames, all in the first 20 frames (first-wave component creation on the render thread, 28-38 ms); then none.
+- Towns' own game-thread CPU time per frame, all 13 runs after the fixes (forest, savanna, herd, city, overview, every speed, age change, war, sweep, pause): max 2.2-3.2 ms, one 5.0 ms (forest); segment averages 0.15-1.3 ms. towns-live (real sim 8x): CPU avg 0.28, max 2.68 ms, 0 attributed. towns-stress -stressasync: tick max 2.56 ms, 0 attributed.
+- Consistency (every planned settlement draws exactly its plan): 0 problems in every run.
+- The builder's "units 8 ms spike = OS preemption" is now PROVEN, not just believed. See fix 1.
+
+FOUND AND FIXED (all in Game/Towns)
+1. The verdict depended on luck (DmTownsPerf). Towns time was wall time, so an OS stall inside the towns tick counted as towns work. On main's code, 2 of 4 city runs FAILED: 2 and 4 frames attributed, towns tick 23.6 and 52.1 ms. The cause was always a phase with nothing to wait on, e.g. the units loop over 29 units, or moving the actor.
+   - Fix: the game thread's CPU time is now measured per towns phase (QueryThreadCycleTime, calibrated against the TSC at start), and frames are attributed by CPU time.
+   - Example: a "units 97.9 ms" frame used 0.42 ms of CPU. Over 13 runs there were 1-14 such stalls per run, spread over follow / units / signatures / apply / construction. Towns CPU never went over 5 ms in any of them.
+   - The wall-time count ("by wall time N") and every stall are still logged.
+2. An in-view settlement kept an outdated plan for 90 s (savanna, two runs: settlement 88, a tier 4 metropolis; dirty, not pending, last plan 96 s ago).
+   - Cause: one shared limit of 6 pending plans. Six out-of-view plans on below-normal-priority workers held all the slots for minutes on a busy machine, so nothing in view could launch.
+   - Fix (LaunchPlans): in-view settlements have their own 3 foreground slots. A settlement that comes into view while its plan waits on a background worker is re-planned on a foreground one; the old task is orphaned and cancelled if it has not started.
+   - After: 0 in-view settlements unplanned or out of date in city, savanna, forest and herd (8 runs).
+3. Coastal plans could not land while the sea rose.
+   - Cause: after the age change at 8x the ground job ran every ~1.3 s and "moved" 40-94 of ~100 settlements each time, mostly by the sea. A plan whose ground moved again while it was being made (1-3 s) was thrown away and re-planned, so coastal towns could loop forever at ~1 s of worker time per plan.
+   - Fix: such a plan is applied (it is one ground snapshot old, newer than what is drawn) and the town stays dirty. A ground-only re-plan waits at least 6 s after the last plan (-townground=); structural changes are not delayed.
+   - This is a logic fix. Its worker-time saving was not isolated by measurement on this machine.
+4. A game was killed at exit: the herd run "did not exit 60 s after it asked to quit". Towns EndPlay waited for up to 15 queued background plans.
+   - Fix: each plan task has a cancel flag set by JoinAll, so plans not yet started return at once.
+   - After: "joined 9-13 planning tasks in 0.4-0.5 s" in normal runs, 12.5 s once on the saturated machine (plans already running finish). No more kills in 7 runs.
+5. New coverage check in towns-hitch: unplanned and out-of-date settlements (over 8 s, in view = failure), with a state dump. The old check only compared drawn settlements with their plans. A settlement with no plan, or an outdated one, passed it.
+6. The units update logs its breakdown when it takes over 3 ms (loop vs components; it is always the loop).
+
+CHECKED AND HOLDS
+- Pool, frozen hidden components, budgeted applies: components registered or destroyed per segment are in the hundreds, with apply max 0.5-3.7 ms wall.
+- First wave asynchronous. On a quiet machine 96 settlements took 8.6 s; under load, out-of-view ones wait (by design; never in view).
+- -townblock, -townbudget=, -townperf work.
+- Clean exit in every run after fix 4.
+
+SCREENSHOTS LOOKED AT (lane build after fixes: shots/ue-towns-*-v2*.png)
+- city: streets, fields and a dense town correct.
+- ruins: walls, piers and ruined blocks correct.
+- ages a0 / a3 / a6: camp to skyscrapers with a harbour, cargo ships and river; correct and no missing pieces.
+- towns-live -s1: fields and coast fine, but the town is hidden under another module's light-beam effect.
+- towns-night: daylight again. Same as the builder saw; sky / harness, not towns.
+
+OPEN
+- towns (next track):
+  - Plans are expensive: ~1 s of worker CPU each (first wave 79-95 s of plan time for 96 settlements on a quiet machine). On a saturated machine out-of-view settlements stay unplanned for 100+ s (invisible, but they arrive late when the camera moves).
+  - In the 40 km overview, with many towns in view, the 3 foreground slots saturated and one in-view town was 30 s out of date (pending) under extreme load.
+  - JoinAll still waits for plans already running: a world change or exit can block up to ~12 s on a saturated machine. A cancel checkpoint inside DmTownsPlan::PlanTown would fix it.
+- bridge (lane.ps1): sync keeps the lane files' modification times. Main had DmTownsActor.obj built at 03:12 from the old source, and the synced source is dated 03:08, so main's build.ps1 said "Target is up to date" and silently kept the stale binary. I touched the 4 synced files and rebuilt. sync should set the copied files' times to now.
+- nature: "fields" slow ticks of 28-70 ms (seen again in these logs).
+- sky: towns-night renders in daylight.
+- Re-check on a quiet machine: the with/without comparison was done once.
+
+SCORE 7/10. The builder's main claim holds and is now proven by CPU time: towns use at most ~3 ms of game-thread CPU per frame, and the no-towns baseline is equally slow. But the pass/fail test was luck-dependent, and an in-view metropolis could stay outdated for 90 s. A game could also hang at exit. All three are fixed and re-run.
