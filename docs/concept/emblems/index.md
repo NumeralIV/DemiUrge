@@ -11,7 +11,7 @@ The emblems are drawn in code as SVG and rendered with headless Chrome. No image
 
 | File | What it is |
 |---|---|
-| `emblem-01.svg` … `emblem-16.svg` | The emblems: 300–600 bytes each, one `<svg>` with paths, circles or ellipses, no text, valid XML |
+| `emblem-01.svg` … `emblem-16.svg` | The emblems: 260–550 bytes each, one `<svg>` with paths, circles or ellipses, no text, valid XML |
 | `emblems-sheet.png` (1920×1080) | All 16 in circular badges, each in one of the culture colours. Includes 16 px filled badges, 24 px outline badges, bare 16 px signs and a 4× pixel enlargement of them, plus one sign in all six `CULTURE_COLORS` |
 | `banners.png` (1920×1080) | Close-ups of a hall banner, a mast pennant, a round shield and a roof flag. At game scale, the three culture towns from `docs/concept/settlements/` with small flags on their landmarks (dashed rings mark the main flag) |
 | `src/emblems.js` | The emblem data (path strings) and an `svg()` helper |
