@@ -49,6 +49,7 @@ struct SimTune {
 	double waterGate = -3.5;             // genesis next: Water -> Life needs seaLevel >= this
 	double lifeGate = 0.25;              // Life -> People needs cover.veg >= this
 	double silenceYears = 50, silencePeak = 1000, ashYears = 200;
+	double silenceMinYear = 1000;        // (v3, design review finding 10) no silence before this year
 	double startAwe = 60;                // genesis skip / first awaken
 	// --- added by the sim engineer (A14) ---
 	double startPop = 30;                // people of the tribe genesis::skip wakes (fallback path; Powers uses its own)

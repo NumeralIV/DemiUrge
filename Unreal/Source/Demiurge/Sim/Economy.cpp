@@ -167,6 +167,9 @@ Survey survey(const World& w, const Settlement& s) {
 	double K = land + fish;
 	if (s.b[Building::GRANARY]) K *= T.granaryK;
 	if (s.b[Building::PLANT]) K *= T.plantK;
+	// (v3) a blessed town's fields give more; the gift fades over its last blessedFade years, so the
+	// end of a blessing is an ebb the people follow, not a famine
+	if (s.blessed > 0) K *= 1 + (T.blessedK - 1) * (T.blessedFade > 0 ? std::min(1.0, s.blessed / T.blessedFade) : 1.0);
 	out.K = (isFinite(K) && K > 0) ? K : 0;
 	return out;
 }
@@ -337,7 +340,8 @@ void evacuate(World& w, int sid) {
 		}
 	}
 	if (sent) w.settlements[size_t(sid)].pop = std::max(0.0, w.settlements[size_t(sid)].pop - size);
-	civ::destroy(w, sid, Cause::Drowned);
+	// (v3, design review finding 7) the sea the people's engines raised took it: not the god's deed
+	civ::destroy(w, sid, Cause::Sea);
 }
 
 // One settlement's year (it may be destroyed on the way).
@@ -380,7 +384,9 @@ void settlementYear(World& w, int sid, const std::vector<uint8_t>& warFlag) {
 			pop += r * pop * (1 - pop / Keff);
 			s.famine = 0;
 		} else {
-			const bool hungry = pop > Keff * (1 + T.famineSlack);
+			// (v3, design review finding 9) a blessed town is not starving: the god's gifts carry it while
+			// its people fall back to what the land feeds
+			const bool hungry = pop > Keff * (1 + T.famineSlack) && !(s.blessed > 0);
 			pop -= std::min(T.famineLoss * pop, T.famineGap * (pop - Keff));
 			if (hungry) {
 				s.famine += 1;
@@ -452,7 +458,10 @@ void settlementYear(World& w, int sid, const std::vector<uint8_t>& warFlag) {
 		if (s2.b[Building::FACTORY]) {
 			double amount = T.factoryCo2 * std::sqrt(std::max(0.0, s2.pop) / 1000.0);
 			if (age >= Age::SPACE) amount *= T.spaceCo2Mul;
-			if (isFinite(amount) && amount > 0) climate::emit(w, amount);
+			if (isFinite(amount) && amount > 0) {
+				climate::emit(w, amount);
+				w.vars.num[numKey("civ_co2_", s2.culture)] += amount;   // (v3) whose engines warmed the air
+			}
 		}
 	}
 }
@@ -466,7 +475,11 @@ void expansion(World& w) {
 		if (s.dead || !w.valid(s.cell)) continue;
 		const Culture* cu = state::culture(w, s.culture);
 		if (!cu || cu->dead) continue;
-		const double cool = cu->edict == Edict::Expand ? T.expandEdict : T.expandCooldown;
+		// (v3, design review finding 4) the cooldown by age: short in the Stone age, long from Iron
+		const int age = cu->age < 0 ? 0 : cu->age > Age::SPACE ? int(Age::SPACE) : cu->age;
+		const double base = T.expandCooldownAge[size_t(age)] > 0 ? T.expandCooldownAge[size_t(age)] : T.expandCooldown;
+		const double ratio = T.expandCooldown > 0 ? T.expandEdict / T.expandCooldown : 0.5;
+		const double cool = cu->edict == Edict::Expand ? base * ratio : base;
 		if (s.pop >= T.expandK * s.K && s.pop >= T.expandPop && w.year - s.lastExpand >= cool)
 			S.waiting.emplace_back(s.lastExpand, s.id);
 	}
@@ -613,6 +626,33 @@ namespace civ {
 
 double capacity(const World& w, const Settlement& s) {
 	return survey(w, s).K;
+}
+
+double addScience(World& w, int cultureId, double years) {
+	Culture* cu = state::culture(w, cultureId);
+	if (!cu || cu->dead || !isFinite(years) || years == 0) return 0;
+	if (cu->age >= Age::SPACE) return 0;                 // nothing left to learn
+	const double before = isFinite(cu->science) ? std::max(0.0, cu->science) : 0.0;
+	const double after = std::max(0.0, before + years);
+	cu->science = after;
+	return after - before;
+}
+
+int strikeKnowledge(World& w, const std::vector<int>& harmed, double years) {
+	if (!(years > 0) || harmed.empty()) return 0;
+	std::vector<int> struck;
+	for (const int sid : harmed) {
+		const Settlement* s = state::settlement(w, sid);
+		if (!s || s->culture < 0) continue;
+		const Culture* cu = state::culture(w, s->culture);
+		if (!cu || cu->dead) continue;
+		const bool capital = cu->capital == sid;
+		if (!capital && !s->has(Building::ACADEMY)) continue;
+		if (std::find(struck.begin(), struck.end(), s->culture) == struck.end()) struck.push_back(s->culture);
+	}
+	std::sort(struck.begin(), struck.end());
+	for (const int cid : struck) addScience(w, cid, -years);
+	return int(struck.size());
 }
 
 void yearly(World& w) {

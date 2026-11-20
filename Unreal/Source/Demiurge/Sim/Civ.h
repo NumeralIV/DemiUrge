@@ -45,6 +45,9 @@ struct CivTune {
 	double siteFresh = 0.12;             // fresh water at <= 1 hop (0.6 of it at 2 hops, 0.3 at 3)
 	double siteCoast = 0.08;             // the sea within 1..3 hops (half at 4): fish now, a port later
 	double siteLow = 0.2, siteLowH = 0.3;   // penalty for ground barely above the sea, fading to 0 at siteLowH
+	// (v3, design review finding 4) an awakening wakes two bands: the second of bandPop people camps
+	// bandMinHops..bandMaxHops from the first (civ::bandSite)
+	double bandPop = 20;  int bandMinHops = 4, bandMaxHops = 6;
 };
 
 // [economy] Starting values from SPEC-SIM 3.7 (economy half).
@@ -75,6 +78,9 @@ struct EconomyTune {
 	double launchDelay = 20;                              // years after the culture reached Space
 	// expansion
 	double expandK = 0.85, expandPop = 40, expandCooldown = 25, expandEdict = 12;
+	// (v3, design review finding 4) the settler cooldown by the culture's age (0 = expandCooldown);
+	// under the expand edict it is x expandEdict / expandCooldown
+	std::array<double, 7> expandCooldownAge{ 0, 0, 0, 0, 0, 0, 0 };
 	int searchesPerYear = 2;
 	double landMaxCost = 45, navalMaxCost = 120;
 	double campKMin = 60;
@@ -107,6 +113,9 @@ struct EconomyTune {
 	int maxCandidates = 96;                               // expansion: valid sites evaluated per search (nearest first)
 	double sizeBase = 0.5, sizeRef = 12, sizeMin = 0.5, sizeMax = 1.25;   // sizeF = clamp(b + b sqrt(n / ref), min, max)
 	double traitBase = 0.85, traitK = 0.3;                // traitF = base + k x curiosity
+	// (v3, design review findings 3, 9) a blessed settlement (Heal, an answered rain / bloom prayer)
+	// feeds more: K x blessedK while blessed > 0
+	double blessedK = 1.2, blessedFade = 10;
 };
 
 namespace civ {
@@ -127,6 +136,9 @@ struct SettleCheck {
 // settlers 0.5 / 0)
 struct FoundOpts {
 	std::optional<double> devotion, love;
+	// (v3, design review finding 4) the second band of an awakening: it may camp within crowdHops of
+	// its sister camp (canSettle's 'crowded' is not checked; sea / lake / barren still are)
+	bool band = false;
 };
 
 // ---------------------------------------------------------------- [civ] lifecycle (Civ.cpp)
@@ -189,6 +201,13 @@ double siteScore(const World& w, int c);
 int bestSite(const World& w);
 // [civ] Civ.ageProgress: science toward the next age, 0..1 (1 at the last age). Read-only.
 double ageProgress(const World& w, int cultureId);
+// [civ] (v3, design review finding 4) the camp of an awakening's second band: the best siteScore
+// cell bandMinHops..bandMaxHops hops from `cell` (BFS over land), on land that is not sea, lake,
+// barren or owned; -1 if none. Read-only.
+int bandSite(const World& w, int cell);
+// [civ] (v3, design review finding 6) Consecrate: settlement sid's shrine becomes a temple (b[TEMPLE],
+// settlement:building). False if it is dead, has no shrine or already has a temple.
+bool consecrate(World& w, int sid);
 
 // ---------------------------------------------------------------- [economy] (Economy.cpp)
 
@@ -205,6 +224,15 @@ void yearly(World& w);
 // cell, culture, tier, b[]): when s.cells is empty the territory is estimated as the land cells
 // within EconomyTune::radius[tier] hops of s.cell not owned by another settlement. Read-only.
 double capacity(const World& w, const Settlement& s);
+// [economy] (v3, design review finding 3) the god moves a culture's progress: add `years`
+// progress-years to its science (Inspire, answered prayers); a negative amount sets it back, never
+// below the start of its current age (ages are not lost). Returns the change made. Age-ups happen at
+// the next research step (yearly).
+double addScience(World& w, int cultureId, double years);
+// [economy] (v3) wrath that hits a capital or an academy sets that culture's research back `years`
+// (once per culture per act): every culture whose capital, or a settlement with an academy, is among
+// `harmed` (settlement ids). Returns how many cultures were set back.
+int strikeKnowledge(World& w, const std::vector<int>& harmed, double years);
 
 } // namespace civ
 } // namespace dm

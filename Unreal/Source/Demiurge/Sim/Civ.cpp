@@ -481,6 +481,44 @@ int bestSite(const World& w) {
 	return best >= 0 ? best : bestOn(w, S, T, *lab, -1, useCrowd);   // that landmass is full: anywhere
 }
 
+int bandSite(const World& w, int cell) {
+	if (!usable(w) || !w.valid(cell) || state::isSea(w, cell)) return -1;
+	const CivTune& T = w.tune<CivTune>();
+	const Geo& g = *w.geo;
+	const int lo = std::max(1, T.bandMinHops), hi = std::max(lo, T.bandMaxHops);
+	// BFS over land (no sea crossing: the two bands walk apart)
+	std::vector<int32_t> q{ int32_t(cell) };
+	std::vector<uint8_t> d(size_t(w.n), uint8_t(255));
+	d[size_t(cell)] = 0;
+	int best = -1;
+	double bestScore = -1e300;
+	for (size_t head = 0; head < q.size(); head++) {
+		const int c = q[head];
+		const int dc = d[size_t(c)];
+		if (dc >= lo && groundCode(w, c, T) == 0 && !ownedByLive(w, c)) {
+			const double sc = siteScore(w, c);
+			if (isFinite(sc) && (sc > bestScore || (sc == bestScore && c < best))) { bestScore = sc; best = c; }
+		}
+		if (dc >= hi) continue;
+		for (int k = 0; k < g.nbrN[size_t(c)]; k++) {
+			const int m = g.nbr[size_t(6 * c + k)];
+			if (m < 0 || d[size_t(m)] != 255 || state::isSea(w, m)) continue;
+			d[size_t(m)] = uint8_t(dc + 1);
+			q.push_back(m);
+		}
+	}
+	return best;
+}
+
+bool consecrate(World& w, int sid) {
+	Settlement* s = liveSett(w, sid);
+	if (!s || !s->has(Building::SHRINE) || s->has(Building::TEMPLE)) return false;
+	s->b[Building::TEMPLE] = 1;
+	w.dirty.objects = true;
+	w.bus.emit(EvSettlementBuilding{ sid, Building::TEMPLE });
+	return true;
+}
+
 double ageProgress(const World& w, int cultureId) {
 	const Culture* cu = state::culture(w, cultureId);
 	if (!cu) return 0.0;
@@ -641,7 +679,11 @@ Settlement* found(World& w, int cell, int cultureId, double pop, FoundedBy by, c
 	for (const Settlement& s : w.settlements)
 		if (!s.dead) liveN++;
 	if (liveN >= T.maxSettlements || w.settlements.size() >= kMaxIds) return nullptr;
-	if (!canSettle(w, cell).ok) return nullptr;
+	if (opts.band) {
+		if (groundCode(w, cell, T) != 0 || ownedByLive(w, cell)) return nullptr;   // a second band: crowding allowed
+	} else if (!canSettle(w, cell).ok) {
+		return nullptr;
+	}
 
 	double devotion = by == FoundedBy::Awaken ? T.awakenDevotion : T.settlerDevotion;
 	double love = by == FoundedBy::Awaken ? T.awakenLove : T.settlerLove;

@@ -22,6 +22,7 @@
 // clock; their clocks live in w.scratch<...>() (not saved).
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <optional>
 #include <string_view>
@@ -50,6 +51,7 @@ struct PowersTune {
 	double brushDtMax = 0.25;                         // a single brush call counts at most this many real seconds
 	double brushMinPay = 0.25;                        // can(): a brush needs this many seconds of Awe to start
 	double strokeGap = 0.5;                           // a brush call with dt <= 0 or dt > this starts a new press
+	                                                  // (Lower Land's drown guard: only dt <= 0 or another power)
 	double maxGameSpeed = 8;                          // awe:short clock: a tick counts as kRealPerTick / this real seconds
 	double rainRate = 3;                              // wet moves this share of the way to rainWet per second (x falloff)
 	double rainFert = 0.02, rainFertCap = 1.2;        // rain: fertility per second at the centre, never above the cap
@@ -60,6 +62,22 @@ struct PowersTune {
 	double quakeRough = 0.5;                          // terrain::roughen amount (largest |change|, world units)
 	double quakeUnitAng = 0.5;                        // units within this share of the quake ang die
 	double seedMinAng = 0.02, seedMaxAng = 0.5;       // seed: clamp of opts.ang
+	// ---- v3, design review (docs/reviews/claude-design-review.md) ----
+	// (finding 3) Inspire teaches at once; wrath that hits a capital or an academy sets that culture's
+	// research back (progress-years, once per culture per act; natural events never do)
+	double inspireScience = 2;
+	double setbackLightning = 1, setbackQuake = 20, setbackPlague = 20, setbackMeteor = 40, setbackVolcano = 30;
+	// (finding 6) Rain and Bloom cost x this when the brush covers no settlement's territory
+	double offTerritoryMul = 2;
+	// (finding 6) Consecrate: a shrine becomes a temple (def.cost); a capital with a temple raises a
+	// Wonder for wonderCost, once per age of the world
+	double wonderCost = 400;
+	// (finding 10) in history one press of Lower Land stops a settlement's centre at sea level + this
+	// (drown:warning); only a press that begins with the centre already there may drown it
+	double drownFloor = 0.05;
+	// (finding 5) the age upgrades: Monsoon (rain, Atomic): brush up to monsoonMaxAng, cost x monsoonCostMul;
+	// Star-fall (meteor, Space): the player's crater x starfallDepth deep (a lake where it is wet enough)
+	double monsoonMaxAng = 0.25, monsoonCostMul = 0.5, starfallDepth = 1.6;
 };
 
 // [disasters] Starting values from SPEC-SIM 3.10 (disasters half).
@@ -76,6 +94,9 @@ struct DisastersTune {
 	// natural events per century at calamity 1
 	double lightningPerCentury = 6, stormsPerCentury = 3, droughtsPerCentury = 2;
 	double quakesPerCentury = 1, plaguesPerCentury = 1, eruptionsPerCentury = 0.4;
+	// (v3.1, design review finding 13) the natural rates x calamityAge[world age]: a busier young world, a
+	// quieter old one (1 = the table above in every age)
+	std::array<double, 7> calamityAge{ 1, 1, 1, 1, 1, 1, 1 };
 	double droughtMinYears = 6, droughtMaxYears = 12;
 	// protection
 	double protectAng = 0.3, protectPop = 200, protectYear = 100, protectAngFew = 0.15;  int protectTowns = 4;
@@ -117,6 +138,9 @@ struct DisastersTune {
 	double quakeAng = 0.08, quakeRough = 0.35, quakeWave = 1.4, quakeSeaShare = 0.3;
 	double eruptSeaDepth = 0.8;                       // natural vents: land, or sea at most this deep
 	int naturalTries = 24;                            // random cells tried per natural event
+	// (v3, design review finding 4) the first trial: a mild drought over the first capital in this year
+	// (0 = none), once per world; vars.num["disasters_trial"] remembers it
+	double trialYear = 45, trialPower = 0.5, trialAng = 0.12, trialYears = 8;
 };
 
 namespace powers {
@@ -130,7 +154,7 @@ enum class WScope : uint8_t { None, Radius, BrushRel, Cultures };
 struct Unlock {
 	Phase phase = Phase::History;        // the world must have reached this phase ...
 	int age = 0;                         // ... and (w.age >= age ...
-	double awe = 0;                      // ... or god.aweMax >= awe); awe <= 0 means "age only"
+	double awe = 0;                      // ... or god.aweMax >= awe); awe <= 0 means "age only" (v3: every power past Bronze)
 	bool phaseOnly = false;              // genesis powers: available ONLY in `phase`
 };
 struct PowerDef {
@@ -162,15 +186,30 @@ inline constexpr PowerDef kPowers[] = {
 	{ "bloom",     "Bloom",         'B', Group::Sky,     true,    6, 0.08, Target::Land,       { Phase::History, Age::BRONZE,   150, false }, WScope::BrushRel, 2,    0.02, "Make the land flourish." },
 	{ "lightning", "Lightning",     'L', Group::Wrath,   false,  15, 0,    Target::Any,        { Phase::History, 0,             0,   false }, WScope::Radius,   0.10, 0.05, "Strike with lightning." },
 	{ "quake",     "Earthquake",    'Z', Group::Wrath,   false,  60, 0.08, Target::Any,        { Phase::History, Age::BRONZE,   200, false }, WScope::Radius,   0.20, 0.10, "Shake the earth." },
-	{ "plague",    "Plague",        'X', Group::Wrath,   false,  80, 0,    Target::Settlement, { Phase::History, Age::IRON,     300, false }, WScope::Radius,   0.12, 0.05, "Send a sickness." },
-	{ "meteor",    "Meteor",        'M', Group::Wrath,   false, 150, 0.05, Target::Any,        { Phase::History, Age::SAIL,     450, false }, WScope::Radius,   0.45, 0.25, "Call down a star." },
-	{ "volcano",   "Volcano",       'V', Group::Wrath,   false, 220, 0.04, Target::Land,       { Phase::History, Age::INDUSTRY, 600, false }, WScope::Radius,   0.40, 0.25, "Open the earth's fire." },
+	{ "plague",    "Plague",        'X', Group::Wrath,   false,  80, 0,    Target::Settlement, { Phase::History, Age::IRON,     0,   false }, WScope::Radius,   0.12, 0.05, "Send a sickness." },
+	{ "meteor",    "Meteor",        'M', Group::Wrath,   false, 150, 0.05, Target::Any,        { Phase::History, Age::SAIL,     0,   false }, WScope::Radius,   0.45, 0.25, "Call down a star." },
+	{ "volcano",   "Volcano",       'V', Group::Wrath,   false, 220, 0.04, Target::Land,       { Phase::History, Age::INDUSTRY, 0,   false }, WScope::Radius,   0.40, 0.25, "Open the earth's fire." },
 	{ "heal",      "Heal",          'T', Group::Grace,   false,  40, 0,    Target::Settlement, { Phase::History, 0,             0,   false }, WScope::Radius,   0.10, 0.12, "Lift a sickness." },
 	{ "inspire",   "Inspire",       'I', Group::Grace,   false,  60, 0,    Target::Settlement, { Phase::History, Age::BRONZE,   200, false }, WScope::Radius,   0.10, 0.08, "Kindle new ideas." },
-	{ "prophet",   "Prophet",       'P', Group::Grace,   false, 120, 0,    Target::Settlement, { Phase::History, Age::IRON,     300, false }, WScope::Radius,   0.15, 0.15, "Raise a prophet." },
-	{ "peace",     "Omen of Peace", 'O', Group::Grace,   false, 100, 0,    Target::Settlement, { Phase::History, Age::IRON,     300, false }, WScope::Cultures, 0,    0.10, "End a war." },
+	{ "prophet",   "Prophet",       'P', Group::Grace,   false, 120, 0,    Target::Settlement, { Phase::History, Age::IRON,     0,   false }, WScope::Radius,   0.15, 0.15, "Raise a prophet." },
+	{ "peace",     "Omen of Peace", 'O', Group::Grace,   false, 100, 0,    Target::Settlement, { Phase::History, Age::IRON,     0,   false }, WScope::Cultures, 0,    0.10, "End a war." },
+	{ "consecrate","Consecrate",    'Y', Group::Grace,   false, 150, 0,    Target::Settlement, { Phase::History, Age::BRONZE,   0,   false }, WScope::Radius,   0.10, 0.10, "Raise a shrine into a temple; in a capital, a Wonder." },
 };
 inline constexpr int kPowerCount = int(sizeof(kPowers) / sizeof(kPowers[0]));
+
+// [powers] (v3, design review finding 5) the late ages upgrade a power instead of unlocking one.
+// Active while the world's age >= age (powers::upgrade).
+struct Upgrade {
+	const char* id;                      // the power
+	int age;                             // Age::Id
+	const char* name;                    // what it is called from then on
+	const char* desc;
+};
+inline constexpr Upgrade kUpgrades[] = {
+	{ "rain",   Age::ATOMIC, "Monsoon",   "Rain over a whole country, at half the cost." },
+	{ "meteor", Age::SPACE,  "Star-fall", "A falling star that leaves a deep crater lake." },
+};
+inline constexpr int kUpgradeCount = int(sizeof(kUpgrades) / sizeof(kUpgrades[0]));
 
 // [powers] Powers.byId: the definition or nullptr.
 inline const PowerDef* byId(std::string_view id) {
@@ -216,6 +255,13 @@ struct StartOpts {
 // [powers] Powers.unlocked: the world has reached unlock.phase AND (w.age >= unlock.age OR
 // god.aweMax >= unlock.awe); genesis powers only in their phase; awaken special case. Read-only.
 bool unlocked(const World& w, std::string_view id);
+// [powers] (v3) the upgrade of power id active in this world (age reached), or nullptr. Read-only.
+const Upgrade* upgrade(const World& w, std::string_view id);
+// [powers] (v3, design review finding 10) for the hover tip of Lower Land at cell with brush ang: the
+// live settlement a press here would drown (its centre is within ang, at the floor, i.e. within
+// drownFloor of the sea, and it already had its drown:warning), or -1. Read-only. (verifier fix) A town
+// at the floor that was never warned (the rising sea brought it there) is only warned by its first press.
+int drownRisk(const World& w, int cell, double ang = -1);
 // [powers] Powers.cost: Awe per use (click) or per real second (brush: def.cost x (ang / def.ang)^2;
 // x 4 for raise / lower in history while the brush centre is on owned land; free during genesis);
 // ang < 0 = def.ang. 0 for an unknown id. Read-only.

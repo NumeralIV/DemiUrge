@@ -39,5 +39,13 @@ void onArrive(World& w, int unitId) {
 void diplomacy(World& w) {
 	DM_STUB(society_diplomacy, w);
 }
+bool swearPeace(World& w, int a, int b) {
+	DM_STUB(society_swearPeace, w, a, b);
+	return false;
+}
+std::vector<int> tense(const World& w, int cultureId) {
+	DM_STUB(society_tense, w, cultureId);
+	return {};
+}
 
 } // namespace dm::society

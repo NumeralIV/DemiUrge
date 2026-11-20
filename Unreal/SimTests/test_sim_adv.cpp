@@ -237,13 +237,14 @@ DM_TEST("sim adv: silence through real ticks lands exactly 50 years after the la
 	auto w = makeWorld({ .phase = Phase::History });
 	w->tick = 0;
 	w->vars.t0 = 0;
+	w->year = 1000;                             // (v3: no silence before year 1,000)
 	w->stats.peakPop = 5000;
 	std::vector<double> endYears;
 	int lost = 0;
 	w->bus.on<EvEnding>([&](const EvEnding& e) { endYears.push_back(e.year); });
 	w->bus.on<EvPeopleLost>([&](const EvPeopleLost&) { lost++; });
 	sim::advance(*w, 4 * 20);                   // the clock starts at year 1
-	ok(w->vars.num.count("sim_empty") == 1 && w->vars.num["sim_empty"] == 1.0, "empty since year 1");
+	ok(w->vars.num.count("sim_empty") == 1 && w->vars.num["sim_empty"] == 1001.0, "empty since year 1001");
 	auto x = roundTrip(*w);                      // save in the middle of the countdown
 	if (!ok(x != nullptr, "round trip")) return;
 	sim::use(*x);
@@ -251,7 +252,7 @@ DM_TEST("sim adv: silence through real ticks lands exactly 50 years after the la
 	x->bus.on<EvPeopleLost>([&](const EvPeopleLost&) { lost++; });
 	sim::advance(*x, 4 * 40);
 	eq(endYears.size(), size_t(1), "one ending");
-	if (!endYears.empty()) eq(endYears[0], 51.0, "silence at year 51 (empty since 1)");
+	if (!endYears.empty()) eq(endYears[0], 1051.0, "silence at year 1051 (empty since 1001)");
 	eq(lost, 0, "no people:lost above 1,000 peak");
 	ok(x->ending.has_value() && x->ending->mood == Mood::Quiet, "quiet");
 }
@@ -416,7 +417,7 @@ DM_TEST("sim adv: genesis skip from every genesis phase (real): one settlement, 
 		const std::string tag = std::string("from ") + toStr(ph) + ": ";
 		ok(sim::genesis::skip(*w, {}), tag + "skip");
 		eq(int(w->phase), int(Phase::History), tag + "history");
-		eq(liveCount(*w), 1, tag + "one settlement");
+		eq(liveCount(*w), 2, tag + "two camps (v3: two bands)");
 		ok(w->god.awe >= 60, tag + "Awe " + f3(w->god.awe));
 		ok(w->vars.seaBase.has_value() && *w->vars.seaBase == w->seaLevel, tag + "calibrated at the skip sea");
 		ok(!phases.empty() && phases.back() == Phase::History, tag + "last phase event is history");
@@ -433,14 +434,14 @@ DM_TEST("sim adv: genesis skip at a sea cell, the pole and a chosen land cell (r
 	{
 		auto w = sim::create({ .seed = 5, .name = "", .L = 5 });
 		ok(sim::genesis::skip(*w, { .sea = 0, .cell = seaCell }), "sea cell: wakes elsewhere");
-		eq(liveCount(*w), 1);
-		if (liveCount(*w) == 1) ok(w->settlements[0].cell != seaCell && !state::isSea(*w, w->settlements[0].cell), "on land");
+		eq(liveCount(*w), 2, "two bands (v3)");
+		if (liveCount(*w) >= 1) ok(w->settlements[0].cell != seaCell && !state::isSea(*w, w->settlements[0].cell), "on land");
 	}
 	{
 		auto w = sim::create({ .seed = 5, .name = "", .L = 5 });
 		const int pole = w->geo->cellAt(0, kPlanetR, 0);
 		const bool woke = sim::genesis::skip(*w, { .sea = 0, .cell = pole });
-		ok(woke && liveCount(*w) == 1, "pole: still one settlement (at the best site if the pole is ice)");
+		ok(woke && liveCount(*w) >= 1 && liveCount(*w) <= 2, "pole: still one people (one or two bands; at the best site if the pole is ice)");
 		noNaN(*w, "pole");
 	}
 	{
@@ -453,7 +454,7 @@ DM_TEST("sim adv: genesis skip at a sea cell, the pole and a chosen land cell (r
 			if (civ::canSettle(*twin, c).ok && twin->hab[size_t(c)] > 0.3 && c != civ::bestSite(*twin)) pick = c;
 		if (!ok(pick >= 0, "found a second good site")) return;
 		ok(sim::genesis::skip(*w, { .sea = 0, .cell = pick }), "chosen cell");
-		if (liveCount(*w) == 1) eq(w->settlements[0].cell, pick, "woke exactly there");
+		if (liveCount(*w) >= 1) eq(w->settlements[0].cell, pick, "the first band woke exactly there");
 	}
 }
 

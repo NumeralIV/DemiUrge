@@ -15,5 +15,13 @@ double capacity(const World& w, const Settlement& s) {
 	DM_STUB(civ_capacity, w, s);
 	return 0.0;
 }
+double addScience(World& w, int cultureId, double years) {
+	DM_STUB(civ_addScience, w, cultureId, years);
+	return 0.0;
+}
+int strikeKnowledge(World& w, const std::vector<int>& harmed, double years) {
+	DM_STUB(civ_strikeKnowledge, w, harmed, years);
+	return 0;
+}
 
 } // namespace dm::civ

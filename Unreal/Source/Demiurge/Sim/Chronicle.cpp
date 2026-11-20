@@ -17,6 +17,16 @@
 //                 plus a world-wide gap for fires, natural lightning and storms); notable and epochal
 //                 entries are never dropped. Events far from every settlement mostly go unwritten: the
 //                 chronicle is what the people saw.
+//   budget        (wave 3, design review finding 8) on top of the gates, token buckets per decade cap the
+//                 notable and epochal entries; routine notables over budget become minor, story ones only
+//                 lose weight; a second minor entry of a kind for a people in one decade, one past the
+//                 world's minor bucket, or one whose every template line was written templateCap times is
+//                 folded into the decade's digest ("That decade Sarello answered the prayers of seven towns
+//                 of the Domafi"). Templates are chosen least-used first. See "the budget" below.
+//   drownings     (finding 7) a town the sea covers is the god's drowning (remembered: the Drowner) only
+//                 near a recent Lower Land / quake / meteor stroke of the god; otherwise the sea's own rise
+//                 or the engines' (the people burning the most are named), and waves count only after the
+//                 god shook or struck the world.
 //   epithets      each living culture remembers what it saw: increments of culture.seen (written by
 //                 Society) decay with a half-life of memoryHalfLife years, plus settlements it lost to
 //                 the sea. The dominant memory picks a category (rain, green, meteor, drowner, ...);
@@ -84,7 +94,17 @@ struct ChronicleScratch {
 		double year = 0;
 		bool war = false;      // false: the end of a plague (a = settlement id); true: a war ended in a draw (a, b cultures)
 		int a = -1, b = -1;
+		// (chronicle budget) a settlement the sea covered (a = settlement id, b = its culture, cell): Powers drowns
+		// a lowered town before it emits power:used, so whose drowning it was is decided once the tick is over
+		bool drown = false;
+		int cell = -1, tier = 0;
 	};
+	// (chronicle budget) the last write was folded into the decade's digest (it was told, in a way)
+	bool foldedLast = false;
+	bool inDigest = false;                         // the digest itself is being written (no budget, no flush)
+	// (verify) the next entry, a story entry by its type, is tellable this once (a natural eruption, a smaller
+	// people renaming its god): notable while the story bucket allows, then minor. budgetGate clears it.
+	bool tellNext = false;
 	std::vector<Pending> pending;
 	// (voice review 2) the omen of peace that named both armies this tick: the other people's omen is that one
 	int64_t omenTick = -1;
@@ -281,9 +301,36 @@ void markUsed(ChronicleScratch& S, const char* body) {
 // kRecentTemplates entries (the same sentence may sit in two families, e.g. the generic building
 // lines) is passed over: first for another in the bag, then for any line of the family not used
 // lately, and when every line was used lately, for the one used longest ago.
-int pickTemplate(ChronicleScratch& S, const string& key, Tpl t, Rng& r) {
+const ChronicleTune& tuneOf(const World& w);
+
+// (chronicle budget) How often a template body has been written in this history: vars.num
+// "chronicle_u.<8 hex digits of its FNV-1a hash>" (saved, so a loaded game keeps rotating where it was).
+string useKey(const char* body) {
+	uint32_t h = 2166136261u;
+	for (const char* p = body; p && *p; ++p) { h ^= uint8_t(*p); h *= 16777619u; }
+	static const char* const kHex = "0123456789abcdef";
+	string k = "chronicle_u.";
+	for (int i = 7; i >= 0; i--) k.push_back(kHex[(h >> (4 * i)) & 15u]);
+	return k;
+}
+int useCount(const World& w, const char* body) {
+	const auto it = w.vars.num.find(useKey(body));
+	return (it == w.vars.num.end() || !std::isfinite(it->second)) ? 0 : int(it->second);
+}
+void bumpUse(World& w, const char* body) {
+	double& v = w.vars.num[useKey(body)];
+	v = fin(v) + 1;
+}
+// (chronicle budget) every line of the family has been written templateCap times or more
+bool familySpent(const World& w, Tpl t, int cap) {
+	if (!t.t || t.n <= 0 || cap <= 0) return false;
+	for (int i = 0; i < t.n; i++) if (useCount(w, t.t[i]) < cap) return false;
+	return true;
+}
+
+int pickTemplate(World& w, ChronicleScratch& S, const string& key, Tpl t, Rng& r) {
 	const int n = t.n;
-	if (n <= 1) return 0;
+	if (n <= 1) { if (n == 1) bumpUse(w, t.t[0]); return 0; }
 	std::vector<int>& bag = S.bags[key];
 	if (bag.empty()) {
 		for (int i = 0; i < n; i++) bag.push_back(i);
@@ -299,9 +346,27 @@ int pickTemplate(ChronicleScratch& S, const string& key, Tpl t, Rng& r) {
 		}
 	}
 	int idx = -1;
-	for (size_t k = bag.size(); k-- > 0 && idx < 0;) {
-		const int i = bag[k];
-		if (i >= 0 && i < n && !recentlyUsed(S, t.t[i])) idx = i;
+	if (!tuneOf(w).budget) {
+		for (size_t k = bag.size(); k-- > 0 && idx < 0;) {
+			const int i = bag[k];
+			if (i >= 0 && i < n && !recentlyUsed(S, t.t[i])) idx = i;
+		}
+	} else {
+		// (chronicle budget) least used first: a line written templateCap times gives way to any fresher line of
+		// the family; the family's first line opens it; then the shuffle bag's order; then the line used least in
+		// this history; never one of the last kRecentTemplates entries' lines while another is free
+		const int cap = tuneOf(w).templateCap;
+		long long best = -1;
+		for (int i = 0; i < n; i++) {
+			if (recentlyUsed(S, t.t[i])) continue;
+			const int u = useCount(w, t.t[i]);
+			const auto at = std::find(bag.begin(), bag.end(), i);
+			const long long inBag = at != bag.end() ? 1 + (at - bag.begin()) : 0;   // later in the bag = sooner
+			// a family's first line (the approved voice's, where it has one) opens it in every history
+			const long long opener = (i == 0 && u == 0) ? 1LL << 45 : 0;
+			const long long score = (cap > 0 && u >= cap ? 0 : 1LL << 50) + opener + (inBag > 0 ? 1LL << 40 : 0) + (1LL << 30) - std::min(u, 1 << 29) * 64LL + inBag;
+			if (score > best) { best = score; idx = i; }
+		}
 	}
 	if (idx < 0) {
 		// every line left in the bag was used lately: the family's least recently used line
@@ -316,6 +381,7 @@ int pickTemplate(ChronicleScratch& S, const string& key, Tpl t, Rng& r) {
 	if (at != bag.end()) bag.erase(at);
 	if (idx < 0 || idx >= n) idx = 0;
 	S.lastPick[key] = idx;
+	bumpUse(w, t.t[idx]);
 	std::vector<int>& last = S.lastPicks[key];
 	last.push_back(idx);
 	if (int(last.size()) > std::max(1, n / 2)) last.erase(last.begin());
@@ -466,6 +532,14 @@ const ChronicleTune& tuneOf(const World& w) { return w.tune<ChronicleTune>(); }
 constexpr int kAnyCulture = -99;
 bool recent(const World& w, string_view type, int culture, double gap) {
 	const double y = fin(w.year);
+	// (chronicle budget) an answered prayer folded into the decade's digest was told, in its way: the prayers it
+	// quiets (prayerHeard) and the answers' own gaps see it too ("chronicle_f.<culture>.<type>" /
+	// "chronicle_fw.<type>" = the year of the last fold). Other folds leave the gates alone, so their repeats
+	// reach the digest's count.
+	if (type == "prayer-answered") {
+		const auto f = w.vars.num.find(culture == kAnyCulture ? "chronicle_fw." + string(type) : "chronicle_f." + std::to_string(culture) + "." + string(type));
+		if (f != w.vars.num.end() && std::isfinite(f->second) && f->second <= y + 1e-9 && f->second >= y - gap - 1e-9) return true;
+	}
 	int scanned = 0;
 	for (size_t i = w.chronicle.size(); i-- > 0;) {
 		const ChronicleEntry& e = w.chronicle[i];
@@ -523,6 +597,362 @@ void ctxYear(Ctx& x, const World& w) {
 	x.set("IN,", drum ? string() : "In the " + yo + " year, ");
 }
 
+// ====================================================================== the budget (wave 3, finding 8)
+// Every entry a handler writes passes budgetGate (writeComposed) first. Three kinds of entry:
+//   story     epithets, the world's first of an age, peoples born and dead, wonders, the Ark, the god's
+//             meteors, volcanoes and quakes, climate, genesis, endings: never dropped, never demoted; an epochal
+//             one (weight 3) is always epochal
+//   tellable  a settlement destroyed, a war declared or ended, a people's later age, prophets and edicts, the
+//             god's heal / inspire / omen / plague: never dropped; a city's
+//             fall is epochal while the epochal bucket allows (about one a real minute); all of them are notable
+//             while the story bucket allows, then minor
+//   routine   famines, growth, buildings, trade, prayers and their answers, the god's brush, battles, captures,
+//             weather...: notable while the notable bucket allows, else minor; a minor one is written only if
+//             it is the first of its kind for its people this decade, the world's minor bucket has a token and
+//             its template family has lines left under templateCap; otherwise it is FOLDED: counted in the
+//             decade's ledger, and the decade's digest entry tells the biggest folds in one sentence
+//             (verify: at most one digest in digestEvery = 30 years; the folds wait and add up, its frames and
+//             clauses rotate like every family)
+//   (verify) a natural eruption and a smaller people's later name for the god are tellable, not story; a people
+//             born or dead is epochal while the epochal bucket allows, else notable; only the world's first Ark is epochal
+// Buckets, ledger and marks live in vars.num ("chronicle_bk.*", "chronicle_dg.*", "chronicle_dt.*"): saved,
+// deterministic, read by no other module. With ChronicleTune::budget = false nothing of this runs.
+
+// the digest group of a routine entry (nullptr: story or tellable)
+const char* groupOf(string_view type, int weight) {
+	struct G { const char* type; const char* group; };
+	static const G kGroups[] = {
+		{ "prayer", "pray" }, { "prayer-answered", "answer" }, { "prayer-unanswered", "unheard" }, { "famine", "famine" },
+		{ "plague", "plague" }, { "plague-end", "healed" }, { "miracle-rain", "rain" }, { "miracle-bloom", "bloom" },
+		{ "miracle-shape", "shape" }, { "founded", "found" }, { "tier", "grow" }, { "decline", "shrink" }, { "building", "build" },
+		{ "trade", "trade" }, { "battle", "battle" }, { "captured", "take" }, { "schism", "take" }, { "settlers-lost", "lost" },
+		{ "fire", "weather" }, { "lightning", "weather" }, { "storm", "weather" }, { "drought", "weather" }, { "drought-end", "weather" },
+		{ "tsunami", "weather" }, { "volcano-end", "weather" }, { "wrath-lightning", "bolt" },
+	};
+	if (type == "quake") return weight <= 1 ? "weather" : nullptr;     // a natural tremor; the god's quake is story
+	if (type == "destroyed") return weight <= 1 ? "empty" : nullptr;   // a hamlet given up; a town or city destroyed is tellable
+	if (type == "tier" && weight >= 3) return nullptr;                  // the world's first city
+	for (const G& g : kGroups) if (type == g.type) return g.group;
+	return nullptr;
+}
+
+// one clause per group: {n} how many (in words), {g} the people's name for the god, and the people as
+// {cS} subject ("the Vaeli" / "they"), {cO} object ("the Vaeli" / "them"), {cP} after "of" ("the Vaeli" /
+// "theirs"), {cL} their lands ("the lands of the Vaeli" / "their lands"): a second clause about the same people
+// says "they". `sig` weighs how much a fold is worth telling: a clause needs n x sig >= digestMin.
+// (verify, chronicle-budget) Each group's clause is a family of lines rotated like every other family
+// (pickTemplate, least used first): with one sentence and two or three [a|b] choices, a kind god's book wrote
+// "Sarello answered the prayers of N towns of the Domafi" some 45 times and each digest frame 20-24 times.
+// No line here has an inner ", and": the frames join two clauses with one.
+const char* const kClAnswer[] = {
+	"{g} answered the prayers of {n} towns of {cP}",
+	"{n} towns of {cP} asked {g} for help and were answered",
+	"{g} heard {n} towns of {cP} and answered them",
+	"{g} gave {n} towns of {cP} what they prayed for",
+	"the prayers of {n} towns of {cP} were heard",
+	"{n} towns of {cP} prayed to {g} and did not pray in vain",
+	"{g} was asked for help by {n} towns of {cP} and gave it",
+	"{n} towns of {cP} had their prayers answered",
+};
+const char* const kClTake[] = { "{n} towns went over to {cO}", "{cS} gained {n} towns that had belonged to others", "{n} towns changed hands and were counted among {cO}" };
+const char* const kClFamine[] = { "hunger came to {n} towns of {cP}", "{n} towns of {cP} went hungry", "{n} towns of {cP} knew lean years", "the granaries of {n} towns of {cP} ran low" };
+const char* const kClBattle[] = { "{cS} lost {n} battles", "{cS} were beaten back {n} times", "{n} attacks by {cO} came to nothing" };
+const char* const kClPlague[] = { "fever came to {n} towns of {cP}", "{n} towns of {cP} took sick", "sickness visited {n} towns of {cP}" };
+const char* const kClLost[] = { "{n} bands of settlers of {cP} never arrived", "{n} bands of {cP} set out to found towns and were not heard of again" };
+const char* const kClUnheard[] = { "{n} prayers of {cP} went unanswered", "{n} prayers of {cP} were not heard, or not answered", "{n} towns of {cP} prayed and heard nothing" };
+const char* const kClRain[] = {
+	"{g} sent rain over {n} towns of {cP}", "rain fell by the hand of {g} on {n} towns of {cP}", "{g} watered the fields of {n} towns of {cP}",
+	"{n} towns of {cP} had rain from {g}", "the sky opened over {n} towns of {cP}",
+};
+const char* const kClBloom[] = {
+	"{g} greened the fields of {n} towns of {cP}", "the fields of {n} towns of {cP} bloomed out of season", "{n} towns of {cP} saw their fields turn green at a touch of {g}",
+	"{g} made the fields of {n} towns of {cP} bloom", "spring came early to {n} towns of {cP}, by the will of {g}",
+};
+const char* const kClShape[] = { "{g} moved the ground under {n} towns of {cP}", "the land shifted under {n} towns of {cP}" };
+const char* const kClBolt[] = { "{g} threw lightning at {cL} {n} times", "lightning from {g} fell on {cL} {n} times" };
+const char* const kClFound[] = { "{cS} founded {n} new settlements", "{cS} built {n} new villages in the wild", "{n} new settlements were founded by {cO}" };
+const char* const kClEmpty[] = { "{cS} gave up {n} small places", "{n} hamlets of {cP} were left empty" };
+const char* const kClShrink[] = { "{n} towns of {cP} dwindled", "{n} towns of {cP} grew smaller" };
+const char* const kClHealed[] = { "the fever left {n} towns of {cP}", "{n} towns of {cP} got up from their sickbeds" };
+const char* const kClWeather[] = { "fire, storm and drought troubled {cL} {n} times", "the weather was hard on {cO}, {n} times over", "{cL} weathered {n} storms, fires and droughts" };
+const char* const kClGrow[] = { "{n} settlements of {cP} grew", "{n} places of {cP} outgrew their old names", "{n} villages and towns of {cP} grew larger" };
+const char* const kClTrade[] = { "{cS} opened {n} new trade roads", "{cS} found {n} new roads for their traders", "merchants of {cP} opened {n} new roads" };
+const char* const kClPray[] = { "{n} towns of {cP} prayed and waited", "{cS} sent up {n} new prayers", "{n} towns of {cP} turned to prayer" };
+const char* const kClBuild[] = {
+	"{cS} raised {n} new buildings", "{cS} put up {n} new buildings, each the finest yet by their own account",
+	"{n} new buildings went up among {cO}", "the builders of {cP} finished {n} new halls, granaries and walls",
+};
+struct Clause { const char* group; double sig; Tpl t; };
+const Clause kClauses[] = {
+	{ "answer", 1.5, tpl(kClAnswer) },
+	{ "take", 1.5, tpl(kClTake) },
+	{ "famine", 1.3, tpl(kClFamine) },
+	{ "battle", 1.3, tpl(kClBattle) },
+	{ "plague", 1.3, tpl(kClPlague) },
+	{ "lost", 1.2, tpl(kClLost) },
+	{ "unheard", 1.2, tpl(kClUnheard) },
+	{ "rain", 1.2, tpl(kClRain) },
+	{ "bloom", 1.2, tpl(kClBloom) },
+	{ "shape", 1.2, tpl(kClShape) },
+	{ "bolt", 1.2, tpl(kClBolt) },
+	{ "found", 1.0, tpl(kClFound) },
+	{ "empty", 1.0, tpl(kClEmpty) },
+	{ "shrink", 1.0, tpl(kClShrink) },
+	{ "healed", 0.8, tpl(kClHealed) },
+	{ "weather", 0.8, tpl(kClWeather) },
+	{ "grow", 0.7, tpl(kClGrow) },
+	{ "trade", 0.7, tpl(kClTrade) },
+	{ "pray", 0.6, tpl(kClPray) },
+	{ "build", 0.6, tpl(kClBuild) },
+};
+const Clause* clauseOf(const string& group) {
+	for (const Clause& c : kClauses) if (group == c.group) return &c;
+	return nullptr;
+}
+// the digest itself: {d1} the biggest fold, {d2} the next, {span} the years it covers ("thirty years")
+const char* const kDigest1[] = {
+	"In those {span} {d1}.",
+	"Of the smaller things of those {span}: {d1}.",
+	"Another {span} went into the book, and in them {d1}.",
+	"The chronicle, which cannot write everything, notes only that in those {span} {d1}.",
+	"Among the small news of those {span}: {d1}.",
+	"Little of those {span} was written down, except that {d1}.",
+	"Below the great events of those {span}, {d1}.",
+	"The scribes, counting rather than writing, set down that in {span} {d1}.",
+	"Between the greater deeds of those {span}, {d1}.",
+	"{d1}. Of such small things in those {span} the chronicle keeps nothing more.",
+	"And there were small things, as there always are: {d1}.",
+	"Over {span}, and hardly worth a line each time, {d1}.",
+};
+const char* const kDigest2[] = {
+	"In those {span} {d1}, and {d2}.",
+	"Of the smaller things of those {span}: {d1}; and {d2}.",
+	"Another {span} went into the book: {d1}, and {d2}.",
+	"The chronicle, which cannot write everything, notes only that in those {span} {d1}, and {d2}.",
+	"Those were busy years, if not great ones: {d1}, and {d2}.",
+	"Meanwhile, in the smaller news of those years, {d1}, and {d2}.",
+	"Below the great events of those {span}, {d1}; {d2}.",
+	"Little of those {span} was written down, except that {d1}, and that {d2}.",
+	"The scribes, counting rather than writing, set down that in {span} {d1}, and {d2}.",
+	"{d1}; and {d2}. Of such small things in those {span} the chronicle keeps nothing more.",
+	"Over {span} {d1}. In the same years {d2}.",
+};
+// (verify) the years a digest covers, in words
+string spanWords(double years) {
+	// (every frame reads "in those {span}", "another {span}", "over {span}": a plain count of years; folds wait at most
+	// digestStale years, so the span stays under a century)
+	static const char* const kTens[] = { "ten years", "ten years", "twenty years", "thirty years", "forty years", "fifty years",
+		"sixty years", "seventy years", "eighty years", "ninety years" };
+	const int t = int(std::lround(std::clamp(fin(years, 10), 10.0, 90.0) / 10.0));
+	return kTens[std::clamp(t, 1, 9)];
+}
+
+// how many, in words (the prose never shows digits other than the year's ordinal)
+string manyWords(int n) {
+	static const char* const kW[] = { "no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve" };
+	if (n >= 0 && n <= 12) return kW[n];
+	if (n <= 19) return "more than a dozen";
+	if (n <= 30) return "a score or more";
+	return "scores of";
+}
+
+long long decadeOf(const World& w) {
+	const double span = tuneOf(w).digestYears > 0.5 ? tuneOf(w).digestYears : 10.0;
+	return static_cast<long long>(std::floor(fin(w.year) / span));
+}
+
+// a bucket's tokens (a new world starts with full buckets)
+double& bucket(World& w, const char* name, double burst) {
+	const string k = string("chronicle_bk.") + name;
+	auto it = w.vars.num.find(k);
+	if (it == w.vars.num.end() || !std::isfinite(it->second)) { w.vars.num[k] = std::max(0.0, burst); it = w.vars.num.find(k); }
+	return it->second;
+}
+void refill(World& w) {
+	const ChronicleTune& T = tuneOf(w);
+	const double year = fin(w.year);
+	double& nb = bucket(w, "n", T.notableBurst);
+	double& eb = bucket(w, "e", T.epochalBurst);
+	double& mb = bucket(w, "m", T.minorBurst);
+	double& sb = bucket(w, "s", T.storyBurst);
+	auto it = w.vars.num.find("chronicle_bk.y");
+	if (it == w.vars.num.end() || !std::isfinite(it->second) || year < it->second) { w.vars.num["chronicle_bk.y"] = year; return; }
+	const double dec = (year - it->second) / (T.digestYears > 0.5 ? T.digestYears : 10.0);
+	if (!(dec > 0)) return;
+	nb = std::min(std::max(0.0, T.notableBurst), nb + std::max(0.0, T.notablePerDecade) * dec);
+	eb = std::min(std::max(0.0, T.epochalBurst), eb + std::max(0.0, T.epochalPerDecade) * dec);
+	mb = std::min(std::max(0.0, T.minorBurst), mb + std::max(0.0, T.minorPerDecade) * dec);
+	sb = std::min(std::max(0.0, T.storyBurst), sb + std::max(0.0, T.storyPerDecade) * dec);
+	it->second = year;
+}
+bool take(double& b) {
+	if (b < 1 - 1e-9) return false;
+	b -= 1;
+	return true;
+}
+
+// (verify) one fold of a routine event into the coming digest ("chronicle_dg.s": the year of the first fold since
+// the last digest, for the digest's span)
+void foldInto(World& w, int culture, const char* group) {
+	double& n = w.vars.num["chronicle_dg." + std::to_string(culture) + "." + group];
+	n = fin(n) + 1;
+	if (!w.vars.num.count("chronicle_dg.s")) w.vars.num["chronicle_dg.s"] = fin(w.year);
+}
+
+// The digest, written by the first entry (or the yearly updateEpithets) of a later decade: the biggest fold of
+// one kind and people, and the next biggest, in one entry. (verify) At most one digest in digestEvery years: the
+// folds wait and add up ("chronicle_dg.y" = the year of the last digest; a digest every decade made its frames
+// and clauses the book's most repeated lines). Folds below digestMin wait too, until digestStale years old.
+void flushDigest(World& w) {
+	const ChronicleTune& T = tuneOf(w);
+	if (!T.budget) return;
+	const long long cur = decadeOf(w);
+	const double year = fin(w.year);
+	const auto d = w.vars.num.find("chronicle_dg.d");
+	if (d != w.vars.num.end() && std::isfinite(d->second) && static_cast<long long>(d->second) == cur) return;
+	{
+		const auto ly = w.vars.num.find("chronicle_dg.y");
+		if (ly != w.vars.num.end() && std::isfinite(ly->second) && year >= ly->second && year - ly->second < T.digestEvery - 1e-9) return;
+	}
+	w.vars.num["chronicle_dg.d"] = double(cur);
+	const double span = std::max(1.0, T.digestYears);
+	const auto s0 = w.vars.num.find("chronicle_dg.s");
+	const double since = (s0 != w.vars.num.end() && std::isfinite(s0->second) && s0->second <= year) ? s0->second : year - span;
+	const bool stale = year - since >= T.digestStale - 1e-9;
+	struct Fold { int n; int cid; string group; double score; };
+	std::vector<Fold> folds;
+	const string pre = "chronicle_dg.";
+	for (auto it = w.vars.num.lower_bound(pre); it != w.vars.num.end() && startsWith(it->first, pre); ++it) {
+		const string rest = it->first.substr(pre.size());
+		const size_t dot = rest.find('.');
+		if (dot == string::npos) continue;
+		const int cid = std::atoi(rest.substr(0, dot).c_str());
+		const int n = std::isfinite(it->second) ? int(it->second) : 0;
+		const Clause* cl = clauseOf(rest.substr(dot + 1));
+		if (cl && n >= 2 && double(n) * cl->sig >= double(std::max(2, T.digestMin)) - 1e-9 && cult(w, cid) && !cult(w, cid)->dead)
+			folds.push_back(Fold{ n, cid, rest.substr(dot + 1), double(n) * cl->sig });
+	}
+	if (folds.empty() && !stale) return;                     // nothing worth a line yet: the folds keep counting
+	for (auto it = w.vars.num.lower_bound(pre); it != w.vars.num.end() && startsWith(it->first, pre);) {
+		if (it->first.find('.', pre.size()) != string::npos) it = w.vars.num.erase(it);
+		else ++it;
+	}
+	w.vars.num.erase("chronicle_dg.s");
+	if (folds.empty()) return;
+	w.vars.num["chronicle_dg.y"] = year;
+	std::stable_sort(folds.begin(), folds.end(), [](const Fold& a, const Fold& b) {
+		if (a.score != b.score) return a.score > b.score;
+		if (a.n != b.n) return a.n > b.n;
+		if (a.cid != b.cid) return a.cid < b.cid;
+		return a.group < b.group;
+	});
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	Rng r = w.rng.fork("chron:" + std::to_string(w.nextId.entry));
+	auto clause = [&](const Fold& f, bool samePeople, const string& before) {
+		const Clause* cl = clauseOf(f.group);
+		if (!cl) return string();
+		Ctx x;
+		ctxCulture(x, w, f.cid);
+		// (verify) a god the first clause already named is "the god" in the second
+		{
+			const string g = godOf(w, f.cid);
+			if (!before.empty() && g.size() > 2 && before.find(g) != string::npos) x.set("g", "the god");
+		}
+		const string c = culturePlural(w, f.cid);
+		x.set("cS", samePeople ? string("they") : c);
+		x.set("cO", samePeople ? string("them") : c);
+		x.set("cP", samePeople ? string("theirs") : c);
+		x.set("cL", samePeople ? string("their lands") : "the lands of " + c);
+		x.set("n", manyWords(f.n));
+		const int k = pickTemplate(w, S, string("dg-") + cl->group, cl->t, r);
+		string out;
+		expandInto(out, cl->t.t[k], x, r, 0);
+		return out;
+	};
+	const string d1 = clause(folds[0], false, string());
+	if (d1.empty()) return;
+	// the second clause: another people's fold of another kind if there is one, else another kind of thing of the
+	// same people ("they ..."), else the same kind among another people
+	size_t second = 0;
+	for (int pass = 0; pass < 3 && !second; pass++)
+		for (size_t i = 1; i < folds.size() && !second; i++) {
+			const bool otherPeople = folds[i].cid != folds[0].cid, otherKind = folds[i].group != folds[0].group;
+			if ((pass == 0 && otherPeople && otherKind) || (pass == 1 && otherKind) || (pass == 2 && otherPeople)) second = i;
+		}
+	const string d2 = second ? clause(folds[second], folds[second].cid == folds[0].cid, d1) : string();
+	Ctx x;
+	x.set("d1", d1);
+	x.set("d2", d2);
+	x.set("span", spanWords(std::floor(year / span) * span - std::floor(since / span) * span));
+	const Tpl t = d2.empty() ? tpl(kDigest1) : tpl(kDigest2);
+	const int idx = pickTemplate(w, S, d2.empty() ? "digest-1" : "digest-2", t, r);
+	markUsed(S, t.t[idx]);
+	string raw;
+	expandInto(raw, t.t[idx], x, r, 0);
+	chronicle::EntryOpts o;
+	o.type = "digest";
+	o.text = tidy(raw);
+	o.culture = folds[0].cid;
+	o.weight = 1;
+	S.inDigest = true;
+	chronicle::add(w, o);
+	S.inDigest = false;
+}
+
+// The budget's verdict on an entry about to be written: its weight, or 0 (folded into the digest).
+int budgetGate(World& w, const char* type, int weight, int culture, Tpl t, Tpl alt) {
+	const ChronicleTune& T = tuneOf(w);
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	S.foldedLast = false;
+	if (!T.budget || S.inDigest) { S.tellNext = false; return weight; }
+	flushDigest(w);
+	refill(w);
+	const string_view ty(type);
+	const char* group = groupOf(ty, weight);
+	// tellable: the story's frequent notables (a town destroyed, wars and peace, a people's later age, prophets
+	// and their edicts, the god's healing, inspiring, omens and sent plagues): never dropped, notable while
+	// their own bucket allows
+	const bool tellable = weight >= 2 && (S.tellNext || ty == "destroyed" || ty == "war" || ty == "peace" || (ty == "age" && weight == 2) ||
+		ty == "prophet" || ty == "prophet-died" || ty == "edict" || ty == "miracle-heal" || ty == "miracle-inspire" ||
+		ty == "miracle-peace" || ty == "wrath-plague");
+	S.tellNext = false;
+	// (verify) a people born or dead is epochal while the epochal bucket allows, else notable (never minor): five
+	// peoples born in one Bronze age were 1.4 epochal entries a real minute
+	const bool epochalOrNotable = ty == "culture-born" || ty == "culture-died";
+	int wt = weight;
+	if (wt >= 3) {
+		double& eb = bucket(w, "e", T.epochalBurst);
+		if (!take(eb) && (tellable || epochalOrNotable)) wt = 2;   // a once-a-world moment stays epochal (and spends a token if there is one)
+	}
+	if (wt == 2 && tellable) {
+		double& sb = bucket(w, "s", T.storyBurst);
+		if (!take(sb)) wt = 1;
+	} else if (wt == 2 && group) {
+		double& nb = bucket(w, "n", T.notableBurst);
+		if (!take(nb)) wt = 1;
+	}
+	if (wt != 1) return wt;
+	double& mb = bucket(w, "m", T.minorBurst);
+	if (!group || !cult(w, culture)) return 1;                  // story and tellable minors are always written (and spend no token)
+	const long long cur = decadeOf(w);
+	const string mark = "chronicle_dt." + std::to_string(culture) + "." + string(ty);   // the first of its kind (type) for its people
+	const auto it = w.vars.num.find(mark);
+	const bool again = it != w.vars.num.end() && std::isfinite(it->second) && static_cast<long long>(it->second) == cur;
+	const bool spent = familySpent(w, t, T.templateCap) && (!alt.t || familySpent(w, alt, T.templateCap));
+	// the god's own small acts (answers, rain, bloom, moved ground, bolts) are the player's reply from the world:
+	// once per kind and people a decade, but never crowded out by the world's own small news
+	const bool godsAct = ty == "prayer-answered" || ty == "miracle-rain" || ty == "miracle-bloom" || ty == "miracle-shape" || ty == "wrath-lightning";
+	if (again || spent || (!godsAct && !take(mb))) {
+		foldInto(w, culture, group);
+		w.vars.num["chronicle_f." + std::to_string(culture) + "." + string(ty)] = fin(w.year);
+		w.vars.num["chronicle_fw." + string(ty)] = fin(w.year);
+		S.foldedLast = true;
+		return 0;
+	}
+	w.vars.num[mark] = double(cur);
+	return 1;
+}
+
 // One entry from a template family (shuffle bag `key`), optionally followed by a suffix from a second
 // family (bag `sfxKey`). (voice) With an `alt` family, the entry is taken from it instead with
 // probability altP (shared voice lines beside an event's own). Every draw comes from the entry's own
@@ -532,6 +962,9 @@ ChronicleEntry* writeComposed(World& w, const char* type, int weight, int cell, 
 	bool altSfx = false) {
 	if (!t.t || t.n <= 0) return nullptr;
 	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	// (chronicle budget) the weight this entry may have, or 0: folded into the decade's digest
+	weight = budgetGate(w, type, weight, culture, t, alt);
+	if (weight <= 0) return nullptr;
 	Rng r = w.rng.fork("chron:" + std::to_string(w.nextId.entry));
 	Ctx x = x0;
 	ctxYear(x, w);
@@ -542,11 +975,11 @@ ChronicleEntry* writeComposed(World& w, const char* type, int weight, int cell, 
 		for (int i = 0; i < alt.n; i++) if (!recentlyUsed(S, alt.t[i])) fresh = true;
 		if (fresh) { t = alt; if (!altSfx) sfx = Tpl{ nullptr, 0 }; }
 	}
-	const string& useKey = (t.t == alt.t && alt.t) ? altKey : key;
-	const int idx = pickTemplate(S, useKey, t, r);
+	const string& famKey = (t.t == alt.t && alt.t) ? altKey : key;
+	const int idx = pickTemplate(w, S, famKey, t, r);
 	string body = t.t[idx];
 	markUsed(S, t.t[idx]);
-	if (sfx.t && sfx.n > 0) body += sfx.t[pickTemplate(S, sfxKey, sfx, r)];
+	if (sfx.t && sfx.n > 0) body += sfx.t[pickTemplate(w, S, sfxKey, sfx, r)];
 	string raw;
 	expandInto(raw, body, x, r, 0);
 	const string text = tidy(renameRepeats(raw, x));
@@ -1186,6 +1619,32 @@ const char* const kDAbandoned[] = {
 	"{c} gave up {s}, [and the wind had it|and the foxes moved in].",
 	"{s} was left empty. [No one could say exactly when.|Its people had gone to the bigger towns.]",
 };
+// (finding 7) the sea covered a town where the god had just lowered the land (or shaken it, or struck it)
+const char* const kDLowered[] = {
+	"{g} pressed the land down under {s} like a thumb in clay, and the sea came in to see what had happened.",
+	"The ground sank under {s} at the touch of the god, and the sea poured into its streets. Its people did not need to be told whose hand it was.",
+	"{s} went down into the sea where {g} had lowered the land. {c} rowed away and looked back only once.",
+	"The god leaned on the land at {s}, and the sea, which is always waiting, came over the walls.",
+};
+// (finding 7) the sea rose over a town on its own (no god's hand near it, no engines to blame)
+const char* const kDSeaRose[] = {
+	"The sea rose at {s} by a hand's width a year, and then by another. In the {yo} year the last of its people rowed away, and the fish moved into the houses.",   // v15
+	"The sea came up the shore at {s} a little every year, and its people moved their doors uphill until there was no more uphill.",
+	"{s} was given back to the sea, slowly, the way the sea takes things. No one thought to blame the god for it.",
+};
+// (finding 7) the sea the engines raised ({c2}: the people whose chimneys burn the most, not the drowned)
+const char* const kDSeaEngines[] = {
+	"The smoke of the {ca2} engines warmed the air, and the sea came up to meet it. At {s} it did not stop.",
+	"{s} drowned in a sea that {c2} had warmed with their chimneys. Its people rowed away cursing the smoke, not the sky.",
+	"The sea rose over {s}. The scholars of {c2} had measured it coming for years, and went on burning coal while they measured.",
+	"Nobody struck {s}. The engines of {c2} breathed out, the ice breathed in, and the water came up the streets a hand's width a year.",
+};
+// (finding 7) ... and when the drowned people burn the most themselves
+const char* const kDSeaEnginesOwn[] = {
+	"The smoke of their own engines warmed the air, and the sea came up to meet it. {c} left {s} to the fish and went on building chimneys elsewhere.",
+	"{s} drowned in a sea that {c} had warmed with their own chimneys. The priests blamed the god; the scholars, quietly, did not.",
+	"The water came up the streets of {s} a hand's width a year, as the chimneys of {c} had invited it to.",
+};
 const char* const kDWave[] = {
 	"The ground shook at {s} and the walls lay down. What the shaking spared, the sea came in to take.",   // v19
 	"A great wave carried {s} out to sea.",
@@ -1473,6 +1932,12 @@ const char* const kSeaRise[] = {
 	"The sea crept up the shores, and the fishermen moved their houses inland.",
 	"The sea was rising. [Old harbours drowned.|Every year the tide came a little higher.]",
 };
+// (finding 7) the sea-rise milestone when the engines raised it ({c}: the people whose chimneys burn the most)
+const char* const kSeaRiseEngines[] = {
+	"The sea was rising, and this time not by any god's hand: the chimneys of {c} had warmed the air, and the ice was giving back its water.",
+	"{IN}the scholars of {c} wrote that the sea stood higher than in their grandfathers' day, and that the smoke of the engines was to blame. Few read it.",
+	"The tide came a little higher every year. The priests looked to the sky; the scholars of {c} looked at the chimneys.",
+};
 const char* const kSeaFall[] = {
 	"The sea drew back from the shores, and new land lay bare.",
 	"The waters went down, and ships were left stranded in the mud of old harbours.",
@@ -1664,6 +2129,9 @@ void onLightning(World& w, const EvLightning& e) {
 	else write(w, type, 1, e.cell, cid, tpl(kLightningGod), "lightning", x);
 }
 
+bool godStrokeRecent(const World& w);
+void recordStroke(World& w, int cell, double ang);
+
 void onTsunamiHit(World& w, const EvTsunamiHit& e) {
 	const ChronicleTune& T = tuneOf(w);
 	int sid = -1;
@@ -1671,7 +2139,9 @@ void onTsunamiHit(World& w, const EvTsunamiHit& e) {
 	sid = setWhere(x, w, e.cell, T.witnessAng);
 	if (sid < 0) return;
 	const int cid = sett(w, sid)->culture;
-	if (cult(w, cid) && T.waveWeight > 0) {                // the people remember the sea that came for them
+	// the people remember the sea that came for them; (finding 7) as the god's deed only when the god shook or
+	// struck the world lately (a wave crosses an ocean), not for the sea's own waves
+	if (cult(w, cid) && T.waveWeight > 0 && (!T.godDrownsOnly || godStrokeRecent(w))) {
 		double& d = w.vars.num["chronicle_d." + std::to_string(cid)];
 		d = fin(d) + T.waveWeight;
 	}
@@ -1691,7 +2161,10 @@ void onVolcanoStart(World& w, const EvVolcanoStart& e) {
 	const int cid = sett(w, sid)->culture;
 	ctxSettlement(x, w, sid);
 	ctxCulture(x, w, cid);
-	if (e.natural) write(w, "volcano", 2, e.cell, cid, tpl(kVolcanoNat), "volcano-nat", x);
+	if (e.natural) {
+		w.scratch<ChronicleScratch>().tellNext = true;     // (verify) the mountain's own fire is news, not the god's story
+		write(w, "volcano", 2, e.cell, cid, tpl(kVolcanoNat), "volcano-nat", x);
+	}
 	else write(w, "volcano", 2, e.cell, cid, tpl(kVolcanoGod), "volcano", x);
 }
 
@@ -1712,6 +2185,7 @@ void onQuake(World& w, const EvQuake& e) {
 	const ChronicleTune& T = tuneOf(w);
 	int sid = -1;
 	Ctx x;
+	if (!e.natural) recordStroke(w, e.cell, e.ang);       // (finding 7) the god's quake: the waves that follow are the god's
 	const double reach = std::max(T.witnessAng, fin(e.ang) + 0.1);
 	sid = setWhere(x, w, e.cell, reach);
 	if (sid < 0) return;                                   // nobody felt it
@@ -1994,12 +2468,106 @@ void onPlague(World& w, const EvSettlementPlague& e) {
 	write(w, "plague", s->tier >= 3 ? 2 : 1, s->cell, cid, tpl(kPlague), "plague", x);
 }
 
+// (finding 7) the god's hand on the land: Lower Land strokes, quakes and meteors, by cell, kept strokeYears
+// (vars.num "chronicle_gs.c<cell>" = year, "chronicle_ga.c<cell>" = the stroke's radius)
+void recordStroke(World& w, int cell, double ang) {
+	if (!tuneOf(w).godDrownsOnly || !w.valid(cell)) return;
+	const string c = std::to_string(cell);
+	w.vars.num["chronicle_gs.c" + c] = fin(w.year);
+	double& a = w.vars.num["chronicle_ga.c" + c];
+	a = std::max(fin(a), std::clamp(fin(ang, 0.1), 0.0, 0.5));
+}
+void onPowerUsed(World& w, const EvPowerUsed& e) {
+	if (e.id == "lower" || e.id == "quake" || e.id == "meteor") recordStroke(w, e.cell, e.ang);
+}
+bool godStrokeNear(const World& w, int cell) {
+	if (!w.geo || !w.valid(cell)) return false;
+	const ChronicleTune& T = tuneOf(w);
+	const string pre = "chronicle_gs.c";
+	for (auto it = w.vars.num.lower_bound(pre); it != w.vars.num.end() && startsWith(it->first, pre); ++it) {
+		if (!std::isfinite(it->second) || fin(w.year) - it->second > T.strokeYears + 1e-9) continue;
+		const string c = it->first.substr(pre.size());
+		const int sc = std::atoi(c.c_str());
+		if (!w.valid(sc)) continue;
+		const auto ga = w.vars.num.find("chronicle_ga.c" + c);
+		const double ang = ga != w.vars.num.end() ? fin(ga->second, 0.1) : 0.1;
+		if (w.geo->angle(sc, cell) <= ang + T.strokeAng) return true;
+	}
+	return false;
+}
+// any stroke of the god's hand on the land, anywhere, within strokeYears (for waves)
+bool godStrokeRecent(const World& w) {
+	const string pre = "chronicle_gs.c";
+	for (auto it = w.vars.num.lower_bound(pre); it != w.vars.num.end() && startsWith(it->first, pre); ++it)
+		if (std::isfinite(it->second) && fin(w.year) - it->second <= tuneOf(w).strokeYears + 1e-9 && fin(w.year) >= it->second - 1e-9) return true;
+	return false;
+}
+void pruneStrokes(World& w) {
+	const ChronicleTune& T = tuneOf(w);
+	const string pre = "chronicle_gs.c";
+	for (auto it = w.vars.num.lower_bound(pre); it != w.vars.num.end() && startsWith(it->first, pre);) {
+		if (std::isfinite(it->second) && fin(w.year) - it->second <= T.strokeYears + 1e-9 && fin(w.year) >= it->second) { ++it; continue; }
+		w.vars.num.erase("chronicle_ga.c" + it->first.substr(pre.size()));
+		it = w.vars.num.erase(it);
+	}
+}
+// (finding 7) the people whose engines warm the world: the most factories and power plants in live towns,
+// once w.co2 reaches enginesCo2; -1 when the warming is no one's doing
+int enginesOf(const World& w) {
+	if (!(fin(w.co2, 0) >= tuneOf(w).enginesCo2)) return -1;
+	std::vector<int> burn(w.cultures.size(), 0);
+	for (const Settlement& s : w.settlements) {
+		if (s.dead || s.culture < 0 || s.culture >= int(w.cultures.size())) continue;
+		burn[size_t(s.culture)] += (s.has(Building::FACTORY) ? 1 : 0) + (s.has(Building::PLANT) ? 2 : 0);
+	}
+	int best = -1;
+	for (size_t i = 0; i < burn.size(); i++) if (burn[i] > 0 && !w.cultures[i].dead && (best < 0 || burn[i] > burn[size_t(best)])) best = int(i);
+	return best;
+}
+// (finding 7) a town the sea covered: the god's drowning (remembered: the Drowner) only where the god lowered,
+// shook or struck the land near it lately; otherwise the sea's own rise, or the engines' (not remembered)
+void tellDrowned(World& w, int sid, int cid, int cell, int tier) {
+	const bool god = godStrokeNear(w, cell);
+	if (god && cult(w, cid)) {
+		double& d = w.vars.num["chronicle_d." + std::to_string(cid)];
+		d = fin(d) + 1;
+	}
+	Ctx x;
+	ctxWorld(x, w);
+	ctxSettlement(x, w, sid);
+	ctxCulture(x, w, cid);
+	const int weight = tier >= 3 ? 3 : 2;
+	if (god) { write(w, "destroyed", weight, cell, cid, tpl(kDLowered), "d-lowered", x); return; }
+	const int burner = enginesOf(w);
+	if (burner >= 0 && burner == cid) { write(w, "destroyed", weight, cell, cid, tpl(kDSeaEnginesOwn), "d-sea-engines-own", x); return; }
+	if (burner >= 0) { ctxCulture(x, w, burner, "2"); write(w, "destroyed", weight, cell, cid, tpl(kDSeaEngines), "d-sea-engines", x); return; }
+	write(w, "destroyed", weight, cell, cid, tpl(kDSeaRose), "d-sea-rose", x);
+}
+
 void onDestroyed(World& w, const EvSettlementDestroyed& e) {
 	const Settlement* s = sett(w, e.id);
 	if (!s) return;
 	const ChronicleTune& T = tuneOf(w);
 	const int cid = e.culture >= 0 ? e.culture : s->culture;
-	if (e.cause == Cause::Drowned || e.cause == Cause::Wave) {
+	// (finding 7) the sea covered it: whose doing that was is decided once the tick is over (Powers drowns a
+	// lowered town before it emits power:used); a flood on land and a wave are still the god's, as before
+	{
+		const int at0 = w.valid(e.cell) ? e.cell : s->cell;
+		if (e.cause == Cause::Drowned && T.godDrownsOnly && w.valid(at0) && w.elev.size() == size_t(w.n) && state::isSea(w, at0)) {
+			ChronicleScratch& PS = w.scratch<ChronicleScratch>();
+			ChronicleScratch::Pending pe;
+			pe.tick = w.tick;
+			pe.year = fin(w.year);
+			pe.drown = true;
+			pe.a = e.id;
+			pe.b = cid;
+			pe.cell = at0;
+			pe.tier = s->tier;
+			PS.pending.push_back(pe);
+			return;
+		}
+	}
+	if (e.cause == Cause::Drowned || (e.cause == Cause::Wave && (!T.godDrownsOnly || godStrokeRecent(w)))) {
 		if (cult(w, cid)) {
 			double& d = w.vars.num["chronicle_d." + std::to_string(cid)];
 			d = fin(d) + 1;
@@ -2021,7 +2589,11 @@ void onDestroyed(World& w, const EvSettlementDestroyed& e) {
 	for (size_t i = w.chronicle.size(), k = 0; i-- > 0 && k < 6; k++)
 		if (w.chronicle[i].type == "nuke" && w.chronicle[i].cell == s->cell && w.chronicle[i].year == fin(w.year)) struck = true;
 	switch (e.cause) {
-	case Cause::Drowned: t = tpl(kDDrowned); key = "d-drowned"; break;
+	case Cause::Drowned:
+		// (finding 7) a flood on land: where the god just lowered the land it is the god's hand, not the sea's rise
+		if (T.godDrownsOnly && godStrokeNear(w, at)) { t = tpl(kDLowered); key = "d-lowered"; }
+		else { t = tpl(kDDrowned); key = "d-drowned"; }
+		break;
 	case Cause::Meteor: t = tpl(kDMeteor); key = "d-meteor"; break;
 	case Cause::Lava: t = tpl(kDLava); key = "d-lava"; break;
 	case Cause::War: t = byArmy ? tpl(kDWarBy) : tpl(kDWar); key = byArmy ? "d-war-by" : "d-war"; break;
@@ -2117,7 +2689,7 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	if (e.kind == PrayerKind::Heal) {
 		for (size_t i = 0; i < S.pending.size();) {
 			const ChronicleScratch::Pending& pe = S.pending[i];
-			if (!pe.war && pe.a == e.id && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+			if (!pe.war && !pe.drown && pe.a == e.id && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
 			else i++;
 		}
 	}
@@ -2133,17 +2705,33 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	// (verifier 2026-11-19) answers are told one at a time in the whole world: one within answerWorldGap years
 	// of another is minor, and the minor rule then drops it (a kind god's answers filled a third of the book
 	// and one rain sentence came back forty times)
-	const int wgt = (recentNotable(w, "prayer-answered", cid, tuneOf(w).minorGap) ||
+	int wgt = (recentNotable(w, "prayer-answered", cid, tuneOf(w).minorGap) ||
 		recent(w, "prayer-answered", kAnyCulture, tuneOf(w).answerWorldGap)) ? 1 : 2;
+	// (chronicle budget, review finding 8) a routine answered prayer is notable only the first time a people is
+	// answered in each of its ages; after that it is minor (and folds into the decade's digest)
+	if (tuneOf(w).budget && cult(w, cid)) {
+		const string pk = "chronicle_pa." + std::to_string(cid);
+		const double age = double(cult(w, cid)->age) + 1;
+		const auto it = w.vars.num.find(pk);
+		if (wgt == 2 && it != w.vars.num.end() && it->second == age) wgt = 1;
+		else if (wgt == 2) w.vars.num[pk] = age;
+	}
 	// (voice review) the minor ones are rate-limited like every minor entry: a kind god answering ten
 	// towns a year wrote ten near-identical lines a year
-	if (wgt == 1 && !minorOk(w, "prayer-answered", cid, tuneOf(w).minorGap, tuneOf(w).answerWorldGap)) return;
+	if (wgt == 1 && !minorOk(w, "prayer-answered", cid, tuneOf(w).minorGap, tuneOf(w).answerWorldGap)) {
+		// (chronicle budget) every answer is a town the god really heard: the ones the gaps leave untold are
+		// counted for the decade's digest ("That decade Sarello answered the prayers of seven towns of the Domafi")
+		if (tuneOf(w).budget && cult(w, cid)) {
+			foldInto(w, cid, "answer");
+		}
+		return;
+	}
 	switch (e.kind) {
 	case PrayerKind::Rain: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsRain), "ans-rain", x); break;
 	case PrayerKind::Heal: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsHeal), "ans-heal", x); break;
 	case PrayerKind::Peace:
 		// (voice review 2) the answer ends the war: a draw held back this tick is told by it
-		if (write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsPeace), "ans-peace", x)) {
+		if (write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsPeace), "ans-peace", x) || S.foldedLast) {
 			for (size_t i = 0; i < S.pending.size();) {
 				const ChronicleScratch::Pending& pe = S.pending[i];
 				if (pe.war && (pe.a == cid || pe.b == cid) && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
@@ -2415,7 +3003,11 @@ void onArkStarted(World& w, const EvArkStarted& e) {
 	ctxSettlement(x, w, e.settlement);
 	const Settlement* s = sett(w, e.settlement);
 	if (!s) x.set("s", "their capital");
-	write(w, "ark", 3, s ? s->cell : -1, e.culture, tpl(kArkStarted), "ark-started", x);
+	// (verify) the world's first Ark is epochal; another people's Ark after it is notable (four or five Arks begun
+	// in the short Space age were up to four epochal entries a real minute)
+	double& arks = w.vars.num["chronicle_arks"];
+	arks = fin(arks) + 1;
+	write(w, "ark", tuneOf(w).budget && arks > 1.5 ? 2 : 3, s ? s->cell : -1, e.culture, tpl(kArkStarted), "ark-started", x);
 }
 
 void onArkLaunched(World& w, const EvArkLaunched& e) {
@@ -2442,7 +3034,13 @@ void onClimate(World& w, const EvClimateMilestone& e) {
 		else write(w, "climate", 2, -1, -1, tpl(kWarm1), "warm1", x);
 		break;
 	case MilestoneKind::Cooling: write(w, "climate", 2, -1, -1, tpl(kCool), "cool", x); break;
-	case MilestoneKind::SeaRise: write(w, "climate", 2, -1, -1, tpl(kSeaRise), "sea-rise", x); break;
+	case MilestoneKind::SeaRise: {
+		// (finding 7) the people's engines own the rising sea, and the chronicle says so
+		const int burner = tuneOf(w).godDrownsOnly ? enginesOf(w) : -1;
+		if (burner >= 0) { ctxCulture(x, w, burner); write(w, "climate", 2, -1, burner, tpl(kSeaRiseEngines), "sea-rise-engines", x); }
+		else write(w, "climate", 2, -1, -1, tpl(kSeaRise), "sea-rise", x);
+		break;
+	}
 	case MilestoneKind::SeaFall: write(w, "climate", 2, -1, -1, tpl(kSeaFall), "sea-fall", x); break;
 	case MilestoneKind::IceAge: write(w, "climate", 2, -1, -1, tpl(kIceAge), "ice-age", x); break;
 	case MilestoneKind::Thaw: write(w, "climate", 2, -1, -1, tpl(kThaw), "thaw", x); break;
@@ -2548,7 +3146,7 @@ void onMiracle(World& w, const EvMiracleWitnessed& e) {
 	if (e.kind == "heal") {
 		for (size_t i = 0; i < S.pending.size();) {
 			const ChronicleScratch::Pending& pe = S.pending[i];
-			const Settlement* ps = pe.war ? nullptr : sett(w, pe.a);
+			const Settlement* ps = (pe.war || pe.drown) ? nullptr : sett(w, pe.a);
 			const bool here = ps && (ps->cell == e.cell || std::find(e.ids.begin(), e.ids.end(), pe.a) != e.ids.end());
 			if (here && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
 			else i++;
@@ -2653,6 +3251,10 @@ void flushPending(World& w, bool all) {
 	}
 	const ChronicleTune& T = tuneOf(w);
 	for (const ChronicleScratch::Pending& pe : due) {
+		if (pe.drown) {
+			if (sett(w, pe.a)) tellDrowned(w, pe.a, pe.b, pe.cell, pe.tier);
+			continue;
+		}
 		if (pe.war) {
 			if (!cult(w, pe.a) || !cult(w, pe.b)) continue;
 			Ctx x;
@@ -3012,6 +3614,7 @@ void attach(World& w) {
 	S.tokens.clear();
 	sub<EvPhase>(w, S, onPhase);
 	sub<EvMiracleWitnessed>(w, S, onMiracle);
+	sub<EvPowerUsed>(w, S, onPowerUsed);
 	sub<EvLightning>(w, S, onLightning);
 	sub<EvMeteorImpact>(w, S, onMeteorImpact);
 	sub<EvTsunamiHit>(w, S, onTsunamiHit);
@@ -3091,6 +3694,20 @@ std::string epithet(const World& w, int cultureId) {
 
 void updateEpithets(World& w) {
 	flushPending(w, true);                                 // (voice review 2) the year's held-back endings
+	flushDigest(w);                                        // (chronicle budget) the last decade's digest, if one is due
+	pruneStrokes(w);
+	// (verify) the people whose name for the god is the god's own (the most populous, as below): its renames are
+	// story; a smaller people's later renames are tellable (in a chaotic god's book renames were two notable
+	// entries a real minute)
+	int mainC = -1;
+	{
+		double mp = -1;
+		for (size_t i = 0; i < w.cultures.size(); i++) {
+			if (w.cultures[i].dead) continue;
+			const double p = popOf(w, int(i));
+			if (p > mp) { mp = p; mainC = int(i); }
+		}
+	}
 	int bestC = -1;
 	double bestP = -1;
 	for (size_t i = 0; i < w.cultures.size(); i++) {
@@ -3111,6 +3728,7 @@ void updateEpithets(World& w) {
 			ctxCulture(x, w, cid);
 			x.set("e", e);
 			x.set("old", old);
+			if (!old.empty() && cid != mainC) w.scratch<ChronicleScratch>().tellNext = true;
 			if (old.empty() && w.cultures[i].parent >= 0) write(w, "epithet", 2, -1, cid, tpl(kEpiFirstDaughter), "epithet-first-d", x);
 			else if (old.empty()) write(w, "epithet", 2, -1, cid, tpl(kEpiFirst), "epithet-first", x);
 			else if (cat == CatSilent) write(w, "epithet", 2, -1, cid, tpl(kEpiSilent), "epithet-silent", x);   // (integration verifier) not "after what they had seen"

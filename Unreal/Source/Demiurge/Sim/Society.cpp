@@ -11,7 +11,16 @@
 //                culture pop / towns -> society::diplomacy -> chronicle::updateEpithets
 //
 // Persisted bookkeeping lives in w.vars.num under "society_*" keys (prophet travel, the Wonder of a
-// build edict); the only transient state is the brush-event pacing counter (SocietyScratch).
+// build edict; v3: each culture's memory of the god "society_grace_<id>", "society_wrath_<id>",
+// "society_heard_<id>", prayers "society_pray_<id>" / "society_answer_<id>"); the only transient state
+// is the brush-event pacing counter (SocietyScratch).
+//
+// v3 (design review, docs/reviews/claude-design-review.md): the ending mood comes from the people's
+// long memory (memory(): grace, wrath, lore, verdict, silence), not only from this year's love;
+// nothing a culture witnesses while building its Ark enters that memory; hoarding Awe costs devotion;
+// the Awe cap grows by age; an answered prayer teaches (+1 progress-year) and an answered rain or
+// bloom prayer blesses the town; a famine's rain prayer is answered by Bloom too; estranged towns
+// secede after 80 years before the Iron age.
 // Everything iterates by ascending id; randomness from w.rng (traits, prophet term) or string forks
 // of it (names), so prose never disturbs the sim stream more than one documented draw.
 //
@@ -54,6 +63,19 @@ std::optional<double> getVar(const World& w, const std::string& k) {
 	const auto it = w.vars.num.find(k);
 	if (it == w.vars.num.end()) return std::nullopt;
 	return it->second;
+}
+
+double varOr(const World& w, const std::string& k, double def) {
+	const auto it = w.vars.num.find(k);
+	return it != w.vars.num.end() && isFinite(it->second) ? it->second : def;
+}
+
+// Is the culture building its Ark (its capital has begun one)?
+bool buildingArk(const World& w, int cid) {
+	const Culture* c = state::culture(w, cid);
+	if (!c) return false;
+	const Settlement* s = state::settlement(w, c->capital);
+	return s && !s->dead && s->culture == cid && s->ark > 0;
 }
 
 bool liveSettlement(const World& w, int sid) {
@@ -115,7 +137,15 @@ double territoryScorch(const World& w, const Settlement& s) {
 bool causeHolds(const World& w, const Settlement& s, PrayerKind k, bool start) {
 	const SocietyTune& tn = tuneOf(w);
 	switch (k) {
-	case PrayerKind::Rain: return s.famine >= 1 || inDrought(w, s.cell);
+	case PrayerKind::Rain: {
+		// (v3.1, design review finding 13) late ages pray for bread only when the hunger lasts
+		int need = 1;
+		if (start) {
+			const Culture* c = state::culture(w, s.culture);
+			need = std::max(1, tn.rainFamineAge[size_t(clampAge(c ? c->age : 0))]);
+		}
+		return s.famine >= need || inDrought(w, s.cell);
+	}
 	case PrayerKind::Heal: return s.plague > (start ? tn.healPlague : tn.healHold);
 	case PrayerKind::Peace: {
 		if (!cultureAtWar(w, s.culture)) return false;
@@ -195,6 +225,41 @@ void housekeeping(World& w) {
 			if (u.culture == cid) mine.push_back(u.id);
 		for (const int uid : mine) units::kill(w, uid, "disbanded");
 	}
+	// (v3) memories of the god fade with a half-life of memoryHalfLife years
+	if (tn.memoryHalfLife > 0) {
+		const double keep = std::pow(0.5, 1.0 / tn.memoryHalfLife);
+		for (const Culture& c : w.cultures) {
+			if (c.dead) continue;
+			for (const char* what : { "grace", "wrath", "neglect" }) {
+				auto it = w.vars.num.find(varKey(what, c.id));
+				if (it != w.vars.num.end()) it->second = isFinite(it->second) ? std::max(0.0, it->second * keep) : 0.0;
+			}
+		}
+	}
+	// (v3.1, design review finding 11) the god's recent favour fades fast (the neighbours' envy is short)
+	if (tn.favourHalfLife > 0) {
+		const double keep = std::pow(0.5, 1.0 / tn.favourHalfLife);
+		for (const Culture& c : w.cultures) {
+			for (const char* what : { "fgrace", "fwrath" }) {
+				auto it = w.vars.num.find(varKey(what, c.id));
+				if (it == w.vars.num.end()) continue;
+				const double v = isFinite(it->second) ? std::max(0.0, it->second * keep) : 0.0;
+				if (c.dead || v < 1e-4) w.vars.num.erase(it);
+				else it->second = v;
+			}
+		}
+	}
+	// (v3, verifier) a year without a deed of its god, after neglectAfter such years, is remembered as neglect
+	if (tn.neglectAfter >= 0) {
+		for (const Culture& c : w.cultures) {
+			if (c.dead) continue;
+			const double heard = varOr(w, varKey("heard", c.id), finiteOr(c.born, 0));
+			if (finiteOr(w.year, 0) - heard >= tn.neglectAfter) {
+				double& n = w.vars.num[varKey("neglect", c.id)];
+				n = (isFinite(n) ? std::max(0.0, n) : 0.0) + 1;
+			}
+		}
+	}
 	for (Settlement& s : w.settlements) {
 		if (s.dead) {
 			s.prayer.reset();           // the dead pray no more (silently)
@@ -218,6 +283,7 @@ double baselineOf(const World& w, const Settlement& s, const Culture& c) {
 
 void belief(World& w) {
 	const SocietyTune& tn = tuneOf(w);
+	const bool hoarding = w.god.aweMax > 0 && finiteOr(w.god.awe, 0) >= tn.hoardShare * w.god.aweMax;
 	for (Settlement& s : w.settlements) {
 		if (s.dead) continue;
 		const Culture* c = state::culture(w, s.culture);
@@ -225,6 +291,8 @@ void belief(World& w) {
 		const double base = baselineOf(w, s, *c);
 		const double dev = sat(finiteOr(s.devotion, 0));
 		s.devotion = sat(dev + tn.devotionDrift * (base - dev));
+		// (v3, design review finding 6) "the god who keeps everything does nothing"
+		if (hoarding && s.devotion > tn.hoardFloor) s.devotion = std::max(tn.hoardFloor, sat(s.devotion * (1 - tn.hoardDrift)));
 	}
 }
 
@@ -237,7 +305,10 @@ void awe(World& w) {
 		temples += s.has(Building::TEMPLE) ? 1 : 0;
 		wonders += s.has(Building::WONDER) ? 1 : 0;
 	}
-	w.god.aweMax = std::min(tn.aweCap, tn.aweBase + tn.aweShrine * shrines + tn.aweTemple * temples + tn.aweWonder * wonders);
+	// (v3, design review finding 5) the cap grows with the world's age
+	const double ageCap = tn.aweCapAge[size_t(clampAge(w.age))];
+	const double cap = ageCap > 0 ? std::min(tn.aweCap, ageCap) : tn.aweCap;
+	w.god.aweMax = std::min(cap, tn.aweBase + tn.aweShrine * shrines + tn.aweTemple * temples + tn.aweWonder * wonders);
 	const double inc = society::aweIncome(w);
 	w.god.awe = clamp(finiteOr(w.god.awe, 0) + inc, 0.0, w.god.aweMax);
 }
@@ -283,6 +354,7 @@ void prayers(World& w) {
 	for (const Cand& cd : cands) {
 		if (active >= tn.maxPrayers) break;
 		w.settlements[size_t(cd.id)].prayer = Prayer{ cd.kind, w.year };
+		w.vars.num[varKey("pray", w.settlements[size_t(cd.id)].culture)] += 1;   // (v3) every prayer of its history
 		active++;
 		w.bus.emit(EvPrayer{ cd.id, cd.kind, true });
 	}
@@ -370,12 +442,8 @@ void prophets(World& w) {
 			const int capId = c.capital;
 			if ((!done || *done != c.edictSince) && liveSettlement(w, capId) && w.settlements[size_t(capId)].culture == cid
 				&& !w.settlements[size_t(capId)].has(Building::WONDER)) {
-				const std::string nm = wonderName(w, capId, c);
 				w.vars.num[wk] = c.edictSince;
-				w.settlements[size_t(capId)].b[Building::WONDER] = 1;
-				w.dirty.objects = true;
-				w.bus.emit(EvWonderBuilt{ capId, nm });
-				w.bus.emit(EvSettlementBuilding{ capId, Building::WONDER });
+				society::raiseWonder(w, capId);
 			}
 		}
 	}
@@ -390,7 +458,8 @@ Apart estrangement(const World& w, const Settlement& s, const std::vector<double
 	if (!c || c->dead) return Apart::No;
 	const Settlement* cap = state::settlement(w, c->capital);
 	if (cap && !cap->dead && cap->id != s.id && cap->culture == s.culture && w.geo && w.valid(s.cell) && w.valid(cap->cell)) {
-		if (w.geo->angle(s.cell, cap->cell) > tn.apartAng) return Apart::Distance;
+		const double far = c->age < Age::IRON ? tn.apartAngEarly : tn.apartAng;   // (v3)
+		if (w.geo->angle(s.cell, cap->cell) > far) return Apart::Distance;
 		const auto& lid = w.cache.landId;
 		if (lid.size() == size_t(w.n)) {
 			const int a = lid[size_t(s.cell)], b = lid[size_t(cap->cell)];
@@ -419,8 +488,10 @@ void schisms(World& w) {
 		if (w.cultures[size_t(cid)].dead) continue;
 		if (w.year - w.cultures[size_t(cid)].lastSplit < tn.birthEvery) continue;
 		std::vector<int> ready;
+		// (v3, design review finding 4) a second culture is possible in the Bronze age
+		const double need = w.cultures[size_t(cid)].age < Age::IRON ? tn.apartYearsEarly : tn.apartYears;
 		for (const Settlement& s : w.settlements)
-			if (!s.dead && s.culture == cid && s.apart >= tn.apartYears) ready.push_back(s.id);
+			if (!s.dead && s.culture == cid && s.apart >= need) ready.push_back(s.id);
 		if (ready.size() < 2 || !w.geo) continue;
 		// the largest estranged bloc secedes (the seed with the most ready partners within secedeAng;
 		// ties: lower id), so a whole far province leaves rather than whichever pair has the lowest id
@@ -546,6 +617,13 @@ Culture* newCulture(World& w, const NewCultureOpts& opts) {
 	}
 	if (opts.reason == BirthReason::Awaken && tn.awakenSeen > 0) c.seen["awaken"] += tn.awakenSeen;
 	if (parent >= 0) w.cultures[size_t(parent)].lastSplit = w.year;
+	// (v3, design review finding 1) a daughter inherits her mother's memory of the god; a new people
+	// has just heard its god wake it
+	for (const char* what : { "grace", "wrath", "neglect", "pray", "answer" }) {
+		const double v = parent >= 0 ? varOr(w, varKey(what, parent), 0) : 0;
+		if (v > 0) w.vars.num[varKey(what, id)] = v;
+	}
+	w.vars.num[varKey("heard", id)] = parent >= 0 ? varOr(w, varKey("heard", parent), w.year) : w.year;
 	w.dirty.color = true;
 	w.bus.emit(EvCultureBorn{ id, parent, cell, opts.reason });
 	return &w.cultures[size_t(id)];
@@ -589,6 +667,14 @@ int witness(World& w, int cell, double ang, const WitnessOpts& opts) {
 	const std::vector<int> ids = civ::near(w, cell, reach);
 	std::vector<int> noticed;
 	int count = 0;
+	// (v3) what each culture will remember of this act: grace / wrath impulses, and that it was heard
+	struct MemAdd { int culture; double grace, wrath; };
+	std::vector<MemAdd> mem;
+	auto memOf = [&](int cid) -> MemAdd& {
+		for (MemAdd& m : mem) if (m.culture == cid) return m;
+		mem.push_back({ cid, 0, 0 });
+		return mem.back();
+	};
 	for (const int sid : ids) {
 		if (!liveSettlement(w, sid)) continue;
 		Settlement& s = w.settlements[size_t(sid)];
@@ -600,7 +686,9 @@ int witness(World& w, int cell, double ang, const WitnessOpts& opts) {
 		double g = harmed ? goodHarmed : good;
 		double fs = faith;
 		bool answered = false;
-		if (s.prayer && !opts.kind.empty() && opts.kind == toStr(s.prayer->kind)) {
+		// (v3, design review finding 9) a famine's rain prayer is a prayer for bread: Bloom answers it too
+		const bool bread = s.prayer && s.prayer->kind == PrayerKind::Rain && s.famine >= 1 && opts.kind == "bloom";
+		if (s.prayer && !opts.kind.empty() && (opts.kind == toStr(s.prayer->kind) || bread)) {
 			answered = true;
 			fs = faith * tn.prayerFaith;
 			g = 1;
@@ -619,15 +707,45 @@ int witness(World& w, int cell, double ang, const WitnessOpts& opts) {
 			if (Culture* cu = state::culture(w, s.culture)) cu->seen[opts.kind] += seenAdd;
 		}
 		const bool gained = gain > 0 || s.love != love0 || seenAdd > 0 || answered;
+		if (!opts.natural && s.culture >= 0) {
+			const Culture* cu = state::culture(w, s.culture);
+			const double cpop = cu ? finiteOr(cu->pop, 0) : 0;
+			const double sp = std::max(0.0, finiteOr(s.pop, 0));
+			const double share = cpop > sp && cpop > 0 ? sp / cpop : 1.0;
+			const double impulse = std::fabs(g) * f * loveScale * share;
+			MemAdd& m = memOf(s.culture);
+			if (g > 0) m.grace += impulse;
+			else if (g < 0) m.wrath += impulse;
+		}
 		if (answered) {
 			const PrayerKind k = s.prayer->kind;
+			const int cid = s.culture;
 			s.prayer.reset();
+			// (v3, design review findings 3, 9) the priests learn from an answered prayer; an answered
+			// rain or bloom prayer blesses the town (Economy: growth and K x blessedK while blessed)
+			if (k == PrayerKind::Rain || k == PrayerKind::Bloom) s.blessed = std::max(finiteOr(s.blessed, 0), tn.prayerBlessed);
+			w.vars.num[varKey("answer", cid)] += 1;
 			w.bus.emit(EvPrayerAnswered{ sid, k });
+			civ::addScience(w, cid, tn.prayerScience);
 		}
 		if (gained) {
 			count++;
 			if (int(noticed.size()) < tn.maxWitnessIds) noticed.push_back(sid);
 		}
+	}
+	// (v3) the long memory: every culture that saw it heard its god; while it builds its Ark the deed
+	// moves love but is not written into the memory (nothing is bought in the last years)
+	for (const MemAdd& m : mem) {
+		if (!liveCulture(w, m.culture)) continue;
+		w.vars.num[varKey("heard", m.culture)] = w.year;
+		// (v3.1, design review finding 11) the god's recent favour (Diplomacy: envy, blame, thanks), Ark or not
+		if (tn.favourHalfLife > 0) {
+			if (m.grace > 0) w.vars.num[varKey("fgrace", m.culture)] += m.grace;
+			if (m.wrath > 0) w.vars.num[varKey("fwrath", m.culture)] += m.wrath;
+		}
+		if (tn.arkNoMemory && buildingArk(w, m.culture)) continue;
+		if (m.grace > 0) w.vars.num[varKey("grace", m.culture)] += m.grace;
+		if (m.wrath > 0) w.vars.num[varKey("wrath", m.culture)] += m.wrath;
 	}
 	w.god.mercy = finiteOr(w.god.mercy, 0) + std::max(0.0, actGood) * faith;
 	w.god.wrath = finiteOr(w.god.wrath, 0) + std::max(0.0, -actGood) * faith;
@@ -671,11 +789,92 @@ Regard regard(const World& w, int cultureId) {
 		r.devotion = dplain / cnt;
 		r.love = lplain / cnt;
 	}
-	if (r.devotion >= tn.belovedDevotion && r.love >= tn.belovedLove) r.mood = Mood::Beloved;
-	else if (r.love <= tn.fearedLove) r.mood = Mood::Feared;
-	else if (r.devotion < tn.forgottenDevotion) r.mood = Mood::Forgotten;
-	else r.mood = Mood::Parting;
+	(void)tn;
+	r.mood = memory(w, cultureId).mood;
 	return r;
+}
+
+// ---------------------------------------------------------------- memory (v3, design review)
+
+Memory memory(const World& w, int cultureId) {
+	const SocietyTune& tn = tuneOf(w);
+	Memory m;
+	// today's feelings: population-weighted means (as regard)
+	double wsum = 0, dsum = 0, lsum = 0, dplain = 0, lplain = 0;
+	int cnt = 0;
+	for (const Settlement& s : w.settlements) {
+		if (s.dead) continue;
+		if (cultureId >= 0 && s.culture != cultureId) continue;
+		const double p = std::max(0.0, finiteOr(s.pop, 0));
+		const double dv = sat(finiteOr(s.devotion, 0));
+		const double lv = clamp(finiteOr(s.love, 0), -1.0, 1.0);
+		wsum += p; dsum += p * dv; lsum += p * lv; dplain += dv; lplain += lv;
+		cnt++;
+	}
+	if (cnt == 0) return m;                        // nobody: Forgotten
+	m.devotion = wsum > 0 ? dsum / wsum : dplain / cnt;
+	m.love = wsum > 0 ? lsum / wsum : lplain / cnt;
+	// the memory: one culture, or everyone (weighted by people; the latest deed of any)
+	double heard = -1e18;
+	if (cultureId >= 0) {
+		m.grace = varOr(w, varKey("grace", cultureId), 0);
+		m.wrath = varOr(w, varKey("wrath", cultureId), 0);
+		m.neglect = varOr(w, varKey("neglect", cultureId), 0);
+		const Culture* c = state::culture(w, cultureId);
+		heard = varOr(w, varKey("heard", cultureId), c ? finiteOr(c->born, 0) : 0);
+		m.prayers = int(varOr(w, varKey("pray", cultureId), 0));
+		m.answered = int(varOr(w, varKey("answer", cultureId), 0));
+	} else {
+		double pw = 0, g = 0, wr = 0, ng = 0;
+		for (const Culture& c : w.cultures) {
+			if (c.dead) continue;
+			const double p = std::max(0.0, finiteOr(c.pop, 0)) + 1e-9;
+			pw += p;
+			g += p * varOr(w, varKey("grace", c.id), 0);
+			wr += p * varOr(w, varKey("wrath", c.id), 0);
+			ng += p * varOr(w, varKey("neglect", c.id), 0);
+			heard = std::max(heard, varOr(w, varKey("heard", c.id), finiteOr(c.born, 0)));
+			m.prayers += int(varOr(w, varKey("pray", c.id), 0));
+			m.answered += int(varOr(w, varKey("answer", c.id), 0));
+		}
+		if (pw > 0) { m.grace = g / pw; m.wrath = wr / pw; m.neglect = ng / pw; }
+		if (heard < -1e17) heard = 0;
+	}
+	m.grace = std::max(0.0, m.grace);
+	m.wrath = std::max(0.0, m.wrath);
+	m.neglect = std::max(0.0, finiteOr(m.neglect, 0));
+	m.silent = std::max(0.0, finiteOr(w.year, 0) - heard);
+	const double total = m.grace + m.wrath;
+	// (v3, verifier) kindness from a god who was long absent is held lightly: grace counts x presence,
+	// presence = 1 / (1 + neglectK x neglect) (wrath is remembered whole: terror needs no habit)
+	m.presence = 1 / (1 + std::max(0.0, finiteOr(tn.neglectK, 0)) * m.neglect);
+	const double held = m.grace * m.presence;
+	m.lore = (held - m.wrath) / (held + m.wrath + std::max(1e-9, tn.loreFloor));
+	m.verdict = tn.verdictLove * m.love + (1 - tn.verdictLove) * m.lore;
+	m.remembered = total >= tn.rememberMin;
+	m.mixed = m.remembered && std::min(m.grace, m.wrath) >= tn.mixedRatio * std::max(m.grace, m.wrath);
+	const bool byPrayers = m.prayers >= tn.answeredMin && m.answered >= tn.answeredShare * m.prayers && m.verdict > 0;
+	if (m.silent >= tn.silentYears) m.mood = m.remembered ? Mood::Parting : Mood::Forgotten;
+	else if (m.mixed) m.mood = Mood::Parting;
+	else if (m.verdict <= tn.fearedLove) m.mood = Mood::Feared;
+	else if ((m.verdict >= tn.belovedLove && m.devotion >= tn.belovedDevotion) || byPrayers) m.mood = Mood::Beloved;
+	else if (m.devotion < tn.forgottenDevotion) m.mood = Mood::Forgotten;
+	else m.mood = Mood::Parting;
+	return m;
+}
+
+bool raiseWonder(World& w, int sid) {
+	if (!liveSettlement(w, sid)) return false;
+	Settlement& s = w.settlements[size_t(sid)];
+	if (s.has(Building::WONDER)) return false;
+	const Culture* c = state::culture(w, s.culture);
+	if (!c) return false;
+	const std::string nm = wonderName(w, sid, *c);
+	w.settlements[size_t(sid)].b[Building::WONDER] = 1;
+	w.dirty.objects = true;
+	w.bus.emit(EvWonderBuilt{ sid, nm });
+	w.bus.emit(EvSettlementBuilding{ sid, Building::WONDER });
+	return true;
 }
 
 // ---------------------------------------------------------------- prophets and edicts

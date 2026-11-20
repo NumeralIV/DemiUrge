@@ -17,6 +17,12 @@
 //
 // Real time: brush pacing counts only the dt passed to use(); the awe:short clock counts those dt
 // plus elapsed ticks at the fastest game speed (no clock is ever read). Clocks live in scratch.
+//
+// v3 (design review, docs/reviews/claude-design-review.md): every power past Bronze unlocks by age
+// only, and the late ages upgrade one (Monsoon, Star-fall); Inspire teaches at once (+2
+// progress-years) and wrath that hits a capital or an academy sets research back; an awakening wakes
+// two bands; Consecrate buys durable things (a temple; a Wonder in a capital, once an age); Rain and
+// Bloom cost double off every territory; one press of Lower Land cannot drown a town (drown:warning).
 #include "Powers.h"
 
 #include <algorithm>
@@ -45,6 +51,10 @@ struct BrushPace {
 	double lastEmit = -1e9;      // PowersScratch::clock at the last power:used of this brush
 	bool shortInStroke = false;  // awe:short already emitted during this press
 	std::vector<int> harmed;     // sorted unique settlement ids for the special good of the window
+	// (v3) Lower Land in history: settlements this press has reached, and whether it may drown each
+	// (only if its centre was already at the floor when the press first reached it); warned ones
+	std::vector<std::pair<int, bool>> reached;
+	std::vector<int> warned;
 };
 
 struct PowersScratch {
@@ -109,6 +119,9 @@ std::vector<int> enemiesOf(const World& w, int cultureId) {
 	return out;
 }
 
+const Upgrade* upgradeOf(const World& w, std::string_view id);
+int consecrateRite(const World& w, int sid);
+
 struct TargetCheck {
 	bool ok = false;
 	Why why = Why::None;
@@ -153,8 +166,10 @@ TargetCheck checkTarget(const World& w, const PowerDef& d, int cell) {
 	}
 	if (is(d, "peace")) {
 		const Settlement* s = state::settlement(w, r.sid);
-		if (!s || enemiesOf(w, s->culture).empty()) { r.why = Why::None; return r; }
+		// (v3.1, design review 11) an Omen may also calm a neighbour on the brink of war (society::tense)
+		if (!s || (enemiesOf(w, s->culture).empty() && society::tense(w, s->culture).empty())) { r.why = Why::None; return r; }
 	}
+	if (is(d, "consecrate") && consecrateRite(w, r.sid) == 0) { r.why = Why::None; return r; }
 	r.ok = true;
 	return r;
 }
@@ -164,7 +179,8 @@ double effAng(const World& w, const PowerDef& d, double ang) {
 	const PowersTune& T = w.tune<PowersTune>();
 	if (d.brush) {
 		if (!(ang > 0) || !std::isfinite(ang)) return d.ang;
-		return clamp(ang, T.brushMinAng, T.brushMaxAng);
+		const double hi = is(d, "rain") && upgradeOf(w, "rain") ? std::max(T.brushMaxAng, T.monsoonMaxAng) : T.brushMaxAng;
+		return clamp(ang, T.brushMinAng, hi);
 	}
 	if (is(d, "seed") && ang > 0 && std::isfinite(ang)) return clamp(ang, T.seedMinAng, T.seedMaxAng);
 	return d.ang;
@@ -210,6 +226,45 @@ void killUnitsNear(World& w, int cell, double ang, const char* cause) {
 	for (int id : ids) units::kill(w, id, cause);
 }
 
+// (v3) the age upgrade of a power, or nullptr
+const Upgrade* upgradeOf(const World& w, std::string_view id) {
+	for (const Upgrade& u : kUpgrades)
+		if (id == u.id && w.age >= u.age && w.phase >= Phase::History) return &u;
+	return nullptr;
+}
+
+// (v3) does a brush of ang at cell cover any settlement's territory?
+bool coversTerritory(const World& w, int cell, double ang) {
+	PowersScratch& S = scr(w);
+	const int cnt = w.geo->within(cell, ang, S.cells);
+	for (int j = 0; j < cnt; j++)
+		if (w.owner[size_t(S.cells[size_t(j)])] >= 0) return true;
+	return false;
+}
+
+// (v3) Consecrate on a settlement: 1 = a temple (it has a shrine, no temple), 2 = a Wonder (a capital
+// with a temple and no Wonder, no Wonder raised by the god in this age yet), 0 = nothing to do
+int consecrateRite(const World& w, int sid) {
+	const Settlement* s = state::settlement(w, sid);
+	if (!s || s->dead) return 0;
+	if (s->has(Building::SHRINE) && !s->has(Building::TEMPLE)) return 1;
+	const Culture* c = state::culture(w, s->culture);
+	if (s->has(Building::TEMPLE) && !s->has(Building::WONDER) && c && c->capital == sid) {
+		const auto it = w.vars.num.find("powers_wonderAge");
+		if (it == w.vars.num.end() || !(it->second >= w.age)) return 2;
+	}
+	return 0;
+}
+
+// (v3) the research setback of a wrath act that hurt these settlements
+void setBack(World& w, const char* id, const std::vector<int>& harmed) {
+	const PowersTune& T = w.tune<PowersTune>();
+	const std::string_view k = id;
+	const double years = k == "lightning" ? T.setbackLightning : k == "quake" ? T.setbackQuake : k == "plague" ? T.setbackPlague
+		: k == "meteor" ? T.setbackMeteor : k == "volcano" ? T.setbackVolcano : 0.0;
+	if (years > 0) civ::strikeKnowledge(w, harmed, years);
+}
+
 // settlements whose centre the sea now covers are drowned
 void drownCovered(World& w, int cell, double ang) {
 	for (int sid : sortedNear(w, cell, ang)) {
@@ -232,7 +287,47 @@ void sculptBrush(World& w, PowersScratch& S, const PowerDef& d, int idx, int cel
 		const int o = w.owner[size_t(S.cells[size_t(j)])];
 		if (o >= 0) addSorted(B.harmed, o);
 	}
-	terrain::sculpt(w, cell, ang, amount);
+	double amt = amount;
+	// (v3, design review finding 10) in history one press of Lower Land stops a settlement's centre at
+	// sea level + drownFloor (drown:warning); only a press that reached it already there may drown it
+	// (verifier fix) only a town that was already warned (drown:warning, remembered in vars.num
+	// "powers_drownWarned_<sid>") and still sits at the floor when a press reaches it may drown: a town
+	// the rising sea brought to the floor is warned by its first press too, not drowned
+	std::vector<std::pair<int, double>> guard;           // settlement, its centre's height before this frame
+	if (w.phase >= Phase::History && amount < 0) {
+		const double floorH = w.seaLevel + T.drownFloor;
+		for (int sid : sortedNear(w, cell, ang)) {
+			const Settlement* s = state::settlement(w, sid);
+			if (!s || s->dead || !w.valid(s->cell)) continue;
+			auto it = std::find_if(B.reached.begin(), B.reached.end(), [&](const std::pair<int, bool>& p) { return p.first == sid; });
+			if (it == B.reached.end()) {
+				const bool atFloor = double(w.elev[size_t(s->cell)]) <= floorH + 1e-3;
+				B.reached.push_back({ sid, atFloor && w.vars.num.count("powers_drownWarned_" + std::to_string(sid)) > 0 });
+				it = B.reached.end() - 1;
+			}
+			if (it->second) continue;                    // a deliberate second press: it may drown
+			const double h0 = double(w.elev[size_t(s->cell)]);
+			guard.push_back({ sid, h0 });
+			const double t = ang > 0 ? w.geo->angle(cell, s->cell) / ang : 0;
+			const double f = t >= 1 ? 0 : (1 - t * t) * (1 - t * t);
+			const double room = h0 - floorH;
+			if (f > 1e-9) amt = std::max(amt, room > 0 ? -room / f : 0.0);
+		}
+	}
+	if (amt < 0 || amt > 0) terrain::sculpt(w, cell, ang, amt);
+	for (const auto& [sid, h0] : guard) {
+		const Settlement* s = state::settlement(w, sid);
+		if (!s || s->dead) continue;
+		const double floorH = w.seaLevel + T.drownFloor;
+		const double keep = std::min(floorH, h0);        // never raised by Lower Land, never sunk below the floor
+		const double h = w.elev[size_t(s->cell)];
+		if (h < keep) terrain::addElev(w, s->cell, keep - h);   // the chord falloff of sculpt may differ a hair
+		if (double(w.elev[size_t(s->cell)]) <= floorH + 1e-3 && std::find(B.warned.begin(), B.warned.end(), sid) == B.warned.end()) {
+			B.warned.push_back(sid);
+			w.vars.num["powers_drownWarned_" + std::to_string(sid)] = 1;
+			w.bus.emit(EvDrownWarning{ sid, s->cell });
+		}
+	}
 	drownCovered(w, cell, ang);
 }
 
@@ -313,6 +408,7 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 		if (type == DisasterType::Meteor) so.data["witness"] = 1;
 		Disaster* z = start(w, type, cell, so);
 		if (!z) return a;
+		if (type == DisasterType::Volcano) setBack(w, "volcano", harmed);   // (the meteor's comes at impact)
 		if (type != DisasterType::Volcano) a.witness = false;
 		a.wo.good = 0;
 		a.wo.harmed = std::move(harmed);
@@ -335,6 +431,13 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 		const int cid = cu->id;
 		Settlement* s = civ::found(w, cell, cid, T.awakenPop, FoundedBy::Awaken);
 		if (!s) return a;
+		// (v3, design review finding 4) a second band wakes a few days' walk away
+		const int site = civ::bandSite(w, cell);
+		if (site >= 0) {
+			civ::FoundOpts fo;
+			fo.band = true;
+			civ::found(w, site, cid, w.tune<CivTune>().bandPop, FoundedBy::Awaken, fo);
+		}
 		a.ok = true;
 		return a;
 	}
@@ -351,6 +454,7 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 			for (int k = 0; !adj && k < g.nbrN[size_t(cell)]; k++) adj = g.nbr[size_t(6 * cell + k)] == s->cell;
 			if (adj) hit.push_back(s2);
 		}
+		setBack(w, "lightning", hit);   // (before the damage: a capital it destroys still counts)
 		for (int s2 : hit) civ::damage(w, s2, w.rng.range(T.lightningLo, T.lightningHi), Cause::Lightning);
 		killUnitsNear(w, cell, 0.5 * g.step, "lightning");
 		a.wo.good = 0;
@@ -363,6 +467,7 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 		const bool underSea = sea(w, cell);
 		w.bus.emit(EvQuake{ cell, ang, 1.0, false });
 		const std::vector<int> hit = sortedNear(w, cell, ang);
+		setBack(w, "quake", hit);
 		for (int s2 : hit) civ::damage(w, s2, w.rng.range(T.quakeLo, T.quakeHi), Cause::Quake);
 		terrain::roughen(w, cell, ang, T.quakeRough, w.rng);
 		killUnitsNear(w, cell, T.quakeUnitAng * ang, "quake");
@@ -376,6 +481,7 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 	}
 	if (id == "plague") {
 		if (!civ::infect(w, sid, T.plagueSeverity)) return a;
+		setBack(w, "plague", { sid });
 		a.wo.good = -0.7;
 		a.wo.harmed = { sid };
 		a.wo.goodHarmed = -0.7;
@@ -395,6 +501,7 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 		Settlement* s = state::settlement(w, sid);
 		if (!s || s->dead) return a;
 		s->inspire = std::max(s->inspire, T.inspireYears);
+		civ::addScience(w, s->culture, T.inspireScience);   // (v3, design review finding 3)
 		a.wo.good = 0.6;
 		a.ok = true;
 		return a;
@@ -405,18 +512,39 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 		a.ok = true;
 		return a;
 	}
+	if (id == "consecrate") {
+		const int rite = consecrateRite(w, sid);
+		if (rite == 1 && !civ::consecrate(w, sid)) return a;
+		if (rite == 2) {
+			if (!society::raiseWonder(w, sid)) return a;
+			w.vars.num["powers_wonderAge"] = w.age;
+		}
+		if (rite == 0) return a;
+		a.wo.good = 0.5;
+		a.ok = true;
+		return a;
+	}
 	if (id == "peace") {
 		const Settlement* s = state::settlement(w, sid);
 		if (!s) return a;
 		const int cu = s->culture;
 		const std::vector<int> foes = enemiesOf(w, cu);
-		if (foes.empty()) return a;
+		// (v3.1, design review 11) no war yet: the Omen calms the neighbours on the brink of one
+		const std::vector<int> calm = foes.empty() ? society::tense(w, cu) : std::vector<int>{};
+		if (foes.empty() && calm.empty()) return a;
+		const DiplomacyTune& DT = w.tune<DiplomacyTune>();
 		for (int other : foes) {
 			society::makePeace(w, cu, other, T.peaceTruce, -1);
 			if (Relation* r = society::rel(w, cu, other)) r->v = clamp(finiteOr(r->v, 0) + T.peaceRel, -1.0, 1.0);
+			society::swearPeace(w, cu, other);       // (v3.1) a sworn peace (omenSworn)
 		}
-		a.wo.good = 0.8;
-		a.cultureWitness = foes;
+		for (int other : calm) {
+			society::makePeace(w, cu, other, DT.omenCalmTruce, -1);   // (at peace: only the truce)
+			if (Relation* r = society::rel(w, cu, other)) r->v = clamp(finiteOr(r->v, 0) + T.peaceRel, -1.0, 1.0);
+			society::swearPeace(w, cu, other);
+		}
+		a.wo.good = foes.empty() ? DT.omenCalmGood : 0.8;   // (v3.1) a war averted is felt less than a war ended
+		a.cultureWitness = foes.empty() ? calm : foes;
 		a.cultureWitness.push_back(cu);
 		std::sort(a.cultureWitness.begin(), a.cultureWitness.end());
 		a.ok = true;
@@ -450,6 +578,23 @@ bool unlocked(const World& w, std::string_view id) {
 	return d && phaseLock(w, *d) == Reason::Ok;
 }
 
+const Upgrade* upgrade(const World& w, std::string_view id) { return upgradeOf(w, id); }
+
+int drownRisk(const World& w, int cell, double ang) {
+	if (!w.valid(cell) || !w.geo || w.phase < Phase::History) return -1;
+	const PowerDef* d = byId("lower");
+	if (!d) return -1;
+	const double a = effAng(w, *d, ang);
+	const double floorH = w.seaLevel + w.tune<PowersTune>().drownFloor;
+	for (int sid : sortedNear(w, cell, a)) {
+		const Settlement* s = state::settlement(w, sid);
+		if (s && !s->dead && w.valid(s->cell) && double(w.elev[size_t(s->cell)]) <= floorH + 1e-3 &&
+			w.vars.num.count("powers_drownWarned_" + std::to_string(sid)))
+			return sid;
+	}
+	return -1;
+}
+
 double cost(const World& w, std::string_view id, double ang, int cell) {
 	const PowerDef* d = byId(id);
 	if (!d) return 0;
@@ -461,8 +606,13 @@ double cost(const World& w, std::string_view id, double ang, int cell) {
 			if (w.phase < Phase::History) return 0;
 			if (w.valid(cell) && w.owner[size_t(cell)] >= 0) c *= T.ownedCostMul;
 		}
+		if (is(*d, "rain") && upgradeOf(w, "rain")) c *= T.monsoonCostMul;
+		// (v3, design review finding 6) painting the empty world is not free
+		if ((is(*d, "rain") || is(*d, "bloom")) && w.phase >= Phase::History && w.valid(cell) && w.geo && !coversTerritory(w, cell, a))
+			c *= T.offTerritoryMul;
 		return finiteOr(c, 0);
 	}
+	if (is(*d, "consecrate") && w.valid(cell) && consecrateRite(w, civ::at(w, cell)) == 2) return T.wonderCost;
 	if (is(*d, "awaken")) {
 		if (w.phase < Phase::History) return 0;
 		if (nobodyAlive(w)) return 0;
@@ -509,11 +659,19 @@ bool use(World& w, std::string_view id, int cell, const UseOpts& opts) {
 	S.haveTick = true;
 	S.lastTick = w.tick;
 	if (d.brush) {
-		const bool newPress = S.lastPower != idx || !(rawDt > 0) || rawDt > T.strokeGap;
+		const bool explicitPress = S.lastPower != idx || !(rawDt > 0);
+		const bool newPress = explicitPress || rawDt > T.strokeGap;
 		if (newPress) {
 			// faith of the last (< 1 / brushRate s) of the previous press is not carried to a new place
 			B.pending = 0;
 			B.harmed.clear();
+			// (v3, verifier fix) a long stalled frame (dt > strokeGap) while the button is held is still
+			// the same press for Lower Land's drown guard: only a real new press (dt <= 0, or another
+			// power in between) may drown a town the last press stopped at the floor
+			if (explicitPress) {
+				B.reached.clear();
+				B.warned.clear();
+			}
 			B.shortInStroke = false;
 			if (S.clock - B.lastEmit >= 1 / T.brushRate - 1e-9) B.pace = 1 / T.brushRate;   // first frame shows at once
 		}

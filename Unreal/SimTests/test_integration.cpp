@@ -287,7 +287,9 @@ DM_TEST("integration: every power used on a living L5 world, then 60 years: vali
 	auto w = historyWorld(5, 5);
 	sim::advance(*w, 4 * 250);
 	w->god.awe = w->god.aweMax = 1200;
-	// aweMax 1200 unlocks every power (the highest unlock is 600)
+	// (v3, design review: powers past Bronze unlock by age only) the world's age opens every power
+	w->age = Age::INDUSTRY;
+	for (Culture& c : w->cultures) if (!c.dead) c.age = std::max(c.age, int(Age::BRONZE));
 	std::map<std::string, std::string> result;
 	for (const powers::PowerDef& d : powers::kPowers) {
 		if (d.group == powers::Group::Genesis && std::string(d.id) != "awaken") continue;

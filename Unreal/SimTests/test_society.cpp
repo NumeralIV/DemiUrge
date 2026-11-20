@@ -76,9 +76,17 @@ struct Base {
 	std::unique_ptr<World> w;
 	int cid = -1, cap = -1, capCell = -1;
 };
+// The v2 rules of these tests run without the v3 hoarding drift and age-based Awe cap (both are
+// tested in test_integration_review.cpp and the "v3" tests at the end of this file).
+void v2Awe(World& w) {
+	w.tune<SocietyTune>().hoardDrift = 0;
+	w.tune<SocietyTune>().aweCapAge.fill(0);
+}
+
 Base base(int L = 5, uint32_t seed = 1) {
 	Base b;
 	b.w = makeWorld({ .L = L, .seed = seed });
+	v2Awe(*b.w);
 	b.cid = addCulture(*b.w);
 	b.capCell = bestHab(*b.w);
 	b.cap = addTown(*b.w, b.capCell, b.cid, 500, 0.5, 0);
@@ -503,6 +511,7 @@ DM_TEST("society: aweMax and Awe income match the formula") {
 	ok(twenty > 3.0 && twenty < 3.6, "twenty settlements ~3.3");
 	// late game: 90 cities with temples at devotion 0.25
 	auto late = makeWorld({ .L = 5 });
+	v2Awe(*late);
 	const int lc = addCulture(*late);
 	double S = 0;
 	int placedLate = 0;
@@ -520,6 +529,7 @@ DM_TEST("society: aweMax and Awe income match the formula") {
 	near(lateInc, 0.6 + 0.9 * std::log(1 + S), 1e-9, "late game formula");
 	// aweMax: 100 + 25 shrines + 60 temples + 150 wonders, cap 1200
 	World& v = *w;
+	v2Awe(v);
 	v.settlements[1].b[Building::TEMPLE] = 1;
 	v.settlements[2].b[Building::WONDER] = 1;
 	int shrines = 0;
@@ -533,6 +543,7 @@ DM_TEST("society: aweMax and Awe income match the formula") {
 	near(v.god.aweMax, std::min(1200.0, 100 + 25.0 * shrines + 60.0 * temples + 150), 1e-12, "aweMax formula (capped)");
 	{
 		auto u = makeWorld({ .L = 4 });
+		v2Awe(*u);
 		const int uc = addCulture(*u);
 		const int a0 = bestHab(*u);
 		const int s0 = addTown(*u, a0, uc, 100, 0.5, 0);
@@ -821,6 +832,7 @@ DM_TEST("society: distant settlements secede together after 120 estranged years 
 	stub::Guard guard(true);
 	auto b = base(5);
 	World& w = *b.w;
+	w.cultures[size_t(b.cid)].age = Age::IRON;   // (v3: before Iron 60 years and 0.40 rad suffice; see the v3 test)
 	const SocietyTune& tn = TS(w);
 	// two towns far from the capital, close to each other
 	const int fa = landAt(w, b.capCell, 0.75);
@@ -1005,19 +1017,25 @@ DM_TEST("society: regard is population-weighted and gives the right mood at each
 	near(all.devotion, (180 + 20 + 10) / 500.0, 1e-12, "everyone");
 	const society::Regard none = society::regard(w, 42);
 	ok(none.devotion == 0 && none.love == 0 && none.mood == Mood::Forgotten, "unknown culture: zeros, forgotten");
-	// thresholds on a single settlement
-	auto moodOf = [&](double dv, double lv) {
+	// thresholds on a single settlement (v3, design review: the mood is the verdict of the culture's
+	// memory, verdict = 0.35 love + 0.65 lore; with a strong one-handed memory lore is about +-0.83)
+	const std::string id = std::to_string(b.cid);
+	auto moodOf = [&](double dv, double lv, double grace = 0, double wrath = 0) {
 		w.settlements[size_t(b.cap)].devotion = dv; w.settlements[size_t(b.cap)].love = lv;
 		for (Settlement& s : w.settlements) if (s.id != b.cap) s.pop = 0;
+		w.vars.num["society_grace_" + id] = grace;
+		w.vars.num["society_wrath_" + id] = wrath;
+		w.vars.num["society_heard_" + id] = w.year;
 		return society::regard(w, b.cid).mood;
 	};
-	ok(moodOf(0.35, 0.2) == Mood::Beloved, "beloved at devotion 0.35, love 0.2");
-	ok(moodOf(0.349, 0.2) == Mood::Parting, "just below: parting");
-	ok(moodOf(0.6, 0.199) == Mood::Parting, "love just below 0.2: parting");
-	ok(moodOf(0.6, -0.2) == Mood::Feared, "feared at love -0.2");
-	ok(moodOf(0.1, -0.2) == Mood::Feared, "fear outranks forgetting");
-	ok(moodOf(0.199, 0) == Mood::Forgotten, "forgotten below devotion 0.2");
-	ok(moodOf(0.2, 0) == Mood::Parting, "parting at 0.2");
+	ok(moodOf(0.30, 0.2, 3) == Mood::Beloved, "beloved at devotion 0.30 with grace remembered");
+	ok(moodOf(0.299, 0.2, 3) == Mood::Parting, "just below: parting");
+	ok(moodOf(0.6, 0.5) == Mood::Parting, "love 0.5 alone (nothing remembered; verdict 0.175) is not beloved: parting");
+	ok(moodOf(0.6, -0.2, 0, 3) == Mood::Feared, "feared with wrath remembered");
+	ok(moodOf(0.1, -0.2, 0, 3) == Mood::Feared, "fear outranks forgetting");
+	ok(moodOf(0.249, 0) == Mood::Forgotten, "forgotten below devotion 0.25");
+	ok(moodOf(0.25, 0) == Mood::Parting, "parting at 0.25");
+	ok(moodOf(0.6, 0.1, 3, 2) == Mood::Parting, "both hands remembered: parting");
 	// zero population: plain means
 	w.settlements[size_t(b.cap)].pop = 0;
 	const society::Regard z = society::regard(w, b.cid);

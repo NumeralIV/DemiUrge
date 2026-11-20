@@ -84,6 +84,8 @@ namespace dm {
 	X(AweShort, "awe:short")                              \
 	X(PeopleLost, "people:lost")                          \
 	X(Ending, "ending")                                   \
+	X(DrownWarning, "drown:warning")                      \
+	X(Alliance, "alliance")                               \
 	X(UiState, "ui:state")                                \
 	X(UiSpeed, "ui:speed")                                \
 	X(UiPower, "ui:power")                                \
@@ -132,8 +134,9 @@ struct EvMeteorImpact { static constexpr Ev kType = Ev::MeteorImpact; int cell =
 	template <class F> void fields(F&& f) const { DM_F(cell); DM_F(ang); DM_F(kind); DM_F(sea); } };
 struct EvTsunamiStart { static constexpr Ev kType = Ev::TsunamiStart; int cell = -1;
 	template <class F> void fields(F&& f) const { DM_F(cell); } };
-struct EvTsunamiHit { static constexpr Ev kType = Ev::TsunamiHit; int cell = -1; double height = 0;
-	template <class F> void fields(F&& f) const { DM_F(cell); DM_F(height); } };
+// natural (v3, design review finding 7): the wave of a natural quake, not of the god's meteor or quake
+struct EvTsunamiHit { static constexpr Ev kType = Ev::TsunamiHit; int cell = -1; double height = 0; bool natural = false;
+	template <class F> void fields(F&& f) const { DM_F(cell); DM_F(height); DM_F(natural); } };
 struct EvVolcanoStart { static constexpr Ev kType = Ev::VolcanoStart; int cell = -1; int id = 0; bool natural = false;
 	template <class F> void fields(F&& f) const { DM_F(cell); DM_F(id); DM_F(natural); } };
 struct EvVolcanoEnd { static constexpr Ev kType = Ev::VolcanoEnd; int cell = -1; int id = 0;
@@ -173,12 +176,15 @@ struct EvCultureAge { static constexpr Ev kType = Ev::CultureAge; int id = -1; i
 	template <class F> void fields(F&& f) const { DM_F(id); DM_F(age); DM_F(prev); } };
 struct EvWorldAge { static constexpr Ev kType = Ev::WorldAge; int age = 0;
 	template <class F> void fields(F&& f) const { DM_F(age); } };
-// a = aggressor (culture ids)
-struct EvWarDeclared { static constexpr Ev kType = Ev::WarDeclared; int a = -1; int b = -1;
-	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); } };
-// victor = culture id, -1 = draw
-struct EvWarEnded { static constexpr Ev kType = Ev::WarEnded; int a = -1; int b = -1; int victor = -1;
-	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); DM_F(victor); } };
+// a = aggressor (culture ids). (v3.1, design review 11/13) ally = the culture whose call to arms a
+// joined (a is its ally and b attacked it; -1: a war of a's own); blamed = a's people blamed the god for
+// this war (the god struck them, or favoured b over them, in the last decades: they turned on b)
+struct EvWarDeclared { static constexpr Ev kType = Ev::WarDeclared; int a = -1; int b = -1; int ally = -1; bool blamed = false;
+	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); DM_F(ally); DM_F(blamed); } };
+// victor = culture id, -1 = draw. (v3.1) thanked = the victor's people thanked the god for the victory
+// (the god's grace was with them while they fought: their devotion rose, the loser's love fell)
+struct EvWarEnded { static constexpr Ev kType = Ev::WarEnded; int a = -1; int b = -1; int victor = -1; bool thanked = false;
+	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); DM_F(victor); DM_F(thanked); } };
 // attacker / defender culture ids; settlement = the defending settlement; won = attacker won
 struct EvBattle { static constexpr Ev kType = Ev::Battle; int cell = -1; int attacker = -1; int defender = -1; bool won = false; int settlement = -1;
 	template <class F> void fields(F&& f) const { DM_F(cell); DM_F(attacker); DM_F(defender); DM_F(won); DM_F(settlement); } };
@@ -200,8 +206,11 @@ struct EvArkStarted { static constexpr Ev kType = Ev::ArkStarted; int culture = 
 	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(settlement); } };
 struct EvArkLaunched { static constexpr Ev kType = Ev::ArkLaunched; int culture = -1; int settlement = -1;
 	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(settlement); } };
-struct EvClimateMilestone { static constexpr Ev kType = Ev::ClimateMilestone; MilestoneKind kind = MilestoneKind::Warming; double value = 0;
-	template <class F> void fields(F&& f) const { DM_F(kind); DM_F(value); } };
+// culture (v3, design review finding 7): the culture whose engines put the most CO2 into the air so far
+// (-1 when nobody's did, e.g. a cooling after a meteor's dust); the HUD and the chronicle name it for a
+// warming or a rising sea instead of blaming the god
+struct EvClimateMilestone { static constexpr Ev kType = Ev::ClimateMilestone; MilestoneKind kind = MilestoneKind::Warming; double value = 0; int culture = -1;
+	template <class F> void fields(F&& f) const { DM_F(kind); DM_F(value); DM_F(culture); } };
 struct EvUnitSpawned { static constexpr Ev kType = Ev::UnitSpawned; int id = 0; UnitType type = UnitType::Settler; int culture = -1; int cell = -1;
 	template <class F> void fields(F&& f) const { DM_F(id); DM_F(type); DM_F(culture); DM_F(cell); } };
 struct EvUnitArrived { static constexpr Ev kType = Ev::UnitArrived; int id = 0; UnitType type = UnitType::Settler; int culture = -1; int cell = -1;
@@ -219,6 +228,17 @@ struct EvPeopleLost { static constexpr Ev kType = Ev::PeopleLost;
 // the world.ending object
 struct EvEnding { static constexpr Ev kType = Ev::Ending; EndingType type = EndingType::Ark; Mood mood = Mood::Parting; int culture = -1; int settlement = -1; double year = 0;
 	template <class F> void fields(F&& f) const { DM_F(type); DM_F(mood); DM_F(culture); DM_F(settlement); DM_F(year); } };
+// (v3, design review finding 10) a Lower Land press stopped at a settlement's centre just above the sea
+// (sea level + 0.05) instead of drowning it: a second press after this one ends would drown it.
+// id = the settlement, cell = its centre. At most once per settlement per press. (verifier) A town the
+// sea already brought within 0.05 is warned (not drowned) by its first press too.
+struct EvDrownWarning { static constexpr Ev kType = Ev::DrownWarning; int id = -1; int cell = -1;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(cell); } };
+// (v3.1, design review 11/13) culture ids a < b became allies (formed = true: in contact, at peace,
+// relations at least DiplomacyTune::allyForm) or their alliance ended (formed = false: relations below
+// allyBreak, a war between them, or one of them died). Allies come to each other's defence.
+struct EvAlliance { static constexpr Ev kType = Ev::Alliance; int a = -1; int b = -1; bool formed = true;
+	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); DM_F(formed); } };
 // Interface events (SPEC-UI section 0), kept so client code can share the bus.
 struct EvUiState { static constexpr Ev kType = Ev::UiState; std::string state, prev;
 	template <class F> void fields(F&& f) const { DM_F(state); DM_F(prev); } };

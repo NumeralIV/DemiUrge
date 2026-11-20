@@ -42,7 +42,7 @@ bool parseIn(const char* const (&names)[N], std::string_view s, E& out) {
 }
 
 const char* const PHASE_N[] = { "molten", "water", "life", "people", "history", "ended" };
-const char* const CAUSE_N[] = { "none", "drowned", "meteor", "lava", "war", "famine", "plague", "quake", "nuke", "abandoned", "wave", "lightning" };
+const char* const CAUSE_N[] = { "none", "drowned", "meteor", "lava", "war", "famine", "plague", "quake", "nuke", "abandoned", "wave", "lightning", "sea" };
 const char* const UNIT_N[] = { "settler", "trader", "army", "prophet" };
 const char* const NAVAL_N[] = { "land", "coastal", "open" };
 const char* const DIS_N[] = { "none", "comet", "meteor", "volcano", "tsunami", "storm", "drought" };

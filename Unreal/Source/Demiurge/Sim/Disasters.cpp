@@ -130,6 +130,7 @@ void witnessNatural(World& w, int cell, const char* kind) {
 	o.kind = kind;
 	o.faith = d->faith * w.tune<PowersTune>().naturalFaith;
 	o.good = 0;
+	o.natural = true;                    // (v3) not a deed of the god: no memory, not 'heard'
 	society::witness(w, cell, d->wAng, o);
 }
 
@@ -263,6 +264,8 @@ void impactMeteor(World& w, int id) {
 	// people
 	std::vector<int> harmed;
 	const std::vector<int> hit = civ::near(w, c, outer);
+	// (v3, design review finding 3) the god's star on a capital or an academy sets research back
+	if (!nat && wantWitness) civ::strikeKnowledge(w, hit, w.tune<PowersTune>().setbackMeteor);
 	for (int sid : hit) {
 		if (sid < 0 || size_t(sid) >= w.settlements.size() || w.settlements[size_t(sid)].dead) continue;
 		const double a = g.angle(c, w.settlements[size_t(sid)].cell);
@@ -272,7 +275,9 @@ void impactMeteor(World& w, int id) {
 	}
 	killUnits(w, c, ang * T.meteorUnitKill, "meteor");
 	// the ground
-	terrain::crater(w, c, ang, T.meteorDepth);
+	// (v3, design review finding 5) Star-fall: from the Space age the god's star digs deeper (a lake)
+	const double depth = !nat && powers::upgrade(w, "meteor") ? T.meteorDepth * w.tune<PowersTune>().starfallDepth : T.meteorDepth;
+	terrain::crater(w, c, ang, depth);
 	climate::addDust(w, T.meteorDust);
 	if (!sea) {
 		DisastersScratch& S = scr(w);
@@ -297,7 +302,7 @@ void impactMeteor(World& w, int id) {
 		if (def) {
 			society::WitnessOpts o;
 			o.kind = "meteor";
-			if (nat) { o.faith = def->faith * w.tune<PowersTune>().naturalFaith; o.good = 0; }
+			if (nat) { o.faith = def->faith * w.tune<PowersTune>().naturalFaith; o.good = 0; o.natural = true; }
 			else { o.faith = def->faith; o.good = 0; o.harmed = harmed; o.goodHarmed = -1; }
 			society::witness(w, c, def->wAng, o);
 		}
@@ -451,6 +456,7 @@ bool tickTsunami(World& w, int id, double dt) {
 	const double front = std::min(reach, d->front + T.tsunamiSpeed);
 	d->front = front;
 	const double power = std::max(0.0, d->power);
+	const bool natural = d->natural;
 	const bool done = front >= reach || d->t >= d->dur + 1e-9 || wo.next >= wo.order.size();
 	const double sea = w.seaLevel;
 	const int32_t mark = newGen(S);
@@ -542,7 +548,7 @@ bool tickTsunami(World& w, int id, double dt) {
 		auto it = S.lastHit.find(id);
 		if (it == S.lastHit.end() || S.clock - it->second >= T.hitEvery) {
 			S.lastHit[id] = S.clock;
-			w.bus.emit(EvTsunamiHit{ firstHit, firstH });
+			w.bus.emit(EvTsunamiHit{ firstHit, firstH, natural });
 		}
 	}
 	return done;
@@ -973,10 +979,28 @@ void tick(World& w) {
 void natural(World& w) {
 	if (!usable(w)) return;
 	if (w.phase != Phase::History && w.phase != Phase::Ended) return;
-	const double cal = w.settings.calamity;
-	if (!(cal > 0) || !isFinite(cal)) return;
 	const DisastersTune& T = w.tune<DisastersTune>();
+	// (v3.1, design review finding 13) the young world is busier, the old one quieter
+	const double ageMul = T.calamityAge[size_t(std::clamp(w.age, 0, 6))];
+	const double cal = w.settings.calamity * (isFinite(ageMul) ? std::max(0.0, ageMul) : 1.0);
+	if (!(cal > 0) || !isFinite(cal)) return;
 	const std::vector<int> liveIds = civ::live(w);
+	// (v3, design review finding 4) the first trial: a dry spell over the first people's camp in
+	// year trialYear (inside the usual protection), so the first prayer (for rain) comes early
+	if (T.trialYear > 0 && w.year + 1e-9 >= T.trialYear && !w.vars.num.count("disasters_trial")) {
+		w.vars.num["disasters_trial"] = w.year;
+		int cap = -1;
+		for (const Culture& cu : w.cultures)
+			if (!cu.dead && cu.capital >= 0 && state::settlement(w, cu.capital) && !w.settlements[size_t(cu.capital)].dead) { cap = cu.capital; break; }
+		if (cap >= 0) {
+			powers::StartOpts so;
+			so.natural = true;
+			so.power = T.trialPower;
+			so.ang = T.trialAng;
+			so.dur = T.trialYears;
+			powers::start(w, DisasterType::Drought, w.settlements[size_t(cap)].cell, so);
+		}
+	}
 	const int nL = rollCount(w, "lightning", T.lightningPerCentury, cal);
 	const int nS = rollCount(w, "storm", T.stormsPerCentury, cal);
 	const int nD = rollCount(w, "drought", T.droughtsPerCentury, cal);

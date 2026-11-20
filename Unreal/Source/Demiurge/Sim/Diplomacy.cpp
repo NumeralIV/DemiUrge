@@ -107,7 +107,35 @@ struct Agg {
 	double tech = 1;
 	int perim = 0, cells = 0;
 	int crusadeTarget = -1;
+	// (v3.1, design review 11/13) the god's recent favour (impulse a year), the sick share of the people, a prophet
+	double fGrace = 0, fWrath = 0, sick = 0;
+	bool prophet = false;
 };
+
+// (v3.1) persisted keys of alliances and sworn peaces: diplomacy_ally<lo>_<hi> (year formed),
+// diplomacy_sworn<lo>_<hi> (year the Omen's sworn peace ends)
+std::string pairKey(const char* what, int a, int b) {
+	const auto k = state::relKey(a, b);
+	return std::string("diplomacy_") + what + std::to_string(k.first) + "_" + std::to_string(k.second);
+}
+bool isAlly(const World& w, int a, int b) {
+	return a != b && w.vars.num.count(pairKey("ally", a, b)) > 0;
+}
+// The allies of culture c (ascending ids), from the persisted alliance keys.
+std::vector<int> alliesOf(const World& w, int c) {
+	std::vector<int> out;
+	for (int z = 0; z < int(w.cultures.size()); z++)
+		if (z != c && isAlly(w, c, z)) out.push_back(z);
+	return out;
+}
+// The god's recent favour of culture c as rates (impulse a year), from Society's fading sums.
+double favourRate(const World& w, const char* what, int c) {
+	const double hl = w.tune<SocietyTune>().favourHalfLife;
+	if (!(hl > 0)) return 0;
+	const auto it = w.vars.num.find(std::string("society_") + what + "_" + std::to_string(c));
+	if (it == w.vars.num.end() || !isFinite(it->second)) return 0;
+	return std::max(0.0, it->second) * (1 - std::pow(0.5, 1.0 / hl));
+}
 
 std::string ns(int v) { return std::to_string(v); }
 std::string warPrefix(int a, int b) {
@@ -161,11 +189,18 @@ std::vector<Agg> aggregates(const World& w) {
 		ag[k].alive = !cu.dead;
 		ag[k].age = std::clamp(cu.age, 0, 6);
 		ag[k].tech = techOf(w, int(k));
+		if (!cu.dead) {
+			ag[k].fGrace = favourRate(w, "fgrace", int(k));
+			ag[k].fWrath = favourRate(w, "fwrath", int(k));
+			ag[k].prophet = cu.prophet.has_value();
+		}
 	}
+	const double sickAt = w.tune<DiplomacyTune>().plagueSick;
 	for (const Settlement& s : w.settlements) {
 		if (s.dead || !cultureOk(w, s.culture)) continue;
 		const size_t k = size_t(s.culture);
 		const double p = std::max(0.0, finiteOr(s.pop, 0));
+		if (finiteOr(s.plague, 0) > sickAt) ag[k].sick += p;
 		ag[k].pop += p;
 		ag[k].towns++;
 		ag[k].love += p * finiteOr(s.love, 0);
@@ -176,6 +211,7 @@ std::vector<Agg> aggregates(const World& w) {
 		devU[k] += finiteOr(s.devotion, 0);
 	}
 	for (size_t k = 0; k < nc; k++) {
+		ag[k].sick = ag[k].pop > 0 ? ag[k].sick / ag[k].pop : 0;
 		if (wsum[k] > 0) { ag[k].love /= wsum[k]; ag[k].devotion /= wsum[k]; }
 		else if (cnt[k] > 0) { ag[k].love = loveU[k] / cnt[k]; ag[k].devotion = devU[k] / cnt[k]; }
 		else { ag[k].love = 0; ag[k].devotion = 0; }
@@ -412,6 +448,7 @@ void strike(World& w, int from, int to, int sid) {
 	wo.kind = "nuke";
 	wo.faith = 0;
 	wo.good = 0;
+	wo.natural = true;                   // (v3) the people's own fire: not a deed of the god (no memory, not 'heard')
 	society::witness(w, cell, T.nukeWitnessAng, wo);
 }
 
@@ -610,12 +647,81 @@ void prune(World& w) {
 			int b = -1;
 			if (pos < k.size() && k[pos] == '_') { pos++; b = parseInt(k, pos); }
 			drop = a < 0 || b < 0 || deadSid(a) || deadSid(b);
+		} else if (k.rfind("diplomacy_sworn", 0) == 0 || k.rfind("diplomacy_feud", 0) == 0) {
+			// (v3.1) a sworn peace that ended; the pair's feud or peace once one of them is gone
+			const bool sworn = k[10] == 's';
+			size_t pos = sworn ? 15 : 14;
+			const int a = parseInt(k, pos);
+			int b = -1;
+			if (pos < k.size() && k[pos] == '_') { pos++; b = parseInt(k, pos); }
+			drop = !cultureAlive(w, a) || !cultureAlive(w, b) || (sworn && !(it->second > w.year));
 		}
 		it = drop ? w.vars.num.erase(it) : std::next(it);
 	}
 	for (auto it = S.routes.begin(); it != S.routes.end();) {
 		const bool drop = deadSid(std::get<0>(it->first)) || deadSid(std::get<1>(it->first)) || w.year - it->second.year >= T.routeYears || w.year < it->second.year;
 		it = drop ? S.routes.erase(it) : std::next(it);
+	}
+}
+
+// (v3.1) end an alliance (event once)
+void breakAlliance(World& w, int a, int b) {
+	const std::string key = pairKey("ally", a, b);
+	if (!w.vars.num.count(key)) return;
+	w.vars.num.erase(key);
+	const auto k = state::relKey(a, b);
+	w.bus.emit(EvAlliance{ k.first, k.second, false });
+}
+
+// (v3.1, design review 11) did the god move a's people to this war against b? Its wrath on a in the last
+// decades, or its favour of b over a (envy), at least blameMin (impulse a year).
+bool blamedOnGod(const World& w, int a, int b) {
+	const DiplomacyTune& T = w.tune<DiplomacyTune>();
+	const double wrathA = favourRate(w, "fwrath", a);
+	const double envy = favourRate(w, "fgrace", b) - favourRate(w, "fgrace", a);
+	return wrathA >= T.blameMin || envy >= T.blameMin;
+}
+
+// declareWar's body; ally >= 0: a joins the war of its ally `ally`, whom b attacked (no further calls)
+void startWar(World& w, int a, int b, int ally) {
+	const DiplomacyTune& T = w.tune<DiplomacyTune>();
+	if (!cultureAlive(w, a) || !cultureAlive(w, b) || a == b) return;
+	Relation* r = society::rel(w, a, b);
+	if (!r || r->war) return;
+	breakAlliance(w, a, b);                      // allies who come to blows are allies no more
+	r->war = true;
+	r->since = w.year;
+	r->aggressor = a;
+	const std::string pre = warPrefix(a, b);
+	erasePrefix(w, pre);
+	setNum(w, pre + "n" + ns(a), liveCount(w, a));
+	setNum(w, pre + "n" + ns(b), liveCount(w, b));
+	if (ally >= 0) setNum(w, pre + "ally", ally);
+	{
+		const std::string fk = pairKey("feud", a, b);
+		setNum(w, fk, getNum(w, fk, 0) + 1);
+	}
+	w.stats.wars++;
+	const bool blamed = blamedOnGod(w, a, b);
+	w.bus.emit(EvWarDeclared{ a, b, ally, blamed });
+	// friends of the victim sour on the aggressor
+	for (size_t z = 0; z < w.cultures.size(); z++) {
+		const int zi = int(z);
+		if (zi == a || zi == b || w.cultures[z].dead) continue;
+		const Relation* fz = society::peek(w, zi, b);
+		if (!fz || fz->war || !(fz->v >= T.allyV)) continue;
+		if (Relation* rz = society::rel(w, zi, a)) rz->v = std::clamp(finiteOr(rz->v, 0) - T.allyOutrage, -1.0, 1.0);
+	}
+	// (v3.1) the call to arms: b's allies who can reach the aggressor come to its defence
+	if (ally < 0 && T.allyCall) {
+		for (const int z : alliesOf(w, b)) {
+			if (z == a || !cultureAlive(w, z) || society::atWar(w, z, a) || isAlly(w, z, a)) continue;
+			if (w.cultures[size_t(z)].edict == Edict::Peace) continue;
+			const Relation* rz = society::peek(w, z, a);
+			if (rz && w.year < rz->truce) continue;
+			if (!canReach(w, z, a, 255)) continue;
+			startWar(w, z, a, b);
+		}
 	}
 }
 
@@ -640,27 +746,7 @@ bool atWar(const World& w, int a, int b) {
 }
 
 void declareWar(World& w, int a, int b) {
-	const DiplomacyTune& T = w.tune<DiplomacyTune>();
-	if (!cultureAlive(w, a) || !cultureAlive(w, b) || a == b) return;
-	Relation* r = rel(w, a, b);
-	if (!r || r->war) return;
-	r->war = true;
-	r->since = w.year;
-	r->aggressor = a;
-	const std::string pre = warPrefix(a, b);
-	erasePrefix(w, pre);
-	setNum(w, pre + "n" + ns(a), liveCount(w, a));
-	setNum(w, pre + "n" + ns(b), liveCount(w, b));
-	w.stats.wars++;
-	w.bus.emit(EvWarDeclared{ a, b });
-	// friends of the victim sour on the aggressor
-	for (size_t z = 0; z < w.cultures.size(); z++) {
-		const int zi = int(z);
-		if (zi == a || zi == b || w.cultures[z].dead) continue;
-		const Relation* fz = peek(w, zi, b);
-		if (!fz || fz->war || !(fz->v >= T.allyV)) continue;
-		if (Relation* rz = rel(w, zi, a)) rz->v = std::clamp(finiteOr(rz->v, 0) - T.allyOutrage, -1.0, 1.0);
-	}
+	startWar(w, a, b, -1);
 }
 
 void makePeace(World& w, int a, int b, double truceYears, int victor) {
@@ -668,11 +754,13 @@ void makePeace(World& w, int a, int b, double truceYears, int victor) {
 	Relation* r = rel(w, a, b);
 	if (!r) return;
 	if (!isFinite(truceYears) || truceYears < 0) truceYears = T.truceYears;
-	const double truce = w.year + truceYears;
 	if (!r->war) {
-		r->truce = std::max(finiteOr(r->truce, 0), truce);
+		r->truce = std::max(finiteOr(r->truce, 0), w.year + truceYears);
 		return;
 	}
+	// (v3.1) old enemies tire of each other: a longer truce after each war of the pair
+	const double feud = std::max(0.0, getNum(w, pairKey("feud", a, b), 1) - 1);
+	const double truce = w.year + truceYears * (1 + std::max(0.0, T.feudK) * std::min(T.feudMax, feud));
 	if (victor != a && victor != b) victor = -1;
 	const int first = (r->aggressor == a || r->aggressor == b) ? r->aggressor : a;
 	const int second = first == a ? b : a;
@@ -682,7 +770,52 @@ void makePeace(World& w, int a, int b, double truceYears, int victor) {
 	r->truce = truce;
 	r->aggressor = -1;
 	erasePrefix(w, warPrefix(a, b));
-	w.bus.emit(EvWarEnded{ first, second, victor });
+	// (v3.1, design review 11) a victor the god favoured while it fought thanks the god; the loser blames it
+	bool thanked = false;
+	if (victor >= 0 && cultureAlive(w, victor) && favourRate(w, "fgrace", victor) >= T.thankMin) {
+		thanked = true;
+		const int loser = victor == a ? b : a;
+		for (Settlement& s : w.settlements) {
+			if (s.dead) continue;
+			if (s.culture == victor && T.thankDevotion > 0) s.devotion = sat(finiteOr(s.devotion, 0) + T.thankDevotion);
+			if (s.culture == loser && T.blameLove > 0) s.love = std::clamp(finiteOr(s.love, 0) - T.blameLove, -1.0, 1.0);
+		}
+	}
+	w.bus.emit(EvWarEnded{ first, second, victor, thanked });
+	// (v3.1) the wars allies joined for a or b against the other end with it (the league makes peace together)
+	struct Joined { int joiner, enemy, v; };
+	std::vector<Joined> joined;
+	for (const auto& kv : w.vars.rel) {
+		if (!kv.second.war) continue;
+		const int p = kv.first.first, q = kv.first.second;
+		const double caller = getNum(w, warPrefix(p, q) + "ally", -1);
+		for (const int principal : { a, b }) {
+			const int enemy = principal == a ? b : a;
+			if (int(caller) != principal || (p != enemy && q != enemy)) continue;
+			const int joiner = p == enemy ? q : p;
+			joined.push_back({ joiner, enemy, victor == principal ? joiner : victor == enemy ? enemy : -1 });
+		}
+	}
+	for (const Joined& j : joined) makePeace(w, j.joiner, j.enemy, truceYears, j.v);
+}
+
+bool swearPeace(World& w, int a, int b) {
+	const DiplomacyTune& T = w.tune<DiplomacyTune>();
+	if (!T.omenSworn || a == b || !cultureAlive(w, a) || !cultureAlive(w, b) || !(T.omenYears > 0)) return false;
+	setNum(w, pairKey("sworn", a, b), w.year + T.omenYears);
+	return true;
+}
+
+std::vector<int> tense(const World& w, int cultureId) {
+	const DiplomacyTune& T = w.tune<DiplomacyTune>();
+	std::vector<int> out;
+	if (!T.omenCalm || !cultureAlive(w, cultureId)) return out;
+	for (const Culture& o : w.cultures) {
+		if (o.dead || o.id == cultureId) continue;
+		const Relation* r = peek(w, cultureId, o.id);
+		if (r && !r->war && r->contact && r->v <= T.omenTension) out.push_back(o.id);
+	}
+	return out;
 }
 
 void onArrive(World& w, int unitId) {
@@ -735,6 +868,9 @@ void diplomacy(World& w) {
 		if (kv.second.war) wars.push_back(kv.first);
 	for (const auto& pr : wars) {
 		const int a = pr.first, b = pr.second;
+		// (sim-findings-2 verifier) a war an ally joined may already have ended this year with its principal
+		// (makePeace ends the joined wars too): no weariness, no second peace and no bomb for a pair at peace
+		if (!atWar(w, a, b)) continue;
 		const bool okA = cultureAlive(w, a) && ag[size_t(a)].towns > 0;
 		const bool okB = cultureAlive(w, b) && ag[size_t(b)].towns > 0;
 		if (!okA || !okB) { makePeace(w, a, b, T.truceYears, okA ? a : okB ? b : -1); continue; }
@@ -752,7 +888,17 @@ void diplomacy(World& w) {
 			makePeace(w, a, b, T.truceYears, lostA < lostB ? a : lostB < lostA ? b : -1);
 			continue;
 		}
-		if (ag[size_t(a)].age >= Age::ATOMIC && ag[size_t(b)].age >= Age::ATOMIC && w.rng.chance(T.nukeP)) nukeExchange(w, a, b);
+		// (v3.1, design review 11/13) a war of nothing peters out: no army from either side for warStall years
+		if (r && T.warStall > 0 && w.year - r->since >= T.warStall) {
+			const double lastA = getNum(w, pre + "army" + ns(a), -1e9), lastB = getNum(w, pre + "army" + ns(b), -1e9);
+			if (w.year - std::max(lastA, lastB) >= T.warStall) {
+				makePeace(w, a, b, T.truceYears, lostA < lostB ? a : lostB < lostA ? b : -1);
+				continue;
+			}
+		}
+		// (v3.1, design review 11/13) after the world's first exchange the bomb is feared (nukeRepeatMul)
+		const double pNuke = T.nukeP * (w.vars.lastNuke ? T.nukeRepeatMul : 1.0);
+		if (ag[size_t(a)].age >= Age::ATOMIC && ag[size_t(b)].age >= Age::ATOMIC && w.rng.chance(pNuke)) nukeExchange(w, a, b);
 	}
 
 	// a peace made this year starts from v = -0.1: no drift on top of it
@@ -774,13 +920,39 @@ void diplomacy(World& w) {
 			r->contact = contact;
 			const double trade = std::clamp(finiteOr(r->trade, 0), 0.0, 1.0);
 			double v = finiteOr(r->v, 0);
-			double dv = T.relax * (T.relTarget - v) + T.tradeK * trade;
+			// (v3.1) an Omen's sworn peace: the pair rests at omenTarget until it ends
+			double target = T.relTarget;
+			{
+				const std::string sk = pairKey("sworn", ia, ib);
+				const auto it = w.vars.num.find(sk);
+				if (it != w.vars.num.end()) {
+					if (isFinite(it->second) && w.year < it->second) target = T.omenTarget;
+					else w.vars.num.erase(it);
+				}
+			}
+			double dv = T.relax * (target - v) + T.tradeK * trade;
 			if (contact) {
 				const int perim = std::max(T.borderMinPerim, std::min(ag[a].perim, ag[b].perim));
 				const double border = sat(double(edges[a * nc + b]) / (2.0 * std::max(1, perim)));
-				dv -= T.borderK * border;
+				// (v3.1, design review 11) frontiers chafe more as the peoples grow
+				const double ageMul = T.borderAge[size_t(std::max(ag[a].age, ag[b].age))];
+				dv -= T.borderK * (isFinite(ageMul) ? ageMul : 1.0) * border;
 				dv -= T.aggrK * std::max(0.0, aggr(ia, ib) + aggr(ib, ia) - T.aggrBase);
 				dv -= T.loveK * std::fabs(ag[a].love - ag[b].love);
+				// (v3.1, design review 11) the god in the relations: a favourite is envied and the scourged
+				// blame the spared; peoples struck together stand together; a fever is blamed on the
+				// neighbours it came from; a prophet's zeal against the less devout, and devout peoples' kinship
+				if (T.envyK > 0 && T.favourRef > 0) {
+					const double fa = ag[a].fGrace - ag[a].fWrath, fb = ag[b].fGrace - ag[b].fWrath;
+					dv -= T.envyK * sat(std::fabs(fa - fb) / T.favourRef);
+				}
+				if (T.sharedWrathK > 0 && T.favourRef > 0) dv += T.sharedWrathK * sat(std::min(ag[a].fWrath, ag[b].fWrath) / T.favourRef);
+				if (T.plagueK > 0) dv -= T.plagueK * std::max(ag[a].sick, ag[b].sick) * sat(trade + border);
+				if (T.zealK > 0 && T.zealRef > 0) {
+					if (ag[a].prophet) dv -= T.zealK * sat((ag[a].devotion - ag[b].devotion) / T.zealRef);
+					if (ag[b].prophet) dv -= T.zealK * sat((ag[b].devotion - ag[a].devotion) / T.zealRef);
+				}
+				if (T.faithK > 0 && (ag[a].prophet || ag[b].prophet) && ag[a].devotion >= T.faithDev && ag[b].devotion >= T.faithDev) dv += T.faithK;
 				dv += T.noise * w.rng.gauss();
 				if (w.cultures[a].edict == Edict::Peace) dv += T.peaceEdictV;
 				if (w.cultures[b].edict == Edict::Peace) dv += T.peaceEdictV;
@@ -798,6 +970,52 @@ void diplomacy(World& w) {
 		}
 	}
 
+	// 2b. (v3.1, design review 11) alliances: friends at peace become allies, and fall apart
+	{
+		std::vector<std::pair<int, int>> have;
+		std::vector<std::string> junk;
+		const std::string pre = "diplomacy_ally";
+		for (auto it = w.vars.num.lower_bound(pre); it != w.vars.num.end() && it->first.compare(0, pre.size(), pre) == 0; ++it) {
+			size_t pos = pre.size();
+			const int x = parseInt(it->first, pos);
+			int y = -1;
+			if (pos < it->first.size() && it->first[pos] == '_') { pos++; y = parseInt(it->first, pos); }
+			if (!cultureOk(w, x) || !cultureOk(w, y) || x == y) junk.push_back(it->first);
+			else have.emplace_back(x, y);
+		}
+		for (const std::string& k : junk) w.vars.num.erase(k);
+		std::vector<int> count(nc, 0);
+		for (const auto& p : have) {
+			const Relation* r = peek(w, p.first, p.second);
+			const bool keep = cultureAlive(w, p.first) && cultureAlive(w, p.second) && r && !r->war && r->v >= T.allyBreak;
+			if (!keep) { breakAlliance(w, p.first, p.second); continue; }
+			count[size_t(p.first)]++;
+			count[size_t(p.second)]++;
+		}
+		if (T.allyForm <= 1) {
+			std::vector<std::pair<int, int>> cand;
+			for (const auto& kv : w.vars.rel) {
+				const int x = kv.first.first, y = kv.first.second;
+				if (!cultureAlive(w, x) || !cultureAlive(w, y) || kv.second.war || !kv.second.contact || !(kv.second.v >= T.allyForm)) continue;
+				if (isAlly(w, x, y)) continue;
+				cand.emplace_back(x, y);
+			}
+			// the warmest friendships first (ties: lower ids)
+			std::sort(cand.begin(), cand.end(), [&](const std::pair<int, int>& p, const std::pair<int, int>& q) {
+				const double vp = peek(w, p.first, p.second)->v, vq = peek(w, q.first, q.second)->v;
+				if (vp != vq) return vp > vq;
+				return p < q;
+			});
+			for (const auto& p : cand) {
+				if (count[size_t(p.first)] >= T.allyMax || count[size_t(p.second)] >= T.allyMax) continue;
+				setNum(w, pairKey("ally", p.first, p.second), w.year);
+				count[size_t(p.first)]++;
+				count[size_t(p.second)]++;
+				w.bus.emit(EvAlliance{ p.first, p.second, true });
+			}
+		}
+	}
+
 	// 3. new wars
 	for (size_t a = 0; a < nc; a++) {
 		if (!ag[a].alive || ag[a].towns == 0) continue;
@@ -807,23 +1025,50 @@ void diplomacy(World& w) {
 			const Relation* r = peek(w, ia, ib);
 			if (!r || r->war || !r->contact || !(r->v < T.warV) || w.year < r->truce) continue;
 			if (w.cultures[a].edict == Edict::Peace || w.cultures[b].edict == Edict::Peace) continue;
+			if (isAlly(w, ia, ib)) continue;
 			const double xa = aggr(ia, ib), xb = aggr(ib, ia);
 			const int agg = xb > xa ? ib : ia;
 			const int def = agg == ia ? ib : ia;
-			const double sAgg = ag[size_t(agg)].pop * ag[size_t(agg)].tech, sDef = ag[size_t(def)].pop * ag[size_t(def)].tech;
+			// (v3.1) a people still weary from its last war, or from a century of them, starts no new one
+			if (finiteOr(w.cultures[size_t(agg)].exhaustion, 0) > T.warWeary) continue;
+			if (T.warredMax > 0 && getNum(w, "diplomacy_warred" + ns(agg), 0) > T.warredMax) continue;
+			const double sAgg = ag[size_t(agg)].pop * ag[size_t(agg)].tech;
+			double sDef = ag[size_t(def)].pop * ag[size_t(def)].tech;
 			if (!(sAgg >= T.warStrength * sDef) || !(sAgg > 0)) continue;
 			if (!canReach(w, agg, def, minGap[a * nc + b])) continue;
+			// (v3.1) the defender's allies who would come: an aggressor must match them too
+			if (T.allyDeter && T.allyCall) {
+				for (const int z : alliesOf(w, def)) {
+					if (z == agg || !ag[size_t(z)].alive || atWar(w, z, agg) || isAlly(w, z, agg)) continue;
+					if (w.cultures[size_t(z)].edict == Edict::Peace) continue;
+					const Relation* rz = peek(w, z, agg);
+					if (rz && w.year < rz->truce) continue;
+					if (!canReach(w, z, agg, 255)) continue;
+					sDef += ag[size_t(z)].pop * ag[size_t(z)].tech;
+				}
+				if (!(sAgg >= T.warStrength * sDef)) continue;
+			}
 			declareWar(w, agg, def);
 		}
 	}
 
-	// 4. weariness fades in peace
+	// 4. weariness fades in peace; (v3.1) the years at war are remembered (warredMax)
+	const double warredKeep = T.warredHalfLife > 0 ? std::pow(0.5, 1.0 / T.warredHalfLife) : 0.0;
 	for (size_t a = 0; a < nc; a++) {
-		if (w.cultures[a].dead) continue;
+		const std::string wk = "diplomacy_warred" + ns(int(a));
+		if (w.cultures[a].dead) {
+			if (T.warredMax > 0) w.vars.num.erase(wk);
+			continue;
+		}
 		bool fighting = false;
 		for (const auto& kv : w.vars.rel)
 			if (kv.second.war && (kv.first.first == int(a) || kv.first.second == int(a))) { fighting = true; break; }
 		if (!fighting) w.cultures[a].exhaustion = std::max(0.0, finiteOr(w.cultures[a].exhaustion, 0) - T.exhaustDecay);
+		if (T.warredMax > 0) {
+			const double v = getNum(w, wk, 0) * warredKeep + (fighting ? 1.0 : 0.0);
+			if (v > 0.01) setNum(w, wk, v);
+			else w.vars.num.erase(wk);
+		}
 	}
 
 	// 5. armies (each side of each war, every armyEvery years)

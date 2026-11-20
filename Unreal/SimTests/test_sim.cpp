@@ -568,7 +568,7 @@ DM_TEST("sim: genesis skip with the real modules (all)") {
 	eq(int(w->phase), int(Phase::History));
 	int live = 0;
 	for (const Settlement& s : w->settlements) if (!s.dead) live++;
-	eq(live, 1, "one settlement");
+	eq(live, 2, "two camps (v3, design review: an awakening wakes two bands)");
 	ok(w->god.awe >= 60, "Awe >= 60");
 	ok(w->vars.seaBase.has_value(), "calibrated");
 	noNaN(*w);
@@ -601,6 +601,8 @@ DM_TEST("sim: refreshStats sums live settlements") {
 	eq(w->stats.pop, 60.0);
 }
 
+// (v3, design review) the Ark mood is the verdict of the Ark culture's memory: society::memory's mood
+// (its rules are tested in test_society / test_integration_review)
 DM_TEST("sim: ark ending moods at each threshold, then no second ending") {
 	stub::Guard g(true);
 	if (!stub::stubbed("society")) return;
@@ -617,7 +619,7 @@ DM_TEST("sim: ark ending moods at each threshold, then no second ending") {
 		w->year = 3456;
 		w->vars.ark = ArkRecord{ cid, sid, 3456 };
 		int regardFor = -9;
-		stub::hooks().society_regard = [&](const World&, int c) { regardFor = c; society::Regard r; r.devotion = k.dev; r.love = k.love; return r; };
+		stub::hooks().society_memory = [&](const World&, int c) { regardFor = c; society::Memory m; m.devotion = k.dev; m.love = k.love; m.mood = k.want; return m; };
 		std::vector<EvEnding> ends;
 		w->bus.on<EvEnding>([&](const EvEnding& e) { ends.push_back(e); });
 		const auto e = sim::checkEnding(*w);
@@ -628,7 +630,7 @@ DM_TEST("sim: ark ending moods at each threshold, then no second ending") {
 		eq(e->culture, cid);
 		eq(e->settlement, sid);
 		eq(e->year, 3456.0);
-		eq(regardFor, cid, "regard of the ark's culture");
+		eq(regardFor, cid, "memory of the ark's culture");
 		ok(w->ending.has_value() && *w->ending == *e, "w.ending written");
 		eq(int(w->phase), int(Phase::Ended), "phase ended");
 		eq(ends.size(), size_t(1), "ending emitted once");
@@ -660,29 +662,43 @@ DM_TEST("sim: silence ending (quiet / ash) after 50 empty years, people:lost bel
 	{   // a nuke more than 200 years ago: quiet
 		auto w = makeWorld();
 		w->stats.peakPop = 5000;
-		w->vars.lastNuke = 100;
-		w->year = 400;
+		w->vars.lastNuke = 1100;
+		w->year = 1400;
 		sim::checkEnding(*w);
-		w->year = 450;
+		w->year = 1450;
 		const auto e = sim::checkEnding(*w);
 		ok(e.has_value() && e->mood == Mood::Quiet, "old nuke: quiet");
 	}
 	{   // a settler unit alive counts as people; revival resets the clock
 		auto w = makeWorld();
 		w->stats.peakPop = 5000;
-		w->year = 10;
+		w->year = 1010;
 		sim::checkEnding(*w);
 		Unit& u = state::newUnit(*w, UnitType::Settler);
 		u.size = 20;
-		w->year = 100;
+		w->year = 1100;
 		ok(!sim::checkEnding(*w).has_value(), "settler alive: no silence");
 		state::eraseUnit(*w, u.id);
-		w->year = 120;
-		ok(!sim::checkEnding(*w).has_value(), "clock restarted at 120");
-		w->year = 169;
+		w->year = 1120;
+		ok(!sim::checkEnding(*w).has_value(), "clock restarted at 1120");
+		w->year = 1169;
 		ok(!sim::checkEnding(*w).has_value(), "49 years");
-		w->year = 170;
+		w->year = 1170;
 		ok(sim::checkEnding(*w).has_value(), "50 years after the settler vanished");
+	}
+	{   // (v3, design review finding 10) no silence before year 1,000: people:lost instead, then silence
+		auto w = makeWorld();
+		w->stats.peakPop = 5000;
+		int lost = 0;
+		w->bus.on<EvPeopleLost>([&](const EvPeopleLost&) { lost++; });
+		w->year = 400;
+		sim::checkEnding(*w);
+		w->year = 600;
+		ok(!sim::checkEnding(*w).has_value(), "200 empty years before 1,000: no silence");
+		eq(lost, 1, "people:lost once instead");
+		w->year = 1000;
+		const auto e = sim::checkEnding(*w);
+		ok(e.has_value() && e->type == EndingType::Silence, "silence at year 1,000");
 	}
 	{   // below 1,000 peak: people:lost once per extinction, never an ending
 		auto w = makeWorld();

@@ -83,22 +83,25 @@
 	X(civ, civ_setCulture, civ::setCulture) X(civ, civ_electCapital, civ::electCapital) \
 	X(civ, civ_infect, civ::infect) X(civ, civ_cure, civ::cure) X(civ, civ_at, civ::at) X(civ, civ_near, civ::near) \
 	X(civ, civ_live, civ::live) X(civ, civ_canSettle, civ::canSettle) X(civ, civ_siteScore, civ::siteScore) \
-	X(civ, civ_bestSite, civ::bestSite) X(civ, civ_ageProgress, civ::ageProgress)
+	X(civ, civ_bestSite, civ::bestSite) X(civ, civ_ageProgress, civ::ageProgress) \
+	X(civ, civ_bandSite, civ::bandSite) X(civ, civ_consecrate, civ::consecrate)
 #define DM_STUBS_ECONOMY(X) \
-	X(economy, civ_yearly, civ::yearly) X(economy, civ_capacity, civ::capacity)
+	X(economy, civ_yearly, civ::yearly) X(economy, civ_capacity, civ::capacity) \
+	X(economy, civ_addScience, civ::addScience) X(economy, civ_strikeKnowledge, civ::strikeKnowledge)
 #define DM_STUBS_SOCIETY(X) \
 	X(society, society_newCulture, society::newCulture) X(society, society_yearly, society::yearly) \
 	X(society, society_witness, society::witness) X(society, society_regard, society::regard) \
 	X(society, society_raiseProphet, society::raiseProphet) X(society, society_setEdict, society::setEdict) \
-	X(society, society_aweIncome, society::aweIncome)
+	X(society, society_aweIncome, society::aweIncome) X(society, society_memory, society::memory) \
+	X(society, society_raiseWonder, society::raiseWonder)
 #define DM_STUBS_DIPLOMACY(X) \
 	X(diplomacy, society_rel, society::rel) X(diplomacy, society_peek, society::peek) \
 	X(diplomacy, society_atWar, society::atWar) X(diplomacy, society_declareWar, society::declareWar) \
 	X(diplomacy, society_makePeace, society::makePeace) X(diplomacy, society_onArrive, society::onArrive) \
-	X(diplomacy, society_diplomacy, society::diplomacy)
+	X(diplomacy, society_diplomacy, society::diplomacy) X(diplomacy, society_swearPeace, society::swearPeace) X(diplomacy, society_tense, society::tense)
 #define DM_STUBS_POWERS(X) \
 	X(powers, powers_unlocked, powers::unlocked) X(powers, powers_cost, powers::cost) X(powers, powers_can, powers::can) \
-	X(powers, powers_use, powers::use)
+	X(powers, powers_use, powers::use) X(powers, powers_upgrade, powers::upgrade) X(powers, powers_drownRisk, powers::drownRisk)
 #define DM_STUBS_DISASTERS(X) \
 	X(disasters, powers_start, powers::start) X(disasters, powers_update, powers::update) \
 	X(disasters, powers_tick, powers::tick) X(disasters, powers_natural, powers::natural)

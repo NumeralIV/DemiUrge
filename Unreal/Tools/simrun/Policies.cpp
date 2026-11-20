@@ -69,12 +69,29 @@ const char* toStr(PolicyKind k) {
 	case PolicyKind::Kind: return "kind";
 	case PolicyKind::Cruel: return "cruel";
 	case PolicyKind::Chaotic: return "chaotic";
-	default: return "doom";
+	case PolicyKind::Doom: return "doom";
+	case PolicyKind::Curious: return "curious";
+	case PolicyKind::BlessOnly: return "blessonly";
+	case PolicyKind::Prayers: return "prayers";
+	case PolicyKind::Repent: return "repent";
+	case PolicyKind::Sculptor: return "sculptor";
+	case PolicyKind::LateKind: return "late-kind";
+	case PolicyKind::LateCruel: return "late-cruel";
+	case PolicyKind::InspireSpam: return "inspire-spam";
+	case PolicyKind::Hoarder: return "hoarder";
+	case PolicyKind::Builder: return "builder";
+	case PolicyKind::AtomicKind: return "atomic-kind";
+	case PolicyKind::AtomicCruel: return "atomic-cruel";
+	case PolicyKind::Peacemaker: return "peacemaker";
+	case PolicyKind::Favourite: return "favourite";
+	case PolicyKind::Scourge: return "scourge";
+	default: return "?";
 	}
 }
 
 bool policyFromStr(std::string_view s, PolicyKind& out) {
-	for (PolicyKind k : { PolicyKind::Passive, PolicyKind::Kind, PolicyKind::Cruel, PolicyKind::Chaotic, PolicyKind::Doom }) {
+	for (int i = 0; i < int(PolicyKind::Count); i++) {
+		const PolicyKind k = PolicyKind(i);
 		if (s == toStr(k)) { out = k; return true; }
 	}
 	return false;
@@ -133,21 +150,145 @@ void Policy::before(World& w) {
 		return;
 	}
 	continueStroke(w);
+	if (kind_ == PolicyKind::LateKind || kind_ == PolicyKind::LateCruel) {
+		if (lateFrom_ < 0) {
+			for (const Settlement& s : w.settlements)
+				if (!s.dead && s.ark > 0) { lateFrom_ = w.year; break; }
+			if (lateFrom_ < 0) return;
+			nextYear_ = 0;
+		}
+	}
+	if (kind_ == PolicyKind::AtomicKind || kind_ == PolicyKind::AtomicCruel) {
+		if (lateFrom_ < 0) {
+			if (w.age < Age::ATOMIC) return;
+			lateFrom_ = w.year;
+			nextYear_ = 0;
+		}
+	}
 	if (w.year + 1e-9 < nextYear_) return;
 	nextYear_ = std::floor(w.year) + 1;
+	const double y = w.year;
 	switch (kind_) {
-	case PolicyKind::Kind: decideKind(w); break;
-	case PolicyKind::Cruel: decideCruel(w, true); break;
+	case PolicyKind::Kind: case PolicyKind::LateKind: case PolicyKind::AtomicKind: decideKind(w); break;
+	case PolicyKind::Cruel: case PolicyKind::LateCruel: case PolicyKind::AtomicCruel: decideCruel(w, true); break;
 	case PolicyKind::Doom: decideCruel(w, false); break;
 	case PolicyKind::Chaotic: decideChaotic(w); break;
+	case PolicyKind::Curious:
+		if (y < 900) smallBlessings(w);
+		else if (y < 1100) wrathBurst(w);
+		break;
+	case PolicyKind::BlessOnly:
+		if (y < 1000) smallBlessings(w);
+		break;
+	case PolicyKind::Prayers: case PolicyKind::Hoarder:
+		if (!reawaken(w)) answerPrayers(w, 3);
+		break;
+	case PolicyKind::Builder:
+		if (reawaken(w)) break;
+		answerPrayers(w, 3);
+		consecrate(w);
+		break;
+	case PolicyKind::Repent:
+		if (y < 800) wrathBurst(w);
+		else { answerPrayers(w, 2); smallBlessings(w); }
+		break;
+	case PolicyKind::Sculptor: {
+		// a curious player who plays with Raise / Lower Land near the people every ~15 years
+		const std::vector<int> ids = civ::live(w);
+		if (!ids.empty() && rng_.chance(1.0 / 15)) {
+			const int sid = ids[size_t(rng_.pickIndex(int(ids.size())))];
+			const int cell = w.settlements[size_t(sid)].cell;
+			if (w.valid(cell)) startStroke(w, rng_.chance(0.5) ? "raise" : "lower", cell, 8);   // one second of brush
+		}
+		reawaken(w);
+		break;
+	}
+	case PolicyKind::InspireSpam: {
+		if (reawaken(w)) break;
+		const int lead = leadingCulture(w);
+		if (lead < 0) break;
+		const Settlement* cap = state::settlement(w, w.cultures[size_t(lead)].capital);
+		if (cap && !cap->dead) click(w, "inspire", cap->cell);
+		break;
+	}
+	case PolicyKind::Peacemaker: decidePeacemaker(w); break;
+	case PolicyKind::Favourite: decideFavourite(w); break;
+	case PolicyKind::Scourge: decideScourge(w); break;
 	default: break;
 	}
+}
+
+// ---------------------------------------------------------------- the design review's players
+
+void Policy::answerPrayers(World& w, int maxN) {
+	int n = 0;
+	for (int sid : byPop(w)) {
+		if (n >= maxN) break;
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (!s.prayer) continue;
+		const int cell = s.cell;
+		bool did = false;
+		switch (s.prayer->kind) {
+		case PrayerKind::Heal: did = click(w, "heal", cell); break;
+		case PrayerKind::Peace: did = click(w, "peace", cell); break;
+		case PrayerKind::Rain: did = startStroke(w, "rain", cell, 8); break;
+		case PrayerKind::Bloom: did = startStroke(w, "bloom", cell, 8) || startStroke(w, "rain", cell, 8); break;
+		}
+		if (did) n++;
+	}
+}
+
+void Policy::smallBlessings(World& w) {
+	answerPrayers(w, 2);
+	for (int sid : byPop(w)) {
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (s.plague > 0.2 && click(w, "heal", s.cell)) break;
+	}
+	const std::vector<int> ids = civ::live(w);
+	if (ids.empty()) return;
+	// a new player dabs rain / bloom on a random town about every other year
+	if (rng_.chance(0.5)) {
+		const int cell = w.settlements[size_t(ids[size_t(rng_.pickIndex(int(ids.size())))])].cell;
+		if (!startStroke(w, "bloom", cell, 4)) startStroke(w, "rain", cell, 4);
+	}
+	if (w.god.awe > 100 && rng_.chance(0.2)) click(w, "inspire", w.settlements[size_t(ids[size_t(rng_.pickIndex(int(ids.size())))])].cell);
+}
+
+void Policy::wrathBurst(World& w) {
+	// a curious player wants to see the big ones: save for the greatest unlocked wrath the Awe can
+	// hold, throwing the odd lightning while waiting
+	const std::vector<int> ids = byPop(w);
+	if (ids.empty()) return;
+	static const char* const kGreat[] = { "meteor", "volcano", "quake", "plague" };
+	const char* great = nullptr;
+	for (const char* id : kGreat)
+		if (powers::unlocked(w, id) && powers::cost(w, id) <= w.god.aweMax) { great = id; break; }
+	const int cell = w.settlements[size_t(ids[size_t(rng_.pickIndex(int(std::min<size_t>(3, ids.size()))))])].cell;
+	if (great && click(w, great, cell)) return;
+	for (const char* id : kGreat) if (click(w, id, cell)) return;
+	if (!great || rng_.chance(0.25)) click(w, "lightning", cell);
+}
+
+// builder: consecrate the largest shrine without a temple, or raise a Wonder in a capital
+bool Policy::consecrate(World& w) {
+	if (!powers::byId("consecrate")) return false;
+	for (int sid : byPop(w)) {
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (powers::can(w, "consecrate", s.cell).ok && click(w, "consecrate", s.cell)) return true;
+	}
+	return false;
 }
 
 void Policy::decideKind(World& w) {
 	if (reawaken(w)) return;
 	const std::vector<int> ids = byPop(w);
 	int actions = 0;
+	// 0. (sim-findings-2 verifier) a kind god stops a war before it answers the next prayer: one Omen of Peace on
+	//    the largest settlement of a warring culture (it used to wait behind two prayers, so a busy year left the war)
+	for (int sid : ids) {
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (anyWar(w, s.culture) && click(w, "peace", s.cell)) { actions++; break; }
+	}
 	// 1. answer prayers, largest settlements first
 	for (int sid : ids) {
 		if (actions >= 2) break;
@@ -169,11 +310,17 @@ void Policy::decideKind(World& w) {
 		const Settlement& s = w.settlements[size_t(sid)];
 		if (s.plague > 0.2 && click(w, "heal", s.cell)) actions++;
 	}
-	// 3. wars: an Omen of Peace on the largest settlement of a warring culture
+	// 3. wars: an Omen of Peace on the largest settlement of a warring culture; (v3.1, sim-findings-2) and,
+	//    with Awe to spare, on a people on the brink of war (society::tense: the Omen calms it beforehand)
 	for (int sid : ids) {
 		if (actions >= 2) break;
 		const Settlement& s = w.settlements[size_t(sid)];
 		if (anyWar(w, s.culture) && click(w, "peace", s.cell)) actions++;
+	}
+	for (int sid : ids) {
+		if (actions >= 2 || w.god.awe < powers::cost(w, "peace") + 40) break;
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (!anyWar(w, s.culture) && !society::tense(w, s.culture).empty() && click(w, "peace", s.cell)) actions++;
 	}
 	// 4. a prophet (and his edict) for the leading culture; for the others only with Awe to spare
 	const int lead = leadingCulture(w);
@@ -268,6 +415,76 @@ void Policy::decideCruel(World& w, bool restrained) {
 		if (!hit) break;
 		done++;
 	}
+}
+
+// ---------------------------------------------------------------- the verifier's adversarial players
+
+void Policy::decidePeacemaker(World& w) {
+	if (reawaken(w)) return;
+	int n = 0;
+	std::vector<int> done;                  // one Omen per people a year
+	for (int sid : byPop(w)) {
+		if (n >= 3) break;
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (std::find(done.begin(), done.end(), s.culture) != done.end()) continue;
+		if (!anyWar(w, s.culture) && society::tense(w, s.culture).empty()) continue;
+		done.push_back(s.culture);
+		if (click(w, "peace", s.cell)) n++;
+	}
+}
+
+void Policy::decideFavourite(World& w) {
+	if (reawaken(w)) return;
+	if (chosen_ < 0 || size_t(chosen_) >= w.cultures.size() || w.cultures[size_t(chosen_)].dead) {
+		chosen_ = -1;
+		double best = -1;
+		for (const Culture& c : w.cultures)
+			if (!c.dead && c.pop > best) { best = c.pop; chosen_ = c.id; }
+		if (chosen_ < 0) return;
+	}
+	const std::vector<int> mine = topOf(w, chosen_, 1000);
+	if (mine.empty()) return;
+	int actions = 0;
+	for (int sid : mine) {
+		if (actions >= 2) break;
+		const Settlement& s = w.settlements[size_t(sid)];
+		if (s.prayer) {
+			bool did = false;
+			switch (s.prayer->kind) {
+			case PrayerKind::Heal: did = click(w, "heal", s.cell); break;
+			case PrayerKind::Peace: did = click(w, "peace", s.cell); break;
+			case PrayerKind::Rain: did = startStroke(w, "rain", s.cell, 8); break;
+			case PrayerKind::Bloom: did = startStroke(w, "bloom", s.cell, 8) || startStroke(w, "rain", s.cell, 8); break;
+			}
+			if (did) actions++;
+		} else if (s.plague > 0.2 && click(w, "heal", s.cell)) actions++;
+	}
+	std::vector<int> top(mine.begin(), mine.begin() + std::min<size_t>(24, mine.size()));
+	std::stable_sort(top.begin(), top.end(), [&](int a, int b) { return w.settlements[size_t(a)].love < w.settlements[size_t(b)].love; });
+	if (!startStroke(w, "bloom", w.settlements[size_t(top[0])].cell, 4)) startStroke(w, "rain", w.settlements[size_t(top[0])].cell, 4);
+	if (w.god.awe > 0.6 * w.god.aweMax)
+		for (int sid : top)
+			if (w.settlements[size_t(sid)].inspire <= 0 && click(w, "inspire", w.settlements[size_t(sid)].cell)) break;
+}
+
+void Policy::decideScourge(World& w) {
+	reawaken(w);
+	int liveCultures = 0;
+	for (const Culture& c : w.cultures)
+		if (!c.dead && !topOf(w, c.id, 1).empty()) liveCultures++;
+	if (liveCultures < 2) return;          // never the last people
+	if (chosen_ < 0 || size_t(chosen_) >= w.cultures.size() || w.cultures[size_t(chosen_)].dead || topOf(w, chosen_, 1).empty()) {
+		chosen_ = -1;
+		double best = 1e300;
+		for (const Culture& c : w.cultures)
+			if (!c.dead && !topOf(w, c.id, 1).empty() && c.pop < best) { best = c.pop; chosen_ = c.id; }
+		if (chosen_ < 0) return;
+	}
+	const std::vector<int> theirs = topOf(w, chosen_, 3);
+	const int cell = w.settlements[size_t(theirs[size_t(rng_.pickIndex(int(theirs.size())))])].cell;
+	if (click(w, "quake", cell)) return;
+	const bool quakeLater = powers::unlocked(w, "quake") && powers::cost(w, "quake") <= w.god.aweMax;
+	if (!quakeLater || rng_.chance(0.3)) click(w, "lightning", cell);
 }
 
 void Policy::decideChaotic(World& w) {

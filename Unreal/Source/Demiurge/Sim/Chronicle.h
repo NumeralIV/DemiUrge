@@ -1,7 +1,7 @@
 // DEMIURGE — Sim/Chronicle.h : the history as prose, epithets, time-lapse snapshots, the tale
 // (SPEC-SIM 3.11, DM.Chronicle).
-// Owner: chronicle engineer (A13, key "chronicle"). Files: Chronicle.h, Chronicle.cpp,
-// SimTests/test_chronicle.cpp, SimTests/stubs/Chronicle_stub.cpp. Header written by foundation-api;
+// Owner: chronicle engineer (A13, key "chronicle"; wave 3 "chronicle-budget"). Files: Chronicle.h, Chronicle.cpp,
+// SimTests/test_chronicle*.cpp, SimTests/stubs/Chronicle_stub.cpp. Header written by foundation-api;
 // the owner may add, never rename.
 //
 // Writers (SPEC-SIM 1.1): w.chronicle, w.snapshots, w.nextId.entry, culture epithet / godName
@@ -66,6 +66,37 @@ struct ChronicleTune {
 	double prayerHeard = 25;         // a people whose prayers were answered (told) within this many years expects the answer: its new prayers are not news (the answer line tells them)
 	double brushTownGap = 30;        // rain / bloom / sculpting over the same town (minor): one entry per this many years (the early book was Nara's rain every 13 years)
 	double firstCluster = 4;         // a people's "first of its kind" buildings: one notable entry per this many years, the rest are ordinary buildings
+	// --- chronicle budget (wave 3, design review finding 8: the late-game firehose) ---
+	// Budgets are token buckets in vars.num (saved, deterministic) that refill with the years. Story entries
+	// (wars, peace, prophets, edicts, epithets, ages, the god's own great acts, ...) are never dropped: over
+	// budget the frequent ones (wars, peace, later ages, destroyed towns, prophets, the god's heal / omen) only
+	// lose weight. Routine notables (city famines, growth, first buildings, answered prayers, captures, ...)
+	// over budget become minor; repeated minor events of one kind and people are folded into one digest entry
+	// per decade instead of being written one by one. See "the budget" in Chronicle.cpp.
+	bool budget = true;              // false: the pre-budget chronicle (every gate above, no buckets, no digests)
+	double digestYears = 10;         // the budget's decade: one entry per kind and people, one digest per decade
+	double storyPerDecade = 0.25;    // (verify: was 0.3) weight-2 wars, peace, later ages, destroyed towns, prophets, edicts, the god's heal /
+	                                 // inspire / omen / plague, natural eruptions, a smaller people's new name for the god:
+	                                 // refill per decade ...
+	double storyBurst = 4;           // ... and the bucket's size (over it they are told as minor entries, never dropped)
+	double notablePerDecade = 0.2;   // (verify: was 0.25) routine weight-2 entries: refill per decade ...
+	double notableBurst = 3;         // ... and the bucket's size
+	double epochalPerDecade = 0.06;  // (verify: was 0.08) weight-3 entries that are not once-a-world moments (a city destroyed, a people
+	                                 // born or dead): refill per decade (about 0.7 per real minute) ...
+	double epochalBurst = 2;         // ... bucket size; over it they are told as notable
+	double minorPerDecade = 2.5;     // the world's own minor entries of the foldable kinds (not the god's small acts): refill per decade ...
+	double minorBurst = 6;           // ... and bucket size; over it (or a second of its kind for a people in one decade) the event is folded
+	double digestEvery = 30;         // (verify) at most one digest in this many years: folds wait and add up
+	double digestStale = 80;         // (verify) folds too small for a clause are let go once this many years old (a digest's span
+	                                 // stays under a century)
+	int digestMin = 5;               // a digest clause needs folded events of one kind and people x the kind's weight (Chronicle.cpp kClauses) >= this
+	int templateCap = 10;            // a foldable minor line used this many times is retired while its family has fresher lines;
+	                                 // a family whose every line reached it folds its minor entries into the digest
+	bool godDrownsOnly = true;       // (finding 7) a town the sea covers is the god's drowning only near a recent stroke (below);
+	                                 // the sea's own rise and the engines' are told as such and never name the god the Drowner
+	double strokeYears = 5;          // a settlement the sea covers within this many years of the god's Lower Land, quake or meteor
+	double strokeAng = 0.12;         // ... within the stroke's radius plus this many radians is the god's drowning (else the sea's)
+	double enginesCo2 = 40;          // w.co2 at or above this while some people burn fuel (factories, plants): the sea rise is the engines'
 };
 
 namespace chronicle {

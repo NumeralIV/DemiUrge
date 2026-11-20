@@ -1,4 +1,22 @@
-# DEMIURGE — Simulation spec (v2)
+# DEMIURGE — Simulation spec (v2; v3 changes from the design review)
+
+> **v3 (design review, 2026-11-19).** The rules marked "(v3, design review)" implement changes 1-7, 9
+> and 10 of `docs/reviews/claude-design-review.md` (the ending verdict from long memory, endings by what
+> happened, grace and wrath move progress, early pacing, age-only unlocks with upgrades and an Awe cap
+> per age, a cost to hoarding plus Consecrate, the rising sea is the people's, answered prayers end
+> famine, Lower Land cannot drown a town in one press). Where v3 and older text disagree, v3 wins. The
+> C++ port is the reference (`Unreal/Source/Demiurge/Sim/`; numbers in the TUNE structs and `Balance.cpp`).
+>
+> **v3.1 (design review 11/13, 2026-11-20, track sim-findings-2).** Rules marked "(v3.1, design review
+> 11/13)" implement findings 11 (wars rare and late, diplomacy barely touches the player) and 13 (pacing
+> front-light and back-heavy): tuning first (a caravan no longer buys a friendship, a cooler resting
+> point, frontier friction by age, an earlier second people, a busier young world and a quieter old one),
+> then rules (the god's favour, wrath, plagues and prophets in the relations; alliances that answer a call
+> to arms and deter; the Omen's sworn peace and its power to calm a war before it starts; wars blamed on
+> the god and victories it is thanked for; feuds, weariness and stalled wars so history is not constant
+> war; the bomb feared after its first use; late peoples pray for bread only when the hunger lasts). Every
+> new TUNE field defaults to the v3 behaviour; `Balance.cpp` switches them on. Evidence:
+> `docs/handoff/sim-findings-2/`.
 
 Read `CONCEPT.md` and `FOUNDATION.md` first. This file defines the shared data model, the event
 list and every sim module's public API and rules. **APIs, entity shapes, event names/payloads,
@@ -95,6 +113,7 @@ Settlement {
   apart,                              // consecutive years estranged from its culture (schisms)
   capital: false,
   ark,                                // 0..1 construction progress (needs b.launch)
+  (cause also 'sea' (v3): the centre went under a sea the people's own engines raised)
   lastExpand,                         // year of the last settler party or failed search
   _cells, _n                          // transient: Int32Array of territory cells, used length
 }
@@ -117,6 +136,11 @@ Culture {
   seen: { },                          // power id -> accumulated faith this culture has witnessed
   lastSplit                           // year a daughter culture last split from it
 }
+(v3, design review) each culture's memory of the god lives in vars.num (Society): society_grace_<id>,
+society_wrath_<id> (remembered deeds, fading), society_heard_<id> (year of the last deed witnessed),
+society_neglect_<id> (v3, verifier: remembered years without a deed, fading),
+society_pray_<id> / society_answer_<id> (prayers begun / answered in its history). Daughters inherit all
+five at a schism. Society.memory(world, id) reads them (3.8).
 
 Relation (between two cultures; stored in world.vars.rel['<lowId>|<highId>'])
   { v: -1..1, war: false, since: year, truce: year, trade: 0..1, contact: bool, aggressor: id | -1 }
@@ -164,9 +188,9 @@ ChronicleEntry { id, year, type, text, cell, culture, weight }   // weight 1 min
 | `rad` | Society raises (nukes); Life.step decays 1.5 %/yr |
 | `owner`, `farm`, `urban` | Civ (Life decays farm/urban on unowned cells) |
 | `road` | Society (diplomacy.js: trade) |
-| settlement: pop, K, growth, tier, radius, famine, plague, immune, inspire, blessed, lastExpand, `b.*` except wonder, culture, capital, dead | Civ (`inspire`/`blessed` are set by Powers, counted down by Civ.yearly; plague only via Civ.infect / Civ.cure) |
+| settlement: pop, K, growth, tier, radius, famine, plague, immune, inspire, blessed, lastExpand, `b.*` except wonder, culture, capital, dead | Civ (`inspire`/`blessed` are set by Powers, counted down by Civ.yearly; plague only via Civ.infect / Civ.cure; v3: Society sets `blessed` on an answered rain / bloom prayer, Consecrate builds a temple through Civ.consecrate) |
 | settlement: devotion, love, jaded, prayer, apart, ark, `b.wonder` | Society |
-| culture: age, science; `world.age`; `culture.capital` | Civ |
+| culture: age, science; `world.age`; `culture.capital` | Civ (v3: Powers and Society move science only through Civ.addScience / Civ.strikeKnowledge) |
 | culture: everything else (pop, towns, dead, prophet, edict, exhaustion, seen, epithet via Chronicle) | Society (`epithet`, `godName` changes: Chronicle.updateEpithets) |
 | `god.awe` | Society adds income; Powers.use spends; `awaken` sets the starting 60 |
 | `god.aweMax` | Society.yearly |
@@ -192,7 +216,7 @@ check against it). `cell` is a cell id or −1. Culture and settlement reference
 | `lightning` | `{ cell, natural }` | Powers |
 | `meteor:launched` | `{ cell, eta, kind: 'comet'|'meteor', id }` | Powers |
 | `meteor:impact` | `{ cell, ang, kind, sea }` | Powers |
-| `tsunami:start` `{ cell }` · `tsunami:hit` `{ cell, height }` (rate-limited) | | Powers |
+| `tsunami:start` `{ cell }` · `tsunami:hit` `{ cell, height, natural }` (rate-limited; v3: natural = the wave of a natural quake) | | Powers |
 | `volcano:start` `{ cell, id, natural }` · `volcano:end` `{ cell, id }` | | Powers |
 | `quake` | `{ cell, ang, power, natural }` | Powers |
 | `fire:start` | `{ cell }` (at most 2 per tick) | Life |
@@ -201,25 +225,27 @@ check against it). `cell` is a cell id or −1. Culture and settlement reference
 | `settlement:tier` | `{ id, tier, prev }` | Civ |
 | `settlement:building` | `{ id, building }` (every building, wonder included) | Civ; Society for `wonder` |
 | `settlement:famine` `{ id }` · `settlement:plague` `{ id, start }` | | Civ |
-| `settlement:destroyed` | `{ id, cell, culture, cause }` cause: `'drowned'|'meteor'|'lava'|'war'|'famine'|'plague'|'quake'|'nuke'|'abandoned'|'wave'|'lightning'` | Civ |
+| `settlement:destroyed` | `{ id, cell, culture, cause }` cause: `'drowned'|'meteor'|'lava'|'war'|'famine'|'plague'|'quake'|'nuke'|'abandoned'|'wave'|'lightning'|'sea'` (v3: `'sea'` = the risen sea, never the god's; `'drowned'` = Lower Land, a quake, a flooded lake) | Civ |
 | `settlement:captured` | `{ id, from, to, how: 'war'|'schism' }` (culture ids) | Civ |
 | `prayer` `{ id, kind, start }` · `prayer:answered` `{ id, kind }` | | Society |
 | `culture:born` | `{ id, parent, cell, reason: 'awaken'|'schism'|'distance' }` | Society |
 | `culture:died` `{ id }` | | Society |
 | `culture:age` `{ id, age, prev }` · `world:age` `{ age }` | | Civ |
-| `war:declared` `{ a, b }` (a = aggressor) · `war:ended` `{ a, b, victor }` (−1 = draw) | culture ids | Society |
+| `war:declared` `{ a, b, ally, blamed }` (a = aggressor) · `war:ended` `{ a, b, victor, thanked }` (−1 = draw) | culture ids. (v3.1, design review 11/13) `ally` ≥ 0: a joined the war as the ally of `ally`, whom b attacked; `blamed`: a's people blamed the god for this war (its wrath on them, or its favour of b over them, lately); `thanked`: the victor's people thanked the god for the victory (its grace was with them) | Society |
+| `alliance` (v3.1) | `{ a, b, formed }` culture ids a < b: they became allies (formed) or their alliance ended | Society |
 | `battle` | `{ cell, attacker, defender, won, settlement }` (culture ids; `settlement` = the defending settlement; `won` = attacker won) | Society |
 | `trade:route` | `{ a, b }` (settlement ids; first caravan between a pair) | Society |
 | `prophet:risen` `{ culture, settlement, name }` · `prophet:died` `{ culture, name }` · `edict` `{ culture, edict }` | | Society |
 | `wonder:built` | `{ settlement, name }` | Society |
 | `nuke` | `{ cell, from, to }` (culture ids) | Society |
 | `ark:started` `{ culture, settlement }` · `ark:launched` `{ culture, settlement }` | | Society |
-| `climate:milestone` | `{ kind: 'warming'|'cooling'|'sea-rise'|'sea-fall'|'ice-age'|'thaw', value }` | Climate |
+| `climate:milestone` | `{ kind: 'warming'|'cooling'|'sea-rise'|'sea-fall'|'ice-age'|'thaw', value, culture }` (v3: culture = whose engines put the most CO₂ into the air so far, −1 none) | Climate |
 | `unit:spawned` · `unit:arrived` `{ id, type, culture, cell }` · `unit:died` `{ id, type, culture, cell, cause }` | | Units |
 | `chronicle:entry` | `{ entry }` | Chronicle |
 | `awe:short` | `{ id }` (at most once per press and once per 1.5 real seconds per power) | Powers |
 | `people:lost` | `{ }` (no settlements left before the world was populous enough for an ending) | Sim |
 | `ending` | the `world.ending` object (§3.12) | Sim |
+| `drown:warning` | `{ id, cell }` (v3, design review: a Lower Land press stopped at settlement id's centre just above the sea; a second press would drown it; once per settlement per press) | Powers |
 
 ## 3. Modules
 
@@ -424,7 +450,15 @@ Civ.siteScore(world, c) → number              hab plus bonuses (fresh water, c
 Civ.bestSite(world) → cell                    best site on the landmass with the most habitable cells (−1 if none)
 Civ.ageProgress(world, cultureId) → 0..1      science toward the next age (1 at the last age)
 Civ.TIERS = ['camp', 'village', 'town', 'city', 'metropolis']
+Civ.bandSite(world, cell) → cell | −1           (v3) the camp of an awakening's second band: best siteScore 4-6 hops
+                                              over land from cell, not sea / lake / barren / owned
+Civ.consecrate(world, s) → bool               (v3) the shrine of s becomes a temple (settlement:building)
+Civ.addScience(world, cultureId, years) → Δ   (v3) progress-years from the god (negative: a setback, never below the
+                                              start of the current age; ages are never lost)
+Civ.strikeKnowledge(world, harmedIds, years) → n   (v3) every culture whose capital or an academy town is in harmedIds
+                                              loses `years` progress-years (once per culture per act)
 ```
+`found` with `{ band: true }` (v3) may camp within crowdHops of its sister camp.
 
 `economy.js`:
 
@@ -439,7 +473,8 @@ Civ.capacity(world, s) → K (people) from the rules below (also used to estimat
   `farmPot = 22 × min(fert, 1.2) × suit(temp, moist) × techYield[age]` on arable cells
   (`hab > 0.15`, not a lake cell); `forage = 3 × (0.6·veg + 0.4·fauna)` (not multiplied by tech);
   per sea cell bordering the territory `fish = 4 × fauna × (1 + port) × sqrt(min(techYield, 10))`.
-  `K = Σ max(farmPot, forage) + Σ fish`, × 1.15 with a granary, × 1.25 with a plant.
+  `K = Σ max(farmPot, forage) + Σ fish`, × 1.15 with a granary, × 1.25 with a plant, × 1.2 while
+  `blessed > 0` (v3, design review: Heal and answered rain / bloom prayers feed the town).
   **K never depends on `farm[]` or on the population.** After K is known, `farm[]` is set for
   display and ecology: the best cells by farmPot are farmed (farm → 1 at 0.25/yr, lowering veg)
   until their summed farmPot reaches 1.15 × pop; other cells relax toward 0 by 0.1/yr. Lake cells
@@ -448,7 +483,7 @@ Civ.capacity(world, s) → K (people) from the rules below (also used to estimat
 - **Growth.** `Keff = max(K, 1)`. If `pop ≤ Keff`: `pop += r × pop × (1 − pop/Keff)` with
   `r = 0.03 × (1 + 0.3·granary + 0.3·[blessed > 0] + 0.2·max(0, love))`, `famine = 0`.
   Else `pop −= min(0.12 × pop, 0.5 × (pop − Keff))`, `famine += 1` (emit `settlement:famine` when
-  it reaches 3). Then plague: deaths `plague × 8 %` of pop per year; plague fades 15 %/yr
+  it reaches 3; v3: a blessed settlement counts no famine years while its people fall back to K). Then plague: deaths `plague × 8 %` of pop per year; plague fades 15 %/yr
   (`Civ.cure` below 0.05) and each year may spread (`Civ.infect`) to settlements within 8 hops.
   Count down `blessed`, `inspire`, `immune` by 1 per year (floor 0). Destroy below 3 people
   (cause `famine`, `plague` or `abandoned`).
@@ -462,7 +497,9 @@ Civ.capacity(world, s) → K (people) from the rules below (also used to estimat
   cells in the territory), academy (Sail; city+), factory (Industry; city+), plant (Atomic;
   city+), launch (Space; the culture's capital, 20 years after the culture reached Space).
 - **Expansion.** A settlement with `pop ≥ 0.85 K`, `pop ≥ 40` and `year − lastExpand ≥ 25` (12
-  under the `expand` edict) may send settlers. At most 2 expansion searches per yearly tick
+  under the `expand` edict) may send settlers. (v3, design review) The cooldown is by the culture's
+  age: 60 years in the Stone age, 260 in Bronze, 240 in Iron, 180 later (`expandCooldownAge`; the
+  edict halves it), so the first minutes have several camps and year 1,000 still holds 8-40. At most 2 expansion searches per yearly tick
   (longest-waiting settlement first, ties by id). Search with `Path.reach` (maxCost 45 on land;
   from the Bronze age a settlement with a sea cell in its territory uses `naval = 'coastal'`;
   from the Sail age with a port, `naval = true`, maxCost 120). Candidate sites: `canSettle` ok,
@@ -474,7 +511,8 @@ Civ.capacity(world, s) → K (people) from the rules below (also used to estimat
   retry in 10 years).
 - **Hazards** (checked yearly): centre cell under the sea because the sea rose → spawn a settler
   unit with 60 % of the people toward the best valid site within 12 hops (it joins the nearest
-  settlement of its culture if there is none), then `destroy(s, 'drowned')`; centre cell with
+  settlement of its culture if there is none), then `destroy(s, 'sea')` (v3, design review: the
+  people's engines raised that sea; it is not counted as the god's drowning); centre cell with
   `water > 0.3` → `drowned`; lava on the centre → `lava`. (Waves, sculpting under the sea and
   impacts kill outright via Powers.)
 - **Research** (intensive, measured in progress-years so world size does not change the pacing):
@@ -482,11 +520,18 @@ Civ.capacity(world, s) → K (people) from the rules below (also used to estimat
   0.4..2.0. `sizeF = clamp(0.5 + 0.5 × sqrt(liveSettlements / 12), 0.5, 1.25)`;
   `buildF = 1 + 0.15 × (share of its settlements with an academy) + 0.10 × (share with a market)
   + 0.10 × (share with a factory)`; `traitF = 0.85 + 0.3 × curiosity`;
-  `inspireF = 1 + 0.25 × (share of its people in inspired settlements)`;
+  `inspireF = 1 + 0.25 × (share of its people in inspired settlements)` (v3, design review: 1 + 1.0 × share);
   `catchUp = 1.5` if a culture in contact is at least one age ahead. Progress needed to leave
   each age: `[420, 500, 600, 750, 620, 520]` (nominal: Bronze ≈ 520, Iron ≈ 1,000, Sail ≈ 1,550,
   Industry ≈ 2,200, Atomic ≈ 2,750, Space ≈ 3,200). Emit `culture:age`, and `world:age` when
-  `world.age` rises.
+  `world.age` rises. (v3, design review: balanced to `[250, 575, 830, 1125, 1035, 850]`: a Stone age of
+  ~320 years; 8 passive seeds: Bronze 309-334, Iron 872-996, Sail 1,534-1,809, Industry 2,301-2,588, Atomic 2,916-3,229, Space 3,412-3,748, Ark 3,631-3,967.
+  (v3.1, design review 11/13: `[250, 575, 830, 1070, 985, 810]`, 5 % less from the Sail age, because the
+  wars now cost a passive world about a century; 8 passive seeds: Bronze 309-338, Iron 904-1,058, Sail
+  1,605-1,923, Industry 2,335-2,710, Atomic 2,871-3,349, Space 3,301-3,868, Ark 3,521-4,087.)
+  The god moves progress: Inspire +2 progress-years at once, an answered prayer +1, and the god's
+  wrath on a capital or an academy sets that culture back: lightning 1, quake 20, plague 20, volcano
+  30, meteor 40 progress-years; natural events never do.)
 
 Destroyed settlements leave `urban` behind as ruins (Life fades them); their cells become unowned.
 
@@ -511,7 +556,11 @@ Society.witness(world, cell, ang, { kind, faith, good })
         Emits miracle:witnessed with the ids that gained anything.
 Society.regard(world, cultureId = -1) → { devotion, love, mood }
         population-weighted means over the culture's live settlements (−1 = everyone); mood by the ending thresholds (§3.12):
-        'beloved' | 'feared' | 'forgotten' | 'parting'
+        'beloved' | 'feared' | 'forgotten' | 'parting'   (v3: the mood is Society.memory's, so the HUD word and the ending agree)
+Society.memory(world, cultureId = -1) → { devotion, love, grace, wrath, lore, verdict, silent, prayers, answered,
+        remembered, mixed, mood }        (v3, design review; read-only; −1 = everyone, people-weighted, latest deed of any)
+Society.raiseWonder(world, s) → bool   (v3) a Wonder in s now (b.wonder, wonder:built, settlement:building); the build
+        edict and Consecrate use it
 Society.raiseProphet(world, s) → prophet | null
 Society.setEdict(world, cultureId, edict) → bool      needs a living prophet; edicts are free; one per culture; may be changed
                                                       once every 20 years; lasts until the prophet dies
@@ -525,6 +574,8 @@ Society.rel(world, a, b) → relation object (created on demand; a ≠ b)       
 Society.peek(world, a, b) → relation | null (never creates)                    for UI
 Society.atWar(world, a, b) → bool
 Society.declareWar(world, a, b)        Society.makePeace(world, a, b, truceYears = 40, victor = -1)
+Society.swearPeace(world, a, b) → bool (v3.1) the Omen's sworn peace: for omenYears the pair rests at omenTarget
+Society.tense(world, c) → [ids]        (v3.1) cultures in contact with c, at peace, v ≤ omenTension (the Omen may calm them)
 Society.onArrive(world, unit)          traders, armies and prophets reaching their destination
 Society.diplomacy(world)               yearly: contact, relations, wars, armies, trade, nuclear risk
 ```
@@ -533,17 +584,44 @@ Society.diplomacy(world)               yearly: contact, relations, wars, armies,
   culture with no live settlement and no settler unit of its own becomes `dead` (emit
   `culture:died` once; `makePeace` on all its wars with the other side as victor; kill its units
   with cause `'disbanded'`; `prophet = null`). `jaded` decays 5 %/yr; `love` drifts 1 %/yr toward 0.
+- **Memory (v3, design review findings 1, 2).** Every witnessed act of the god (not natural events:
+  `witness` takes `natural: true` for them) adds `|good| × falloff × seconds (brush, else 1) × pop share of
+  the witness in its culture` to that culture's `grace` (good > 0) or `wrath` (good < 0), and sets its
+  `heard` year. Both fade with a half-life of 1,000 years. Nothing enters the memory while the culture
+  builds its Ark (love still moves: nothing is bought in the last minutes). (v3, verifier) Neglect is
+  remembered too: each year a culture has heard no deed for ≥ 120 years adds 1 to its `neglect` (fading
+  with the same half-life, inherited by daughters), and grace counts × `presence = 1 / (1 + 0.02 ×
+  neglect)` in the lore (wrath whole): a god idle for millennia cannot buy a beloved verdict in the
+  centuries before the Ark (`atomic-kind`, idle until the Atomic age and then kind, was beloved on 7 of 8
+  seeds; now 1 of 8). `lore = (grace × presence − wrath) / (grace × presence + wrath + 2.5)`; `verdict = 0.35 × love + 0.65 × lore`; `remembered` = grace + wrath ≥ 0.25;
+  `mixed` = remembered and the smaller hand ≥ 0.35 × the larger. **Mood**, in order: silent ≥ 600 years
+  → `parting` if remembered, else `forgotten`; mixed → `parting`; verdict ≤ −0.2 → `feared`; (verdict
+  ≥ 0.2 and devotion ≥ 0.30) or (≥ 60 % of ≥ 10 prayers answered and verdict > 0) → `beloved`; devotion
+  < 0.25 → `forgotten`; else `parting`. An answered prayer also teaches (+1 progress-year) and an
+  answered rain or bloom prayer blesses the town for 20 years (K × 1.2, no famine years); a rain
+  prayer begun in famine is a prayer for bread, which Bloom answers too.
+- **The god's recent favour (v3.1, design review 11/13).** Every witnessed deed of the god also adds the
+  same grace or wrath impulse to the culture's fading favour sums (vars.num `society_fgrace_<id>` /
+  `society_fwrath_<id>`, half-life `favourHalfLife` 30 years; also while the Ark is built: envy is not
+  memory). Diplomacy reads them as rates (sum × (1 − 0.5^(1/30)), impulse a year): a culture the god
+  blesses or punishes more than its neighbour is envied or blames it (below).
 - **Belief.** Each settlement's `devotion` drifts 2 %/yr toward
   `baseline = [0.55, 0.6, 0.55, 0.45, 0.3, 0.18, 0.1][age] × (0.6 + 0.8 × piety)` plus 0.05 with
   a shrine, 0.10 with a temple, 0.15 while its culture has a living prophet. Fear (love < −0.3)
   adds 0.1 to the baseline before the Atomic age (they pray harder) and subtracts 0.1 from it in
-  the Atomic and Space ages (defiance).
-- **Awe.** `god.aweMax = min(1200, 100 + 25 × shrines + 60 × temples + 150 × wonders)`.
+  the Atomic and Space ages (defiance). (v3, design review finding 6) While Awe ≥ 95 % of aweMax every
+  devotion then drifts down 1.5 % a year (`Balance.cpp`; 1 % in the TUNE default): the god who keeps everything does nothing.
+  (v3.1) Never below `hoardFloor` 0.3 (TUNE 0 = none): a low-piety people whose god sits at a small cap
+  otherwise never built a shrine, so the cap never grew (passive seed 7 held aweMax 150 for 1,600 years).
+- **Awe.** `god.aweMax = min(1200, 100 + 25 × shrines + 60 × temples + 150 × wonders)`, and (v3, design
+  review finding 5) at most `[300, 450, 600, 800, 1000, 1200, 1200][world.age]`: the bar grows with the world.
   `S = Σ over live settlements of devotion × (0.2 + 0.5·shrine + 1.2·temple) × (1 + tier/2)`.
   Income per year = `0.6 + 0.9 × ln(1 + S)` (one camp ≈ 0.7; three shrined villages ≈ 1.4;
   twenty settlements ≈ 3.3; late game ≈ 4.5). `yearly` adds it to `god.awe`, clamped to aweMax.
 - **Prayers.** Yearly, a settlement with devotion ≥ 0.15 and no prayer starts praying for
-  `'rain'` (famine ≥ 1 or inside a drought), `'heal'` (plague > 0.2), `'peace'` (its culture at
+  `'rain'` (famine ≥ 1 or inside a drought; v3.1, design review 13: famine ≥ `rainFamineAge[age]` =
+  1, 1, 1, 1, 2, 2, 2 by its culture's age, so the late ages pray for bread only when the hunger lasts:
+  fewer, longer prayers; a drought starts one at once in every age), `'heal'` (plague > 0.2), `'peace'` (its culture at
   war with exhaustion > 0.4) or `'bloom'` (mean scorch of its territory > 0.3). At most 6 prayers
   at once, largest settlements first. Emit `prayer { start: true }`. A prayer ends when its cause
   is gone (`start: false`), when answered (see `witness`), or after 15 unanswered years
@@ -558,7 +636,9 @@ Society.diplomacy(world)               yearly: contact, relations, wars, armies,
 - **New cultures.** A settlement is *estranged* while it is more than 0.57 rad from its capital,
   or on another landmass (`world._landId`), or its love differs from its culture's mean by more
   than 0.6; `apart` counts consecutive estranged years. When two or more settlements within
-  0.28 rad of each other have `apart ≥ 120`, they secede together (`newCulture` with
+  0.28 rad of each other have `apart ≥ 120` (v3: before the Iron age, estranged beyond 0.40 rad and
+  `apart ≥ 60`, so a second people can rise in the Bronze age; v3.1, design review 13: beyond 0.28 rad and
+`apart ≥ 40`, so the second people rises at 250-370 instead of 340-640), they secede together (`newCulture` with
   `reason: 'distance'` or `'schism'`, then `Civ.setCulture` for each). At most one birth per
   parent per 150 years and at most 6 living cultures.
 - **The Ark.** Only in the capital of a Space-age culture with `b.launch = 1`: emit
@@ -581,6 +661,33 @@ Society.diplomacy(world)               yearly: contact, relations, wars, armies,
   `battle`. **Peace** when either side's exhaustion reaches 1, after 60 years regardless, when a
   side has lost 40 % of its settlements, or by miracle/edict: `v = −0.1`, truce 40 years;
   exhaustion then decays 0.03/yr. At most 4 army/trader path searches per yearly tick.
+- **Relations, war and peace (v3.1, design review 11/13).** Tuning: a caravan's arrival adds 0.004 to v
+  (was 0.02: with dozens of market towns every trading pair sat at v +0.4..+0.7 from the Sail age, and a
+  passive world was at war in 3 % of its years), resting point `relTarget` −0.2, aggression ×0.02, and the
+  border term × `borderAge[older side's age]` = 1, 1, 1.3, 1.6, 1.6, 1.6, 1.6. The god in the relations
+  (rates r = the favour sums above, `favourRef` 0.015): `v −= envyK × sat(|fa − fb| / favourRef)` with
+  f = grace − wrath rate (0.002: a god's favourite is envied, its scourged blame the spared);
+  `v += sharedWrathK × sat(min(wrath a, wrath b) / favourRef)` (0.006: struck together, they stand
+  together); `v −= plagueK × max(sick a, sick b) × sat(trade + border)` (0.02; sick = the people's share in
+  towns with plague > 0.2: the fever came from over there); a culture with a living prophet `v −= zealK ×
+  sat((its devotion − theirs) / 0.3)` toward the less devout (0.002), and two devout peoples (≥ 0.4), one
+  with a prophet, `v += faithK` (0.006). **Alliances**: a pair in contact, at peace, with v ≥ `allyForm`
+  0.55 allies (the warmest first, at most `allyMax` 2 each; vars.num `diplomacy_ally<lo>_<hi>`, event
+  `alliance`) and stays allied while v ≥ 0.15 and at peace; allies never attack each other; when a
+  culture is attacked each of its allies that can reach the aggressor (a shared landmass or, from Sail,
+  a port), is not under the peace edict and not in truce with it joins the war (`war:declared.ally`);
+  an aggressor must have ≥ 0.6 of the strength of the defender **and** those allies; when the war ends
+  the wars its allies joined end with it (the victor's ally wins too). **The Omen of Peace**: a peace it
+  makes is sworn (`diplomacy_sworn<lo>_<hi>` = until): for 80 years the pair rests at +0.3 instead of
+  relTarget; and with no war it may calm a neighbour on the brink (`Society.tense`: v ≤ −0.4): truce 40
+  years, v + 0.4, sworn, witnessed with good 0.3. **Blame and thanks**: `war:declared.blamed` when the
+  aggressor's wrath rate, or the defender's grace rate over its own, is ≥ 0.004; at a peace with a victor
+  whose grace rate is ≥ 0.004 the victor thanks the god (`war:ended.thanked`, devotion + 0.05 in its
+  towns, the loser's love − 0.05). **Not constant war**: each further war of a pair lengthens its truce
+  by its own length (× 1 + min(4, wars − 1); `diplomacy_feud<lo>_<hi>`); a culture with exhaustion
+  > 0.3, or more than 18 remembered war years (+1 a year at war, half-life 80; `diplomacy_warred<id>`),
+  starts no war; a war in which neither side sent an army for 25 years ends in a draw. **The bomb is
+  feared**: after the world's first exchange the yearly chance is × 0.1.
 - **Trade.** Every ~5 years a town+ with a market sends a `'trader'` unit to a partner within
   reach (cache routes per pair in `world._routes`). On arrival: `trade` toward 1, relations up,
   plague may hop (`Civ.infect`), and `road[]` along the land part of the path rises with traffic
@@ -645,7 +752,11 @@ Powers.natural(world)                  yearly roll for natural events, scaled by
 Power definition: `{ id, name, key, group: 'genesis'|'shape'|'sky'|'wrath'|'grace', brush: bool,
 cost, ang, target: 'any'|'land'|'sea'|'settlement', unlock: { phase, age, awe }, wAng, faith,
 desc }`. Unlocked when the world has reached `unlock.phase` **and** (`world.age ≥ unlock.age`
-**or** `god.aweMax ≥ unlock.awe`). Genesis powers are available only in their phase. `key` is
+**or** `god.aweMax ≥ unlock.awe`). (v3, design review finding 5) Every power past Bronze unlocks by age
+only (`unlock.awe = 0`: plague, prophet, peace in Iron, meteor in Sail, volcano in Industry), and the
+two last ages upgrade one (`Powers.kUpgrades`, `Powers.upgrade(world, id)`): **Monsoon** (rain, Atomic:
+brush up to 0.25 rad at half the cost) and **Star-fall** (meteor, Space: the god's crater 1.6 × as
+deep, a crater lake where it is wet enough). Genesis powers are available only in their phase. `key` is
 the hotkey (Input and HUD read it; nobody else binds letters to powers). `wAng` and `faith` are
 the witness radius and the devotion gained at the centre (per second for brush powers).
 
@@ -666,7 +777,13 @@ the witness radius and the devotion gained at the centre (per second for brush p
 | `heal` | Heal | T | grace | click | 40 | 0 | settlement | history | 0.10 | 0.12 | +1 |
 | `inspire` | Inspire | I | grace | click | 60 | 0 | settlement | Bronze or 200 | 0.10 | 0.08 | +0.6 |
 | `prophet` | Prophet | P | grace | click | 120 | 0 | settlement | Iron or 300 | 0.15 | 0.15 | +0.5 |
-| `peace` | Omen of Peace | O | grace | click | 100 | 0 | settlement | Iron or 300 | both cultures | 0.10 | +0.8 |
+| `peace` | Omen of Peace | O | grace | click | 100 | 0 | settlement | Iron or 300 (v3: Iron) | both cultures | 0.10 | +0.8 |
+| `consecrate` (v3) | Consecrate | Y | grace | click | 150 (a Wonder: 400) | 0 | settlement | Bronze | 0.10 | 0.10 | +0.5 |
+
+(v3) plague, prophet: Iron; meteor: Sail; volcano: Industry (age only). Rain and Bloom cost × 2 when the
+brush covers no settlement's territory (painting the empty world is not free).
+**consecrate**: a settlement with a shrine and no temple gets a temple (Civ.consecrate); a capital with a
+temple and no Wonder raises one (Society.raiseWonder) for 400, once per world age.
 
 An act with good ≤ 0 gives half faith to witnesses it did not harm. Natural events call
 `witness` with a quarter of the faith and good = 0.
@@ -679,11 +796,20 @@ Effects:
   reach 0; hard cap +1.5). `Terrain.touched`.
 - **seed**: `Life.seed(world, cell, ang)`.
 - **awaken**: needs `Civ.canSettle`. `Society.newCulture`, then `Civ.found(cell, culture, 30,
-  'awaken')`. The first successful use in phase `'people'` calls `Sim.setPhase(world, 'history')`
+  'awaken')`, then (v3, design review finding 4) a second band of 20 at `Civ.bandSite` (4-6 hops away,
+  `found` with `band: true`). The first successful use in phase `'people'` calls `Sim.setPhase(world, 'history')`
   and sets `god.awe = max(god.awe, 60)`. Powers never writes `world.phase` itself.
 - **raise / lower**: `Terrain.sculpt` at 1.5 units/s at the brush centre during genesis and
   0.2 units/s in history; in history the cost is × 4 while the brush centre is on owned land.
-  A settlement whose centre goes under the sea is destroyed (`drowned`).
+  A settlement whose centre goes under the sea is destroyed (`drowned`). (v3, design review finding 10)
+  In history one press of Lower Land stops every settlement centre it reaches at sea level + 0.05
+  (the whole stroke slows to keep it there) and emits `drown:warning` once; only a press that reaches
+  a centre already at that floor may drown it. `Powers.drownRisk(world, cell, ang)` names the town a
+  press there would drown (the hover tip). (v3, verifier fixes) Only a town that already had its
+  `drown:warning` (vars.num `powers_drownWarned_<id>`) may drown, so a town the rising sea brought to the
+  floor is warned by its first press too (Lower Land never raises it, nor sinks it below where it stood);
+  and a stalled frame (dt > strokeGap) in the middle of a held press does not start a new press for this
+  guard (only dt ≤ 0 or another power does).
 - **rain**: `wet` toward 1 within the brush, extinguishes fire, fertility slowly up; sets
   need.climate (the scheduler rate-limits it).
 - **bloom**: `Life.bloom`.
@@ -692,7 +818,10 @@ Effects:
 - **quake**: settlements within 0.08 rad lose 15–35 %; `Terrain.roughen`; under the sea it
   starts a tsunami.
 - **plague / heal / inspire**: `Civ.infect(s, 0.6)` / `Civ.cure(s)` + `blessed = 30` /
-  `inspire = 40`.
+  `inspire = 40` (v3: and +2 progress-years at once). (v3) The god's lightning, quake, plague, volcano
+  and meteor that hit a capital or an academy town set its culture back (`Civ.strikeKnowledge`; v3.1:
+  a quake 50 progress-years, was 20: wars now slow every people, and a cruel god must still cost the
+  world 150+ years).
 - **meteor**: ≈ 1.6 s flight, then `Terrain.crater` (0.05 rad, depth 1.6); settlements inside
   are destroyed (`meteor`), those within 2.5 × that radius lose 50 %; units die; fires at the
   rim; `Climate.addDust(0.25)`; in the sea it starts a tsunami instead of fires.
@@ -702,7 +831,11 @@ Effects:
   Terrain, making new land where it reaches the sea); dust +0.03/yr while it lasts; afterwards
   fertility +0.3 within 3 × the cone radius. Bound the lava field (≤ 400 cells).
 - **prophet**: `Society.raiseProphet(s)`. **peace**: `Society.makePeace` for every war of that
-  settlement's culture with an 80-year truce and relations +0.4.
+  settlement's culture with an 80-year truce and relations +0.4. (v3.1, design review 11/13) Each such
+  peace is sworn (`Society.swearPeace`: 80 years resting at +0.3); with no war, the Omen may be cast on a
+  culture with a neighbour on the brink (`Society.tense`, v ≤ −0.4): truce 40 years, relations +0.4, sworn,
+  witnessed with good 0.3 (a war averted is felt less than a war ended). `can` refuses it only when
+  there is neither a war nor a brink.
 - **Tsunami**: `data.front` expands over sea cells each tick up to `ang`; where the front meets
   a coast, land cells within a few hops and lower than the wave height (decaying with distance)
   are flooded: `wet = 1`, settlements there lose people by depth (destroyed with cause `wave`
@@ -712,7 +845,11 @@ Effects:
   quakes 1, plague 1 (only where a city exists), eruptions 0.4. Each emits the same events as
   its miracle twin with `natural: true`. **Protection**: no natural event is centred within
   0.3 rad of a live settlement while `stats.pop < 200` or before year 100, nor within 0.15 rad
-  while fewer than 4 settlements live. Droughts set need.climate when they start and end.
+  while fewer than 4 settlements live. (v3.1, design review 13) The rates are × `calamityAge[world age]`
+  = 1.4, 1.2, 1, 1, 0.85, 0.75, 0.7: a busier young world, a quieter old one. Droughts set need.climate when they start and end.
+  (v3, design review finding 4) **The first trial**: in year 45 a mild drought (power 0.5, 0.12 rad,
+  8 years) settles on the first capital, once per world, so the first prayer (for rain) comes within
+  the first minute. Natural events witness with `natural: true` (no memory, not heard).
 
 ### 3.11 `chronicle.js` → `DM.Chronicle`
 
@@ -793,7 +930,12 @@ guards are allowed), so a partial tree still ticks.
 `checkEnding` returns null once `world.ending` is set. Ark: when `vars.ark` exists →
 `type: 'ark'`, mood from `Society.regard(world, vars.ark.culture)`: `'beloved'` (devotion ≥ 0.35
 and love ≥ 0.2), `'feared'` (love ≤ −0.2), `'forgotten'` (devotion < 0.2), else `'parting'`.
-Silence: no live settlement and no settler unit for 50 years **and** `stats.peakPop ≥ 1000` →
+(v3, design review findings 1, 2) The mood is `Society.memory(world, vars.ark.culture).mood`: the
+verdict of the Ark culture's long memory (§3.8), so forgotten (neglect), parting (both hands, or an
+absent but remembered god), beloved (kindness or answered prayers) and feared (wrath) are all reachable
+and the last years cannot buy one.
+Silence: no live settlement and no settler unit for 50 years **and** `stats.peakPop ≥ 1000`
+(v3, design review finding 10: **and** year ≥ 1,000; earlier it is `people:lost`) →
 `type: 'silence'`, mood `'ash'` if `vars.lastNuke` is within 200 years, else `'quiet'`. Below
 that population, emit `people:lost` once per extinction instead (the player may `awaken` again
 for free). Setting an ending: write `world.ending`, `setPhase('ended')`, emit `ending` with that
@@ -831,3 +973,42 @@ balance owner edits: `Object.assign(DM.TUNE.civ, { … })`. Module authors do no
   and every 3–8 s later; a great one (≥ 150) every 25–60 s from the age it unlocks. An active
   policy sits below 90 % of aweMax in at least 60 % of years.
 - Performance per §0.8.
+
+**Design-review targets (v3, design review; simrun `--policy all --summary` prints them per policy and
+across policies; "x/6" in the review is the share x/6 of the seeds run).** The scripted players
+`curious` (blessings to 900, wrath to 1100, then neglect), `blessonly` (blessings to 1000), `prayers`,
+`repent` (wrath to 800, then kind), `sculptor`, `late-kind` / `late-cruel` (idle until an Ark is being
+built), `inspire-spam`, `hoarder` (answers prayers, buys nothing) and `builder` (answers prayers and
+consecrates) live in `Tools/simrun/Policies.cpp`, with the verifier's `atomic-kind` / `atomic-cruel` (idle
+until the Atomic age, then kind / cruel).
+- Endings: `passive` forgotten ≥ 5/6; `kind` beloved ≥ 6/8; `cruel` feared ≥ 6/8; `chaotic` and
+  `curious` parting ≥ 4/6; `prayers` beloved ≥ 4/6; `late-kind` not beloved ≥ 4/6; `late-cruel` not
+  feared ≥ 4/6; `atomic-kind` not beloved ≥ 4/6 (verifier); `blessonly` and `passive` end differently ≥ 5/6; each of the four Ark moods is the
+  most common ending of some policy.
+- Progress: `kind`'s Ark ≥ 150 years before `passive`'s and `cruel`'s ≥ 150 after, ≥ 5/6;
+  `inspire-spam` reaches Space ≥ 200 years before `passive`, ≥ 5/6.
+- Early pacing (`passive`): settlements ≥ 3 at year 200 and ≥ 6 at 400; first prayer by year 80 ≥ 5/6;
+  second culture by 650 ≥ 4/6; no stretch over 150 years without a weight-2 chronicle entry in years
+  0-1,000 (this one is the chronicle's to meet).
+- Powers and Awe: meteor not before Sail, volcano not before Industry; every age from Bronze to Space
+  unlocks or upgrades a power; aweMax at year 1,000 ≤ 600; `passive` at the cap ≤ 50 % and `prayers`
+  ≤ 15 % of years (not met: see the gameplay handoff); `hoarder` ends less devout than `builder` ≥ 5/6.
+- The sea and the land: the final `passive` epithet is never a Drowner one (the chronicle's to meet:
+  it still counts natural waves; `tsunami:hit.natural` now tells it); `doom` still earns one ≥ 5/6;
+  `sculptor` never loses its people; `doom` reaches silence, after year 1,000, 8/8.
+- Famine: answered rain / bloom prayers end the famine within 5 years in ≥ 80 % of cases; `kind` has
+  no more famine entries than `passive` ≥ 5/6.
+
+**Wars, alliances and pacing targets (v3.1, design review 11/13; simrun `--policy all --summary`
+prints them, plus the per-policy tables "diplomacy", "pacing" and "ending mix").**
+- War: `passive` at war in 8-15 % of its years (median of the seeds) and every seed in 3-25 %; first war
+  by year 1,300 ≥ 5/6; at most one nuclear exchange per `passive` run; alliances form in every `passive`
+  run; no policy (but `doom`) at war in more than a third of its years in any run.
+- The god in the wars: a `cruel` god is blamed for ≥ 3 wars ≥ 5/6; `kind` casts the Omen of Peace ≥ 10
+  times ≥ 5/6, its victors thank the god for ≥ 1 war ≥ 5/6, and its peoples are at war less than a `cruel`
+  god's ≥ 5/6.
+- Pacing: the auto-pace replay (2× while fewer than 2 notable entries fell in the last real minute, 1×
+  for 20 real seconds after a weight-3 entry or a new prayer) lasts 25-35 real minutes; sim moments per
+  real minute in the Industry-Space ages ≤ 3.5 × those of the Stone-Bronze ages ≥ 5/6 (v3: about 4.6).
+  Moments = wars declared / ended, peoples born / dead, towns destroyed / captured, Wonders, prophets,
+  prayers begun, nukes, quakes, eruptions, impacts, droughts begun, Arks begun, alliances made / broken.

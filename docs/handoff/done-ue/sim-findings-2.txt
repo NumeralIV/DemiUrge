@@ -1,0 +1,87 @@
+2026-11-20 sim-findings-2 VERIFIED (independent adversarial check of design review findings 11 and 13 in the simulation). Score 7/10.
+docs/handoff/done-ue/wave3-final.txt had not appeared when I finished; release-notes.md was not changed by this check.
+
+Summary. The builder's claims reproduce on 8 new seeds (301-308) almost everywhere, with one exception. "kind's peoples are at war less than cruel's on >= 5/6" held on only 5/8 new seeds with the builder's code. More generally, a kind god's world is at war about as often as a world the god ignores. I fixed one latent bug in Diplomacy and changed the scripted kind player so that an Omen against a war comes before its two prayers of the year; with that the target holds 7/8 on both seed sets (14/16). I added three adversarial players and a save-at-the-event test. Determinism, save/load, every SPEC-SIM section 4 target and every v3.1 target pass. Only the four design-review targets that were already failing still fail.
+
+Fixes (owned files only; Game/, Names.*, Chronicle.* untouched):
+- Sim/Diplomacy.cpp (bug): the yearly loop over open wars ran on pairs whose war had just ended earlier in the same loop. makePeace ends a principal war together with the wars its allies joined. A joined pair later in the list still got war weariness, a second peace attempt and the 1.5 %/yr nuclear draw: a bomb between two peoples at peace. The loop now skips pairs no longer at war. On 16 seeds x 20 policies no table changed, so the case is rare, but the bug was real.
+- Tools/simrun/Policies.cpp (kind player): one Omen of Peace on a warring people now comes first, before the year's two prayers. Before, a busy prayer year left the war running.
+  - kind < cruel at war: 5/8 -> 7/8 on seeds 301-308, and 7/8 on seeds 1-8.
+  - kind median at war 9.8 % (seeds 1-8) and 10.0 % (301-308); passive 9.9 / 9.8; cruel 15.9 / 17.2.
+  - Every other kind target is unchanged: beloved 16/16, Ark >= 150 y before passive 15/16, thanked 15/16, Omens 33-35 a game, atomic-kind / late-kind not beloved 15/16.
+- Tools/simrun: three adversarial players, also in --policy all:
+  - peacemaker: casts only the Omen, up to 3 a year, on any people at war or on the brink.
+  - favourite: blesses one people only.
+  - scourge: strikes only the smallest people, never the last.
+- SimTests/test_integration_findings2.cpp (new): on seeds 303 and 306 (L 6) it saves at the exact tick of the first war:declared and at the tick of the next world age. Every relation (war, since, truce, aggressor, v, trade) and every vars.num key (war tallies, alliances, oaths, feuds, favour) survives exactly. Two worlds loaded from the same bytes replay 300 years with the same hash.
+- Tried and reverted (numbers in verify/exp-*): weakening envy.
+  - envyK 0.001, envyK 0, envyRef 0.04, and a split grace / wrath envy reference.
+  - They raised kind < cruel on seeds 301-308 but lowered it on seeds 1-8.
+  - They also made cruel more warlike (median 17 -> 20 %), broke "cruel launches the Ark >= 150 y after passive" (6/8) and "atomic-kind is not beloved" (5/8).
+  - Envy's effect on war is not robust; the sim keeps the builder's envy term.
+
+Evidence (docs/handoff/sim-findings-2/verify/):
+- simrun-final-seeds1-8-all.txt and simrun-final-seeds301-308-all.txt: the final code, 20 policies x 4,500 years each.
+- simrun-builder-code-seeds301-308-all.txt: the builder's code on the new seeds.
+- exp-*.txt: the reverted experiments.
+- hash-run1..3.sorted.txt, runps1-all.txt, chronicle-seed305-kind.txt, chronicle-seed301-passive.txt.
+
+Re-run results (final code; seeds 1-8 | new seeds 301-308):
+- passive at war, min/median/max: 6.1/9.9/23.6 | 6.5/9.8/24.4. Target 8-15 % median, every seed 3-25 %: PASS on both.
+- First war 335/450/925 | 398/682/981 (8/8 by 1,300 on both). Nuclear exchanges in a passive run: max 0 | 1. Alliances in every passive run: 8/8 on both.
+- No policy is at war in more than a third of its years in any run. Highest: cruel 30.2 %, favourite 29.8 %.
+- Passive wars by age, Stone..Space: 0/5.1/6.8/5.8/4.2/2.6/0.9 | 0/4.8/6.2/7.2/2.8/2.1/0.9. Wars now run through every age, heaviest in Bronze..Sail.
+- Pacing:
+  - Auto-pace 28.8-33.2 | 27.3-32.7 real minutes.
+  - Late/early moments <= 3.5x on 7/8 | 7/8.
+  - Passive moments per real minute, Stone..Space (new seeds): 7.0/17.8/23.0/33.8/45.4/31.7/24.3.
+- Every SPEC-SIM 4 target passes. Still failing, exactly as the builder reported:
+  - review 4: the quiet Stone-age stretch, 224-336 y against 150 (the chronicle's job).
+  - review 6: passive / prayers at the Awe cap (open design decision).
+  - review 9: kind has no more famine entries than passive, 4/8 on both sets.
+  - Tick-time targets fail only under --jobs 20 contention. With --jobs 1-class load: thread CPU mean 1.10-1.13 ms, max 14-16 ms.
+
+Trying to break it:
+- War spirals: none.
+  - Feuds lengthen truces: the chronicles show "the old enemies" fighting again after long truces, not every 40 years.
+  - Weary or war-worn peoples stand down; stalled wars end in a draw.
+  - The worst passive seed (301, 24.4 %) is at war 41 % of its Sail age and 23-30 % of the later ages. That is a sustained war theme, not constant war.
+- Permanent peace: not reachable.
+  - peacemaker casts 80-82 Omens a game and still sees 5.4-8.0 % of years at war (median; passive 9.8-9.9). The Omen wakes only in the Iron age, so Bronze-age wars go on.
+  - It is not an Awe exploit to "beloved" either: 2/8 and 3/8 beloved, the rest parting.
+- Extinction cascades: none. Cultures that died per run: usually 0-5 (passive 0-7), up to 10 only in runs that birthed 15. No policy except doom ever lost every people.
+  - scourge (wrath on the smallest people only): 0.6-26.7 % at war, ends forgotten 7/8, no cascade. The scourged rarely have the 0.6 strength to attack.
+- Exploiting the new rules: favouritism is the strongest lever.
+  - favourite (bless one people) is at war 13-18 % (median), close to cruel's 16-17 %, through envy, and still ends beloved 8/8 and 6/8. This reads as intended ("a god's favourite is envied"); the lead should confirm.
+  - A prayers-only god is "blamed" for 73-76 wars per 8 runs (cruel 113-131): blame counts envy of answered neighbours. The HUD and chronicle should say "envied" rather than "blamed the god" when the defender was the one favoured (the event has no field to tell the two apart; see the open items).
+- Determinism:
+  - --hash three times (seeds 301-306 x passive/kind/cruel/peacemaker x 3,000 y, --jobs 10/4/10): 24/24 identical hashes and identical chronicle entry counts.
+  - simrun --saveload at seed 302's first war (443), Bronze (345), Iron (1046) and Industry (2673): each re-saves identically and replays to the same hash twice. Each ends ark/forgotten in 3,974-4,077 (uninterrupted 3,979).
+- run.ps1 all: 762 passed, 0 failed.
+
+The chronicle's shape (read seed 305 kind and seed 301 passive in full, 187-192 notable entries each):
+- Clearly better. The first quarrel and war come at 385-641 and an early people is wiped out (452 / 710). Secessions come in the Iron age, then feuds with long memories ("War came between the Kosdeonoi and the Dolusloi, the old enemies"), conquests and tribute, and wars that "wore themselves out". A kind god's Omens punctuate the middle ages. The late ages turn to famine, warming seas, abandoned towns and a quieter end.
+- The weak spots are the chronicle's, not the sim's:
+  - The calming Omen (no war) reuses "laid down their spears".
+  - Alliances, calls to arms, `blamed` and `thanked` have no lines, so the player never reads the new diplomacy.
+  - Passive worlds still draw god-flavoured war lines ("saying the god was with them") although blamed = 0. Those lines should key on the new `blamed` field.
+
+For others (HUD / chronicle, not edited here):
+- Chronicle templates for `alliance`, war:declared.ally/.blamed, war:ended.thanked and the calming Omen.
+- Use `blamed` for the god-flavoured war lines.
+- The HUD items the builder listed still stand.
+
+Open (not done):
+- The Omen of Peace is weak as a tool: even 80 casts a game cut war only from about 10 % to 6-8 %, and kind ~ passive in war share. A design decision for the lead, for example:
+  - an earlier Omen (Bronze),
+  - calming every tense neighbour of the people at once,
+  - or an Omen that also clears the envy it causes.
+- "kind < cruel >= 5/6" sits at the threshold: 14/16 now, noise per seed is large. 16 seeds is the honest sample for it.
+- Unreal/build.ps1 was not run. Society.h is unchanged from the builder's version; the Game/ module reads only headers.
+
+Files changed:
+- Unreal/Source/Demiurge/Sim/Diplomacy.cpp: the joined-war skip.
+- Unreal/Tools/simrun/Policies.cpp and Policies.h: kind player Omen first; peacemaker, favourite and scourge.
+- Unreal/Tools/simrun/simrun.cpp: help text.
+- Unreal/SimTests/test_integration_findings2.cpp (new).
+- docs/handoff/sim-findings-2/verify/* (evidence).

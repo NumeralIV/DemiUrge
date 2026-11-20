@@ -36,5 +36,13 @@ double aweIncome(const World& w) {
 	DM_STUB(society_aweIncome, w);
 	return 0.0;
 }
+Memory memory(const World& w, int cultureId) {
+	DM_STUB(society_memory, w, cultureId);
+	return Memory{};
+}
+bool raiseWonder(World& w, int sid) {
+	DM_STUB(society_raiseWonder, w, sid);
+	return false;
+}
 
 } // namespace dm::society

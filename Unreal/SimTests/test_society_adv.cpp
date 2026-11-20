@@ -425,7 +425,8 @@ std::string foreign(const World& w, size_t nCultures) {   // cultures Society cr
 	num(double(w.chronicle.size())); num(double(w.disasters.size()));
 	for (const Settlement& t : w.settlements) {
 		num(t.id); num(t.cell); s += t.name; num(t.culture); num(t.founded); num(t.dead); num(t.deadYear.value_or(-1)); num(double(int(t.cause)));
-		num(t.pop); num(t.tier); num(t.K); num(t.growth); num(t.radius); num(t.plague); num(t.immune); num(t.inspire); num(t.blessed);
+		// (v3, design review: Society blesses a town whose rain / bloom prayer it answers, so blessed is not foreign)
+		num(t.pop); num(t.tier); num(t.K); num(t.growth); num(t.radius); num(t.plague); num(t.immune); num(t.inspire);
 		num(t.famine); num(t.capital); num(t.lastExpand); num(double(t.cells.size()));
 		for (int k = 0; k < Building::COUNT; k++) if (k != Building::WONDER) num(t.b[size_t(k)]);
 	}

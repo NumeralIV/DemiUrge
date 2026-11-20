@@ -164,6 +164,12 @@ if ($needLink) {
 if ($buildOnly) { Write-Host "simrun built: $exe"; exit 0 }
 
 # ---------------------------------------------------------------- run
+# (wave-3 gameplay) inside a private lane (Unreal/Lanes/<key>/, marked by .lane) the project root is the
+# main project's, so tests that read <root>/Unreal/Source and shots/ find them
+$laneMarker = Join-Path $unreal '.lane'
+if (Test-Path -LiteralPath $laneMarker) {
+    try { $project = Split-Path -Parent ([System.IO.Path]::GetFullPath((Get-Content -LiteralPath $laneMarker -Raw | ConvertFrom-Json).main)) } catch { }
+}
 $env:DM_ROOT = $project
 $env:DM_SIMRUN_STUBS = ($stubbed -join ',')
 & $exe @passArgs

@@ -525,7 +525,19 @@ double numOr(const World& w, const char* key, double d) {
 	return it == w.vars.num.end() ? d : fin(it->second, d);
 }
 
-void milestone(World& w, MilestoneKind kind, double value) { w.bus.emit(EvClimateMilestone{ kind, value }); }
+// (v3, design review finding 7) the culture whose engines put the most CO2 into the air so far
+// (Economy's vars.num "civ_co2_<id>"), -1 if nobody's did
+int smokiest(const World& w) {
+	int best = -1;
+	double most = 0;
+	for (const Culture& c : w.cultures) {
+		const auto it = w.vars.num.find("civ_co2_" + std::to_string(c.id));
+		if (it != w.vars.num.end() && std::isfinite(it->second) && it->second > most) { most = it->second; best = c.id; }
+	}
+	return best;
+}
+
+void milestone(World& w, MilestoneKind kind, double value) { w.bus.emit(EvClimateMilestone{ kind, value, smokiest(w) }); }
 
 } // namespace
 

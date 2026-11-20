@@ -45,8 +45,8 @@ DM_TEST("link: the stub registry matches the stub files") {
 		for (const char* m : stub::kStubModules) if (std::string(m) == f.module) known = true;
 		ok(known, std::string("row of an unknown module: ") + f.module + " " + f.hook);
 	}
-	eq(stub::kStubFnCount, 133, "declared module functions");
-	eq(powers::kPowerCount, 16, "power table rows (SPEC-SIM 3.10)");
+	eq(stub::kStubFnCount, 143, "declared module functions (v3, design review: +8; v3.1: + society::swearPeace, society::tense)");
+	eq(powers::kPowerCount, 17, "power table rows (SPEC-SIM 3.10; v3: + consecrate)");
 }
 
 DM_TEST("link: every declared function is callable") {
@@ -143,6 +143,10 @@ DM_TEST("link: every declared function is callable") {
 	}
 	(void)society::regard(w, -1);
 	(void)society::aweIncome(w);
+	(void)society::memory(w, cu);
+	(void)civ::bandSite(w, c2);
+	(void)powers::upgrade(w, "rain");
+	(void)powers::drownRisk(w, c, 0.06);
 	(void)society::atWar(w, cu, cuB);
 	(void)powers::unlocked(w, "rain");
 	(void)powers::cost(w, "rain", -1, -1);
@@ -191,6 +195,10 @@ DM_TEST("link: every declared function is callable") {
 	(void)society::witness(w, c, 0.2, { "rain", 0.1, 0.5, {}, 0 });
 	(void)society::raiseProphet(w, sid);
 	(void)society::setEdict(w, cu, Edict::Peace);
+	(void)society::raiseWonder(w, sid);
+	(void)civ::consecrate(w, sid);
+	(void)civ::addScience(w, cu, 1);
+	(void)civ::strikeKnowledge(w, { sid }, 1);
 	(void)powers::use(w, "rain", c, { 0.1, 0.125 });
 	(void)powers::start(w, DisasterType::Storm, c2, {});
 	powers::update(w, 0.125);

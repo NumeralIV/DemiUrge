@@ -38,6 +38,22 @@ std::string planet(Rng& rng) {
 	DM_STUB(names_planet, rng);
 	return "World";
 }
+// Added with Names.h's ruler / epithet / ship (names-cultures track): plain placeholders, no rng draws.
+std::string ruler(const std::string& lang, Rng& rng) {
+	(void)lang;
+	(void)rng;
+	return "Ruler Person";
+}
+std::string epithet(const std::string& lang, Rng& rng) {
+	(void)lang;
+	(void)rng;
+	return "the Wise";
+}
+std::string ship(const std::string& lang, Rng& rng) {
+	(void)lang;
+	(void)rng;
+	return "Ship";
+}
 std::string cap(const std::string& s) {
 	DM_STUB(names_cap, s);
 	std::string r = s;

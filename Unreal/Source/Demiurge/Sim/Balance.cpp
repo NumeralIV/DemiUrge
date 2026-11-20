@@ -39,6 +39,8 @@ template <class T, size_t N, std::array<double, N> T::*M, size_t I>
 void setA(World& w, double v) { (w.tune<T>().*M)[I] = v; }
 template <class T, size_t N, std::array<int, N> T::*M, size_t I>
 void setAI(World& w, double v) { (w.tune<T>().*M)[I] = int(std::lround(std::clamp(v, -1e9, 1e9))); }
+template <class T, bool T::*M>
+void setB(World& w, double v) { w.tune<T>().*M = v != 0; }
 
 // Registered keys (alphabetical within a module is not required: keys() sorts).
 const KeyRow kKeys[] = {
@@ -216,6 +218,107 @@ const KeyRow kKeys[] = {
 	{ "units.seaMul", &setD<UnitsTune, &UnitsTune::seaMul> },
 	// chronicle
 	{ "chronicle.snapEvery", &setD<ChronicleTune, &ChronicleTune::snapEvery> },
+	// v3, design review
+	{ "economy.blessedK", &setD<EconomyTune, &EconomyTune::blessedK> },
+	{ "economy.famineSlack", &setD<EconomyTune, &EconomyTune::famineSlack> },
+	{ "economy.expandCooldownAge.0", &setA<EconomyTune, 7, &EconomyTune::expandCooldownAge, 0> },
+	{ "economy.expandCooldownAge.1", &setA<EconomyTune, 7, &EconomyTune::expandCooldownAge, 1> },
+	{ "economy.expandCooldownAge.2", &setA<EconomyTune, 7, &EconomyTune::expandCooldownAge, 2> },
+	{ "economy.expandCooldownAge.3", &setA<EconomyTune, 7, &EconomyTune::expandCooldownAge, 3> },
+	{ "society.memoryHalfLife", &setD<SocietyTune, &SocietyTune::memoryHalfLife> },
+	{ "society.loreFloor", &setD<SocietyTune, &SocietyTune::loreFloor> },
+	{ "society.neglectK", &setD<SocietyTune, &SocietyTune::neglectK> },
+	{ "society.neglectAfter", &setD<SocietyTune, &SocietyTune::neglectAfter> },
+	{ "society.verdictLove", &setD<SocietyTune, &SocietyTune::verdictLove> },
+	{ "society.rememberMin", &setD<SocietyTune, &SocietyTune::rememberMin> },
+	{ "society.mixedRatio", &setD<SocietyTune, &SocietyTune::mixedRatio> },
+	{ "society.silentYears", &setD<SocietyTune, &SocietyTune::silentYears> },
+	{ "society.answeredShare", &setD<SocietyTune, &SocietyTune::answeredShare> },
+	{ "society.hoardShare", &setD<SocietyTune, &SocietyTune::hoardShare> },
+	{ "society.hoardDrift", &setD<SocietyTune, &SocietyTune::hoardDrift> },
+	{ "society.belovedDevotion", &setD<SocietyTune, &SocietyTune::belovedDevotion> },
+	{ "society.forgottenDevotion", &setD<SocietyTune, &SocietyTune::forgottenDevotion> },
+	{ "society.apartYearsEarly", &setD<SocietyTune, &SocietyTune::apartYearsEarly> },
+	{ "society.apartAngEarly", &setD<SocietyTune, &SocietyTune::apartAngEarly> },
+	{ "society.prayerScience", &setD<SocietyTune, &SocietyTune::prayerScience> },
+	{ "society.prayerBlessed", &setD<SocietyTune, &SocietyTune::prayerBlessed> },
+	{ "society.aweCapAge.0", &setA<SocietyTune, 7, &SocietyTune::aweCapAge, 0> },
+	{ "society.aweCapAge.1", &setA<SocietyTune, 7, &SocietyTune::aweCapAge, 1> },
+	{ "society.aweCapAge.2", &setA<SocietyTune, 7, &SocietyTune::aweCapAge, 2> },
+	{ "society.aweCapAge.3", &setA<SocietyTune, 7, &SocietyTune::aweCapAge, 3> },
+	{ "society.aweCapAge.4", &setA<SocietyTune, 7, &SocietyTune::aweCapAge, 4> },
+	{ "society.aweCapAge.5", &setA<SocietyTune, 7, &SocietyTune::aweCapAge, 5> },
+	{ "powers.inspireScience", &setD<PowersTune, &PowersTune::inspireScience> },
+	{ "powers.setbackQuake", &setD<PowersTune, &PowersTune::setbackQuake> },
+	{ "powers.setbackPlague", &setD<PowersTune, &PowersTune::setbackPlague> },
+	{ "powers.setbackMeteor", &setD<PowersTune, &PowersTune::setbackMeteor> },
+	{ "powers.setbackVolcano", &setD<PowersTune, &PowersTune::setbackVolcano> },
+	{ "powers.setbackLightning", &setD<PowersTune, &PowersTune::setbackLightning> },
+	{ "powers.offTerritoryMul", &setD<PowersTune, &PowersTune::offTerritoryMul> },
+	{ "powers.drownFloor", &setD<PowersTune, &PowersTune::drownFloor> },
+	{ "disasters.trialYear", &setD<DisastersTune, &DisastersTune::trialYear> },
+	{ "civ.bandPop", &setD<CivTune, &CivTune::bandPop> },
+	{ "sim.silenceMinYear", &setD<SimTune, &SimTune::silenceMinYear> },
+	// v3.1, design review findings 11 and 13
+	{ "diplomacy.borderAge.0", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 0> },
+	{ "diplomacy.borderAge.1", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 1> },
+	{ "diplomacy.borderAge.2", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 2> },
+	{ "diplomacy.borderAge.3", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 3> },
+	{ "diplomacy.borderAge.4", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 4> },
+	{ "diplomacy.borderAge.5", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 5> },
+	{ "diplomacy.borderAge.6", &setA<DiplomacyTune, 7, &DiplomacyTune::borderAge, 6> },
+	{ "diplomacy.envyK", &setD<DiplomacyTune, &DiplomacyTune::envyK> },
+	{ "diplomacy.favourRef", &setD<DiplomacyTune, &DiplomacyTune::favourRef> },
+	{ "diplomacy.sharedWrathK", &setD<DiplomacyTune, &DiplomacyTune::sharedWrathK> },
+	{ "diplomacy.plagueK", &setD<DiplomacyTune, &DiplomacyTune::plagueK> },
+	{ "diplomacy.plagueSick", &setD<DiplomacyTune, &DiplomacyTune::plagueSick> },
+	{ "diplomacy.zealK", &setD<DiplomacyTune, &DiplomacyTune::zealK> },
+	{ "diplomacy.zealRef", &setD<DiplomacyTune, &DiplomacyTune::zealRef> },
+	{ "diplomacy.faithK", &setD<DiplomacyTune, &DiplomacyTune::faithK> },
+	{ "diplomacy.faithDev", &setD<DiplomacyTune, &DiplomacyTune::faithDev> },
+	{ "diplomacy.allyForm", &setD<DiplomacyTune, &DiplomacyTune::allyForm> },
+	{ "diplomacy.allyBreak", &setD<DiplomacyTune, &DiplomacyTune::allyBreak> },
+	{ "diplomacy.allyMax", &setI<DiplomacyTune, &DiplomacyTune::allyMax> },
+	{ "diplomacy.allyCall", &setB<DiplomacyTune, &DiplomacyTune::allyCall> },
+	{ "diplomacy.allyDeter", &setB<DiplomacyTune, &DiplomacyTune::allyDeter> },
+	{ "diplomacy.allyV", &setD<DiplomacyTune, &DiplomacyTune::allyV> },
+	{ "diplomacy.omenTarget", &setD<DiplomacyTune, &DiplomacyTune::omenTarget> },
+	{ "diplomacy.omenYears", &setD<DiplomacyTune, &DiplomacyTune::omenYears> },
+	{ "diplomacy.omenTension", &setD<DiplomacyTune, &DiplomacyTune::omenTension> },
+	{ "diplomacy.omenCalmTruce", &setD<DiplomacyTune, &DiplomacyTune::omenCalmTruce> },
+	{ "diplomacy.omenSworn", &setB<DiplomacyTune, &DiplomacyTune::omenSworn> },
+	{ "diplomacy.omenCalm", &setB<DiplomacyTune, &DiplomacyTune::omenCalm> },
+	{ "diplomacy.nukeRepeatMul", &setD<DiplomacyTune, &DiplomacyTune::nukeRepeatMul> },
+	{ "diplomacy.blameMin", &setD<DiplomacyTune, &DiplomacyTune::blameMin> },
+	{ "diplomacy.thankMin", &setD<DiplomacyTune, &DiplomacyTune::thankMin> },
+	{ "diplomacy.thankDevotion", &setD<DiplomacyTune, &DiplomacyTune::thankDevotion> },
+	{ "diplomacy.blameLove", &setD<DiplomacyTune, &DiplomacyTune::blameLove> },
+	{ "diplomacy.peaceV", &setD<DiplomacyTune, &DiplomacyTune::peaceV> },
+	{ "diplomacy.exhaustYear", &setD<DiplomacyTune, &DiplomacyTune::exhaustYear> },
+	{ "society.favourHalfLife", &setD<SocietyTune, &SocietyTune::favourHalfLife> },
+	{ "society.rainFamineAge.0", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 0> },
+	{ "society.rainFamineAge.1", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 1> },
+	{ "society.rainFamineAge.2", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 2> },
+	{ "society.rainFamineAge.3", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 3> },
+	{ "society.rainFamineAge.4", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 4> },
+	{ "society.rainFamineAge.5", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 5> },
+	{ "society.rainFamineAge.6", &setAI<SocietyTune, 7, &SocietyTune::rainFamineAge, 6> },
+	{ "society.maxPrayers", &setI<SocietyTune, &SocietyTune::maxPrayers> },
+	{ "society.hoardFloor", &setD<SocietyTune, &SocietyTune::hoardFloor> },
+	{ "diplomacy.feudK", &setD<DiplomacyTune, &DiplomacyTune::feudK> },
+	{ "diplomacy.warWeary", &setD<DiplomacyTune, &DiplomacyTune::warWeary> },
+	{ "diplomacy.warStall", &setD<DiplomacyTune, &DiplomacyTune::warStall> },
+	{ "diplomacy.warredMax", &setD<DiplomacyTune, &DiplomacyTune::warredMax> },
+	{ "diplomacy.warredHalfLife", &setD<DiplomacyTune, &DiplomacyTune::warredHalfLife> },
+	{ "diplomacy.omenCalmGood", &setD<DiplomacyTune, &DiplomacyTune::omenCalmGood> },
+	{ "diplomacy.feudMax", &setD<DiplomacyTune, &DiplomacyTune::feudMax> },
+	{ "disasters.calamityAge.0", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 0> },
+	{ "disasters.calamityAge.1", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 1> },
+	{ "disasters.calamityAge.2", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 2> },
+	{ "disasters.calamityAge.3", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 3> },
+	{ "disasters.calamityAge.4", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 4> },
+	{ "disasters.calamityAge.5", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 5> },
+	{ "disasters.calamityAge.6", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 6> },
 };
 
 } // namespace
@@ -239,6 +342,26 @@ void apply(World& w) {
 	// 1,041-1,124, Sail 1,591-1,805, Industry 2,239-2,490, Atomic 2,784-3,059, Space 3,230-3,519, Ark
 	// 3,449-3,738 (spec nominal 520 / 1,000 / 1,550 / 2,200 / 2,750 / 3,200, Ark 3,300-4,500).
 	E.ageNeed = { 375, 520, 750, 1015, 935, 767 };
+	// (v3, design review finding 4) a shorter Stone age: 250 progress-years (Bronze ~350-400)
+	E.ageNeed[0] = 250;
+	// ... and the later ages need about 11 % more (the faster early world researches faster). 8 passive
+	// seeds x 4,500 years: Bronze 309-334, Iron 872-996, Sail 1,534-1,809, Industry 2,301-2,588, Atomic
+	// 2,916-3,229, Space 3,412-3,748, Ark 3,631-3,967; a kind god launches 170-470 years earlier, a cruel
+	// one 170-450 years later, inspire-spam reaches Space 300-580 years earlier
+	E.ageNeed[1] = 575;
+	E.ageNeed[2] = 830;
+	E.ageNeed[3] = 1125;
+	E.ageNeed[4] = 1035;
+	E.ageNeed[5] = 850;
+	// (v3, design review finding 4) settlers leave every 60 years in the Stone age (the review proposed 50 /
+	// 90 / 180), 260 in Bronze, 240 in Iron and 180 after (the edict halves it): the first minutes have
+	// more than one camp to watch while year 1,000 stays inside 8-40 settlements
+	E.expandCooldownAge = { 60, 260, 240, 180, 180, 180, 180 };
+	// (v3, design review finding 3) Inspire is a real push: an inspired settlement's people learn twice as fast
+	E.inspireF = 1.0;
+	// (v3, design review finding 9) a famine is a real shortfall: it counts only while the people are 5 %
+	// above what the land feeds (2 % before), so the slow ebb of a bloomed or rained field is not one
+	E.famineSlack = 0.05;
 	// New sites at least 8 hops from owned land (spec 7; crowdHops of canSettle and the owned-distance
 	// field follow): with 7 the late world held up to 124 settlements at year 3,000 (target 25-120);
 	// now 94-110.
@@ -265,6 +388,13 @@ void apply(World& w) {
 	SocietyTune& S = w.tune<SocietyTune>();
 	S.incomeBase = 1.25;
 	S.incomeK = 0.31;
+	// (v3, design review) a flatter curve again, 2.0 + 0.17 ln(1 + S): hoarding now costs devotion (and so
+	// income), and the larger v3 world earned a great miracle in under 25 s with 0.31; 8 seeds x 4
+	// policies: Stone small every 9-10 s, later small every 7.0-7.9 s, great every 25.4-28.3 s
+	S.incomeBase = 2.0;
+	S.incomeK = 0.17;
+	// (v3, design review finding 6) hoarding costs 1.5 % of devotion a year
+	S.hoardDrift = 0.015;
 	// Endings. With 1 %/yr love fading toward 0, a kind god who blooms, heals and answers prayers every
 	// year held the Ark culture's love at +0.12..0.16 and a tyrant at -0.16..-0.23: 'beloved' (love >=
 	// 0.2) was never reached (0 of 6 seeds). Love now fades 0.25 %/yr (half-life ~280 years: people
@@ -286,6 +416,68 @@ void apply(World& w) {
 	D.tradeK = 0.015;
 	D.relTarget = -0.05;
 	D.noise = 0.05;
+
+	// ---- v3.1, design review findings 11 and 13 (sim-findings-2), 8 seeds x 17 policies x 4,500 years ----
+	// Tuning first. Every caravan that arrived added +0.02 to its pair's relations: with dozens of market
+	// towns that was +0.1 a year, so from the Sail age every pair of peoples sat at v +0.4..+0.7 and only a
+	// few pairs of aggressive neighbours ever fought (passive at war in 0.6-13 % of years, median 3.4 %).
+	// A caravan now adds 0.004; trade itself (tradeK) still warms a pair. Aggression counts a little less
+	// (it decided which seeds had wars at all), frontiers chafe more as the peoples grow.
+	D.tradeArriveV = 0.004;
+	D.aggrK = 0.02;
+	D.relTarget = -0.2;
+	D.borderAge = { 1, 1, 1.3, 1.6, 1.6, 1.6, 1.6 };
+	// Rules second: the god in the relations (rates: the fading sums x ln 2 / 30 years)
+	D.envyK = 0.002;
+	D.favourRef = 0.015;
+	D.sharedWrathK = 0.006;
+	D.plagueK = 0.02;
+	D.zealK = 0.002;
+	D.faithK = 0.006;
+	D.blameMin = 0.004;
+	D.thankMin = 0.004;
+	D.thankDevotion = 0.05;
+	D.blameLove = 0.05;
+	// alliances that matter: allies defend each other, and an aggressor must match the whole alliance
+	D.allyForm = 0.55;
+	D.allyBreak = 0.15;
+	D.allyMax = 2;
+	D.allyCall = true;
+	D.allyDeter = true;
+	// the Omen of Peace: a sworn peace (80 years at +0.3), and it may calm a neighbour on the brink
+	D.omenSworn = true;
+	D.omenCalm = true;
+	D.omenTension = -0.4;
+	// a war of nothing (no army from either side for 25 years) peters out in a draw
+	D.warStall = 25;
+	// the bomb is feared after the first exchange
+	D.nukeRepeatMul = 0.1;
+	// old enemies tire of each other: each further war of a pair lengthens its truce by its length again (at most x5)
+	D.feudK = 1;
+	D.feudMax = 4;
+	// (sim-findings-2) hoarding never drags devotion below 0.3 (seed 7's shrine-less trap)
+	S.hoardFloor = 0.3;
+	// a people still weary from its last war (exhaustion above 0.3, about 20 years of peace) starts no new one
+	D.warWeary = 0.3;
+	// ... nor one that spent about a sixth of the last century at war (remembered war years, half-life 80)
+	D.warredMax = 18;
+	// finding 13: two estranged towns secede after 40 years beyond 0.28 rad before the Iron age (v3: 60 / 0.40):
+	// a second people at 250-370 (was 340-640), the first war at 335-925 (was 640-2,350)
+	S.apartAngEarly = 0.28;
+	S.apartYearsEarly = 40;
+	// wars now slow every people; the god's quake on a capital or an academy costs 50 progress-years (v3: 20) so
+	// a cruel god still sets the world back 150+ years (review 3)
+	PowersTune& P = w.tune<PowersTune>();
+	P.setbackQuake = 50;
+	// the wars cost the passive world about a century (seed 7, at war in a quarter of its years, reached Atomic in
+	// 3,415 and Space in 3,957 against <= 3,400 / 3,900): the Sail, Industry and Atomic ages need 5 % less
+	E.ageNeed[3] = 1070;
+	E.ageNeed[4] = 985;
+	E.ageNeed[5] = 810;
+	// finding 13: a busier young world and a quieter old one; late peoples pray for bread after two hungry years
+	DisastersTune& DT = w.tune<DisastersTune>();
+	DT.calamityAge = { 1.4, 1.2, 1, 1, 0.85, 0.75, 0.7 };
+	S.rainFamineAge = { 1, 1, 1, 1, 2, 2, 2 };
 }
 
 bool set(World& w, std::string_view key, double value) {

@@ -71,7 +71,9 @@ inline constexpr double kVegT[3] = { 0.22, 0.5, 0.78 };
 
 enum class Phase : uint8_t { Molten, Water, Life, People, History, Ended };
 // Why a settlement was destroyed ('drowned', 'meteor', ...). None = alive / unknown.
-enum class Cause : uint8_t { None, Drowned, Meteor, Lava, War, Famine, Plague, Quake, Nuke, Abandoned, Wave, Lightning };
+// Sea (v3, design review finding 7): the centre went under a sea the people's own engines raised (Climate's
+// sea rise), never the god's doing; Drowned is the god's (Lower Land, quakes) or a flooded lake.
+enum class Cause : uint8_t { None, Drowned, Meteor, Lava, War, Famine, Plague, Quake, Nuke, Abandoned, Wave, Lightning, Sea };
 enum class UnitType : uint8_t { Settler, Trader, Army, Prophet };
 // What a unit may cross: Land = JS false, Coastal = 'coastal', Open = JS true (Path section 3.6).
 enum class NavalMode : uint8_t { Land, Coastal, Open };
@@ -104,7 +106,7 @@ const char* toStr(Mood v);          bool fromStr(std::string_view s, Mood& out);
 // Number of enumerators (for loops and validation).
 template <class E> constexpr int enumCount();
 template <> constexpr int enumCount<Phase>() { return 6; }
-template <> constexpr int enumCount<Cause>() { return 12; }
+template <> constexpr int enumCount<Cause>() { return 13; }
 template <> constexpr int enumCount<UnitType>() { return 4; }
 template <> constexpr int enumCount<NavalMode>() { return 3; }
 template <> constexpr int enumCount<DisasterType>() { return 7; }

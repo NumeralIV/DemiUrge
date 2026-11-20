@@ -26,7 +26,7 @@ void forEachPayload(const std::function<void(size_t, const Event&)>& f) {
 } // namespace
 
 DM_TEST("events: the table is DM.EVENTS and every payload struct matches it") {
-	eq(kEventCount, 55, "event count (DM.EVENTS has 55 entries)");
+	eq(kEventCount, 57, "event count (DM.EVENTS has 55 entries; v3, design review: + drown:warning; v3.1: + alliance)");
 	std::set<std::string> names;
 	for (int i = 0; i < kEventCount; i++) names.insert(kEventTable[i].name);
 	eq(names.size(), size_t(kEventCount), "names are unique");

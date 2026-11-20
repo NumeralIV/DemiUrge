@@ -475,12 +475,13 @@ DM_TEST("powers adv: real modules: first awaken in People starts history; second
 	ok(pw::use(*w, "awaken", site), "awaken");
 	eq(int(w->phase), int(Phase::History), "history began (via sim::setPhase)");
 	near(w->god.awe, 60, 1e-9, "Awe 60");
-	eq(int(civ::live(*w).size()), 1, "one camp");
-	if (civ::live(*w).size() == 1) eq(w->settlements[size_t(civ::live(*w)[0])].pop, 30.0, "of 30");
+	eq(int(civ::live(*w).size()), 2, "two camps (v3, design review: two bands)");
+	if (!civ::live(*w).empty()) eq(w->settlements[size_t(civ::live(*w)[0])].pop, 30.0, "the first of 30");
 	eq(int(w->cultures.size()), 1, "one culture");
-	// a second people far away (aweMax 450 unlocks)
+	// a second people far away (v3: Sail unlocks it; aweMax no longer does past Bronze)
 	w->god.aweMax = 1200;
 	w->god.awe = 2000;
+	w->age = Age::SAIL;
 	int far = -1;
 	for (int c = 0; c < w->n; c++)
 		if (w->geo->angle(c, site) > 1.0 && civ::canSettle(*w, c).ok && (far < 0 || w->hab[size_t(c)] > w->hab[size_t(far)])) far = c;
@@ -515,6 +516,7 @@ DM_TEST("powers adv: real modules at L 6: meteor, volcano, sea quake, lightning,
 	if (!ok(sim::genesis::skip(*w), "genesis skip")) return;
 	w->god.awe = 5000;
 	w->god.aweMax = 1200;
+	w->age = Age::INDUSTRY;    // (v3: meteor and volcano wake by age only)
 	w->settings.calamity = 0;
 	const std::vector<float> elev0 = w->elev;
 	const std::vector<int> live0 = civ::live(*w);
@@ -573,6 +575,10 @@ DM_TEST("powers adv: real modules at L 6: meteor, volcano, sea quake, lightning,
 		const int csid = cs ? cs->id : -1;
 		if (csid >= 0) {
 			hold(*w, "lower", ccell, 0.05, 60, 60 * 20);
+			// (v3, design review finding 10) one press stops the centre at sea level + 0.05; the second drowns it
+			ok(!w->settlements[size_t(csid)].dead && std::fabs(w->elev[size_t(ccell)] - w->seaLevel - 0.05) < 2e-3,
+				"the first press stops above the sea: elev-sea " + std::to_string(w->elev[size_t(ccell)] - w->seaLevel));
+			hold(*w, "lower", ccell, 0.05, 60, 60 * 5);
 			ok(w->settlements[size_t(csid)].dead && w->settlements[size_t(csid)].cause == Cause::Drowned,
 				std::string("lowered camp drowned: dead ") + std::to_string(w->settlements[size_t(csid)].dead) + " cause " + toStr(w->settlements[size_t(csid)].cause) +
 				" elev-sea " + std::to_string(w->elev[size_t(ccell)] - w->seaLevel));

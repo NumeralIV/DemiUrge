@@ -396,7 +396,7 @@ DM_TEST("foundation-adv: event table = SPEC-SIM 2 (names and payload keys in ord
 		{ "phase", { "phase", "prev" } }, { "power:used", { "id", "cell", "ang", "brush" } },
 		{ "miracle:witnessed", { "cell", "kind", "good", "ids" } }, { "lightning", { "cell", "natural" } },
 		{ "meteor:launched", { "cell", "eta", "kind", "id" } }, { "meteor:impact", { "cell", "ang", "kind", "sea" } },
-		{ "tsunami:start", { "cell" } }, { "tsunami:hit", { "cell", "height" } },
+		{ "tsunami:start", { "cell" } }, { "tsunami:hit", { "cell", "height", "natural" } },
 		{ "volcano:start", { "cell", "id", "natural" } }, { "volcano:end", { "cell", "id" } },
 		{ "quake", { "cell", "ang", "power", "natural" } }, { "fire:start", { "cell" } },
 		{ "storm", { "cell", "ang", "start" } }, { "drought", { "cell", "ang", "start" } },
@@ -406,17 +406,19 @@ DM_TEST("foundation-adv: event table = SPEC-SIM 2 (names and payload keys in ord
 		{ "settlement:captured", { "id", "from", "to", "how" } }, { "prayer", { "id", "kind", "start" } },
 		{ "prayer:answered", { "id", "kind" } }, { "culture:born", { "id", "parent", "cell", "reason" } },
 		{ "culture:died", { "id" } }, { "culture:age", { "id", "age", "prev" } }, { "world:age", { "age" } },
-		{ "war:declared", { "a", "b" } }, { "war:ended", { "a", "b", "victor" } },
+		{ "war:declared", { "a", "b", "ally", "blamed" } }, { "war:ended", { "a", "b", "victor", "thanked" } },   // (v3.1: + ally, blamed, thanked)
 		{ "battle", { "cell", "attacker", "defender", "won", "settlement" } }, { "trade:route", { "a", "b" } },
 		{ "prophet:risen", { "culture", "settlement", "name" } }, { "prophet:died", { "culture", "name" } },
 		{ "edict", { "culture", "edict" } }, { "wonder:built", { "settlement", "name" } },
 		{ "nuke", { "cell", "from", "to" } }, { "ark:started", { "culture", "settlement" } },
-		{ "ark:launched", { "culture", "settlement" } }, { "climate:milestone", { "kind", "value" } },
+		{ "ark:launched", { "culture", "settlement" } }, { "climate:milestone", { "kind", "value", "culture" } },   // (v3: + culture)
 		{ "unit:spawned", { "id", "type", "culture", "cell" } }, { "unit:arrived", { "id", "type", "culture", "cell" } },
 		{ "unit:died", { "id", "type", "culture", "cell", "cause" } }, { "chronicle:entry", { "entry" } },
 		{ "awe:short", { "id" } }, { "people:lost", {} }, { "ending", { "type", "mood", "culture", "settlement", "year" } },
+		{ "drown:warning", { "id", "cell" } },   // (v3, design review)
+		{ "alliance", { "a", "b", "formed" } },   // (v3.1, design review 11/13)
 	};
-	eq(spec.size(), size_t(46), "spec rows");
+	eq(spec.size(), size_t(48), "spec rows (v3: + drown:warning; v3.1: + alliance)");
 	for (const Row& row : spec) {
 		const Ev t = eventFromName(row.name);
 		if (!ok(t != Ev::Count, std::string("missing event ") + row.name)) continue;
@@ -633,14 +635,15 @@ DM_TEST("foundation-adv: power table = SPEC-SIM 3.10") {
 		{ "awaken", 'K', false, 0, 0, T::Land, 0, 0, Age::SAIL, 450 }, { "raise", 'U', true, 6, 0.06, T::Any, 2, 0.02, 0, 0 },
 		{ "lower", 'J', true, 6, 0.06, T::Any, 2, 0.02, 0, 0 }, { "rain", 'N', true, 5, 0.10, T::Any, 2, 0.02, 0, 0 },
 		{ "bloom", 'B', true, 6, 0.08, T::Land, 2, 0.02, Age::BRONZE, 150 }, { "lightning", 'L', false, 15, 0, T::Any, 0.10, 0.05, 0, 0 },
-		{ "quake", 'Z', false, 60, 0.08, T::Any, 0.20, 0.10, Age::BRONZE, 200 }, { "plague", 'X', false, 80, 0, T::Settlement, 0.12, 0.05, Age::IRON, 300 },
-		{ "meteor", 'M', false, 150, 0.05, T::Any, 0.45, 0.25, Age::SAIL, 450 }, { "volcano", 'V', false, 220, 0.04, T::Land, 0.40, 0.25, Age::INDUSTRY, 600 },
+		{ "quake", 'Z', false, 60, 0.08, T::Any, 0.20, 0.10, Age::BRONZE, 200 }, { "plague", 'X', false, 80, 0, T::Settlement, 0.12, 0.05, Age::IRON, 0 },
+		{ "meteor", 'M', false, 150, 0.05, T::Any, 0.45, 0.25, Age::SAIL, 0 }, { "volcano", 'V', false, 220, 0.04, T::Land, 0.40, 0.25, Age::INDUSTRY, 0 },
 		{ "heal", 'T', false, 40, 0, T::Settlement, 0.10, 0.12, 0, 0 }, { "inspire", 'I', false, 60, 0, T::Settlement, 0.10, 0.08, Age::BRONZE, 200 },
-		{ "prophet", 'P', false, 120, 0, T::Settlement, 0.15, 0.15, Age::IRON, 300 }, { "peace", 'O', false, 100, 0, T::Settlement, 0, 0.10, Age::IRON, 300 },
+		{ "prophet", 'P', false, 120, 0, T::Settlement, 0.15, 0.15, Age::IRON, 0 }, { "peace", 'O', false, 100, 0, T::Settlement, 0, 0.10, Age::IRON, 0 },
+		{ "consecrate", 'Y', false, 150, 0, T::Settlement, 0.10, 0.10, Age::BRONZE, 0 },   // (v3, design review)
 	};
-	eq(powers::kPowerCount, 16, "power count");
+	eq(powers::kPowerCount, 17, "power count (v3: + consecrate)");
 	std::set<char> keys;
-	for (int i = 0; i < 16 && i < powers::kPowerCount; i++) {
+	for (int i = 0; i < 17 && i < powers::kPowerCount; i++) {
 		const powers::PowerDef& d = powers::kPowers[i];
 		const P& p = spec[i];
 		const std::string tag = p.id;
@@ -651,7 +654,7 @@ DM_TEST("foundation-adv: power table = SPEC-SIM 3.10") {
 		ok(powers::byId(p.id) == &d, tag + " byId");
 		keys.insert(d.key);
 	}
-	eq(keys.size(), size_t(16), "hotkeys unique");
+	eq(keys.size(), size_t(17), "hotkeys unique");
 	ok(powers::byId("nuke") == nullptr && powers::byId("") == nullptr, "byId unknown");
 	ok(powers::kPowers[0].unlock.phaseOnly && powers::kPowers[1].unlock.phaseOnly && powers::kPowers[0].unlock.phase == Phase::Water && powers::kPowers[1].unlock.phase == Phase::Life, "genesis powers only in their phase");
 	ok(powers::kPowers[15].wScope == powers::WScope::Cultures, "peace witnesses both cultures");

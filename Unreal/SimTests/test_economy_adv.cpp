@@ -366,7 +366,7 @@ DM_TEST("economy adv: poles, no sea, no land, every phase, L = 4 and 6") {
 		sea.pop = 500;
 		const int seaId = sea.id;
 		std::vector<Event> ev = capture(*ws, [&] { advYear(*ws); });
-		ok(ws->settlements[size_t(seaId)].dead && ws->settlements[size_t(seaId)].cause == Cause::Drowned, tag + ": drowned");
+		ok(ws->settlements[size_t(seaId)].dead && ws->settlements[size_t(seaId)].cause == Cause::Sea, tag + ": taken by the sea (v3 cause 'sea')");
 		eq(advCount(ev, Ev::SettlementDestroyed), 1, tag + ": one destroyed event");
 		noNaN(*ws, tag + " no land");
 	}
@@ -679,7 +679,7 @@ DM_TEST("economy adv: evacuation: spawn refused -> people stay and die with the 
 	const int sister = advSettle(*w, advLatLon(*w, 10, 30 + 20 * w->geo->step * 180 / kPi), cu, 300, 1);
 	w->seaLevel = 0.3;
 	advYear(*w);
-	ok(w->settlements[size_t(sid)].dead && w->settlements[size_t(sid)].cause == Cause::Drowned, "drowned");
+	ok(w->settlements[size_t(sid)].dead && w->settlements[size_t(sid)].cause == Cause::Sea, "taken by the sea (v3 cause 'sea')");
 	eq(calls, 2, "tried a new site, then the sister town");
 	near(w->settlements[size_t(sid)].pop, 1000, 1e-9, "nobody removed when nobody could leave");
 	ok(!w->settlements[size_t(sister)].dead, "the sister lives");

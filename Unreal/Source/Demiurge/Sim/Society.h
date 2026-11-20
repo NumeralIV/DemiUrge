@@ -54,8 +54,9 @@ struct SocietyTune {
 	double birthEvery = 150;  int maxCultures = 6;
 	// the Ark
 	double arkYears = 250, arkPopRef = 1.5e6, arkMin = 0.8, arkMax = 1.25;
-	// moods (ending thresholds, SPEC-SIM 3.12)
-	double belovedDevotion = 0.35, belovedLove = 0.2, fearedLove = -0.2, forgottenDevotion = 0.2;
+	// moods (ending thresholds, SPEC-SIM 3.12; v3: belovedLove / fearedLove are thresholds of the verdict,
+	// see society::memory)
+	double belovedDevotion = 0.30, belovedLove = 0.2, fearedLove = -0.2, forgottenDevotion = 0.25;
 	// witness
 	double witnessJaded = 2;                              // jaded += 2 x faith x falloff
 	double witnessLove = 0.5;                             // love += 0.5 x good x falloff x (1 - |love|)
@@ -72,6 +73,50 @@ struct SocietyTune {
 	double awakenSeen = 0.3;                              // an awakened culture remembers its waking: seen["awaken"]
 	double daughterSeen = 0.5;                            // a daughter inherits this share of the parent's seen
 	int maxCultureIds = 120;                              // newCulture refuses past this many cultures ever (snapshot owner is int8)
+	// --- v3, design review (docs/reviews/claude-design-review.md) ---
+	// Long memory (findings 1, 2): each culture remembers the god's grace and wrath (persisted in
+	// vars.num "society_grace_<id>" / "society_wrath_<id>"): every witnessed act adds
+	// |good| x falloff x seconds (brush) x the witness's share of its culture's people to one of the two;
+	// both fade with memoryHalfLife. lore = (grace - wrath) / (grace + wrath + loreFloor) in -1..1;
+	// verdict = verdictLove x love + (1 - verdictLove) x lore decides the mood (see society::memory).
+	double memoryHalfLife = 1000;                         // years
+	double loreFloor = 2.5;                               // small memories give a small lore (a sculptor is not a tyrant)
+	double verdictLove = 0.35;                            // the share of today's love in the verdict
+	double rememberMin = 0.25;                            // grace + wrath at least this: the god is remembered
+	double mixedRatio = 0.35;                             // the smaller hand at least this share of the larger: two-handed
+	double silentYears = 600;                             // no deed witnessed for this long: silent
+	double answeredShare = 0.6;  int answeredMin = 10;    // beloved by answered prayers (share of every prayer, at least this many)
+	// (finding 1) nothing bought late: while a culture builds its Ark, deeds change love but not its memory
+	bool arkNoMemory = true;
+	// (finding 1, verifier) neglect is remembered too: every year a culture has heard no deed of its god for
+	// neglectAfter years adds 1 to its neglect (vars.num "society_neglect_<id>", fading with memoryHalfLife,
+	// inherited by daughters); grace counts x presence = 1 / (1 + neglectK x neglect) in the lore (wrath
+	// whole), so a god absent for millennia cannot buy a beloved verdict in the few centuries before the
+	// Ark (simrun atomic-kind: idle until the Atomic age, then kind, was beloved on 7 of 8 seeds)
+	double neglectAfter = 120, neglectK = 0.02;
+	// (finding 6) hoarding: while Awe >= hoardShare x aweMax, every devotion drifts down hoardDrift a year
+	double hoardShare = 0.95, hoardDrift = 0.01;
+	// (v3.1, sim-findings-2) hoarding never drags a town's devotion below hoardFloor (0 = no floor): a young,
+	// low-piety people whose god sits at a small cap (150) otherwise never built a shrine, so its cap never
+	// grew (passive seed 7: aweMax 150 for 1,600 years, the later-age small miracle 8.7 s against 3-8)
+	double hoardFloor = 0;
+	// (finding 5) the Awe cap grows with the world: aweMax <= aweCapAge[world age] (and <= aweCap)
+	std::array<double, 7> aweCapAge{ 300, 450, 600, 800, 1000, 1200, 1200 };
+	// (finding 4) before the Iron age a town is estranged beyond apartAngEarly of its capital (apartAng
+	// from Iron) and secedes after apartYearsEarly years (apartYears from Iron): a second people in Bronze
+	double apartYearsEarly = 60, apartAngEarly = 0.40;
+	// (findings 3, 9) an answered prayer: progress-years for the culture (priest-scholars); an answered
+	// rain or bloom prayer blesses the town (blessed >= prayerBlessed years: growth and K, Economy)
+	double prayerScience = 1.0, prayerBlessed = 20;
+	// --- v3.1, design review findings 11 and 13 ---
+	// (11) the god's recent favour, for the neighbours to envy or blame: every witnessed deed of the god adds
+	// the same impulse as the memory (grace or wrath, x the witness's share of its culture) to vars.num
+	// "society_fgrace_<id>" / "society_fwrath_<id>", which fade with favourHalfLife (also while the Ark is
+	// built: envy is not memory). Diplomacy reads them as rates (x ln 2 / favourHalfLife: impulse a year).
+	double favourHalfLife = 30;
+	// (13) fewer, bigger prayers late: a town begins a rain prayer for a famine only after this many famine
+	// years in a row, by its culture's age (droughts start one at once in every age)
+	std::array<int, 7> rainFamineAge{ 1, 1, 1, 1, 1, 1, 1 };
 };
 
 // [diplomacy] Starting values from SPEC-SIM 3.8 (relations half).
@@ -111,6 +156,46 @@ struct DiplomacyTune {
 	// alliances (emergent): friends of a victim sour on the aggressor; a common enemy draws cultures together
 	double allyV = 0.5, allyOutrage = 0.15, commonEnemyV = 0.02;
 	double nukeWitnessAng = 0.3;  int nukeFireHops = 1;
+	// --- v3.1, design review findings 11 and 13 (SPEC-SIM 3.8 "(v3.1, design review 11/13)") ---
+	// frontier friction by the older side's age (borderK x borderAge[age])
+	std::array<double, 7> borderAge{ 1, 1, 1, 1, 1, 1, 1 };
+	// the god in the relations: favour rates come from SocietyTune::favourHalfLife (impulse a year)
+	double envyK = 0;                // v -= envyK x sat(|favour a - favour b| / favourRef): a god's favourite is envied, its scourged blame the spared
+	double favourRef = 0.01;         // favour (grace - wrath, impulse a year) that counts in full
+	double sharedWrathK = 0;         // v += sharedWrathK x sat(min(wrath a, wrath b) / favourRef): struck together, they stand together
+	double plagueK = 0;              // v -= plagueK x max(sick share a, sick share b) x sat(trade + border): the fever came from over there
+	double plagueSick = 0.2;         // a town counts as sick above this plague
+	double zealK = 0;                // a people with a living prophet: v -= zealK x sat((devotion - theirs) / zealRef) toward the less devout
+	double zealRef = 0.3;
+	double faithK = 0;               // two devout peoples (both devotion >= faithDev), one with a prophet: v += faithK
+	double faithDev = 0.4;
+	// alliances: a pair in contact, at peace, with v >= allyForm becomes allied (vars.num diplomacy_ally<lo>_<hi> = the
+	// year; alliance event); it ends below allyBreak, at war, or when one dies. allyMax: at most this many allies each
+	double allyForm = 2, allyBreak = 0.2;  int allyMax = 2;
+	bool allyCall = false;           // when a culture is attacked its allies who can reach the aggressor join the war
+	bool allyDeter = false;          // an aggressor must match warStrength x (the defender + its allies who could join)
+	// the Omen of Peace: a peace it made is sworn: for omenYears the pair rests at omenTarget instead of relTarget
+	// (vars.num diplomacy_sworn<lo>_<hi> = until); it may also calm a neighbour this tense (v <= omenTension) before a war
+	double omenTarget = 0.3, omenYears = 80, omenTension = -0.3, omenCalmTruce = 40;
+	bool omenSworn = false, omenCalm = false;
+	// after the world's first nuclear exchange the bomb is feared: nukeP x nukeRepeatMul
+	double nukeRepeatMul = 1;
+	// old enemies tire of each other: the truce after the n-th war of a pair lasts x (1 + feudK x min(feudMax, n - 1))
+	// (vars.num diplomacy_feud<lo>_<hi> counts the pair's wars)
+	double feudK = 0, feudMax = 4;
+	// a weary people starts no war: the aggressor's exhaustion must be at most warWeary (1 = any), and its
+	// remembered war years (vars.num diplomacy_warred<id>: +1 a year at war, half-life warredHalfLife) at most
+	// warredMax (0 = no limit): a people that fought most of the last century does not start another war
+	double warWeary = 1, warredHalfLife = 80, warredMax = 0;
+	// a war in which neither side has sent an army for warStall years ends in a draw (0 = never): no 60-year
+	// wars of nothing between peoples whose armies cannot reach each other
+	double warStall = 0;
+	// the Omen calming a neighbour (no war yet): the people witness it with this good (an Omen ending a war: 0.8)
+	double omenCalmGood = 0.3;
+	// blame and thanks: a war is blamed on the god when the aggressor's recent wrath, or its envy of the defender's
+	// favour, is at least blameMin; its victor thanks the god when its grace rate is at least thankMin (devotion
+	// + thankDevotion in its towns; the loser's love - blameLove)
+	double blameMin = 0.004, thankMin = 0.004, thankDevotion = 0, blameLove = 0;
 };
 
 namespace society {
@@ -129,11 +214,26 @@ struct WitnessOpts {
 	double good = 0;                     // -1..1, for witnesses not in `harmed`
 	std::vector<int> harmed;             // settlement ids the act hurt (they use goodHarmed)
 	double goodHarmed = 0;
+	bool natural = false;                // (v3) a natural event: no deed of the god (no memory, not 'heard')
 };
 // [society] regard() result
 struct Regard {
 	double devotion = 0, love = 0;
-	Mood mood = Mood::Forgotten;         // Beloved | Feared | Forgotten | Parting
+	Mood mood = Mood::Forgotten;         // Beloved | Feared | Forgotten | Parting (from memory(): the verdict)
+};
+// [society] (v3, design review) memory() result: what a culture (or everyone) remembers of its god.
+struct Memory {
+	double devotion = 0, love = 0;       // as regard(): population-weighted means today
+	double grace = 0, wrath = 0;         // remembered deeds (fading with SocietyTune::memoryHalfLife)
+	double neglect = 0;                  // remembered years of an absent god (fading like grace and wrath)
+	double presence = 1;                 // 1 / (1 + neglectK x neglect): the share of grace the lore holds
+	double lore = 0;                     // (grace x presence - wrath) / (grace x presence + wrath + loreFloor), -1..1
+	double verdict = 0;                  // verdictLove x love + (1 - verdictLove) x lore
+	double silent = 0;                   // years since a deed of the god was last witnessed
+	int prayers = 0, answered = 0;       // prayers begun / answered in the culture's history (daughters inherit)
+	bool remembered = false;             // grace + wrath >= rememberMin
+	bool mixed = false;                  // both hands remembered (the smaller >= mixedRatio x the larger)
+	Mood mood = Mood::Forgotten;
 };
 
 // ---------------------------------------------------------------- [society] belief (Society.cpp)
@@ -172,6 +272,21 @@ bool setEdict(World& w, int cultureId, Edict edict);
 // [society] Society.aweIncome: Awe per year = 0.6 + 0.9 x ln(1 + S). Read-only. 0 while no
 // settlement lives (nobody believes).
 double aweIncome(const World& w);
+// [society] (v3, design review findings 1, 2) the culture's memory of the god and the mood it
+// leaves (-1 = everyone: population-weighted over living cultures; the latest deed of any). Read-only.
+// Mood, in this order:
+//   silent >= silentYears              -> Parting when remembered, else Forgotten (an absent god)
+//   mixed (both hands remembered)      -> Parting ("the Two-Handed")
+//   verdict <= fearedLove (-0.2)       -> Feared
+//   verdict >= belovedLove (0.2) and devotion >= belovedDevotion (0.30), or answered >= answeredShare
+//   of at least answeredMin prayers with verdict > 0                  -> Beloved
+//   devotion < forgottenDevotion (0.25) -> Forgotten
+//   otherwise                           -> Parting
+Memory memory(const World& w, int cultureId = -1);
+// [society] (v3, design review finding 6) raise a Wonder in settlement sid now (b.wonder, wonder:built
+// with its name, settlement:building). False if it is dead or already has one. Used by the build edict
+// and by Consecrate on a capital.
+bool raiseWonder(World& w, int sid);
 // [society] notes for the readers of edicts (A9 owner): Society.yearly implements `build` (the
 // Wonder 30 years after edictSince, once per edict) and prophet travel; the other edict effects are
 // read by their owners from culture.edict: `peace` (no new wars, relations +0.02/yr) and `crusade`
@@ -195,6 +310,17 @@ void declareWar(World& w, int a, int b);
 // [diplomacy] Society.makePeace: works at any time; v = -0.1, truce = year + truceYears, war ends
 // (war:ended { a, b, victor }, -1 = draw).
 void makePeace(World& w, int a, int b, double truceYears = 40, int victor = -1);
+// (v3.1, design review 11) makePeace also: a victor whose god favoured it lately (grace rate >= thankMin)
+// thanks the god (war:ended.thanked; devotion + thankDevotion in its towns, the loser's love - blameLove),
+// and the wars allies joined for a or b against the other end with it. declareWar: allies a war breaks
+// up; war:declared.blamed when the god moved the aggressor (blameMin); with allyCall b's allies who can
+// reach a join (war:declared.ally = b).
+// [diplomacy] (v3.1) the Omen of Peace swears the pair to peace (omenSworn): for omenYears their relations
+// rest at omenTarget. False when it is off or invalid.
+bool swearPeace(World& w, int a, int b);
+// [diplomacy] (v3.1) the cultures in contact with cultureId, at peace with it, whose relations are at most
+// omenTension (empty unless omenCalm): the neighbours an Omen of Peace may calm before a war. Read-only.
+std::vector<int> tense(const World& w, int cultureId);
 // [diplomacy] Society.onArrive: a trader, army or prophet reached its destination (see the arrival
 // contract in Units.h): battles (battle event, capture / raze, losses), trade (trade, relations,
 // road[] along the land part of the path, plague hop via civ::infect, trade:route once per pair),

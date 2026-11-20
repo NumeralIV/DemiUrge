@@ -377,11 +377,13 @@ DM_TEST("economy: logistic growth, its rate terms and the famine counter / event
 	w->settlements[size_t(sid)].pop = 50; w->settlements[size_t(sid)].blessed = 3; w->settlements[size_t(sid)].b[Building::GRANARY] = 1;
 	year(*w);
 	const double K2 = w->settlements[size_t(sid)].K;
-	near(K2, K * 1.15, 1e-6, "granary raises K");
+	// (v3, design review) blessed 3 years left: K x (1 + 0.2 x 3 / 10) as the blessing fades
+	near(K2, K * 1.15 * (1 + 0.2 * 0.3), 1e-6, "granary raises K (and the fading blessing)");
 	const double r2 = 0.03 * (1 + 0.3 + 0.3 + 0.06);
 	near(w->settlements[size_t(sid)].pop, 50 + r2 * 50 * (1 - 50 / K2), 1e-9, "granary + blessed rate");
 	near(w->settlements[size_t(sid)].blessed, 2, 0, "blessed counts down");
 	// famine: as a village (Stone age: no town however many people), 2.5 x K -> 12 % per year, counter, one event at 3
+	w->settlements[size_t(sid)].blessed = 0;   // (v3: a blessed town counts no famine years)
 	w->settlements[size_t(sid)].tier = 1;
 	w->settlements[size_t(sid)].pop = 100;
 	year(*w);
@@ -874,7 +876,7 @@ DM_TEST("economy: hazards: sea rise evacuates 60 % then drowned; flooded centre;
 	w->seaLevel = 0.3;   // the sea rose over the centre (and nothing else)
 	std::vector<Event> ev = capture(*w, [&] { year(*w); });
 	ok(w->settlements[size_t(sid)].dead, "destroyed");
-	eq(int(w->settlements[size_t(sid)].cause), int(Cause::Drowned), "drowned");
+	eq(int(w->settlements[size_t(sid)].cause), int(Cause::Sea), "the risen sea took it (v3: cause 'sea', not the god's drowning)");
 	if (hookUnits) {
 		if (eq(int(spawns.size()), 1, "one evacuation party")) {
 			near(spawns[0].size, 600, 1e-9, "60 % of the people");

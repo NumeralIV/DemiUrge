@@ -300,10 +300,11 @@ std::optional<Ending> checkEnding(World& w) {
 	const SimTune& T = w.tune<SimTune>();
 	if (w.vars.ark.has_value()) {
 		const ArkRecord ark = *w.vars.ark;
-		const society::Regard r = society::regard(w, ark.culture);
+		// (v3, design review findings 1, 2) the mood the Ark culture's memory leaves: its verdict
+		const society::Memory m = society::memory(w, ark.culture);
 		Ending e;
 		e.type = EndingType::Ark;
-		e.mood = moodWith(T, r.devotion, r.love);
+		e.mood = m.mood;
 		e.culture = ark.culture;
 		e.settlement = ark.settlement;
 		e.year = w.year;
@@ -322,7 +323,9 @@ std::optional<Ending> checkEnding(World& w) {
 		it = num.find("sim_empty");
 	}
 	const double emptySince = it->second;
-	if (w.stats.peakPop >= T.silencePeak) {
+	// (v3, design review finding 10) a world can only fall silent after silenceMinYear: before that
+	// the player is told the people are lost and may wake others
+	if (w.stats.peakPop >= T.silencePeak && w.year + 1e-9 >= T.silenceMinYear) {
 		if (w.year - emptySince >= T.silenceYears) {
 			const bool ash = w.vars.lastNuke.has_value() && std::isfinite(*w.vars.lastNuke) && w.year - *w.vars.lastNuke <= T.ashYears;
 			Ending e;

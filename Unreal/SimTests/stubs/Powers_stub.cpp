@@ -25,5 +25,13 @@ bool use(World& w, std::string_view id, int cell, const UseOpts& opts) {
 	DM_STUB(powers_use, w, id, cell, opts);
 	return false;
 }
+const Upgrade* upgrade(const World& w, std::string_view id) {
+	DM_STUB(powers_upgrade, w, id);
+	return nullptr;
+}
+int drownRisk(const World& w, int cell, double ang) {
+	DM_STUB(powers_drownRisk, w, cell, ang);
+	return -1;
+}
 
 } // namespace dm::powers

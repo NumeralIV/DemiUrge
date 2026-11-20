@@ -96,5 +96,13 @@ double ageProgress(const World& w, int cultureId) {
 	DM_STUB(civ_ageProgress, w, cultureId);
 	return 0.0;
 }
+int bandSite(const World& w, int cell) {
+	DM_STUB(civ_bandSite, w, cell);
+	return -1;
+}
+bool consecrate(World& w, int sid) {
+	DM_STUB(civ_consecrate, w, sid);
+	return false;
+}
 
 } // namespace dm::civ

@@ -65,7 +65,10 @@ std::unique_ptr<World> histWorld(int L = 5, uint32_t seed = 3) {
 	auto w = makeWorld({ .L = L, .seed = seed });
 	w->god.awe = 1000;
 	w->god.aweMax = 1200;
-	w->age = Age::SPACE;
+	// (v3, design review) every power is unlocked from Industry; the Atomic / Space upgrades and the
+	// off-territory price of Rain and Bloom are tested on their own (end of file, test_integration_review)
+	w->age = Age::INDUSTRY;
+	w->tune<PowersTune>().offTerritoryMul = 1;
 	return w;
 }
 
@@ -137,13 +140,16 @@ const Row kSpec[] = {
 	{ "bloom", "Bloom", 'B', G::Sky, true, 6, 0.08, Tg::Land, Phase::History, Age::BRONZE, 150, false, WS::BrushRel, 2, 0.02 },
 	{ "lightning", "Lightning", 'L', G::Wrath, false, 15, 0, Tg::Any, Phase::History, 0, 0, false, WS::Radius, 0.10, 0.05 },
 	{ "quake", "Earthquake", 'Z', G::Wrath, false, 60, 0.08, Tg::Any, Phase::History, Age::BRONZE, 200, false, WS::Radius, 0.20, 0.10 },
-	{ "plague", "Plague", 'X', G::Wrath, false, 80, 0, Tg::Settlement, Phase::History, Age::IRON, 300, false, WS::Radius, 0.12, 0.05 },
-	{ "meteor", "Meteor", 'M', G::Wrath, false, 150, 0.05, Tg::Any, Phase::History, Age::SAIL, 450, false, WS::Radius, 0.45, 0.25 },
-	{ "volcano", "Volcano", 'V', G::Wrath, false, 220, 0.04, Tg::Land, Phase::History, Age::INDUSTRY, 600, false, WS::Radius, 0.40, 0.25 },
+	// (v3, design review finding 5) every power past Bronze unlocks by age only (awe 0)
+	{ "plague", "Plague", 'X', G::Wrath, false, 80, 0, Tg::Settlement, Phase::History, Age::IRON, 0, false, WS::Radius, 0.12, 0.05 },
+	{ "meteor", "Meteor", 'M', G::Wrath, false, 150, 0.05, Tg::Any, Phase::History, Age::SAIL, 0, false, WS::Radius, 0.45, 0.25 },
+	{ "volcano", "Volcano", 'V', G::Wrath, false, 220, 0.04, Tg::Land, Phase::History, Age::INDUSTRY, 0, false, WS::Radius, 0.40, 0.25 },
 	{ "heal", "Heal", 'T', G::Grace, false, 40, 0, Tg::Settlement, Phase::History, 0, 0, false, WS::Radius, 0.10, 0.12 },
 	{ "inspire", "Inspire", 'I', G::Grace, false, 60, 0, Tg::Settlement, Phase::History, Age::BRONZE, 200, false, WS::Radius, 0.10, 0.08 },
-	{ "prophet", "Prophet", 'P', G::Grace, false, 120, 0, Tg::Settlement, Phase::History, Age::IRON, 300, false, WS::Radius, 0.15, 0.15 },
-	{ "peace", "Omen of Peace", 'O', G::Grace, false, 100, 0, Tg::Settlement, Phase::History, Age::IRON, 300, false, WS::Cultures, 0, 0.10 },
+	{ "prophet", "Prophet", 'P', G::Grace, false, 120, 0, Tg::Settlement, Phase::History, Age::IRON, 0, false, WS::Radius, 0.15, 0.15 },
+	{ "peace", "Omen of Peace", 'O', G::Grace, false, 100, 0, Tg::Settlement, Phase::History, Age::IRON, 0, false, WS::Cultures, 0, 0.10 },
+	// (v3, design review finding 6) a durable thing to buy
+	{ "consecrate", "Consecrate", 'Y', G::Grace, false, 150, 0, Tg::Settlement, Phase::History, Age::BRONZE, 0, false, WS::Radius, 0.10, 0.10 },
 };
 const Phase kPhases[] = { Phase::Molten, Phase::Water, Phase::Life, Phase::People, Phase::History, Phase::Ended };
 
@@ -163,7 +169,7 @@ bool specUnlocked(const World& w, const Row& r, bool nobody) {
 // ================================================================== the table
 
 DM_TEST("powers: LIST equals the spec table field for field") {
-	if (!eq(pw::kPowerCount, int(std::size(kSpec)), "16 powers")) return;
+	if (!eq(pw::kPowerCount, int(std::size(kSpec)), "17 powers (v3: + consecrate)")) return;
 	for (int i = 0; i < pw::kPowerCount; i++) {
 		const pw::PowerDef& d = pw::kPowers[i];
 		const Row& r = kSpec[i];
@@ -752,13 +758,20 @@ DM_TEST("powers: raise / lower sculpt at 1.5 u/s in genesis and 0.2 u/s in histo
 		near(c.ang, 0.1, 1e-12, "sculpt witness radius 2 x ang");
 	}
 	if (stub::stubbed("society")) ok(harmedOk, "sculpting owned land: -0.5 for its owner, 0 for others (" + std::to_string(wcalls().size()) + " calls, first harmed " + (wcalls().empty() ? std::string("-") : show(wcalls()[0].o.harmed)) + ")");
-	// the centre goes under the sea -> destroy(drowned)
+	// (v3, design review finding 10) one press stops the centre at sea level + 0.05; a second press
+	// drowns it -> destroy(drowned)
 	int destroyed = -1;
 	Cause why = Cause::None;
 	stub::hooks().civ_destroy = [&](World& ww, int s, Cause c) { destroyed = s; why = c; ww.settlements[size_t(s)].dead = true; };
 	stub::hooks().terrain_sculpt = [&](World& ww, int c, double, double amount) { ww.elev[size_t(c)] += float(amount * 40); return 1; };
+	w->elev[size_t(land)] = float(w->seaLevel + 0.3);
+	int warned = 0;
+	w->bus.on<EvDrownWarning>([&](const EvDrownWarning& e) { if (e.id == sid) warned++; });
 	for (int f = 0; f < 300 && destroyed < 0; f++) pw::use(*w, "lower", land, { .ang = 0.05, .dt = f ? 1.0 / 60 : 0.0 });
-	eq(destroyed, sid, "the town was destroyed when its centre sank");
+	eq(destroyed, -1, "one press does not drown the town");   // (the floor itself: test_integration_review, real Terrain)
+	eq(warned, 1, "drown:warning once");
+	for (int f = 0; f < 300 && destroyed < 0; f++) pw::use(*w, "lower", land, { .ang = 0.05, .dt = f ? 1.0 / 60 : 0.0 });
+	eq(destroyed, sid, "the town was destroyed when its centre sank (second press)");
 	eq(int(why), int(Cause::Drowned), "cause drowned");
 	ok(state::isSea(*w, land), "the centre is sea");
 }
