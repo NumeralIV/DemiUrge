@@ -1,0 +1,1079 @@
+== seed 1  policy passive  world "Ember Vale"  L 6  calamity 1.00  create 140 ms  start 29 ms
+   ENDING year 3631: ark / forgotten (culture 2, settlement 4)
+   result: 3631 years, ending ark / forgotten in 3631; ages: Bronze 318 Iron 969 Sail 1675 Industry 2364 Atomic 2940 Space 3412; ark 3631
+   peaks: pop 8.35M, settlements 110, cultures 6; anomaly +3.92 (min -1.72), co2 147.9, dust 0.191, sea +0.258 / -0.009 vs seaBase; largest fire 10 cells (year 440)
+   awe: at cap 88% of years, below 90% 6%; income stone 2.14/yr (a 40-Awe miracle every 9.3 s at 1x), later 2.72/yr (7.3 s), 150 Awe every 27 s once meteors unlock
+   events: founded 144, destroyed 50 ( lava 4 sea 46 ), cultures born 7 / died 2, wars 17, battles 89, nukes 0, prophets 0, wonders 0, trade routes 571, famines 210, plagues 86, fires 427, storms 220, droughts 150, quakes 37, volcanoes 15, impacts 0, people:lost 0, chronicle 1063
+   timing: 14524 ticks, wall mean 44.118 ms, max 67682.47 ms (year 2506); thread CPU mean 1.761 ms, max 25.67 ms, p99.9 17.28 ms; score 3795; non-finite: none
+   regard now: everyone devotion 0.275 love -0.000 (forgotten); Siphaphu 0.299/-0.000 age Space pop 1.38M; Presipo* 0.270/+0.000 age Space pop 4.31M; Kasesma 0.267/+0.000 age Space pop 2.28M; Orafon 0.284/+0.000 age Atomic pop 242.2k; Iphirino 0.298/-0.000 age Atomic pop 55.7k; Perdrisi 0.288/-0.000 age Atomic pop 82.0k
+   memory (Ark culture): grace 0.00 wrath 0.00 neglect 1316.7 (presence 0.04) lore +0.000 verdict +0.000 silent 3631 y prayers 193 answered 0 -> forgotten
+   unlocks: raise 1 lower 1 rain 1 bloom 15 lightning 1 quake 164 plague 969 meteor 1675 volcano 2364 heal 1 inspire 164 prophet 969 peace 969 consecrate 318
+   review: settlements @200 4 @400 10; first prayer 46; second culture 266; first war 335, war in 8.5% of years; longest quiet (no weight-2 entry, years 0-1000) 265 y; aweMax@1000 600; Awe >= 95% of the cap in 91% of years; prayers 529, answered 0; rain/bloom answered 0, famine over within 5 y 0; famine entries 62; HUD mood = lead mood in 100% of years; epithet 'the Mountain-Maker'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.270/+0.000; memory grace 0.00 wrath 0.00 lore +0.00 verdict +0.00 silent 3631 y prayers 0/193 -> forgotten
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 317/0/0%/7.2/1.9,1.89; Bronze 651/9/25%/23.8/6.3,0.74; Iron 706/5/17%/26.5/5.1,0.34; Sail 689/3/4%/25.4/5.4,0.52; Industry 576/0/0%/48.3/6.9,1.04; Atomic 472/0/0%/23.9/5.8,1.02; Space 219/0/0%/15.9/6.0,2.19;
+   diplomacy: alliances formed 23 (peak 3 at once, 62% of years), alliance events 12, wars joined by an ally 0, blamed on the god 0, victor thanked the god 0, nuclear exchanges 0; pace: 30.3 min at 1x (1 without a notable entry), auto-pace 29.7 min (0 without)
+   chronicle (last entries):
+     [    0 w3] Then green came out of the wet places of Ember Vale, slowly at first, as if it were not sure it was allowed.
+     [    0 w3] Elaxeus touched the sleeping clay in the woods, and the first of the Siphaphoi opened their eyes. They named their camp Ekamoteira.
+     [    0 w3] Again the god woke a people: the Siphaphoi, at Phamismar.
+     [    0 w3] Here the counting of years begins.
+     [    1 w2] At Ekamoteira they set stones in a ring and laid the first fruits on them for Elaxeus. It was a small shrine. The god did not complain.
+     [    1 w2] The Siphaphoi called the one who had woken them the Maker.
+     [   15 w1] The people of Phamismar raised a shrine to Elaxeus.
+     [   27 w1] Ekamoteira grew from a camp into a village.
+     [   42 w1] Children were born at Phamismar who had never lived anywhere else, and it became a village.
+     [   45 w1] No rain fell on the lands of Ekamoteira. The river showed its stones, and the people counted them.
+     [   46 w1] The people of Ekamoteira climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Maker was far away.
+     [   53 w1] Rain returned to Ekamoteira at last.
+     [  144 w1] In the 143rd year, a band went out from Ekamoteira with seed corn and quarrels enough for a new town, and founded Anitoterax by the water.
+     [  144 w1] The Siphaphoi set up a shrine at Anitoterax, and left flowers there for the god.
+     [  158 w1] There were now enough hearths at Anitoterax to call it a village.
+     [  164 w1] Wanderers from Phamismar came to Derixasenth and did not go back.
+     [  164 w1] The elders of Derixasenth chose a holy place, and a shrine to Elaxeus was raised there.
+     [  171 w1] Far away, on the wild shore of the north, a mountain was born in fire, and its ash darkened the sky.
+     [  175 w1] The tents of Derixasenth gave way to houses of mud and reed, and it was called a village.
+     [  206 w1] A new village of the Siphaphoi, Keretruxonos, was raised on the dry grasslands, a few days' walk from Ekamoteira.
+     [  206 w1] Keretruxonos built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [  214 w1] In the 214th year Keretruxonos could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  219 w1] Lightning struck east of Keretruxonos in a summer storm.
+     [  219 w1] Fire ran through the woods east of Keretruxonos.
+     [  227 w1] Enopanthe was founded on the dry grasslands by the Siphaphoi, who had grown too many for Phamismar.
+     [  227 w1] A circle of white stones was laid out at Enopanthe, and the Siphaphoi came there to speak to Elaxeus.
+     [  235 w1] The camp at Enopanthe put down roots and became a village.
+     [  266 w3] From the Siphaphoi came the Keitetisoi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  266 w2] The Keitetisoi called the god who had woken their fathers the Maker.
+     [  266 w1] Some of the people of Ekamoteira grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Kelemin.
+     [  267 w1] At Kelemin a shrine of stones was made for Elaxeus.
+     [  280 w1] Kelemin was a village now, with a well and a headman.
+     [  294 w1] A band from Anitoterax crossed the country and founded Donuphane on the plains.
+     [  295 w1] At Donuphane they set stones in a ring and laid the first fruits on them for Elaxeus. It was a small shrine. The Maker did not complain.
+     [  297 w1] Donuphane grew from a camp into a village.
+     [  300 w2] Generations passed and the Siphaphoi saw nothing of the Maker; they began to call the god the Rumour.
+     [  305 w1] Samokronanto was founded in the 304th year. Its founders swore it would one day be greater than Derixasenth. The chronicle notes that all founders swear this.
+     [  305 w2] The Keitetisoi made their first shrine at Samokronanto, and kept the name their fathers had given the god: Elaxeus.
+     [  309 w1] There were now enough hearths at Samokronanto to call it a village.
+     [  318 w3] In the 318th year the world turned a page: the Siphaphoi, first of all peoples, came into the Age of Bronze, and the others began to hurry.
+     [  319 w1] So many children were born in Ekamoteira that the elders gave up learning their names. Thus it became a town.
+     [  319 w2] Ekamoteira built a granary against lean years. It was the first granary of the Siphaphoi.
+     [  321 w1] Families of the Keitetisoi who left Enopanthe built their first fires at Hakrastusion, and were not sorry.
+     [  323 w2] The Keitetisoi learned to marry copper and tin, and the age of bronze began among them.
+     [  324 w2] The Keitetisoi of Derixasenth built a temple to Elaxeus so tall that the priests must rest twice on the stair, and they said that this was the point. No one among the Keitetisoi had built a temple before.
+     [  327 w1] In Ekamoteira the old shrine was pulled down and a temple to Elaxeus put up in its place. It was the first temple of the Siphaphoi.
+     [  335 w2] In the 335th year the Siphaphoi remembered an old insult from the Keitetisoi, and went to war over it.
+     [  336 w1] Ekamoteira built walls. No one said against whom. Everyone knew. No one among the Siphaphoi had built walls before.
+     [  336 w1] The people of Derixasenth built a wall and a gate, and shut it every night at dusk. It was the first wall of the Keitetisoi.
+     [  338 w1] Before Derixasenth, the Siphaphoi met the Keitetisoi. By evening the field belonged to the Keitetisoi, and to the birds.
+     [  338 w1] The Keitetisoi came against Anitoterax and were thrown back.
+     [  346 w1] The host of the Siphaphoi came against Derixasenth and broke on its walls like a wave on rock, and went home fewer.
+     [  346 w1] Before Anitoterax, the army of the Keitetisoi was broken.
+     [  352 w1] In Anitoterax a lamb was given to Elaxeus, with a prayer for peace.
+     [  354 w1] At Derixasenth the Keitetisoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  354 w1] The Keitetisoi attacked Anitoterax at dawn and were beaten by its old men and boys.
+     [  359 w1] Donuphane became a town, with a market-day.
+     [  359 w1] In the 359th year the Siphaphoi raised a temple at Donuphane, and were proud of it for one generation, which is the usual length of pride.
+     [  362 w1] The Keitetisoi held Derixasenth against the Siphaphoi, and the field was red.
+     [  367 w1] For fifteen years Ekamoteira prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [  368 w1] The priests of Keretruxonos went up to the high places and cried out for peace.
+     [  375 w2] The war of the Siphaphoi and the Keitetisoi ended because both had run out of sons. Each side wrote down that it had won.
+     [  383 w1] Enopanthe grew until a man could get lost in it, and they called it a town.
+     [  383 w1] The priests of Enopanthe built a house for the god with a golden roof.
+     [  391 w1] A tree north-east of Hakrastusion was split by lightning. The children of the village dared each other to touch it.
+     [  391 w1] The woods north-east of Hakrastusion burned, and the herds fled toward the village.
+     [  416 w3] The Siphaphine settlers about Keretruxonos had been apart too long. They took a new name, Presipo, and went their own way.
+     [  416 w2] In the first songs of the Presipoi, the god was the Waker.
+     [  419 w1] Hakrastusion was a town now, loud and crowded and proud.
+     [  419 w1] Hakrastusion raised a temple to Elaxeus, and the priests grew fat.
+     [  438 w1] The earth opened in the wild woods of the middle lands, where no one lived, and fire poured out for many years.
+     [  443 w1] The houses of Kelemin reached the old boundary stones and did not stop. From this year the Siphaphoi call it a town.
+     [  443 w1] Kelemin raised walls of earth and timber, for there was war.
+     [  463 w1] Thunder rolled over Donuphane, and lightning fell north-west of the town.
+     [  463 w1] A wildfire came close to Donuphane, and the children watched it from the roofs.
+     [  465 w2] War came between the Keitetisoi and the Presipoi, the old enemies.
+     [  469 w2] In the 469th year Samokronanto opened its gates to the Presipoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [  472 w1] Settlers of the Presipoi went out from Keretruxonos and made a new home at Dekeostra.
+     [  472 w1] Children were born at Dekeostra who had never lived anywhere else, and it became a village.
+     [  472 w2] At Dekeostra, the Presipoi raised their first shrine to Elaxeus, a heap of white stones where they could speak to the sky.
+     [  472 w2] The people of Dekeostra began to store grain in great jars, after a hungry winter. No one among the Presipoi had built a granary before.
+     [  472 w1] An army of the Keitetisoi besieged Keretruxonos and went home with nothing but stories.
+     [  473 w1] The Keitetisoi of Derixasenth wrote their prayer for peace on bark and buried it at the shrine.
+     [  476 w2] Envoys of the Siphaphoi threw down their staffs before the Keitetisoi, and the war began.
+     [  479 w1] Enopanthe was lost by the Keitetisoi and won by the Presipoi, and its market changed hands with it.
+     [  480 w1] The host of the Siphaphoi came against Derixasenth and broke on its walls like a wave on rock, and went home fewer.
+     [  480 w2] After fifteen years the Keitetisoi asked for peace, and the Presipoi granted it, and made them pay for the asking.
+     [  481 w2] The Keitetisoi were beaten, and the Siphaphoi carried their temple bells home in carts.
+     [  486 w1] The village of Dekeostra grew into a town, and its people began to look down on villages.
+     [  486 w1] A temple to Elaxeus was built in Dekeostra. It was the first temple of the Presipoi.
+     [  502 w1] The rains forgot the country of Phamismar. The priests climbed the hills and called to them.
+     [  503 w1] The people of Ekamoteira prayed for rain.
+     [  513 w1] Green came back to the fields of Phamismar, and the wells were sweet again.
+     [  528 w1] It is written that Pronimemaxis began as a ring of tents in the pine woods, raised by wanderers from Phamismar.
+     [  529 w1] The tents of Pronimemaxis gave way to houses of mud and reed, and it was called a village.
+     [  529 w1] The elders of Pronimemaxis chose a holy place, and a shrine to Elaxeus was raised there.
+     [  534 w1] In the 533rd year, a band went out from Kelemin with seed corn and quarrels enough for a new town, and founded Kanesanthe in the woods.
+     [  551 w1] The rains failed around Samokronanto.
+     [  552 w1] The women of Anitoterax tied red threads to the shrine and asked for rain.
+     [  553 w1] The fields around Pronimemaxis filled with new houses, and it became a town of the Siphaphoi.
+     [  553 w1] The Siphaphoi of Pronimemaxis spent ten years on a temple to Elaxeus, and were very proud of it.
+     [  554 w1] In the 554th year the granaries of Keretruxonos rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [  560 w1] Wanderers from Donuphane came to Soliophor and did not go back.
+     [  561 w1] The camp at Soliophor put down roots and became a village.
+     [  561 w1] The people of Soliophor raised a shrine to Elaxeus.
+     [  561 w2] The long quarrel between the Siphaphoi and the Keitetisoi came to blood.
+     [  564 w1] Before Derixasenth, the Siphaphoi met the Keitetisoi. By evening the field belonged to the Keitetisoi, and to the birds.
+     [  572 w1] Before Derixasenth, the army of the Siphaphoi was broken.
+     [  572 w1] The Keitetisoi came against Anitoterax and were thrown back.
+     [  578 w1] Some of the people of Enopanthe grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Prorildun.
+     [  580 w1] At Derixasenth the Keitetisoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  584 w1] A new village of the Keitetisoi, Oliskimeum, was raised in the woods, a few days' walk from Hakrastusion.
+     [  588 w1] The Keitetisoi attacked Anitoterax in the rain and were beaten in the river mud.
+     [  593 w1] The prayers of Ekamoteira went up for fifteen years and nothing came down. The Siphaphoi began to wonder whether anyone was listening.
+     [  596 w1] The Keitetisoi held Derixasenth against the Siphaphoi, and the field was red.
+     [  601 w2] The war of the Siphaphoi and the Keitetisoi wore itself out, like a fire with nothing left to burn.
+     [  613 w1] Oliskimeum became a town, and built a gate, though it had no wall yet.
+     [  613 w1] In Oliskimeum the old shrine was pulled down and a temple to Elaxeus put up in its place.
+     [  616 w1] A great storm walked in from the sea and stood over Pronimemaxis for three days, and the roofs learned to fly.
+     [  617 w1] Rathethalos was founded in the woods by the Presipoi, who had grown too many for Samokronanto.
+     [  623 w3] In the lands about Hakrastusion a new people arose, the Pelepanoi, children of the Keitetisoi but no longer their subjects.
+     [  623 w2] Among the Pelepanoi the god was named the Maker.
+     [  630 w1] Prorildun could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [  630 w1] Walls rose around Prorildun, and the Presipian watchmen stood upon them at night.
+     [  645 w1] Rathethalos was a town now, the busiest of the Presipoi.
+     [  645 w1] Fearing the war, Rathethalos ringed itself with a ditch and a palisade.
+     [  656 w2] Far from their old capital, the people about Soliophor began to call themselves the Kasesmoi, and spoke a tongue the Presipoi could barely follow.
+     [  656 w2] The Kasesmoi began to speak of Elaxeu as the Maker.
+     [  699 w1] Far away, on the lonely plains of the south, a mountain was born in fire, and its ash darkened the sky.
+     [  702 w1] In Pronimemaxis they burned incense and asked Elaxeus for rain.
+     [  705 w2] The Keitetisoi marched against the Pelepanoi, and the fields were left unharvested.
+     [  709 w2] The god did nothing that the Keitetisoi could see for longer than anyone remembered, and the Maker became the Silent One.
+     [  714 w1] An army of the Keitetisoi besieged Hakrastusion and went home with nothing but stories.
+     [  714 w1] The Pelepanoi came against Derixasenth and were thrown back.
+     [  721 w2] The Siphaphoi made war on the Keitetisoi.
+     [  722 w1] The host of the Pelepanoi came against Derixasenth and broke on its walls like a wave on rock, and went home fewer.
+     [  723 w2] The Keitetisoi took Hakrastusion from the Pelepanoi.
+     [  723 w1] At Oliskimeum, the Pelepanoi prayed to Elaseu for peace, morning and evening.
+     [  723 w2] The armies of the Keitetisoi came home in triumph to Derixasenth, and the Pelepanoi swore to remember.
+     [  724 w1] Before Derixasenth, the army of the Siphaphoi was broken.
+     [  724 w1] Before Anitoterax, the Keitetisoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [  732 w1] At Derixasenth the Keitetisoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  732 w1] The Keitetisoi attacked Anitoterax in the rain and were beaten in the river mud.
+     [  735 w1] A band from Keretruxonos crossed the country and founded Tikremaponos in the sands.
+     [  735 w1] So many children were born in Tikremaponos that the elders gave up learning their names. Thus it became a village.
+     [  735 w1] The Presipoi set up a shrine at Tikremaponos, and left small carved birds there for the god.
+     [  740 w1] The people of Derixasenth stopped praying for peace; Elaxeus had not answered them.
+     [  746 w1] Tikremaponos became a town, with a market-day.
+     [  748 w1] The Keitetisoi held Derixasenth against the Siphaphoi, and the field was red.
+     [  749 w2] The war ended in victory for the Siphaphoi. The Keitetisoi paid tribute for a generation.
+     [  753 w1] The river by Rapirairmene shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [  763 w1] Rapirairmene grew until a man could get lost in it, and they called it a town.
+     [  763 w1] Rapirairmene built walls. No one said against whom. Everyone knew.
+     [  764 w2] The Presipoi still kept the shrines, but the priests now spoke of the Empty Chair, not the Waker.
+     [  764 w1] The drought about Rapirairmene broke, and the children ran out into the rain.
+     [  792 w1] Soxopasalos was founded in the 792nd year. Its founders swore it would one day be greater than Pronimemaxis. The chronicle notes that all founders swear this.
+     [  793 w1] Soxopasalos was a village now, with a well and a headman.
+     [  793 w1] Soxopasalos built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [  806 w3] The Presipian settlers about Dekeostra had been apart too long. They took a new name, Orafon, and went their own way.
+     [  806 w2] In the first songs of the Orafonoi, the god was the First Voice.
+     [  822 w1] Families of the Presipoi who left Donuphane built their first fires at Mepiseinmene, and called it good.
+     [  822 w1] Children were born at Mepiseinmene who had never lived anywhere else, and it became a village.
+     [  822 w1] A circle of white stones was laid out at Mepiseinmene, and the Presipoi came there to speak to Elaxeus.
+     [  826 w1] Settlers of the Kasesmoi went out from Soliophor and made a new home at Ponosdinanto.
+     [  826 w2] At Ponosdinanto they set stones in a ring and laid the first fruits on them for Elaxeu. It was a small shrine. The Maker did not complain.
+     [  826 w2] Ponosdinanto dug storage pits and lined them with clay, and slept better for it. No one among the Kasesmoi had built a granary before.
+     [  832 w1] The village of Soxopasalos grew into a town; it had a name even among strangers.
+     [  833 w1] In Samokronanto the ground cracked like old pottery, and the Presipoi began to pray for rain.
+     [  834 w1] In Anitoterax a jar of honey was given to Elaxeus, with a prayer for rain.
+     [  837 w1] The fields about Anitoterax could not feed it any longer. The priests asked Elaxeus for bread.
+     [  837 w1] There was famine in Keretruxonos. The people looked up and asked the Empty Chair for rain, and counted the days, and the days were long.
+     [  840 w1] It is written that Eliophor began as a ring of tents in the deep forest, raised by wanderers from Enopanthe.
+     [  843 w1] The long thirst of Samokronanto ended in a storm, and the Presipoi danced in the mud.
+     [  848 w1] A new village of the Keitetisoi, Lestalon, was raised on the dry grasslands, a few days' walk from Hakrastusion.
+     [  851 w1] In the 850th year, a band went out from Oliskimeum with seed corn and quarrels enough for a new town, and founded Atrita in the woods.
+     [  851 w2] The Pelepanoi made their first shrine at Atrita, and called the god by a name of their own: Elaseu.
+     [  852 w1] The earth opened on the wild shore of the middle lands, where no one lived, and fire poured out for many years.
+     [  855 w1] The priests of Pronimemaxis went up to the high places and cried out for rain.
+     [  858 w1] There was drought in the country of Soxopasalos, and the Siphaphoi looked at the sky every morning.
+     [  865 w2] The Keitetisian kings swore an oath against the Pelepanoi, and there was war.
+     [  868 w1] The Keitetisoi marched into Oliskimeum, and the Pelepanian families who could fled to their kin.
+     [  868 w1] An army of the Pelepanoi besieged Hakrastusion and went home with nothing but stories.
+     [  868 w2] The Keitetisoi won their war against the Pelepanoi.
+     [  870 w1] Clouds came back over Soxopasalos, and the dry river filled in a single night.
+     [  876 w1] The fields around Pisoudophor filled with new houses, and it became a town of the Presipoi.
+     [  881 w1] Some of the people of Rathethalos grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Sirrelsir.
+     [  882 w1] Sirrelsir grew from a camp into a village.
+     [  889 w1] Lestalon became a town, and chose a council of elders, who argued.
+     [  890 w2] At Atrita they built a temple. It took longer than promised and cost more than was said, as is the way of all building. It was the first temple of the Pelepanoi.
+     [  909 w2] The Siphaphoi sharpened their spears and went against the Keitetisoi, though no one could remember who had struck first.
+     [  909 w2] War between the Siphaphoi and the Presipoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [  909 w1] A hard sun stood over Pisoudophor year after year, and the barley died standing.
+     [  910 w1] The houses of Sirrelsir reached the old boundary stones and did not stop. From this year the Kasesmoi call it a town.
+     [  910 w1] The Presipoi of Pisoudophor wrote their prayer for rain on bark and buried it at the shrine.
+     [  912 w1] Before Derixasenth, the Siphaphoi met the Keitetisoi. By evening the field belonged to the Keitetisoi, and to the birds.
+     [  912 w1] The Keitetisoi came against Anitoterax and were thrown back.
+     [  913 w1] The host of the Presipoi came against Anitoterax and broke on its walls like a wave on rock, and went home fewer.
+     [  917 w1] The rains came back to Pisoudophor, and the Presipoi said the god had relented.
+     [  918 w1] The people of Anitoterax climbed to the shrine and prayed to Elaxeus for peace. They prayed loudly, in case the Rumour was far away.
+     [  923 w1] Generations passed and the Pelepanoi saw nothing of the Maker; they began to call the god the Rumour.
+     [  923 w1] The sky over Oliskimeum cracked open with fire, and the rain that followed was warm.
+     [  928 w1] Before Derixasenth, the army of the Siphaphoi was broken.
+     [  929 w1] The armies of the Keitetisoi came home in triumph to Derixasenth, and the Siphaphoi swore to remember.
+     [  929 w1] After twenty years the Siphaphoi asked for peace, and the Presipoi granted it, and made them pay for the asking.
+     [  969 w3] The Presipoi drew iron out of red stone, and the age of iron began among them. No people had done so before them.
+     [  970 w3] Keretruxonos became the first city in the world, and its people did not let anyone forget it.
+     [  970 w2] A harbour now stands at Keretruxonos, where before there was only mud and opinion. No one among the Presipoi had built a harbour before.
+     [  973 w2] In the 973rd year the Kasesmoi stopped calling their god the Maker. From now on, in the market and at the hearth, it was the God of Our Fathers.
+     [  974 w1] The first caravan came from Keretruxonos to Donuphane, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [  975 w1] The Siphaphoi entered the Age of Iron. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [  976 w2] Ekamoteira became a city, and its people forgot they had ever lived in tents.
+     [  976 w1] A market was founded in Ekamoteira, and strangers came to it. It was the first market of the Siphaphoi.
+     [  978 w1] A storm passed over Enopanthe, and lightning split an old tree north-east of the town.
+     [  978 w1] The country north-east of Enopanthe burned until the rain came, and the smoke hung over the town.
+     [  980 w1] Soxopasalos and Pronimemaxis began to trade, cloth for copper, and both grew fat on it.
+     [  982 w1] Merchants of Anitoterax reached Derixasenth and found that the people there were also people. This was thought remarkable, and then useful.
+     [  983 w1] At Rapirairmene they built a temple. It took longer than promised and cost more than was said, as is the way of all building. No one among the Orafonoi had built a temple before.
+     [  985 w1] The Keitetisoi of Hakrastusion saw their first Presipian merchants, and bought everything they had.
+     [  986 w1] The Kasesmoi of Soliophor built a temple to Elaxeu so tall that the priests must rest twice on the stair, and they said that this was the point. It was the first temple of the Kasesmoi.
+     [  992 w1] In the 992nd year Eliophor could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [  998 w1] Pinferonella was founded in the pine woods by the Orafonoi, who had grown too many for Dekeostra.
+     [  998 w1] There were now enough hearths at Pinferonella to call it a village.
+     [ 1002 w1] At Plosonedimos a shrine of bones and flowers was made for Elaxeus.
+     [ 1002 w2] The Orafonoi worked iron, and their ploughs bit deep.
+     [ 1009 w1] The smiths of Rathethalos learned the secret of iron, and the Kasesmoi were never weak again.
+     [ 1010 w1] Caravans of the Presipoi now came to Ekamoteira of the Siphaphoi as well.
+     [ 1010 w1] Soliophor built a harbour, and ships came and went. No one among the Kasesmoi had built a harbour before.
+     [ 1016 w1] Donuphane of the Presipoi began to buy the goods of Soliophor, and its merchants learned the Kasesmian way of haggling.
+     [ 1021 w1] Merchants began to travel between Kelemin and Anitoterax, and the road between them grew wide.
+     [ 1025 w1] Rapirairmene had become a city, with more people in it than anyone could name.
+     [ 1027 w2] So many children were born in Enopanthe that the elders gave up learning their names. Thus it became a city.
+     [ 1028 w1] Another road joined Dekeostra to Anitoterax of the Siphaphoi, and the tolls on it were argued over.
+     [ 1032 w2] A new thing was learned at Derixasenth, and then everywhere. So the Age of Iron began among the Keitetisoi.
+     [ 1033 w1] Derixasenth grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1034 w1] The priests of Pinferonella built a house for the god with a hundred steps.
+     [ 1038 w1] The people of Kopapur prayed for rain.
+     [ 1040 w1] In those thirty years the Keitetisoi raised eleven new buildings.
+     [ 1042 w1] Wanderers from Soxopasalos came to Ikrisamalos and stayed.
+     [ 1046 w1] Traders from Kopapur found their way to Ikrisamalos of the Siphaphoi, where Presipian coin was already known.
+     [ 1054 w1] Prorildun of the Presipoi began to buy the goods of Oliskimeum, and its merchants learned the Keitetisian way of haggling.
+     [ 1060 w1] Green came back to the fields of Strenapos, and the wells were sweet again.
+     [ 1062 w1] The feet of traders wore a road between Strenapos and Soxopasalos. Along it went pots and coins and, later, fevers.
+     [ 1062 w1] The mountain in the sands far to the south of Dekeostra woke and wept fire.
+     [ 1063 w1] Fire walked through the dry grasslands north of Keretruxonos, and the beasts ran before it.
+     [ 1067 w1] The women of Pronimemaxis tied red threads to the shrine and asked for rain.
+     [ 1070 w1] The houses of Estholen reached the old boundary stones and did not stop. From this year the Presipoi call it a village.
+     [ 1074 w1] The fire-mountain on the plains far to the south of Dekeostra fell asleep again.
+     [ 1077 w2] A sickness came to Pisoudophor by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1078 w1] In Pisoudophor they burned incense and asked Elaxeus for healing.
+     [ 1082 w1] A grey sickness settled on Donuphane. The Presipoi said it came from the marshes.
+     [ 1086 w1] Caravans of the Keitetisoi now came to Enopanthe of the Presipoi as well.
+     [ 1089 w2] The Orafonoi and the Kasesmoi could no longer share the river. They tried to share it with spears instead.
+     [ 1090 w1] The chronicle, which cannot write everything, notes only that in those fifty years the Presipoi put up eleven new buildings, each the finest yet by their own account.
+     [ 1090 w1] Ponosdinanto raised walls of earth and timber, for there was war. It was the first wall of the Kasesmoi.
+     [ 1094 w1] Paikradi was a town now, the busiest of the Presipoi.
+     [ 1098 w1] Another road joined Hosorros to Simianthe of the Kasesmoi, and the tolls on it were argued over.
+     [ 1101 w1] The Orafonoi were beaten, and the Kasesmoi carried their temple bells home in carts.
+     [ 1101 w1] In the 1101st year the Presipoi and the Kasesmoi swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 1103 w1] In Enopanthe they still tell of the great wind, which blew the fires out in every hearth.
+     [ 1104 w1] The Pelepanoi drew iron out of red stone, and the age of iron began among them.
+     [ 1110 w1] Ten thousand hearths burned in Atrita. It was a city now, and it knew it.
+     [ 1114 w1] Traders of the Pelepanoi and the Presipoi met at Prorildun, and each thought they had cheated the other.
+     [ 1118 w1] So many children were born in Simianthe that the elders gave up learning their names. Thus it became a city.
+     [ 1118 w1] Simianthe cut a harbour into the shore, and its boats went further every year.
+     [ 1123 w1] A band from Rathethalos crossed the country and founded Likapeikaxis on the shore.
+     [ 1123 w2] In the songs of the Orafonoi, the First Voice became the Remembered One.
+     [ 1127 w1] At Ennuphane, the Kasesmoi prayed to Elaxeu for rain, morning and evening.
+     [ 1128 w2] Estholen could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1130 w1] Traders from Likapeikaxis found their way to Hosorros of the Presipoi, where Kasesmian coin was already known.
+     [ 1140 w1] The merchants of Hosorros found a road to Eliophor, and the road found more merchants.
+     [ 1140 w1] Oliskimeum gave up asking Elaxeus for healing. Its people grew bitter.
+     [ 1143 w1] The sea sent a howling wind against Ponosdinanto, and the fishermen did not go out for a month.
+     [ 1154 w1] The rains failed around Sirrelsir.
+     [ 1155 w1] The priests of Sirrelsir went up to the high places and cried out for rain.
+     [ 1159 w1] In Lestalon a lamb was given to Elaxeus, with a prayer for rain.
+     [ 1160 w2] Envoys of the Siphaphoi threw down their staffs before the Keitetisoi, and the war began.
+     [ 1161 w1] Ox-carts began to creak along the road from Ennuphane to Sirrelsir, loaded with grain and gossip.
+     [ 1163 w1] Rain returned to Sirrelsir at last.
+     [ 1166 w1] The scribes of the Siphaphoi began to write Ikrisamalos with the sign for 'city', and its people were insufferable about it.
+     [ 1170 w1] At Pisophoumene they set stones in a ring and laid the first fruits on them for Elaseu. It was a small shrine. The Rumour did not complain.
+     [ 1177 w1] The people of Derixasenth climbed to the shrine and prayed to Elaxeus for peace. They prayed loudly, in case the Silent One was far away.
+     [ 1178 w1] Caravans of the Pelepanoi now came to Estholen of the Presipoi as well.
+     [ 1186 w1] At Derixasenth the Keitetisoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1186 w1] Enopanthe of the Presipoi grew used to the goods of Kelemin, and its merchants learned the Siphaphine way of haggling.
+     [ 1192 w1] In Ekamoteira they said the god was deaf, and stopped asking.
+     [ 1194 w1] The river by Pisoudophor shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 1198 w1] In the 1198th year the first caravan came from Hosorros to Paikradi, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1200 w2] The war between the Siphaphoi and the Keitetisoi ended, and neither could say it had won.
+     [ 1204 w1] The drought about Pisoudophor broke, and the children ran out into the rain.
+     [ 1219 w1] Another road joined Pisophoumene to Simianthe of the Kasesmoi, and the inns along it prospered.
+     [ 1219 w2] Pisophoumene outgrew its walls twice and became a city of the Pelepanoi.
+     [ 1222 w1] Fever spread through Hosorros, and the priests could do nothing.
+     [ 1223 w1] The Presipoi of Hosorros wrote their prayer for healing on bark and buried it at the shrine.
+     [ 1236 w1] Likapeikaxis and Simianthe began to trade, cloth for copper, and both grew fat on it.
+     [ 1238 w1] The prayers of Hosorros went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 1238 w1] The plague left Hosorros as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1242 w1] Tipiostra was founded in the 1242nd year. Its founders swore it would one day be greater than Pinferonella. The chronicle notes that all founders swear this.
+     [ 1243 w1] The tents of Tipiostra gave way to houses of stone, and it was called a village.
+     [ 1243 w1] The people of Tipiostra raised a shrine to Elaxeu.
+     [ 1275 w1] Merchants began to travel between Mepiseinmene and Estholen, and the road between them grew wide.
+     [ 1282 w1] The alliance of the Presipoi and the Kasesmoi was not broken; it was forgotten, like a path no one walks any more.
+     [ 1283 w1] Far away, in the lonely hills of the middle lands, a mountain was born in fire, and its ash darkened the sky.
+     [ 1284 w1] In a night of thunder a bolt came down north-west of Hosorros, and the dogs of the city howled until dawn.
+     [ 1285 w2] The Keitetisoi marched against the Pelepanoi, and the fields were left unharvested.
+     [ 1286 w1] The people of Pronimemaxis prayed for rain.
+     [ 1288 w2] Ash hid the sun from Ember Vale, the summers did not come, and Rapirairmene went hungry with all its neighbours.
+     [ 1290 w1] The women of Plosonedimos sang at the shrine every evening and asked for rain.
+     [ 1290 w1] The Pelepanoi attacked Oliskimeum in the rain and were beaten in the river mud.
+     [ 1293 w2] The banners of the Keitetisoi were raised over Atrita.
+     [ 1293 w2] The war ended in victory for the Keitetisoi. In Derixasenth there were feasts for a month.
+     [ 1298 w1] Tipiostra became a town, with a market-day.
+     [ 1298 w1] The people of Tipiostra built a wall and a gate, and shut it every night at dusk.
+     [ 1302 w1] The feet of traders wore a road between Tipiostra and Plosonedimos. Along it went pots and coins and, later, fevers.
+     [ 1303 w1] The spotted fever broke out in Anitoterax, and its gates were shut.
+     [ 1304 w1] In Anitoterax they burned fat and asked Elaxeus for healing.
+     [ 1306 w1] No rain fell on the lands of Lestalon. The river showed its stones, and the people counted them.
+     [ 1308 w1] Families of the Presipoi who left Mepiseinmene built their first fires at Lekosles, and called it good.
+     [ 1308 w1] The camp at Lekosles put down roots and became a village.
+     [ 1314 w1] The long thirst of Lestalon ended in a storm, and the old people wept.
+     [ 1319 w1] Settlers of the Presipoi went out from Estholen and made a new home at Phodesdri.
+     [ 1320 w1] Phodesdri grew until a man could get lost in it, and they called it a town.
+     [ 1326 w1] The merchants of Tipiostra found a road to Ennuphane, and the road found more merchants.
+     [ 1330 w1] Among the small news of those thirty years: nine new buildings went up among the Presipoi.
+     [ 1332 w1] It is written that Modranesion began as a ring of tents in the deep forest, raised by wanderers from Hosorros.
+     [ 1333 w1] Modranesion was a village now, with a well and a headman.
+     [ 1334 w2] In the 1334th year the Keitetisoi remembered an old insult from the Kasesmoi, and went to war over it.
+     [ 1341 w1] Taphixekeira was founded in the woods by the Presipoi, who had grown too many for Paikradi.
+     [ 1341 w1] The Kasesmoi held Ponosdinanto against the Keitetisoi, and the field was red.
+     [ 1342 w2] Atrita fell to the Kasesmoi, and its people learned new songs.
+     [ 1346 w1] Traders from Modranesion found their way to Pisophoumene of the Pelepanoi, where Presipian coin was already known.
+     [ 1350 w2] The Presipoi and the Kasesmoi became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 1351 w1] In the 1350th year Lestalon opened its gates to the Kasesmoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1351 w1] The Kasesmoi won their war against the Keitetisoi.
+     [ 1352 w1] Lightning walked on the hills south-west of Anitoterax, and the Siphaphoi stayed indoors.
+     [ 1359 w1] At Likapeikaxis, the Kasesmoi prayed to Elaxeu for rain, and fasted.
+     [ 1360 w1] Little of those thirty years was written down, except that the builders of the Presipoi finished twelve new halls, granaries and walls.
+     [ 1362 w1] The town of Phodesdri grew into a city of the Presipoi, full of smoke and music.
+     [ 1363 w1] The god did nothing that the Orafonoi could see for longer than anyone remembered, and the Remembered One became the Rumour.
+     [ 1364 w1] Lightning found the pine woods near Kanesanthe, and the forest burned for a season. In the spring, from the ash, it began again.
+     [ 1371 w1] Caravans of the Kasesmoi now came to Oliskimeum of the Keitetisoi as well.
+     [ 1373 w1] Many roads now led to Modranesion, and it was called a city.
+     [ 1375 w1] The Kasesmoi still kept the shrines, but the priests now spoke of the Silent One, not the God of Our Fathers.
+     [ 1377 w2] In Anitoterax they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 1378 w1] In Anitoterax a lamb was given to Elaxeus, with a prayer for healing.
+     [ 1386 w1] Pisophoumene of the Pelepanoi began to buy the goods of Taphixekeira, and its merchants learned the Presipian way of haggling.
+     [ 1392 w1] The earth shook north-west of Atrita.
+     [ 1393 w1] For fifteen years Anitoterax prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1393 w1] In Anitoterax the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 1401 w2] The Siphaphoi and the Presipoi swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 1405 w1] Lightning struck north-west of Ponosdinanto in a summer storm.
+     [ 1405 w1] A red night: the woods north-west of Ponosdinanto burned, and ash fell on the city.
+     [ 1410 w1] The old alliance of the Presipoi and the Kasesmoi came apart over a small matter, as old alliances do.
+     [ 1422 w1] Ox-carts began to creak along the road from Modranesion to Taphixekeira, loaded with grain and gossip.
+     [ 1440 w2] War came between the Siphaphoi and the Keitetisoi, the old enemies.
+     [ 1442 w1] An army of the Siphaphoi besieged Derixasenth and went home with nothing but stories.
+     [ 1442 w1] Before Anitoterax, the Keitetisoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [ 1457 w1] The Keitetisoi of Derixasenth wrote their prayer for peace on bark and buried it at the shrine.
+     [ 1458 w1] The Siphaphoi came against Derixasenth and were thrown back.
+     [ 1458 w1] The host of the Keitetisoi came against Anitoterax and broke on its walls like a wave on rock, and went home fewer.
+     [ 1466 w1] Before Derixasenth, the army of the Siphaphoi was broken.
+     [ 1466 w1] At Anitoterax the Siphaphoi won the day. The Keitetisoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1472 w1] The people of Ekamoteira stopped praying for peace; Elaxeus had not answered them.
+     [ 1472 w1] Derixasenth gave up asking Elaxeus for peace. They learned to manage without.
+     [ 1472 w1] The people of Pronimemaxis climbed to the shrine and prayed to Elaxeus for peace. They prayed loudly, in case the Rumour was far away.
+     [ 1474 w1] The Siphaphoi attacked Derixasenth at dawn and were beaten in the river mud.
+     [ 1474 w1] The Siphaphoi held Anitoterax against the Keitetisoi, and the field was red.
+     [ 1480 w1] The sea drew back from the shore at Kopapur, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [ 1480 w2] The Siphaphoi and the Keitetisoi laid down their arms. Nothing had changed but the number of graves.
+     [ 1480 w2] A coughing sickness came to Keretruxonos with the traders, and did not leave.
+     [ 1481 w1] The priests of Keretruxonos went up to the high places and cried out for healing.
+     [ 1496 w1] In Keretruxonos they said the god was deaf, and let the shrine fall into ruin.
+     [ 1496 w1] The sickness went out of Keretruxonos at last, and the bells rang for the living as well as the dead.
+     [ 1504 w1] Another road joined Likapeikaxis to Taphixekeira of the Presipoi, and the tolls on it were argued over.
+     [ 1517 w1] The people of Ikrisamalos prayed for rain.
+     [ 1520 w2] The elders of the Presipoi and the Kasesmoi clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 1539 w1] A storm walked inland over the country of Atrita, and the Kasesmoi counted their dead and their cattle.
+     [ 1544 w2] In Ponosdinanto the people sickened, and the roads to it were empty.
+     [ 1545 w1] The women of Ponosdinanto sang at the shrine every evening and asked for healing.
+     [ 1546 w2] Fever spread through Prorildun, and many were buried.
+     [ 1560 w1] The people of Ponosdinanto stopped praying for healing; Elaxeu had not answered them.
+     [ 1560 w1] The plague left Prorildun as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1560 w1] In Ponosdinanto the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 1567 w1] In Atrita they burned sweet grass and asked Elaxeu for rain.
+     [ 1580 w1] A new village of the Presipoi, Pakesthalos, was raised on the dry grasslands, where the hunters of Modranesion had always camped.
+     [ 1580 w1] The houses of Pakesthalos reached the old boundary stones and did not stop. From this year the Presipoi call it a village.
+     [ 1580 w1] The Presipoi set up a shrine at Pakesthalos, and left bread there for the god.
+     [ 1581 w1] Wind and rain beat upon Modranesion for a week, and the roofs flew.
+     [ 1586 w1] Pakesthalos and Modranesion began to trade, wine for wool, and both grew fat on it.
+     [ 1599 w1] The earth opened on the empty ice of the far north, where no one lived, and fire poured out for many years.
+     [ 1601 w1] At Rapirairmene, the Orafonoi prayed to Elaxeus for rain, morning and evening.
+     [ 1603 w1] In the dark years the barley would not ripen, and hunger came to Kopapur and to many towns of the Presipoi.
+     [ 1605 w1] The Kasesmoi of Plosonedimos wrote their prayer for rain on clay and buried it at the shrine.
+     [ 1607 w1] At Ennuphane the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Kasesmoi went hungry.
+     [ 1609 w1] The priests of Pronimemaxis went up to the high places and cried out for rain.
+     [ 1622 w2] In the 1622nd year Pakesthalos could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1622 w1] The people of Pakesthalos dug into the hills for good stone.
+     [ 1632 w2] A grey sickness settled on Pisophoumene. The Pelepanoi said it came from the marshes.
+     [ 1633 w1] In Pisophoumene a lamb was given to Elaseu, with a prayer for healing.
+     [ 1635 w1] In the 1634th year the first caravan came from Pakesthalos to Hosorros, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1637 w1] A sickness came to Paikradi by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1638 w1] The people of Paikradi climbed to the shrine and prayed to Elaxeus for healing. They prayed loudly, in case the Empty Chair was far away.
+     [ 1641 w1] The spotted fever broke out in Simianthe, and its neighbours turned travellers away.
+     [ 1642 w1] The people of Simianthe prayed for healing.
+     [ 1648 w1] For fifteen years Pisophoumene prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1648 w1] The sickness went out of Pisophoumene at last, and the bells rang for the living as well as the dead.
+     [ 1649 w1] The plague left Paikradi as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1653 w1] In Simianthe the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 1664 w1] The women of Likapeikaxis tied red threads to the shrine and asked for rain.
+     [ 1675 w3] In the 1675th year the world turned a page: the Presipoi, first of all peoples, came into the Age of Sail, and the others began to hurry.
+     [ 1676 w2] An academy was founded at Keretruxonos, where the wise argued about everything, the god included. No one among the Presipoi had built an academy before.
+     [ 1681 w1] The rains forgot the country of Hakrastusion. The priests climbed the hills and called to them.
+     [ 1682 w1] In Derixasenth they burned incense and asked Elaxeus for rain.
+     [ 1684 w1] At Derixasenth there was hunger, three years running.
+     [ 1689 w1] The village of Lekosles grew into a town, and its people began to look down on villages.
+     [ 1689 w1] Walls rose around Lekosles, and the Presipian watchmen stood upon them at night.
+     [ 1689 w1] At Lestalon, the Kasesmoi prayed to Elaxeu for rain, and fasted.
+     [ 1692 w1] Clouds came back over Hakrastusion, and the dry river filled in a single night.
+     [ 1696 w1] In the 1696th year the Kasesmoi raised a temple at Simianthe, and were proud of it for one generation, which is the usual length of pride.
+     [ 1696 w1] Some of the people of Enopanthe grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Leisenda.
+     [ 1700 w1] Merchants began to travel between Lekosles and Estholen, bringing salt and news.
+     [ 1702 w1] So many children were born in Leisenda that the elders gave up learning their names. Thus it became a town.
+     [ 1719 w1] In the 1719th year, a band went out from Mepiseinmene with seed corn and quarrels enough for a new town, and founded Kedephane by the water.
+     [ 1720 w1] Kedephane grew from a camp into a village.
+     [ 1720 w1] Kedephane built a small shrine on the hill above the fields, and kept a fire burning in it.
+     [ 1725 w1] Wanderers from Kopapur came to Phelesanalos and stayed.
+     [ 1725 w1] Far away, on the empty ice of the south, a mountain was born in fire, and its ash darkened the sky.
+     [ 1726 w1] Traders from Leisenda found their way to Phamismar of the Siphaphoi, where Presipian coin was already known.
+     [ 1728 w1] The people of Rapirairmene climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Rumour was far away.
+     [ 1730 w1] A band from Lekosles crossed the country and founded Ixelanthe on the plains.
+     [ 1730 w2] The sun was a pale coin behind the dust, and the granaries of Rapirairmene stood empty. The Orafonoi remembered those years as the hungry ones.
+     [ 1734 w1] The priests of Plosonedimos went up to the high places and cried out for rain.
+     [ 1737 w1] Children were born at Dakrixoleira who had never lived anywhere else, and it became a village.
+     [ 1741 w1] The elders of Ithidra chose a holy place, and a shrine to Elaxeus was raised there.
+     [ 1741 w2] The Siphaphoi raised sails and went out upon the great sea.
+     [ 1747 w1] Caravans of the Presipoi now came to Kanesanthe of the Siphaphoi as well.
+     [ 1750 w2] The shipwrights of the Kasesmoi learned to sail against the wind, and new shores appeared on their maps.
+     [ 1750 w1] Black clouds came over Ladulanthe from the sea, and the hail broke the young barley.
+     [ 1751 w2] The long quarrel between the Siphaphoi and the Keitetisoi came to blood.
+     [ 1753 w1] The wise of the Siphaphoi came together at Derixasenth, and wrote down everything they knew.
+     [ 1758 w1] Walls of cut stone went up around Lestalon, and the Kasesmian scribes began to call it a city.
+     [ 1760 w1] In those seventy years ten settlements of the Presipoi grew, and they founded six new settlements.
+     [ 1761 w1] The scribes of the Presipoi began to write Eldosses with the sign for 'city', and its people were insufferable about it.
+     [ 1765 w1] A circle of white stones was laid out at Kirekan, and the Presipoi came there to speak to Elaxeus.
+     [ 1767 w2] The Keitetisoi were beaten, and the Siphaphoi took their best fields.
+     [ 1769 w1] Simianthe of the Kasesmoi began to buy the goods of Lekosles, and its merchants learned the Presipian way of haggling.
+     [ 1775 w1] In Pronimemaxis they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 1779 w2] Ithidra grew past counting into a city, and its markets never closed.
+     [ 1779 w1] At Ithidra a school was opened where the young learned numbers, stars and the names of things.
+     [ 1784 w1] The feet of traders wore a road between Kanesanthe and Anitoterax. Along it went pots and coins and, later, fevers.
+     [ 1791 w1] The prayers of Pronimemaxis went up for fifteen years and nothing came down. The Siphaphoi began to wonder whether anyone was listening.
+     [ 1791 w1] The sickness went out of Pronimemaxis at last, and the bells rang for the living as well as the dead.
+     [ 1794 w1] Scholars gathered at Kraloromene and built a house of learning, and filled it with arguments.
+     [ 1800 w1] Lakreradalo was founded in the 1799th year. Its founders swore it would one day be greater than Sirrelsir. The chronicle notes that all founders swear this.
+     [ 1801 w1] The fields around Lakreradalo filled with new houses, and it became a town of the Kasesmoi.
+     [ 1805 w1] At Kiloukanthe a shrine of wood was made for Elaxeu.
+     [ 1809 w1] Families of the Kasesmoi who left Ennuphane built their first fires at Lounolde, and were not sorry.
+     [ 1810 w1] The scribes, counting rather than writing, set down that in fifty years the Kasesmoi put up more than a dozen new buildings, each the finest yet by their own account.
+     [ 1814 w1] The merchants of Dolilthalos found a road to Leisenda, and the road found more merchants.
+     [ 1817 w1] The houses of Romulxaronos reached the old boundary stones and did not stop. From this year the Siphaphoi call it a town.
+     [ 1823 w1] Another road joined Romulxaronos to Leisenda of the Presipoi, and the inns along it prospered.
+     [ 1828 w1] Kedeostra became a town, and chose a council of elders, who argued.
+     [ 1829 w1] At Lesmapironos they set stones in a ring and laid the first fruits on them for Elaxeus. It was a small shrine. The Rumour did not complain.
+     [ 1833 w2] A road was opened between Pipalostra of the Kasesmoi and Lesmapironos of the Siphaphoi, and strange coins began to turn up in both markets.
+     [ 1838 w1] Ten thousand hearths burned in Lakreradalo. It was a city now, and it knew it.
+     [ 1838 w1] Mines were opened near Lakreradalo, and the hills were never quite the same.
+     [ 1842 w1] Paranar became a city, the pride of the Kasesmoi.
+     [ 1845 w1] Ixelanthe had become a city, with more people in it than there were sheep in the hills.
+     [ 1852 w1] Kiloukanthe outgrew its walls twice and became a city of the Kasesmoi.
+     [ 1853 w1] The town of Romulxaronos grew into a city of the Siphaphoi, full of smoke and music.
+     [ 1857 w1] Traders from Kiloukanthe found their way to Kirekan of the Presipoi, where Kasesmian coin was already known.
+     [ 1860 w1] The Kasesmoi raised nine new buildings. Of such small things in those fifty years the chronicle keeps nothing more.
+     [ 1861 w1] Many roads now led to Lesmapironos, and it was called a city.
+     [ 1865 w1] So many children were born in Akianthe that the elders gave up learning their names. Thus it became a city.
+     [ 1869 w1] A coughing sickness came to Eldosses with the traders, and lingered.
+     [ 1877 w2] Walls of cut stone went up around Lounolde, and the Kasesmian scribes began to call it a city.
+     [ 1877 w1] An academy now stands at Lounolde, where before there was only mud and opinion.
+     [ 1878 w1] Settlers of the Kasesmoi went out from Pinferonella and made a new home at Tadinu.
+     [ 1881 w1] The rains came back to Lesmapironos, and the Siphaphoi said the god had relented.
+     [ 1882 w2] The Orafonoi took to the open sea, and nowhere was far any more.
+     [ 1885 w1] Ox-carts began to creak along the road from Henosthi to Lakreradalo, loaded with grain and gossip.
+     [ 1889 w1] Tithupatrin became a town, with streets.
+     [ 1890 w1] And there were small things, as there always are: more than a dozen new buildings went up among the Siphaphoi.
+     [ 1891 w2] The Keitetisoi put down the tools of their mothers and took up the tools of the Age of Sail. The Silent One watched, and did not say whether this was wise.
+     [ 1894 w1] Merchants began to travel between Losaphenmene and Phelesanalos, bringing salt and news.
+     [ 1897 w1] The scribes of the Orafonoi began to write Soliophor with the sign for 'city', and its people were insufferable about it.
+     [ 1903 w1] The harvest failed at Pronimemaxis, and the people ate their seed corn.
+     [ 1905 w1] Piroxaileron was a town now, the busiest of the Siphaphoi.
+     [ 1909 w1] Fearing the war, Preismoku ringed itself with a ditch and a palisade.
+     [ 1913 w1] Tedridras grew until a man could get lost in it, and they called it a town.
+     [ 1917 w1] Plilena and Lonapismis began to trade, cloth for copper, and both grew fat on it.
+     [ 1920 w1] Another thirty years went into the book: the Presipoi built eleven new villages in the wild, and the builders of the Siphaphoi finished twelve new halls, granaries and walls.
+     [ 1921 w1] It is written that Toseloka began as a ring of tents in the deep forest, raised by wanderers from Samokronanto.
+     [ 1925 w1] Ten thousand hearths burned in Preismoku. It was a city now, and it knew it.
+     [ 1930 w1] Caravans of the Siphaphoi now came to Rukasemeum of the Presipoi as well.
+     [ 1931 w2] Tosekratrex had become a city, with more people in it than anyone could name.
+     [ 1931 w2] Envoys went back and forth between the Siphaphoi and the Presipoi until they had worn a road, and at the end of it was an alliance.
+     [ 1933 w1] Sepamostra built walls. No one said against whom. Everyone knew.
+     [ 1935 w2] Smoke rose from the earth near Plosonedimos, and then fire. The Kasesmoi said the mountain was angry.
+     [ 1936 w1] Among the Kasesmoi the god was no longer the Silent One but the Mountain-Maker, and the old name was forgotten.
+     [ 1937 w1] In a dry season a fire ate the woods south-east of Plosonedimos.
+     [ 1941 w1] In the 1941st year Klonesaponos could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [ 1945 w1] In Rapirairmene they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 1949 w1] Kiloukanthe of the Kasesmoi grew used to the goods of Klonesaponos, and its merchants learned the Presipian way of haggling.
+     [ 1950 w1] Of the smaller things of those thirty years: the Presipoi raised a score or more new buildings; and seven new settlements were founded by them.
+     [ 1953 w1] There were now enough hearths at Tokiophor to call it a village.
+     [ 1957 w1] Dexelaxeron grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1962 w1] Another road joined Lounolde to Lassodis of the Presipoi, and the tolls on it were argued over.
+     [ 1965 w1] A storm such as the old people had never seen passed over Dexelaxeron.
+     [ 1969 w1] The houses of Toseloka reached the old boundary stones and did not stop. From this year the Presipoi call it a city.
+     [ 1973 w1] So many children were born in Plilena that the elders gave up learning their names. Thus it became a city.
+     [ 1977 w1] Traders from Keadanthe found their way to Dexelaxeron of the Orafonoi, where Presipian coin was already known.
+     [ 1977 w2] Sepamostra became a city, the pride of the Presipoi.
+     [ 1979 w1] The oath between the Siphaphoi and the Presipoi lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 1980 w1] Over thirty years, and hardly worth a line each time, the Presipoi put up ten new buildings, each the finest yet by their own account.
+     [ 1981 w1] The wise of the Presipoi came together at Klonesaponos, and wrote down everything they knew.
+     [ 1985 w2] The Siphaphoi made war on the Keitetisoi.
+     [ 1987 w1] An army of the Keitetisoi besieged Hakrastusion and went home with nothing but stories.
+     [ 1990 w1] Famine came to Tephalaperax.
+     [ 1992 w2] The armies of the Siphaphoi came home in triumph to Ekamoteira, and the Keitetisoi swore to remember.
+     [ 1993 w1] In the 1993rd year Pasdopeinalo could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [ 1998 w1] The first caravan came from Imixophor to Taripousmene, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2001 w1] The Kasesmoi of Kedeostra wrote their prayer for rain on bark and buried it at the shrine.
+     [ 2005 w1] A tree south-east of Pipalostra was split by lightning. The children of the city dared each other to touch it.
+     [ 2010 w1] The chronicle, which cannot write everything, notes only that in those thirty years more than a dozen new buildings went up among the Kasesmoi, and they founded five new settlements.
+     [ 2011 w1] Rain returned to Kraloromene at last.
+     [ 2014 w1] Lonapismis of the Presipoi grew used to the goods of Dodrusodimos, and its merchants learned the Orafonian way of haggling.
+     [ 2021 w2] The Pelepanoi raised sails and went out upon the great sea.
+     [ 2022 w1] An academy was founded at Pisophoumene, where the wise argued about everything, the god included. It was the first academy of the Pelepanoi.
+     [ 2022 w1] Keadanthe outgrew its walls twice and became a city of the Presipoi.
+     [ 2026 w1] The feet of traders wore a road between Irinanthe and Modranesion. Along it went pots and coins and, later, fevers.
+     [ 2029 w1] The houses of Plosonedimos reached the old boundary stones and did not stop. From this year the Kasesmoi call it a town.
+     [ 2034 w1] Caravans of the Kasesmoi now came to Deleophor of the Presipoi as well.
+     [ 2041 w1] The sky over Kinnerir cracked open with fire, and the old oak west of the city burned like a torch.
+     [ 2041 w1] Fire walked through the marshes west of Kinnerir, and left only ash behind it.
+     [ 2043 w2] The town of Pasdopeinalo grew into a city of the Kasesmoi, full of smoke and music.
+     [ 2046 w1] So many children were born in Tokiophor that the elders gave up learning their names. Thus it became a city.
+     [ 2049 w1] Hunger came to Phelesanalos and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2056 w1] The drought about Phelesanalos broke, and the children ran out into the rain.
+     [ 2059 w1] Atrita gave up asking Elaxeu for healing. They learned to manage without.
+     [ 2061 w1] Another road joined Kopapur to Tithupatrin of the Siphaphoi, and the inns along it prospered.
+     [ 2066 w1] A grey wave as tall as a temple broke over the fields of Pisophoumene, and salt lay on them for years.
+     [ 2070 w1] Many roads now led to Plosonedimos, and it was called a city.
+     [ 2074 w1] Traders from Takassir found their way to Sepamostra of the Presipoi, where Kasesmian coin was already known.
+     [ 2079 w1] In Kopapur the ground cracked like old pottery, and the Presipoi carried water from far away.
+     [ 2082 w2] Hunger walked the streets of Strenapos, and the Siphaphoi sold their tools for grain.
+     [ 2083 w1] The merchants of Erisaimaxis found a road to Ladulanthe, and the road found more merchants.
+     [ 2085 w2] In the 2085th year the Siphaphoi and the Presipoi swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 2089 w1] In Tokiophor a jar of honey was given to Elaxeus, with a prayer for rain.
+     [ 2090 w1] Green came back to the fields of Kopapur, and the wells were sweet again.
+     [ 2104 w1] Caravans of the Presipoi now came to Plosonedimos of the Kasesmoi as well.
+     [ 2105 w1] Thunder rolled over Rapirairmene, and lightning fell south-west of the city.
+     [ 2105 w1] In the month of dust a fire ate the pine woods south-west of Rapirairmene.
+     [ 2109 w1] The sea sent a howling wind against Toseloka, and the fishermen did not go out for a month.
+     [ 2116 w1] A storm passed over Keadanthe, and lightning killed a herd of goats north-west of the city.
+     [ 2116 w1] A wildfire came close to Keadanthe, and the people beat it back with green branches.
+     [ 2121 w2] A fire-mountain woke in the woods north-west of Simianthe, and the sky above the city turned the colour of iron.
+     [ 2122 w1] The people of Takassir prayed for rain.
+     [ 2123 w1] There was drought in the country of Isanonile, and the Kasesmoi looked at the sky every morning.
+     [ 2126 w1] The old people of Simianthe said the fire north-west of the city had been started by the god, and argued about it all winter.
+     [ 2126 w2] The dust of the sky fell on the fields of Rapirairmene like a second winter, and there was nothing to harvest but straw.
+     [ 2130 w1] Takassir dwindled to a village. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [ 2133 w1] The mountain north-west of Simianthe stopped smoking, though no one trusted it.
+     [ 2138 w1] Klonesaponos of the Presipoi grew used to the goods of Phoremer, and its merchants learned the Kasesmian way of haggling.
+     [ 2146 w1] A storm walked inland over the country of Eldosses, and left the fields flattened behind it.
+     [ 2150 w1] Another road joined Sepamostra to Dexelaxeron of the Orafonoi, and the inns along it prospered.
+     [ 2152 w1] In a night of thunder a bolt came down in the pine woods north of Pronimemaxis, and in the morning the shepherds found the stones blackened.
+     [ 2155 w1] A hard sun stood over Preismoku all that summer, and the barley died standing.
+     [ 2163 w1] Lightning walked on the hills north of Rapirairmene, and the priests of the city read it as a sign.
+     [ 2163 w1] Fire ran through the pine woods north of Rapirairmene.
+     [ 2165 w1] The women of Erisaimaxis tied red threads to the shrine and asked for healing.
+     [ 2175 w1] A tree west of Pisoudophor was split by lightning. The wood was kept as a holy thing in the city.
+     [ 2175 w1] The country in the marshes west of Pisoudophor burned for many days, and the smoke hung over the city.
+     [ 2180 w1] In Erisaimaxis they said the god was deaf, and let the shrine fall into ruin.
+     [ 2184 w1] Ox-carts began to creak along the road from Phiminon to Tadinu, loaded with grain and gossip.
+     [ 2188 w1] In Oralomene they burned incense and asked Elaxeus for rain.
+     [ 2190 w1] In Pronimemaxis they still tell of the great wind, which blew the fires out in every hearth.
+     [ 2193 w1] Traders from Demitalos found their way to Keadanthe of the Presipoi, where Keitetisian coin was already known.
+     [ 2199 w1] Lightning struck north-west of Pinferonella in a summer storm.
+     [ 2202 w1] The rains forgot the country of Keretruxonos. The children grew up not knowing the smell of rain.
+     [ 2204 w2] The Siphaphine kings swore an oath against the Keitetisoi, and there was war.
+     [ 2205 w2] That winter Anitoterax ate its oxen, and then its dogs.
+     [ 2205 w1] There were too many mouths in Keretruxonos and too little bread, and the old went hungry so the young could eat.
+     [ 2209 w3] The Keitetisoi are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [ 2209 w2] The war ended when there were none of the Keitetisoi left to fight it.
+     [ 2209 w3] From the Siphaphoi came the Iphirinoi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [ 2209 w2] The Iphirinoi called the god who had woken their fathers the Maker.
+     [ 2212 w1] Thunder rolled over Ekamoteira, and lightning fell in the marshes south-west of the city.
+     [ 2225 w1] The sky over Lestalon cracked open with fire, and the rain that followed was warm.
+     [ 2225 w1] The dry grasslands south of Lestalon burned, and the herds fled toward the city.
+     [ 2233 w1] The river by Pimathorimos shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 2234 w1] At Preismoku, the Presipoi prayed to Elaxeus for rain, morning and evening.
+     [ 2237 w2] In the 2237th year the granaries of Pimathorimos rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2244 w1] The long thirst of Pimathorimos ended in a storm, and the old people wept.
+     [ 2245 w1] In Ramannixeira the people sickened, and the roads to it were empty.
+     [ 2246 w1] In Ramannixeira a lamb was given to Elaxeus, with a prayer for healing.
+     [ 2249 w1] The spotted fever broke out in Kedeostra, and its neighbours turned travellers away.
+     [ 2259 w1] The village of Takassir grew into a town, and its people began to look down on villages.
+     [ 2260 w1] A storm passed over Kraloromene, and lightning killed a herd of goats south-west of the city.
+     [ 2260 w1] A red night: the deep forest south-west of Kraloromene burned, and ash fell on the city.
+     [ 2261 w1] For fifteen years Ramannixeira prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 2261 w1] In Ramannixeira the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 2263 w1] The Siphaphoi and the Presipoi were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 2269 w1] The Presipoi of Tokiophor wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2293 w1] A great storm walked in from the sea and stood over Pisophoumene for three days, and the roofs learned to fly.
+     [ 2295 w1] In the 2294th year the first caravan came from Deleophor to Hosorros, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2300 w2] The Siphaphoi and the Presipoi swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 2301 w1] The rains failed around Pisophoumene.
+     [ 2302 w1] The priests of Paikradi went up to the high places and cried out for rain.
+     [ 2304 w2] There was famine in Pisophoumene. The people looked up and asked the Rumour for rain, and counted the days, and the days were long.
+     [ 2312 w1] Clouds came back over Pisophoumene, and the dry river filled in a single night.
+     [ 2319 w1] The people of Pasdopeinalo climbed to the shrine and prayed to Elaxeu for rain. They prayed loudly, in case the Mountain-Maker was far away.
+     [ 2327 w1] In a night of thunder a bolt came down west of Taripousmene, and the dogs of the city howled until dawn.
+     [ 2327 w1] Fire walked through the dry grasslands west of Taripousmene, and left only ash behind it.
+     [ 2334 w1] No rain fell on the lands of Okisostra. The river showed its stones, and the people counted them.
+     [ 2335 w1] The people of Ramannixeira prayed for rain.
+     [ 2338 w2] The fields about Kalatina could not feed it any longer. The priests asked Elaxeus for bread.
+     [ 2340 w1] The rains came back to Okisostra, and the Presipoi said the god had relented.
+     [ 2346 w1] A great wave broke south of Isanonile, and the people of the village ran for the hills.
+     [ 2348 w1] Lightning walked on the hills outside Prenesu, and no one was hurt, that time.
+     [ 2348 w1] In the month of dust a fire ate the pine woods outside Prenesu.
+     [ 2348 w1] Wind and rain beat upon Lekosles for a week, and the boats were thrown up on the fields.
+     [ 2358 w1] Caravans of the Presipoi now came to Pasdopeinalo of the Kasesmoi as well.
+     [ 2364 w3] In the 2364th year the world turned a page: the Presipoi, first of all peoples, came into the Age of Industry, and the others began to hurry.
+     [ 2365 w1] Keretruxonos became a great city such as the world had not seen, and the sky over it never grew dark.
+     [ 2365 w1] Chimneys rose over Keretruxonos, and the sky above it turned grey. No one among the Presipoi had built a manufactory before.
+     [ 2365 w1] Lightning struck south-west of Rathethalos in a summer storm.
+     [ 2365 w1] Fire ran through the dry grasslands south-west of Rathethalos.
+     [ 2370 w1] Another ten years went into the book, and in them eleven places of the Presipoi outgrew their old names.
+     [ 2370 w1] Walls of cut stone went up around Kopapur, and the Presipian scribes began to call it a city.
+     [ 2376 w2] In the 2376th year Ramannixeira could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2377 w1] The women of Phoremer tied red threads to the shrine and asked for rain.
+     [ 2377 w1] Black clouds came over Irinanthe from the sea, and the hail broke the young barley.
+     [ 2377 w1] A sickness came to Tedridras by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 2380 w1] A grey sickness settled on Dexelaxeron. The Orafonoi said it came from the marshes.
+     [ 2385 w1] Kanesanthe raised a temple to Elaxeus, and its bells could be heard in the fields.
+     [ 2390 w1] Eldosses of the Presipoi began to buy the goods of Kelemin, and its merchants learned the Siphaphine way of haggling.
+     [ 2391 w1] In Deleophor they burned fat and asked Elaxeus for rain.
+     [ 2398 w1] Kraloromene grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 2398 w2] The mountain at Prorildun woke and wept fire.
+     [ 2399 w3] The mountain opened above Prorildun and its stone ran like honey, though not like honey. The city is beneath it. The new ground is very fertile, the chronicle observes, as though that were a comfort.
+     [ 2399 w2] The Presipian priests gave the god a new name: the Mountain-Maker.
+     [ 2401 w1] At Pronimemaxis, the Siphaphoi prayed to Elaxeus for rain, and fasted.
+     [ 2403 w1] The sky stayed grey over Ember Vale for years. The harvest failed at Pinferonella, and not only there.
+     [ 2407 w1] Eliophor became a great city, a sea of roofs from one horizon to the other.
+     [ 2411 w1] A tree south of Pasdopeinalo was split by lightning. The children of the city dared each other to touch it.
+     [ 2415 w1] Phoxedilonos and Kinnerir began to trade, wine for wool, and both grew fat on it.
+     [ 2420 w1] Below the great events of those fifty years, the builders of the Kasesmoi finished more than a dozen new halls, granaries and walls; nine villages and towns of the Presipoi grew larger.
+     [ 2421 w1] A storm such as the old people had never seen passed over Dodrusodimos.
+     [ 2424 w1] The priests of Tokiophor went up to the high places and cried out for rain.
+     [ 2426 w2] In the dark years the barley would not ripen, and hunger came to Klonesaponos and to many towns of the Presipoi.
+     [ 2427 w1] Rukasemeum swallowed the villages around it and became a great city of the Presipoi.
+     [ 2429 w2] No one destroyed Klonesaponos. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2432 w1] Rain returned to Lounolde at last.
+     [ 2434 w2] The last families left Dodrusodimos, and grass grew in its streets.
+     [ 2434 w2] Tokiophor was abandoned.
+     [ 2434 w1] The Kasesmoi gave up Isanonile, and the foxes moved in.
+     [ 2437 w1] In Erisaimaxis a white goat was given to Elaxeus, with a prayer for rain.
+     [ 2439 w2] The Kasesmoi built engines that breathed fire, and the age of smoke began among them.
+     [ 2440 w1] The engines of Rathethalos began to turn, and their noise did not stop at night. It was the first manufactory of the Kasesmoi.
+     [ 2443 w1] The houses of Kinothapeira reached the old boundary stones and did not stop. From this year the Presipoi call it a town.
+     [ 2448 w1] Another road joined Kanesanthe to Ixelanthe of the Presipoi, and the inns along it prospered.
+     [ 2450 w1] Phoremer was left empty. No one could say exactly when.
+     [ 2451 w1] At Ixelanthe there was hunger, three years running.
+     [ 2456 w1] Phumudostra was founded on the cold barrens by the Presipoi, who had grown too many for Sepamostra.
+     [ 2458 w1] The last families left Likapeikaxis, and grass grew in its streets.
+     [ 2459 w1] In the 2459th year Sirrelsir could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2460 w1] Meanwhile, in the smaller news of those years, ten places of the Kasesmoi outgrew their old names, and hunger came to five towns of the Presipoi.
+     [ 2461 w1] No one destroyed Deleophor. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2463 w1] So many people lived in Atrita that no one could count them, though the scribes tried.
+     [ 2464 w1] Strenapos was abandoned.
+     [ 2464 w1] The Kasesmoi gave up Tenimialo, and the wind had it.
+     [ 2466 w1] Keminthalos was left empty. Its people had gone to the bigger towns.
+     [ 2466 w1] The alliance of the Siphaphoi and the Presipoi was not broken; it was forgotten, like a path no one walks any more.
+     [ 2467 w1] The last families left Erisaimaxis, and grass grew in its streets.
+     [ 2467 w1] The people of Painasi raised a shrine to Elaxeus.
+     [ 2472 w1] In the 2472nd year the Siphaphoi entered the Age of Industry. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 2472 w1] The sky over Takassir cracked open with fire, and the rain that followed was warm.
+     [ 2473 w1] No one destroyed Opoxikimo. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2475 w1] The harvest failed at Dakrixoleira; the children grew thin.
+     [ 2478 w2] The lamps of Ekamoteira drowned out the stars: it had become a great city of the Siphaphoi.
+     [ 2479 w2] Lekosles was abandoned.
+     [ 2480 w1] The first caravan from Osnepodeum came to Ponosdinanto, and the Iphirinoi and the Kasesmoi learned each other's words for 'price'.
+     [ 2482 w2] In the 2482nd year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+     [ 2485 w1] Traders from Alexemion found their way to Dekeostra of the Orafonoi, where Siphaphine coin was already known.
+     [ 2487 w1] So many children were born in Kloslathon that the elders gave up learning their names. Thus it became a great city.
+     [ 2489 w1] The Pelepanoi gave up Pisophoumene, and the wind had it.
+     [ 2490 w2] The last of the Pelepanoi passed from the world, and only their ruins remember them.
+     [ 2490 w2] In the lands about Strotuxanthe a new people arose, the Perdrisoi, children of the Siphaphoi but no longer their subjects.
+     [ 2490 w2] Among the Perdrisoi the god was named the Maker.
+     [ 2491 w1] The elders of Preramir chose a holy place, and a shrine to Elaxeu was raised there.
+     [ 2492 w1] Osnepodeum was left empty. No one could say exactly when.
+     [ 2492 w1] The last families left Preramir, and grass grew in its streets.
+     [ 2495 w1] The people of Soxopasalos climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Maker was far away.
+     [ 2498 w1] No one destroyed Kekranonion. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2499 w1] Famine came to Sepamostra.
+     [ 2500 w1] Below the great events of those forty years, the Presipoi raised eleven new buildings.
+     [ 2503 w1] Hunger came to Demitalos and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2507 w1] Estholen was abandoned.
+     [ 2508 w1] Merchants began to travel between Enaskra and Prenesu, bringing salt and news.
+     [ 2509 w1] The Presipoi gave up Painasi, and the foxes moved in.
+     [ 2509 w1] The god did nothing that the Iphirinoi could see for longer than anyone remembered, and the Maker became the Sleeper.
+     [ 2510 w1] Ikrisamalos was left empty. Its people had gone to the bigger towns.
+     [ 2511 w1] The Presipoi of Paikradi wrote their prayer for rain on bark and buried it at the shrine.
+     [ 2515 w1] Thunder rolled over Dakrixoleira, and lightning fell in the woods south-east of the city.
+     [ 2518 w2] No one destroyed Akianthe. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2519 w1] The tents of Phisnonulalo gave way to houses of stone, and it was called a village.
+     [ 2523 w1] Plothinix built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [ 2527 w1] A wall of water came out of the sea upon Phiminon.
+     [ 2529 w2] Hunger walked the streets of Strotuxanthe, and the fields were not enough for all of them.
+     [ 2530 w1] Over thirty years the Kasesmoi put up nine new buildings, each the finest yet by their own account. In the same years four towns of the Presipoi knew lean years.
+     [ 2532 w1] Caravans of the Presipoi now came to Kloslathon of the Kasesmoi as well.
+     [ 2534 w1] The last families left Phumudostra, and grass grew in its streets.
+     [ 2537 w1] That winter Lassodis ate its oxen, and then its dogs.
+     [ 2537 w1] Alexemion was abandoned.
+     [ 2539 w1] The houses of Reralostra reached the old boundary stones and did not stop. From this year the Kasesmoi call it a city.
+     [ 2542 w1] The Siphaphoi and the Presipoi became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 2544 w1] Fever spread through Atrita, and the priests could do nothing.
+     [ 2546 w1] Smoke rose from the earth on the cold barrens east of Takassir, and then fire. The Kasesmoi said the mountain was angry.
+     [ 2547 w1] A wildfire came close to Takassir, and turned only when the wind did.
+     [ 2550 w3] Rivers of fire ran through Takassir and buried it.
+     [ 2550 w1] The Kasesmoi gave up Lounolde, and the wind had it.
+     [ 2551 w1] The feet of traders wore a road between Tephalaperax and Kloslathon. Along it went pots and coins and, later, fevers.
+     [ 2556 w1] In Eliophor they painted marks on the doors of the sick, and there were many marks.
+     [ 2558 w2] Kronmidophor was left empty. Its people had gone to the bigger towns.
+     [ 2560 w1] The scribes, counting rather than writing, set down that in thirty years the granaries of nine towns of the Presipoi ran low, and nine towns of the Kasesmoi prayed and waited.
+     [ 2560 w1] In Soxopasalos the first engines turned, and the Iphirinoi did more work in a day than their grandfathers in a year.
+     [ 2560 w1] The people of Atrita stopped praying for healing; Elaxeu had not answered them.
+     [ 2563 w1] At Tipiostra the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Kasesmoi went hungry.
+     [ 2567 w1] The fields around Kithasa filled with new houses, and it became a town of the Kasesmoi.
+     [ 2571 w1] In Taphixekeira the ground cracked like old pottery, and the Presipoi carried water from far away.
+     [ 2575 w1] There were too many mouths in Phodesdri and too little bread, and the weak did not see the spring.
+     [ 2579 w1] Anitoterax of the Siphaphoi began to buy the goods of Soliophor, and its merchants learned the Orafonian way of haggling.
+     [ 2583 w1] Green came back to the fields of Taphixekeira, and the wells were sweet again.
+     [ 2584 w2] The fields about Dakrixoleira could not feed it any longer. The priests asked Elaxeus for bread.
+     [ 2587 w1] Irinanthe shrank to a town. Its walls were too big for it now.
+     [ 2591 w1] The people of Irinanthe prayed for rain.
+     [ 2594 w2] The ice in the north began to weep, and the summers were cruel.
+     [ 2596 w1] The sea sent a howling wind against Phisnonulalo, and the fishermen did not go out for a month.
+     [ 2601 w1] Soxopasalos became a great city such as the world had not seen, lit all night.
+     [ 2603 w2] The last families left Samokronanto, and grass grew in its streets.
+     [ 2603 w1] The old alliance of the Siphaphoi and the Presipoi came apart over a small matter, as old alliances do.
+     [ 2605 w1] The women of Epaxomaxis sang at the shrine every evening and asked for rain.
+     [ 2606 w1] No one destroyed Sepamostra. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2607 w1] The harvest failed at Keretruxonos; the children grew thin.
+     [ 2609 w1] Tipiostra was abandoned.
+     [ 2614 w1] Another road joined Axetanthe to Dekeostra of the Orafonoi, and the inns along it prospered.
+     [ 2615 w1] In Phisnonulalo they burned fat and asked Elaxeu for rain.
+     [ 2619 w1] Traders from Phisnonulalo found their way to Kelemin of the Siphaphoi, where Kasesmian coin was already known.
+     [ 2623 w1] The scribes of the Siphaphoi began to write Axetanthe with the sign for 'city', and its taxes rose accordingly.
+     [ 2624 w1] The Siphaphoi gave up Demitalos, and the wind had it.
+     [ 2630 w1] Of the smaller things of those seventy years: four towns of the Presipoi went hungry.
+     [ 2630 w1] At Kinothapeira, the Presipoi prayed to Elaxeus for rain, morning and evening.
+     [ 2631 w1] In the 2631st year the granaries of Kinothapeira rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2635 w1] The camp at Dipophakalos put down roots and became a village.
+     [ 2638 w2] Kopapur was left empty. No one could say exactly when.
+     [ 2639 w1] The Presipoi founded Pixeostra in the pine woods.
+     [ 2639 w1] No one destroyed Oralomene. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2639 w1] The last families left Pasdopeinalo, and grass grew in its streets.
+     [ 2640 w2] Phoxedilonos grew into a city of towers, its lights seen from the next valley.
+     [ 2641 w1] Irinanthe was abandoned.
+     [ 2643 w1] In Epaxomaxis a white goat was given to Elaxeu, with a prayer for rain.
+     [ 2648 w1] There was drought in the country of Phelesanalos, and the Presipoi looked at the sky every morning.
+     [ 2651 w1] There was famine in Phelesanalos. The people looked up and asked the Mountain-Maker for rain, and counted the days, and the days were long.
+     [ 2656 w1] The drought about Phelesanalos broke, and the children ran out into the rain.
+     [ 2660 w1] Between the greater deeds of those thirty years, eleven new buildings went up among the Presipoi.
+     [ 2662 w1] A new village of the Kasesmoi, Soputhalo, was raised on the cold barrens, a few days' walk from Sirrelsir.
+     [ 2663 w1] The Kasesmoi of Soputhalo wrote their prayer for rain on bark and buried it at the shrine.
+     [ 2667 w1] Ten thousand hearths burned in Dipophakalos. It was a city now, and it knew it.
+     [ 2673 w1] The merchants of Plothinix found a road to Simianthe, and the road found more merchants.
+     [ 2676 w1] The priests of Pixeostra went up to the high places and cried out for rain.
+     [ 2681 w1] The people of Dexelaxeron climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Rumour was far away.
+     [ 2684 w1] A storm passed over Kinnerir, and lightning killed a herd of goats north-west of the great city.
+     [ 2687 w2] The Presipoi gave up Preismoku, and the wind had it.
+     [ 2690 w1] Ox-carts began to creak along the road from Prenesu to Phoxedilonos, loaded with grain and gossip.
+     [ 2691 w2] At Phoxedilonos there was hunger, three years running.
+     [ 2692 w1] Lassodis was left empty. Its people had gone to the bigger towns.
+     [ 2692 w1] A coughing sickness came to Dexelaxeron with the traders, and lingered.
+     [ 2695 w1] Kinothapeira became a city, and its towers could be seen from far off.
+     [ 2699 w1] The last families left Tadinu, and grass grew in its streets.
+     [ 2700 w1] A hard sun stood over Ekamoteira year after year, and the barley died standing.
+     [ 2703 w1] The people of Henosthi prayed for rain.
+     [ 2708 w1] The prayers of Dexelaxeron went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 2710 w1] The chronicle, which cannot write everything, notes only that in those fifty years the builders of the Kasesmoi finished nine new halls, granaries and walls.
+     [ 2711 w1] Famine came to Enaskra.
+     [ 2720 w1] In the 2719th year the first caravan came from Atrita to Plothinix, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2722 w1] Omamir became a town, and chose a council of elders, who argued.
+     [ 2725 w1] The women of Enaskra sang at the shrine every evening and asked for rain.
+     [ 2726 w2] At Missanin, the Perdrisoi raised their first shrine to Elaxeus, a ring of stones where they could speak to the sky.
+     [ 2731 w1] A great storm walked in from the sea and stood over Pronimemaxis for three days, and the roofs learned to fly.
+     [ 2735 w1] Anipumene had become a city, with more people in it than anyone could name.
+     [ 2735 w1] In Anipumene great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron.
+     [ 2739 w1] In Dexelaxeron they burned fat and asked Elaxeus for rain.
+     [ 2743 w1] Missanin became a town, with streets.
+     [ 2748 w1] Many left Enaskra, and it was a village again.
+     [ 2749 w2] A new thing was learned at Dekeostra, and then everywhere. So the Age of Industry began among the Orafonoi.
+     [ 2758 w1] Omamir grew past counting into a city, and its markets never closed.
+     [ 2758 w1] Omamir built its first manufactory, and the river ran a strange colour.
+     [ 2764 w1] Merchants began to travel between Lakreradalo and Kloslathon, and the road between them grew wide.
+     [ 2765 w1] In a night of thunder a bolt came down hard by Okisostra, and the dogs of the city howled until dawn.
+     [ 2767 w1] Hunger came to Epaxomaxis and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2774 w1] The rains forgot the country of Kithasa. The priests climbed the hills and called to them.
+     [ 2775 w1] At Kithasa, the Kasesmoi prayed to Elaxeu for rain, morning and evening.
+     [ 2778 w2] Hunger walked the streets of Kithasa, and the fields were not enough for all of them.
+     [ 2780 w1] Among the small news of those seventy years: four towns of the Presipoi knew lean years.
+     [ 2782 w1] Missanin outgrew its walls twice and became a city of the Perdrisoi.
+     [ 2784 w1] Dipophakalos and Plilena began to trade, pots for fish, and both grew fat on it.
+     [ 2790 w2] Generations passed and the Perdrisoi saw nothing of the Maker; they began to call the god the Sleeper.
+     [ 2790 w1] Lightning walked on the hills north-west of Plilena, and the priests of the city read it as a sign.
+     [ 2804 w1] So many children were born in Anipumene that the elders gave up learning their names. Thus it became a great city.
+     [ 2804 w1] The river by Derixasenth shrank to a string of muddy pools, and the frogs were the first to leave.
+     [ 2805 w1] The feet of traders wore a road between Phiminon and Omamir. Along it went pots and coins and, later, fevers.
+     [ 2805 w1] The Siphaphoi of Derixasenth wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2807 w1] In those lean years Enopanthe ate its oxen, and then its dogs.
+     [ 2813 w1] Lightning struck east of Toseloka in a summer storm.
+     [ 2818 w2] The Kasesmoi had called the god the Mountain-Maker. After what they had seen, they called the god the God of Our Fathers.
+     [ 2822 w1] In Lonapismis they still tell of the great wind, which carried a goat over the temple.
+     [ 2825 w1] Merchants of the Kasesmoi reached Missanin of the Perdrisoi, and the two peoples traded songs and diseases.
+     [ 2835 w2] Omamir became a great city, a sea of roofs from one horizon to the other.
+     [ 2839 w1] The sky over Dolilthalos cracked open with fire, and the rain that followed was warm.
+     [ 2839 w1] The country south-east of Dolilthalos burned until the rain came, and the smoke hung over the great city.
+     [ 2847 w2] The Kasesmoi still kept the shrines, but the priests now spoke of the Silent One, not the God of Our Fathers.
+     [ 2856 w1] A storm walked inland over the country of Soliophor, and left the fields flattened behind it.
+     [ 2857 w1] The people of Phisnonulalo climbed to the shrine and prayed to Elaxeu for rain. They prayed loudly, in case the Silent One was far away.
+     [ 2858 w1] There were too many mouths in Phisnonulalo and too little bread, and the old went hungry so the young could eat.
+     [ 2863 w1] In Kanesanthe the people sickened, and the roads to it were empty.
+     [ 2864 w3] No one destroyed Dexelaxeron. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2864 w1] Half the houses of Phisnonulalo stood empty, and it was no more than a town.
+     [ 2864 w1] The priests of Derixasenth went up to the high places and cried out for healing.
+     [ 2868 w1] The merchants of Paileromi found a road to Anipumene, and the road found more merchants.
+     [ 2871 w1] A grey sickness settled on Keretruxonos. The Presipoi said it came from the marshes.
+     [ 2871 w1] In Keretruxonos a white goat was given to Elaxeus, with a prayer for healing.
+     [ 2872 w1] The sea rose up and walked inland at Soliophor, and did not ask leave.
+     [ 2876 w3] Reralostra was abandoned.
+     [ 2878 w1] A tree south-east of Lesmapironos was split by lightning. The wood was kept as a holy thing in the great city.
+     [ 2880 w2] Fever spread through Dekeostra, and many were buried.
+     [ 2880 w1] The people of Dekeostra prayed for healing.
+     [ 2888 w1] The long thirst of Losaphenmene ended in a storm, and the old people wept.
+     [ 2891 w1] The plague left Dekeostra as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 2902 w2] A fire-mountain woke in the sands south-east of Keadanthe, and the sky above the city turned the colour of iron.
+     [ 2904 w1] The women of Soputhalo sang at the shrine every evening and asked for rain.
+     [ 2905 w1] The old people of Keadanthe said the fire south-east of the city had been started by the god, and argued about it all winter.
+     [ 2905 w1] Ash hid the sun from Ember Vale, the summers did not come, and Soputhalo went hungry, and many places besides.
+     [ 2905 w1] The town of Eukeri grew into a city of the Siphaphoi, with paved streets and quarrelsome councils.
+     [ 2909 w1] The sun was a pale coin behind the dust, and the granaries of Missanin stood empty. The Perdrisoi remembered those years as the hungry ones.
+     [ 2912 w1] Thunder rolled over Kedeostra, and lightning fell in the woods south of the great city.
+     [ 2916 w1] Krelirax was a village now, with a well and a headman.
+     [ 2926 w1] A storm passed over Eliophor, and lightning set the grass alight south-west of the great city.
+     [ 2940 w3] In the 2940th year the world turned a page: the Presipoi, first of all peoples, came into the Age of the Atom, and the others began to hurry.
+     [ 2941 w2] The Presipoi built at Keretruxonos a house where the smallest fire burns. No one among the Presipoi had built a power plant before.
+     [ 2943 w1] The rains failed around Rathethalos.
+     [ 2944 w1] In Rathethalos they burned fat and asked Elaxeu for rain.
+     [ 2944 w1] Wind and rain beat upon Oliskimeum for three days, and the roofs flew.
+     [ 2945 w1] Okisostra swallowed the villages around it and became a great city of the Presipoi.
+     [ 2946 w1] The harvest failed at Rathethalos, and the people ate their seed corn.
+     [ 2950 w1] Ox-carts began to creak along the road from Phisnonulalo to Pipalostra, loaded with grain and gossip.
+     [ 2954 w1] Clouds came back over Rathethalos, and the dry river filled in a single night.
+     [ 2955 w1] A tremor ran through the land about Paileromi, and the old wall finally came down.
+     [ 2956 w1] Many roads now led to Krelirax, and it was called a city.
+     [ 2960 w1] In those ninety years the Presipoi raised nine new buildings.
+     [ 2960 w1] In the 2960th year Plilena could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2967 w1] The spotted fever broke out in Ramannixeira, and its neighbours turned travellers away.
+     [ 2968 w1] At Ramannixeira, the Presipoi prayed to Elaxeus for healing, morning and evening.
+     [ 2969 w2] The Presipoi gave up Krelirax, and the foxes moved in.
+     [ 2977 w2] So many people lived in Padorapimos that no one could count them, and so they stopped trying.
+     [ 2977 w2] The elders of the Siphaphoi and the Presipoi clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 2982 w1] In the 2981st year the first caravan came from Enopanthe to Keretruxonos, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2983 w1] Ramannixeira gave up asking Elaxeus for healing. They learned to manage without.
+     [ 2983 w1] The sickness went out of Ramannixeira at last, and the bells rang for the living as well as the dead.
+     [ 2989 w1] No rain fell on the lands of Phelesanalos. The river showed its stones, and the people counted them.
+     [ 2991 w1] In the 2991st year the granaries of Epaxomaxis rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2992 w1] At Tosekratrex there was hunger, three years running.
+     [ 2996 w1] The rains came back to Phelesanalos, and the Presipoi said the god had relented.
+     [ 3004 w2] Phisnonulalo was left empty. Its people had gone to the bigger towns.
+     [ 3004 w1] Asmaxalthalo was founded on the dry grasslands by the Kasesmoi, who had walked a long way to find it.
+     [ 3005 w1] Children were born at Asmaxalthalo who had never lived anywhere else, and it became a village.
+     [ 3009 w1] The Kasesmoi put down the tools of their mothers and took up the tools of the Age of the Atom. The Silent One watched, and did not say whether this was wise.
+     [ 3010 w1] At Rathethalos they built a power plant. It took longer than promised and cost more than was said, as is the way of all building. It was the first power plant of the Kasesmoi.
+     [ 3014 w1] Eldeophor and Phelesanalos began to trade, wine for wool, and both grew fat on it.
+     [ 3018 w1] The houses of Paranar reached the old boundary stones and did not stop. From this year the Kasesmoi call it a great city.
+     [ 3021 w1] The lamps of Ixelanthe drowned out the stars: it had become a great city of the Presipoi.
+     [ 3024 w1] Walls of cut stone went up around Paileromi, and the Kasesmian scribes began to call it a city.
+     [ 3035 w1] In Dipophakalos the ground cracked like old pottery, and the Presipoi carried water from far away.
+     [ 3039 w2] There was famine in Toseloka. The people looked up and asked the Mountain-Maker for rain, and counted the days, and the days were long.
+     [ 3039 w2] No one destroyed Phiminon. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3039 w1] Black clouds came over Rapirairmene from the sea, and the hail broke the young barley.
+     [ 3040 w2] Ember Vale grew hot as a kiln. The forests of the south withered.
+     [ 3041 w1] In the 3041st year a new camp of the Kasesmoi was raised at Usledren, in the pine woods.
+     [ 3041 w1] Usledren grew from a camp into a village.
+     [ 3044 w1] Eukeri grew into a city of towers, its lights seen from the next valley.
+     [ 3048 w1] Merchants began to travel between Usledren and Lakreradalo, bringing salt and news.
+     [ 3050 w1] The scribes, counting rather than writing, set down that in ten years the Kasesmoi put up nine new buildings, each the finest yet by their own account.
+     [ 3054 w1] Kithasa became a great city, a sea of roofs from one horizon to the other.
+     [ 3059 w1] The oath between the Siphaphoi and the Presipoi lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 3066 w1] Ten thousand hearths burned in Pixeostra. It was a city now, the jewel of the Presipoi.
+     [ 3066 w1] The engines of Pixeostra began to turn, and their noise did not stop at night.
+     [ 3068 w2] The sea was rising, and this time not by any god's hand: the chimneys of the Presipoi had warmed the air, and the ice was giving back its water.
+     [ 3070 w1] In the 3070th year Soputhalo could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 3070 w1] There was drought in the country of Tosekratrex, and the Siphaphoi looked at the sky every morning.
+     [ 3072 w1] The feet of traders wore a road between Soputhalo and Pinferonella. Along it went pots and coins and, later, fevers.
+     [ 3077 w1] In a night of thunder a bolt came down near Soliophor, and the dogs of the city howled until dawn.
+     [ 3080 w1] There was an earthquake south of Dolilthalos, and the people of the great city slept outside for a month.
+     [ 3084 w2] The fields about Padorapimos could not feed it any longer. Some families left in the night.
+     [ 3090 w1] Padorapimos grew small and was only a city, and the young went away.
+     [ 3095 w2] The Siphaphoi split the smallest thing in the world, and found a fire inside it.
+     [ 3096 w1] The merchants of Asmaxalthalo found a road to Pipalostra, and the road found more merchants.
+     [ 3096 w1] A great power plant hummed at Ekamoteira, and the Siphaphine priests did not like it. No one among the Siphaphoi had built a power plant before.
+     [ 3096 w1] Envoys went back and forth between the Siphaphoi and the Presipoi until they had worn a road, and at the end of it was an alliance.
+     [ 3101 w1] Famine came to Toseloka.
+     [ 3110 w1] The Siphaphoi and the Presipoi were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 3113 w1] Piroxaileron became a great city such as the world had not seen, lit all night.
+     [ 3115 w1] Ox-carts began to creak along the road from Eldeophor to Dolilthalos, and inns grew up beside it.
+     [ 3121 w3] The last families left Eukeri, and grass grew in its streets.
+     [ 3121 w1] A hard sun stood over Paikradi year after year, and the barley died standing.
+     [ 3123 w1] Kelemin swallowed the villages around it and became a great city of the Siphaphoi.
+     [ 3126 w2] Hunger came to Sirrelsir and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3127 w1] Lightning walked on the hills north-west of Pinferonella, and no one was hurt, that time.
+     [ 3127 w1] The pine woods north-west of Pinferonella burned, and the herds fled toward the city.
+     [ 3130 w1] Rain returned to Paikradi at last.
+     [ 3133 w1] A sickness came to Kithasa by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 3136 w1] Wanderers from Soxopasalos came to Phekidometta and did not go back.
+     [ 3136 w1] There were now enough hearths at Phekidometta to call it a village.
+     [ 3142 w1] Hunger walked the streets of Epaxomaxis, and the Kasesmoi sold their tools for grain.
+     [ 3147 w1] In Rukasemeum they painted marks on the doors of the sick, and there were many marks.
+     [ 3149 w1] In Kithasa they said the god was deaf, and let the shrine fall into ruin.
+     [ 3159 w1] The plague left Rukasemeum as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 3166 w1] So many children were born in Phekidometta that the elders gave up learning their names. Thus it became a city.
+     [ 3166 w1] The miners of Phekidometta went deep into the mountain, and some did not come back.
+     [ 3166 w1] Lightning struck in the hills south of Pipalostra in a summer storm.
+     [ 3168 w1] So many people lived in Pinferonella that no one could count them, and so they stopped trying.
+     [ 3169 w2] Smoke rose from the earth near Pakesthalos, and then fire. Ash fell on the great city like grey snow.
+     [ 3171 w2] Pakesthalos was lost beneath the lava, all but its name.
+     [ 3173 w1] In the 3173rd year the first caravan came from Usledren to Omamir, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 3176 w2] In Pinferonella they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 3180 w1] A red night: the woods west of Lakreradalo burned, and ash fell on the great city.
+     [ 3181 w1] The fires in the woods far to the west of Ixapoxion cooled into black stone, and in time the ash made the fields rich.
+     [ 3184 w1] Kimithalo grew until a man could get lost in it, and they called it a town.
+     [ 3189 w1] The river by Soputhalo shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 3197 w1] The drought about Soputhalo broke, and the children ran out into the rain.
+     [ 3197 w1] A tree south-east of Kimithalo was split by lightning. The children of the town dared each other to touch it.
+     [ 3200 w1] Hunger came to four towns of the Presipoi. Of such small things in those sixty years the chronicle keeps nothing more.
+     [ 3203 w1] In those lean years Kinothapeira ate its oxen, and then its dogs.
+     [ 3212 w1] The scribes of the Kasesmoi began to write Kimithalo with the sign for 'city', and its taxes rose accordingly.
+     [ 3212 w1] Chimneys rose over Kimithalo, and the sky above it turned grey.
+     [ 3213 w1] Merchants began to travel between Kanesanthe and Hakrastusion, bringing salt and news.
+     [ 3227 w1] Toseloka shrank to a town. Its walls were too big for it now.
+     [ 3238 w1] Thunder rolled over Kedeostra, and lightning fell on the dry grasslands north-west of the great city.
+     [ 3239 w1] There were too many mouths in Toseloka and too little bread, and the old went hungry so the young could eat.
+     [ 3240 w2] Toseloka was abandoned.
+     [ 3240 w1] Wanderers of the Presipoi settled at Phenile, on the shore.
+     [ 3241 w1] The tents of Phenile gave way to houses of stone, and it was called a village.
+     [ 3241 w1] In the 3241st year the Presipoi raised a granary at Phenile, and were proud of it for one generation, which is the usual length of pride.
+     [ 3248 w2] The lamps of Phekidometta drowned out the stars: it had become a great city of the Iphirinoi.
+     [ 3250 w2] The Perdrisoi entered the Age of the Atom. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 3251 w1] A power plant now stands at Romulxaronos, where before there was only mud and opinion. It was the first power plant of the Perdrisoi.
+     [ 3251 w1] In the 3251st year the granaries of Asmaxalthalo rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 3254 w3] The Iphirinoi gave up Phekidometta, and the wind had it.
+     [ 3255 w1] The earth groaned under Leisenda, and the temple bell rang by itself.
+     [ 3258 w1] The fields about Soxopasalos could not feed it any longer. The priests asked Elaxeus for bread.
+     [ 3259 w1] The fishermen of Okisostra built a stone quay, and the big ships began to call.
+     [ 3265 w1] The sky over Pipalostra cracked open with fire, and the rain that followed was warm.
+     [ 3265 w1] A wildfire came close to Pipalostra, and turned only when the wind did.
+     [ 3266 w1] The Siphaphoi and the Presipoi swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 3272 w1] No rain fell on the lands of Pisoudophor. The river showed its stones, and the people counted them.
+     [ 3273 w1] Praxipuleum and Kinnerir began to trade, wine for wool, and both grew fat on it.
+     [ 3280 w2] Darialaxis became a great city such as the world had not seen, lit all night.
+     [ 3280 w1] Green came back to the fields of Pisoudophor, and the wells were sweet again.
+     [ 3283 w1] The prayers of Kinnerir went up for fifteen years and nothing came down. The Presipoi began to wonder whether anyone was listening.
+     [ 3292 w2] Praxipuleum was left empty. No one could say exactly when.
+     [ 3294 w1] A storm passed over Phelesanalos, and lightning split an old tree close by the great city.
+     [ 3296 w1] The feet of traders wore a road between Epaxomaxis and Kimithalo. Along it went pots and coins and, later, fevers.
+     [ 3311 w1] In the 3310th year, a band went out from Rapirairmene with seed corn and quarrels enough for a new town, and founded Eidralas by the water.
+     [ 3311 w1] The camp at Eidralas put down roots and became a village.
+     [ 3311 w1] The Orafonoi set up a shrine at Eidralas, and left small carved birds there for the god.
+     [ 3320 w1] In a night of thunder a bolt came down in the pine woods south-east of Eidralas, and in the morning the shepherds found the stones blackened.
+     [ 3320 w1] A red night: the pine woods south-east of Eidralas burned, and ash fell on the town.
+     [ 3329 w1] The alliance of the Siphaphoi and the Presipoi was not broken; it was forgotten, like a path no one walks any more.
+     [ 3336 w1] The rains forgot the country of Ithidra. The priests climbed the hills and called to them.
+     [ 3339 w2] There was famine in Ithidra. The people looked up and asked the Mountain-Maker for rain, and counted the days, and the days were long.
+     [ 3339 w1] At Tosekratrex there was hunger, three years running.
+     [ 3342 w1] The houses of Eidralas reached the old boundary stones and did not stop. From this year the Orafonoi call it a city.
+     [ 3342 w1] In Eidralas great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron.
+     [ 3344 w1] The long thirst of Ithidra ended in a storm, and the old people wept.
+     [ 3346 w1] The ground on the open sea far to the east of Kanesanthe trembled for the space of a hundred breaths, and cracks opened in the fields of the city.
+     [ 3347 w1] A great wave broke north-east of Kanesanthe, and the people of the city ran for the hills.
+     [ 3349 w1] The sea drew back from the shore at Leisenda, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [ 3356 w1] Paileromi grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 3359 w1] The harvest failed at Epaxomaxis, and the people ate their seed corn.
+     [ 3364 w1] Lightning walked on the hills east of Taphixekeira, and no one was hurt, that time.
+     [ 3364 w1] Fire walked through the woods east of Taphixekeira, and the beasts ran before it.
+     [ 3370 w1] A storm such as the old people had never seen passed over Axetanthe.
+     [ 3385 w1] The sky over Leisenda cracked open with fire, and the old oak north of the great city burned like a torch.
+     [ 3385 w1] In the month of dust a fire ate the deep forest north of Leisenda.
+     [ 3400 w3] No one destroyed Mepiseinmene. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3402 w2] A new thing was learned at Soxopasalos, and then everywhere. So the Age of the Atom began among the Iphirinoi.
+     [ 3403 w2] At Soxopasalos the hidden fire was put to work, and the lamps of a whole country were lit from it. No one among the Iphirinoi had built a power plant before.
+     [ 3405 w1] Some of the people of Kedephane grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Prisixiseira.
+     [ 3405 w1] Prisixiseira was a village now, with a fence against the wolves.
+     [ 3408 w1] The rains failed around Keadanthe.
+     [ 3411 w1] Famine came to Keadanthe.
+     [ 3412 w3] In the 3412th year the world turned a page: the Presipoi, first of all peoples, came into the Age of the Stars, and the others began to hurry.
+     [ 3418 w1] Clouds came back over Keadanthe, and the dry river filled in a single night.
+     [ 3418 w1] A tree south-east of Lesmapironos was split by lightning. The children of the great city dared each other to touch it.
+     [ 3418 w1] The country on the plains south-east of Lesmapironos burned for many days, and the smoke hung over the great city.
+     [ 3419 w1] Tedridras became a great city, a sea of roofs from one horizon to the other.
+     [ 3420 w1] Kedephane swallowed the villages around it and became a great city of the Presipoi.
+     [ 3424 w1] So many people lived in Eidralas that no one could count them, and so they stopped trying.
+     [ 3432 w2] Outside Keretruxonos, on flat ground swept clean, the Presipian builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+     [ 3432 w3] At Keretruxonos the Presipoi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3434 w1] The merchants of Prisixiseira found a road to Pisoudophor, and the road found more merchants.
+     [ 3437 w1] Prisixiseira had become a city, with more people in it than anyone could name.
+     [ 3440 w2] The Orafonoi put down the tools of their mothers and took up the tools of the Age of the Atom. The Rumour watched, and did not say whether this was wise.
+     [ 3441 w1] The Orafonoi built at Dekeostra a house where the smallest fire burns. It was the first power plant of the Orafonoi.
+     [ 3447 w1] A coughing sickness came to Pronimemaxis with the traders, and lingered.
+     [ 3458 w2] The mountain in the pine woods north of Kithasa woke and wept fire.
+     [ 3459 w1] Fire ran through the pine woods north-east of Kithasa.
+     [ 3461 w1] The dust of the sky fell on the fields of Soputhalo like a second winter, and there was nothing to harvest but straw.
+     [ 3462 w2] The fire-mountain came down upon Kithasa and ate it.
+     [ 3463 w1] For fifteen years Pronimemaxis prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 3463 w1] In Pronimemaxis the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 3466 w1] Phenile was a town now, the busiest of the Presipoi.
+     [ 3466 w1] Phenile raised walls of earth and timber, for there was war.
+     [ 3468 w1] The sky stayed grey over Ember Vale for years. The harvest failed at Plilena, and not only there.
+     [ 3470 w1] The mountain on the burnt ground far to the south of Eidralas stopped smoking, and the Orafonoi gave thanks.
+     [ 3473 w1] The Kasesmoi turned their eyes to the stars, and built towers of fire to reach them.
+     [ 3479 w2] Kinothapeira grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 3479 w1] A great power plant hummed at Kinothapeira, and the Presipian priests did not like it.
+     [ 3479 w1] Lightning struck in the pine woods north-east of Pronimemaxis in a summer storm.
+     [ 3485 w1] A band from Soxopasalos crossed the country and founded Phaxara on the cold barrens.
+     [ 3485 w1] Children were born at Phaxara who had never lived anywhere else, and it became a village.
+     [ 3492 w1] Ox-carts began to creak along the road from Phenile to Eldosses, loaded with grain and gossip.
+     [ 3493 w1] A launch field was cleared at Rathethalos, and the Kasesmoi began to speak of leaving.
+     [ 3493 w2] The Kasesmoi laid the keel of a great ship at Rathethalos, a ship for the space between the stars.
+     [ 3499 w1] The pine woods east of Lesmapironos burned, and the sky over the great city was brown for days.
+     [ 3503 w1] The lamps of Eidralas drowned out the stars: it had become a great city of the Orafonoi.
+     [ 3508 w1] Prisixiseira became a great city, a sea of roofs from one horizon to the other.
+     [ 3513 w1] In Pronimemaxis the ground cracked like old pottery, and the Siphaphoi carried water from far away.
+     [ 3517 w1] Hunger came to Phenile and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3517 w1] Phaxara became a city, and its towers could be seen from far off.
+     [ 3523 w1] The rains came back to Pronimemaxis, as rains do, in their own time.
+     [ 3525 w1] Ennuphane grew into a city of towers, its lights seen from the next valley.
+     [ 3529 w2] Usledren became a great city such as the world had not seen, numberless as ants.
+     [ 3532 w1] A storm walked inland over the country of Plothinix, and left the fields flattened behind it.
+     [ 3535 w1] The people of Dakrixoleira stopped praying for healing; Elaxeus had not answered them.
+     [ 3550 w1] Soputhalo swallowed the villages around it and became a great city of the Kasesmoi.
+     [ 3561 w2] In the 3561st year the Siphaphoi and the Presipoi swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 3566 w1] Traders of the Iphirinoi and the Orafonoi met at Eidralas, and each thought they had cheated the other.
+     [ 3582 w1] Thunder rolled over Phelesanalos, and lightning fell south-east of the great city.
+     [ 3583 w1] The old alliance of the Siphaphoi and the Presipoi came apart over a small matter, as old alliances do.
+     [ 3583 w1] There was drought in the country of Donuphane, and the Presipoi looked at the sky every morning.
+     [ 3586 w2] Hunger walked the streets of Donuphane, and the fields were not enough for all of them.
+     [ 3588 w2] The first ship of the Siphaphoi went up beyond the sky and came back, and its sailors spoke of the world as a small blue stone.
+     [ 3590 w1] Green came back to the fields of Donuphane, and the wells were sweet again.
+     [ 3603 w1] A great storm walked in from the sea and stood over Plilena for three days, and the roofs learned to fly.
+     [ 3608 w1] At Ekamoteira, the Siphaphoi built a tower to throw ships at the stars.
+     [ 3608 w1] So many people lived in Axetanthe that no one could count them, though the scribes tried.
+     [ 3608 w2] At Ekamoteira the Siphaphoi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3613 w1] In Rathethalos the people sickened, and the roads to it were empty.
+     [ 3625 w1] In the 3625th year Asmaxalthalo could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 3625 w1] The Kasesmoi raised a manufactory at Asmaxalthalo, and were proud of it for one generation, which is the usual length of pride.
+     [ 3629 w1] Rathethalos gave up asking Elaxeu for healing. They learned to manage without.
+     [ 3629 w1] The sickness went out of Rathethalos at last, and the bells rang for the living as well as the dead.
+     [ 3631 w3] From Keretruxonos, the Presipoi went up into the sky on a pillar of fire, carrying seed and songs and the name of Elaxeus. Those who stayed watched until the light was a star among stars.
+     [ 3631 w3] In the 3631st year the Presipoi left Ember Vale for the stars. They took their machines, their music and their quarrels. They did not take Elaxeus; no one remembered to. In an old temple at Paikradi the wind still turns the pages of a book no one reads, and in it, in a hand no one living could read, is a name that once meant everything.
+
+simrun: 1 run(s) in 641.1 s wall, no non-finite values

@@ -1,0 +1,78 @@
+2026-11-20 chronicle-diplomacy built: the chronicle tells the v3.1 diplomacy, and the Omen of Peace is stronger (sim-findings-2 "open for the lead" and "for others"). Determinism, save/load and every SPEC-SIM 4 and v3/v3.1 target that passed before still pass.
+
+Files:
+- Sim/Chronicle.cpp, Chronicle.h (one tune field added: allianceGap).
+- Sim/Diplomacy.cpp, Powers.cpp, Society.h, Society.cpp.
+- Sim/Core/Events.h, Events.cpp: the payload (war:declared.envied).
+- Sim/Balance.cpp: 3 keys registered, 2 switches on.
+- SimTests/test_chronicle_diplomacy.cpp (new, 4 tests), test_diplomacy_omen.cpp (new, 2), test_powers.cpp (+1).
+- SimTests/test_foundation_adv.cpp (the key list), test_link.cpp (144 functions), stubs/StubHooks.h, stubs/Diplomacy_stub.cpp.
+- docs/SPEC-SIM.md: sections 2, 3.8, 3.10 and 3.11, each change marked "(chronicle-diplomacy)".
+- Not touched: Game/, Names.*, Tools/simrun. Unreal/build.ps1 was not run. Game/ reads only headers, and every addition there is a trailing field with a default or a new function.
+
+(1) The chronicle, in the approved voice (translated, wry, the god seen from below, no game terms). Every family has 3-8 variants, rotated least-used first.
+- Alliances:
+  - `alliance` formed: 5 lines, tellable notable.
+  - Ended in peace: 4 lines, minor. Held back to the year's close.
+  - A pair that falls out and makes up again within allianceGap (20 years) is told once.
+  - Allies who come to blows: Diplomacy breaks the alliance just before war:declared in the same tick, so it is told as one betrayal (3 lines), never as "the alliance lapsed".
+- Allies joining a war: war:declared.ally gets 4 lines naming the joiner, the enemy and the ally it defends ({c3}).
+- Blame, two families:
+  - "the god struck us" (blamed && !envied): 8 lines.
+  - "the god favoured them" (envied): 7 lines.
+  - A betrayal that was blamed takes a suffix of either kind.
+- Payload: war:declared gains a fifth key, `envied` (Events.h/.cpp). It is true when the god's favour of b over a was at least blameMin and weighed more than its wrath on a. It is never true without blamed.
+- No god in unblamed wars: the one plain war line that named the god ("saying the god was with them") lost that clause, and the clause moved to the thanked lines. Only blamed and thanked lines name the god. Approved voice line v27c ("both sides prayed to the same sky") was kept: it names prayer, not the god's hand.
+- Thanks: war:ended.thanked gets 5 lines in which the victors thank their god for the victory and for the peace. One tells the beaten people's love growing cold, matching blameLove.
+- The calming Omen (no war) now has its own 7 lines. It no longer reuses "laid down their spears". {c} is the people it was cast on, {c2} the neighbour it calmed. A suffix names any further calmed peoples ("The same calm came over the A and the B").
+- An Omen that ends a war and also calms other neighbours writes the war line plus a suffix naming them.
+- How it works: Chronicle records the Omen at power:used, which comes after the effect and before the witnesses. It names the target town, its people and the neighbours calmed: those sworn this very year (society::swornUntil, new and read-only) with no war ended between them this tick. It tells everything once, at the first witness.
+- Tests (test_chronicle_diplomacy, run.ps1 chronicle and all):
+  - 60 wars: 0 of 20 plain lines name the god, every struck and envied line does, and struck lines never use envy words.
+  - Thanked victories name the god; unthanked ones do not.
+  - Alliance formed, ended, betrayed and joined lines name the right peoples.
+  - The calming Omen is one entry naming all 3 peoples, not "laid down their spears". The war Omen with a calmed neighbour is one entry, with no "draw" beside it.
+
+(2) The Omen of Peace. TUNE defaults keep v3.1; Balance.cpp switches the first two on.
+- omenWide: an Omen that ends a people's wars also calms every other tense neighbour of that people (society::tense: 40-year truce, v + 0.4, sworn). They witness it too.
+- omenNoEnvy: the Omen leaves no envy. Its witnesses carry the new WitnessOpts.favour = false, so they add nothing to society_fgrace (before, every third people envied the two armies the god had just blessed). A pair under a sworn peace does not envy each other's favour while the oath lasts.
+- omenAge = 1 (Bronze) was tested and left off (default -1 = the table's Iron). The sim-findings-2 numbers pointed to it (Bronze is 18 % at war), but in the run it made things worse:
+  - kind's median war share rose 7.7 -> 11.1 %, and kind < cruel fell to 6/8.
+  - It cost Bronze Awe, and the sworn early peoples fought more in Iron and Sail (kind wars a run, median 24 -> 36).
+  - peacemaker fell to 1.2 % but missed first-war-by-1300 on 1/8.
+  - Evidence: exp-wide-noenvy-bronze-seeds1-8.txt.
+
+Proof. simrun, 8 seeds x passive / kind / cruel / peacemaker x 4,500 years (docs/handoff/chronicle-diplomacy/), before -> after:
+- Seeds 1-8:
+  - kind at war (min / median / max): 3.3 / 9.8 / 21.0 -> 4.5 / 7.7 / 19.7 %.
+  - kind < cruel per seed: 21/30 10/16 5/24 18/14 8/15 3/13 10/17 10/10 -> 20/30 6/16 6/24 14/14 8/15 4/13 14/17 7/10. That is 7/8: seed 4 is a tie at 14.1 %, and seed 7 got worse (10 -> 14).
+  - cruel 15.9 % unchanged. peacemaker 7.4 -> 6.7 %.
+- Seeds 301-308:
+  - kind median 10.0 -> 10.0 %.
+  - kind < cruel 7/8 -> 7/8. Per seed: 14 7 12 16 4 7 8 14 -> 12 8 9 17 6 9 11 16 against cruel 19 19 16 15 10 12 20 18. The weak seed is 304, 17 vs 15.
+- So the target holds on 14/16 seeds, but the stronger Omen does not make the kind world clearly more peaceful. It cut the median on one seed set only (9.8 -> 7.7 %); on 301-308 kind got worse on 6 of 8 seeds.
+- Envy and blame: kind's wars blamed on the god 43 -> 18 (seeds 1-8) and 57 -> 22 (301-308), because the Omen no longer makes the neighbours envious. kind's victors thanked the god 35 -> 23 and 63 -> 31. "kind thanked >= 1" holds 7/8 and 8/8. Omens a game stay about 33.
+- Passive and cruel are unchanged: neither casts an Omen. On all 16 seeds, every per-seed row (ages, Ark, ending, population, settlements, cultures, anomaly, sea) and every event-count line is identical before and after, apart from the chronicle's own count. The world fingerprint differs only because it includes the chronicle's text and bookkeeping (vars.num chronicle_*).
+  - passive at war: median 9.9 / 9.8 %, every seed 6.1-23.6 / 6.5-24.4 %.
+  - cruel blamed on the god: 113 / 131.
+- Targets:
+  - Every SPEC-SIM 4 target and every v3 and v3.1 target that passed before passes on both sets.
+  - The same three review targets fail as before: review 4 (the Stone-age quiet stretch, 224-336 y), review 6 (the Awe cap) and review 9 (kind famine entries, 4/8 and 6/8).
+  - One max-tick reading on seeds 301-308 was 30.1 ms against the 30 ms budget, with 4 simrun processes running at once (thread CPU; known contention).
+- run.ps1 all: 769 passed, 0 failed (762 before + 7 new). run.ps1 chronicle 53, diplomacy 42, powers 31, society 37, link 3, core 45.
+  - test_link had been failing since v3.1: society::tense and society::swearPeace were never called through their stubs. It now calls them and swornUntil.
+- Determinism: --hash twice on the final code (seeds 1-8 x 4 policies x 3,000 y, --jobs 8 and --jobs 4): 32/32 identical hashes and 32/32 identical chronicle counts (hash-run1/2.txt, .sorted.txt). Prose still draws only from w.rng.fork("chron:" + id). The new Chronicle scratch (the Omen record, alliance breaks pending) is transient and written within one tick.
+- Save/load: no new saved state outside vars.num. The envy rule reads the existing diplomacy_sworn keys.
+
+Read (chronicle-seed305-kind.txt, chronicle-seed1-passive.txt, chronicle-seed1-cruel.txt):
+- passive seed 1: 17 alliance entries. None of its war or peace entries names the god: blamed 0, as the sim reports.
+- cruel seed 1: 28 blamed-war lines, all "the god struck us" (its god only strikes), such as "When the anger of Elaxeus fell on the Siphaphoi, they looked for someone to blame, and found the Oslalxanoi."
+- kind seed 305: 32 calming Omens, 27 alliance lines, thanked victories ("gave the glory to the Green Hand"), and envy ("the Masonizani saw how the Breaker of Spears smiled on the Tosedasoni").
+- Fixed while reading: the calming and struck families repeated within a few centuries (4 and 5 lines), so I added 3 lines each and 2 envy lines. One thanked line said "the god" twice when a people had no epithet.
+- Left as is: the "ring of light" calm line plus a suffix runs to about 50 words (the style guide says about 45).
+
+For others:
+- HUD (Game/): war:declared.envied lets the toast say "envied" rather than "blamed the god" when the defender was the favoured one (the sim-findings-2 open item).
+- If omenAge is ever set, the HUD's locked tip ("Wakes in the Iron Age") reads the power table, not the tune. Change the table row in Powers.h instead.
+- Integration: Unreal/build.ps1 to confirm Game/ compiles against the new trailing fields (EvWarDeclared.envied, WitnessOpts.favour, three DiplomacyTune fields) and society::swornUntil.
+- Lead: the Omen's effect on war share is modest and noisy; "kind < cruel" sits at 7/8 on both seed sets with ties. Further levers, not tried: a longer sworn peace (omenYears), or letting the kind player cast its calming Omen before its prayers.

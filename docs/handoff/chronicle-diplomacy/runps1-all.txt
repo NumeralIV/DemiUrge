@@ -1,0 +1,1807 @@
+﻿compiling 1 of 78 sources for 'all' [Balance(real), Chronicle(real), Civ(real), Climate(real), Diplomacy(real), Disasters(real), Economy(real), Hydro(real), Life(real), Names(real), Path(real), Powers(real), Save(real), Sim(real), Society(real), Terrain(real), Units(real)]
+built in 9.6 s
+  120 event cases, 138 entries
+  Year 13 [genesis/3] The fire went out of Erethe, and its skin hardened into black stone. The god waited.
+  Year 26 [comet/2] In the beginning Erethe was fire and then stone, and the god called ice down out of the dark. Where it fell, the hollows filled, and that was the first sea.
+  Year 26 [comet/1] Still the ice fell from heaven, and the seas of Erethe grew deep.
+  Year 26 [comet/1] Another ice-star fell, and the waters crept higher up the black shores.
+  Year 39 [genesis/3] The deep places of Erethe were filled with water, and the god turned to the bare land.
+  Year 52 [genesis/3] Green covered the lands of Erethe, and beasts walked in it, but no one yet knew their names.
+  Year 65 [genesis/3] Here the counting of years begins.
+  Year 91 [awakening/3] Ashvel touched the sleeping clay in the woods, and the first of the Umari opened their eyes. They named their camp Vornhal.
+  Year 104 [founded/1] The Umari founded Kesh Amun in the woods.
+  Year 117 [founded/1] Far from their kin, a band of the Teshki made a home at Oduya, in the woods.
+  Year 130 [tier/1] Ulu Kesh grew from a camp into a village.
+  Year 143 [tier/1] Imbrek became a town, with a market-day.
+  Year 156 [tier/2] Tel Asha became a city, and its people forgot they had ever lived in tents.
+  Year 169 [tier/2] Vornhal became a great city such as the world had not seen, numberless as ants.
+  Year 182 [decline/1] Imbrek dwindled to a village. Its streets were too wide for the people left in them, and grass came up between the stones.
+  Year 195 [building/2] At Qe-Luun they set stones in a ring and laid the first fruits on them for Ashvel. It was a small shrine. The god did not complain.
+  Year 208 [building/2] The Umari of Qe-Luun built a temple to Ashvel so tall that the priests must rest twice on the stair, and they said that this was the point. It was the first temple of the Umari.
+  Year 221 [building/1] Qe-Luun built a granary against lean years. No one among the Umari had built a granary before.
+  Year 234 [building/1] Qe-Luun built walls. No one said against whom. Everyone knew. It was the first wall of the Umari.
+  Year 247 [building/1] In the 247th year the Umari raised a harbour at Qe-Luun, and were proud of it for one generation, which is the usual length of pride. No one among the Umari had built a harbour before.
+  Year 260 [building/2] A market was founded in Qe-Luun, and strangers came to it. It was the first market of the Umari.
+  Year 273 [building/1] The people of Qe-Luun dug into the hills for good stone. No one among the Umari had built a mine before.
+  Year 286 [building/1] Chimneys rose over Qe-Luun, and the sky above it turned grey. It was the first manufactory of the Umari.
+  Year 299 [building/1] An academy was founded at Qe-Luun, where the wise argued about everything, the god included. No one among the Umari had built an academy before.
+  Year 312 [building/2] The Umari built at Qe-Luun a house where the smallest fire burns. It was the first power plant of the Umari.
+  Year 325 [building/1] Outside Qe-Luun, on flat ground swept clean, the Umaran builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+  Year 351 [building/1] Ulu Kesh built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+  Year 364 [famine/1] In the 364th year the granaries of Qe-Luun rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+  Year 377 [plague/2] A sickness came to Tel Asha by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+  Year 390 [plague-end/1] The plague left Tel Asha as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+  Year 390 [epithet/2] The Umari called the one who had woken them the Sleeper.
+  Year 390 [epithet/2] The Teshki began to speak of Orro-Ka as the Rumour.
+  Year 390 [epithet/2] The Vaeli called the god who had woken their fathers the Sleeper.
+  Year 403 [prayer/1] The people of Qe-Luun climbed to the shrine and prayed to Ashvel for rain. They prayed loudly, in case the Sleeper was far away.
+  Year 416 [prayer-answered/2] Qe-Luun prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+  Year 429 [prayer/1] The priests of Tel Asha went up to the high places and cried out for healing.
+  Year 448 [prayer-unanswered/1] For nineteen years Tel Asha prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+  Year 461 [prayer/1] In Imbrek a white goat was given to Orro-Ka, with a prayer for peace.
+  Year 479 [prayer-answered/2] Sarnath prayed for green fields, and they were given. The priests were as surprised as anyone, but hid it well.
+  Year 492 [prayer-answered/1] Tel Asha prayed for healing, and it was given. The priests were as surprised as anyone, but hid it well.
+  Year 505 [prayer-answered/1] Imbrek prayed for peace, and it was given. The priests were as surprised as anyone, but hid it well.
+  Year 518 [miracle-rain/1] The Sleeper drew a hand across the sky above Qe-Luun, and the dry fields drank.
+  Year 551 [miracle-rain/1] Soft rain fell over Qe-Luun.
+  Year 564 [miracle-bloom/1] Where the Sleeper passed near Sarnath, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 577 [miracle-shape/1] The Rumour took hold of the land near Tel Asha and moved it, the way a sleeper moves a blanket. The farmers measured their fields again and did not like the answer.
+  Year 610 [miracle-shape/1] The land near Tel Asha lifted itself up, and the shepherds had new pastures.
+  Year 643 [miracle-shape/1] The land upon Tel Asha sank, and water came in.
+  Year 656 [miracle-heal/2] The Rumour laid a hand on Tel Asha, and the sick rose from their beds, puzzled, and asked what there was to eat.
+  Year 669 [miracle-inspire/2] At Vornhal the craftsmen woke with ideas they could not explain, and claimed them as their own.
+  Year 682 [miracle-peace/2] An omen of peace was seen over Tel Asha, and the Teshki laid down their spears.
+  Year 695 [wrath-plague/2] The Rumour breathed on Dorrow, and the breath was sick. The priests said it was a punishment. They were not sure for what, so they punished everything.
+  Year 747 [wrath-lightning/1] The Sleeper threw fire from a clear sky at Vornhal. No one knew why. The Umari made more offerings, to be safe.
+  Year 760 [lightning/1] Lightning struck hard by Vornhal in a summer storm.
+  Year 799 [meteor/2] In the 799th year a star came down among the Umari, and the sky was dark with dust until the harvest after next. They gave Ashvel a new name that year, and it was not a kind one.
+  Year 812 [meteor/2] A star fell into the sea north-west of Vornhal, and the waters stood up like a wall.
+  Year 825 [meteor/2] A star fell on the wild ice of the far north, and the sky was red for many nights.
+  Year 851 [tsunami/1] The sea drew back from the shore at Vornhal, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+  Year 864 [volcano/2] The Sleeper split the earth near Vornhal, and a mountain was born in one summer, roaring like a calf. Its smoke stood over the land for twelve years.
+  Year 877 [volcano/2] The mountain at Tel Asha woke and wept fire.
+  Year 890 [volcano/1] Far away, on the lonely ice of the far north, a mountain was born in fire, and its ash darkened the sky.
+  Year 903 [volcano-end/1] The fire-mountain close by Vornhal fell asleep again.
+  Year 916 [quake/2] The earth shrugged under Vornhal. Pots fell, then roofs, then the walls. The Umari asked what they had done. No answer came, which was itself an answer.
+  Year 929 [quake/1] The earth shook upon Tel Asha.
+  Year 942 [fire/1] Fire ran through the hills close by Vornhal.
+  Year 955 [storm/1] A great storm walked in from the sea and stood over Qe-Luun for three days, and the roofs learned to fly.
+  Year 981 [drought/1] No rain fell on the lands of Qe-Luun. The river showed its stones, and the people counted them.
+  Year 994 [drought-end/1] Rain returned to Qe-Luun at last.
+  Year 1007 [age/3] In the 1007th year the world turned a page: the Umari, first of all peoples, came into the Age of Bronze, and the others began to hurry.
+  Year 1007 [age/3] The Umari drew iron out of red stone, and the age of iron began among them. No people had done so before them.
+  Year 1007 [age/3] The Umari raised sails and went out upon the great sea. The other peoples of Erethe had not yet dreamed of it.
+  Year 1007 [age/3] The Umari built engines that breathed fire, and the age of smoke began among them. They were the first in all the world.
+  Year 1007 [age/3] The Umari split the smallest thing in the world, and found a fire inside it. The other peoples of Erethe had not yet dreamed of it.
+  Year 1007 [age/3] The Umari turned their eyes to the stars, and built towers of fire to reach them. No people had done so before them.
+  Year 1020 [age/2] The Teshki learned to marry copper and tin, and the age of bronze began among them.
+  Year 1033 [war/2] In the 1033rd year the Teshki remembered an old insult from the Umari, and went to war over it.
+  Year 1046 [battle/1] Before Qe-Luun, the Teshki met the Umari. By evening the field belonged to the Umari, and to the birds.
+  Year 1072 [captured/2] Ulu Kesh opened its gates to the Teshki, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+  Year 1085 [peace/2] After fifty-two years the Umari asked for peace, and the Teshki granted it, and made them pay for the asking.
+  Year 1098 [war/2] War between the Umari and the Vaeli. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+  Year 1111 [peace/2] The war of the Umari and the Vaeli ended because both had run out of sons. Each side wrote down that it had won.
+  Year 1111 [epithet/2] In the 1111th year the Umari stopped calling their god the Sleeper. From now on, in the market and at the hearth, it was the Cloud-Shepherd.
+  Year 1111 [epithet/2] The Teshkan priests gave the god a new name: He Who Moves the Hills.
+  Year 1111 [epithet/1] Among the Vaeli the god was no longer the Sleeper but the Sower, and the old name was forgotten.
+  Year 1124 [trade/1] In the 1124th year the first caravan came from Vornhal to Qe-Luun, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+  Year 1137 [trade/2] Merchants of Vornhal reached Tel Asha and found that the people there were also people. This was thought remarkable, and then useful.
+  Year 1150 [prophet/2] A prophet named Ishmavel stood up in the market of Vornhal and said that Ashvel had spoken. Some believed. The rest moved their stalls.
+  Year 1163 [edict/1] Ishmavel spoke for the Cloud-Shepherd: "Lay down the spear." And the Umari laid it down, though somewhere they could reach it.
+  Year 1176 [edict/1] Ishmavel spoke for the Cloud-Shepherd: "Go out and fill the land." The young of the Umari took this as permission, which it was.
+  Year 1189 [edict/2] Ishmavel spoke for the Cloud-Shepherd: "Build a thing that can be seen from the sky." And the Umari began to quarry the hills.
+  Year 1202 [edict/1] Ishmavel spoke for the Cloud-Shepherd: "Their neighbours pray badly." the Umari sharpened their swords to correct them.
+  Year 1215 [wonder/3] In the 1215th year the Umari finished the Hanging Stair at Vornhal. It took three lifetimes. The first did not live to see it; the last complained of the dust.
+  Year 1228 [prophet-died/2] Ishmavel the prophet died, and was buried facing the sunrise. The Umari argued over every word Ishmavel had said, which is how they knew the words were holy.
+  Year 1241 [culture-born/2] The people of the far valleys about Dorrow spoke the old tongue so strangely that the capital laughed at them. In the 1241st year they stopped coming to be laughed at, and called themselves the Orun.
+  Year 1254 [schism/1] Imbrek turned from the Teshki and joined the Orun.
+  Year 1267 [culture-born/2] From the Umari came the Hsar, as a branch comes from a tree: the same wood, pointing elsewhere.
+  Year 1306 [settlers-lost/1] Settlers who had left Vornhal were never heard from again.
+  Year 1345 [climate/2] In the 1345th year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+  Year 1345 [climate/2] The ice in the north began to weep, and the summers were cruel.
+  Year 1345 [climate/2] Erethe grew hot as a kiln. The old crops failed and new deserts grew.
+  Year 1358 [climate/2] The winters grew long and the summers forgot to come. Snow lay on the high passes all year, and the trade roads closed one by one.
+  Year 1371 [climate/2] The sea was rising. Old harbours drowned.
+  Year 1384 [climate/2] The sea drew back from the shores, and new land lay bare.
+  Year 1397 [climate/2] Ice crept down from the poles, swallowing fields and forests.
+  Year 1410 [climate/2] The great ice retreated, and the old lands came out from under it.
+  Year 1423 [nuke/3] In the 1423rd year the Umari lit a second sun over Tel Asha. It rose at noon and did not set gently. Afterwards both peoples were very quiet for a long time.
+  Year 1423 [destroyed/2] When the light faded, Tel Asha was gone.
+  Year 1436 [nuke/2] Again the sun-fire fell, this time upon Vornhal.
+  Year 1449 [ark/3] At Vornhal the Umari began to build a ship that would not sail on water. The children were told it was for them. It was.
+  Year 1462 [ark/3] From Vornhal, the Umari went up into the sky on a pillar of fire, carrying seed and songs and the name of Ashvel. Those who stayed watched until the light was a star among stars.
+  Year 1475 [founded/1] In the 1475th year a new camp of the Vaeli was raised at Brennick, in the woods.
+  Year 1475 [destroyed/2] The sea rose at Brennick by a hand's width a year, and then by another. In the 1475th year the last of its people rowed away, and the fish moved into the houses.
+  Year 1488 [founded/1] Tamsin Var was founded in the woods by the Vaeli, though no one remembered why there.
+  Year 1488 [destroyed/2] Fire fell on Tamsin Var. Where it stood there is now a round hollow, and the Vaeli do not go near it, and they do not say its name.
+  Year 1501 [founded/1] Wanderers of the Vaeli settled at Ilo, in the woods.
+  Year 1501 [destroyed/2] The mountain opened above Ilo and its stone ran like honey, though not like honey. The town is beneath it. The new ground is very fertile, the chronicle observes, as though that were a comfort.
+  Year 1514 [founded/1] Far from their kin, a band of the Vaeli made a home at Haddath, in the woods.
+  Year 1514 [destroyed/2] Haddath was sacked and burned, and its people scattered.
+  Year 1527 [founded/1] The Vaeli founded Zuneri in the woods.
+  Year 1527 [destroyed/2] Zuneri starved, and those who lived left it empty.
+  Year 1540 [founded/1] In the 1540th year a new camp of the Vaeli was raised at Penkarrow, in the woods.
+  Year 1540 [destroyed/1] The sickness emptied Penkarrow.
+  Year 1553 [founded/1] Asel was founded in the woods by the Vaeli, who had walked a long way to find it.
+  Year 1553 [destroyed/1] The earth opened under Asel.
+  Year 1566 [founded/1] Wanderers of the Vaeli settled at Umbrin, in the deep forest.
+  Year 1566 [destroyed/2] No one destroyed Umbrin. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+  Year 1579 [founded/1] Far from their kin, a band of the Vaeli made a home at Garrowmere, in the woods.
+  Year 1579 [destroyed/1] The ground shook at Garrowmere and the walls lay down. What the shaking spared, the sea came in to take.
+  Year 1592 [founded/1] The Vaeli founded Nish in the woods.
+  Year 1592 [destroyed/1] Lightning set Nish ablaze, and it burned to nothing.
+  Year 1605 [destroyed/2] The last families left Sarnath, and grass grew in its streets.
+  Year 1605 [culture-died/3] The Vaeli are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+  Year 1631 [lost/3] The last fire of the Vaeli went out at Mirathe. The land kept their footprints for a season, then the grass forgot them too.
+  Year 1644 [ending/3] In the 1644th year the Umari rose from Vornhal on a pillar of light. They carried seed, and songs, and a carved stone bearing the name of Ashvel, whom they called the Cloud-Shepherd. Before the clouds closed below them, they looked back at Erethe and wept, not from grief, but because they had been loved, and knew it, and were taking that with them too. Wherever they land, there will be a shrine before there is a house.
+  Year 1657 [ending/3] In the 1657th year the Umari fled Erethe. They built the ship in secret, as far as anything can be secret from a god, and they launched it at night. They did not pray as they rose. On the new world, the mothers will tell the children of the Cloud-Shepherd, who lived in the sky of the old one, and the children will sleep with the lamp lit, and grow up, and build their houses low.
+  Year 1670 [ending/3] In the 1670th year the Umari left Erethe for the stars. They took their machines, their music and their quarrels. They did not take Ashvel; no one remembered to. In an old temple at Qe-Luun the wind still turns the pages of a book no one reads, and in it, in a hand no one living could read, is a name that once meant everything.
+  Year 1683 [ending/3] In the 1683rd year the Umari went up from Vornhal to the stars. They were not sure, at the end, what Ashvel had been to them: a parent, a storm, a story. So they did what grown children do: they said a careful goodbye, and promised to write, and did not say when. Somewhere above the clouds one of them looked back and raised a hand, just in case.
+  Year 1696 [ending/3] They had learned at last to make suns, and they made them. Afterwards the sky over Erethe was grey for a hundred years, and then blue again, as if nothing had happened. Nothing had: not any more. In the ruins of Tel Asha a green shoot came up through the floor of the great hall, and there was no one to call it a sign.
+  Year 1709 [ending/3] There was no last battle and no last prayer. The towns emptied, one and then another, and the roads went back to grass, and the grass did not ask where everyone had gone. Erethe turns in the light as it did before the first fire. The rivers still find the sea. If the Cloud-Shepherd is listening, there is nothing now to hear but the wind.
+  war: 12 distinct of 12, 0 repeats in a row
+  founded: 12 distinct of 12, 0 repeats in a row
+  meteor: 11 distinct of 12, 0 repeats in a row
+  famine: 12 distinct of 12, 0 repeats in a row
+  prayer-answered: 11 distinct of 12, 0 repeats in a row
+  fire: 12 distinct of 12, 0 repeats in a row
+  destroyed-war: 12 distinct of 12, 0 repeats in a row
+  fires over 100 years (300 events): 4 entries (fireGap 20.000000)
+  rain and bloom: Year 0: Lord of the Second Spring | Year 40: the Rain-Giver
+  meteors: Year 0: the Maker | Year 60: She Who Burns the Sky
+  floods: Year 0: the First Voice | Year 80: the Deep
+  silence: Year 0: the Maker | Year 300: the Empty Chair
+  mixed: Year 0: the Shaker of Floors | Year 40: the Coin-Tosser
+  healer turned wrathful: Year 0: the Physician of Towns | Year 384: the Two-Handed | Year 704: the Bringer of Fevers
+  blessed (the Umari): the Well-Filler; struck (the Teshki): the Hammer; god: the Hammer
+  calm: the Maker; loving: He Who Keeps the Lamp Lit; fearful: the Hungry One
+  year 4975: 201 frames -> 102, interval 50
+  --- tale: The Chronicle of Erethe ---
+  In the beginning Erethe was fire. The god cooled it and called down the ice of heaven, until the sea covered the greater part of its face. Then green came upon the land, and beasts, and the god looked for a people to wake.
+
+  The first people were the Umari. The god woke them in the woods at Vornhal, and they called the god Ashvel. After them came the Teshki, the Orun, the Vaeli and the Hsar, peoples with their own tongues and their own names for the god.
+
+  In 2,000 years the peoples of Erethe founded 60 settlements, and at their height they numbered 3,455,327 souls. The greatest of their places was Wenmarrow. The furthest of them reached the Age of the Stars.
+
+  They were not always at peace. They fought ten wars, in which twelve towns changed hands.
+
+  The god was known for rain, healing and falling stars. The scribes wrote more of the god's mercy than of the god's anger. Of the prayers the scribes wrote down, 24 were answered and five went unheard. In the end, most of them called the god the Well-Filler.
+
+  There were hard times. Five stars fell, two mountains woke in fire, hunger came 16 times, sickness came 15 times and six towns were taken by the sea. Of all the places the peoples built, 16 lay in ruins.
+
+  These things the scribes remembered above all. In the first year, before there was counting, the god touched the ground at Vornhal, and the Umari woke. They looked up at the sky and did not yet know whom to thank, so they thanked everything. In the year 900, from the Umari came the Vaeli, as a branch comes from a tree: the same wood, pointing elsewhere. In the year 1,400, the people of the far valleys about Oduya spoke the old tongue so strangely that the capital laughed at them. In that year they stopped coming to be laughed at, and called themselves the Hsar. In the year 1,923, the Hsar turned their eyes to the stars, and built towers of fire to reach them. They were the first in all the world.
+
+  In the 2000th year the Umari went up from Vornhal to the stars. They were not sure, at the end, what Ashvel had been to them: a parent, a storm, a story. So they did what grown children do: they said a careful goodbye, and promised to write, and did not say when. Somewhere above the clouds one of them looked back and raised a hand, just in case.
+
+  [empty] In the beginning Testworld was fire. The god cooled it and called down the ice of heaven, until the sea covered the greater part of its face. Then green came upon the land, and beasts, and the god looked for a people to wake.
+  [empty] No people ever woke on Testworld. Its forests grew and fell with no one to name them, and the god watched alone.
+  [empty] The god did little that the scribes could see.
+  [empty] The world is still waiting for its people.
+  [meteor] A star fell in a place no one has named, so far away that only its thunder reached the people.
+  [volcano] Far away, in a place no one has named, a mountain was born in fire, and its ash darkened the sky.
+  [ending] There was no last battle and no last prayer. The towns emptied, one and then another, and the roads went back to grass, and the grass did not ask where everyone had gone. Erethe turns in the light as it did before the first fire. The rivers still find the sea. If the god is listening, there is nothing now to hear but the wind.
+  [lost] And then there was no one left on Erethe to remember.
+  [destroyed] The sickness emptied a nameless town.
+  [war] In the 40th year a nameless people remembered an old insult from the Umari, and went to war over it.
+  [famine] The granaries of a nameless town rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+  2000 years, 1827 scripted events -> 918 entries (911 distinct), weights 1/2/3 = 772/122/24, 152 ms
+  types: age 23, ark 2, awakening 2, battle 16, building 100, captured 11, climate 4, comet 3, culture-born 2, culture-died 3, destroyed 22, digest 5, drought 19, drought-end 14, edict 8, ending 1, epithet 22, famine 17, fire 87, founded 24, genesis 4, lightning 37, meteor 5, miracle-bloom 45, miracle-heal 27, miracle-inspire 20, miracle-rain 69, miracle-shape 19, nuke 5, peace 8, plague 16, prayer 13, prayer-answered 22, prayer-unanswered 3, prophet 9, prophet-died 8, quake 18, settlers-lost 7, storm 23, tier 77, trade 25, tsunami 13, volcano 2, war 10, wonder 1, wrath-lightning 39, wrath-plague 8, 
+  --- the chronicle of Erethe ---
+  Year 0     ** The fire went out of Erethe, and its skin hardened into black stone. The god waited.
+  Year 0     *  In the beginning Erethe was fire and then stone, and the god called ice down out of the dark. Where it fell, the hollows filled, and that was the first sea.
+  Year 0        Still the ice fell from heaven, and the seas of Erethe grew wide.
+  Year 0        The god called down more ice, and the young sea of Erethe swelled to meet it.
+  Year 0     ** The deep places of Erethe were filled with water, and the god turned to the bare land.
+  Year 0     ** Green covered the lands of Erethe, and beasts walked in it, but no one yet knew their names.
+  Year 0     ** Ashvel touched the sleeping clay in the deep forest, and the first of the Umari opened their eyes. They named their camp Vornhal.
+  Year 0     ** Here the counting of years begins.
+  Year 0     *  The Umari called the one who had woken them the Maker.
+  Year 2        Fire ran through the hills north-east of Vornhal.
+  Year 4        The Umari founded Tel Asha in the woods.
+  Year 9        Lightning struck south-east of Tel Asha in a summer storm.
+  Year 12       Wanderers of the Umari settled at Qe-Luun, in the deep forest.
+  Year 13    *  At Tel Asha they set stones in a ring and laid the first fruits on them for Ashvel. It was a small shrine. The Maker did not complain.
+  Year 17    *  Tel Asha prayed for healing, and it was given. The priests were as surprised as anyone, but hid it well.
+  Year 22       Far from their kin, a band of the Umari made a home at Imbrek, in the woods.
+  Year 29       Soft rain fell over Imbrek.
+  Year 29    *  In the 29th year the Umari stopped calling their god the Maker. From now on, in the market and at the hearth, it was the Cloud-Shepherd.
+  Year 30       A red night: the hills east of Imbrek burned, and ash fell on the camp.
+  Year 31       A great storm walked in from the sea and stood over Sarnath for three days, and the roofs learned to fly.
+  Year 32       Qe-Luun built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+  Year 32       The Cloud-Shepherd took hold of the land near Qe-Luun and moved it, the way a sleeper moves a blanket. The farmers measured their fields again and did not like the answer.
+  Year 39       In the 39th year the granaries of Sarnath rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+  Year 44       Ulu Kesh was founded in the woods by the Umari, though no one remembered why there.
+  Year 45    *  The Cloud-Shepherd laid a hand on Tel Asha, and the sick rose from their beds, puzzled, and asked what there was to eat.
+  Year 51       A long gentle rain came to Qe-Luun, and the Umari did not complain.
+  Year 54       A tree near Qe-Luun was split by lightning. The wood was kept as a holy thing in the camp.
+  Year 62       No rain fell on the lands of Vornhal. The river showed its stones, and the people counted them.
+  Year 62       The people of Vornhal climbed to the shrine and prayed to Ashvel for rain. They prayed loudly, in case the Cloud-Shepherd was far away.
+  Year 64       In the 64th year a new camp of the Umari was raised at Dorrow, in the woods.
+  Year 69       Imbrek prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+  Year 71       Imbrek grew from a camp into a village.
+  Year 71       The old people of Mirathe said the fire hard by the camp had been started by the god, and argued about it all winter.
+  Year 74       The elders of Dorrow chose a holy place, and a shrine to Ashvel was raised there.
+  Year 76       The sky over Mirathe cracked open with fire, and the old oak outside the camp burned like a torch.
+  Year 79       There was drought in the country of Mirathe, and the Umari looked at the sky every morning.
+  Year 87       In the 87th year Sarnath could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+  Year 87       The Cloud-Shepherd drew a hand across the sky above Tel Asha, and the dry fields drank.
+  Year 88       Wanderers of the Umari settled at Kesh Amun, in the deep forest.
+  Year 90       Where the Cloud-Shepherd passed near Mirathe, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 94       Far from their kin, a band of the Umari made a home at Oduya, in the woods.
+  Year 95       A circle of white stones was laid out at Oduya, and the Umari came there to speak to Ashvel.
+  Year 96       A sickness came to Ulu Kesh by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+  Year 96       In Ulu Kesh a jar of honey was given to Ashvel, with a prayer for healing.
+  Year 98       Lightning found the woods south-west of Sarnath, and the forest burned for a season. In the spring, from the ash, it began again.
+  Year 102      A storm walked inland over the country of Qe-Luun, and left the fields flattened behind it.
+  Year 107      The Cloud-Shepherd threw fire from a clear sky at Qe-Luun. No one knew why. The Umari made more offerings, to be safe.
+  Year 109      Children were born at Qe-Luun who had never lived anywhere else, and it became a village.
+  Year 110      The people of Ulu Kesh raised a shrine to Ashvel.
+  Year 111      Near Dorrow, at the touch of the god, seeds woke in the dry ground.
+  Year 112      Mist and rain came to Mirathe, and the hills around it turned a deeper green.
+  Year 114      For Oduya, thirsty and praying, Ashvel sent a long grey rain, and the wells filled again.
+  Year 118      In Ulu Kesh they painted marks on the doors of the sick, and there were many marks.
+  Year 119      The Umari founded Tamsin Var in the woods.
+  Year 124      The Umari set up a shrine at Tamsin Var, and left small carved birds there for the god.
+  Year 127      The earth shook at Kesh Amun.
+  Year 128      The people of Ilo prayed for rain, and Ashvel sent it.
+  Year 138      In a night of thunder a bolt came down hard by Vornhal, and in the morning the shepherds found the stones blackened.
+  Year 140      Zuneri was founded in the woods by the Umari, though no one remembered why there.
+  Year 143      At Haddath a shrine of bones and flowers was made for Ashvel.
+  Year 143      In the month of dust a fire ate the hills south-west of Kesh Amun.
+  Year 155      Out of a blue sky a white spear fell near Haddath, and the cattle would not graze there after. The Umari said nothing, and brought more bread to the shrine.
+  Year 160      There were now enough hearths at Oduya to call it a village.
+  Year 160      The rains forgot the country of Ilo. The priests climbed the hills and called to them.
+  Year 160      The priests of Ilo went up to the high places and cried out for rain.
+  Year 166      The hills south of Kesh Amun burned, and the Umari watched the glow at night.
+  Year 168      A storm passed over Zuneri, and lightning set the grass alight close by the camp.
+  Year 173      The camp at Zuneri put down roots and became a village.
+  Year 181      At Ilo they set stones in a ring and laid the first fruits on them for Ashvel. It was a small shrine. The Cloud-Shepherd did not complain.
+  Year 183      The god's fire fell hard by Tel Asha. In the village the mothers kept the children indoors, and the dogs hid under the beds.
+  Year 188      In the 188th year a new camp of the Umari was raised at Asel, in the woods.
+  Year 188      Ashvel heard the dry fields of Vornhal, and opened the sky.
+  Year 189      Fire walked through the hills north-east of Dorrow, and left only ash behind it.
+  Year 192      Lightning walked on the hills close by Qe-Luun, and the priests of the village read it as a sign.
+  Year 194      The ground upon Dorrow rolled like a wave for the space of a hundred breaths, and cracks opened in the fields of the village.
+  Year 198      The Umari founded Umbrin in the deep forest.
+  Year 199      A circle of white stones was laid out at Asel, and the Umari came there to speak to Ashvel.
+  Year 202      A spear of light came down near Asel, and the Umaran elders argued for a long time about what it meant.
+  Year 209      The rains failed around Zuneri.
+  Year 210      A wildfire came close to Tamsin Var, and the children watched it from the roofs.
+  Year 211      Rain came to Imbrek. The old people said it smelled of the god.
+  Year 214      A tremor ran through the land about Imbrek, and the old wall finally came down.
+  Year 215      Thunder rolled over Qe-Luun, and lightning fell close by the village.
+  Year 216      A bolt of white fire struck outside Asel at noon. The Umari said it was Ashvel clearing the throat of heaven.
+  Year 217      Penkarrow built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+  Year 217      Ashvel raised the ground upon Tamsin Var, and the Umari built a cairn on top.
+  Year 221      Wanderers of the Umari settled at Garrowmere, in the woods.
+  Year 221   *  Asel was healed by Ashvel. For a generation no one there feared the sickness.
+  Year 223      The people of Mirathe prayed to be healed, and they were, and they did not forget it.
+  Year 225      Just when the wells of Ilo were failing, the god sent rain, and the frogs sang all night.
+  Year 225      In Penkarrow they still tell of the great wind, when even the priests were afraid.
+  Year 228      The herds about Brennick grew fat on grass that had not been there the week before.
+  Year 231      Far from their kin, a band of the Umari made a home at Nish, in the woods.
+  Year 234      The people of Garrowmere raised a shrine to Ashvel.
+  Year 235      The old people of Haddath said the fire close by the village had been started by a falling star, and argued about it all winter.
+  Year 242      The tents of Penkarrow gave way to houses of mud and reed, and it was called a village.
+  Year 245      Lightning fell close by Garrowmere out of a clear sky. The Umari said Ashvel was watching.
+  Year 246      The spotted fever broke out in Asel, and its gates were shut.
+  Year 252      Ostra was founded in the woods by the Umari, though no one remembered why there.
+  Year 257      The elders of Ostra chose a holy place, and a shrine to Ashvel was raised there.
+  Year 257      The sky over Oduya cracked open with fire, and the rain that followed was warm.
+  Year 260   ** Again the god woke a people: the Teshki, at Bel Thuun.
+  Year 260      Ashvel struck the ground outside Umbrin with lightning, and the people of the camp hid their faces.
+  Year 260   *  The Teshki began to speak of Orro-Ka as the First Voice.
+  Year 263      Asel was a village now, with its own small quarrels.
+  Year 266      A warm rain fell on Sarnath all through the night, and the roofs leaked, and nobody minded.
+  Year 268      The fields about Ostra grew green overnight.
+  Year 275      The country in the hills south-west of Brennick burned for many days, and the smoke hung over the village.
+  Year 277      The Umari set up a shrine at Nish, and left small carved birds there for the god.
+  Year 279      In the 279th year a new camp of the Teshki was raised at Ravik, in the woods.
+  Year 279      A hard sun stood over Kesh Amun year after year, and the barley died standing.
+  Year 279      In Kesh Amun they burned sweet grass and asked Ashvel for rain.
+  Year 285      The houses of Ostra reached the old boundary stones and did not stop. From this year the Umari call it a village.
+  Year 286      The god let rain fall on Mirathe, though it had not been asked for. The children made mud houses.
+  Year 287      The Teshki founded Saphal in the woods.
+  Year 289   *  The Teshki made their first shrine at Ravik, and gave the god who had woken them a name: Orro-Ka.
+  Year 297      Far from their kin, a band of the Teshki made a home at Ennor, in the woods.
+  Year 298      In a night of thunder a bolt came down hard by Brennick, and the dogs of the village howled until dawn.
+  Year 305      Garrowmere grew from a camp into a village.
+  Year 305      The sea sent a howling wind against Bel Thuun, and it took the thatch from every roof.
+  Year 307      A wildfire came close to Qe-Luun, and the children watched it from the roofs.
+  Year 309      Fire came down from a clear sky near Kesh Amun, and no one in the village slept that night.
+  Year 310      Mist and rain came to Vornhal, and the hills around it ran with little streams.
+  Year 313      There were now enough hearths at Saphal to call it a village.
+  Year 313   *  Among the Teshki the god was no longer the First Voice but the Cloud-Shepherd, and the old name was forgotten.
+  Year 316      At Umbrin a shrine of wood was made for Ashvel.
+  Year 318      Wanderers of the Umari settled at Kaddo, in the woods.
+  Year 322      The sky struck Penkarrow without a cloud in it, and the old people said the god had a long memory.
+  Year 323      At Bel Thuun they set stones in a ring and laid the first fruits on them for Orro-Ka. It was a small shrine. The Cloud-Shepherd did not complain.
+  Year 325   ** The Umari learned to marry copper and tin, and the age of bronze began among them. No people had done so before them.
+  Year 325   *  Oduya built a granary against lean years. It was the first granary of the Umari.
+  Year 326      A tree near Umbrin was split by lightning. The children of the village dared each other to touch it.
+  Year 330      Lightning came down at Nish on a windless day. The Umaran priests said it was a warning; the farmers said it was a waste of a good tree.
+  Year 330   *  The healers of Kaddo had given up, but Ashvel had not. The fever left the town in a single night.
+  Year 330   *  The Umari no longer called the god the Cloud-Shepherd; now they said the Two-Handed.
+  Year 331      Tsoreh was founded in the woods by the Umari, though no one remembered why there.
+  Year 335   *  In the forges of Bel Thuun, the Teshki made bronze for the first time, and their spears grew sharp.
+  Year 338      The headmen of Penkarrow ordered a tithe of every harvest kept in a great barn, against the bad years.
+  Year 338      A new camp of the Teshki was raised at Daro Vel, in the woods.
+  Year 339   *  At Haddath the craftsmen woke with ideas they could not explain, and claimed them as their own.
+  Year 347      The land at Mirathe sank, and water came in.
+  Year 348      So many children were born in Ennor that the elders gave up learning their names. Thus it became a village.
+  Year 348      Fire ran through the hills north-east of Dorrow.
+  Year 349      Around Brennick the trees bent with fruit, and the Umari said Ashvel had walked there.
+  Year 351      At Tel Asha there was hunger, three years running.
+  Year 354      Imbrek became a town, with a market-day.
+  Year 354   *  A cool wind passed through Bel Thuun, and in every house the fevered slept and woke well.
+  Year 354   *  The Teshkan priests gave the god a new name: the Physician of Towns.
+  Year 356      Querrin prayed against the sickness, and Ashvel laid a cool hand on every brow.
+  Year 358      Ilo dug storage pits and lined them with clay, and the mice rejoiced.
+  Year 362      Wanderers of the Umari settled at Kolm, in the woods.
+  Year 362      In Tamsin Var the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+  Year 366      Fire walked through the woods south-west of Ytheth, and the Teshki prayed for rain.
+  Year 369   *  In the 369th year the Umari raised a temple at Imbrek, and were proud of it for one generation, which is the usual length of pride. No one among the Umari had built a temple before.
+  Year 369      Ashvel pressed the land at Kaddo down, and the Umari watched new water spread where fields had been.
+  Year 371      That winter Ytheth ate its oxen, and then its dogs.
+  Year 373      A long gentle rain came to Penkarrow, and the Umari did not complain.
+  Year 375   *  The earth shrugged under Varrah. Pots fell, then roofs, then the walls. The Umari asked what they had done. No answer came, which was itself an answer.
+  Year 376      A granary now stands at Bel Thuun, where before there was only mud and opinion. It was the first granary of the Teshki.
+  Year 379      Children were born at Kaddo who had never lived anywhere else, and it became a village.
+  Year 380      The dry country about Inishte drank rain that came from nowhere, and turned green again.
+  Year 386      Black clouds came over Brennick from the sea, and the river ran brown for days.
+  Year 387      Famine came to Kaddo.
+  Year 388      The land of Ennor bloomed out of season, and the beekeepers grew rich.
+  Year 390      The Umari of Sarnath built a temple to Ashvel so tall that the priests must rest twice on the stair, and they said that this was the point.
+  Year 394   *  The Teshki had called the god the Physician of Towns. After what they had seen, they called the god the Cloud-Shepherd.
+  Year 396      The village of Ulu Kesh grew into a town, and its people began to look down on villages.
+  Year 398      The Teshki founded Wenmarrow in the woods.
+  Year 399      The fever left Bel Thuun in a single night. The Teshki said Orro-Ka had walked through the streets.
+  Year 404      At Ennor they built a granary. It took longer than promised and cost more than was said, as is the way of all building.
+  Year 406      The camp at Avalun put down roots and became a village.
+  Year 410      In those fifty years fire, storm and drought troubled the lands of the Umari eight times.
+  Year 410      Far from their kin, a band of the Umari made a home at Qe-Luun, on the shore.
+  Year 410      Orro-Ka breathed on the land around Vornhal, and it flowered.
+  Year 411      The ground upon Mirathe went down like a sigh, and the sea followed it.
+  Year 413      Orro-Ka spoke in fire over Ennor. No one understood the word, but everyone heard it.
+  Year 415      The people of Hask raised a shrine to Ashvel.
+  Year 416      Near Lumbe, at the touch of the god, the orchards fruited twice.
+  Year 420      Ulu Kesh was founded on the shore by the Umari, who had walked a long way to find it.
+  Year 425      Ashvel reshaped the land under Tobru while its people slept, and they woke to find their fields tilted.
+  Year 425      In the month of dust a fire ate the hills south-east of Imbrek.
+  Year 426      Wenmarrow built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+  Year 427      The young of Asel were seized with questions, and the old could not answer them.
+  Year 430      The herds about Imbrek grew fat on grass that had not been there the week before.
+  Year 430      Hunger walked the streets of Wenmarrow, and the fields were not enough for all of them.
+  Year 434      A granary was raised in Querrin, and its keepers became the most important people in town.
+  Year 434      Clouds gathered over Oduya where no clouds had been, and wept on the dry fields. The Umari gave thanks to Ashvel.
+  Year 434   *  Among the Teshki, mothers who had once told their children of the Cloud-Shepherd now told them of the Physician of Towns.
+  Year 439      There was no cloud in the sky, and still the lightning fell near Varrah. In the village they spoke of it in whispers.
+  Year 440      Of the smaller things of those thirty years: the Umari founded five new settlements.
+  Year 440      Kesh Amun became a town, and chose a council of elders, who argued.
+  Year 443   *  Orro-Ka shook the earth hard by Inishte, and the houses of the village fell down.
+  Year 444      The river by Asel shrank to a string of muddy pools, and the frogs were the first to leave.
+  Year 447      The elders of Qe-Luun chose a holy place, and a shrine to Ashvel was raised there.
+  Year 450      In the 450th year the first caravan came from Kolm to Brennick, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+  Year 451      A cool wind passed through Ostra, and in every house the fevered slept and woke well.
+  Year 454      The fields around Tamsin Var filled with new houses, and it became a town of the Umari.
+  Year 454      Soft rain fell over Bel Thuun.
+  Year 454      In the 454th year the Umari remembered an old insult from the Teshki, and went to war over it.
+  Year 455   *  The sick of Vornhal were carried to the shrine, and Orro-Ka walked out of it with them.
+  Year 458      A red night: the hills north of Mirathe burned, and ash fell on the camp.
+  Year 461      A warm rain fell on Ilo all through the night, and the roofs leaked, and nobody minded.
+  Year 462      Rain returned to Saphal at last.
+  Year 466      A circle of white stones was laid out at Sarnath, and the Umari came there to speak to Ashvel.
+  Year 468      Rain fell on Inishte out of a clear sky, and the Teshki danced in it.
+  Year 470      The chronicle, which cannot write everything, notes only that in those thirty years five new settlements were founded by the Umari.
+  Year 470      Before Vornhal, the Umari met the Teshki. By evening the field belonged to the Teshki, and to the birds.
+  Year 474      The tents of Tobru gave way to houses of mud and reed, and it was called a village.
+  Year 474   *  In the songs of the Teshki, the Physician of Towns became the Cloud-Shepherd.
+  Year 476   *  Merchants of Mirathe reached Garrowmere and found that the people there were also people. This was thought remarkable, and then useful.
+  Year 476      After twenty-two years the Teshki asked for peace, and the Umari granted it, and made them pay for the asking.
+  Year 479      The Umari set up a shrine at Dorrow, and left flowers there for the god.
+  Year 483      Vornhal was a village now, with a well and a headman.
+  Year 486      Where the Two-Handed passed near Ostra, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 486   *  Among the Umari the god was no longer the Two-Handed but the Cloud-Shepherd, and the old name was forgotten.
+  Year 488      The craftsmen of Kaddo dreamed the same dream, and woke knowing new things.
+  Year 489      A storm such as the old people had never seen passed over Nish.
+  Year 491      The people of Daro Vel began to store grain in great jars, as the wise had advised.
+  Year 493      Ashvel whispered to the wise of Garrowmere, and they wrote it all down.
+  Year 495      The hills south-east of Ravik burned, and the Teshki watched the glow at night.
+  Year 497      The Cloud-Shepherd threw fire from a clear sky at Tobru. No one knew why. The Umari made more offerings, to be safe.
+  Year 499      Clouds came back over Kesh Amun, and the dry river filled in a single night.
+  Year 503   *  Ashvel struck the earth near Esk, and the land rang like a drum. In the village the roofs came down.
+  Year 504      Caravans of the Umari now came to Ravik of the Teshki as well.
+  Year 505      Rain came to Esk. The old people said it smelled of the god.
+  Year 507      Fire ran through the woods outside Sarnath.
+  Year 510      A granary now stands at Haddath, where before there was only mud and opinion.
+  Year 515      Children were born at Mirathe who had never lived anywhere else, and it became a village.
+  Year 519      The country west of Bel Thuun burned until the rain came, and the smoke hung over the village.
+  Year 523      There were now enough hearths at Ulu Kesh to call it a village.
+  Year 523      Lightning fell near Tsoreh out of a clear sky. The Umari said Ashvel was watching.
+  Year 524      A spear of light came down near Ytheth, and the Teshkan elders argued for a long time about what it meant.
+  Year 528      In the 528th year the Teshki raised a granary at Tamsin Var, and were proud of it for one generation, which is the usual length of pride.
+  Year 528   *  A prophet named Brannoch stood up in the market of Oduya and said that Ashvel had spoken. Some believed. The rest moved their stalls.
+  Year 528      Brannoch spoke for the Cloud-Shepherd: "Their neighbours pray badly." the Umari sharpened their swords to correct them.
+  Year 531      The houses of Penkarrow reached the old boundary stones and did not stop. From this year the Teshki call it a village.
+  Year 534      In the month of dust a fire ate the deep forest near Tsoreh.
+  Year 538      Garrowmere could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+  Year 544      Umbrin grew from a camp into a village.
+  Year 545   *  At the touch of the god the hills near Saphal shuddered, and the village lost many houses.
+  Year 545      The Teshkan priests gave the god a new name: the Laughing Storm.
+  Year 549      Lightning struck hard by Avalun in a summer storm.
+  Year 552      Mirathe built a granary against lean years.
+  Year 553      A dark cloud stood over the parched fields of Sarnath and rained on them, and on nowhere else.
+  Year 554      So many children were born in Ostra that the elders gave up learning their names. Thus it became a town.
+  Year 556      The earth moved under Ostra like dough under a baker's hand. The Umari did not find it amusing.
+  Year 561      A storm passed over Hask, and lightning set the grass alight outside the village.
+  Year 564      The Umari of Umbrin spent twenty years on a temple to Ashvel, and then argued about the colour of the doors.
+  Year 567      A red night: the woods east of Mirathe burned, and ash fell on the village.
+  Year 573   *  Brannoch the prophet died, and was buried facing the sunrise. The Umari argued over every word Brannoch had said, which is how they knew the words were holy.
+  Year 574      The Cloud-Shepherd breathed on Ilo, and the breath was sick. The priests said it was a punishment. They were not sure for what, so they punished everything.
+  Year 574      Fever spread through Ilo, and many were buried.
+  Year 577      A fire of thought was lit in Qe-Luun, and the Umari built things no one had built before.
+  Year 577      The old people of Ulu Kesh said the fire hard by the town had been started by a careless shepherd, and kept their buckets full.
+  Year 579      Garrowmere grew until a man could get lost in it, and they called it a town.
+  Year 587      Vornhal was healed by Ashvel. Its people carved a hand on the temple wall.
+  Year 589      Ashvel sent rain on the thirsty fields of Dorrow.
+  Year 590      A temple to Ashvel was built in Garrowmere.
+  Year 590      Saphal was a town now, the busiest of the Teshki.
+  Year 590   *  Saphal raised a temple to Orro-Ka, and its bells could be heard in the fields. No one among the Teshki had built a temple before.
+  Year 590      The fields about Qe-Luun grew green overnight.
+  Year 595      The long thirst of Imbrek ended in a storm, and the old people wept.
+  Year 601      Fire walked through the hills north-east of Kolm, and the Umari prayed for rain.
+  Year 612      At Penkarrow a shrine of wood was made for Orro-Ka.
+  Year 614      The dry country about Asel drank rain that came from nowhere, and turned green again.
+  Year 615      The rains came back to Dorrow, and the Umari said the god had relented.
+  Year 617      The sea drew back from the shore at Ostra, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+  Year 617   *  The ground shook at Ostra and the walls lay down. What the shaking spared, the sea came in to take.
+  Year 617      Ishmavel, a fisher of Asel, came down from the hills with a message from Ashvel.
+  Year 617      Ishmavel called the Umari to carry the word of Ashvel to the unbelievers, with fire if need be.
+  Year 618      The houses of Ennor reached the old boundary stones and did not stop. From this year the Teshki call it a town.
+  Year 618      In Haddath the ground cracked like old pottery, and the Umari began to pray for rain.
+  Year 618      At Haddath, the Umari prayed to Ashvel for rain, and fasted.
+  Year 632      The village of Tsoreh grew into a town; it had a name even among strangers.
+  Year 633      Lightning walked on the hills near Mirathe, and the priests of the village read it as a sign.
+  Year 635      There was drought in the country of Sarnath, and the Umari looked at the sky every morning.
+  Year 635      The Umari of Sarnath wrote their prayer for rain on bark and buried it at the shrine.
+  Year 638   *  In Brennick they whispered that the fever was the god's own breath. Many went to the temples that year.
+  Year 638      A grey sickness settled on Brennick. The healers burned herbs day and night.
+  Year 642      Ravik became a town, with a wall of thorns.
+  Year 647      The woods east of Daro Vel burned, and the sky over the village was brown for days.
+  Year 651      The priests of Tsoreh built a house for the god with a hundred steps.
+  Year 658      Lightning found the woods south of Tel Asha, and the forest burned for a season. In the spring, from the ash, it began again.
+  Year 658      The prophet Ishmavel was gathered to Ashvel.
+  Year 660   ** The Umari drew iron out of red stone, and the age of iron began among them. The other peoples of Erethe had not yet dreamed of it.
+  Year 660   *  A market was founded in Qe-Luun, and strangers came to it. It was the first market of the Umari.
+  Year 660   ** Imbrek became the first city in the world, and its people did not let anyone forget it.
+  Year 664      The god let rain fall on Daro Vel, though it had not been asked for. The children made mud houses.
+  Year 670      The Cloud-Shepherd drew a hand across the sky above Hask, and the dry fields drank.
+  Year 674      The people of Ilo dug into the hills for good stone.
+  Year 678      Avalun became a town, and built a gate, though it had no wall yet.
+  Year 680      A wildfire came close to Ytheth, and the children watched it from the roofs.
+  Year 682      In Inishte the old shrine was pulled down and a temple to Orro-Ka put up in its place.
+  Year 682      The drought about Umbrin broke, and the children ran out into the rain.
+  Year 684   *  Tel Asha became a city, and its towers could be seen from far off.
+  Year 685      Just when the wells of Ravik were failing, the god sent rain; the priests said they had known it would come.
+  Year 688      Around Kesh Amun the grass grew to a man's waist, and the Umari said Ashvel had walked there.
+  Year 689      Every seventh day the square of Umbrin filled with traders, and the priests complained of the noise.
+  Year 694   *  In the 694th year the Teshki entered the Age of Iron. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+  Year 694   *  Saphal built a harbour, and ships came and went. No one among the Teshki had built a harbour before.
+  Year 696      Another road joined Kolm to Ytheth of the Teshki, and the tolls on it were argued over.
+  Year 697      The fields around Varrah filled with new houses, and it became a town of the Umari.
+  Year 698      Weights and measures were set in stone at Bel Thuun, and its market became the fairest in the land, or so it claimed. It was the first market of the Teshki.
+  Year 699      The old people of Nish said the fire north-east of the town had been started by a careless shepherd, and kept their buckets full.
+  Year 700   *  The ground near Sarnath heaved like the sea. The Umari said Ashvel had stamped upon the earth.
+  Year 700   *  The Orun are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+  Year 702      A bolt of white fire struck outside Garrowmere at noon. The Umari said it was Ashvel clearing the throat of heaven.
+  Year 705      A vein of ore was found above Qe-Luun, and the town grew loud with hammers.
+  Year 706      A warm rain fell on Umbrin all through the night, and the roofs leaked, and nobody minded.
+  Year 707      Many roads now led to Penkarrow, and it was called a city.
+  Year 708      Wind and rain beat upon Garrowmere for three days, and the roofs flew.
+  Year 712      A temple to Orro-Ka was built in Bel Thuun.
+  Year 715      Imbrek grew until a man could get lost in it, and they called it a town.
+  Year 719      The fishermen of Tel Asha built a stone quay, and the town turned its face to the sea.
+  Year 720   *  The town of Asel grew into a city of the Umari, with paved streets and quarrelsome councils.
+  Year 722      The country hard by Brennick burned until the rain came, and the smoke hung over the village.
+  Year 727      Mines were opened near Tamsin Var, and the hills were never quite the same.
+  Year 730      Thunder rolled over Wenmarrow, and lightning fell near the village.
+  Year 732      Clouds gathered over Brennick where no clouds had been, and wept on the dry fields. The Umari gave thanks to Ashvel.
+  Year 734      Fire walked through the woods south-west of Ytheth, and the Teshki prayed for rain.
+  Year 738      Varrah cut a harbour into the shore, and its boats went further every year.
+  Year 744      A red night: the hills south-east of Kaddo burned, and ash fell on the town.
+  Year 745      The land of Imbrek bloomed out of season, and the beekeepers grew rich.
+  Year 745   *  In the 745th year the Teshki stopped calling their god the Laughing Storm. From now on, in the market and at the hearth, it was the Cloud-Shepherd.
+  Year 746      In Umbrin a potter invented a wheel, a weaver a loom, and a priest a reason why the god had done it.
+  Year 747      Tobru was a town now, the busiest of the Umari.
+  Year 751      Tobru became a market town, loud with haggling.
+  Year 754      Asel starved, and those who lived left it empty.
+  Year 756      Rain fell on Ravik out of a clear sky, and the Teshki danced in it.
+  Year 758      Walls of cut stone went up around Umbrin, and the Umaran scribes began to call it a city.
+  Year 760   *  Garrowmere outgrew its walls twice and became a city of the Umari.
+  Year 761      Rain answered the prayers of Querrin, warm and heavy and long.
+  Year 762      Wenmarrow built a market hall, and its merchants grew rich and pompous.
+  Year 764      Ashvel breathed on the land around Hask, and it flowered.
+  Year 765      A dark cloud stood over the parched fields of Tamsin Var and rained on them, and on nowhere else.
+  Year 768      The earth groaned under Tobru, and the temple bell rang by itself.
+  Year 770      The sky over Haddath cracked open with fire, and the old oak close by the city burned like a torch.
+  Year 774      The miners of Umbrin went deep into the mountain, and some did not come back.
+  Year 778   *  In the 778th year a star came down among the Umari, and the sky was dark with dust until the harvest after next. They gave Ashvel a new name that year, and it was not a kind one.
+  Year 778   *  Fire fell on Tobru. Where it stood there is now a round hollow, and the Umari do not go near it, and they do not say its name.
+  Year 780      Zuneri became a town, with streets.
+  Year 783      The young of Vornhal were seized with questions, and the old could not answer them.
+  Year 784      At Vornhal they built a market. It took longer than promised and cost more than was said, as is the way of all building.
+  Year 785      Where the Cloud-Shepherd passed near Mirathe, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 786      A wildfire came close to Sarnath, and turned only when the wind did.
+  Year 794      The village of Ulu Kesh grew into a town; it had a name even among strangers.
+  Year 794      Ashvel sent rain on the thirsty fields of Kesh Amun.
+  Year 795      Every seventh day the square of Esk filled with traders, and the pickpockets prospered.
+  Year 796      The god's fire fell close by Vornhal. In the city the mothers kept the children indoors, and the dogs hid under the beds.
+  Year 799      Near Esk, at the touch of the god, flowers opened in the snow.
+  Year 802      There was famine in Oduya. The people looked up and asked the Cloud-Shepherd for rain, and counted the days, and the days were long.
+  Year 805      A port was made at Avalun, and the Teshkan sailors grew bold.
+  Year 807      In a dry season a fire ate the hills south-east of Oduya.
+  Year 812      The Umari of Ulu Kesh built a temple to Ashvel so tall that the priests must rest twice on the stair, and they said that this was the point.
+  Year 814   *  Ten thousand hearths burned in Bel Thuun. It was a city now, and it knew it.
+  Year 817      Fire ran through the hills north-west of Vornhal.
+  Year 818      Mist and rain came to Brennick, and the hills around it ran with little streams.
+  Year 820      Hunger came to Garrowmere and sat down at every table. Many were carried out to the fields that could no longer feed them.
+  Year 822      Ox-carts began to creak along the road from Imbrek to Ytheth, and inns grew up beside it.
+  Year 826      Tsoreh had become a city, with more people in it than anyone could name.
+  Year 831      The hills east of Lumbe burned, and the sky over the town was brown for days.
+  Year 834      Kaddo grew past counting into a city, and its markets never closed.
+  Year 838      The scribes of the Teshki began to write Ytheth with the sign for 'city', and its taxes rose accordingly.
+  Year 840   *  Envoys of the Umari spat on the threshold before the Teshki, and the war began.
+  Year 843      A market was founded in Zuneri, and strangers came to it.
+  Year 846      Walls of cut stone went up around Querrin, and the Umaran scribes began to call it a city.
+  Year 847      The herds about Tamsin Var grew fat on grass that had not been there the week before.
+  Year 852      Fire ran through the woods south-west of Ytheth.
+  Year 854      Inishte became a city, and its towers could be seen from far off.
+  Year 859      The Umari of Esk spent ten years on a temple to Ashvel, and then argued about the colour of the doors.
+  Year 861   *  Murrow outgrew its walls twice and became a city of the Umari.
+  Year 863      The old people of Tel Asha said the fire south-west of the city had been started by a careless shepherd, and kept their buckets full.
+  Year 864      The land upon Umbrin sank, and water came in.
+  Year 866      Lightning struck near Inishte in a summer storm.
+  Year 870      Weights and measures were set in stone at Imbrek, and its market became the fairest in the land, or so it claimed.
+  Year 870   *  The Cloud-Shepherd laid a hand on Hask, and the sick rose from their beds, puzzled, and asked what there was to eat.
+  Year 871      Out of a blue sky a white spear fell hard by Kolm, and the cattle would not graze there after. The Umari said nothing, and brought more bread to the shrine.
+  Year 876      A great wave broke at Tsoreh, and the people of the city ran for the hills.
+  Year 877   *  In Sarnath the sick were healed, all at once, and the healers lost their trade for a while.
+  Year 883      Ashvel struck the ground close by Kaddo with lightning, and the people of the city hid their faces.
+  Year 884      Haddath became a market town, full of salt and cloth and lies.
+  Year 885      Many roads now led to Daro Vel, and it was called a city.
+  Year 886      In the 886th year Hask could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+  Year 887      The war of the Umari and the Teshki ended because both had run out of sons. Each side wrote down that it had won.
+  Year 888      The craftsmen of Imbrek dreamed the same dream, and woke knowing new things.
+  Year 892      So many children were born in Esk that the elders gave up learning their names. Thus it became a city.
+  Year 892      The Cloud-Shepherd drew a hand across the sky above Tsoreh, and the dry fields drank.
+  Year 897      The fields about Ilo grew green overnight.
+  Year 899      Fire walked through the hills west of Kolm, and the beasts ran before it.
+  Year 900   *  Orro-Ka shook the earth hard by Umbrin, and the houses of the town fell down.
+  Year 900   ** From the Umari came the Vaeli, as a branch comes from a tree: the same wood, pointing elsewhere.
+  Year 900   *  The Vaeli called the god who had woken their fathers the Remembered One.
+  Year 904      Traders from Nish found their way to Daro Vel of the Teshki, where Umaran coin was already known.
+  Year 907      The town of Imbrek grew into a city of the Teshki, full of smoke and music.
+  Year 907      Ten thousand hearths burned in Sarnath. It was a city now, and it knew it.
+  Year 909      The land near Wenmarrow lifted itself up, and the old maps were wrong.
+  Year 910      The Vaeli put down the tools of their mothers and took up the tools of the Age of Bronze. The Remembered One watched, and did not say whether this was wise.
+  Year 910      A wall of water came out of the sea upon Ilo.
+  Year 910      A great wave carried Ilo out to sea.
+  Year 914   *  Dorrow had become a city, with more people in it than anyone could name.
+  Year 914   *  A voice cried out in the market of Imbrek: it was Ishmavel, who said the god had chosen the Teshki.
+  Year 914      Ishmavel spoke for the Cloud-Shepherd: "Go out and fill the land." The young of the Teshki took this as permission, which it was.
+  Year 915      Around Vornhal the trees bent with fruit, and the Teshki said Orro-Ka had walked there.
+  Year 916      A tree outside Vornhal was split by lightning. The wood was kept as a holy thing in the city.
+  Year 920      Green came back to the fields of Mirathe, and the wells were sweet again.
+  Year 921   *  Orro-Ka struck the earth near Bel Thuun, and the land rang like a drum. In the city the roofs came down.
+  Year 922      Clouds gathered over Mirathe where no clouds had been, and wept on the dry fields. The Teshki gave thanks to Orro-Ka.
+  Year 923      The fever left Saphal in a single night. The Teshki said Orro-Ka had walked through the streets.
+  Year 924      A wildfire came close to Dorrow, and turned only when the wind did.
+  Year 926      There were too many mouths in Penkarrow and too little bread, and the old went hungry so the young could eat.
+  Year 933      The Cloud-Shepherd laid a hand on Asel, and the sick rose from their beds, puzzled, and asked what there was to eat.
+  Year 936      Ilo grew past counting into a city, and its markets never closed.
+  Year 937      Rain came to Zuneri. The old people said it smelled of the god.
+  Year 937      In a night of thunder a bolt came down in the hills south-east of Tel Asha, and the dogs of the city howled until dawn.
+  Year 939      Fire came down from a clear sky near Mirathe, and no one in the town slept that night.
+  Year 943      The scribes of the Umari began to write Qe-Luun with the sign for 'city', and its taxes rose accordingly.
+  Year 944      The feet of traders wore a road between Haddath and Dorrow. Along it went pots and coins and, later, fevers.
+  Year 946      Walls of cut stone went up around Wenmarrow, and the Teshkan scribes began to call it a city.
+  Year 950      Many roads now led to Haddath, and it was called a city.
+  Year 953   *  A new thing was learned at Oduya, and then everywhere. So the Age of Iron began among the Vaeli.
+  Year 957      The fields about Kesh Amun could not feed it any longer. Some families left in the night.
+  Year 958      The rains failed around Kesh Amun.
+  Year 959      Hills rose near Saphal where there had been none.
+  Year 962   ** The Umari raised sails and went out upon the great sea. They were the first in all the world.
+  Year 962      In Kesh Amun they still tell of the great wind, which blew the fires out in every hearth.
+  Year 964   *  Tamsin Var outgrew its walls twice and became a city of the Teshki.
+  Year 966      In the 966th year the Umari raised an academy at Sarnath, and were proud of it for one generation, which is the usual length of pride.
+  Year 967      The sea stood up and fell on Asel, and when it drew back, the city was gone.
+  Year 968      The Teshki entered the Age of Sail. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+  Year 969      Ishmavel, who had spoken for the god among the Teshki, died, and the disciples quarrelled at once.
+  Year 970      An academy was founded at Ravik, where the wise argued about everything, the god included. No one among the Teshki had built an academy before.
+  Year 971      The shipwrights of the Vaeli learned to sail against the wind, and the world grew wider.
+  Year 973      The sky struck Ennor without a cloud in it, and the old people said the god had a long memory.
+  Year 974      Clouds came back over Saphal, and the dry river filled in a single night.
+  Year 975      The land of Imbrek blossomed out of season, and the beekeepers grew rich.
+  Year 977      Ashvel pressed the land at Kesh Amun down, and the Umari watched new water spread where fields had been.
+  Year 980      Scholars gathered at Tsoreh and built a house of learning, and filled it with arguments.
+  Year 980      A cool wind passed through Umbrin, and in every house the fevered slept and woke well.
+  Year 980      The Vaeli no longer called the god the Remembered One; now they said the Physician of Towns.
+  Year 984      The town of Ulu Kesh grew into a city of the Umari, with paved streets and quarrelsome councils.
+  Year 986      Just when the wells of Nish were failing, the god sent rain, and the frogs sang all night.
+  Year 987      The country south-west of Ulu Kesh burned for many days, and the smoke hung over the city.
+  Year 992      The wise of the Teshki came together at Saphal, and began to ask questions the priests did not like.
+  Year 993      Orro-Ka breathed on the land around Saphal, and it flowered.
+  Year 994      Brennick became a city, and its people forgot they had ever lived in tents.
+  Year 994   *  Brennick was healed by Ashvel. Its people carved a hand on the temple wall.
+  Year 999   *  The sky opened close by Tsoreh and spat out a mountain of fire. The Umari said it was the anger of Ashvel.
+  Year 1001     A storm passed over Bel Thuun, and lightning killed a herd of goats outside the city.
+  Year 1002     In the 1002nd year Umbrin could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+  Year 1006     At Varrah a school was opened where the young learned numbers, stars and the names of things.
+  Year 1012     That summer a fire ate the hills near Ulu Kesh.
+  Year 1015  *  The first caravan from Wenmarrow came to Kolm, and the Teshki and the Vaeli learned each other's words for 'price'.
+  Year 1020     An academy was founded at Umbrin, where the wise argued about everything, the god included.
+  Year 1020     The long quarrel between the Teshki and the Vaeli came to blood.
+  Year 1020     In the 1020th year Oduya opened its gates to the Teshki, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+  Year 1022     A long gentle rain came to Umbrin, and the Vaeli did not complain.
+  Year 1023     Where the Cloud-Shepherd passed near Sarnath, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 1029     Scholars gathered at Tel Asha and built a house of learning, and filled it with books.
+  Year 1030     A great storm walked in from the sea and stood over Tamsin Var for three days, and the roofs learned to fly.
+  Year 1033     A coughing sickness came to Ennor with the traders, and lingered.
+  Year 1035     The ground heaved under Oduya at the touch of the god.
+  Year 1036     A red night: the hills north-east of Sarnath burned, and ash fell on the city.
+  Year 1039     An army of the Teshki besieged Oduya and went home with nothing but stories.
+  Year 1046     The rains forgot the country of Avalun. The children grew up not knowing the smell of rain.
+  Year 1046     The women of Avalun tied red threads to the shrine and asked for rain.
+  Year 1050     The wise of the Teshki came together at Vornhal, and wrote down everything they knew.
+  Year 1051  ** The ground shook at Tel Asha and the walls lay down. What the shaking spared, the sea came in to take.
+  Year 1053  *  A great wave carried Hask out to sea.
+  Year 1057     The war of the Teshki and the Vaeli wore itself out, like a fire with nothing left to burn.
+  Year 1058     The hills east of Zuneri burned, and the herds fled toward the city.
+  Year 1060     The long thirst of Mirathe ended in a storm, and the old people wept.
+  Year 1062  *  Orro-Ka heard the sick of Imbrek, and the fever broke.
+  Year 1063     At Umbrin a school was opened where the young learned numbers, stars and the names of things.
+  Year 1067     Fire ran through the hills north of Vornhal.
+  Year 1071     Scholars gathered at Kaddo and built a house of learning, and filled it with books.
+  Year 1075     Lightning walked on the hills close by Vornhal, and no one was hurt, that time.
+  Year 1079     In the month of dust a fire ate the woods south-east of Avalun.
+  Year 1083     The harvest failed at Saphal, and the people ate their seed corn.
+  Year 1087     Soft rain fell over Tel Asha.
+  Year 1088     Merchants of the Vaeli reached Kaddo of the Umari, and the two peoples traded cloth for copper.
+  Year 1090     A red night: the woods close by Murrow burned, and ash fell on the city.
+  Year 1095     The dry country about Penkarrow drank rain that came from nowhere, and turned green again.
+  Year 1100     Lightning came down at Nish on a windless day. The Umaran priests said it was a warning; the farmers said it was a waste of a good tree.
+  Year 1101     An academy was founded at Dorrow, where the wise argued about everything, the god included.
+  Year 1102     The sea rose up and walked inland at Ulu Kesh, and did not ask leave.
+  Year 1102  *  The sea stood up and fell on Ulu Kesh, and when it drew back, the city was gone.
+  Year 1108     Tamsin Var of the Umari grew used to the goods of Penkarrow, and its merchants learned the Teshkan way of haggling.
+  Year 1110     The woods close by Ravik burned, and the sky over the city was brown for days.
+  Year 1112     A storm walked inland over the country of Nish, and left the fields flattened behind it.
+  Year 1114     Rain fell on Nish out of a clear sky, and the Umari danced in it.
+  Year 1119     No rain fell on the lands of Sarnath. The river showed its stones, and the people counted them.
+  Year 1119     The people of Sarnath prayed for rain.
+  Year 1131  *  Ten thousand hearths burned in Garrowmere. It was a city now, the jewel of the Vaeli.
+  Year 1132     The wise of the Vaeli came together at Garrowmere, and began to ask questions the priests did not like.
+  Year 1132     Lightning found the woods near Dorrow, and the forest burned for a season. In the spring, from the ash, it began again.
+  Year 1133     A grey wave as tall as a temple broke over the fields of Inishte, and salt lay on them for years.
+  Year 1134     The sea sent a howling wind against Tel Asha, and the fishermen did not go out for a month.
+  Year 1138     Thunder rolled over Haddath, and lightning fell in the hills north-east of the city.
+  Year 1139     A dark cloud stood over the parched fields of Zuneri and rained on them, and on nowhere else.
+  Year 1142  *  In Kesh Amun the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+  Year 1144     The rain-dancers of Querrin had danced for three days when Ashvel answered them with thunder and a long rain.
+  Year 1149     The old people of Avalun said the fire north of the city had been started by a falling star, and argued about it all winter.
+  Year 1151     In Tamsin Var the people sickened, and the roads to it were empty.
+  Year 1151     The people of Tamsin Var climbed to the shrine and prayed to Orro-Ka for healing. They prayed loudly, in case the Cloud-Shepherd was far away.
+  Year 1160     Fire walked through the woods outside Mirathe, and the beasts ran before it.
+  Year 1162  *  The Vaelish kings swore an oath against the Teshki, and there was war.
+  Year 1163     A hard sun stood over Tsoreh year after year, and the barley died standing.
+  Year 1166  *  Oduya had become a city, with more people in it than there were sheep in the hills.
+  Year 1167     At Ilo the craftsmen woke with ideas they could not explain, and claimed them as their own.
+  Year 1168     The Vaeli attacked Penkarrow at dawn and were beaten by its old men and boys.
+  Year 1171     Hunger walked the streets of Umbrin, and the fields were not enough for all of them.
+  Year 1174     The god let rain fall on Haddath, though it had not been asked for. The children made mud houses.
+  Year 1176     The fever left Zuneri in a single night. The Umari said Ashvel had walked through the streets.
+  Year 1178     For more than a hundred years Vornhal prayed for rain, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+  Year 1180     Black clouds came over Tamsin Var from the sea, and the hail broke the young barley.
+  Year 1182     The herds about Nish grew fat on grass that had not been there the week before.
+  Year 1182     In Zuneri a prophet appeared, Anuket, who walked barefoot and spoke of the god, and the Umari listened.
+  Year 1182     Anuket preached war against those who did not honour Ashvel, and the Umari sharpened their spears.
+  Year 1183     A wildfire came close to Bel Thuun, and the people beat it back with green branches.
+  Year 1183     Ytheth fell to the Vaeli, and its Teshkan lords were driven out.
+  Year 1187     Lightning struck near Bel Thuun in a summer storm.
+  Year 1188     A warm rain fell on Lumbe for three days, and the roofs leaked, and nobody minded.
+  Year 1191     Sarnath was healed by Ashvel. For a generation no one there feared the sickness.
+  Year 1193  *  The Cloud-Shepherd laid a hand on Umbrin, and the sick rose from their beds, puzzled, and asked what there was to eat.
+  Year 1193     There was an earthquake upon Saphal, and the people of the city slept outside for a month.
+  Year 1194     The Teshki held Mirathe against the Vaeli, and the field was red.
+  Year 1197     Orro-Ka sent rain on the thirsty fields of Saphal.
+  Year 1203     Ashvel spoke in fire over Sarnath. No one understood the word, but everyone heard it.
+  Year 1204     A storm such as the old people had never seen passed over Kaddo.
+  Year 1208     The fields about Tamsin Var grew green as if in a dream.
+  Year 1210     At Oduya a school was opened where the young learned numbers, stars and the names of things.
+  Year 1210     Fire walked through the hills west of Nish, and the beasts ran before it.
+  Year 1210     The merchants of Dorrow found a road to Murrow, and kept the secret of it for a while.
+  Year 1213  *  The Vaeli marched into Mirathe, and the town paid tribute from that day.
+  Year 1214     The host of the Vaeli came against Tamsin Var and broke on its walls like a wave on rock, and went home fewer.
+  Year 1218     The Vaeli won their war against the Teshki.
+  Year 1219     Near Kaddo, at the touch of the god, seeds woke in the dry ground.
+  Year 1223     The Umari said the sickness in Tel Asha was sent by Ashvel, and they were afraid.
+  Year 1223     In Tel Asha they painted marks on the doors of the sick, and the marks spread from street to street.
+  Year 1226     Mist and rain came to Querrin, and the hills around it turned a deeper green.
+  Year 1228     The country close by Oduya burned until the rain came, and the smoke hung over the city.
+  Year 1229     The sky over Garrowmere cracked open with fire, and the old oak outside the city burned like a torch.
+  Year 1232     In Kolm they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+  Year 1237  *  Ashvel whispered to the wise of Zuneri, and they wrote it all down.
+  Year 1237     The Vaeli had called the god the Physician of Towns. After what they had seen, they called the god the Whisperer of Crafts.
+  Year 1239     A great wave broke upon Daro Vel, and the people of the city counted their dead.
+  Year 1239  ** The ground shook at Daro Vel and the walls lay down. What the shaking spared, the sea came in to take.
+  Year 1242     Wind and rain beat upon Nish for three days, and the boats were thrown up on the fields.
+  Year 1243  *  Orro-Ka threw down a burning stone in the hills north-west of Oduya, and the Teshki did not sleep for many nights.
+  Year 1247     Anuket the prophet went into the hills and did not come back. The Umari said Ashvel had taken the prophet home.
+  Year 1248     Caravans of the Teshki now came to Dorrow of the Umari as well.
+  Year 1257     A cool wind passed through Wenmarrow, and in every house the fevered slept and woke well.
+  Year 1262     The earth shook at Penkarrow.
+  Year 1264     The old people of Ytheth said the fire in the woods south-west of the city had been started by a careless shepherd, and kept their buckets full.
+  Year 1267     Brannoch of Umbrin heard the voice of Ashvel and began to preach, and some threw stones.
+  Year 1267     At the word of Brannoch, the young of the Vaeli left their homes to found new ones.
+  Year 1277  *  Among the Vaeli, mothers who had once told their children of the Whisperer of Crafts now told them of the Physician of Towns.
+  Year 1278     Clouds gathered over Querrin where no clouds had been, and wept on the dry fields. The Umari gave thanks to Ashvel.
+  Year 1282  ** In the 1282nd year the world turned a page: the Teshki, first of all peoples, came into the Age of Industry, and the others began to hurry.
+  Year 1282  *  Bel Thuun became a great city such as the world had not seen, and the sky over it never grew dark.
+  Year 1283     The Vaeli built engines that breathed fire, and the age of smoke began among them.
+  Year 1283     Wenmarrow became a great city, a sea of roofs from one horizon to the other.
+  Year 1285     Around Qe-Luun the grass grew to a man's waist, and the Umari said Ashvel had walked there.
+  Year 1285     Settlers who had left Sarnath were never heard from again.
+  Year 1286     Chimneys rose over Wenmarrow, and the sky above it turned grey. It was the first manufactory of the Vaeli.
+  Year 1288     Rain returned to Lumbe at last.
+  Year 1289     In Penkarrow great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron. No one among the Teshki had built a manufactory before.
+  Year 1292     The rains came back to Wenmarrow, and the Vaeli said the god had relented.
+  Year 1299     The land of Tamsin Var blossomed out of season, and the beekeepers grew rich.
+  Year 1300     A manufactory now stands at Oduya, where before there was only mud and opinion.
+  Year 1300  *  In the 1300th year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+  Year 1301     Soft rain fell over Imbrek.
+  Year 1302     The priests of Ennor said Orro-Ka had sent the sickness for their sins, though no one could agree which sins.
+  Year 1302     The spotted fever broke out in Ennor, and its neighbours turned travellers away.
+  Year 1302     In the songs of the Teshki, the Cloud-Shepherd became the Laughing Storm.
+  Year 1304     A red night: the hills north-east of Dorrow burned, and ash fell on the city.
+  Year 1305     Ytheth swallowed the villages around it and became a great city of the Vaeli.
+  Year 1305     Avalun grew into a city of towers, its lights seen from the next valley.
+  Year 1307     At Bel Thuun they built a manufactory. It took longer than promised and cost more than was said, as is the way of all building.
+  Year 1310  *  The earth shrugged under Zuneri. Pots fell, then roofs, then the walls. The Vaeli asked what they had done. No answer came, which was itself an answer.
+  Year 1312     Ashvel breathed on the land around Kaddo, and it flowered.
+  Year 1314  *  So many people lived in Inishte that no one could count them, though the scribes tried.
+  Year 1319  *  In Kesh Amun the sick were healed, all at once, and the healers lost their trade for a while.
+  Year 1320     A wildfire came close to Bel Thuun, and the children watched it from the roofs.
+  Year 1321     A great storm walked in from the sea and stood over Ulu Kesh for three days, and the roofs learned to fly.
+  Year 1328     Another road joined Oduya to Penkarrow of the Umari, and the inns along it prospered.
+  Year 1328     War between the Umari and the Vaeli. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+  Year 1330     The Umari put down the tools of their mothers and took up the tools of the Age of Industry. The Cloud-Shepherd watched, and did not say whether this was wise.
+  Year 1330     The lamps of Imbrek drowned out the stars: it had become a great city of the Umari.
+  Year 1330     In the month of dust a fire ate the hills north-east of Kesh Amun.
+  Year 1331     The engines of Kaddo began to turn, and their noise did not stop at night. It was the first manufactory of the Umari.
+  Year 1333     The prophet Brannoch was gathered to Ashvel.
+  Year 1336     The Cloud-Shepherd breathed on Nish, and the breath was sick. The priests said it was a punishment. They were not sure for what, so they punished everything.
+  Year 1336     A sickness came to Nish by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+  Year 1338     It rained on Zuneri, gently and for a long time, and the Vaeli did not complain.
+  Year 1340     The scribes, counting rather than writing, set down that in sixty years more than a dozen settlements of the Umari grew.
+  Year 1341     Ilo became a great city such as the world had not seen, lit all night.
+  Year 1344     Ytheth built its first manufactory, and the smiths grumbled.
+  Year 1345     The war ended in victory for the Umari. The Vaeli paid tribute for a generation.
+  Year 1349     There was no cloud in the sky, and still the lightning fell hard by Esk. The Umari knew whose hand had thrown it.
+  Year 1350     The fever left Vornhal in a single night. The Umari said Ashvel had walked through the streets.
+  Year 1350     A band of settlers of the Umari was lost in the woods east of Ravik.
+  Year 1351     Chimneys rose over Tamsin Var, and the sky above it turned grey.
+  Year 1354     The Cloud-Shepherd drew a hand across the sky above Querrin, and the dry fields drank.
+  Year 1355     Fire ran through the woods east of Mirathe.
+  Year 1356     The priests of Dorrow were still singing for rain when it began to fall on them.
+  Year 1357  *  A prophet named Anuket arose in Sarnath, saying that Ashvel had spoken in the night.
+  Year 1362     In a night of thunder a bolt came down close by Ulu Kesh, and in the morning the shepherds found the stones blackened.
+  Year 1363     The river by Wenmarrow shrank to a string of muddy pools, and the frogs were the first to leave.
+  Year 1366     The herds about Vornhal grew fat on grass that had not been there the week before.
+  Year 1369     In Sarnath great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron.
+  Year 1370     Over thirty years, and hardly worth a line each time, eleven villages and towns of the Umari grew larger.
+  Year 1370  *  The houses of Qe-Luun reached the old boundary stones and did not stop. From this year the Umari call it a great city.
+  Year 1374  *  At the touch of the god the hills close by Kolm shuddered, and the city was shaken to its roots.
+  Year 1374     Among the Vaeli the god was no longer the Physician of Towns but the Laughing Storm, and the old name was forgotten.
+  Year 1376     The dry country about Ulu Kesh drank rain that came from nowhere, and turned green again.
+  Year 1380     The hills south-west of Garrowmere burned, and the Umari watched the glow at night.
+  Year 1383     Traders from Haddath found their way to Oduya of the Vaeli, where Umaran coin was already known.
+  Year 1386     The engines of Saphal began to turn, and their noise did not stop at night.
+  Year 1391     A wall of water came out of the sea upon Ulu Kesh.
+  Year 1400  ** The people of the far valleys about Brennick spoke the old tongue so strangely that the capital laughed at them. In the 1400th year they stopped coming to be laughed at, and called themselves the Hsar.
+  Year 1400  *  Among the Hsar the god was named the Old God.
+  Year 1401     Fever spread through Penkarrow, and the priests could do nothing.
+  Year 1401     The priests of Penkarrow went up to the high places and cried out for healing.
+  Year 1402     In Umbrin the ground cracked like old pottery, and the Teshki began to pray for rain.
+  Year 1402     Traders of the Vaeli and the Hsar met at Brennick, and each thought they had cheated the other.
+  Year 1402  *  Anuket the prophet died, and was buried facing the sunrise. The Umari argued over every word Anuket had said, which is how they knew the words were holy.
+  Year 1403     Kesh Amun built its first manufactory, and the river ran a strange colour.
+  Year 1403     Rain came to Dorrow. The old people said it smelled of the god.
+  Year 1407     Where the Laughing Storm passed near Kolm, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 1408     The Hsar and the Umari could no longer share the river. They tried to share it with spears instead.
+  Year 1409     Fire ran through the hills north of Bel Thuun.
+  Year 1412     There was drought in the country of Oduya, and the Teshki looked at the sky every morning.
+  Year 1414     The Hsar discovered bronze. Their bells rang for the first time.
+  Year 1417     Just when the wells of Sarnath were failing, the god sent rain, and the frogs sang all night.
+  Year 1418     The old people of Vornhal said the fire north-east of the great city had been started by the god, and argued about it all winter.
+  Year 1420     The Hsar worked iron, and their ploughs bit deep.
+  Year 1420     The Hsar came against Qe-Luun and were thrown back.
+  Year 1421  *  Oduya became a great city, a sea of roofs from one horizon to the other.
+  Year 1424     The sea drew back from the shore at Wenmarrow, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+  Year 1424     A great wave carried Wenmarrow out to sea.
+  Year 1427     The ground upon Ennor went down like a sigh, and the sea followed it.
+  Year 1428     A bolt of white fire struck outside Zuneri at noon. The Umari said it was Ashvel clearing the throat of heaven.
+  Year 1429     Garrowmere swallowed the villages around it and became a great city of the Umari.
+  Year 1431     Umbrin grew into a city of towers, so loud that the priests said the god could hear it.
+  Year 1432     It rained on Ilo, gently and for a long time, and the Umari said it was a blessing.
+  Year 1436  *  A fire of thought was lit in Oduya, and the Vaeli built things no one had built before.
+  Year 1437     That summer a fire ate the woods south-west of Vornhal.
+  Year 1438     The fields about Querrin grew green as if in a dream.
+  Year 1439     The Hsar took to the open sea, and nowhere was far any more.
+  Year 1440     Before Brennick, the army of the Hsar was broken.
+  Year 1445     The banners of the Hsar were raised over Esk.
+  Year 1446     The armies of the Hsar came home in triumph to their cities, and the Umari counted what they had lost.
+  Year 1449     A wildfire came close to Lumbe, and the children watched it from the roofs.
+  Year 1453     In the 1453rd year a prophet named Ishmavel stood up in the market of Nish and said that Ashvel had spoken. Some believed. The rest moved their stalls.
+  Year 1453     Ishmavel spoke for the Cloud-Shepherd: "Build a thing that can be seen from the sky." And the Umari began to quarry the hills.
+  Year 1453  ** The Hsar finished the Hanging Stair at Vornhal. It took three lifetimes. The first did not live to see it; the last complained of the dust.
+  Year 1454     Brennick asked for rain, and Ashvel gave it, and the barley stood up again.
+  Year 1457     Rain fell on Penkarrow out of a clear sky, and the Teshki danced in it.
+  Year 1458     In Vornhal the first engines turned, and the Hsar did more work in a day than their grandfathers in a year.
+  Year 1458     A grey sickness settled on Ulu Kesh. The healers burned herbs day and night.
+  Year 1460  *  So many people lived in Oduya that no one could count them, though the scribes tried.
+  Year 1460     Near Saphal, at the touch of the god, the orchards fruited twice.
+  Year 1461     Fire walked through the hills outside Umbrin, and the Teshki prayed for rain.
+  Year 1462     In Kolm they still tell of the great wind, which carried a goat over the temple.
+  Year 1466     The sea rose up and walked inland at Varrah, and did not ask leave.
+  Year 1469     A tree outside Qe-Luun was split by lightning. The wood was kept as a holy thing in the great city.
+  Year 1474     Around Varrah the trees bent with fruit, and the Umari said Ashvel had walked there.
+  Year 1477     In Querrin the sick had prayed, and one morning they woke well.
+  Year 1477     Zuneri of the Vaeli grew used to the goods of Bel Thuun, and its merchants learned the Teshkan way of haggling.
+  Year 1480     The country near Zuneri burned for many days, and the smoke hung over the great city.
+  Year 1482  *  A cool wind passed through Vornhal, and in every house the fevered slept and woke well.
+  Year 1482     The Hsari priests gave the god a new name: the Physician of Towns.
+  Year 1483     A manufactory now stands at Vornhal, where before there was only mud and opinion. No one among the Hsar had built a manufactory before.
+  Year 1485     The rains forgot the country of Murrow. The priests climbed the hills and called to them.
+  Year 1491     The sea sent a howling wind against Lumbe, and the fishermen did not go out for a month.
+  Year 1493     The god let rain fall on Brennick, though it had not been asked for. The children made mud houses.
+  Year 1495     Nish was healed by Ashvel. For a generation no one there feared the sickness.
+  Year 1496     The Cloud-Shepherd took hold of the land near Haddath and moved it, the way a sleeper moves a blanket. The farmers measured their fields again and did not like the answer.
+  Year 1498     A warm rain fell on Zuneri all through the night, and the roofs leaked, and nobody minded.
+  Year 1506     In those lean years Ennor ate its oxen, and then its dogs.
+  Year 1509     A coughing sickness came to Umbrin in the spring, and lingered.
+  Year 1509     In Umbrin a white goat was given to Orro-Ka, with a prayer for healing.
+  Year 1510     The drought about Tamsin Var broke, and the children ran out into the rain.
+  Year 1511     The ground upon Garrowmere rolled like a wave for the space of a hundred breaths, and cracks opened in the fields of the great city.
+  Year 1511     Ishmavel, who had spoken for the god among the Umari, died, and the disciples quarrelled at once.
+  Year 1512     Haddath prayed for healing, and it was given. The priests were as surprised as anyone, but hid it well.
+  Year 1513     A red night: the woods close by Penkarrow burned, and ash fell on the great city.
+  Year 1514     Lightning fell hard by Querrin out of a clear sky. The Umari said Ashvel was watching.
+  Year 1515  *  In Brennick a potter invented a wheel, a weaver a loom, and a priest a reason why the god had done it.
+  Year 1518     Soft rain fell over Zuneri.
+  Year 1518     Green came back to the fields of Dorrow, and the wells were sweet again.
+  Year 1520     The Vaeli sent out settlers who did not arrive. Some said the wilds took them.
+  Year 1524     The rains failed around Inishte.
+  Year 1529     Settlers set out from Haddath, and none of them lived to build anything.
+  Year 1532     The land of Dorrow blossomed out of season, and the beekeepers grew rich.
+  Year 1544     The god's fire fell hard by Umbrin. In the great city the mothers kept the children indoors, and the dogs hid under the beds.
+  Year 1545     A storm passed over Nish, and lightning killed a herd of goats outside the great city.
+  Year 1551     Mist and rain came to Qe-Luun, and the hills around it ran with little streams.
+  Year 1552     The Cloud-Shepherd took hold of the land near Dorrow and moved it, the way a sleeper moves a blanket. The farmers measured their fields again and did not like the answer.
+  Year 1553     The woods west of Dorrow burned, and the sky over the great city was brown for days.
+  Year 1557     Merchants began to travel between Oduya and Ravik, and the road between them grew wide.
+  Year 1571  *  Sarnath had prayed for rain, and the rain came in the night, and the priests were proven right.
+  Year 1573     Ashvel reshaped the land under Mirathe while its people slept, and they woke to find their fields broken.
+  Year 1580     The Cloud-Shepherd threw fire from a clear sky at Haddath. No one knew why. The Umari made more offerings, to be safe.
+  Year 1580  *  The Teshki sharpened their spears and went against the Vaeli, though no one could remember who had struck first.
+  Year 1580     At Zuneri the Vaeli won the day. The Teshki tell it differently, in their own chronicle, which no one has asked to read.
+  Year 1583     Out of a blue sky a white spear fell close by Tamsin Var, and split the old well-stone. The Teshki said nothing, and brought more bread to the shrine.
+  Year 1586     Ashvel breathed on the land around Zuneri, and it flowered.
+  Year 1586     In a dry season a fire ate the hills east of Dorrow.
+  Year 1588     A dark cloud stood over the parched fields of Ennor and rained on them, and on nowhere else.
+  Year 1592  *  In the 1592nd year the granaries of Querrin rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+  Year 1594     Rain came to Umbrin. The old people said it smelled of the god.
+  Year 1596  *  In Kaddo they whispered that the fever was the god's own breath. Many went to the temples that year.
+  Year 1596     In Kaddo the people sickened, and the roads to it were empty.
+  Year 1597     Kolm was lost by the Vaeli and won by the Teshki, and its market changed hands with it.
+  Year 1599     A spear of light came down close by Murrow, and the Umaran elders argued for a long time about what it meant.
+  Year 1599     The Teshki were beaten, and the Vaeli took their best fields.
+  Year 1605  ** In the 1605th year the world turned a page: the Umari, first of all peoples, came into the Age of the Atom, and the others began to hurry.
+  Year 1605     The Vaeli split the smallest thing in the world, and found a fire inside it.
+  Year 1606     The Umari built at Kesh Amun a house where the smallest fire burns. It was the first power plant of the Umari.
+  Year 1606     Another road joined Ulu Kesh to Inishte of the Teshki, and the tolls on it were argued over.
+  Year 1608     At Tel Asha the craftsmen woke with ideas they could not explain, and claimed them as their own.
+  Year 1609     A red night: the hills west of Tamsin Var burned, and ash fell on the great city.
+  Year 1610     The settlers of Umbrin were caught in the woods east of Ravik, and none came home to tell of it.
+  Year 1611     Orro-Ka struck the ground near Saphal with lightning; the Teshki counted it a warning.
+  Year 1614     The wise of the Hsar learned to wake the fire inside stones, and some of them were afraid.
+  Year 1614     Lightning walked on the hills close by Tamsin Var, and no one was hurt, that time.
+  Year 1615  *  In the 1615th year the Vaeli raised a power plant at Zuneri, and were proud of it for one generation, which is the usual length of pride. No one among the Vaeli had built a power plant before.
+  Year 1615     The god let rain fall on Mirathe, though it had not been asked for. The children made mud houses.
+  Year 1615     No rain fell on the lands of Vornhal. The river showed its stones, and the people counted them.
+  Year 1615     In Vornhal they burned fat and asked Ka-Imen for rain.
+  Year 1617     The Cloud-Shepherd laid a hand on Ilo, and the sick rose from their beds, puzzled, and asked what there was to eat.
+  Year 1620     Fire came down from a clear sky close by Brennick, and no one in the great city slept that night.
+  Year 1622     At Tamsin Var they built a power plant. It took longer than promised and cost more than was said, as is the way of all building.
+  Year 1623     The Teshki entered the age of the hidden fire, with great fears.
+  Year 1623     Lightning found the woods close by Dorrow, and the forest burned for a season. In the spring, from the ash, it began again.
+  Year 1625     A great power plant hummed at Sarnath, and its lights never went out. It was the first power plant of the Hsar.
+  Year 1626     Where the Cloud-Shepherd passed near Zuneri, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 1627     At Ravik the hidden fire was put to work, and the lamps of a whole country were lit from it. No one among the Teshki had built a power plant before.
+  Year 1628     In Umbrin the sick were healed, all at once, and the healers lost their trade for a while.
+  Year 1633     A wildfire came close to Zuneri, and turned only when the wind did.
+  Year 1634     Orro-Ka sent rain on the thirsty fields of Ravik.
+  Year 1637     The Umari built at Kaddo a house where the smallest fire burns.
+  Year 1641     Rain came to Vornhal. The fields were glad of it.
+  Year 1641  *  In the 1641st year the Hsar stopped calling their god the Physician of Towns. From now on, in the market and at the hearth, it was She Who Opens the Sky.
+  Year 1644     A great power plant hummed at Oduya, and the Teshkan priests did not like it.
+  Year 1644  *  The ground close by Nish heaved like the sea. The Umari said Ashvel had stamped upon the earth.
+  Year 1644     The hills south-west of Brennick burned, and the herds fled toward the great city.
+  Year 1645  *  The Cloud-Shepherd split the earth near Ilo, and a mountain was born in one summer, roaring like a calf. Its smoke stood over the land for twelve years.
+  Year 1648     Rain answered the prayers of Haddath, so suddenly that the priests were soaked at the altar.
+  Year 1650  *  The ice in the north began to weep, and the summers were cruel.
+  Year 1653     At Lumbe the hidden fire was put to work, and the lamps of a whole country were lit from it.
+  Year 1654     Famine came to Oduya.
+  Year 1655     Fire walked through the woods south-west of Ytheth, and the Vaeli prayed for rain.
+  Year 1658     Thunder rolled over Kesh Amun, and lightning fell close by the great city.
+  Year 1660     Ishmavel, a fisher of Kaddo, came down from the hills with a message from Ashvel.
+  Year 1660     Ishmavel told the Umari to go out and fill the land.
+  Year 1668     The Umari built at Garrowmere a house where the smallest fire burns.
+  Year 1670  *  The god built a mountain of fire in the woods east of Mirathe. Its glow lit the nights of the great city.
+  Year 1670     Lightning struck on the shore north-west of Imbrek in a summer storm.
+  Year 1675     Caravans of the Umari now came to Ytheth of the Vaeli as well.
+  Year 1677     The fields about Sarnath grew green overnight.
+  Year 1677     Fire ran through the hills north of Kaddo.
+  Year 1678     A warm rain fell on Umbrin all through the night, and the roofs leaked, and nobody minded.
+  Year 1681     A grey wave as tall as a temple broke over the fields of Brennick, and salt lay on them for years.
+  Year 1682     A great power plant hummed at Saphal, and the Teshkan priests did not like it.
+  Year 1687     A storm walked inland over the country of Nish, and the Umari counted their dead and their cattle.
+  Year 1690     At Mirathe the hidden fire was put to work, and the lamps of a whole country were lit from it.
+  Year 1694     A hard sun stood over Tel Asha all that summer, and the barley died standing.
+  Year 1695  *  The people of Brennick prayed to be healed, and they were, and the temple was full for a year.
+  Year 1698     The Teshki built at Avalun a house where the smallest fire burns.
+  Year 1700  *  The sea was rising. Every year the tide came a little higher.
+  Year 1702     The herds about Ytheth grew fat on grass that had not been there the week before.
+  Year 1704     The old people of Penkarrow said the fire north-west of the great city had been started by a careless shepherd, and argued about it all winter.
+  Year 1708     A great power plant hummed at Dorrow, and its lights never went out.
+  Year 1710  *  The craftsmen of Lumbe dreamed the same dream, and woke knowing new things.
+  Year 1713  *  Ka-Imen struck the earth close by Sarnath, and the land rang like a drum. In the great city the roofs came down.
+  Year 1713     Black clouds came over Oduya from the sea, and the hail broke the young barley.
+  Year 1713  *  The Hsar no longer called the god She Who Opens the Sky; now they said the Laughing Storm.
+  Year 1720  *  A star fell close by Inishte, and the ground split open.
+  Year 1720  ** Inishte was struck from the sky and was no more.
+  Year 1721     At Brennick the hidden fire was put to work, and the lamps of a whole country were lit from it.
+  Year 1722     Settlers who had left Nish were never heard from again.
+  Year 1725     Near Tamsin Var, at the touch of the god, seeds woke in the dry ground.
+  Year 1726     Just when the wells of Ytheth were failing, the god sent rain; the priests said they had known it would come.
+  Year 1728     Ishmavel the prophet went into the hills and did not come back. The Umari said Ashvel had taken the prophet home.
+  Year 1730     The young of Ytheth were seized with questions, and went looking for answers in the stars.
+  Year 1730  *  A road was opened between Zuneri of the Umari and Sarnath of the Hsar, and strange coins began to turn up in both markets.
+  Year 1731     The sea rose at Ilo by a hand's width a year, and then by another. In the 1731st year the last of its people rowed away, and the fish moved into the houses.
+  Year 1734     The old people of Murrow said the fire south of the great city had been started by a careless shepherd, and kept their buckets full.
+  Year 1735     Rain returned to Tamsin Var at last.
+  Year 1740     A great power plant hummed at Vornhal, and the Hsari priests did not like it.
+  Year 1744     Clouds came back over Brennick, and the dry river filled in a single night.
+  Year 1745     A wildfire came close to Brennick, and turned only when the wind did.
+  Year 1749     Around Imbrek the trees bent with fruit, and the Umari said Ashvel had walked there.
+  Year 1750     A storm such as the old people had never seen passed over Brennick.
+  Year 1751     At Saphal there was hunger, three years running.
+  Year 1754     Fire ran through the woods south-east of Mirathe.
+  Year 1757  *  War came between the Hsar and the Umari, who had once traded salt and songs.
+  Year 1759     The Hsar took Nish from the Umari.
+  Year 1762     Ashvel whispered to the wise of Qe-Luun, and they argued about it for years.
+  Year 1762     The Hsar attacked Kaddo in the rain and were beaten by its old men and boys.
+  Year 1763     The Teshki built at Vornhal a house where the smallest fire burns.
+  Year 1763     The land of Qe-Luun blossomed out of season, and the beekeepers grew rich.
+  Year 1768     In Kesh Amun they said the god was deaf, and let the shrine fall into ruin.
+  Year 1770     The sky struck Sarnath without a cloud in it, and the old people said the god had a long memory.
+  Year 1772     An army of the Hsar besieged Umbrin and went home with nothing but stories.
+  Year 1773  *  Fire came down out of a clear sky south of Kesh Amun. It was seen as far as the great city.
+  Year 1773     A falling star made Kesh Amun into a pit of glass.
+  Year 1773     The war ended in victory for the Hsar. In their cities there were feasts for a month.
+  Year 1775     The sky over Brennick cracked open with fire, and the rain that followed was warm.
+  Year 1778     A long gentle rain came to Tel Asha, and the Umari did not complain.
+  Year 1779     Sarnath prayed against the sickness, and Ashvel took it away like a cloth from a table.
+  Year 1782     That summer a fire ate the woods south-east of Brennick.
+  Year 1783     The Laughing Storm drew a hand across the sky above Oduya, and the dry fields drank.
+  Year 1787     The land at Dorrow sank, and water came in.
+  Year 1790     The fever left Nish in a single night. The Hsar said Ka-Imen had walked through the streets.
+  Year 1793  *  In Ulu Kesh they painted marks on the doors of the sick, and the marks spread from street to street.
+  Year 1794  *  The Umari said the sickness in Querrin was sent by Ashvel, and they were afraid.
+  Year 1795     The dry country about Sarnath drank rain sent by Ashvel, and turned green again.
+  Year 1798     A red night: the woods outside Saphal burned, and ash fell on the great city.
+  Year 1801     There was famine in Penkarrow. The people looked up and asked the Laughing Storm for rain, and counted the days, and the days were long.
+  Year 1801     The Vaeli marched against the Hsar, and the fields were left unharvested.
+  Year 1804     Wind and rain beat upon Tsoreh for three days, and the roofs flew.
+  Year 1810     Soft rain fell over Garrowmere.
+  Year 1813     Ashvel breathed on the land around Kesh Amun, and it flowered.
+  Year 1814     In a night of thunder a bolt came down near Penkarrow, and in the morning the shepherds found the stones blackened.
+  Year 1814     The Hsar held Nish against the Vaeli, and the field was red.
+  Year 1815     Fire walked through the hills south-west of Dorrow, and left only ash behind it.
+  Year 1818  *  The healers of Oduya had given up, but Orro-Ka had not. The fever left the town in a single night.
+  Year 1823     Before Brennick, the Vaeli met the Hsar. By evening the field belonged to the Hsar, and to the birds.
+  Year 1826     Esk fell to the Vaeli, and its Hsari lords were driven out.
+  Year 1830     Traders from Sarnath found their way to Zuneri of the Vaeli, where Hsari coin was already known.
+  Year 1833     Lightning came down at Penkarrow on a windless day. The Teshkan priests said it was a warning; the farmers said it was a waste of a good tree.
+  Year 1835     Clouds gathered over Tel Asha where no clouds had been, and wept on the dry fields. The Umari gave thanks to Ashvel.
+  Year 1837     The sea sent a howling wind against Qe-Luun, and it took the thatch from every roof.
+  Year 1839     In the 1839th year Vornhal opened its gates to the Vaeli, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+  Year 1842     The host of the Vaeli came against Sarnath and broke on its walls like a wave on rock, and went home fewer.
+  Year 1843     Esk and Mirathe began to trade, pots for fish, and both grew fat on it.
+  Year 1848     Rain fell on Haddath out of a clear sky, and the Umari danced in it.
+  Year 1850  ** In the 1850th year the Vaeli lit a second sun over Brennick. It rose at noon and did not set gently. Afterwards both peoples were very quiet for a long time.
+  Year 1850  *  When the light faded, Brennick was gone.
+  Year 1851     The woods near Bel Thuun burned, and the Teshki watched the glow at night.
+  Year 1852     The Vaeli marched into Sarnath, and the town paid tribute from that day.
+  Year 1853     A fire of thought was lit in Kesh Amun, and the Umari built things no one had built before.
+  Year 1856     A tree near Vornhal was split by lightning. The children of the great city dared each other to touch it.
+  Year 1856     Where Umbrin stood, fish now swim.
+  Year 1859  *  The last of the Hsar passed from the world, and only their ruins remember them.
+  Year 1861     The country west of Zuneri burned until the rain came, and the smoke hung over the great city.
+  Year 1863     A wall of water came out of the sea upon Oduya.
+  Year 1863     The sea stood up and fell on Oduya, and when it drew back, the great city was gone.
+  Year 1866     In Kaddo a potter invented a wheel, a weaver a loom, and a priest a reason why the god had done it.
+  Year 1866     Ox-carts began to creak along the road from Kesh Amun to Zuneri, loaded with grain and gossip.
+  Year 1871     Kaddo was healed by Ashvel. For a generation no one there feared the sickness.
+  Year 1874     Mist and rain came to Penkarrow, and the hills around it ran with little streams.
+  Year 1874  *  Hunger came to Penkarrow and sat down at every table. Many were carried out to the fields that could no longer feed them.
+  Year 1878     Ashvel spoke in fire over Lumbe. No one understood the word, but everyone heard it.
+  Year 1882     The hills near Penkarrow burned, and the Teshki watched the glow at night.
+  Year 1886     A dark cloud stood over the parched fields of Garrowmere and rained on them, and on nowhere else.
+  Year 1886     The prayers of Saphal went up for many generations and nothing came down. The Teshki began to wonder whether anyone was listening.
+  Year 1890     Near Qe-Luun, at the touch of the god, seeds woke in the dry ground.
+  Year 1892     A great wave broke upon Kaddo, and the people of the great city ran for the hills.
+  Year 1892  *  The Teshki made war on the Vaeli.
+  Year 1896     The country north of Sarnath burned for many days, and the smoke hung over the great city.
+  Year 1897     In Kesh Amun they still tell of the great wind, which carried a goat over the temple.
+  Year 1899     There was no cloud in the sky, and still the lightning fell close by Dorrow. In the great city they spoke of it in whispers.
+  Year 1900  *  Erethe grew hot as a kiln. The forests of the south withered.
+  Year 1902     The Teshki came against Mirathe and were thrown back.
+  Year 1904     The feet of traders wore a road between Qe-Luun and Mirathe. Along it went pots and coins and, later, fevers.
+  Year 1906     Lightning found the woods west of Saphal, and the forest burned for a season. In the spring, from the ash, it began again.
+  Year 1911     A storm passed over Sarnath, and lightning set the grass alight outside the great city.
+  Year 1911  *  The banners of the Teshki were raised over Nish.
+  Year 1914     The earth moved under Zuneri like dough under a baker's hand. The Umari did not find it amusing.
+  Year 1915     Esk was lost by the Vaeli and won by the Teshki, and its market changed hands with it.
+  Year 1918     Fire walked through the woods near Imbrek, and the beasts ran before it.
+  Year 1920  ** At Vornhal the Umari began to build a ship that would not sail on water. The children were told it was for them. It was.
+  Year 1921     Before Ytheth, the army of the Teshki was broken.
+  Year 1922  *  Again the sun-fire fell, this time upon Vornhal.
+  Year 1922  *  Nothing of Vornhal was left standing but shadows on the stones.
+  Year 1924     The young of Zuneri were seized with questions, and went looking for answers in the stars.
+  Year 1926  *  The fire of the Teshki came down on Sarnath, and the sky over the Vaeli was black for a season.
+  Year 1926     Sarnath did not rise again from it. The ash fell for a year.
+  Year 1927     Lightning walked on the hills close by Sarnath, and the priests of the great city read it as a sign.
+  Year 1932     At Mirathe the Vaeli won the day. The Teshki tell it differently, in their own chronicle, which no one has asked to read.
+  Year 1937     The sea drew back from the shore at Ravik, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+  Year 1938  ** In the 1938th year the world turned a page: the Teshki, first of all peoples, came into the Age of the Stars, and the others began to hurry.
+  Year 1940     The Vaeli turned their eyes to the stars, and built towers of fire to reach them.
+  Year 1940     The country in the hills north-west of Zuneri burned for many days, and the smoke hung over the great city.
+  Year 1941     The fields about Kaddo grew green overnight.
+  Year 1942     The Umari reached the edge of heaven, and found it empty.
+  Year 1944     Tamsin Var was swallowed by the sea.
+  Year 1945  *  The Teshki burned Mirathe of the Vaeli with the hidden fire.
+  Year 1945     Nothing of Mirathe was left standing but shadows on the stones.
+  Year 1946     Thunder rolled over Kolm, and lightning fell close by the great city.
+  Year 1947     A voice cried out in the market of Nish: it was Anuket, who said the god had chosen the Teshki.
+  Year 1947     Anuket spoke for the Laughing Storm: "Go out and fill the land." The young of the Teshki took this as permission, which it was.
+  Year 1947  *  The fire of the Teshki came down on Ytheth, and the sky over the Vaeli was black for a season.
+  Year 1947     When the light faded, Ytheth was gone.
+  Year 1947  *  The Vaeli dwindled and were gone, and other peoples walked in their streets.
+  Year 1948     The priests of Garrowmere said Ashvel had sent the sickness for their sins, though no one could agree which sins.
+  Year 1948     Fever spread through Garrowmere, and many were buried.
+  Year 1948     At Dorrow, the Umari prayed to Ashvel for healing, morning and evening.
+  Year 1949     The Teshki sent out settlers who did not arrive. Some said the wilds took them.
+  Year 1950     A bolt of white fire struck outside Tel Asha at noon. The Umari said it was Ashvel clearing the throat of heaven.
+  Year 1951     Where the Laughing Storm passed near Bel Thuun, the land went green out of season, and the old women said the trees had heard a rumour.
+  Year 1957     Out of a blue sky a white spear fell close by Penkarrow, and split the old well-stone. The Teshki said nothing, and brought more bread to the shrine.
+  Year 1961     The country in the hills south-west of Dorrow burned until the rain came, and the smoke hung over the great city.
+  Year 1963     Lightning struck south-west of Dorrow in a summer storm.
+  Year 1966     The ground heaved under Lumbe at the touch of the god.
+  Year 1972  *  At Vornhal the craftsmen woke with ideas they could not explain, and claimed them as their own.
+  Year 1980     Umbrin of the Teshki began to buy the goods of Sarnath, and its merchants learned the Umaran way of haggling.
+  Year 1984     The sky over Kaddo cracked open with fire, and the old oak north of the great city burned like a torch.
+  Year 1986     Lightning fell close by Ennor out of a clear sky. The Teshki said Orro-Ka was not pleased.
+  Year 1995  ** Lumbe drowned, and its bells could be heard under the waves, the sailors said.
+  Year 1998  *  A cool wind passed through Dorrow, and in every house the fevered slept and woke well.
+  Year 2000  ** From Vornhal, the Umari went up into the sky on a pillar of fire, carrying seed and songs and the name of Ashvel. Those who stayed watched until the light was a star among stars.
+  Year 2000  ** In the 2000th year the Umari went up from Vornhal to the stars. They were not sure, at the end, what Ashvel had been to them: a parent, a storm, a story. So they did what grown children do: they said a careful goodbye, and promised to write, and did not say when. Somewhere above the clouds one of them looked back and raised a hand, just in case.
+  --- epithets: the Umari: the Cloud-Shepherd; the Teshki: the Laughing Storm; the Orun:  (dead); the Vaeli: the Laughing Storm (dead); the Hsar: the Laughing Storm (dead); god: the Cloud-Shepherd
+  C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-chronicle-frame-early.png (frame of year 125, pop 844)
+  C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-chronicle-frame-mid.png (frame of year 975, pop 261220)
+  C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-chronicle-frame-late.png (frame of year 2000, pop 3061997)
+  C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-chronicle-entries.png (853 entries with a place)
+  garbage events emitted: 6000, entries written: 1355
+  ocean world wrote 5 entries, first: A star fell on the empty sea of the far north, so far away that only its thunder reached the people.
+  history frames pushed: 219, kept: 124, final interval: 50.000000
+  kept years: first 25.000000 ... last 6000.000000, gap after the thinning 50.000000
+  society is real: regard hook not used
+  sample deterministic run: 106 entries
+  fuzzer: 2353 entries, 1757 distinct texts, 0 faults
+  L6 settlements: 160 of 40962 cells
+  L6 per year: events 0.071680 ms (12 events), updateEpithets 0.077848 ms, snapshot 0.012833 ms; entries 205, frames 16
+  L6 tale: 0.144600 ms, 6 paragraphs
+  TALE The Chronicle of Erethe
+    > In the beginning Erethe was fire and then stone, and the god called ice down out of the dark. Where it fell, the hollows filled, and that was the first sea, and in time it covered the greater part of the world. Then green came out of the wet places, slowly at first, as if it were not sure it was allowed.
+    > The first people were the Exi. The god woke them in the woods at Townsend, and they called the god Ashvel.
+    > In 400 years the peoples of Erethe founded 160 settlements, and at their height they numbered 30,120 souls. The greatest of their places was Townsend. None of them ever learned to work metal.
+    > The god did little that the scribes could see. In the end, most of them called the god the Old God.
+    > There were hard times. Hunger came 23 times.
+    > The story of Erethe is not finished. Six peoples still live there, in 160 places, and the scribes are still writing.
+  E 1 [fire] Lightning found the woods at Townsend, and the forest burned for a season. In the spring, from the ash, it began again.
+  E 1 [battle] Before Townsend, the Exi met the Exi. By evening the field belonged to the Exi, and to the birds.
+  E 1 [epithet] Among the Exi the god was named the Old God.
+  E 9 [tier] The tents of Townsend gave way to houses of mud and reed, and it was called a village.
+  E 21 [famine] There was famine in Townsend. The people looked up and asked the Old God for rain, and counted the days, and the days were long.
+  E 35 [miracle-rain] Clouds gathered over Townsend where no clouds had been, and wept on the dry fields. The Exi gave thanks to Ashvel.
+  E 45 [miracle-rain] Ashvel sent rain on the thirsty fields of Townsend.
+  E 58 [miracle-rain] The dry country about Townsend drank rain that came from nowhere, and turned green again.
+  E 70 [digest] Little of those thirty years was written down, except that scores of attacks by the Exi came to nothing, and that eight towns of the Exi went hungry.
+  E 85 [battle] The host of the Exi came against Townsend and broke on its walls like a wave on rock, and went home fewer.
+  E 97 [trade] Another road joined Townsend to the town of the Exi, and the inns along it prospered.
+  E 106 [miracle-rain] Just when the wells of Townsend were failing, the god sent rain, and the frogs sang all night.
+  E 121 [tier] Townsend became a city, the pride of the Exi.
+  E 133 [building] In the 133rd year the Exi raised a market at Townsend, and were proud of it for one generation, which is the usual length of pride.
+  E 145 [miracle-rain] Just when the wells of Townsend were failing, the god sent rain, and the frogs sang all night.
+  E 157 [miracle-rain] A dark cloud stood over the parched fields of Townsend and rained on them, and on nowhere else.
+  E 169 [lightning] In a night of thunder a bolt came down at Townsend, and in the morning the shepherds found the stones blackened.
+  E 185 [lightning] Lightning walked on the hills at Townsend, and the priests of the great city read it as a sign.
+  E 197 [famine] In the 197th year the granaries of Townsend rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+  E 209 [prayer] The priests of Townsend went up to the high places and cried out for rain.
+  E 221 [lightning] Thunder rolled over Townsend, and lightning fell at the city.
+  E 234 [miracle-rain] Clouds gathered over Townsend where no clouds had been, and wept on the dry fields. The Exi gave thanks to Ashvel.
+  E 249 [famine] At Townsend there was hunger, three years running.
+  E 257 [prayer] In Townsend a lamb was given to Ashvel, with a prayer for rain.
+  E 273 [prayer] In Townsend they burned sweet grass and asked Ashvel for rain.
+  E 284 [miracle-rain] The Old God drew a hand across the sky above Townsend, and the dry fields drank.
+  E 298 [miracle-rain] The dry country about Townsend drank rain that came from nowhere, and turned green again.
+  E 310 [digest] Those were busy years, if not great ones: the Exi were beaten back a score or more times, and fire, storm and drought troubled the lands of the Exi more than a dozen times.
+  E 321 [miracle-rain] Ashvel sent rain on the thirsty fields of Townsend.
+  E 336 [miracle-rain] The Elder drew a hand across the sky above Townsend, and the dry fields drank.
+  E 347 [miracle-rain] Just when the wells of Townsend were failing, the god sent rain; the priests said they had known it would come.
+  E 359 [miracle-rain] Ashvel sent rain on the thirsty fields of Townsend.
+  E 372 [miracle-rain] A dark cloud stood over the parched fields of Townsend and rained on them, and on nowhere else.
+  E 385 [prayer] The women of Townsend sang at the shrine every evening and asked for rain.
+  E 400 [digest] Of the smaller things of those thirty years: the Exi lost scores of battles; and ten towns of the Exi knew lean years.
+  integration: 53 entries, 6 settlements, 1 cultures, pop peak 5005.882421, year 800.000000
+  TALE The Book of Erethe
+    > In the beginning Erethe was fire. The god cooled it and called down the ice of heaven, until the sea covered the greater part of its face. Then green came upon the land, and beasts, and the god looked for a people to wake.
+    > The first people were the Itahaun. The god woke them in the woods at Dimar Yushunab, and they called the god Aqunar.
+    > In 800 years the peoples of Erethe founded six settlements, and at their height they numbered 5,006 souls. The greatest of their places was Dimar Yushunab. The furthest of them reached the Age of Bronze.
+    > The god was known for rain and lightning. The scribes wrote more of the god's mercy than of the god's anger. In the end, most of them called the god the Maker.
+    > There were hard times. Five mountains woke in fire and hunger came once.
+    > These things the scribes remembered above all. In the first year, before there was counting, the god touched the ground at Dimar Yushunab, and the Itahaun woke. They looked up at the sky and did not yet know whom to thank, so they thanked everything. In the first year, again the god woke a people: the Itahaun, at Qarazamil. In the year 344, the Itahaun learned to marry copper and tin, and the age of bronze began among them. No people had done so before them.
+    > The story of Erethe is not finished. One people still lives there, in six places, and the scribes are still writing.
+  integration: 7 of 9 sample kinds appear
+    [In the 700th year the Umari finished the Spire of Vornhal at the city. It took three lifetimes. The first did not live to see it; the last complained of the dust.]
+    [The people of the far valleys about Vornhal spoke the old tongue so strangely that the capital laughed at them. In the 700th year they stopped coming to be laughed at, and called themselves the Vaeli.]
+    [A prophet named Brannoch stood up in the market of Vornhal and said that Ashvel had spoken. Some believed. The rest moved their stalls.]
+    [The prophet spoke for the god: "Build a thing that can be seen from the sky." And the Umari began to quarry the hills.]
+    [In the 700th year the world turned a page: the Umari, first of all peoples, came into the Age of Bronze, and the others began to hurry.]
+    [The Umari turned their eyes to the stars, and built towers of fire to reach them. No people had done so before them.]
+  12 captures in 5 years: 3 notable, 1 minor
+  digest: In those ten years eight towns went over to the Vaeli.
+  8 cities destroyed in 8 years: weight 3/2/1 = 2/4/2
+  'out of habit': 10
+  'was abandoned': 10
+  'grass grew in its streets': 10
+  ' gave up ': 10
+  'was left empty': 10
+  100 abandonments, 50 told
+  answers in ages 1, 1, 2, 2: weights 2 1 2 1
+  sea rose: The sea rose at Qe-Luun by a hand's width a year, and then by another. In the 100th year the last of its people rowed away, and the fish moved into the houses.
+  lowered: Ashvel pressed the land down under Imbrek like a thumb in clay, and the sea came in to see what had happened.
+  engines: The smoke of the Brannish engines warmed the air, and the sea came up to meet it. At Sarnath it did not stop.
+  milestone: The sea was rising, and this time not by any god's hand: the chimneys of the Branni had warmed the air, and the ice was giving back its water.
+  risen sea: the Maker / the Empty Chair / 
+  lowered land: the Maker / the Deep / 
+  600 busy years: budget on 308 entries (20 digests), off 550
+  20 digests in 600 years
+  most used opening: 'Below the great' x2; e.g. Over thirty years a score or more towns of the Umari had their prayers answered. In the same years Ashvel gave more than a dozen towns of the Vaeli what they prayed for.
+  In the 300th year the Umari and the Teshki swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+  The alliance of the Umari and the Teshki was not broken; it was forgotten, like a path no one walks any more.
+  The Umari turned on the Teshki, who had been their allies. The stone on which they had sworn was broken and thrown in the river.
+  The Vaeli had sworn to stand by the Teshki, and when the Umari marched, they kept their word.
+  The alliance of the Umari and the Teshki ended the way such things end: with the Umari at the gates of their old friends. They said the Empty Chair had come to love the Teshki better, and could not forgive it.
+  In the 100th year the Teshki remembered an old insult from the Umari, and went to war over it.
+  In the 130th year the Umari said that the Waker had turned against them, and that the Teshki were the reason. They went to war to set it right.
+  The Teshki saw how the Maker smiled on the Umari, and could not bear it. They went to war to take the god's favour by the spear.
+  War came between the Umari and the Teshki, who had once traded salt and songs.
+  The Teshki made war on the Umari, saying that a people the god punishes must punish someone in turn. The chronicle records the saying, not the sense in it.
+  Envy is a slow fire. Among the Umari it had burned for a generation, watching Ashvel bless the Teshki, and at last it reached the spears.
+  Envoys of the Teshki spat on the threshold before the Umari, and the war began.
+  Their towns burned under a clear sky, and the Umari would not believe it was for nothing. Someone had offended the Waker, they said, and it must have been the Teshki.
+  "Why them?" the Teshki asked, of the god and of the Umari. The god did not answer, so they asked the Umari with an army.
+  The Umari and the Teshki could no longer share the river. They tried to share it with spears instead.
+  When the anger of Orro-Ka fell on the Teshki, they looked for someone to blame, and found the Umari. The war began that summer.
+  The Umari said that the Silent One loved the Teshki too well, and that a little of that love could be taken by force.
+  The Teshki made war on the Umari.
+  The Umari had been struck by the Silent One and could not strike back at the sky. They struck at the Teshki instead.
+  The gifts of Orro-Ka fell on the Umari and passed the Teshki by, and the Teshki said this was not just. They crossed the border to take their share.
+  The Umari sharpened their spears and went against the Teshki, though no one could remember who had struck first.
+  The priests of the Teshki said the god was punishing them for the wickedness of the Umari. The young believed it, and there was war.
+  The Umari grew jealous of the Teshki, whom the Silent One seemed to love better, and went to war to be loved instead. The chronicle does not record that it worked.
+  The Teshkan kings swore an oath against the Umari, and there was war.
+  The wise of the Umari could not stay the god's hand, so they pointed at the Teshki. The young took the hint, and their spears.
+  Orro-Ka blessed the fields of the Umari and not the fields of the Teshki. So the Teshki went to take the fields.
+  The Umari marched against the Teshki, and the smiths worked day and night.
+  The Teshki counted their dead and their ruined fields, and decided that the Umari must have turned Orro-Ka against them. They went to undo it with spears.
+  The long quarrel between the Teshki and the Umari came to blood.
+  When the anger of Ashvel fell on the Umari, they looked for someone to blame, and found the Teshki. The war began that summer.
+  War between the Umari and the Teshki. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+  Their towns burned under a clear sky, and the Teshki would not believe it was for nothing. Someone had offended the Rumour, they said, and it must have been the Umari.
+  The Umari made war on the Teshki, saying that a people the god punishes must punish someone in turn. The chronicle records the saying, not the sense in it.
+  In the 1060th year the Teshki saw how the Rumour smiled on the Umari, and could not bear it. They went to war to take the god's favour by the spear.
+  In the 1120th year the Teshki said that the Rumour had turned against them, and that the Umari were the reason. They went to war to set it right.
+  The gifts of Ashvel fell on the Teshki and passed the Umari by, and the Umari said this was not just. They crossed the border to take their share.
+  The Teshki grew jealous of the Umari, whom the Rumour seemed to love better, and went to war to be loved instead. The chronicle does not record that it worked.
+  In the 1270th year the Umari remembered an old insult from the Teshki, and went to war over it.
+  Ashvel blessed the fields of the Teshki and not the fields of the Umari. So the Umari went to take the fields.
+  War came between the Teshki and the Umari, who had once traded salt and songs.
+  The Teshki said that the Rumour loved the Umari too well, and that a little of that love could be taken by force.
+  In the 1510th year the Umari saw how the Silent One smiled on the Teshki, and could not bear it. They went to war to take the god's favour by the spear.
+  In the 1570th year the Umari said that the Silent One had turned against them, and that the Teshki were the reason. They went to war to set it right.
+  The Umari marched against the Teshki, and the fields were left unharvested.
+  The Umari won their war against the Teshki, and gave the glory to the god. The priests of Vornhal had never been so busy, nor so well fed.
+  After twelve years the Teshki asked for peace, and the Umari granted it, and made them pay for the asking.
+  After twelve years the war ended, and the Umari said it was the god who had won it. The Teshki said nothing, and their love for the god grew cold.
+  The Umari won their war against the Teshki.
+  The Umari carried the spoils of the Teshki up the temple steps of Vornhal, saying the god had been with them.
+  The armies of the Umari came home in triumph to Vornhal, and the Teshki counted what they had lost.
+  The Umari and the Teshki had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead. The same calm came over the Vaeli.
+  A great calm settled on the border of the Teshki and the Vaeli. The young, who had been ready to fight, went home and were annoyed about it for years.
+  A sign appeared over the armies of the Umari and the Teshki, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come. Even the Vaeli, who had been spoiling for a fight with them, put their grievances away.
+  A sign appeared over the armies of the Umari and the Teshki, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+  The war ended when there were none of the Teshki left to fight it.
+  At Tel Asha they set stones in a ring and laid the first fruits on them for Ashvel. It was a small shrine. The Silent One did not complain.
+  Tel Asha built a granary against lean years. It was the first granary of the Vaeli.
+  lightning: approved 244, invented 56, other 0
+  peace: approved 237, invented 63, other 0
+  volcano: approved 239, invented 61, other 0
+  rain: approved 300, invented 0, other 0
+  rain, bloom and a drowning coast: the Drowner
+  Settlers who had left Vornhal were never heard from again.
+  The Vaeli sent out settlers who did not arrive. Their kin waited for years.
+  Settlers set out from Vornhal, and none of them lived to build anything.
+  Settlers who had left Vornhal were never heard from again.
+  3915 entries over 64 rounds; 84 of 84 voice lines found
+  200 wars: 20 entries open with 'In the', 0 right after another
+  society is real: regard hook not used
+    radius 2: 19 cells (hop disc 19, hex 3r^2+3r+1 = 19); outermost 2.18 steps, first outside 2.38 steps
+    radius 3: 37 cells (hop disc 37, hex 3r^2+3r+1 = 37); outermost 3.14 steps, first outside 3.25 steps
+    radius 4: 63 cells (hop disc 61, hex 3r^2+3r+1 = 61); outermost 4.19 steps, first outside 4.26 steps
+    radius 5: 97 cells (hop disc 91, hex 3r^2+3r+1 = 91); outermost 5.25 steps, first outside 5.25 steps
+    radius 6: 137 cells (hop disc 127, hex 3r^2+3r+1 = 127); outermost 6.24 steps, first outside 6.25 steps
+    12 settlements at radius 6 own 1399 cells; window lat -21..40 lon -5..95
+    history (year 560): 7 live after era 1, 40 after era 2; captured 3, destroyed 2, seceded 6; final 54 live, 3 dead; A 25, B 21, S 8; 387 ms
+    L6, 60 settlements: bestSite 1.08 ms mean, found 0.100 ms mean, claim r6 0.017 ms, canSettle 0.36 us, rebuild 0.13 ms
+    fuzz: 1400 ops, 90 founded, 43 destroyed, 65 captured / converted, all invariants held
+    seed 1: 26 settlements, 1215 cells inside a disc
+    seed 2: 28 settlements, 1181 cells inside a disc
+    seed 3: 21 settlements, 1017 cells inside a disc
+    radius 6 territory: north pole 151, south pole 151, equator 137 cells
+    radius 6 disc over the sphere (every 97th cell): 121 .. 158 cells
+    default spacing (crowdHops 7) fits 147 settlements on seed 4 (L 6)
+    L6: bestSite 0.71 ms mean (161 calls), found 0.099 ms, claim 0.0102 ms (mixed radii, 160 neighbours), canSettle 0.10 us over 16385 land cells (308 ok), siteScore 0.32 us, near(0.3) 5.80 us, at 0.150 us, rebuild 0.146 ms, destroy 0.001 ms, capture 0.000 ms
+    climate timing at L = 6: update median 5.36 ms (min 5.07, max 5.86), first calibrate 29.4 ms (builds the wind table), stepIce 0.317 ms, yearly 0.107 ms
+    climate adv timing at L = 6: seed 1 cold 28.8 median 5.92 max 6.31; 6 droughts of 0.6 rad median 7.39; seed 6 cold 30.6 median 5.83 max 6.65; seed 9 cold 28.8 median 5.73 max 5.87; all sea 3.86, all land 0.55
+    climate adv equilibrium: co2 60: +2.03 C, sea +0.134; co2 80: +2.54 C, sea +0.169; co2 120: +3.41 C, sea +0.224; co2 200: +4.75 C, sea +0.312; co2 300: +5.99 C, sea +0.390; 
+       geo L=6: build 4.1 ms, cellAt 0.050 us cold / 0.051 us hinted, within(0.1 rad, 101 cells) 1.1 us  [6]
+    formula: v 0.2 -> 0.239477 (gauss 1.5492)
+    border: touching 0.455, 3 hops apart 0.136, 8 apart 0.000
+    L 4 no sea: 2 towns, sea cells 0, v -0.77 contact 1, wars 1
+    L 6 no sea: 2 towns, sea cells 0, v -0.82 contact 1, wars 1
+    real modules, 300 years: 1 wars, 6 armies, 5 battles, 4 captures; hash 53d4fa08 / 53d4fa08
+    comets: gate 4, zero 13, levels -6.00 -5.00 -4.00 -3.08 ... 1.50
+    tsunami on helper world: 80 land cells flooded in 20 ticks
+    storm: 24 ticks, 18 over land, 39 wet cells
+    tick with 3 disasters at L6: mean 0.032 ms, max 0.394 ms over 20 ticks
+    real terrain: crater 2.01 -> 0.44, vent now 1.59
+    storms 244, storm-ticks with the eye within 0.15 rad of the young settlement: 0
+    L4 flood volcano: 48 ticks, field max 161, lava cells max 161
+    L6 flood volcano: 48 ticks, field max 162, lava cells max 162
+    all-sea world: lightning 0 storms 0 droughts 0 quakes 0 eruptions 0
+    all-land world: lightning 88 storms 0 droughts 32 quakes 14 eruptions 6
+    hash fadb4d99 / fadb4d99; reload 4dae6c45; events after load: straight 37, reloaded 16
+    L6: tick with volcano + tsunami(3.0, 0.9) + storm: mean 0.032 ms, max 0.073 ms over 30 ticks; sea impact update max 0.47 ms; natural mean 0.0081 ms max 0.179 ms
+    camp / Stone         cells  19 arable  12  K     126.7  (spec ~131, -3.3 %)
+    village / Bronze     cells  37 arable  24  K     633.6  (spec ~638, -0.7 %)
+    town / Iron          cells  61 arable  40  K    2112.0  (spec ~2104, +0.4 %)
+    city / Industry      cells  91 arable  59  K   15576.0  (spec ~15700, -0.8 %)
+    metropolis / Space   cells 127 arable  83  K  105177.6  (spec ~105000, +0.2 %)
+    K 390.7 -> 184.8; worst yearly decline 12.00 %; final pop 184.80; famine counter 0
+    K = 0: abandoned after 33 years (cause famine)
+    hops a->b 5, a->far 12
+    plague 1.0 cured after 19 years (0.85^n < 0.05 -> n = 19)
+    farmed 3 cells for 46 people (summed farmPot 49.6)
+    no buildings, rate 1.0: Bronze 420 (nominal 520) Iron 920 (nominal 1000) Sail 1520 (nominal 1550) Industry 2270 (nominal 2200) Atomic 2890 (nominal 2750) Space 3410 (nominal 3200)  [106 ms for 3500 years]
+    reference curve: Bronze 545 (nominal 520, +5 %) Iron 1028 (nominal 1000, +3 %) Sail 1494 (nominal 1550, -4 %) Industry 2045 (nominal 2200, -7 %) Atomic 2491 (nominal 2750, -9 %) Space 2865 (nominal 3200, -10 %)
+    real modules: pop 60 in year 28; at 300: 7 settlements, 1420 people; 8 settler parties, 8 arrived
+    yearly with 100 live settlements: mean 2.700 ms, worst 6.503 ms; test stand-ins 0.000 ms/yr -> economy alone 2.700 ms/yr, worst 6.503 ms
+    K 13.200; with one NaN-fauna sea cell 11.200 (expected 11.200)
+    L 4 poles: K 2156 / 2156, pop 1317 / 1317, live 2
+    L 6 poles: K 2156 / 2156, pop 1317 / 1317, live 2
+    veg lowered on 290 cells (all of them farmed in the year it happened)
+    after 30 years: 14 live, 0 dead settlements, 2 vars.num keys
+    after 40 years from 1.3 K: pop/K 1.0000, famine 0
+    placed 158 settlements
+    breakdown: year without searches 2.210 ms; bare naval flood 5.683 ms (40162 cells); 136 valid sites, canSettle 0.0002 ms/cell
+    real modules: 158 live; yearly mean 14.256 ms, worst 20.098 ms; stand-ins 0.000 ms/yr -> economy alone 14.256 ms/yr (worst 20.098)
+    camp / Stone         Civ claim:  19 cells,  11 arable (58 %), K     116.2 (spec 131, -11.3 %)
+    village / Bronze     Civ claim:  35 cells,  22 arable (63 %), K     580.8 (spec 638, -9.0 %)
+    town / Iron          Civ claim:  57 cells,  36 arable (63 %), K    1900.8 (spec 2104, -9.7 %)
+    city / Industry      Civ claim:  86 cells,  56 arable (65 %), K   14784.0 (spec 15700, -5.8 %)
+    metropolis / Space   Civ claim: 121 cells,  79 arable (65 %), K  100108.8 (spec 105000, -4.7 %)
+    research with only a dead culture ahead in contact: 1.0000 / yr
+  L4 seed 1      riverT 2.00  rivers 3 (>=10 cells: 0, longest 6)  river cells 8 (0.8 % of land)  mouths 3  confluences 0  lakes 11 (18 cells)  fresh<=2 23 %  ridge 25 %
+  L4 seed 2      riverT 2.00  rivers 7 (>=10 cells: 0, longest 7)  river cells 22 (2.1 % of land)  mouths 5  confluences 1  lakes 5 (8 cells)  fresh<=2 18 %  ridge 23 %
+  L4 seed 3      riverT 2.00  rivers 2 (>=10 cells: 0, longest 6)  river cells 7 (0.7 % of land)  mouths 2  confluences 0  lakes 3 (8 cells)  fresh<=2 11 %  ridge 14 %
+  L5 seed 1      riverT 4.00  rivers 33 (>=10 cells: 0, longest 9)  river cells 123 (3.0 % of land)  mouths 19  confluences 3  lakes 25 (91 cells)  fresh<=2 28 %  ridge 17 %
+  L5 seed 2      riverT 4.00  rivers 26 (>=10 cells: 2, longest 12)  river cells 99 (2.4 % of land)  mouths 12  confluences 6  lakes 21 (79 cells)  fresh<=2 23 %  ridge 18 %
+  L5 seed 3      riverT 4.00  rivers 22 (>=10 cells: 2, longest 10)  river cells 83 (2.0 % of land)  mouths 15  confluences 0  lakes 24 (85 cells)  fresh<=2 25 %  ridge 20 %
+  L5 seed 4      riverT 4.00  rivers 18 (>=10 cells: 0, longest 8)  river cells 64 (1.6 % of land)  mouths 11  confluences 1  lakes 25 (70 cells)  fresh<=2 22 %  ridge 25 %
+  valleys        riverT 4.00  rivers 173 (>=10 cells: 77, longest 50)  river cells 1927 (37.2 % of land)  mouths 34  confluences 139  lakes 0 (0 cells)  fresh<=2 94 %  ridge 52 %
+  L6 seed 1      riverT 8.00  rivers 112 (>=10 cells: 21, longest 18)  river cells 613 (3.7 % of land)  mouths 46  confluences 13  lakes 57 (487 cells)  fresh<=2 28 %  ridge 20 %  4.459880 ms
+  L6 seed 1: update mean 4.46 ms, max 4.75 ms (target 15)
+  L6 seed 2      riverT 8.00  rivers 104 (>=10 cells: 12, longest 16)  river cells 535 (3.3 % of land)  mouths 37  confluences 18  lakes 67 (497 cells)  fresh<=2 28 %  ridge 20 %  3.208760 ms
+  L6 seed 2: update mean 3.21 ms, max 4.14 ms (target 15)
+  L6 seed 3      riverT 8.00  rivers 83 (>=10 cells: 17, longest 18)  river cells 476 (2.9 % of land)  mouths 41  confluences 12  lakes 49 (491 cells)  fresh<=2 25 %  ridge 20 %  4.063970 ms
+  L6 seed 3: update mean 4.06 ms, max 4.63 ms (target 15)
+  L6 all land, moist 0.6: update 4.52 ms
+  L6 all land, moist 0.0: update 3.84 ms
+  helper L6 s4       rivers  166 (>=10:  31, >=20:   2, longest  21)  river cells   914 (4.5 % land)  sea mouths  63 (62 systems)  into lakes  77  confluences  26  lakes  87 ( 769 cells)  fresh<=2 34 %  ridge 17 %  (riverT 8.00)
+  helper L6 s5       rivers  205 (>=10:  39, >=20:   1, longest  21)  river cells  1165 (5.2 % land)  sea mouths  75 (75 systems)  into lakes  95  confluences  35  lakes 113 ( 864 cells)  fresh<=2 38 %  ridge 18 %  (riverT 8.00)
+  helper L6 s6       rivers  237 (>=10:  58, >=20:   1, longest  28)  river cells  1490 (6.1 % land)  sea mouths  92 (90 systems)  into lakes 104  confluences  41  lakes 130 (1169 cells)  fresh<=2 44 %  ridge 18 %  (riverT 8.00)
+  helper L6 s7       rivers  307 (>=10:  79, >=20:   1, longest  21)  river cells  1958 (7.4 % land)  sea mouths 112 (110 systems)  into lakes 127  confluences  68  lakes 130 (1138 cells)  fresh<=2 48 %  ridge 18 %  (riverT 8.00)
+  3 shallow cells at mean moist 0.14: lake = 1, flow into the basin 18.92 (riverT 4.00)
+  big dry basin (37 cells, 0.8 deep, moist 0.05): lake cells 37, inflow 14.20
+  valley lake        rivers  245 (>=10:  97, >=20:  57, longest  64)  river cells  3527 (43.1 % land)  sea mouths  43 (39 systems)  into lakes   4  confluences 198  lakes   1 (   7 cells)  fresh<=2 100 %  ridge 58 %  (riverT 4.00)
+  rivers at sea 0: 25; after +0.4: 22
+  L5 s2 sea +0.3 over seaBase 0: river cells 88 with the rule, 54 without
+  L5 s5 sea +0.3 over seaBase 0: river cells 71 with the rule, 55 without
+  L5 s9 sea +0.3 over seaBase 0: river cells 93 with the rule, 80 without
+  real L6 s1         rivers   92 (>=10:  36, >=20:   3, longest  25)  river cells   757 (4.7 % land)  sea mouths  38 (38 systems)  into lakes  19  confluences  35  lakes  21 ( 212 cells)  fresh<=2 27 %  ridge 5 %  update mean 4.39 ms max 4.88 ms  (riverT 8.00)
+  real L6 s2         rivers   88 (>=10:  37, >=20:   8, longest  28)  river cells   789 (4.9 % land)  sea mouths  41 (39 systems)  into lakes  16  confluences  31  lakes  23 ( 213 cells)  fresh<=2 29 %  ridge 5 %  update mean 4.40 ms max 4.76 ms  (riverT 8.00)
+  real L6 s3         rivers   68 (>=10:  29, >=20:   4, longest  35)  river cells   593 (3.7 % land)  sea mouths  29 (28 systems)  into lakes  15  confluences  24  lakes  20 ( 118 cells)  fresh<=2 21 %  ridge 4 %  update mean 3.70 ms max 4.61 ms  (riverT 8.00)
+  real L6 s4         rivers  116 (>=10:  48, >=20:   7, longest  39)  river cells   962 (6.0 % land)  sea mouths  41 (41 systems)  into lakes  23  confluences  52  lakes  32 ( 311 cells)  fresh<=2 34 %  ridge 4 %  update mean 4.34 ms max 4.52 ms  (riverT 8.00)
+  real L6 s5         rivers   93 (>=10:  41, >=20:   9, longest  31)  river cells   864 (5.4 % land)  sea mouths  39 (39 systems)  into lakes  17  confluences  37  lakes  21 ( 192 cells)  fresh<=2 30 %  ridge 3 %  update mean 4.25 ms max 4.47 ms  (riverT 8.00)
+  real L6 s6         rivers  118 (>=10:  36, >=20:   4, longest  29)  river cells   848 (5.3 % land)  sea mouths  38 (38 systems)  into lakes  37  confluences  43  lakes  27 ( 280 cells)  fresh<=2 31 %  ridge 4 %  update mean 4.20 ms max 4.55 ms  (riverT 8.00)
+  real s2 sea -9.00  rivers    0 (>=10:   0, >=20:   0, longest   0)  river cells     0 (0.0 % land)  sea mouths   0 (0 systems)  into lakes   0  confluences   0  lakes   0 (   0 cells)  fresh<=2 0 %  ridge 0 %  update mean 5.32 ms max 6.41 ms  (riverT 8.00)
+  real s2 sea -6.00  rivers   25 (>=10:   8, >=20:   2, longest  31)  river cells   227 (0.6 % land)  sea mouths   6 (6 systems)  into lakes  10  confluences   9  lakes  17 ( 155 cells)  fresh<=2 4 %  ridge 17 %  update mean 8.16 ms max 8.85 ms  (riverT 8.00)
+  real s2 sea -3.50  rivers  109 (>=10:  45, >=20:   7, longest  31)  river cells   895 (3.4 % land)  sea mouths  42 (41 systems)  into lakes  39  confluences  28  lakes  57 (1020 cells)  fresh<=2 27 %  ridge 14 %  update mean 6.13 ms max 6.65 ms  (riverT 8.00)
+  real s2 sea 0.600  rivers   24 (>=10:  10, >=20:   0, longest  18)  river cells   183 (2.0 % land)  sea mouths  13 (13 systems)  into lakes   3  confluences   8  lakes   9 (  31 cells)  fresh<=2 13 %  ridge 3 %  update mean 2.82 ms max 2.97 ms  (riverT 8.00)
+  real L4 s1         rivers   10 (>=10:   0, >=20:   0, longest   8)  river cells    38 (3.8 % land)  sea mouths   6 (6 systems)  into lakes   0  confluences   4  lakes   1 (   3 cells)  fresh<=2 22 %  ridge 11 %  (riverT 2.00)
+  real L5 s1         rivers   27 (>=10:   2, >=20:   0, longest  16)  river cells   142 (3.6 % land)  sea mouths  13 (13 systems)  into lakes   3  confluences  11  lakes   8 (  52 cells)  fresh<=2 23 %  ridge 8 %  (riverT 4.00)
+  crater: elev 2.23 -> 0.83, sea 0.00, rim 1.23
+  crater on the main river at cell 29240: water 1.51, lake 1
+  s1 sea +0.0: land 15975  rivers  92  river cells  757 (4.7 % of land;  478 below +0.6,  19 on ice > 0.5)  lakes 21  update mean 4.26 max 4.39 ms
+  s1 sea +0.2: land 12783  rivers  81  river cells  541 (4.2 % of land;  256 below +0.6,  15 on ice > 0.5)  lakes 12  update mean 7.18 max 7.75 ms
+  s1 sea +0.4: land 10191  rivers  58  river cells  351 (3.4 % of land;   86 below +0.6,  17 on ice > 0.5)  lakes  8  update mean 6.77 max 7.31 ms
+  s1 sea +0.6: land  8137  rivers  38  river cells  218 (2.7 % of land;    0 below +0.6,  16 on ice > 0.5)  lakes  5  update mean 6.33 max 6.47 ms
+  s1 sea -0.3: land 18431  rivers 111  river cells  932 (5.1 % of land;  637 below +0.6,  18 on ice > 0.5)  lakes 24  update mean 4.66 max 4.69 ms
+  s2 sea +0.0: land 15975  rivers  88  river cells  789 (4.9 % of land;  447 below +0.6,  68 on ice > 0.5)  lakes 23  update mean 4.03 max 4.09 ms
+  s2 sea +0.2: land 13088  rivers  83  river cells  659 (5.0 % of land;  286 below +0.6,  60 on ice > 0.5)  lakes 18  update mean 6.84 max 6.96 ms
+  s2 sea +0.4: land 10858  rivers  71  river cells  497 (4.6 % of land;  119 below +0.6,  38 on ice > 0.5)  lakes 15  update mean 6.81 max 6.97 ms
+  s2 sea +0.6: land  9086  rivers  54  river cells  346 (3.8 % of land;    0 below +0.6,  27 on ice > 0.5)  lakes  9  update mean 6.29 max 6.60 ms
+  s2 sea -0.3: land 18469  rivers 103  river cells  948 (5.1 % of land;  579 below +0.6,  65 on ice > 0.5)  lakes 26  update mean 5.10 max 5.37 ms
+  s3 sea +0.0: land 15975  rivers  68  river cells  593 (3.7 % of land;  302 below +0.6,   3 on ice > 0.5)  lakes 20  update mean 4.07 max 4.11 ms
+  s3 sea +0.2: land 13168  rivers  62  river cells  522 (4.0 % of land;  197 below +0.6,   2 on ice > 0.5)  lakes 14  update mean 7.55 max 7.81 ms
+  s3 sea +0.4: land 10702  rivers  49  river cells  401 (3.7 % of land;   83 below +0.6,   2 on ice > 0.5)  lakes  9  update mean 7.04 max 7.29 ms
+  s3 sea +0.6: land  8736  rivers  47  river cells  327 (3.7 % of land;    0 below +0.6,   4 on ice > 0.5)  lakes  9  update mean 6.31 max 6.62 ms
+  s3 sea -0.3: land 18396  rivers  81  river cells  677 (3.7 % of land;  385 below +0.6,   4 on ice > 0.5)  lakes 27  update mean 4.97 max 5.15 ms
+  s1 sea +0.2 with tune.estuary = false: rivers 41, river cells 322 (2.5 % of land)
+  L6 400 years: 10 settlements, pop 12453.68, age 1, chronicle 66 entries, ticks mean 1.09 ms, worst 8.92 ms (1.95 s in all)
+  events: battle 10 chronicle:entry 62 culture:age 2 culture:born 1 drought 22 fire:start 43 lightning 34 prayer 28 quake 5 settlement:building 36 settlement:captured 2 settlement:founded 8 settlement:tier 18 storm 35 tsunami:hit 5 tsunami:start 1 unit:arrived 18 unit:died 10 unit:spawned 18 volcano:end 1 volcano:start 1 war:declared 1 war:ended 1 world:age 1
+  genesis: 14 comets (sea 0.23), 8 seeds, 183 ticks; veg 0.25
+  player: 86 uses (28 refused): bloom 12 lightning 4 lower 15 rain 34 raise 21
+  save 789253 bytes at year 300 (9 settlements, pop 2006.32); 150 years later: original 10 / 11437.54, loaded 10 / 11351.33
+  powers: awaken:ok bloom:ok consecrate:ok heal:ok inspire:ok lightning:ok lower:ok meteor:ok peace:no target plague:ok prophet:ok quake:ok rain:ok raise:ok volcano:ok
+  save container 227914 bytes (18 frames) vs raw state 206450 bytes
+  seed 41 y17 fire burning: 764 KB raw / 801 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 115.41 X 115.41, settlements W 2 X 2, epithets changed 0
+  seed 41 y27 drought: 764 KB raw / 802 KB container; first tick events 2/2 identical; impacts W 0 X 0; after 8.00 y: pop W 161.29 X 161.29, settlements W 2 X 2, epithets changed 0
+  seed 41 y35 brush stroke half done: first tick, never-saved: lightning fire:start | loaded: power:used miracle:witnessed lightning fire:start
+  seed 41 y35 brush stroke half done: 765 KB raw / 802 KB container; first tick events 0/4 identical; impacts W 0 X 0; after 8.00 y: pop W 205.91 X 206.05, settlements W 2 X 2, epithets changed 0
+  seed 41 y46 pending prayer: 765 KB raw / 803 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 271.80 X 271.79, settlements W 2 X 2, epithets changed 0
+  seed 41 y74 storm: 766 KB raw / 804 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 472.38 X 472.38, settlements W 2 X 2, epithets changed 0
+  seed 41 y90 volcano erupting: 766 KB raw / 805 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 16.00 y: pop W 658.34 X 658.28, settlements W 2 X 2, epithets changed 0
+  seed 41 y126 settlers on the road: 767 KB raw / 819 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 842.61 X 842.72, settlements W 3 X 3, epithets changed 0
+  seed 41 y167 tsunami front: first tick, never-saved: | loaded: power:used tsunami:hit
+  seed 41 y167 tsunami front: 769 KB raw / 823 KB container; first tick events 0/2 identical; impacts W 0 X 0; after 8.00 y: pop W 1123.22 X 1123.06, settlements W 4 X 4, epithets changed 0
+  seed 41 y224 age change tick: 771 KB raw / 833 KB container; first tick events 1/1 identical; impacts W 0 X 0; after 8.00 y: pop W 2100.27 X 2100.22, settlements W 6 X 6, epithets changed 0
+  seed 41 y491 war with armies marching: 786 KB raw / 869 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 17634.09 X 17632.15, settlements W 14 X 14, epithets changed 1
+  seed 41 y732 trader on the road: 810 KB raw / 907 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 26695.91 X 26695.26, settlements W 21 X 21, epithets changed 0
+  seed 41 y740 plague: 811 KB raw / 909 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 31076.92 X 31077.15, settlements W 21 X 21, epithets changed 1
+  seed 41 y754 prophet travelling: 814 KB raw / 916 KB container; first tick events 0/0 identical; impacts W 0 X 0; after 8.00 y: pop W 38397.51 X 38700.11, settlements W 21 X 21, epithets changed 0
+  seed 41 y1385 meteor in flight: 877 KB raw / 1023 KB container; first tick events 0/0 identical; impacts W 1 X 1 (first after 11 ticks); after 8.00 y: pop W 172816.25 X 172812.88, settlements W 44 X 44, epithets changed 0
+  seed 41: 14 of 14 moments saved and loaded by year 1393 (age 3, 44 settlements); not met: none; player 189 clicks, 93 strokes, 13 refused: awaken 3 bloom 17 consecrate 4 heal 44 inspire 42 lightning 41 lower 20 meteor 1 peace 1 plague 1 prophet 13 quake 39 rain 30 raise 26
+  L5 seed 45: 400.00 years, ticks mean 0.48 ms, worst 1.86 ms (year 128.75); peak live 13, units 1, disasters 4, lava field 37 cells; elev -6.78 .. 6.85; now 11 settlements, pop 1853.52, age 0, 7 cultures ever, chronicle 480
+  L5 seed 45 player: 504 clicks, 62 strokes, 0 refused: awaken 6 bloom 16 heal 121 inspire 126 lightning 132 lower 18 quake 119 rain 13 raise 15
+  L5 seed 45 events: settlement:destroyed 6 settlement:founded 15 meteor:impact 0 volcano:start 2 tsunami:hit 117 quake 125 battle 0 people:lost 0 culture:born 6 miracle:witnessed 676 awe:short 0
+  L6 seed 46: 150.00 years, ticks mean 2.01 ms, worst 9.45 ms (year 106.50); peak live 11, units 1, disasters 3, lava field 0 cells; elev -6.34 .. 6.85; now 10 settlements, pop 1609.21, age 0, 5 cultures ever, chronicle 174
+  L6 seed 46 player: 170 clicks, 20 strokes, 0 refused: awaken 4 bloom 4 heal 30 inspire 46 lightning 43 lower 3 quake 47 rain 4 raise 9
+  L6 seed 46 events: settlement:destroyed 1 settlement:founded 9 meteor:impact 0 volcano:start 0 tsunami:hit 53 quake 48 battle 0 people:lost 0 culture:born 4 miracle:witnessed 225 awe:short 0
+  awaken flood: 74 awakenings (0 refused after can; can refused: target 1726); peak live 152 settlements, 68 living cultures, 14 units; now 64 living cultures with 6 distinct colours and 64 distinct names; 75 cultures ever; chronicle 512
+    favour after 30 years: x 0.500 (half-life 30)
+    year 1200: 6 cultures, 0 alliances, 2 feuding pairs, 2 wars so far
+    seed 303 war:declared at year 754.00: 804252 bytes, 1 wars open; replayed 300 years, 4 wars declared in all
+    seed 303 world:age 2 at year 978.00: 816116 bytes, 0 wars open; replayed 300 years, 5 wars declared in all
+    seed 306 war:declared at year 981.00: 812609 bytes, 1 wars open; replayed 300 years, 3 wars declared in all
+    seed 306 world:age 2 at year 1007.00: 815776 bytes, 1 wars open; replayed 300 years, 4 wars declared in all
+  town alive, centre 0.050 above the sea, 1 drown:warning
+  town 1: 0.938 -> 0.050 above the sea; after 30 years water 0.000, alive (none)
+  grace 25.00 wrath 14.40 lore +0.253 verdict +0.269 mood parting
+  present: lore +0.375 verdict +0.349 beloved; absent (neglect 780, presence 0.060): lore +0.035 verdict +0.128 parting
+  biome shares, % of land (5 helper worlds, L = 5):
+    world        Beach Desert Savann Grassl Forest Rainfo  Taiga Tundra    Ice   Rock Snow p Wetlan Barren
+    temperate      0.3    0.0    2.7    3.0   34.2    1.1   17.5    5.4   29.1    0.3    5.5    0.3    0.5
+    warm seas      0.4    0.0    9.8    1.9   44.7    2.4   14.9    3.1   20.1    0.3    1.9    0.5    0.0
+    arid           0.3   14.0    9.9   30.2    0.0    0.0    0.2   18.2   16.7    0.3   10.2    0.0    0.0
+    cold           0.2    0.0    0.2    1.3   21.9    0.2   25.1    7.9   38.7    0.2    4.2    0.0    0.0
+    steppe         0.4    0.0   10.0   28.5    2.0    0.0   12.6    9.9   27.4    0.2    9.1    0.0    0.0
+    all five       0.3    3.8    6.8   15.8   16.8    0.6   12.7   10.1   25.9    0.2    6.9    0.1    0.1
+  spread on a continent of 2813 cells (L = 5): t20 9.3% t60 65.3% t120 99.5% t180 99.9% t240 99.9% t300 100.0% t360 100.0% t420 100.0% t480 100.0%; bare plantable cells left 0 of 2253
+  spread on a continent of 11226 cells (L = 6, 101 cells seeded): t30 4.7% t60 18.3% t120 46.3% t240 96.9% t480 100.0%; bare plantable cells left 1 of 9014; world cover 99.9%
+  front on a uniform plain after 40 ticks: 1993 green cells, edge 10.6 .. 34.5 hops from the seed (mean 22.4), radial spread 19 % (the seed disc itself: 10 %)
+  pocket of 91 cells behind a 3-cell ring of ice (126 cells): first sprout inside at tick 8, 91 green after 400 ticks
+  pocket of 91 cells behind a 3-cell ring of lake (126 cells): first sprout inside at tick 8, 91 green after 400 ticks
+  half cover of a plain from one seed: 117 years at boost 1, 36 years at boost 4
+  island behind a 5-cell strait: first seedling in year 1.5, 37 of 37 cells wooded 300 years later
+  drift into a bare disc of 121 cells in 20 ticks at boost 25 (L = 4): 40.3 seedlings across a strait (predicted 40.8), 5.7 across bare land (thinned to boost ^ 0.3: 4.9)
+  the same at boost 1 over 125 years: 39.2 across the strait (predicted 40.8), 36.3 across bare land (39.1)
+  islands (all but the largest landmass stripped bare): 187 green cells on 9 islands after 25 years, 396 of 396 on 19 islands after 400
+  a 19-cell clearing in forest: half grown after 65 years, 90 % after 115 (design target 120)
+  after 40 years, 2 vs 8 slices: veg 156.8 / 157.1, fauna 238.4 / 241.2, fert 533.6 / 533.2
+  years to half cover from one seed (helper L = 4, boost 1): 104.0 with 2 slices, 109.5 with 8
+  ignition frequency at P = 0.2746: 0.2779 over 12000 attempts
+  fire sizes in cells on a uniform forest of 10242 cells:
+  wet forest (veg .85, moist .70)   P 0.037  mean     1.3  median     1  p90     2  max     5  > 200 cells:   0.0 %  peak burning 3
+  dry forest (veg .90, moist .40)   P 0.277  mean    47.6  median    19  p90   133  max   378  > 200 cells:   5.0 %  peak burning 35
+  drought (veg .85, moist .15)      P 0.449  mean  9882.0  median  9892  p90  9912  max  9933  > 200 cells: 100.0 %  peak burning 395
+  fire size against P (uniform forest, veg 0.9, L = 5, 10,242 cells):
+    P 0.10  mean     2.2  median     2  p90     4  max    12  > 200 cells   0 %  > 10 % of the planet   0 %
+    P 0.20  mean     7.4  median     4  p90    17  max    56  > 200 cells   0 %  > 10 % of the planet   0 %
+    P 0.25  mean    23.0  median    11  p90    63  max   126  > 200 cells   0 %  > 10 % of the planet   0 %
+    P 0.28  mean    61.4  median    22  p90   204  max   476  > 200 cells  10 %  > 10 % of the planet   0 %
+    P 0.30  mean    96.2  median    27  p90   280  max   737  > 200 cells  17 %  > 10 % of the planet   0 %
+    P 0.33  mean  1366.8  median   421  p90  3939  max  6400  > 200 cells  57 %  > 10 % of the planet  40 %
+    P 0.36  mean  5993.7  median  8165  p90  8645  max  8694  > 200 cells  75 %  > 10 % of the planet  75 %
+    P 0.40  mean  8248.2  median  9430  p90  9529  max  9612  > 200 cells  88 %  > 10 % of the planet  88 %
+    P 0.45  mean  9641.1  median  9892  p90  9939  max  9965  > 200 cells  98 %  > 10 % of the planet  98 %
+  151 simultaneous strikes in drought forest (L = 6): peak 1500 cells burning, 28 ticks at the cap, 39920 cells burnt, out after 83 ticks; burn with >= 1,000 cells alight: mean 0.068 ms, worst 0.078 ms
+  arid helper world: mean hab 0.43 in 454 desert valley cells (fresh water <= 2 hops), 0.012 in 1892 open desert cells
+  L = 6 timings: step (1 slice of 8) mean 0.249 ms, worst 0.521 ms; classify 0.293 ms; habitability 0.312 ms; cover 0.144 ms; life-phase tick (2 slices, boost 25) 0.963 ms
+  front-uniform (landmass of 40962 cells): t15 0.8% (bare 40319/40962) t30 2.4% (bare 39252/40962) t60 9.3% (bare 35801/40962)
+  front-uniform: 5161 cells of the landmass turned green; half by tick 40, 97 % by tick 59
+  wave-helper (landmass of 11226 cells): t30 4.7% (bare 8322/9014) t60 18.3% (bare 7005/9014) t120 46.3% (bare 4647/9014) t240 96.9% (bare 245/9014)
+  wave-helper: 8769 cells of the landmass turned green; half by tick 121, 97 % by tick 224
+  drought fire map: 7 cells burning on the front
+  51 poisoned-field runs (17 fields x NaN, +inf, -inf on every third cell), 0 failures
+  690 poisoned-tuning runs over 115 LifeTune numbers: 0 wrote a non-finite value
+  random fire ops: 3000 checks, 0 cache mismatches, most cells burning 11
+  10 drought fires burnt 174 cells in 30 ticks; events emitted by burn / step: 0
+      slow tick 1: 2.054 ms
+      slow tick 4: 2.008 ms
+  L = 6 burn + step per tick: history (1 of 8) mean 0.216 ms, worst 0.317; dry planet with fires mean 0.221, worst 0.233; life-phase wave (1 of 2, boost 25) mean 0.899, worst 1.126; boost 400 mean 1.015, worst 2.054
+  dry planet, 28 ignitions: 388 of 16385 land cells scorched
+  language 0 distinct of 300: places 297, persons 300, cultures 297
+  language 1 distinct of 300: places 289, persons 299, cultures 300
+  language 2 distinct of 300: places 289, persons 298, cultures 300
+  language 3 distinct of 300: places 296, persons 298, cultures 297
+  language 4 distinct of 300: places 280, persons 299, cultures 300
+  language 5 distinct of 300: places 293, persons 296, cultures 299
+  language 6 distinct of 300: places 287, persons 294, cultures 300
+  language 7 distinct of 300: places 284, persons 297, cultures 299
+  letter-pair profile L1 distance between the 8 languages: min 0.253 (3-5), max 1.341
+    language 0: mean place length 8.59
+    language 1: mean place length 7.95
+    language 2: mean place length 7.77
+    language 3: mean place length 9.55
+    language 4: mean place length 7.89
+    language 5: mean place length 9.48
+    language 6: mean place length 7.86
+    language 7: mean place length 7.87
+  parent 0: trigram share of daughter places in parent 0.807, of unrelated languages 0.327
+  god name: parent Khoragh, daughter Khuragh (edit distance 1)
+  parent 1: trigram share of daughter places in parent 0.721, of unrelated languages 0.567
+  god name: parent Pelao, daughter Perao (edit distance 1)
+  parent 2: trigram share of daughter places in parent 0.909, of unrelated languages 0.528
+  god name: parent Awani, daughter Awani (edit distance 0)
+  parent 3: trigram share of daughter places in parent 0.806, of unrelated languages 0.481
+  god name: parent Elaxara, daughter Elasara (edit distance 1)
+  10,000 names (5,000 places, 5,000 persons): 63.2 ms
+  language 0 places: Trukoghaz; Kaknorom; Guzd-Vroma; Khikibod; Ud-Krulazubar; Ka-Nolkozog; Ukrunvakh; Khalomdum; Khontukir; Vrok-Nilok;
+  language 1 places: Ahowehi; Wihakipu; Wolomena; Nokakipu; Munumingo; Hapamepi; Powahoki; Memelaki; Halanuka; Penginiwa;
+  language 2 places: Natunine; Petuheho; Konitewa; Nganuhiwa; Akitola; Kotonupo; Piwatewa; Kukumuhu; Teupilo; Kulokutoa;
+  language 3 places: Trekepho; Palakrexeum; Thotelomerax; Errianthe; Akalostra; Ustritas; Isitopeum; Atosophor; Asotophor; Kolakretonos;
+  language 4 places: Kaluhao; Hahapoki; Lanahiwa; Kukungolo; Haowehi; Wokolua; Natanulo; Ilahowa; Kuneniwa; Onehuto;
+  language 5 places: Pemosmenimos; Tethasax; Eontotion; Leurosthi; Namolouralos; Kreusani; Pekuphu; Arathireron; Dimekroseira; Sadathux;
+  language 6 places: Hiwakipu; Mopaoha; Pikomone; Nangomone; Malamupu; Winumowi; Kuhalana; Ngamone; Nomepoki; Komatapu;
+  language 7 places: Namumbe; Njunilela; Nganutu; Ayuzimba; Ndikalela; Mawobo; Nzambuli; Mamilu; Kuzinyu; Yonyulo;
+  language 0 people: Nughadvu; Dimakodak; Utoghagar; Ghunghuka; Ugharurd; Girigamum; Muralugum; Krazhalu; Tigaku; Omanolug;
+    culture: Rarukamo / Rarukami / the Rarukamar
+    culture: Sutorad / Sutoradi / the Sutoradar
+    culture: Agonvur / Agonvuri / the Agonvurar
+    culture: Akhiruzd / Akhiruzdi / the Akhiruzdar
+  language 1 people: Kanamoma; Ngimetuha; Holikuele; Kumihato; Meongoewa; Hulapeto; Watiohele; Mulewiono; Mingumu; Motiohiha;
+    culture: Hutomuhu / Hutomuhan / the Hutomuhu
+    culture: Wotihopu / Wotihopan / the Wotihopu
+    culture: Potimeki / Potimekan / the Potimeki
+    culture: Mamanako / Mamanakan / the Mamanako
+  pair 0 parent: Khotolmor; Brukhiguzd; Vrolarak; Khulunukh; Agudmulod; Sukumghaz;
+  pair 0 daughter: Khunumur; Krunakuzd; Khunuvey; Numukhur; Nutaghaz; Az-Zavang;
+  pair 1 parent: Mupanuka; Laemelu; Kikiwiko; Epomena; Kutelewa; Tumowiko;
+  pair 1 daughter: Woherewa; Owikipo; Mohongipa; Eohivia; Ahawota; Kiripoki;
+  pair 2 parent: Ngekolehu; Komowonu; Wewalehu; Kokohapu; Mamitolo; Manalutoa;
+  pair 2 daughter: Tilutoa; Tanakua; Halaniwa; Manitoko; Manalutoa; Witimina;
+  pair 3 parent: Lelote; Ikoxeonos; Allonan; Kourrulus; Roladaxeron; Edoderenth;
+  pair 3 daughter: Trusumo; Lolenante; Tallosar; Kourrulus; Madakeanne; Potaloudessi;
+  planets: Vatheilor; Vesperwell; Hofaeleos; Veil Fen; Salt Wake; Glass Sound; Naselara; Dawn Crest; Teilkacei; Aeloleselia; Cefialaela; Teneilo;
+  800 languages: 0 of 120800 checks failed
+  longest plural field: "the Svadafekir" (14 characters)
+  plural fields: 0 of 8000 checks failed
+  god names checked against 135000 generated names: 0 violations
+  lowest shares of 200 languages: 0.913 0.913 0.923 0.930; median 0.970
+  languages below 90 % distinct (any category): 0 of 200; worst share 0.913 (language 113, record dm2;f=5;g=0;c=-1;L=;on=mb:4,nd:4,ng:3,nj:2,nz:1,b:2,d:2,t:3,l:2,n:2,s:3,w:3,y:1,ny:1,gw:1;om=mb:3,nd:2,ng:1,nj:1,nz:2,k:3,t:3,l:4,m:3,n:2,s:3,w:1,y:1,ny:1,z:1,b:2,d:1;vo=e:3,i:5,o:2,u:4;fr=;bk=;lo=;cm=;cf=;p=95,0,0,0,0,0;gm=;sy=2,6,0;fw=59,33,0,0,4,10;pr=113;ro=diki,ndi,wimu,nge,nzule,mbubi,ndinzo,mbili,ngimbi,eno,nze,nzi,tese,wiku,sili,mbungi,ume,ne,nju,beli,lole,njenzu;gn=mbiri,ndari,landa,zimba,mbalu,kumbe,wazi,ngo,kani,yumbe,sungu,mbuka,mbola,lela,ndu,mbe,ngoli;pp=ma,e,u,ki;qn=a:2,e:2,o:1,i:2,ende:2,ombe:1,ulu:2,ika:2;rt=ngozu,ndalo;sw=ngayo,sumbe,mbeli;gd=tobiwe)
+  780 pairs of 40 languages: 0 closer than 0.2 (L1); minimum 0.291 between 16 and 29
+  record size: gen 1 614, gen 10 581, gen 20 587, gen 40 591 bytes; roots: gen 1 22, gen 10 22, gen 40 22
+  final god: Elaseu
+  chain: 0 of 120 checks failed
+  trigram share of generation 40 places found among the root's places: 0.701
+  garbled records: 0 of 15000 checks failed
+  80 daughters of the god "Sarakonatemi": 0 lengthened to 13 letters, 0 reset to "Ama", 0 invalid
+  god of "gd=abc...z" (26 letters): "Tobondo"; of "Ko Ma!!": "Onthion"; of empty: "Ardum"
+  3308 distinct planet names of 5000; real planet names: 0
+  planets: 0 of 5000 checks failed
+  180000 names scanned, 0 hits
+  language 0: word(2,2) with two nuclei: 300 of 300 (one or three: 0;)
+  language 1: word(2,2) with two nuclei: 291 of 300 (one or three: 9; huat shii qia aaz qii riu shuir baut qua)
+  language 2: word(2,2) with two nuclei: 300 of 300 (one or three: 0;)
+  language 3: word(2,2) with two nuclei: 289 of 300 (one or three: 11; tain qaab khaa ziur khiush dii khiim iiz yaim huir iaz)
+  language 4: word(2,2) with two nuclei: 300 of 300 (one or three: 0;)
+  language 5: word(2,2) with two nuclei: 297 of 300 (one or three: 3; iax preo teor)
+  language 6: word(2,2) with two nuclei: 283 of 300 (one or three: 17; lua wio weu tao nio wau mio wiu woa mia tao hue lae wao mei)
+  language 7: word(2,2) with two nuclei: 299 of 300 (one or three: 1; thion)
+  word arguments: 0 of 1200 checks failed
+  fingerprint of 800 names and 40 languages: ad45c4ca (26719 bytes)
+  a new language (with its variety probe): 1.69 ms on average over 100
+  10,000 names, root language: 65.6 ms; 40th daughter (676 bytes): 64.3 ms
+  language 0 places: Rellemineum; Kranisthir; Petroxuneron; Strorsesthes; Laditho; Pulephane; Phisonarimos; Truxesoxeum; Asephane; Thaxisthalos;
+  language 1 places: Hluviheid; Saurgostaf; Iturey; Falurseld; Nekuskel; Ketevarp; Mutivung; Knarulurk; Alisvarp; Skiskuner;
+  language 2 places: Thenxutostra; Lutaphane; Tairasa; Koxeophor; Oxanostra; Dakiostra; Oixorsir; Latresadalos; Plaposanthe; Laikanu;
+  language 3 places: Safanahar; Tiru Datad; Nurulimar; Tamrindar; Mahz Muhaqar; Saqzumabir; Ubimzuun; Sahantiz; Shashisan; Qinzusu;
+  language 4 places: Teimua; Apohupu; Tokenuka; Holakele; Makanawe; Mutioki; Otomamu; Toewiko; Pokakuho; Mimewiko;
+  language 5 places: Adasvang; Svivermen; Senekvang; Vognohald; Fildoggi; Dalthurn; Rigvihlid; Skogranung; Skitanes; Orotey;
+  pair parent:   Uni'arun; Zilatibar; Jaqrabraa; Qi'alabir; Dimar Zunu; Qihasudar; Jarridi; Tudani;
+  pair daughter: Ubumrin; Huratibar; Mahamirun; Huratibar; Shahi'anuq; Tudani; Qaruhuzan; Mira'ahar;
+  god: parent Ilunar, daughter Ilunar
+  400 root languages by family: Velessan 52; Korvagh 54; Aavik 48; Qa'tiri 38; Hanuwe 41; Mbendi 50; Thrask 54; Pheraxi 63;
+  Velessan   0: distinct of 300: places 296, persons 296, peoples 299
+  Velessan   1: distinct of 300: places 294, persons 298, peoples 300
+  Velessan   2: distinct of 300: places 295, persons 297, peoples 300
+  Korvagh    0: distinct of 300: places 298, persons 298, peoples 300
+  Korvagh    1: distinct of 300: places 297, persons 300, peoples 300
+  Korvagh    2: distinct of 300: places 297, persons 298, peoples 300
+  Aavik      0: distinct of 300: places 289, persons 299, peoples 299
+  Aavik      1: distinct of 300: places 291, persons 299, peoples 299
+  Aavik      2: distinct of 300: places 289, persons 299, peoples 300
+  Qa'tiri    0: distinct of 300: places 294, persons 297, peoples 297
+  Qa'tiri    1: distinct of 300: places 295, persons 295, peoples 297
+  Qa'tiri    2: distinct of 300: places 289, persons 298, peoples 300
+  Hanuwe     0: distinct of 300: places 283, persons 297, peoples 300
+  Hanuwe     1: distinct of 300: places 283, persons 297, peoples 299
+  Hanuwe     2: distinct of 300: places 280, persons 297, peoples 294
+  Mbendi     0: distinct of 300: places 282, persons 300, peoples 299
+  Mbendi     1: distinct of 300: places 284, persons 296, peoples 299
+  Mbendi     2: distinct of 300: places 288, persons 300, peoples 298
+  Thrask     0: distinct of 300: places 298, persons 297, peoples 300
+  Thrask     1: distinct of 300: places 286, persons 299, peoples 300
+  Thrask     2: distinct of 300: places 293, persons 298, peoples 300
+  Pheraxi    0: distinct of 300: places 284, persons 298, peoples 298
+  Pheraxi    1: distinct of 300: places 290, persons 299, peoples 299
+  Pheraxi    2: distinct of 300: places 293, persons 298, peoples 297
+  nearest-family by letter trigrams: from 5 place names 99.6 % right (956 of 960); from a single name 81.4 %
+  wrong 5-name guesses by family: Velessan 3; Korvagh 0; Aavik 1; Qa'tiri 0; Hanuwe 0; Mbendi 0; Thrask 0; Pheraxi 0;
+  120 worlds, 16800 towns: pairs one letter apart 0; pairs of 10+ letters two edits apart 5 (Tinipilehte ~ Iinipiklehte), of them two substitutions 0; exact repeats re-rolled 147
+  Velessan   4th daughter (laws 5, contact Pheraxi): classified Velessan; places: Birimovia, Orpagivia, Sinimaro, Vilarisce; god Sarione -> Sarioni
+  Korvagh    4th daughter (laws 5, contact none): classified Korvagh; places: Zharosk, Arghazh, Hoghidron, Pokilto; god Zharum -> Zharom
+  Aavik      4th daughter (laws 4, contact none): classified Aavik; places: Varalukuusi, Upakomaki, Pilutilholmi, Volilolanna; god Sierkki -> Hirki
+  Qa'tiri    4th daughter (laws 5, contact none): classified Qa'tiri; places: Nirribufa, Sarsa'iyun, Harahuzan, Zasaruzan; god Zarihun -> Zarihun
+  Hanuwe     4th daughter (laws 5, contact Velessan): classified Hanuwe; places: Mokianto, Hamimawa, Oroanto, Pinowanto; god Awao -> Awao
+  Mbendi     4th daughter (laws 6, contact Qa'tiri): classified Mbendi; places: Mboyosi, Rikizimba, Oninjiri, Chinzino; god Zumbari -> Zombari
+  Thrask     4th daughter (laws 6, contact Korvagh): classified Thrask; places: Vunerlesk, Sharvoshel, Lanakey, Stumikmu; god Thromar -> Tromar
+  Pheraxi    4th daughter (laws 6, contact Velessan): classified Pheraxi; places: Fisdameulimo, Propofoiralo, Tikonulofor, Tainsosa; god Elaxios -> Elasio
+  Velessan   Ossaro Elovo the Unlucky | Ondessa Budorra; Vessaro Putiadol the Vine-Crowned | Ondessa Safebetta; Ossaro Sobemo the Builder | Vedanessi;
+  Korvagh    Zhogan Zhokvirzu the Unlucky | Morkh Durtash; Zhogan Bovekma the Twice-Crowned | Gonbarak; Borukh Gargogam the Unbowed | Morkh Vamuvoz;
+  Aavik      Hallava Vulmona the Silent | Honnasunu; Hallava Ajakpa the Elder | Raavi Hinnaskorpi; Kuura Postovumo the Rune-Wise | Veteripekke;
+  Qa'tiri    Ishar Shanulima the Thrice-Wise | Shubara Suzdu'anuq; Ishar Habbantu the Patient | Sardu'amil; Qadun Dulusu the Unlucky | Danuhli;
+  Hanuwe     Lewahi Itawohele the Wave-Walker | Tewaha Ngepako; Lewahi Kuango the Long-Voyager | Hokupako; Lewahi Upukamono the Wave-Walker | Lohotola;
+  Mbendi     Ngozu Sumuwa the Forest-Born | Mbeli Ube; Ngozu Njalibika the Elder | Sumbe Njomendu; Ndalo Semelo the Ironsmith | Ambakumbe;
+  Thrask     Thrund Thasetild the Wolf-Friend | Hakane; Thrund Knafevund the Wave-Breaker | Skeldra Svigsund; Jorvald Afadis the Wolf-Friend | Deisrenes;
+  Pheraxi    Exarion Strephasu the Golden-Tongued | Elsatoilonos; Thalarch Krilikine the Younger | Dorantha Phoilphane; Thalarch Thasimira the Learned | Innephupaxis;
+  1440 checked
+  50400 names scanned against the test-side list: 0 hits
+  a new language: 1.75 ms; a daughter: 2.05 ms (each with its variety probe)
+    L6 optimality: 144 pairs, 52 reachable, worst |route - optimal| 0
+    maxCost boundary: 194 pairs
+    largest landmass: 11226 cells
+    worst case: land, far ends of the largest continent, default budget      0.41 ms (0 cells, cost -1.0)
+    worst case: land, far ends, unlimited budget                             0.74 ms (223 cells, cost 527.4)
+    worst case: land, enclosed target, unlimited budget                      0.97 ms (0 cells, cost -1.0)
+    worst case: open, enclosed target, unlimited (whole planet)              4.48 ms (0 cells, cost -1.0)
+    worst case: coastal, enclosed target, unlimited                          1.55 ms (0 cells, cost -1.0)
+    worst case: land, other landmass, need.derive set (no shortcut)          0.96 ms (0 cells, cost -1.0)
+    whole-planet reach (open, unlimited): 40946 cells 4.28 ms
+    damaged worlds: 58.1 ms
+    dirOf over the pole: max jump 0.00072 rad per 0.04 cells (step 0.01889), |len - 1| 2.2e-16
+    re-path storm: 2 lost (a one-cell lava block on a continent always has a detour)
+    L6: 300 spawns 136.4 ms (0.45 each); step mean 0.039 ms, max 0.207 ms; re-path storm (285 blocked of 285): 126.8 ms, 283 alive after
+    map route land: 282 cells, cost 795.0
+    map route coastal: 228 cells, cost 523.7
+    map route open: 204 cells, cost 86.7
+    L6 n=40962: land find across the largest continent 0.75 ms (236 cells, cost 807.2; default budget 0.18 ms), open-sea pole to pole 0.85 ms (199 cells), unreachable on foot 1.06 ms (shortcut 0.000 ms), whole-planet reach 5.02 ms (40962 cells), 50 coastal finds mean 0.682 ms max 1.55 ms
+    route costs: land 807.2, coastal 155.2, open 52.4
+    maps: land route 236 cells, coastal 81, open 99; coastal reach max cost 400.0
+    unlocked: 11424 (power, phase, age, aweMax, people) combinations match the spec
+    rain  3 s: 60 fps used 12 faith 0.00000 spent 14.917 wet 19.810 | 144 fps used 12 faith 0.00000 spent 14.965 wet 19.816 | 30 fps used 12 faith 0.00000
+    raise 3 s: 60 fps used 12 faith 0.00000 spent 17.900 wet 0.000 | 144 fps used 12 faith 0.00000 spent 17.958 wet 0.000 | 30 fps used 12 faith 0.00000
+    bloom 3 s: 60 fps used 12 faith 0.00000 spent 17.900 wet 0.000 | 144 fps used 12 faith 0.00000 spent 17.958 wet 0.000 | 30 fps used 12 faith 0.00000
+    29376 hostile calls, 1686 accepted, no crash
+    hash a8d6da79 rng 6108182a
+    strokes centred on cell 38443 (coast 16 hops, lat -53.1, lon -44.0)
+    maps: C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-powers-rain-wet.png, C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-powers-fert-delta.png, C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-powers-sculpt.png
+    wet > 0.3 on 248 cells, max wet 0.976, sum 192.8, sea cells wet 0; fert up max 0.0244; sculpt max +1.92 / -2.43
+    rain  60 fps: used 20 spent 12.500 wet 22.035 fert 0.9219 faith 0.00000
+    rain  20      : used 20 spent 12.500 wet 22.052 fert 0.9218 faith 0.00000
+    rain  45      : used 19 spent 12.500 wet 22.038 fert 0.9218 faith 0.00000
+    rain  144     : used 20 spent 12.500 wet 22.030 fert 0.9218 faith 0.00000
+    rain  240     : used 20 spent 12.500 wet 22.029 fert 0.9215 faith 0.00000
+    rain  jitter  : used 19 spent 12.500 wet 22.040 fert 0.9218 faith 0.00000
+    lower 60 fps: used 20 spent 83.333 wet 0.000 fert 0.0000 faith 0.00000
+    lower 20      : used 20 spent 83.333 wet 0.000 fert 0.0000 faith 0.00000
+    lower 45      : used 19 spent 83.333 wet 0.000 fert 0.0000 faith 0.00000
+    lower 144     : used 20 spent 83.333 wet 0.000 fert 0.0000 faith 0.00000
+    lower 240     : used 20 spent 83.333 wet 0.000 fert 0.0000 faith 0.00000
+    lower jitter  : used 19 spent 83.333 wet 0.000 fert 0.0000 faith 0.00000
+    bloom 60 fps: used 20 spent 46.875 wet 0.000 fert 10.1196 faith 0.00000
+    bloom 20      : used 20 spent 46.875 wet 0.000 fert 10.1195 faith 0.00000
+    bloom 45      : used 19 spent 46.875 wet 0.000 fert 10.1195 faith 0.00000
+    bloom 144     : used 20 spent 46.875 wet 0.000 fert 10.1193 faith 0.00000
+    bloom 240     : used 20 spent 46.875 wet 0.000 fert 10.1199 faith 0.00000
+    bloom jitter  : used 19 spent 46.875 wet 0.000 fert 10.1195 faith 0.00000
+    HUD poll (can + cost + unlocked for 16 powers): mean 0.0063 ms, max 0.0235 ms
+    rain   brush frame (ang 0.15): mean 0.0080 ms, max 0.0284 ms
+    raise  brush frame (ang 0.15): mean 0.0078 ms, max 0.0643 ms
+    bloom  brush frame (ang 0.15): mean 0.0083 ms, max 0.0569 ms
+    lightning click: 0.0040 ms (20 of 20 accepted)
+    quake     click: 0.0103 ms (20 of 20 accepted)
+    plague    click: 0.0022 ms (17 of 20 accepted)
+    heal      click: 0.0020 ms (17 of 20 accepted)
+    inspire   click: 0.0018 ms (17 of 20 accepted)
+    prophet   click: 0.0119 ms (6 of 20 accepted)
+    peace     click: 0.0084 ms (1 of 20 accepted)
+    meteor    click: 0.0012 ms (20 of 20 accepted)
+    omen of peace over 7 live towns: 7 miracle:witnessed events, 1 'miracle-peace' chronicle entries, mercy +0.560 (one act)
+    after the advance: aweMax 1200 age 4; can volcano ok/none, quake ok
+    maps C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-powersadv-elev-delta.png C:\Users\Relly\Documents\Fable5.2 Test\demiurge\shots\ue-powersadv-wet.png; marks: meteor 476 volcano 3 quake 5 fire 20 camp 1
+  round trip L4: 68182 bytes, hash 1ffc999b before and after
+  elev   q16: worst error 0.000244 (half step 0.000244)
+  water  q16: worst error 0.000061 (half step 0.000061)
+  wet    q8 : worst error 0.001961 (half step 0.001961)
+  veg    q8 : worst error 0.001960 (half step 0.001961)
+  fert   q8 : worst error 0.002939 (half step 0.002941)
+  ice    q8 : worst error 0.001959 (half step 0.001961)
+  fire   q8 : worst error 0.001960 (half step 0.001961)
+  scorch q8 : worst error 0.001960 (half step 0.001961)
+  lava   q16: worst error 0.000061 (half step 0.000061)
+  fauna  q8 : worst error 0.001961 (half step 0.001961)
+  rad    q8 : worst error 0.001960 (half step 0.001961)
+  farm   q8 : worst error 0.001960 (half step 0.001961)
+  urban  q8 : worst error 0.001959 (half step 0.001961)
+  frames: 68182 bytes with two frames, 51560 without
+  L2: 7147 truncations of a 7147-byte save, all refused
+  L4: 703 truncations of a 68182-byte save, all refused
+  12 header and envelope edits refused
+  L2 payload edits: 790 loaded (and saved again), 710 refused with a reason
+  L4 payload edits: 174 loaded (and saved again), 126 refused with a reason
+  empty L6 world: state blob 778675 bytes, container 778751 bytes
+  L6 populated: container 1034380 bytes (781160 without frames); encode 10.5 ms (includes its read-back), decode 6.0 ms
+  maps: elev error worst 0.000244 of half step 0.000244
+  L0: n 12, container 1065 bytes
+  L1: n 42, container 1905 bytes
+  L7: n 163842, container 4588323 bytes
+  200 cultures: 51 frame cells clamped to 127
+  11 crafted containers refused
+  L6, 200 frames: 833513 bytes (783240 without frames, 251 bytes per frame); encode 41.6 ms (with read-back), decode 15.5 ms
+  real sim L4: save 62128 bytes with 18 frames; 100 y later original pop 2675 in 3 settlements, loaded pop 2682 in 3
+  L6 create 87.662 ms, skip 17.394 ms (budget 800 together)
+  fingerprints: seed 11 3441254335, seed 12 2594316677
+  Sim.cpp world assignments found: 23
+  land 0.000: woke 0, live 0, pop 0.000
+  land 1.000: woke 0, live 0, pop 0.000
+  L6 create 95.996 ms + skip 18.350 ms (budget 800); Life-phase tick mean 0.688 max 1.081 ms; history (first 200 years) mean 0.590 max 5.232 ms
+  daughter trait drift: mean |trait - parent| = 0.077 (drift sd 0.120)
+  root trait spread: mean |piety - 0.5| = 0.104
+  witness falloff: d = 0.1002 rad of 0.200 -> f = 0.4982
+  witnesses that gained: 25
+  1 s of rain: 4 calls -> love 0.2679 devotion 0.3137; 8 calls -> love 0.2634 devotion 0.3136; 1 call of 1 s -> love 0.3000
+  10 s of rain: love 0.956 (was 1.000 before scaling love per second)
+  raise: devotion 0.300 -> 0.3035, love -0.062, seen 0.0050, mercy +0.0000, wrath +0.0025, event
+  lower: devotion 0.300 -> 0.3035, love -0.062, seen 0.0050, mercy +0.0000, wrath +0.0025, event
+  rain: devotion 0.300 -> 0.3035, love 0.075, seen 0.0050, mercy +0.0030, wrath +0.0000, event
+  bloom: devotion 0.300 -> 0.3035, love 0.050, seen 0.0050, mercy +0.0020, wrath +0.0000, event
+  lightning: devotion 0.300 -> 0.3350, love -0.300, seen 0.0500, mercy +0.0000, wrath +0.0300, event
+  quake: devotion 0.300 -> 0.3700, love -0.400, seen 0.1000, mercy +0.0000, wrath +0.0800, event
+  plague: devotion 0.300 -> 0.3350, love -0.350, seen 0.0500, mercy +0.0000, wrath +0.0350, event
+  meteor: devotion 0.300 -> 0.4750, love -0.500, seen 0.2500, mercy +0.0000, wrath +0.2500, event
+  volcano: devotion 0.300 -> 0.4750, love -0.500, seen 0.2500, mercy +0.0000, wrath +0.2500, event
+  heal: devotion 0.300 -> 0.3840, love 0.500, seen 0.1200, mercy +0.1200, wrath +0.0000, event
+  inspire: devotion 0.300 -> 0.3560, love 0.300, seen 0.0800, mercy +0.0480, wrath +0.0000, event
+  prophet: devotion 0.300 -> 0.4050, love 0.250, seen 0.1500, mercy +0.0750, wrath +0.0000, event
+  peace: devotion 0.300 -> 0.3700, love 0.400, seen 0.1000, mercy +0.0800, wrath +0.0000, event
+  age Stone piety 0.5: devotion after 400 yr 0.550 (baseline 0.550)
+  age Bronze piety 0.5: devotion after 400 yr 0.600 (baseline 0.600)
+  age Iron piety 0.5: devotion after 400 yr 0.550 (baseline 0.550)
+  age Sail piety 0.5: devotion after 400 yr 0.450 (baseline 0.450)
+  age Industry piety 0.5: devotion after 400 yr 0.300 (baseline 0.300)
+  age Atomic piety 0.5: devotion after 400 yr 0.180 (baseline 0.180)
+  age Space piety 0.5: devotion after 400 yr 0.100 (baseline 0.100)
+  one camp, devotion 0.6: income 0.702 Awe/yr (spec ~0.70)
+  three shrined villages, devotion 0.5: income 1.451 (spec ~1.4)
+  twenty shrined villages (10 with temples), devotion 0.5: income 3.318 (spec ~3.3)
+  late game, 90 templed cities at devotion 0.25: income 4.813 (spec ~4.5)
+  aweMax with 2 shrines, 1 temple, 1 wonder: 360 (100 + 50 + 60 + 150 = 360)
+  wonder: the Pyramid of Koxemuserax
+  secession at year 320; daughter 'Tenepi' parent 0
+  Ark launched after 250 years at pop 1.5M (spec 250)
+  stress seed 3: 600 yr, cultures 5 (5 living), awe 300.0/300, mercy 43.65, wrath 137.87, regard dev 0.189 love -0.101 mood parting
+  stress seed 4: 600 yr, cultures 5 (5 living), awe 300.0/300, mercy 44.60, wrath 139.40, regard dev 0.202 love -0.015 mood forgotten, ark launched
+  600 yearly calls with 40 settlements: 86.9 ms including setup
+  society::yearly with 160 settlements, 6 cultures, L = 6: 0.473 ms per call
+  map world: 219 settlements
+  rain centre: devotion 0.489 love 0.956; meteor centre: devotion 0.606 love -0.984
+  cultures after 125 years: 2 (1 born by secession)
+  cultures 2, parent capital 0 (was 0; most populous 1), ark 0.716
+  province towns in the daughter: 5/5; low-id pair: 0, 0
+  L 4: hash 3816618745 / 3816618745 (seed 10: 626888453)
+  L 6: hash 1926344214 / 1926344214 (seed 10: 2695366621)
+  200 years: 906 starts, 895 ends, 5 answered, max active 6
+  ark:started 2, ark:launched 1, vars.ark culture 0 year 3700
+  10 s of rain brush (40 witness calls): 20 miracle:witnessed
+  love after 2 s of bloom: 8 calls 0.3366, 4 calls 0.3439
+  160 settlements, 10886 territory cells, 8 droughts, 7 wars: yearly mean 0.807 ms, worst 2.018 ms (diplomacy / chronicle real)
+  witness: meteor-size 5.0 us, brush 3.4 us per call
+  266 settlements; cultures 6 (6 living); towns per culture 0:217 1:13 2:4 3:13 4:3 5:16
+  events: culture:born 5, prophet:risen 8, prophet:died 8, prayer 198, miracle:witnessed 1823
+  world regard: devotion 0.408 love 0.012 mood parting; awe 300.0/300 mercy 1.80 wrath 5.75
+    daughter 1 (parent 0, born 60): 13 towns, spread 0.531 rad
+    daughter 2 (parent 1, born 120): 4 towns, spread 0.265 rad
+    daughter 3 (parent 0, born 210): 13 towns, spread 0.519 rad
+    daughter 4 (parent 3, born 270): 3 towns, spread 0.339 rad
+    daughter 5 (parent 0, born 360): 16 towns, spread 0.536 rad
+  year 1500 (3.9 s): pop 89879, 28 towns, cultures 6 (max living 6), awe 600.0/600 income 2.58, years >= 90 % of cap 1424/1500
+  regard: devotion 0.307 love -0.016 mood forgotten; max prayers at once 6
+  events: culture:born=5 culture:died=0 prayer=268 prayer:answered=0 settlement:captured=36 war:declared=13 wonder:built=0 ark:started=0 ark:launched=0
+       empty L=6 save: 778675 bytes (19.01 bytes per cell)
+       L=6 serialize 2.16 ms, deserialize 4.55 ms
+       map 1024x512 at L=6: 24 ms
+  terrain: generate at L = 6: mean 61 ms, worst 63 ms (target < 500 ms)
+  terrain: 3+ major landmasses (>= 2 % of the planet) on 20 of 20 seeds at L = 5
+  terrain: derive at L = 6: 1.21 ms
+  terrain adv: 71 extra worlds: hard checks failed 0; < 2 landmasses >= 3 % on 0; < 3 islands on 0; major landmasses (>= 2 %) outside 3-6 on 0; no polar land on 0; peak outside +6..+8.5 on 0; floor outside -6..-7 on 0
+  terrain adv: L4: 30 craters, rim cells not above old ground 0, bowls not 1+ deep 0; cones without summit pit / height 0
+  terrain adv: L5: 30 craters, rim cells not above old ground 0, bowls not 1+ deep 0; cones without summit pit / height 0
+  terrain adv: L6: 30 craters, rim cells not above old ground 0, bowls not 1+ deep 0; cones without summit pit / height 0
+  terrain adv: L6 generate mean 64 ms worst 70 ms (5 seeds); derive 1.22 ms; sculpt 0.15 rad 0.004 ms; crater 0.002 ms; cone 0.000 ms; quake 0.005 ms; whole-planet sculpt 0.6 ms, roughen 1.9 ms, crater 1.0 ms
+  terrain adv2: JS reference comet L5: 900 impacts: centre raised 0, centre dug < depth / 2 0, worst drop 1.00 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: JS reference comet L6: 900 impacts: centre raised 17, centre dug < depth / 2 64, worst drop -1.21 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: JS reference meteor L5: 900 impacts: centre raised 0, centre dug < depth / 2 5, worst drop 0.36 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: JS reference meteor L6: 900 impacts: centre raised 0, centre dug < depth / 2 12, worst drop 0.10 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: fixed comet L5: 900 impacts: centre raised 0, centre dug < craterMinDrop x depth 0, worst drop 1.00 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: fixed comet L6: 900 impacts: centre raised 0, centre dug < craterMinDrop x depth 0, worst drop 0.50 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: fixed meteor L5: 900 impacts: centre raised 0, centre dug < craterMinDrop x depth 0, worst drop 0.50 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+  terrain adv2: fixed meteor L6: 900 impacts: centre raised 0, centre dug < craterMinDrop x depth 0, worst drop 0.50 x depth, rim cells not raised 0, cells moved beyond 1.5 x R 0
+    300 units at L6: spawn (A* each) 177.78 ms total, step mean 0.023 ms, max 0.039 ms, 273 still travelling
+    journeys: 14 units, 1410 walking and 520 sailing unit-ticks, 0 left after 500 years
+
+769 passed, 0 failed (152130 ms)
+
+all 769 passed, 0 failed

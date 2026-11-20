@@ -1,0 +1,30 @@
+--- seed 603 kind saveload 956 run 1
+   save/load at year 956: 832791 bytes; re-save of the loaded world identical; after sim::use differs (derived recompute); fingerprint 0248607d -> edbb9c9c (quantized fields differ by design)
+   result: 3000 years, no ending; ages: Bronze 309 Iron 944 Sail 1674 Industry 2333 Atomic 2867 Space -; ark -
+   events ... chronicle 1169
+   hash 98f9c2ec
+--- seed 603 kind saveload 956 run 2
+   save/load at year 956: 832791 bytes; re-save of the loaded world identical; after sim::use differs (derived recompute); fingerprint 0248607d -> edbb9c9c (quantized fields differ by design)
+   result: 3000 years, no ending; ages: Bronze 309 Iron 944 Sail 1674 Industry 2333 Atomic 2867 Space -; ark -
+   events ... chronicle 1169
+   hash 98f9c2ec
+--- seed 603 kind saveload 1800 run 1
+   save/load at year 1800: 909371 bytes; re-save of the loaded world identical; after sim::use differs (derived recompute); fingerprint 391806bf -> c6ca8ca6 (quantized fields differ by design)
+   result: 3000 years, no ending; ages: Bronze 309 Iron 944 Sail 1648 Industry 2298 Atomic 2831 Space -; ark -
+   events ... chronicle 1227
+   hash 13295ad3
+--- seed 603 kind saveload 1800 run 2
+   save/load at year 1800: 909371 bytes; re-save of the loaded world identical; after sim::use differs (derived recompute); fingerprint 391806bf -> c6ca8ca6 (quantized fields differ by design)
+   result: 3000 years, no ending; ages: Bronze 309 Iron 944 Sail 1648 Industry 2298 Atomic 2831 Space -; ark -
+   events ... chronicle 1227
+   hash 13295ad3
+--- seed 603 kind saveload 2184 run 1
+   save/load at year 2184: 962223 bytes; re-save of the loaded world identical; after sim::use differs (derived recompute); fingerprint 0f5fd327 -> 8d0e744a (quantized fields differ by design)
+   result: 3000 years, no ending; ages: Bronze 309 Iron 944 Sail 1648 Industry 2299 Atomic 2832 Space -; ark -
+   events ... chronicle 1213
+   hash 0e6b17ba
+--- seed 603 kind saveload 2184 run 2
+   save/load at year 2184: 962223 bytes; re-save of the loaded world identical; after sim::use differs (derived recompute); fingerprint 0f5fd327 -> 8d0e744a (quantized fields differ by design)
+   result: 3000 years, no ending; ages: Bronze 309 Iron 944 Sail 1648 Industry 2299 Atomic 2832 Space -; ark -
+   events ... chronicle 1213
+   hash 0e6b17ba

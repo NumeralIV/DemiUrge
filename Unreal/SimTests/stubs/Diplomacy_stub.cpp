@@ -47,5 +47,9 @@ std::vector<int> tense(const World& w, int cultureId) {
 	DM_STUB(society_tense, w, cultureId);
 	return {};
 }
+double swornUntil(const World& w, int a, int b) {
+	DM_STUB(society_swornUntil, w, a, b);
+	return -1;
+}
 
 } // namespace dm::society

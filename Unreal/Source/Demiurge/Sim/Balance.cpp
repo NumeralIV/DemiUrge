@@ -451,6 +451,13 @@ void apply(World& w) {
 	D.omenSworn = true;
 	D.omenCalm = true;
 	D.omenTension = -0.4;
+	// (chronicle-diplomacy) a stronger Omen: one that ends a people's wars calms every other tense neighbour of that
+	// people too, and it leaves no envy (no favour for its witnesses; a sworn pair does not envy each other).
+	// 8 seeds x 4,500 years: kind at war 9.8 -> 7.7 % (median), kind < cruel 7/8 (seed 4 a tie, 14 / 14 %), passive
+	// unchanged (it casts no Omen). Waking the Omen in Bronze (diplomacy.omenAge = 1) was tried and left off: kind
+	// rose to 11.1 % and kind < cruel fell to 6/8 (sworn early peoples fought more in Iron and Sail).
+	D.omenWide = true;
+	D.omenNoEnvy = true;
 	// a war of nothing (no army from either side for 25 years) peters out in a draw
 	D.warStall = 25;
 	// the bomb is feared after the first exchange

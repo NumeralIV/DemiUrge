@@ -45,7 +45,7 @@ DM_TEST("link: the stub registry matches the stub files") {
 		for (const char* m : stub::kStubModules) if (std::string(m) == f.module) known = true;
 		ok(known, std::string("row of an unknown module: ") + f.module + " " + f.hook);
 	}
-	eq(stub::kStubFnCount, 143, "declared module functions (v3, design review: +8; v3.1: + society::swearPeace, society::tense)");
+	eq(stub::kStubFnCount, 144, "declared module functions (v3, design review: +8; v3.1: + society::swearPeace, society::tense; chronicle-diplomacy: + society::swornUntil)");
 	eq(powers::kPowerCount, 17, "power table rows (SPEC-SIM 3.10; v3: + consecrate)");
 }
 
@@ -148,6 +148,9 @@ DM_TEST("link: every declared function is callable") {
 	(void)powers::upgrade(w, "rain");
 	(void)powers::drownRisk(w, c, 0.06);
 	(void)society::atWar(w, cu, cuB);
+	(void)society::swornUntil(w, cu, cuB);
+	(void)society::tense(w, cu);                      // (chronicle-diplomacy) the v3.1 pair was never called here
+	(void)society::swearPeace(w, cu, cuB);
 	(void)powers::unlocked(w, "rain");
 	(void)powers::cost(w, "rain", -1, -1);
 	(void)powers::can(w, "rain", c);

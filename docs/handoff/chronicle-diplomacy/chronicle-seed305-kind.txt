@@ -1,0 +1,1303 @@
+== seed 305  policy kind  world "Cahei"  L 6  calamity 1.00  create 137 ms  start 33 ms
+   ENDING year 3493: ark / beloved (culture 0, settlement 0)
+   result: 3493 years, ending ark / beloved in 3493; ages: Bronze 318 Iron 888 Sail 1583 Industry 2252 Atomic 2802 Space 3274; ark 3493
+   peaks: pop 9.75M, settlements 101, cultures 6; anomaly +4.03 (min -1.72), co2 155.2, dust 0.191, sea +0.283 / -0.006 vs seaBase; largest fire 11 cells (year 597)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.21/yr (a 40-Awe miracle every 9.1 s at 1x), later 2.85/yr (7.0 s), 150 Awe every 26 s once meteors unlock
+   events: founded 112, destroyed 19 ( lava 2 sea 17 ), cultures born 7 / died 2, wars 21, battles 55, nukes 0, prophets 4, wonders 1, trade routes 426, famines 128, plagues 50, fires 358, storms 210, droughts 134, quakes 33, volcanoes 12, impacts 0, people:lost 0, chronicle 1286
+   policy: 71 clicks, 1444 strokes, 0 refused, 4 edicts; bloom 961 heal 23 inspire 1 peace 43 prophet 4 rain 483
+   timing: 13972 ticks, wall mean 46.987 ms, max 87847.29 ms (year 2343); thread CPU mean 1.996 ms, max 21.23 ms, p99.9 16.66 ms; score 5646; non-finite: none
+   regard now: everyone devotion 0.430 love +0.323 (beloved); Ziliditi* 0.445/+0.413 age Space pop 6.10M; Alengita 0.466/+0.607 age Industry pop 28.2k; Masoniza 0.475/+0.366 age Industry pop 6706; Wariramo 0.399/+0.148 age Space pop 3.30M; Tosedaso 0.456/+0.419 age Atomic pop 279.0k; Wanjoto 0.434/+0.066 age Atomic pop 28.2k
+   memory (Ark culture): grace 6.99 wrath 0.00 neglect 1.7 (presence 0.97) lore +0.730 verdict +0.619 silent 0 y prayers 419 answered 351 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 14 lightning 1 quake 161 plague 888 meteor 1583 volcano 2252 heal 1 inspire 161 prophet 888 peace 888 consecrate 318
+   review: settlements @200 4 @400 10; first prayer 46; second culture 324; first war 385, war in 6.0% of years; longest quiet (no weight-2 entry, years 0-1000) 285 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 826, answered 673; rain/bloom answered 657, famine over within 5 y 657; famine entries 57; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Quiet Between Armies'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.445/+0.413; memory grace 6.99 wrath 0.00 lore +0.73 verdict +0.62 silent 0 y prayers 351/419 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 317/0/0%/10.6/1.9,1.51; Bronze 570/3/6%/17.5/4.6,0.63; Iron 695/6/12%/28.5/6.7,0.69; Sail 669/9/13%/58.7/5.4,0.36; Industry 550/2/1%/62.0/6.3,0.65; Atomic 472/0/0%/36.6/6.1,0.51; Space 219/1/1%/28.5/6.6,2.19;
+   diplomacy: alliances formed 31 (peak 2 at once, 39% of years), alliance events 21, wars joined by an ally 0, blamed on the god 1, victor thanked the god 3, nuclear exchanges 0; pace: 29.1 min at 1x (2 without a notable entry), auto-pace 28.3 min (3 without)
+   chronicle (last entries):
+     [    0 w3] Then green came out of the wet places of Cahei, slowly at first, as if it were not sure it was allowed.
+     [    0 w3] In the first year, before there was counting, the god touched the ground at Wazembola, and the Ziliditini woke. They looked up at the sky and did not yet know whom to thank, so they thanked everything.
+     [    0 w3] Again the god woke a people: the Ziliditini, at Walimandu.
+     [    0 w3] Here the counting of years begins.
+     [    0 w1] Soft rain fell over Wazembola.
+     [    1 w2] At Wazembola they set stones in a ring and laid the first fruits on them for Zumbende. It was a small shrine. The god did not complain.
+     [    1 w2] The Ziliditini called the one who had woken them the Maker.
+     [    6 w2] In the 6th year the Ziliditini stopped calling their god the Maker. From now on, in the market and at the hearth, it was the Cloud-Shepherd.
+     [   14 w1] Walimandu built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [   14 w1] Where the Cloud-Shepherd passed near Wazembola, the land went green out of season, and the old women said the trees had heard a rumour.
+     [   25 w1] Wazembola grew from a camp into a village.
+     [   28 w1] Around Wazembola the trees bent with fruit, and the Ziliditini said Zumbende had walked there.
+     [   38 w1] The tents of Walimandu gave way to houses of mud and reed, and it was called a village.
+     [   45 w1] No rain fell on the lands of Wazembola. The river showed its stones, and the people counted them.
+     [   46 w1] The people of Wazembola climbed to the shrine and prayed to Zumbende for rain. They prayed loudly, in case the Cloud-Shepherd was far away.
+     [   46 w2] Among the Ziliditini, mothers who had once told their children of the Cloud-Shepherd now told them of the Green Hand.
+     [   46 w2] Wazembola prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [   50 w1] In those ten years Zumbende answered the prayers of seven towns of the Ziliditini.
+     [   52 w1] Wazembola asked for rain, and Zumbende gave it, and the barley stood up again.
+     [   53 w1] Rain returned to Wazembola at last.
+     [   58 w1] The herds about Wazembola grew fat on grass that had not been there the week before.
+     [   72 w1] Near Wazembola, at the touch of the god, seeds woke in the dry ground.
+     [   80 w1] Below the great events of those thirty years, Zumbende was asked for help by five towns of the Ziliditini and gave it.
+     [  102 w1] Zumbende breathed on the land around Wazembola, and it flowered.
+     [  116 w1] The fields about Wazembola grew green as if in a dream.
+     [  144 w1] The land of Walimandu blossomed out of season, and the beekeepers grew rich.
+     [  148 w1] In the 147th year, a band went out from Wazembola with seed corn and quarrels enough for a new town, and founded Naluli by the water.
+     [  148 w1] There were now enough hearths at Naluli to call it a village.
+     [  148 w1] The people of Naluli raised a shrine to Zumbende.
+     [  160 w1] Where the Green Hand passed near Naluli, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  160 w1] Kulasungu began as a ring of tents in the woods, raised by wanderers from Walimandu.
+     [  161 w1] Kulasungu was a village now, with a fence against the wolves.
+     [  161 w1] The elders of Kulasungu chose a holy place, and a shrine to Zumbende was raised there.
+     [  173 w1] Near Kulasungu, at the touch of the god, the orchards fruited twice.
+     [  188 w1] The herds about Walimandu grew fat on grass that had not been there the week before.
+     [  202 w1] Around Naluli the trees bent with fruit, and the Ziliditini said Zumbende had walked there.
+     [  207 w1] Far away, on the wild dry grasslands of the middle lands, a mountain was born in fire, and its ash darkened the sky.
+     [  208 w1] Families of the Ziliditini who left Wazembola built their first fires at Nyalekude, and were not sorry.
+     [  208 w1] Children were born at Nyalekude who had never lived anywhere else, and it became a village.
+     [  208 w1] At Nyalekude a shrine of wood was made for Zumbende.
+     [  216 w1] Zumbende breathed on the land around Kulasungu, and it flowered.
+     [  221 w1] A band from Walimandu crossed the country and founded Manginja in the woods.
+     [  221 w1] The camp at Manginja put down roots and became a village.
+     [  221 w1] The Ziliditini set up a shrine at Manginja, and left bread there for the god.
+     [  229 w1] The fields about Manginja grew green overnight.
+     [  242 w1] The land of Naluli blossomed out of season, and the beekeepers grew rich.
+     [  256 w1] Around Kulasungu the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [  266 w1] Some of the people of Naluli grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Inamba.
+     [  267 w1] In the 267th year Inamba could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  267 w1] A circle of white stones was laid out at Inamba, and the Ziliditini came there to speak to Zumbende.
+     [  270 w1] Near Walimandu, at the touch of the god, the orchards fruited twice.
+     [  271 w1] Wanderers from Wazembola came to Nituda and stayed.
+     [  281 w1] A new village of the Ziliditini, Uwasungu, was raised in the woods, where the hunters of Kulasungu had always camped.
+     [  281 w1] So many children were born in Uwasungu that the elders gave up learning their names. Thus it became a village.
+     [  281 w1] At Uwasungu they set stones in a ring and laid the first fruits on them for Zumbende. It was a small shrine. The Green Hand did not complain.
+     [  284 w1] Where the Green Hand passed near Uwasungu, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  291 w1] Lightning struck in the woods north-west of Naluli in a summer storm.
+     [  291 w1] Fire ran through the woods north-west of Naluli.
+     [  297 w1] The herds about Manginja grew fat on grass that had not been there the week before.
+     [  298 w1] The earth opened in the lonely woods of the middle lands, where no one lived, and fire poured out until the sea quenched it.
+     [  310 w1] Zumbende breathed on the land around Walimandu, and it flowered.
+     [  318 w3] The Ziliditini learned to marry copper and tin, and the age of bronze began among them. No people had done so before them.
+     [  319 w1] Wazembola became a town, with a wall of thorns.
+     [  319 w2] The Ziliditini of Wazembola built a temple to Zumbende so tall that the priests must rest twice on the stair, and they said that this was the point. It was the first temple of the Ziliditini.
+     [  319 w1] The rains failed around Inamba.
+     [  320 w1] The people of Naluli prayed for rain.
+     [  320 w2] Naluli had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [  324 w2] From the Ziliditini came the Kitisonani, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  324 w2] The Kitisonani called the god who had woken their fathers Lord of the Second Spring.
+     [  326 w1] Zumbende heard the dry fields of Naluli, and opened the sky.
+     [  328 w1] The Green Hand drew a hand across the sky above Nyalekude, and the dry fields drank.
+     [  330 w1] More than a dozen towns of the Ziliditini prayed to Zumbende and did not pray in vain. Of such small things in those fifty years the chronicle keeps nothing more.
+     [  331 w1] The rains came back to Inamba, as rains do, in their own time.
+     [  333 w1] The fields about Manginja grew green overnight.
+     [  334 w1] Uwasungu was a town now, the busiest of the Kitisonani.
+     [  334 w2] A temple to Zombende was built in Uwasungu. No one among the Kitisonani had built a temple before.
+     [  346 w1] The land of Kulasungu blossomed out of season, and the beekeepers grew rich.
+     [  358 w1] The sky over Inamba cracked open with fire, and the old oak east of the town burned like a torch.
+     [  358 w1] The country east of Inamba burned until the rain came, and the smoke hung over the town.
+     [  361 w1] Around Inamba the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [  376 w1] The herds about Walimandu grew fat on grass that had not been there the week before.
+     [  385 w2] In the 385th year the Ziliditini remembered an old insult from the Kitisonani, and went to war over it.
+     [  386 w2] Wazembola built walls. No one said against whom. Everyone knew. It was the first wall of the Ziliditini.
+     [  386 w1] Fearing the war, Uwasungu ringed itself with a ditch and a palisade. No one among the Kitisonani had built walls before.
+     [  389 w1] Near Nyalekude, at the touch of the god, the orchards fruited twice.
+     [  390 w1] Before Kulasungu, the Kitisonani met the Ziliditini. By evening the field belonged to the Ziliditini, and to the birds.
+     [  392 w1] In the 391st year Kadetende opened its gates to the Ziliditini, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [  392 w2] The Ziliditini won their war against the Kitisonani, and gave the glory to the Green Hand. The priests of Wazembola had never been so busy, nor so well fed.
+     [  402 w1] Where the Green Hand passed near Naluli, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  416 w1] Zumbende breathed on the land around Walimandu, and it flowered.
+     [  429 w1] The fields about Inamba grew green as if in a dream.
+     [  442 w1] The land of Kulasungu bloomed out of season, and the beekeepers grew rich.
+     [  443 w2] Envoys of the Ziliditini threw down their staffs before the Kitisonani, and the war began.
+     [  448 w1] The Kitisonani attacked Kadetende in the rain and were beaten in the river mud.
+     [  452 w2] Uwasungu was lost by the Kitisonani and won by the Ziliditini, and its market changed hands with it.
+     [  452 w3] The Kitisonani are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [  452 w2] The war ended when there were none of the Kitisonani left to fight it.
+     [  456 w1] The herds about Uwasungu grew fat on grass that had not been there the week before.
+     [  469 w1] Near Nituda, at the touch of the god, the orchards fruited twice.
+     [  482 w1] Where the Green Hand passed near Inamba, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  487 w1] Ungizu was founded in the woods by the Ziliditini, who had grown too many for Manginja.
+     [  488 w1] Ungizu grew from a camp into a village.
+     [  488 w1] Ungizu built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [  491 w2] Far from their old capital, the people about Uwasungu began to call themselves the Alengitani, and spoke a tongue the Ziliditini could barely follow.
+     [  491 w2] Among the Alengitani the god was named the Sower.
+     [  496 w1] Around Kulasungu the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [  509 w1] Zumbende breathed on the land around Ungizu, and it flowered.
+     [  524 w1] The fields about Walimandu grew green as if in a dream.
+     [  528 w1] Settlers of the Ziliditini went out from Naluli and made a new home at Kotimbola.
+     [  529 w1] There were now enough hearths at Kotimbola to call it a village.
+     [  529 w1] At Kotimbola a shrine of wood was made for Zumbende.
+     [  529 w1] In Kotimbola they burned fat and asked Zumbende for rain.
+     [  530 w1] The priests of Kotimbola were still singing for rain when it began to fall on them.
+     [  533 w1] Katelanda was founded in the 533rd year. Its founders swore it would one day be greater than Inamba. The chronicle notes that all founders swear this.
+     [  536 w1] Rain came to Katelanda. The old people said it smelled of the god.
+     [  536 w1] The land of Kulasungu blossomed out of season, and the beekeepers grew rich.
+     [  537 w1] A great storm walked in from the sea and stood over Katelanda for three days, and the roofs learned to fly.
+     [  545 w1] The houses of Nilotende reached the old boundary stones and did not stop. From this year the Ziliditini call it a town.
+     [  545 w1] In the 545th year the Ziliditini raised a temple at Nilotende, and were proud of it for one generation, which is the usual length of pride.
+     [  548 w1] It is written that Manibabir began as a ring of tents on the dry grasslands, raised by wanderers from Uwasungu.
+     [  548 w2] The Alengitani made their first shrine at Manibabir, and kept the name their fathers had given the god: Zumbende.
+     [  548 w2] A granary now stands at Manibabir, where before there was only mud and opinion. It was the first granary of the Alengitani.
+     [  548 w1] The priests of Manibabir went up to the high places and cried out for rain.
+     [  548 w1] Rain answered the prayers of Manibabir, so suddenly that the priests were soaked at the altar.
+     [  550 w1] Where the Green Hand passed near Manginja, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  564 w1] Around Kotimbola the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [  577 w1] The herds about Naluli grew fat on grass that had not been there the week before.
+     [  580 w1] Families of the Ziliditini who left Nyalekude built their first fires at Ingeda, and were not sorry.
+     [  580 w1] The tents of Ingeda gave way to houses of stone, and it was called a village.
+     [  580 w1] The elders of Ingeda chose a holy place, and a shrine to Zumbende was raised there.
+     [  580 w1] In Ingeda a white goat was given to Zumbende, with a prayer for rain.
+     [  580 w1] In Ingeda they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [  590 w1] Near Ungizu, at the touch of the god, seeds woke in the dry ground.
+     [  596 w1] Far away, in the wild woods of the south, a mountain was born in fire, and its ash darkened the sky.
+     [  603 w1] Zumbende breathed on the land around Walimandu, and it flowered.
+     [  616 w1] The fields about Katelanda grew green overnight.
+     [  630 w1] The land of Walimandu bloomed out of season, and the beekeepers grew rich.
+     [  644 w1] Around Ungizu the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [  658 w1] Where the Green Hand passed near Nilotende, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  671 w1] The herds about Kulasungu grew fat on grass that had not been there the week before.
+     [  684 w1] Near Inamba, at the touch of the god, seeds woke in the dry ground.
+     [  692 w1] Wind and rain beat upon Ungizu for a week, and the boats were thrown up on the fields.
+     [  698 w1] Zumbende breathed on the land around Katelanda, and it flowered.
+     [  711 w1] The fields about Ungizu grew green as if in a dream.
+     [  722 w1] At Manibabir, the Alengitani prayed to Zumbende for rain, morning and evening.
+     [  722 w1] The people of Manibabir prayed for rain, and Zumbende sent it.
+     [  725 w1] The land of Walimandu blossomed out of season, and the beekeepers grew rich.
+     [  738 w1] Around Walimandu the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [  746 w1] For Manibabir, thirsty and praying, Zumbende gathered the clouds, and the wells filled again.
+     [  747 w1] A band from Manginja crossed the country and founded Ebisungu in the deep forest.
+     [  748 w1] Ebisungu was a village now, with a well and a headman.
+     [  748 w1] The people of Ebisungu raised a shrine to Zumbende.
+     [  751 w1] Near Kulasungu, at the touch of the god, flowers opened in the snow.
+     [  753 w1] Some of the people of Ungizu grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Kimoli.
+     [  760 w1] Kimoli became a town, and built a gate, though it had no wall yet.
+     [  764 w1] The herds about Katelanda grew fat on grass that had not been there the week before.
+     [  770 w1] The rain-dancers of Manibabir had danced for three days when Zumbende answered them with thunder and a long rain.
+     [  773 w1] A storm walked inland over the country of Kimoli, and left the fields flattened behind it.
+     [  773 w1] The earth shook near Katelanda.
+     [  777 w1] Where the Green Hand passed near Kimoli, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  790 w1] Zumbende breathed on the land around Nyalekude, and it flowered.
+     [  790 w1] Zumbende heard the dry fields of Manibabir, and opened the sky.
+     [  793 w1] In the 793rd year, a band went out from Inamba with seed corn and quarrels enough for a new town, and founded Ndutiwilo by the water.
+     [  794 w1] Children were born at Ndutiwilo who had never lived anywhere else, and it became a village.
+     [  794 w1] The Ziliditini set up a shrine at Ndutiwilo, and left flowers there for the god.
+     [  797 w1] The Ziliditini of Kinumbola wrote their prayer for rain on bark and buried it at the shrine.
+     [  798 w1] Kinumbola had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [  803 w1] The fields about Inamba grew green overnight.
+     [  806 w1] Wanderers from Nilotende came to Nenzilela and stayed.
+     [  807 w1] In the 807th year Nenzilela could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  807 w1] A circle of white stones was laid out at Nenzilela, and the Ziliditini came there to speak to Zumbende.
+     [  812 w1] Manibabir asked for rain, and Zumbende gave it, and the barley stood up again.
+     [  816 w1] The land of Ungizu bloomed out of season, and the beekeepers grew rich.
+     [  826 w1] The women of Kinumbola tied red threads to the shrine and asked for rain.
+     [  826 w1] Kinumbola prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [  828 w1] Mist and rain came to Nenzilela, and the hills around it ran with little streams.
+     [  829 w1] Near Ndutiwilo, at the touch of the god, the orchards fruited twice.
+     [  832 w1] The priests of Manibabir were still singing for rain when it began to fall on them.
+     [  833 w3] The Ziliditan settlers about Ndutiwilo had been apart too long. They took a new name, Palilulo, and went their own way.
+     [  833 w2] In the first songs of the Paliluloni, the god was the Green Hand.
+     [  840 w1] The fields around Zatendeni filled with new houses, and it became a town of the Ziliditini.
+     [  840 w1] At Zatendeni they built a temple. It took longer than promised and cost more than was said, as is the way of all building.
+     [  842 w1] The herds about Ndudeli grew fat on grass that had not been there the week before.
+     [  853 w1] In Kinumbola they burned incense and asked Zumbende for rain.
+     [  854 w1] Rain answered the prayers of Manibabir, warm and heavy and long.
+     [  855 w1] In the 855th year the granaries of Kinumbola rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [  857 w1] The god let rain fall on Nenzilela, though it had not been asked for. The farmers said it was too much.
+     [  858 w1] Around Walimandu the trees bent with fruit, and the Ziliditini said Zumbende had walked there.
+     [  867 w2] The Alengitani made war on the Paliluloni.
+     [  868 w2] The people of Manibabir built a wall and a gate, and slept behind them. No one among the Alengitani had built walls before.
+     [  870 w2] The Alengitani marched into Ingeda, and the town paid tribute from that day.
+     [  870 w1] The Paliluloni came against Manibabir and were thrown back.
+     [  871 w1] Where the Green Hand passed near Nyalekude, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  875 w1] The people of Kotimbola climbed to the shrine and prayed to Zumbende for peace. They prayed loudly, in case the Green Hand was far away.
+     [  876 w1] In Manibabir they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [  878 w2] At Ungizu the craftsmen woke with ideas they could not explain, and claimed them as their own.
+     [  878 w1] A long gentle rain came to Nenzilela, and the Ziliditini said it was a blessing.
+     [  882 w2] The Alengitani took Kotimbola from the Paliluloni.
+     [  883 w2] After sixteen years the Paliluloni asked for peace, and the Alengitani granted it, and made them pay for the asking.
+     [  884 w1] Zumbende breathed on the land around Ebisungu, and it flowered.
+     [  888 w3] In the 888th year the world turned a page: the Ziliditini, first of all peoples, came into the Age of Iron, and the others began to hurry.
+     [  888 w2] The Ziliditini and the Alengitani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [  889 w3] Wazembola became the first city in the world, and its walls held more people than the whole world had once held.
+     [  889 w1] A market was founded in Wazembola, and strangers came to it. It was the first market of the Ziliditini.
+     [  889 w1] In the songs of the Alengitani, the Sower became the Quiet Between Armies.
+     [  892 w1] The first caravan came from Zatendeni to Ungizu, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [  898 w1] A prophet named Iminjida stood up in the market of Wazembola and said that Zumbende had spoken. Some believed. The rest moved their stalls.
+     [  898 w1] Iminjida spoke for the Green Hand: "Build a thing that can be seen from the sky." And the Ziliditini began to quarry the hills.
+     [  898 w1] The people of Manibabir prayed for rain, and Zumbende sent it.
+     [  901 w1] The fields about Nilotende grew green as if in a dream.
+     [  902 w1] The priests of Kinumbola went up to the high places and cried out for rain.
+     [  904 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [  905 w1] The earth opened in the lonely hills of the south, where no one lived, and fire poured out for many years.
+     [  908 w1] The village of Ndudeli grew into a town, and its people began to look down on villages.
+     [  908 w1] A temple now stands at Ndudeli, where before there was only mud and opinion.
+     [  910 w2] In the lands about Manibabir a new people arose, the Masonizani, children of the Alengitani but no longer their subjects.
+     [  910 w2] The Masonizani began to speak of Zombende as the Green Hand.
+     [  910 w1] Thunder rolled over Nenzilela, and lightning fell south of the city.
+     [  910 w1] A wildfire came close to Nenzilela, and the people beat it back with green branches.
+     [  912 w2] Among the Ziliditini the god was no longer the Green Hand but the Gentle Hand, and the old name was forgotten.
+     [  912 w1] The feet of traders wore a road between Wazembola and Nyalekude. Along it went pots and coins and, later, fevers.
+     [  915 w1] The land of Kulasungu bloomed out of season, and the beekeepers grew rich.
+     [  919 w1] The people of Manibabir prayed for rain.
+     [  920 w2] For Manibabir, thirsty and praying, Zombende sent a long grey rain, and the wells filled again.
+     [  921 w1] Zatendeni became a city, the pride of the Ziliditini.
+     [  923 w1] Merchants of Zatendeni reached Manibabir and found that the people there were also people. This was thought remarkable, and then useful.
+     [  923 w1] In Kinumbola a jar of honey was given to Zumbende, with a prayer for rain.
+     [  924 w1] Soft rain fell over Nenzilela.
+     [  926 w2] In the 926th year the Paliluloni entered the Age of Iron. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [  927 w1] The Paliluloni raised a harbour at Ndutiwilo, and were proud of it for one generation, which is the usual length of pride. No one among the Paliluloni had built a harbour before.
+     [  928 w3] The Ziliditini finished the Great Temple of Badisungu at Wazembola. It took three lifetimes. The first did not live to see it; the last complained of the dust.
+     [  928 w1] Where the Gentle Hand passed near Katelanda, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  931 w1] The Masonizani of Ingeda saw their first Paliluli merchants, and laughed at their hats.
+     [  942 w1] Near Manginja, at the touch of the god, the orchards fruited twice.
+     [  944 w1] The rain-dancers of Manibabir had danced for three days when Zombende answered them with thunder and a long rain.
+     [  944 w1] At Kinumbola, the Ziliditini prayed to Zumbende for rain, morning and evening.
+     [  947 w1] Rain came to Nenzilela. The fields were glad of it.
+     [  947 w1] The merchants of Manginja found a road to Wazembola, and the road found more merchants.
+     [  951 w2] Iminjida the prophet died, and was buried facing the sunrise. The Ziliditini argued over every word Iminjida had said, which is how they knew the words were holy.
+     [  960 w1] A tremor ran through the land about Ndudeli, and the old wall finally came down.
+     [  960 w1] The sea drew back from the shore at Manginja, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [  962 w1] A great wave broke on the shore south-west of Uwasungu, and the people of the town counted their dead.
+     [  965 w1] A tree south-west of Nyalekude was split by lightning. The wood was kept as a holy thing in the city.
+     [  965 w1] In the month of dust a fire ate the woods south-west of Nyalekude.
+     [  968 w1] The Ziliditini of Kinumbola wrote their prayer for rain on clay and buried it at the shrine.
+     [  968 w2] Kinumbola had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [  969 w1] Mist and rain came to Nenzilela, and the hills around it turned a deeper green.
+     [  970 w1] The harvest failed at Manibabir, and the people ate their seed corn.
+     [  983 w2] From the Ziliditini came the Wariramoni, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  983 w2] Among the Wariramoni the god was named Lord of the Second Spring.
+     [  987 w2] The Green Hand sent a sign over Manibabir: a ring of light around the sun at noon. The Masonizani and the Paliluloni, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them.
+     [  992 w1] A new village of the Ziliditini, Mbazukani, was raised in the woods, a few days' walk from Ebisungu.
+     [  993 w1] The camp at Mbazukani put down roots and became a village.
+     [  993 w1] At Mbazukani they set stones in a ring and laid the first fruits on them for Zumbende. It was a small shrine. The Gentle Hand did not complain.
+     [  993 w1] The women of Kinumbola sang at the shrine every evening and asked for rain.
+     [  994 w1] Kinumbola asked for rain, and Zumbende gave it, and the barley stood up again.
+     [  994 w1] The god let rain fall on Nenzilela, though it had not been asked for. The farmers said it was too much.
+     [  995 w1] There were too many mouths in Manibabir and too little bread, and the weak did not see the spring.
+     [  998 w1] Merchants began to travel between Mbazukani and Kimoli, and the road between them grew wide.
+     [ 1001 w1] The Alengitani drew iron out of red stone, and the age of iron began among them.
+     [ 1002 w1] Walls of cut stone went up around Uwasungu, and the Alengitan scribes began to call it a city.
+     [ 1002 w1] Uwasungu built a market hall, and its merchants grew rich and pompous. It was the first market of the Alengitani.
+     [ 1005 w1] Caravans of the Alengitani now came to Nyalekude of the Ziliditini as well.
+     [ 1006 w1] The Masonizani worked iron, and their ploughs bit deep.
+     [ 1006 w1] The Gentle Hand laid a hand on Katelanda, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 1011 w1] Nyalekude of the Ziliditini began to buy the goods of Manibabir, and its merchants learned the Masonizan way of haggling.
+     [ 1011 w1] War came between the Masonizani and the Alengitani, who had once traded salt and songs.
+     [ 1014 w1] Before Kadetende, the army of the Masonizani was broken.
+     [ 1014 w1] The priests of Kinumbola were still singing for rain when it began to fall on them.
+     [ 1015 w1] A long gentle rain came to Nenzilela, and the Wariramoni said it was a blessing.
+     [ 1017 w1] The town of Mbazukani grew into a city of the Ziliditini, with paved streets and quarrelsome councils.
+     [ 1022 w2] The scribes of the Masonizani began to write Ingeda with the sign for 'city', and its people were insufferable about it.
+     [ 1022 w1] The host of the Masonizani came against Kadetende and broke on its walls like a wave on rock, and went home fewer.
+     [ 1028 w1] The people of Kadetende prayed for peace.
+     [ 1028 w1] Uwasungu prayed for peace, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1029 w2] The Masonizani no longer called the god the Green Hand; now they said the Breaker of Spears.
+     [ 1030 w1] Monzili had become a city, with more people in it than there were sheep in the hills.
+     [ 1035 w1] The first caravan from Manibabir came to Kadetende, and the Masonizani and the Alengitani learned each other's words for 'price'.
+     [ 1036 w1] Kinumbola prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1036 w1] A warm rain fell on Nenzilela for three days, and the roofs leaked, and nobody minded.
+     [ 1040 w1] Bundungo was founded on the shore by the Ziliditini, who had grown too many for Zatendeni.
+     [ 1047 w1] Traders from Ndudeli found their way to Kadetende of the Alengitani, where Ziliditan coin was already known.
+     [ 1051 w1] Settlers of the Wariramoni went out from Nenzilela and made a new home at Ndemunza.
+     [ 1051 w1] The tents of Ndemunza gave way to houses of mud and reed, and it was called a village.
+     [ 1055 w1] The people of Nginondu raised a shrine to Zumbende.
+     [ 1056 w1] Zumbende heard the dry fields of Kinumbola, and opened the sky.
+     [ 1057 w1] Rain came to Nenzilela. The old people said it smelled of the god.
+     [ 1059 w1] Ox-carts began to creak along the road from Ndemunza to Nenzilela, and inns grew up beside it.
+     [ 1065 w1] In a night of thunder a bolt came down west of Nilotende, and the dogs of the city howled until dawn.
+     [ 1065 w1] Fire walked through the plains west of Nilotende, and the beasts ran before it.
+     [ 1068 w2] In the 1068th year the Ziliditini and the Wariramoni swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 1073 w1] Bundungo and Ebisungu began to trade, wine for wool, and both grew fat on it.
+     [ 1078 w1] The rains forgot the country of Ungizu. The priests climbed the hills and called to them.
+     [ 1079 w1] In Uwasungu they burned sweet grass and asked Zumbende for rain.
+     [ 1080 w1] Rain answered the prayers of Uwasungu, warm and heavy and long.
+     [ 1081 w1] Another road joined Manibabir to Uwasungu of the Alengitani, and the tolls on it were argued over.
+     [ 1081 w2] Hunger walked the streets of Ungizu, and the fields were not enough for all of them.
+     [ 1085 w1] In Uwasungu they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1086 w1] The priests of Ungizu went up to the high places and cried out for rain.
+     [ 1087 w1] Clouds gathered over Ungizu where no clouds had been, and wept on the dry fields. The Ziliditini gave thanks to Zumbende.
+     [ 1090 w1] The drought about Ungizu broke, and the children ran out into the rain.
+     [ 1090 w1] The people of Ungizu prayed for rain, and Zumbende sent it.
+     [ 1090 w1] In those ten years seven towns of the Alengitani asked Zumbende for help and were answered, and four towns of the Ziliditini had their prayers answered.
+     [ 1092 w1] A prophet named Mbulonizo arose in Wazembola, saying that Zumbende had spoken in the night.
+     [ 1092 w1] Mbulonizo told the Ziliditini that Zumbende wished for a great work, and the Ziliditini began to cut timber and haul stone.
+     [ 1092 w1] Walimandu of the Ziliditini grew used to the goods of Kadetende, and its merchants learned the Alengitan way of haggling.
+     [ 1092 w1] Mist and rain came to Nenzilela, and the hills around it turned a deeper green.
+     [ 1094 w1] The herds about Bundungo grew fat on grass that had not been there the week before.
+     [ 1097 w1] The alliance of the Ziliditini and the Wariramoni was not broken; it was forgotten, like a path no one walks any more.
+     [ 1098 w1] Caravans of the Ziliditini now came to Kadetende of the Alengitani as well.
+     [ 1108 w1] Around Zatendeni the grass grew to a man's waist, and the Ziliditini said Zumbende had walked there.
+     [ 1108 w1] A sickness came to Nenzilela by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1109 w1] The people of Nenzilela climbed to the shrine and prayed to Zumbende for healing. They prayed loudly, in case Lord of the Second Spring was far away.
+     [ 1118 w1] In the 1118th year the first caravan came from Bundungo to Monzili, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1121 w1] Zumbende breathed on the land around Nituda, and it flowered.
+     [ 1121 w1] In Kinumbola a lamb was given to Zumbende, with a prayer for rain.
+     [ 1122 w1] For Kinumbola, thirsty and praying, Zumbende sent a long grey rain, and the wells filled again.
+     [ 1122 w1] It rained on Nenzilela, gently and for a long time, and the Wariramoni did not complain.
+     [ 1124 w1] For fifteen years Nenzilela prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1124 w1] The plague left Nenzilela as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1133 w2] Bundungo grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1133 w3] Far from their old capital, the people about Ungizu began to call themselves the Tosedasoni, and paid no more taxes to the Ziliditini.
+     [ 1133 w2] The Tosedasoni called the god who had woken their fathers Lord of the Second Spring.
+     [ 1135 w1] The fields about Kimoli grew green overnight.
+     [ 1142 w1] The rain-dancers of Kinumbola had danced for three days when Zumbende answered them with thunder and a long rain.
+     [ 1144 w1] Soft rain fell over Nenzilela.
+     [ 1146 w2] The prophet Mbulonizo was gathered to Zumbende.
+     [ 1154 w1] Traders of the Ziliditini and the Tosedasoni met at Zatendeni, and each thought they had cheated the other.
+     [ 1166 w1] Zumbende heard the dry fields of Kinumbola, and opened the sky.
+     [ 1168 w1] The god let rain fall on Nenzilela, though it had not been asked for. The farmers said it was too much.
+     [ 1179 w2] The Alengitani and the Tosedasoni could no longer share the river. They tried to share it with spears instead.
+     [ 1179 w1] A sign appeared over the armies of the Alengitani and the Tosedasoni, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come. Even the Masonizani, who had been spoiling for a fight with them, put their grievances away.
+     [ 1188 w1] Kinumbola had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1188 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [ 1208 w1] Kinumbola prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1210 w1] A long gentle rain came to Nenzilela, and the Wariramoni said it was a blessing.
+     [ 1219 w2] A great calm settled on the border of the Masonizani and the Paliluloni. The young, who had been ready to fight, went home and were annoyed about it for years.
+     [ 1232 w1] Watasungu was founded in the 1232nd year. Its founders swore it would one day be greater than Ebisungu. The chronicle notes that all founders swear this.
+     [ 1233 w1] There were now enough hearths at Watasungu to call it a village.
+     [ 1233 w1] At Watasungu a shrine of bones and flowers was made for Zumbende.
+     [ 1234 w1] Kinumbola asked for rain, and Zumbende gave it, and more besides: the river flooded the lower fields.
+     [ 1234 w1] Soft rain fell over Nenzilela.
+     [ 1238 w1] The merchants of Monzili found a road to Watasungu, and the road found more merchants.
+     [ 1239 w2] In Zatendeni the people sickened, and the roads to it were empty.
+     [ 1239 w2] In Zatendeni the sick were healed, all at once, and the healers lost their trade for a while.
+     [ 1244 w1] A band from Monzili crossed the country and founded Dandetu in the sands.
+     [ 1244 w1] Dandetu grew from a camp into a village.
+     [ 1259 w1] The feet of traders wore a road between Laselanda and Monzili. Along it went pots and coins and, later, fevers.
+     [ 1259 w1] At Kinumbola, the Wariramoni prayed to Zumbende for rain, and fasted.
+     [ 1260 w1] The priests of Kinumbola were still singing for rain when it began to fall on them.
+     [ 1260 w1] Rain came to Nenzilela. The fields were glad of it.
+     [ 1270 w1] Far away, on the empty high peaks of the far south, a mountain was born in fire, and its ash darkened the sky.
+     [ 1273 w2] So many children were born in Laselanda that the elders gave up learning their names. Thus it became a city.
+     [ 1273 w2] The quarrel of the Ziliditini and the Masonizani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 1274 w2] The Ziliditini had called the god the Gentle Hand. After what they had seen, they called the god the Quiet Between Armies.
+     [ 1280 w1] Rain answered the prayers of Kinumbola, warm and heavy and long.
+     [ 1282 w1] Mist and rain came to Nenzilela, and the hills around it ran with little streams.
+     [ 1286 w1] It is written that Zalude began as a ring of tents on the plains, raised by wanderers from Bundungo.
+     [ 1286 w1] Zalude was a village now, with its own small quarrels.
+     [ 1286 w1] The elders of Zalude chose a holy place, and a shrine to Zumbende was raised there.
+     [ 1286 w1] There was drought in the country of Ungizu, and the Tosedasoni looked at the sky every morning.
+     [ 1287 w1] The Alengitani of Uwasungu wrote their prayer for rain on clay and buried it at the shrine.
+     [ 1288 w1] In Uwasungu they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1291 w1] Rain fell on Ungizu out of a clear sky, and the Tosedasoni danced in it.
+     [ 1291 w1] The women of Ungizu sang at the shrine every evening and asked for rain.
+     [ 1293 w1] The people of Uwasungu prayed for rain, and Zumbende sent it.
+     [ 1294 w1] Some of the people of Nenzilela grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Miroma.
+     [ 1294 w1] The houses of Miroma reached the old boundary stones and did not stop. From this year the Wariramoni call it a village.
+     [ 1296 w2] The people of Angedi dug into the hills for good stone. No one among the Wariramoni had built a mine before.
+     [ 1298 w1] For Ungizu, thirsty and praying, Zombende sent a long grey rain, and the wells filled again.
+     [ 1300 w1] The scribes, counting rather than writing, set down that in seventy years the prayers of seven towns of the Alengitani were heard, and Zombende heard four towns of the Tosedasoni and answered them.
+     [ 1300 w1] Zalude grew until a man could get lost in it, and they called it a town.
+     [ 1302 w1] The god let rain fall on Nenzilela, though it had not been asked for. The farmers said it was too much.
+     [ 1304 w1] In the 1304th year the Masonizani saw how the Breaker of Spears smiled on the Tosedasoni, and could not bear it. They went to war to take the god's favour by the spear.
+     [ 1304 w1] Merchants began to travel between Miroma and Nginondu, and the road between them grew wide.
+     [ 1307 w2] A white light lay between the armies of the Tosedasoni and the Masonizani for a day, and both sent envoys instead of soldiers.
+     [ 1322 w1] The Alengitan kings swore an oath against the Tosedasoni, and there was war.
+     [ 1323 w1] The people of Kinumbola prayed for rain.
+     [ 1324 w1] The rain-dancers of Kinumbola had danced for three days when Zumbende answered them with thunder and a long rain.
+     [ 1324 w1] The Tosedasoni held Ungizu against the Alengitani, and the field was red.
+     [ 1324 w1] At Uwasungu the Alengitani won the day. The Tosedasoni tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1324 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [ 1328 w1] The Masonizani and the Tosedasoni became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 1330 w2] Miroma outgrew its walls twice and became a city of the Wariramoni.
+     [ 1332 w1] An army of the Alengitani besieged Ungizu and went home with nothing but stories.
+     [ 1332 w1] Before Uwasungu, the army of the Tosedasoni was broken.
+     [ 1339 w1] The priests of Uwasungu went up to the high places and cried out for peace.
+     [ 1340 w1] The Alengitani attacked Ungizu at dawn and were beaten by its farmers.
+     [ 1340 w1] Before Uwasungu, the Tosedasoni met the Alengitani. By evening the field belonged to the Alengitani, and to the birds.
+     [ 1341 w1] In Ungizu they still tell of the great wind, which blew the fires out in every hearth.
+     [ 1344 w1] The prayers of Uwasungu for peace were answered, and the soldiers came home.
+     [ 1344 w1] Neither the Alengitani nor the Paliluloni would give way, and the war was a summer off, when Zumbende set a sign between them. That summer the spears stayed in their racks, and so did the next.
+     [ 1345 w1] It rained on Nenzilela, gently and for a long time, and the Wariramoni did not complain.
+     [ 1346 w1] Merchants of the Ziliditini reached Nilotende of the Wariramoni, and the two peoples traded cloth for copper.
+     [ 1351 w1] Many roads now led to Zalude, and it was called a city.
+     [ 1351 w1] Ox-carts began to creak along the road from Miroma to Nenzilela, loaded with grain and gossip.
+     [ 1359 w1] In Watasungu they burned fat and asked Zumbende for rain.
+     [ 1360 w1] Watasungu asked for rain, and Zumbende gave it, and the barley stood up again.
+     [ 1360 w1] Mist and rain came to Bundungo, and the hills around it ran with little streams.
+     [ 1365 w1] The people of Kinumbola climbed to the shrine and prayed to Zumbende for rain. They prayed loudly, in case Lord of the Second Spring was far away.
+     [ 1366 w1] Zumbende heard the dry fields of Kinumbola, and opened the sky.
+     [ 1366 w1] Soft rain fell over Nenzilela.
+     [ 1368 w1] A storm passed over Miroma, and lightning set the grass alight north-west of the city.
+     [ 1368 w1] A red night: the woods north-west of Miroma burned, and ash fell on the city.
+     [ 1370 w2] A coughing sickness came to Nilotende with the traders, and did not leave.
+     [ 1370 w2] The fever left Nilotende in a single night. The Wariramoni said Zumbende had walked through the streets.
+     [ 1372 w1] Zasima and Miroma began to trade, pots for fish, and both grew fat on it.
+     [ 1378 w1] In Manibabir a white goat was given to Zombende, with a prayer for rain.
+     [ 1378 w1] The priests of Manibabir were still singing for rain when it began to fall on them.
+     [ 1386 w1] Kinumbola prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1387 w1] Rain came to Nenzilela. The old people said it smelled of the god.
+     [ 1388 w1] At Watasungu, the Ziliditini prayed to Zumbende for rain, morning and evening.
+     [ 1404 w1] Manibabir had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1408 w1] Rain answered the prayers of Kinumbola, so suddenly that the priests were soaked at the altar.
+     [ 1408 w1] The Masonizani and the Tosedasoni were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 1409 w1] The god let rain fall on Nenzilela, though it had not been asked for. The children made mud houses.
+     [ 1409 w1] The Ziliditini of Watasungu wrote their prayer for rain on clay and buried it at the shrine.
+     [ 1418 w1] The merchants of Watasungu found a road to Laselanda, and the road found more merchants.
+     [ 1421 w2] Before the Alengitani and the Paliluloni could come to blows, the Quiet Between Armies set a light over Uwasungu. Both peoples took it for a warning, and neither wished to be the first to ignore it.
+     [ 1424 w2] Ten thousand hearths burned in Watasungu. It was a city now, and it knew it.
+     [ 1424 w1] In Manibabir they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1428 w1] Traders from Kotimbola found their way to Manibabir of the Masonizani, where Alengitan coin was already known.
+     [ 1429 w1] The people of Kinumbola prayed for rain, and Zumbende sent it.
+     [ 1429 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [ 1432 w1] The women of Watasungu sang at the shrine every evening and asked for rain.
+     [ 1434 w1] A long gentle rain came to Bundungo, and the Ziliditini did not complain.
+     [ 1446 w1] For Manibabir, thirsty and praying, Zombende gathered the clouds, and the wells filled again.
+     [ 1446 w2] The Masonizani sharpened their spears and went against the Alengitani, though no one could remember who had struck first.
+     [ 1447 w1] The spotted fever broke out in Nyalekude, and its neighbours turned travellers away.
+     [ 1447 w1] A cool wind passed through Nyalekude, and in every house the fevered slept and woke well.
+     [ 1448 w1] The Masonizani came against Kadetende and were thrown back.
+     [ 1450 w1] The host of the Alengitani came against Manibabir and broke on its walls like a wave on rock, and went home fewer.
+     [ 1450 w1] The rain-dancers of Kinumbola had danced for three days when Zumbende answered them with thunder and a long rain.
+     [ 1450 w1] A road was opened between Ingeda of the Masonizani and Zatendeni of the Tosedasoni, and strange coins began to turn up in both markets.
+     [ 1451 w1] Soft rain fell over Nenzilela.
+     [ 1453 w1] The people of Watasungu prayed for rain.
+     [ 1455 w1] Rain came to Bundungo. The fields were glad of it.
+     [ 1456 w1] The Alengitani held Kadetende against the Masonizani, and sang about it for a hundred years.
+     [ 1458 w1] At Manibabir the Masonizani won the day. The Alengitani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1460 w1] The mountain on the plains south-west of Ndemunza woke and wept fire.
+     [ 1460 w1] The plains south-west of Ndemunza burned, and the sky over the city was brown for days.
+     [ 1461 w1] At Ndemunza they built a mine. It took longer than promised and cost more than was said, as is the way of all building.
+     [ 1463 w1] The priests of Uwasungu went up to the high places and cried out for peace.
+     [ 1464 w1] Miroma had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1468 w1] Ndemunza dwindled to a town. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [ 1468 w2] The war of the Masonizani and the Alengitani ended because both had run out of sons. Each side wrote down that it had won.
+     [ 1468 w1] Mist and rain came to Zasima, and the hills around it ran with little streams.
+     [ 1470 w1] Zombende heard the dry fields of Manibabir, and opened the sky.
+     [ 1472 w1] The fire-mountain in the pine woods south-west of Ndemunza fell asleep again.
+     [ 1475 w1] Watasungu asked for rain, and Zumbende gave it, and the barley stood up again.
+     [ 1476 w1] The god let rain fall on Bundungo, though it had not been asked for. The children made mud houses.
+     [ 1479 w1] Families of the Ziliditini who left Mbazukani built their first fires at Denanze, and called it good.
+     [ 1480 w1] Children were born at Denanze who had never lived anywhere else, and it became a village.
+     [ 1483 w1] Satuyumbe built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [ 1486 w1] Ndemunza prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1488 w1] The feet of traders wore a road between Ekene and Zalude. Along it went pots and coins and, later, fevers.
+     [ 1490 w1] The chronicle, which cannot write everything, notes only that in those ninety years Zumbende gave six towns of the Wariramoni what they prayed for, and the Ziliditini raised more than a dozen new buildings.
+     [ 1490 w1] The priests of Manibabir were still singing for rain when it began to fall on them.
+     [ 1493 w1] The Warirami priests gave the god a new name: Mother of Harvests.
+     [ 1494 w1] Clouds came back over Ndemunza, and the dry river filled in a single night.
+     [ 1494 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [ 1495 w2] The scribes of the Wariramoni began to write Ndemunza with the sign for 'city', and its taxes rose accordingly.
+     [ 1496 w1] Rain answered the prayers of Watasungu, warm and heavy and long.
+     [ 1500 w1] Fever spread through Ebisungu, and many were buried.
+     [ 1500 w1] Ebisungu was healed by Zumbende. For a generation no one there feared the sickness.
+     [ 1518 w1] In Manibabir they burned sweet grass and asked Zombende for rain.
+     [ 1518 w1] In Manibabir they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1520 w2] There was famine in Kinumbola. The people looked up and asked Mother of Harvests for rain, and counted the days, and the days were long.
+     [ 1520 w1] Hunger came to Watasungu and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 1521 w1] A long gentle rain came to Nenzilela, and the Wariramoni did not complain.
+     [ 1524 w1] The town of Denanze grew into a city of the Ziliditini, full of smoke and music.
+     [ 1528 w2] The elders of the Alengitani and the Masonizani clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 1533 w1] In the 1532nd year, a band went out from Nenzilela with seed corn and quarrels enough for a new town, and founded Duwokani by the water.
+     [ 1533 w1] The camp at Duwokani put down roots and became a village.
+     [ 1533 w1] The Wariramoni set up a shrine at Duwokani, and left small carved birds there for the god.
+     [ 1535 w1] The people of Watasungu climbed to the shrine and prayed to Zumbende for rain. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 1536 w1] The people of Watasungu prayed for rain, and Zumbende sent it.
+     [ 1536 w1] Mist and rain came to Bundungo, and the hills around it ran with little streams.
+     [ 1540 w1] In the 1539th year the first caravan came from Duwokani to Miroma, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1540 w1] For Manibabir, thirsty and praying, Zombende gathered the clouds, and the wells filled again.
+     [ 1540 w1] Wanderers from Miroma came to Basiranda and stayed.
+     [ 1541 w1] In Kinumbola a jar of honey was given to Zumbende, with a prayer for rain.
+     [ 1542 w1] Black clouds came over Katelanda from the sea, and the hail broke the young barley.
+     [ 1542 w1] Soft rain fell over Nenzilela.
+     [ 1550 w1] Of the smaller things of those sixty years: four towns of the Wariramoni prayed to Zumbende and did not pray in vain.
+     [ 1554 w1] Basiranda became a town, with a wall of thorns.
+     [ 1554 w1] Basiranda raised a temple to Zumbende, and the priests grew fat.
+     [ 1554 w2] The envoys of the Masonizani had come to the Paliluloni to declare a war. They saw the sign over Manibabir, and declared a feast instead.
+     [ 1560 w1] The rain-dancers of Manibabir had danced for three days when Zombende answered them with thunder and a long rain.
+     [ 1562 w1] The fields about Watasungu could not feed it any longer. The priests asked Zumbende for bread.
+     [ 1562 w1] At Kinumbola, the Wariramoni prayed to Zumbende for rain, morning and evening.
+     [ 1562 w1] Merchants began to travel between Basiranda and Miroma, and the road between them grew wide.
+     [ 1564 w1] Rain came to Nenzilela. The fields were glad of it.
+     [ 1569 w1] The Alengitani marched against the Tosedasoni, and the smiths worked day and night.
+     [ 1571 w1] An army of the Alengitani besieged Ungizu and went home with nothing but its wounded.
+     [ 1571 w1] The Tosedasoni came against Uwasungu and were thrown back.
+     [ 1573 w1] Kindangi became a town, and chose a council of elders, who argued.
+     [ 1577 w1] The old alliance of the Alengitani and the Masonizani came apart over a small matter, as old alliances do.
+     [ 1579 w2] Sazandaba had become a city, with more people in it than there were sheep in the hills.
+     [ 1579 w1] An omen of peace was seen over Uwasungu, and the Alengitani and the Tosedasoni laid down their spears. The sign was seen as far as the lands of the Ziliditini and the Paliluloni, and there too the spears were put away.
+     [ 1580 w1] In the 1580th year the Paliluloni stopped calling their god the Green Hand. From now on, in the market and at the hearth, it was the Quiet Between Armies.
+     [ 1582 w1] The priests of Manibabir were still singing for rain when it began to fall on them.
+     [ 1583 w3] The world turned a page: the Ziliditini, first of all peoples, came into the Age of Sail, and the others began to hurry.
+     [ 1583 w1] The Wariramoni of Kinumbola wrote their prayer for rain on bark and buried it at the shrine.
+     [ 1583 w1] The long quarrel between the Masonizani and the Tosedasoni came to blood.
+     [ 1584 w1] An academy was founded at Wazembola, where the wise argued about everything, the god included. It was the first academy of the Ziliditini.
+     [ 1585 w1] The god let rain fall on Nenzilela, though it had not been asked for. The children made mud houses.
+     [ 1586 w1] Ox-carts began to creak along the road from Kindangi to Miroma, loaded with grain and gossip.
+     [ 1591 w1] The women of Ungizu sang at the shrine every evening and asked for peace.
+     [ 1594 w1] Zumbende heard the dry fields of Naluli, and opened the sky.
+     [ 1594 w1] Before Ungizu, the Masonizani met the Tosedasoni. By evening the field belonged to the Tosedasoni, and to the birds.
+     [ 1594 w1] The dry country about Inamba drank rain that came from nowhere, and turned green again.
+     [ 1600 w1] Among the small news of those forty years: twelve towns of the Ziliditini asked Zumbende for help and were answered.
+     [ 1602 w1] The Masonizani attacked Ungizu on a holy day and were beaten in the river mud.
+     [ 1602 w1] Before Manibabir, the army of the Tosedasoni was broken.
+     [ 1603 w2] Smoke rose from the earth on the plains north of Mbazukani, and then fire. The Ziliditini said the mountain was angry.
+     [ 1604 w1] Manibabir asked for rain, and Zombende gave it, and the barley stood up again.
+     [ 1605 w1] In Kinumbola they burned fat and asked Zumbende for rain.
+     [ 1606 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [ 1608 w1] The fever left Kindangi in a single night. The Wariramoni said Zumbende had walked through the streets.
+     [ 1609 w1] Ash hid the sun from Cahei, the summers did not come, and Basiranda went hungry with all its neighbours.
+     [ 1610 w1] Zasima prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1614 w1] Another road joined Kotimbola to Wazembola of the Ziliditini, and the inns along it prospered.
+     [ 1614 w1] The Masonizani carried the spoils of the Tosedasoni up the temple steps of Manibabir, saying the god had been with them.
+     [ 1617 w1] Lightning walked on the hills south-west of Kindangi, and the Wariramoni stayed indoors.
+     [ 1618 w2] Duwokani became a city, and its towers could be seen from far off.
+     [ 1623 w1] Envoys went back and forth between the Alengitani and the Paliluloni until they had worn a road, and at the end of it was an alliance.
+     [ 1624 w1] Manibabir had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [ 1627 w1] It rained on Nenzilela, gently and for a long time, and the Wariramoni said it was a blessing.
+     [ 1628 w1] A new village of the Ziliditini, Natotende, was raised in the woods, where the hunters of Manginja had always camped.
+     [ 1628 w1] Natotende grew from a camp into a village.
+     [ 1629 w1] In the 1629th year the Ziliditini raised a temple at Natotende, and were proud of it for one generation, which is the usual length of pride.
+     [ 1630 w1] Of the smaller things of those thirty years: Zumbende answered the prayers of four towns of the Ziliditini; and the god was asked for help by four towns of the Wariramoni and gave it.
+     [ 1633 w1] Natotende and Wazembola began to trade, pots for fish, and both grew fat on it.
+     [ 1638 w1] Lightning struck west of Kadetende in a summer storm.
+     [ 1641 w1] The oath between the Alengitani and the Paliluloni lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 1642 w1] Besumbiri was founded in the pine woods by the Ziliditini, who had grown too many for Kimoli.
+     [ 1647 w1] There were now enough hearths at Salingoli to call it a village.
+     [ 1650 w1] The people of Manibabir climbed to the shrine and prayed to Zombende for rain. They prayed loudly, in case the Breaker of Spears was far away.
+     [ 1650 w1] Rain answered the prayers of Manibabir, so suddenly that the priests were soaked at the altar.
+     [ 1653 w1] In Ziwawingo the old shrine was pulled down and a temple to Zumbende put up in its place.
+     [ 1654 w1] Rain came to Nenzilela. The fields were glad of it.
+     [ 1658 w1] The merchants of Natotende found a road to Walimandu, and kept the secret of it for a while.
+     [ 1660 w1] Below the great events of those thirty years, more than a dozen new buildings went up among the Ziliditini; they founded five new settlements.
+     [ 1661 w1] Settlers of the Ziliditini went out from Ndutiwazi and made a new home at Mbundinu.
+     [ 1664 w1] The alliance of the Ziliditini and the Alengitani was not broken; it was forgotten, like a path no one walks any more.
+     [ 1665 w1] So many children were born in Angandari that the elders gave up learning their names. Thus it became a village.
+     [ 1667 w2] The Quiet Between Armies sent a sign over Inamba: a ring of light around the sun at noon. The Ziliditini and the Masonizani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them.
+     [ 1672 w1] In Manibabir they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1673 w2] In the 1673rd year Besumbiri could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1673 w1] The wise of the Ziliditini came together at Besumbiri, and wrote down everything they knew.
+     [ 1673 w1] The priests of Kinumbola went up to the high places and cried out for rain.
+     [ 1674 w1] Mist and rain came to Nenzilela, and the hills around it ran with little streams.
+     [ 1680 w1] In the 1679th year the first caravan came from Angandari to Satuyumbe, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1682 w1] Anzube was founded in the 1682nd year. Its founders swore it would one day be greater than Nyalekude. The chronicle notes that all founders swear this.
+     [ 1683 w2] The Wariramoni put down the tools of their mothers and took up the tools of the Age of Sail. Mother of Harvests watched, and did not say whether this was wise.
+     [ 1686 w1] Scholars gathered at Ziwawingo and built a house of learning, and filled it with arguments.
+     [ 1690 w1] Little of those thirty years was written down, except that the builders of the Ziliditini finished more than a dozen new halls, granaries and walls, and that the Wariramoni put up eleven new buildings, each the finest yet by their own account.
+     [ 1690 w1] A band from Bundungo crossed the country and founded Enasa in the deep forest.
+     [ 1694 w1] War between the Masonizani and the Tosedasoni. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 1694 w1] A sign appeared over the armies of the Masonizani and the Tosedasoni, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+     [ 1695 w1] In the songs of the Tosedasoni, Lord of the Second Spring became the Quiet Between Armies.
+     [ 1696 w1] Walls of cut stone went up around Miminzala, and the Ziliditan scribes began to call it a city.
+     [ 1696 w1] The people of Manibabir prayed for rain, and Zombende sent it.
+     [ 1698 w1] In those lean years Kinumbola ate its oxen, and then its dogs.
+     [ 1700 w1] Soft rain fell over Nenzilela.
+     [ 1702 w1] Angandari grew past counting into a city, and its markets never closed.
+     [ 1705 w1] At Imbolela a school was opened where the young learned numbers, stars and the names of things.
+     [ 1709 w1] Duwokani of the Wariramoni began to buy the goods of Ziwawingo, and its merchants learned the Ziliditan way of haggling.
+     [ 1710 w1] For Watasungu, thirsty and praying, Zumbende sent a long grey rain, and the wells filled again.
+     [ 1710 w1] The god let rain fall on Bundungo, though it had not been asked for. The farmers said it was too much.
+     [ 1713 w1] A wall of water came out of the sea upon Ndutiwazi.
+     [ 1715 w2] Envoys of the Masonizani threw down their staffs before the Alengitani, and the war began.
+     [ 1717 w1] The host of the Masonizani came against Kadetende and broke on its walls like a wave on rock, and went home fewer.
+     [ 1720 w2] The houses of Anzube reached the old boundary stones and did not stop. From this year the Ziliditini call it a city.
+     [ 1720 w1] The rain-dancers of Manibabir had danced for three days when Zombende answered them with thunder and a long rain.
+     [ 1721 w1] The wise of the Ziliditini came together at Mbundinu, and wrote down everything they knew.
+     [ 1723 w1] A warm rain fell on Nenzilela all through the night, and the roofs leaked, and nobody minded.
+     [ 1725 w1] The Alengitani held Kadetende against the Masonizani, and sang about it for a hundred years.
+     [ 1729 w1] In the 1729th year Orenjiri could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [ 1729 w1] In Satuyumbe the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+     [ 1733 w1] Families of the Wariramoni who left Nenzilela built their first fires at Diringango, and were not sorry.
+     [ 1736 w1] Watasungu prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1738 w1] Caravans of the Wariramoni now came to Ziwawingo of the Ziliditini as well.
+     [ 1738 w1] A long gentle rain came to Bundungo, and the Ziliditini did not complain.
+     [ 1740 w1] Between the greater deeds of those fifty years, scores of new buildings went up among the Wariramoni.
+     [ 1741 w1] At Kadetende the Alengitani won the day. The Masonizani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1744 w1] Wilinduto asked for rain, and Zumbende gave it, and the barley stood up again.
+     [ 1745 w1] Wilinduto was a town now, the busiest of the Ziliditini.
+     [ 1749 w1] The feet of traders wore a road between Wilinduto and Angandari. Along it went pots and coins and, later, fevers.
+     [ 1750 w1] The priests of Laselanda were still singing for rain when it began to fall on them.
+     [ 1751 w1] Soft rain fell over Monzili.
+     [ 1752 w2] A new thing was learned at Ungizu, and then everywhere. So the Age of Sail began among the Tosedasoni.
+     [ 1753 w1] An academy now stands at Ungizu, where before there was only mud and opinion. No one among the Tosedasoni had built an academy before.
+     [ 1755 w1] The war between the Masonizani and the Alengitani ended, and neither could say it had won.
+     [ 1758 w1] Some of the people of Kindangi grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Wingowazi.
+     [ 1761 w1] The sea sent a howling wind against Kotimbola, and it took the thatch from every roof.
+     [ 1762 w1] Zumbende heard the dry fields of Watasungu, and opened the sky.
+     [ 1764 w1] Rain came to Bundungo. The old people said it smelled of the god.
+     [ 1765 w1] Bandotolo outgrew its walls twice and became a city of the Wariramoni.
+     [ 1769 w1] Traders from Ngenzaze found their way to Kunimbola of the Ziliditini, where Warirami coin was already known.
+     [ 1770 w1] Another thirty years went into the book: five towns of the Ziliditini had their prayers answered, and the Wariramoni opened nine new trade roads.
+     [ 1770 w2] Many roads now led to Bandindu, and it was called a city.
+     [ 1771 w1] A great calm settled on the border of the Tosedasoni and the Alengitani. The young, who had been ready to fight, went home and were annoyed about it for years.
+     [ 1777 w1] Merchants began to travel between Wilinduto and Satuyumbe, bringing salt and news.
+     [ 1778 w1] The people of Kinumbola prayed for rain.
+     [ 1778 w1] Kinumbola had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [ 1780 w1] Mist and rain came to Nenzilela, and the hills around it ran with little streams.
+     [ 1781 w1] At Zisukumbe they built an academy. It took longer than promised and cost more than was said, as is the way of all building.
+     [ 1784 w1] Rain answered the prayers of Nginondu, so suddenly that the priests were soaked at the altar.
+     [ 1785 w1] Famine came to Watasungu.
+     [ 1789 w1] In Watasungu a lamb was given to Zumbende, with a prayer for rain.
+     [ 1790 w1] In Watasungu they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1791 w1] The god let rain fall on Bundungo, though it had not been asked for. The farmers said it was too much.
+     [ 1794 w1] Ten thousand hearths burned in Suzobo. It was a city now, the jewel of the Wariramoni.
+     [ 1798 w1] Ox-carts began to creak along the road from Suzobo to Angedi, loaded with grain and gossip.
+     [ 1800 w1] And there were small things, as there always are: the prayers of six towns of the Wariramoni were heard.
+     [ 1806 w1] The people of Kinumbola prayed for rain, and Zumbende sent it.
+     [ 1807 w1] Just when the wells of Nenzilela were failing, the god sent rain, and the frogs sang all night.
+     [ 1810 w1] It is written that Winambiri began as a ring of tents on the plains, raised by wanderers from Manginja.
+     [ 1810 w1] The tents of Winambiri gave way to houses of timber, and it was called a village.
+     [ 1810 w1] A circle of white stones was laid out at Winambiri, and the Ziliditini came there to speak to Zumbende.
+     [ 1812 w1] A warm rain fell on Bundungo all through the night, and the roofs leaked, and nobody minded.
+     [ 1813 w1] The sea rose up and walked inland at Manibabir, and did not ask leave.
+     [ 1819 w2] The quarrel of the Ziliditini and the Masonizani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 1819 w1] In the 1819th year, a band went out from Natotende with seed corn and quarrels enough for a new town, and founded Kodosungu in the pine woods.
+     [ 1821 w1] The fields around Kodosungu filled with new houses, and it became a town of the Ziliditini.
+     [ 1827 w1] A tree west of Orenjiri was split by lightning. The children of the city dared each other to touch it.
+     [ 1828 w1] For Kinumbola, thirsty and praying, Zumbende sent a long grey rain, and the wells filled again.
+     [ 1828 w1] A long gentle rain came to Nenzilela, and the Wariramoni said it was a blessing.
+     [ 1829 w1] The priests of Kanida built a house for the god of cut stone.
+     [ 1833 w1] The village of Angandeni grew into a town, and its people began to look down on villages.
+     [ 1833 w1] Mist and rain came to Bundungo, and the hills around it turned a deeper green.
+     [ 1835 w1] The rain-dancers of Nzaminu had danced for three days when Zumbende answered them with thunder and a long rain.
+     [ 1837 w1] A hard sun stood over Naluli year after year, and the barley died standing.
+     [ 1840 w1] Meanwhile, in the smaller news of those years, Zumbende heard eight towns of the Ziliditini and answered them, and they built seven new villages in the wild.
+     [ 1840 w2] At Nyalekude there was hunger, three years running.
+     [ 1840 w1] Inamba asked for rain, and Zumbende gave it, and more besides: the river flooded the lower fields.
+     [ 1841 w1] Wanderers from Ziwawingo came to Dengiwazi and did not go back.
+     [ 1845 w1] Kelumbalu was a village now, with its own small quarrels.
+     [ 1848 w1] Soft rain fell over Inamba.
+     [ 1850 w1] At Monembiri they set stones in a ring and laid the first fruits on them for Zumbende. It was a small shrine. The Quiet Between Armies did not complain.
+     [ 1850 w1] Wilinduto had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1854 w1] The scribes of the Ziliditini began to write Sinilombe with the sign for 'city', and its taxes rose accordingly.
+     [ 1857 w1] Another road joined Dengiwazi to Orenjiri of the Wariramoni, and the tolls on it were argued over.
+     [ 1862 w1] The town of Kwedosu grew into a city of the Ziliditini, with paved streets and quarrelsome councils.
+     [ 1865 w1] Merchants of Mbinzando reached Bandotolo and found that the people there were also people. This was thought remarkable, and then useful.
+     [ 1867 w2] The Quiet Between Armies laid a hand on Mbazukani, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 1868 w1] The priests of Basiranda were still singing for rain when it began to fall on them.
+     [ 1868 w2] Zamesungu had become a city, with more people in it than anyone could name.
+     [ 1869 w1] The people of Imandeni raised a shrine to Zumbende.
+     [ 1869 w2] Among the Wariramoni the god was no longer Mother of Harvests but the Rain-Giver, and the old name was forgotten.
+     [ 1870 w1] Those were busy years, if not great ones: the Ziliditini raised scores of new buildings, and Zumbende gave four towns of the Wariramoni what they prayed for.
+     [ 1871 w1] Rain came to Nenzilela. The old people said it smelled of the god.
+     [ 1873 w1] Diringango and Orenjiri began to trade, cloth for copper, and both grew fat on it.
+     [ 1874 w1] Watasungu prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1875 w1] The Ziliditini made war on the Paliluloni.
+     [ 1878 w1] A white light lay between the armies of the Ziliditini and the Paliluloni for a day, and both sent envoys instead of soldiers.
+     [ 1878 w1] A new village of the Ziliditini, Nzisili, was raised in the pine woods, where the hunters of Enasa had always camped.
+     [ 1881 w1] The feet of traders wore a road between Enasa and Wilinduto. Along it went pots and coins and, later, fevers.
+     [ 1882 w1] Zumbende heard the dry fields of Kumidandu, and opened the sky.
+     [ 1885 w1] Mbinzando became a city, the pride of the Tosedasoni.
+     [ 1890 w1] Walls of cut stone went up around Tatawise, and the Ziliditan scribes began to call it a city.
+     [ 1890 w1] The god let rain fall on Nzaminu, though it had not been asked for. The children made mud houses.
+     [ 1893 w1] The sky over Tatawise cracked open with fire, and the old oak west of the city burned like a torch.
+     [ 1897 w1] Rain answered the prayers of Watasungu, so suddenly that the priests were soaked at the altar.
+     [ 1898 w1] Hunger walked the streets of Nzangoli, and the Tosedasoni sold their tools for grain.
+     [ 1900 w1] A warm rain fell on Nzangoli for three days, and the roofs leaked, and nobody minded.
+     [ 1900 w1] The scribes, counting rather than writing, set down that in thirty years the builders of the Ziliditini finished ten new halls, granaries and walls.
+     [ 1901 w1] In the 1901st year the Alengitani remembered an old insult from the Tosedasoni, and went to war over it.
+     [ 1902 w1] Imandeni grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1905 w1] The first caravan came from Zanitende to Uwembalu, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1905 w1] The Alengitani raised sails and went out upon the great sea.
+     [ 1905 w1] The Masonizani and the Alengitani could no longer share the river. They tried to share it with spears instead.
+     [ 1908 w2] The Masonizani were beaten, and the Alengitani carried their temple bells home in carts.
+     [ 1909 w1] A storm such as the old people had never seen passed over Nzaminu.
+     [ 1912 w1] The armies of the Tosedasoni came home in triumph to Ungizu, and the Alengitani swore to remember.
+     [ 1912 w1] In Kinumbola they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1915 w1] Ndarini was founded in the pine woods by the Wariramoni, who had grown too many for Zasima.
+     [ 1917 w1] Ndarini grew until a man could get lost in it, and they called it a town.
+     [ 1919 w1] The people of Watasungu prayed for rain, and Zumbende sent it.
+     [ 1921 w1] The harvest failed at Zusanjiri; the children grew thin.
+     [ 1924 w1] For Zusanjiri, thirsty and praying, Zumbende gathered the clouds, and the wells filled again.
+     [ 1927 w1] Suzobo of the Wariramoni began to buy the goods of Bitundari, and its merchants learned the Ziliditan way of haggling.
+     [ 1927 w1] A fire-mountain was born in the woods west of Uwasungu, and the sky above the city turned the colour of iron.
+     [ 1929 w1] The rain-dancers of Nzaminu had danced for three days when Zumbende answered them with thunder and a long rain.
+     [ 1929 w1] The old people of Uwasungu said the fire west of the city had been started by a careless shepherd, and kept their buckets full.
+     [ 1930 w1] The Wariramoni put up a score or more new buildings, each the finest yet by their own account; and Zumbende sent rain over five towns of theirs. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 1934 w2] The sun was a pale coin behind the dust, and the granaries of Basiranda stood empty. The Wariramoni remembered those years as the hungry ones.
+     [ 1934 w1] The priests of Kinumbola were still singing for rain when it began to fall on them.
+     [ 1935 w1] Uwasungu shrank to a town. Its young had gone to other places.
+     [ 1937 w1] Caravans of the Wariramoni now came to Mabuba of the Ziliditini as well.
+     [ 1941 w1] Watasungu had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1943 w1] A storm walked inland over the country of Mutukumbe, and the Wariramoni counted their dead and their cattle.
+     [ 1946 w1] Zusanjiri prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1948 w1] The merchants of Zetolanda found a road to Zalude, and the road found more merchants.
+     [ 1956 w2] The Tosedasoni and the Alengitani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [ 1958 w1] Zumbende heard the dry fields of Kinumbola, and opened the sky.
+     [ 1959 w1] Kwetiwazi was a town now, the busiest of the Wariramoni.
+     [ 1959 w1] The Wariramoni of Kwetiwazi spent twenty years on a temple to Zumbende, and then argued about the colour of the doors.
+     [ 1960 w1] Over thirty years five towns of the Wariramoni had rain from Zumbende. In the same years the god answered the prayers of four towns of the Ziliditini.
+     [ 1961 w1] Traders from Ndarini found their way to Anzube of the Ziliditini, where Warirami coin was already known.
+     [ 1963 w1] The Alengitani of Kadetende saw their first Tosedasi merchants, and bought everything they had.
+     [ 1969 w1] The Paliluloni took to the open sea, and came back with strange fruit and stranger stories.
+     [ 1974 w1] Merchants began to travel between Zamesungu and Embisanzi, bringing salt and news.
+     [ 1975 w2] Ndutiwilo outgrew its walls twice and became a city of the Paliluloni.
+     [ 1975 w1] An academy was founded at Ndutiwilo, where the wise argued about everything, the god included. It was the first academy of the Paliluloni.
+     [ 1976 w1] Zusanjiri asked for rain, and Zumbende gave it, and more besides: the river flooded the lower fields.
+     [ 1978 w1] So many children were born in Uwasungu that the elders gave up learning their names. Thus it became a city.
+     [ 1979 w1] Thunder rolled over Naluli, and lightning fell in the woods north of the city.
+     [ 1981 w1] The Ziliditini and the Wariramoni swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 1981 w1] A great storm walked in from the sea and stood over Nzisili for three days, and the roofs learned to fly.
+     [ 1983 w1] Rain answered the prayers of Watasungu, warm and heavy and long.
+     [ 1986 w1] A dark cloud stood over the parched fields of Zusanjiri and rained on them, and on nowhere else.
+     [ 1987 w1] Green came back to the fields of Zusanjiri, and the wells were sweet again.
+     [ 1988 w1] In Zusanjiri they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1989 w1] Ox-carts began to creak along the road from Kwetiwazi to Kindangi, and inns grew up beside it.
+     [ 1990 w1] Of the smaller things of those thirty years: rain fell by the hand of Zumbende on five towns of the Ziliditini; and the god was asked for help by four towns of the Wariramoni and gave it.
+     [ 1996 w1] Another road joined Dengiwazi to Mbinzando of the Tosedasoni, and the inns along it prospered.
+     [ 1998 w1] The houses of Bubikani reached the old boundary stones and did not stop. From this year the Ziliditini call it a city.
+     [ 1998 w2] The shipwrights of the Masonizani learned to sail against the wind, and the world grew wider.
+     [ 1999 w1] A cool wind passed through Kimoli, and in every house the fevered slept and woke well.
+     [ 2004 w1] The people of Kinumbola prayed for rain, and Zumbende sent it.
+     [ 2004 w1] Zumbende sent rain on the thirsty fields of Nenzilela.
+     [ 2005 w1] There was famine in Watasungu. The people looked up and asked the Quiet Between Armies for rain, and counted the days, and the days were long.
+     [ 2008 w1] War came between the Masonizani and the Paliluloni, the old enemies.
+     [ 2008 w1] An omen of peace was seen over Ingeda, and the Masonizani and the Paliluloni laid down their spears. Even the Ziliditini, who had been spoiling for a fight with them, put their grievances away.
+     [ 2011 w1] Caravans of the Wariramoni now came to Mbinzando of the Tosedasoni as well.
+     [ 2020 w1] The river by Orenjiri shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 2020 w1] For Zusanjiri, thirsty and praying, Zumbende gathered the clouds, and the wells filled again.
+     [ 2022 w1] Embisanzi and Lungo began to trade, wine for wool, and both grew fat on it.
+     [ 2024 w1] Clouds gathered over Orenjiri where no clouds had been, and wept on the dry fields. The Wariramoni gave thanks to Zumbende.
+     [ 2025 w1] In a night of thunder a bolt came down north of Diringango, and the dogs of the city howled until dawn.
+     [ 2025 w1] The dry grasslands north of Diringango burned, and the sky over the city was brown for days.
+     [ 2026 w2] There were too many mouths in Kinumbola and too little bread, and the weak did not see the spring.
+     [ 2026 w1] At Watasungu, the Ziliditini prayed to Zumbende for rain, morning and evening.
+     [ 2030 w1] Little of those forty years was written down, except that eight towns of the Wariramoni asked Zumbende for help and were answered.
+     [ 2030 w1] In the 2030th year the granaries of Wilinduto rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2031 w1] The rain-dancers of Watasungu had danced for three days when Zumbende answered them with thunder and a long rain.
+     [ 2046 w1] A storm passed over Basiranda, and lightning set the grass alight north of the city.
+     [ 2046 w1] That summer a fire ate the pine woods north of Basiranda.
+     [ 2047 w1] Wind and rain beat upon Denanze for three days, and the roofs flew.
+     [ 2049 w1] Hunger came to Zusanjiri and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2052 w1] In the 2052nd year the first caravan came from Mabuba to Imandeni, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2054 w1] In Lungo they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 2054 w2] Lungo was healed by Zumbende. For a generation no one there feared the sickness.
+     [ 2060 w1] Over thirty years, and hardly worth a line each time, four towns of the Wariramoni prayed to Zumbende and did not pray in vain.
+     [ 2065 w1] The Ziliditini of Wilinduto wrote their prayer for rain on bark and buried it at the shrine.
+     [ 2066 w1] The dry country about Wilinduto drank rain sent by Zumbende, and turned green again.
+     [ 2067 w1] In Duwokani they still tell of the great wind, which carried a goat over the temple.
+     [ 2069 w1] Lightning walked on the hills north-west of Bandindu, and the Wariramoni stayed indoors.
+     [ 2069 w1] The country north-west of Bandindu burned for many days, and the smoke hung over the city.
+     [ 2073 w1] The merchants of Imandeni found a road to Uwembalu, and the road found more merchants.
+     [ 2079 w2] The Alengitan kings swore an oath against the Paliluloni, and there was war.
+     [ 2079 w1] A sign appeared over the armies of the Alengitani and the Paliluloni, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+     [ 2080 w1] The sky over Laselanda cracked open with fire, and the old oak west of the city burned like a torch.
+     [ 2090 w1] A tree west of Orenjiri was split by lightning. The children of the city dared each other to touch it.
+     [ 2090 w1] Fire ran through the woods west of Orenjiri.
+     [ 2092 w1] In the 2092nd year the Alengitani and the Paliluloni swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 2100 w1] Another forty years went into the book, and in them four towns of the Ziliditini had their prayers answered.
+     [ 2105 w2] A grey sickness settled on Kodosungu. The Ziliditini said it came from the marshes.
+     [ 2105 w1] The Quiet Between Armies laid a hand on Kodosungu, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 2106 w1] The women of Zusanjiri tied red threads to the shrine and asked for rain.
+     [ 2106 w1] In Zasima the ground cracked like old pottery, and the Wariramoni began to pray for rain.
+     [ 2107 w1] Thunder rolled over Ndutiwazi, and lightning fell in the deep forest west of the city.
+     [ 2107 w1] A wildfire came close to Ndutiwazi, and turned only when the wind did.
+     [ 2108 w1] Rain fell on Zusanjiri out of a clear sky, and the Wariramoni danced in it.
+     [ 2109 w1] The fields about Wilinduto could not feed it any longer. Some families left in the night.
+     [ 2112 w1] The earth groaned under Natotende, and the well water turned cloudy.
+     [ 2113 w1] A grey wave as tall as a temple broke over the fields of Natotende, and salt lay on them for years.
+     [ 2119 w1] The Quiet Between Armies drew a hand across the sky above Wilinduto, and the dry fields drank.
+     [ 2124 w1] Lightning struck in the woods north of Bandindu in a summer storm.
+     [ 2124 w1] Fire walked through the woods north of Bandindu, and the beasts ran before it.
+     [ 2130 w1] The chronicle, which cannot write everything, notes only that in those thirty years the prayers of seven towns of the Wariramoni were heard.
+     [ 2134 w1] Black clouds came over Dengiwazi from the sea, and the river ran brown for days.
+     [ 2135 w1] There was drought in the country of Mbanombi, and the Wariramoni looked at the sky every morning.
+     [ 2138 w1] Just when the wells of Mbanombi were failing, the god sent rain, and the frogs sang all night.
+     [ 2139 w2] That winter Watasungu ate its oxen, and then its dogs.
+     [ 2145 w1] The priests of Watasungu went up to the high places and cried out for rain.
+     [ 2145 w1] The Alengitani and the Paliluloni were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 2145 w1] The long thirst of Mbanombi ended in a storm, and the Wariramoni danced in the mud.
+     [ 2156 w1] A sickness came to Winambiri by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 2156 w2] The fever left Winambiri in a single night. The Ziliditini said Zumbende had walked through the streets.
+     [ 2160 w1] Below the great events of those thirty years, Zumbende heard more than a dozen towns of the Wariramoni and answered them; the sky opened over five towns of theirs.
+     [ 2160 w1] The feet of traders wore a road between Zanitende and Lungo. Along it went pots and coins and, later, fevers.
+     [ 2172 w1] In Wilinduto they burned incense and asked Zumbende for rain.
+     [ 2174 w1] A dark cloud stood over the parched fields of Wilinduto and rained on them, and on nowhere else.
+     [ 2180 w1] In a night of thunder a bolt came down north of Sazandaba, and the dogs of the city howled until dawn.
+     [ 2180 w1] A red night: the deep forest north of Sazandaba burned, and ash fell on the city.
+     [ 2184 w1] Ngenzaze of the Wariramoni grew used to the goods of Wilinduto, and its merchants learned the Ziliditan way of haggling.
+     [ 2186 w2] Neither the Ziliditini nor the Alengitani would give way, and the war was a summer off, when Zumbende set a sign between them. That summer the spears stayed in their racks, and so did the next.
+     [ 2190 w2] The elders of the Ziliditini and the Tosedasoni clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 2191 w1] Zumbende sent rain on the thirsty fields of Ngenzaze.
+     [ 2197 w1] A storm passed over Kadetende, and lightning set the grass alight south-east of the city.
+     [ 2197 w1] The marshes south-east of Kadetende burned, and the sky over the city was brown for days.
+     [ 2200 w1] Zumbende gave five towns of the Wariramoni what they prayed for. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 2203 w1] The old alliance of the Ziliditini and the Tosedasoni came apart over a small matter, as old alliances do.
+     [ 2204 w1] The rains failed around Sinilombe.
+     [ 2205 w1] The people of Sinilombe prayed for rain.
+     [ 2207 w2] Famine came to Zanitende.
+     [ 2207 w1] Lightning walked on the hills south-west of Zanitende, and the Ziliditini stayed indoors.
+     [ 2207 w1] The country south-west of Zanitende burned for many days, and the smoke hung over the city.
+     [ 2210 w1] The Quiet Between Armies drew a hand across the sky above Sinilombe, and the dry fields drank.
+     [ 2211 w1] Rain returned to Sinilombe at last.
+     [ 2214 w1] The mountain in the woods south of Laselanda woke and wept fire.
+     [ 2216 w3] The mountain opened above Laselanda and its stone ran like honey, though not like honey. The city is beneath it. The new ground is very fertile, the chronicle observes, as though that were a comfort.
+     [ 2218 w2] At Kinumbola the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Wariramoni went hungry.
+     [ 2221 w1] Settlers of the Ziliditini went out from Enasa and made a new home at Ndosanju.
+     [ 2222 w1] Children were born at Ndosanju who had never lived anywhere else, and it became a village.
+     [ 2222 w1] Ndosanju built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [ 2223 w1] Rain fell on Nenzilela out of a clear sky, and the Wariramoni danced in it.
+     [ 2224 w1] The dust of the sky fell on the fields of Tatawise like a second winter, and there was nothing to harvest but straw.
+     [ 2226 w1] The fires north-east of Ndosanju cooled into black stone, and the people of the town went back to their fields.
+     [ 2230 w1] Below the great events of those thirty years, Zumbende was asked for help by eleven towns of the Ziliditini and gave it.
+     [ 2230 w1] Merchants began to travel between Ekene and Mbazukani, bringing salt and news.
+     [ 2240 w2] The Ziliditini sharpened their spears and went against the Paliluloni, though no one could remember who had struck first.
+     [ 2240 w1] A white light lay between the armies of the Ziliditini and the Paliluloni for a day, and both sent envoys instead of soldiers. The sign was seen as far as the lands of the Masonizani, and there too the spears were put away.
+     [ 2250 w1] No rain fell on the lands of Naluli. The river showed its stones, and the people counted them.
+     [ 2251 w1] The people of Naluli climbed to the shrine and prayed to Zumbende for rain. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 2252 w1] Ox-carts began to creak along the road from Ndosanju to Monzili, loaded with grain and gossip.
+     [ 2252 w1] In the 2252nd year Ndosanju could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 2252 w1] Scholars gathered at Ndosanju and built a house of learning, and filled it with books.
+     [ 2252 w3] The world turned a page: the Ziliditini, first of all peoples, came into the Age of Industry, and the others began to hurry.
+     [ 2252 w1] A coughing sickness came to Kanida with the traders, and lingered.
+     [ 2252 w1] In Kanida the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+     [ 2256 w1] Clouds gathered over Inamba where no clouds had been, and wept on the dry fields. The Ziliditini gave thanks to Zumbende.
+     [ 2257 w1] The drought about Naluli broke, and the children ran out into the rain.
+     [ 2259 w1] The sea sent a howling wind against Nzaminu, and it took the thatch from every roof.
+     [ 2260 w1] Little of those thirty years was written down, except that eight towns of the Ziliditini asked Zumbende for help and were answered, and that more than a dozen settlements of theirs grew.
+     [ 2262 w1] Nituda became a great city such as the world had not seen, and the sky over it never grew dark.
+     [ 2269 w2] So many children were born in Kunimbola that the elders gave up learning their names. Thus it became a great city.
+     [ 2272 w1] The miners of Besumbiri went deep into the mountain, and came back black with dust and rich.
+     [ 2273 w1] Traders from Nzisili found their way to Ngenzaze of the Wariramoni, where Ziliditan coin was already known.
+     [ 2275 w1] Lightning struck south of Bandotolo in a summer storm.
+     [ 2282 w2] The Alengitani marched against the Paliluloni, and the fields were left unharvested.
+     [ 2283 w1] The Ziliditini and the Paliluloni became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 2284 w1] An army of the Paliluloni besieged Kotimbola and went home with nothing but stories.
+     [ 2284 w1] Ndutiwilo fell to the Alengitani, and its people learned new songs.
+     [ 2285 w2] The Paliluloni dwindled and were gone, and other peoples walked in their streets.
+     [ 2285 w1] The Alengitani had won: of the Paliluloni there was no one left to ask for peace.
+     [ 2285 w2] The Ziliditan settlers about Mbazukani had been apart too long. They took a new name, Wanjoto, and went their own way.
+     [ 2285 w2] In the first songs of the Wanjotoni, the god was the Breaker of Spears.
+     [ 2287 w1] In Wilinduto a jar of honey was given to Zumbende, with a prayer for rain.
+     [ 2288 w1] The dry country about Wilinduto drank rain that came from nowhere, and turned green again.
+     [ 2291 w1] Many roads now led to Enasa, and it was called a city.
+     [ 2292 w1] Generations passed and the Tosedasoni saw nothing of the Quiet Between Armies; they began to call the god the Silent One.
+     [ 2295 w1] The oath between the Ziliditini and the Wariramoni lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 2295 w1] A tree south of Mabuba was split by lightning. The wood was kept as a holy thing in the great city.
+     [ 2298 w1] No one destroyed Kotimbola. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2300 w1] The first caravan from Besumbiri came to Mbazukani, and the Ziliditini and the Wanjotoni learned each other's words for 'price'.
+     [ 2300 w1] Between the greater deeds of those forty years, eight places of the Ziliditini outgrew their old names.
+     [ 2306 w1] So many people lived in Kanida that no one could count them, and so they stopped trying.
+     [ 2309 w1] At Wilinduto, the Ziliditini prayed to Zumbende for rain, and fasted.
+     [ 2311 w1] Ziwawingo became a great city, a sea of roofs from one horizon to the other.
+     [ 2312 w2] Before the Ziliditini and the Alengitani could come to blows, the Quiet Between Armies set a light over Inamba. Both peoples took it for a warning, and neither wished to be the first to ignore it. The same calm came over the Tosedasoni.
+     [ 2313 w1] Among the Tosedasoni, mothers who had once told their children of the Silent One now told them of the Quiet Between Armies.
+     [ 2317 w1] The Tosedasoni of Zatendeni wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2319 w1] Envoys went back and forth between the Ziliditini and the Wanjotoni until they had worn a road, and at the end of it was an alliance.
+     [ 2320 w1] The rains forgot the country of Denanze. The priests climbed the hills and called to them.
+     [ 2321 w2] At Ndutiwilo there was hunger, three years running.
+     [ 2321 w1] A cool wind passed through Inamba, and in every house the fevered slept and woke well.
+     [ 2322 w1] Mbundinu and Ndosanju began to trade, cloth for copper, and both grew fat on it.
+     [ 2322 w1] Just when the wells of Dandetu were failing, the god sent rain; the priests said they had known it would come.
+     [ 2326 w1] Hunger walked the streets of Ebisungu, and the Ziliditini sold their tools for grain.
+     [ 2328 w1] Ndutiwilo was left empty. No one could say exactly when.
+     [ 2330 w1] Among the small news of those thirty years: Zumbende answered the prayers of twelve towns of the Ziliditini.
+     [ 2331 w1] There were too many mouths in Litimbuka and too little bread, and the weak did not see the spring.
+     [ 2334 w1] Nuluwazi was founded in the 2334th year. Its founders swore it would one day be greater than Kimoli. The chronicle notes that all founders swear this.
+     [ 2336 w1] The last families left Litimbuka, and grass grew in its streets.
+     [ 2342 w1] The harvest failed at Angandari, and the people ate their seed corn.
+     [ 2344 w1] In the 2343rd year the first caravan came from Nuluwazi to Kelumbalu, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2346 w1] The sky over Wilinduto cracked open with fire, and the rain that followed was warm.
+     [ 2349 w2] The Ziliditini gave up Nuluwazi, and the foxes moved in.
+     [ 2350 w1] Satuyumbe swallowed the villages around it and became a great city of the Ziliditini.
+     [ 2353 w1] Ekene was abandoned.
+     [ 2354 w1] Bundungo was left empty. Its people had gone to the bigger towns.
+     [ 2354 w1] The Wariramoni built engines that breathed fire, and the age of smoke began among them.
+     [ 2355 w1] Chimneys rose over Nilotende, and the sky above it turned grey. No one among the Wariramoni had built a manufactory before.
+     [ 2358 w1] Half the houses of Angandari stood empty, and it was no more than a town.
+     [ 2359 w1] The last families left Watasungu, and grass grew in its streets.
+     [ 2360 w1] In those thirty years more than a dozen new buildings went up among the Ziliditini, and Zumbende watered the fields of six towns of the Wariramoni.
+     [ 2360 w2] In the 2360th year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+     [ 2362 w1] The women of Mbazukani tied red threads to the shrine and asked for rain.
+     [ 2365 w1] The alliance of the Ziliditini and the Wanjotoni was not broken; it was forgotten, like a path no one walks any more.
+     [ 2366 w1] Zatendeni grew small and was only a town, and the young went away.
+     [ 2366 w1] No one destroyed Angandari. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2370 w2] The houses of Suzobo reached the old boundary stones and did not stop. From this year the Wariramoni call it a great city.
+     [ 2375 w1] The Ziliditini gave up Nzetawi, and the foxes moved in.
+     [ 2375 w1] In Wilinduto they burned sweet grass and asked Zumbende for rain.
+     [ 2375 w1] A hard sun stood over Orenjiri all that summer, and the barley died standing.
+     [ 2378 w1] Thunder rolled over Imandeni, and lightning fell on the dry grasslands north of the great city.
+     [ 2379 w1] A dark cloud stood over the parched fields of Orenjiri and rained on them, and on nowhere else.
+     [ 2382 w1] There was famine in Langombe. The people looked up and asked the Quiet Between Armies for rain, and counted the days, and the days were long.
+     [ 2390 w1] In those thirty years six towns of the Wariramoni prayed to Zumbende and did not pray in vain.
+     [ 2391 w2] Zatendeni was abandoned.
+     [ 2391 w1] In the 2391st year the granaries of Ndudeli rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2391 w1] Lightning found the pine woods south-west of Kumidandu, and the forest burned for a season. In the spring, from the ash, it began again.
+     [ 2391 w1] Zumbende sent rain on the thirsty fields of Nenzilela.
+     [ 2398 w1] Another road joined Kumidandu to Bandindu of the Wariramoni, and the tolls on it were argued over.
+     [ 2400 w1] The people of Ingeda climbed to the shrine and prayed to Zombende for rain. They prayed loudly, in case the Breaker of Spears was far away.
+     [ 2402 w1] Ten thousand hearths burned in Kwetiwazi. It was a city now, and it knew it.
+     [ 2403 w1] The envoys of the Ziliditini had come to the Alengitani to declare a war. They saw the sign over Miminzala, and declared a feast instead.
+     [ 2406 w1] The Tosedasoni of Nzangoli built a temple to Zombende so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [ 2408 w1] The Ziliditini and the Tosedasoni were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 2415 w1] Anzube of the Ziliditini began to buy the goods of Nzangoli, and its merchants learned the Tosedasi way of haggling.
+     [ 2420 w1] Of the smaller things of those thirty years: four towns of the Ziliditini had their prayers answered.
+     [ 2420 w1] The priests of Kinumbola went up to the high places and cried out for rain.
+     [ 2420 w1] In the 2420th year, a band went out from Zisukumbe with seed corn and quarrels enough for a new town, and founded Manunzi by the water.
+     [ 2421 w2] Hunger came to Kinumbola and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2422 w1] Manunzi became a town, and chose a council of elders, who argued.
+     [ 2428 w1] Caravans of the Wariramoni now came to Nyalekude of the Ziliditini as well.
+     [ 2429 w2] The last families left Zusanjiri, and grass grew in its streets.
+     [ 2430 w1] The Wariramoni founded Memedisa in the pine woods.
+     [ 2436 w1] Traders from Kumidandu found their way to Wingowazi of the Wariramoni, where Ziliditan coin was already known.
+     [ 2440 w1] The ground north-east of Enasa rolled like a wave for the space of a hundred breaths, and cracks opened in the fields of the city.
+     [ 2442 w1] A wall of water came out of the sea upon Winambiri.
+     [ 2445 w1] The Quiet Between Armies sent a sign over Mbinzando: a ring of light around the sun at noon. The Tosedasoni and the Alengitani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them. The Masonizani saw it too, and put away their own grievances.
+     [ 2448 w1] A storm such as the old people had never seen passed over Kunimbola.
+     [ 2450 w1] The chronicle, which cannot write everything, notes only that in those thirty years the Wariramoni raised more than a dozen new buildings, and Zumbende sent rain over five towns of the Ziliditini.
+     [ 2450 w1] Walimandu built a harbour, and ships came and went.
+     [ 2451 w1] Rain fell on Umengi out of a clear sky, and the Wariramoni danced in it.
+     [ 2457 w1] So many children were born in Manunzi that the elders gave up learning their names. Thus it became a city.
+     [ 2459 w1] The Ziliditini and the Alengitani swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 2460 w2] The ice in the north began to weep, and the summers were cruel.
+     [ 2461 w1] The river by Dandetu shrank to a string of muddy pools, and the frogs were the first to leave.
+     [ 2464 w1] The dry country about Dandetu drank rain sent by Zumbende, and turned green again.
+     [ 2464 w1] In the 2464th year Kinumbola could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2470 w1] The rains came back to Dandetu, and the Ziliditini said the god had relented.
+     [ 2470 w1] The fields about Nizambuka could not feed it any longer. Some families left in the night.
+     [ 2470 w2] In Kelumbalu the people sickened, and the roads to it were empty.
+     [ 2470 w2] Kelumbalu was healed by Zumbende. For a generation no one there feared the sickness.
+     [ 2475 w1] That winter Ebisungu ate its oxen, and then its dogs.
+     [ 2479 w1] Another road joined Memedisa to Satuyumbe of the Ziliditini, and the inns along it prospered.
+     [ 2480 w1] And there were small things, as there always are: the prayers of more than a dozen towns of the Ziliditini were heard.
+     [ 2487 w1] In a night of thunder a bolt came down in the pine woods north-west of Basiranda, and the dogs of the city howled until dawn.
+     [ 2487 w1] Fire ran through the pine woods north-west of Basiranda.
+     [ 2493 w1] Famine came to Kinumbola.
+     [ 2494 w1] Caravans of the Ziliditini now came to Kwetiwazi of the Wariramoni as well.
+     [ 2497 w1] Smoke rose from the earth at Kinumbola, and then fire. Ash fell on the great city like grey snow.
+     [ 2498 w3] Rivers of fire ran through Kinumbola and buried it.
+     [ 2500 w1] The people of Nzangoli prayed for rain.
+     [ 2502 w1] In Zasima they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 2505 w1] The Ziliditini and the Wariramoni became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 2507 w1] In Ingeda a white goat was given to Zombende, with a prayer for rain.
+     [ 2510 w1] The scribes, counting rather than writing, set down that in thirty years eight towns of the Ziliditini had rain from Zumbende, and the god heard four towns of the Wariramoni and answered them.
+     [ 2514 w1] The Quiet Between Armies drew a hand across the sky above Kulasungu, and the dry fields drank.
+     [ 2516 w1] Clouds came back over Wazembola, and the dry river filled in a single night.
+     [ 2526 w1] The fishermen of Miroma built a stone quay, and the town turned its face to the sea.
+     [ 2527 w1] The old alliance of the Ziliditini and the Alengitani came apart over a small matter, as old alliances do.
+     [ 2535 w2] The Tosedasoni and the Masonizani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [ 2536 w1] Miminzala of the Ziliditini grew used to the goods of Memedisa, and its merchants learned the Warirami way of haggling.
+     [ 2540 w1] The scribes, counting rather than writing, set down that in thirty years Zumbende gave eight towns of the Ziliditini what they prayed for.
+     [ 2542 w1] At Wilinduto, the Ziliditini prayed to Zumbende for rain, morning and evening.
+     [ 2542 w1] A storm passed over Kunimbola, and lightning split an old tree north-west of the great city.
+     [ 2542 w1] A wildfire came close to Kunimbola, and the children watched it from the roofs.
+     [ 2545 w1] No one destroyed Langombe. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2548 w1] There was an earthquake south of Manibabir, and the people of the city slept outside for a month.
+     [ 2550 w1] The Ziliditini of Mbundinu wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2552 w1] At Ebisungu there was hunger, three years running.
+     [ 2552 w1] Dandetu cut a harbour into the shore, and its boats went further every year.
+     [ 2559 w3] Manunzi was left empty. Its people had gone to the bigger towns.
+     [ 2560 w1] Traders from Manunzi found their way to Naluli of the Ziliditini, where Warirami coin was already known.
+     [ 2562 w2] There were too many mouths in Menjukani and too little bread, and the old went hungry so the young could eat.
+     [ 2569 w1] The women of Ingeda tied red threads to the shrine and asked for rain.
+     [ 2570 w1] Another thirty years went into the book: rain fell by the hand of Zumbende on seven towns of the Ziliditini, and five towns of theirs prayed to the god and did not pray in vain.
+     [ 2570 w1] Some of the people of Zalude grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Zilendari.
+     [ 2570 w1] The camp at Zilendari put down roots and became a village.
+     [ 2570 w1] At Zilendari a shrine of wood was made for Zumbende.
+     [ 2571 w1] The oath between the Ziliditini and the Wariramoni lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 2574 w1] The feet of traders wore a road between Zilendari and Nyalekude. Along it went pots and coins and, later, fevers.
+     [ 2575 w1] In Nzangoli they burned sweet grass and asked Zombende for rain.
+     [ 2577 w2] The spotted fever broke out in Angandeni, and its neighbours turned travellers away.
+     [ 2577 w2] In Angandeni the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+     [ 2580 w1] Many left Mbundinu, and it was a town again.
+     [ 2584 w1] Walls of cut stone went up around Memedisa, and the Warirami scribes began to call it a city.
+     [ 2584 w1] The Ziliditini gave up Zilendari, and the wind had it.
+     [ 2585 w1] The god did nothing that the Wanjotoni could see for longer than anyone remembered, and the Breaker of Spears became the Rumour.
+     [ 2587 w1] In Nizambuka they still tell of the great wind, which carried a goat over the temple.
+     [ 2591 w1] In Lungo the ground cracked like old pottery, and the Ziliditini began to pray for rain.
+     [ 2594 w1] Clouds gathered over Uwembalu where no clouds had been, and wept on the dry fields. The Ziliditini gave thanks to Zumbende.
+     [ 2594 w1] Lightning walked on the hills north-east of Mbundinu, and the Ziliditini stayed indoors.
+     [ 2599 w2] Ebisungu was abandoned.
+     [ 2600 w1] Little of those thirty years was written down, except that twelve towns of the Ziliditini asked Zumbende for help and were answered.
+     [ 2601 w1] Green came back to the fields of Lungo, and the wells were sweet again.
+     [ 2606 w1] The people of Menjukani climbed to the shrine and prayed to Zumbende for rain. They prayed loudly, in case the Rain-Giver was far away.
+     [ 2614 w1] A great calm settled on the border of the Wariramoni and the Tosedasoni. The young, who had been ready to fight, went home and were annoyed about it for years.
+     [ 2615 w1] The Wariramoni no longer called the god the Rain-Giver; now they said the Quiet Between Armies.
+     [ 2616 w1] Thunder rolled over Uwasungu, and lightning fell north-east of the city.
+     [ 2616 w1] That summer a fire ate the dry grasslands north-east of Uwasungu.
+     [ 2621 w1] The elders of the Ziliditini and the Wariramoni clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 2629 w1] Another road joined Mutukumbe to Bubikani of the Ziliditini, and the inns along it prospered.
+     [ 2632 w1] The priests of Menjukani went up to the high places and cried out for rain.
+     [ 2633 w2] Hunger walked the streets of Wilinduto, and the fields were not enough for all of them.
+     [ 2640 w1] Over forty years, and hardly worth a line each time, Zumbende answered the prayers of five towns of the Ziliditini.
+     [ 2640 w2] In Ungizu the first engines turned, and the Tosedasoni did more work in a day than their grandfathers in a year.
+     [ 2641 w1] The engines of Uwasungu began to turn, and their noise did not stop at night. It was the first manufactory of the Tosedasoni.
+     [ 2641 w1] Mbinzando grew into a city of towers, its lights seen from the next valley.
+     [ 2646 w1] The long quarrel between the Ziliditini and the Wanjotoni came to blood.
+     [ 2646 w1] An omen of peace was seen over Miminzala, and the Ziliditini and the Wanjotoni laid down their spears.
+     [ 2647 w1] The Wanjotoni had called the god the Rumour. After what they had seen, they called the god the Breaker of Spears.
+     [ 2652 w1] The houses of Uwasungu reached the old boundary stones and did not stop. From this year the Tosedasoni call it a great city.
+     [ 2656 w1] The people of Wilinduto prayed for rain.
+     [ 2658 w1] The Ziliditini and the Wariramoni were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 2661 w1] Fever spread through Wilinduto, and the priests could do nothing.
+     [ 2661 w1] The fever left Wilinduto in a single night. The Ziliditini said Zumbende had walked through the streets.
+     [ 2662 w1] A tree south-west of Mediwo was split by lightning. The wood was kept as a holy thing in the city.
+     [ 2662 w1] Fire walked through the dry grasslands south-west of Mediwo, and the Ziliditini prayed for rain.
+     [ 2667 w1] No rain fell on the lands of Denanze. The river showed its stones, and the people counted them.
+     [ 2668 w1] In Zalude a lamb was given to Zumbende, with a prayer for rain.
+     [ 2669 w2] In the 2669th year Menjukani could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2670 w1] Just when the wells of Zalude were failing, the god sent rain; the priests said they had known it would come.
+     [ 2675 w1] So many children were born in Manibabir that the elders gave up learning their names. Thus it became a great city.
+     [ 2676 w1] The long thirst of Denanze ended in a storm, and the Ziliditini danced in the mud.
+     [ 2677 w2] In the 2677th year the Wariramoni and the Tosedasoni swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 2680 w1] Another thirty years went into the book, and in them Zumbende was asked for help by eleven towns of the Ziliditini and gave it.
+     [ 2680 w1] A great storm walked in from the sea and stood over Nituda for three days, and the roofs learned to fly.
+     [ 2683 w1] Lightning struck east of Kadetende in a summer storm.
+     [ 2683 w1] A red night: the dry grasslands east of Kadetende burned, and ash fell on the city.
+     [ 2686 w1] The lamps of Ungizu drowned out the stars: it had become a great city of the Tosedasoni.
+     [ 2686 w1] A vein of ore was found above Ungizu, and the town grew loud with hammers.
+     [ 2690 w1] At Mutukumbe, the Wariramoni prayed to Zumbende for rain, and fasted.
+     [ 2700 w1] The alliance of the Wariramoni and the Tosedasoni was not broken; it was forgotten, like a path no one walks any more.
+     [ 2708 w1] The sky over Lungo cracked open with fire, and the rain that followed was warm.
+     [ 2708 w1] The woods south-west of Lungo burned, and the sky over the great city was brown for days.
+     [ 2711 w1] The Ziliditini of Kumidandu wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2712 w1] Wind and rain beat upon Kimoli for three days, and the rivers rose.
+     [ 2716 w1] Mbinzando of the Tosedasoni grew used to the goods of Duwokani, and its merchants learned the Warirami way of haggling.
+     [ 2716 w2] The quarrel of the Ziliditini and the Alengitani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 2718 w2] The sea was rising, and this time not by any god's hand: the chimneys of the Ziliditini had warmed the air, and the ice was giving back its water.
+     [ 2723 w1] Envoys went back and forth between the Ziliditini and the Wariramoni until they had worn a road, and at the end of it was an alliance.
+     [ 2726 w1] The women of Ndarini tied red threads to the shrine and asked for rain.
+     [ 2726 w1] In a night of thunder a bolt came down in the deep forest south-east of Sazandaba, and in the morning the shepherds found the stones blackened.
+     [ 2726 w1] The country south-east of Sazandaba burned for many days, and the smoke hung over the great city.
+     [ 2730 w1] Meanwhile, in the smaller news of those years, the sky opened over five towns of the Ziliditini, and four towns of the Wariramoni had their prayers answered.
+     [ 2737 w1] The merchants of Basiranda found a road to Menjukani, and the road found more merchants.
+     [ 2741 w1] There was famine in Umengi. The people looked up and asked the Quiet Between Armies for rain, and counted the days, and the days were long.
+     [ 2741 w1] The rains forgot the country of Mbunjinje. The children grew up not knowing the smell of rain.
+     [ 2743 w2] In the 2743rd year the granaries of Menjukani rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2743 w1] A storm walked inland over the country of Mbanombi, and left the fields flattened behind it.
+     [ 2744 w1] A dark cloud stood over the parched fields of Mbunjinje and rained on them, and on nowhere else.
+     [ 2745 w1] The harvest failed at Mediwo, and the people ate their seed corn.
+     [ 2748 w1] Rain returned to Mbunjinje at last.
+     [ 2752 w1] The people of Menjukani climbed to the shrine and prayed to Zumbende for rain. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 2755 w1] The earth groaned under Salingoli, and the well water turned cloudy.
+     [ 2758 w1] Merchants began to travel between Inamba and Walimandu, bringing salt and news.
+     [ 2760 w1] The chronicle, which cannot write everything, notes only that in those twenty years the prayers of nine towns of the Ziliditini were heard.
+     [ 2761 w2] A fire-mountain was born in the deep forest far to the west of Ziwawingo, and the sky above the great city turned the colour of iron.
+     [ 2764 w1] The sky stayed grey over Cahei for years. The harvest failed at Kumidandu, and not only there.
+     [ 2764 w1] Neither the Tosedasoni nor the Alengitani would give way, and the war was a summer off, when Zombende set a sign between them. That summer the spears stayed in their racks, and so did the next.
+     [ 2768 w1] The people of Nzangoli prayed for rain.
+     [ 2768 w1] Zumbende sent rain on the thirsty fields of Basiranda.
+     [ 2771 w1] In the dark years the barley would not ripen, and hunger came to Mutukumbe and to many towns of the Wariramoni.
+     [ 2773 w1] The mountain in the woods far to the west of Ziwawingo stopped smoking, and the Ziliditini gave thanks.
+     [ 2784 w1] The old alliance of the Ziliditini and the Wanjotoni came apart over a small matter, as old alliances do.
+     [ 2790 w1] In those thirty years Zumbende heard four towns of the Ziliditini and answered them.
+     [ 2801 w1] The priests of Menjukani went up to the high places and cried out for rain.
+     [ 2802 w3] In the 2802nd year the world turned a page: the Ziliditini, first of all peoples, came into the Age of the Atom, and the others began to hurry.
+     [ 2803 w2] The Ziliditini built at Wazembola a house where the smallest fire burns. No one among the Ziliditini had built a power plant before.
+     [ 2809 w2] Before the Ziliditini and the Masonizani could come to blows, the Quiet Between Armies set a light over Miminzala. Both peoples took it for a warning, and neither wished to be the first to ignore it.
+     [ 2814 w1] In Naluli they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 2814 w1] The Quiet Between Armies laid a hand on Naluli, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 2815 w1] A storm passed over Imandeni, and lightning killed a herd of goats north-west of the great city.
+     [ 2815 w1] Fire ran through the dry grasslands north-west of Imandeni.
+     [ 2818 w2] So many people lived in Anzube that no one could count them, and so they stopped trying.
+     [ 2822 w1] There was drought in the country of Suzobo, and the Wariramoni looked at the sky every morning.
+     [ 2824 w1] In Wilinduto they burned fat and asked Zumbende for rain.
+     [ 2824 w1] Rain fell on Bandotolo out of a clear sky, and the Wariramoni danced in it.
+     [ 2825 w1] Hunger came to Menjukani and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2825 w1] The fields about Wilinduto could not feed it any longer. The priests asked Zumbende for bread.
+     [ 2830 w1] Among the small news of those thirty years: Zumbende gave ten towns of the Wariramoni what they prayed for.
+     [ 2830 w1] The rains came back to Suzobo, as rains do, in their own time.
+     [ 2833 w1] Black clouds came over Salingoli from the sea, and the river ran brown for days.
+     [ 2834 w2] Ndudeli was left empty. No one could say exactly when.
+     [ 2841 w1] Lightning walked on the hills north of Miminzala, and the priests of the great city read it as a sign.
+     [ 2841 w1] That summer a fire ate the plains north of Miminzala.
+     [ 2843 w1] Caravans of the Wariramoni now came to Bubikani of the Ziliditini as well.
+     [ 2853 w1] Denanze became a great city, a sea of roofs from one horizon to the other.
+     [ 2859 w1] In Menjukani a lamb was given to Zumbende, with a prayer for rain.
+     [ 2860 w1] Clouds gathered over Menjukani where no clouds had been, and wept on the dry fields. The Wariramoni gave thanks to Zumbende.
+     [ 2863 w1] The envoys of the Ziliditini had come to the Alengitani to declare a war. They saw the sign over Miminzala, and declared a feast instead.
+     [ 2865 w1] A tree close by Suzobo was split by lightning. The wood was kept as a holy thing in the great city.
+     [ 2865 w1] A wildfire came close to Suzobo, and the children watched it from the roofs.
+     [ 2866 w2] Cahei grew hot as a kiln. The old crops failed and new deserts grew.
+     [ 2868 w2] Wilinduto became a great city such as the world had not seen, lit all night.
+     [ 2868 w1] The rains failed around Nenzilela.
+     [ 2871 w1] In those lean years Nenzilela ate its oxen, and then its dogs.
+     [ 2873 w1] The dry country about Nenzilela drank rain that came from nowhere, and turned green again.
+     [ 2875 w1] In Zetolanda great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron.
+     [ 2876 w1] At Katelanda, the Ziliditini prayed to Zumbende for rain, and fasted.
+     [ 2877 w1] Famine came to Katelanda.
+     [ 2878 w1] The drought about Nenzilela broke, and the children ran out into the rain.
+     [ 2880 w1] Below the great events of those fifty years, more than a dozen towns of the Wariramoni prayed to Zumbende and did not pray in vain.
+     [ 2882 w1] The Ziliditini of Tatawise wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2887 w1] The women of Ingeda tied red threads to the shrine and asked for rain.
+     [ 2891 w1] The houses of Kumidandu reached the old boundary stones and did not stop. From this year the Ziliditini call it a city.
+     [ 2906 w2] A great calm settled on the border of the Ziliditini and the Masonizani. The young, who had been ready to fight, went home and were annoyed about it for years.
+     [ 2908 w1] At Wilinduto there was hunger, three years running.
+     [ 2910 w1] Those were busy years, if not great ones: Zumbende watered the fields of seven towns of the Ziliditini, and the god was asked for help by five towns of theirs and gave it.
+     [ 2910 w1] A tremor ran through the land about Naluli, and the cattle would not go into their byres.
+     [ 2922 w1] The sky over Nginondu cracked open with fire, and the rain that followed was warm.
+     [ 2922 w1] Fire walked through the woods east of Nginondu, and the beasts ran before it.
+     [ 2930 w2] The Wariramoni split the smallest thing in the world, and found a fire inside it.
+     [ 2931 w2] A great power plant hummed at Nilotende, and the Warirami priests did not like it. It was the first power plant of the Wariramoni.
+     [ 2933 w1] So many children were born in Zasima that the elders gave up learning their names. Thus it became a great city.
+     [ 2937 w1] A hard sun stood over Basiranda year after year, and the barley died standing.
+     [ 2938 w1] The sea sent a howling wind against Umengi, and it took the thatch from every roof.
+     [ 2940 w1] Basiranda swallowed the villages around it and became a great city of the Wariramoni.
+     [ 2942 w1] The Quiet Between Armies drew a hand across the sky above Basiranda, and the dry fields drank.
+     [ 2944 w1] Masts filled the bay at Wazembola, where a harbour had been built.
+     [ 2944 w1] Clouds came back over Basiranda, and the dry river filled in a single night.
+     [ 2945 w1] The Quiet Between Armies sent a sign over Mbinzando: a ring of light around the sun at noon. The Tosedasoni and the Alengitani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them. The same calm came over the Masonizani.
+     [ 2947 w2] The Wanjotoni still kept the shrines, but the priests now spoke of the Rumour, not the Breaker of Spears.
+     [ 2950 w1] Zumbende answered the prayers of five towns of the Wariramoni; and rain fell by the hand of the god on five towns of the Ziliditini. Of such small things in those forty years the chronicle keeps nothing more.
+     [ 2958 w1] Ngenzaze grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 2958 w1] A port was made at Bitundari, and the Ziliditan sailors grew bold.
+     [ 2959 w1] The Alengitani harnessed fire and steam. The forests grew thin and the cities grew tall.
+     [ 2959 w1] A grey sickness settled on Ndarini. The healers burned herbs day and night.
+     [ 2959 w1] A cool wind passed through Ndarini, and in every house the fevered slept and woke well.
+     [ 2960 w1] Kadetende built its first manufactory, and the river ran a strange colour. No one among the Alengitani had built a manufactory before.
+     [ 2964 w1] There was famine in Umengi. The people looked up and asked the Quiet Between Armies for rain, and counted the days, and the days were long.
+     [ 2965 w1] Mutukumbe became a city, the pride of the Wariramoni.
+     [ 2968 w1] Ox-carts began to creak along the road from Angandeni to Zanitende, and inns grew up beside it.
+     [ 2974 w1] Lightning struck in the woods south-west of Lungo in a summer storm.
+     [ 2974 w1] A red night: the woods south-west of Lungo burned, and ash fell on the great city.
+     [ 2975 w1] The Ziliditini and the Wariramoni swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 2976 w1] A storm such as the old people had never seen passed over Natotende.
+     [ 2979 w2] The lamps of Kadetende drowned out the stars: it had become a great city of the Alengitani.
+     [ 2984 w1] In the 2984th year Zisukumbe could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2990 w1] Five towns of the Ziliditini had rain from Zumbende. Of such small things in those forty years the chronicle keeps nothing more.
+     [ 2997 w2] The quarrel of the Ziliditini and the Alengitani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 2999 w1] The oath between the Ziliditini and the Wariramoni lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 3009 w1] Thunder rolled over Zasima, and lightning fell south of the great city.
+     [ 3009 w1] The pine woods south of Zasima burned, and the Wariramoni watched the glow at night.
+     [ 3019 w1] Umengi became a town, with streets.
+     [ 3019 w1] Umengi raised a temple to Zumbende, and its bells could be heard in the fields.
+     [ 3024 w1] Traders from Umengi found their way to Kodosungu of the Ziliditini, where Warirami coin was already known.
+     [ 3027 w1] The river by Diringango shrank to a string of muddy pools, and the frogs were the first to leave.
+     [ 3029 w2] The spotted fever broke out in Basiranda, and its neighbours turned travellers away.
+     [ 3029 w2] Basiranda was healed by Zumbende. Its people carved a hand on the temple wall.
+     [ 3030 w1] There were too many mouths in Salingoli and too little bread, and the weak did not see the spring.
+     [ 3031 w1] Hunger walked the streets of Umengi, and the Wariramoni sold their tools for grain.
+     [ 3033 w1] Wind and rain beat upon Dengiwazi for a week, and the rivers rose.
+     [ 3034 w1] Just when the wells of Diringango were failing, the god sent rain; the priests said they had known it would come.
+     [ 3034 w1] Green came back to the fields of Diringango, and the wells were sweet again.
+     [ 3040 w1] Over fifty years seven towns of the Wariramoni asked Zumbende for help and were answered. In the same years six towns of the Ziliditini had their prayers answered.
+     [ 3052 w1] Families of the Ziliditini who left Wandange built their first fires at Unzutondu, and called it good.
+     [ 3052 w1] Unzutondu grew from a camp into a village.
+     [ 3052 w1] The elders of Unzutondu chose a holy place, and a shrine to Zumbende was raised there.
+     [ 3052 w1] The Tosedasoni and the Alengitani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead. The Masonizani saw it too, and put away their own grievances.
+     [ 3062 w1] Another road joined Unzutondu to Bandindu of the Wariramoni, and the tolls on it were argued over.
+     [ 3064 w1] In a night of thunder a bolt came down south-east of Uwasungu, and the dogs of the great city howled until dawn.
+     [ 3074 w3] No one destroyed Angandeni. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3075 w1] In the 3075th year a new camp of the Ziliditini was raised at Matotimbe, in the woods.
+     [ 3075 w1] The tents of Matotimbe gave way to houses of mud and reed, and it was called a village.
+     [ 3075 w1] The Ziliditini set up a shrine at Matotimbe, and left bread there for the god.
+     [ 3077 w2] Matotimbe had become a city, with more people in it than there were sheep in the hills.
+     [ 3080 w1] Caravans of the Wariramoni now came to Kunimbola of the Ziliditini as well.
+     [ 3086 w1] In Zalude the ground cracked like old pottery, and the Ziliditini carried water from far away.
+     [ 3089 w1] In the 3089th year the granaries of Zalude rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 3089 w2] In Ingeda the first engines turned, and the Masonizani did more work in a day than their grandfathers in a year.
+     [ 3089 w1] Neither the Tosedasoni nor the Alengitani would give way, and the war was a summer off, when Zombende set a sign between them. That summer the spears stayed in their racks, and so did the next.
+     [ 3090 w1] Of the smaller things of those fifty years: the prayers of seven towns of the Ziliditini were heard.
+     [ 3090 w1] The engines of Ingeda began to turn, and their noise did not stop at night. It was the first manufactory of the Masonizani.
+     [ 3090 w1] Matotimbe and Zanitende began to trade, wine for wool, and both grew fat on it.
+     [ 3092 w1] The harvest failed at Mutukumbe; the children grew thin.
+     [ 3092 w1] A dark cloud stood over the parched fields of Dandetu and rained on them, and on nowhere else.
+     [ 3094 w1] The long thirst of Zalude ended in a storm, and the Ziliditini danced in the mud.
+     [ 3112 w1] Wingowazi of the Wariramoni grew used to the goods of Unzutondu, and its merchants learned the Ziliditan way of haggling.
+     [ 3119 w1] A storm passed over Katelanda, and lightning split an old tree north of the city.
+     [ 3119 w1] A wildfire came close to Katelanda, and the children watched it from the roofs.
+     [ 3120 w1] Between the greater deeds of those thirty years, Zumbende heard seven towns of the Ziliditini and answered them.
+     [ 3128 w2] Before the Wariramoni and the Tosedasoni could come to blows, the Quiet Between Armies set a light over Miroma. Both peoples took it for a warning, and neither wished to be the first to ignore it.
+     [ 3139 w1] The Wanjotoni entered the age of the hidden fire, with great fears.
+     [ 3140 w2] At Mbazukani the hidden fire was put to work, and the lamps of a whole country were lit from it. No one among the Wanjotoni had built a power plant before.
+     [ 3142 w1] Unzutondu became a great city such as the world had not seen, lit all night.
+     [ 3154 w1] Traders from Mutukumbe found their way to Matotimbe of the Ziliditini, where Warirami coin was already known.
+     [ 3158 w1] A storm walked inland over the country of Bubikani, and left the fields flattened behind it.
+     [ 3161 w1] Hunger came to Wilinduto and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3161 w1] Lightning walked on the hills west of Kulasungu, and the Ziliditini stayed indoors.
+     [ 3161 w1] That summer a fire ate the woods west of Kulasungu.
+     [ 3163 w1] Zumbende sent rain on the thirsty fields of Wilinduto.
+     [ 3166 w2] Mebidilo of Wazembola heard the voice of Zumbende and began to preach, and many believed.
+     [ 3166 w1] Mebidilo commanded the Ziliditini to build a wonder worthy of Zumbende.
+     [ 3167 w1] The land of Mabuba bloomed out of season, and the beekeepers grew rich.
+     [ 3170 w1] And there were small things, as there always are: Zumbende gave five towns of the Ziliditini what they prayed for.
+     [ 3181 w2] A coughing sickness came to Milombe in the spring, and lingered.
+     [ 3183 w1] The fields about Tatawise could not feed it any longer. Some families left in the night.
+     [ 3185 w1] A tree east of Anzube was split by lightning. The children of the great city dared each other to touch it.
+     [ 3185 w1] Fire ran through the plains east of Anzube.
+     [ 3190 w1] Another road joined Nizambuka to Unzutondu of the Ziliditini, and the tolls on it were argued over.
+     [ 3191 w2] Smoke rose from the earth south-east of Nizambuka, and then fire. The Wariramoni said the mountain was angry.
+     [ 3192 w1] A band from Tatawise crossed the country and founded Dulondeni in the pine woods.
+     [ 3192 w1] There were now enough hearths at Dulondeni to call it a village.
+     [ 3192 w1] A circle of white stones was laid out at Dulondeni, and the Ziliditini came there to speak to Zumbende.
+     [ 3194 w1] The Quiet Between Armies drew a hand across the sky above Dandetu, and the dry fields drank.
+     [ 3196 w1] The dust of the sky fell on the fields of Kodosungu like a second winter, and there was nothing to harvest but straw.
+     [ 3198 w1] The country in the sands south-east of Nizambuka burned for many days, and the smoke hung over the town.
+     [ 3200 w1] Of the smaller things of those thirty years: eight towns of the Ziliditini prayed to Zumbende and did not pray in vain; and the god greened the fields of five towns of theirs.
+     [ 3203 w1] The fires in the woods south-east of Nizambuka cooled into black stone, and the people of the town went back to their fields.
+     [ 3207 w1] The earth shook in the shallows north-west of Nzisili.
+     [ 3207 w1] A great wave broke north-west of Nzisili, and the people of the city counted their dead.
+     [ 3211 w1] The sea drew back from the shore at Ngenzaze, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [ 3220 w1] Mebidilo the prophet went into the hills and did not come back. The Ziliditini said Zumbende had taken the prophet home.
+     [ 3223 w1] The sky over Embisanzi cracked open with fire, and the rain that followed was warm.
+     [ 3223 w1] Fire walked through the dry grasslands south-west of Embisanzi, and the beasts ran before it.
+     [ 3230 w1] The scribes, counting rather than writing, set down that in thirty years the fields of nine towns of the Ziliditini bloomed out of season.
+     [ 3240 w1] A great storm walked in from the sea and stood over Memedisa for three days, and the roofs learned to fly.
+     [ 3249 w1] Thunder rolled over Kwedosu, and lightning fell west of the great city.
+     [ 3252 w1] The rains failed around Sazandaba.
+     [ 3254 w2] In those lean years Wilinduto ate its oxen, and then its dogs.
+     [ 3254 w2] The envoys of the Ziliditini had come to the Masonizani to declare a war. They saw the sign over Bitundari, and declared a feast instead.
+     [ 3255 w1] Famine came to Angedi.
+     [ 3256 w1] Rain fell on Sazandaba out of a clear sky, and the Wariramoni danced in it.
+     [ 3258 w2] The heat of the world became a thing every child knew. The priests said it was the god's fever.
+     [ 3260 w1] In those thirty years Zumbende answered the prayers of eight towns of the Wariramoni, and the god sent rain over six towns of the Ziliditini.
+     [ 3262 w1] The rains came back to Sazandaba, as rains do, in their own time.
+     [ 3264 w1] Clouds gathered over Wilinduto where no clouds had been, and wept on the dry fields. The Ziliditini gave thanks to Zumbende.
+     [ 3265 w1] Tatandubo began as a ring of tents in the deep forest, raised by wanderers from Menjukani.
+     [ 3265 w1] The houses of Tatandubo reached the old boundary stones and did not stop. From this year the Wariramoni call it a village.
+     [ 3265 w1] At Tatandubo they set stones in a ring and laid the first fruits on them for Zumbende. It was a small shrine. The Quiet Between Armies did not complain.
+     [ 3274 w3] The Ziliditini turned their eyes to the stars, and built towers of fire to reach them. The other peoples of Cahei had not yet dreamed of it.
+     [ 3275 w1] Dandetu of the Ziliditini began to buy the goods of Tatandubo, and its merchants learned the Warirami way of haggling.
+     [ 3276 w2] So many children were born in Nzisili that the elders gave up learning their names. Thus it became a great city.
+     [ 3276 w1] Lightning struck in the pine woods west of Ngenzaze in a summer storm.
+     [ 3276 w1] A red night: the pine woods west of Ngenzaze burned, and ash fell on the great city.
+     [ 3289 w1] The ground on the plains south-west of Enasa rolled like a wave for the space of a hundred breaths, and cracks opened in the fields of the city.
+     [ 3292 w1] Caravans of the Ziliditini now came to Tatandubo of the Wariramoni as well.
+     [ 3293 w1] The town of Tatandubo grew into a city of the Wariramoni, full of smoke and music.
+     [ 3293 w1] Chimneys rose over Tatandubo, and the sky above it turned grey.
+     [ 3293 w2] The Ziliditini and the Alengitani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [ 3294 w1] Outside Wazembola, on flat ground swept clean, the Ziliditan builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+     [ 3294 w3] At Wazembola the Ziliditini began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3306 w1] In Embisanzi they still tell of the great wind, which blew the fires out in every hearth.
+     [ 3314 w1] The feet of traders wore a road between Unzutondu and Sinilombe. Along it went pots and coins and, later, fevers.
+     [ 3320 w2] The Tosedasoni put down the tools of their mothers and took up the tools of the Age of the Atom. The Quiet Between Armies watched, and did not say whether this was wise.
+     [ 3321 w2] The Tosedasoni built at Uwasungu a house where the smallest fire burns. It was the first power plant of the Tosedasoni.
+     [ 3327 w1] The scribes of the Tosedasoni began to write Nzangoli with the sign for 'city', and its taxes rose accordingly.
+     [ 3328 w1] The Quiet Between Armies sent a sign over Mbinzando: a ring of light around the sun at noon. The Tosedasoni and the Alengitani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them. The same calm came over the Masonizani.
+     [ 3329 w1] Traders of the Wariramoni and the Wanjotoni met at Monzili, and each thought they had cheated the other.
+     [ 3330 w1] The Ziliditini and the Masonizani became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 3340 w1] Traders from Mbundinu found their way to Tatandubo of the Wariramoni, where Ziliditan coin was already known.
+     [ 3340 w1] Little of those eighty years was written down, except that Zumbende was asked for help by four towns of the Ziliditini and gave it.
+     [ 3340 w1] The rains forgot the country of Manibabir. The children grew up not knowing the smell of rain.
+     [ 3342 w1] The dry country about Uwasungu drank rain that came from nowhere, and turned green again.
+     [ 3348 w1] Black clouds came over Tatawise from the sea, and the hail broke the young barley.
+     [ 3351 w1] So many people lived in Tatandubo that no one could count them, though the scribes tried.
+     [ 3351 w1] Rain returned to Manibabir at last.
+     [ 3352 w1] The alliance of the Ziliditini and the Masonizani was not broken; it was forgotten, like a path no one walks any more.
+     [ 3368 w2] In Besumbiri the people sickened, and the roads to it were empty.
+     [ 3368 w2] The fever left Besumbiri in a single night. The Ziliditini said Zumbende had walked through the streets.
+     [ 3370 w1] The scribes, counting rather than writing, set down that in thirty years nine towns of the Tosedasoni asked Zombende for help and were answered, and five towns of the Alengitani had their prayers answered.
+     [ 3380 w1] Enasa became a great city, a sea of roofs from one horizon to the other.
+     [ 3382 w1] The quarrel of the Ziliditini and the Alengitani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 3403 w2] The first ship of the Wariramoni went up beyond the sky and came back, and the priests were very quiet.
+     [ 3404 w1] Another road joined Ndutiwazi to Tatandubo of the Wariramoni, and the tolls on it were argued over.
+     [ 3413 w1] The sea sent a howling wind against Kwedosu, and the fishermen did not go out for a month.
+     [ 3417 w1] A great calm settled on the border of the Tosedasoni and the Alengitani. The young, who had been ready to fight, went home and were annoyed about it for years. The Masonizani saw it too, and put away their own grievances.
+     [ 3423 w2] A launch field was cleared at Nilotende, and the Wariramoni began to speak of leaving.
+     [ 3423 w2] The Wariramoni laid the keel of a great ship at Nilotende, a ship for the space between the stars.
+     [ 3424 w1] War between the Ziliditini and the Wanjotoni. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 3426 w1] The banners of the Ziliditini were raised over Monzili.
+     [ 3426 w1] The Wanjotoni came against Dandetu and were thrown back.
+     [ 3426 w1] The war ended in victory for the Ziliditini. The Wanjotoni paid tribute for a generation.
+     [ 3426 w1] In a night of thunder a bolt came down on the dry grasslands north-east of Duwokani, and in the morning the shepherds found the stones blackened.
+     [ 3426 w1] The country north-east of Duwokani burned for many days, and the smoke hung over the city.
+     [ 3428 w1] No rain fell on the lands of Manginja. The river showed its stones, and the people counted them.
+     [ 3430 w1] The chronicle, which cannot write everything, notes only that in those sixty years the prayers of five towns of the Ziliditini were heard, and the sky opened over six towns of theirs.
+     [ 3434 w1] Just when the wells of Kulasungu were failing, the god sent rain; the priests said they had known it would come.
+     [ 3435 w1] The drought about Manginja broke, and the children ran out into the rain.
+     [ 3442 w1] A storm such as the old people had never seen passed over Mawatandu.
+     [ 3442 w1] A sickness came to Nzaminu by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 3442 w2] In Nzaminu the sick were healed, all at once, and the healers lost their trade for a while.
+     [ 3443 w1] The sea rose up and walked inland at Uwembalu, taking boats and houses and cattle.
+     [ 3444 w1] A grey wave as tall as a temple broke over the fields of Suzobo, and salt lay on them for years.
+     [ 3460 w1] Over thirty years, and hardly worth a line each time, Zumbende heard more than a dozen towns of the Ziliditini and answered them.
+     [ 3461 w1] A storm passed over Umengi, and lightning killed a herd of goats south-west of the town.
+     [ 3464 w1] Mbundinu grew past counting into a city, and its markets never closed.
+     [ 3464 w1] A great power plant hummed at Mbundinu, and the Ziliditan priests did not like it.
+     [ 3470 w2] Ubunja, a scribe of Wazembola, came down from the hills with a message from Zumbende.
+     [ 3470 w1] Ubunja told the Ziliditini that Zumbende wished for a great work, and the Ziliditini began to cut timber and haul stone.
+     [ 3471 w2] In the 3471st year Duwokani could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 3490 w1] Another twenty years went into the book, and in them Zumbende made the fields of more than a dozen towns of the Ziliditini bloom.
+     [ 3492 w1] Lightning walked on the hills east of Mbinzando, and the Tosedasoni stayed indoors.
+     [ 3492 w1] The woods east of Mbinzando burned, and the herds fled toward the great city.
+     [ 3493 w3] From Wazembola, the Ziliditini went up into the sky on a pillar of fire, carrying seed and songs and the name of Zumbende. Those who stayed watched until the light was a star among stars.
+     [ 3493 w3] In the 3493rd year the Ziliditini rose from Wazembola on a pillar of light. They carried seed, and songs, and a carved stone bearing the name of Zumbende, whom they called the Quiet Between Armies. Before the clouds closed below them, they looked back at Cahei and wept, not from grief, but because they had been loved, and knew it, and were taking that with them too. Wherever they land, there will be a shrine before there is a house.
+
+simrun: 1 run(s) in 657.7 s wall, no non-finite values

@@ -406,7 +406,7 @@ DM_TEST("foundation-adv: event table = SPEC-SIM 2 (names and payload keys in ord
 		{ "settlement:captured", { "id", "from", "to", "how" } }, { "prayer", { "id", "kind", "start" } },
 		{ "prayer:answered", { "id", "kind" } }, { "culture:born", { "id", "parent", "cell", "reason" } },
 		{ "culture:died", { "id" } }, { "culture:age", { "id", "age", "prev" } }, { "world:age", { "age" } },
-		{ "war:declared", { "a", "b", "ally", "blamed" } }, { "war:ended", { "a", "b", "victor", "thanked" } },   // (v3.1: + ally, blamed, thanked)
+		{ "war:declared", { "a", "b", "ally", "blamed", "envied" } }, { "war:ended", { "a", "b", "victor", "thanked" } },   // (v3.1: + ally, blamed, thanked; chronicle-diplomacy: + envied)
 		{ "battle", { "cell", "attacker", "defender", "won", "settlement" } }, { "trade:route", { "a", "b" } },
 		{ "prophet:risen", { "culture", "settlement", "name" } }, { "prophet:died", { "culture", "name" } },
 		{ "edict", { "culture", "edict" } }, { "wonder:built", { "settlement", "name" } },

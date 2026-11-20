@@ -1,0 +1,1480 @@
+== seed 1  policy cruel  world "Ember Vale"  L 6  calamity 1.00  create 150 ms  start 35 ms
+   ENDING year 3894: ark / feared (culture 0, settlement 0)
+   result: 3894 years, ending ark / feared in 3894; ages: Bronze 387 Iron 1020 Sail 1710 Industry 2493 Atomic 3129 Space 3640; ark 3894
+   peaks: pop 8.89M, settlements 111, cultures 6; anomaly +3.99 (min -1.72), co2 152.1, dust 0.389, sea +0.263 / -0.009 vs seaBase; largest fire 7 cells (year 865)
+   awe: at cap 3% of years, below 90% 97%; income stone 2.18/yr (a 40-Awe miracle every 9.2 s at 1x), later 2.84/yr (7.0 s), 150 Awe every 26 s once meteors unlock
+   events: founded 139, destroyed 42 ( lava 2 sea 40 ), cultures born 15 / died 10, wars 82, battles 382, nukes 8, prophets 0, wonders 0, trade routes 557, famines 196, plagues 69, fires 427, storms 238, droughts 150, quakes 49, volcanoes 14, impacts 0, people:lost 0, chronicle 1463
+   policy: 684 clicks, 0 strokes, 0 refused, 0 edicts; lightning 676 quake 8
+   timing: 15576 ticks, wall mean 41.522 ms, max 70004.99 ms (year 2544); thread CPU mean 1.807 ms, max 25.45 ms, p99.9 16.59 ms; score 3554; non-finite: none
+   regard now: everyone devotion 0.302 love -0.210 (feared); Siphaphu* 0.284/-0.405 age Space pop 4.04M; Dirasme 0.303/-0.096 age Space pop 1.51M; Otentes 0.339/-0.004 age Space pop 1.18M; Klesele 0.314/-0.037 age Space pop 1.65M; Kresimer 0.358/-0.099 age Space pop 212.7k; Kepamin 0.304/-0.003 age Space pop 287.0k
+   memory (Ark culture): grace 0.00 wrath 5.86 neglect 3.3 (presence 0.94) lore -0.701 verdict -0.597 silent 1 y prayers 275 answered 0 -> feared
+   unlocks: raise 1 lower 1 rain 1 bloom 15 lightning 1 quake 164 plague 1020 meteor 1710 volcano 2493 heal 1 inspire 164 prophet 1020 peace 1020 consecrate 387
+   review: settlements @200 4 @400 9; first prayer 46; second culture 382; first war 399, war in 30.2% of years; longest quiet (no weight-2 entry, years 0-1000) 163 y; aweMax@1000 450; Awe >= 95% of the cap in 3% of years; prayers 742, answered 0; rain/bloom answered 0, famine over within 5 y 0; famine entries 51; HUD mood = lead mood in 98% of years; epithet 'the Lightning-Handed'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.284/-0.405; memory grace 0.00 wrath 5.86 lore -0.70 verdict -0.60 silent 1 y prayers 0/275 -> feared (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 386/0/0%/8.4/2.5,1.55; Bronze 633/11/29%/24.1/6.3,0.57; Iron 690/15/33%/39.8/7.1,0.87; Sail 783/12/36%/40.5/5.7,0.15; Industry 636/17/32%/60.9/6.2,0.57; Atomic 511/21/42%/65.0/12.0,1.17; Space 254/6/24%/37.8/7.6,1.89;
+   diplomacy: alliances formed 10 (peak 1 at once, 7% of years), alliance events 4, wars joined by an ally 0, blamed on the god 27, victor thanked the god 0, nuclear exchanges 2; pace: 32.5 min at 1x (1 without a notable entry), auto-pace 32.0 min (0 without)
+   chronicle (last entries):
+     [    0 w3] Then green came out of the wet places of Ember Vale, slowly at first, as if it were not sure it was allowed.
+     [    0 w3] Elaxeus touched the sleeping clay in the woods, and the first of the Siphaphoi opened their eyes. They named their camp Ekamoteira.
+     [    0 w3] Again the god woke a people: the Siphaphoi, at Phamismar.
+     [    0 w3] Here the counting of years begins.
+     [    1 w2] At Ekamoteira they set stones in a ring and laid the first fruits on them for Elaxeus. It was a small shrine. The god did not complain.
+     [    1 w2] The Siphaphoi called the one who had woken them the Maker.
+     [   15 w1] The people of Phamismar raised a shrine to Elaxeus.
+     [   27 w1] Ekamoteira grew from a camp into a village.
+     [   42 w1] Children were born at Phamismar who had never lived anywhere else, and it became a village.
+     [   45 w1] No rain fell on the lands of Ekamoteira. The river showed its stones, and the people counted them.
+     [   46 w1] The people of Ekamoteira climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Maker was far away.
+     [   53 w1] Rain returned to Ekamoteira at last.
+     [  144 w1] In the 143rd year, a band went out from Ekamoteira with seed corn and quarrels enough for a new town, and founded Anitoterax by the water.
+     [  144 w1] The Siphaphoi set up a shrine at Anitoterax, and left flowers there for the god.
+     [  158 w1] There were now enough hearths at Anitoterax to call it a village.
+     [  164 w1] Wanderers from Phamismar came to Derixasenth and did not go back.
+     [  164 w1] The elders of Derixasenth chose a holy place, and a shrine to Elaxeus was raised there.
+     [  164 w2] The earth shrugged under Ekamoteira. Pots fell, then roofs, then the walls. The Siphaphoi asked what they had done. No answer came, which was itself an answer.
+     [  165 w2] In the 165th year the Siphaphoi stopped calling their god the Maker. From now on, in the market and at the hearth, it was the Shaker of Floors.
+     [  165 w2] The ground at Anitoterax heaved like the sea. The Siphaphoi said Elaxeus had stamped upon the earth.
+     [  166 w2] Elaxeus struck the earth upon Derixasenth, and the land rang like a drum. The Siphaphoi fell on their faces.
+     [  171 w1] Far away, in the wild deep forest of the middle lands, a mountain was born in fire, and its ash darkened the sky.
+     [  173 w1] The Shaker of Floors threw fire from a clear sky at Phamismar. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [  186 w1] A spear of light came down at Phamismar, and the Siphaphine elders argued for a long time about what it meant.
+     [  189 w1] The tents of Derixasenth gave way to houses of stone, and it was called a village.
+     [  194 w1] Out of a blue sky a white spear fell at Anitoterax, and the cattle would not graze there after. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [  194 w1] Fire ran through the dry grasslands at Anitoterax.
+     [  204 w1] The god's fire fell upon Derixasenth. In the village the mothers kept the children indoors, and the dogs hid under the beds.
+     [  214 w1] A bolt of white fire struck at Ekamoteira at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  214 w1] Settlers who had left Ekamoteira were never heard from again.
+     [  224 w1] The earth shook close by Phamismar.
+     [  226 w1] Elaxeus spoke in fire over Anitoterax. No one understood the word, but everyone heard it.
+     [  227 w2] Among the Siphaphoi the god was no longer the Shaker of Floors but the Lightning-Handed, and the old name was forgotten.
+     [  233 w1] There was no cloud in the sky, and still the lightning fell at Derixasenth. The Siphaphoi knew whose hand had thrown it.
+     [  241 w1] Lightning came down at Phamismar on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [  250 w1] The sky struck Anitoterax without a cloud in it, and the old people said the god had a long memory.
+     [  255 w1] The rains forgot the country of Anitoterax. The priests climbed the hills and called to them.
+     [  256 w1] In Anitoterax a lamb was given to Elaxeus, with a prayer for rain.
+     [  261 w1] Lightning fell upon Phamismar out of a clear sky. The Siphaphoi said Elaxeus was angry.
+     [  262 w1] Green came back to the fields of Anitoterax, and the wells were sweet again.
+     [  275 w1] Elaxeus struck the ground at Anitoterax with lightning, and the people of the village hid their faces.
+     [  288 w1] A new village of the Siphaphoi, Paxariseum, was raised on the dry grasslands, a few days' walk from Phamismar.
+     [  288 w1] Paxariseum built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [  292 w1] Fire came down from a clear sky upon Derixasenth, and no one in the village slept that night.
+     [  293 w1] In the 293rd year Paxariseum could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  295 w1] In the month of dust a fire ate the dry grasslands at Paxariseum.
+     [  308 w1] The god's fire fell upon Ekamoteira. In the village the mothers kept the children indoors, and the dogs hid under the beds.
+     [  316 w1] A spear of light came down at Derixasenth, and the Siphaphine elders argued for a long time about what it meant.
+     [  322 w1] A bolt of white fire struck at Phamismar at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  336 w1] Out of a blue sky a white spear fell at Ekamoteira, and split the old well-stone. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [  342 w1] Elaxeus spoke in fire over Anitoterax. No one understood the word, but everyone heard it.
+     [  343 w1] Krisalsi was founded on the plains by the Siphaphoi, who had grown too many for Anitoterax.
+     [  343 w1] A circle of white stones was laid out at Krisalsi, and the Siphaphoi came there to speak to Elaxeus.
+     [  347 w1] The rains failed around Ekamoteira.
+     [  348 w1] The camp at Krisalsi put down roots and became a village.
+     [  348 w1] The priests of Ekamoteira went up to the high places and cried out for rain.
+     [  353 w1] Some of the people of Ekamoteira grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Kousnapa.
+     [  354 w1] Lightning struck on the dry grasslands west of Derixasenth in a summer storm.
+     [  354 w1] A red night: the dry grasslands west of Derixasenth burned, and ash fell on the village.
+     [  355 w1] The drought about Sepikras broke, and the children ran out into the rain.
+     [  365 w1] Kousnapa was a village now, with its own small quarrels.
+     [  366 w1] The Lightning-Handed threw fire from a clear sky at Phamismar. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [  374 w1] There was no cloud in the sky, and still the lightning fell at Ekamoteira. In the village they spoke of it in whispers.
+     [  382 w1] Children were born at Sepikras who had never lived anywhere else, and it became a village.
+     [  382 w3] From the Siphaphoi came the Dirasmoi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  382 w2] The Dirasmoi called the god who had woken their fathers the Spear of Heaven.
+     [  384 w1] Lightning came down at Kousnapa on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [  387 w3] In the 387th year the world turned a page: the Siphaphoi, first of all peoples, came into the Age of Bronze, and the others began to hurry.
+     [  387 w2] The Dirasmoi entered the Age of Bronze. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [  388 w2] Ekamoteira built a granary against lean years. It was the first granary of the Siphaphoi.
+     [  388 w2] The headmen of Paxariseum ordered a tithe of every harvest kept in a great barn, against the bad years. No one among the Dirasmoi had built a granary before.
+     [  391 w1] Paxariseum became a town, with streets.
+     [  391 w1] The sky struck Anitoterax without a cloud in it, and the old people said the god had a long memory.
+     [  399 w2] In the 399th year the Siphaphoi said that the Lightning-Handed had turned against them, and that the Dirasmoi were the reason. They went to war to set it right.
+     [  400 w2] Ekamoteira built walls. No one said against whom. Everyone knew. It was the first wall of the Siphaphoi.
+     [  400 w1] Paxariseum raised walls of earth and timber, for there was war. No one among the Dirasmoi had built walls before.
+     [  400 w1] Lightning fell at Kaskupesaxis out of a clear sky. The Siphaphoi said Elaxeus was not pleased.
+     [  403 w1] Before Anitoterax, the Dirasmoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [  406 w1] The earth opened on the lonely shore of the south, where no one lived, and fire poured out until the sea quenched it.
+     [  407 w1] Before Paxariseum, the army of the Siphaphoi was broken.
+     [  411 w1] The Siphaphoi held Anitoterax against the Dirasmoi, and the field was red.
+     [  411 w1] Elaxeus struck the ground at Sepikras with lightning, and the people of the village hid their faces.
+     [  416 w1] The Siphaphoi of Anitoterax wrote their prayer for peace on bark and buried it at the shrine.
+     [  418 w1] Krisalsi became a town, and chose a council of elders, who argued.
+     [  418 w1] The Dirasmoi of Krisalsi built a temple to Elaxeus so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [  423 w1] At Paxariseum the Dirasmoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  425 w1] Fire came down from a clear sky upon Kousnapa, and no one in the village slept that night.
+     [  427 w1] The host of the Dirasmoi came against Anitoterax and broke on its walls like a wave on rock, and went home fewer.
+     [  429 w1] The village of Kaskupesaxis grew into a town; it had a name even among strangers.
+     [  429 w1] The priests of Kaskupesaxis built a house for the god of cut stone.
+     [  431 w1] An army of the Siphaphoi besieged Paxariseum and went home with nothing but stories.
+     [  431 w1] For fifteen years Ekamoteira prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [  431 w1] Out of a blue sky a white spear fell at Kaskupesaxis, and the cattle would not graze there after. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [  432 w1] The people of Derixasenth prayed for peace.
+     [  439 w2] The war of the Siphaphoi and the Dirasmoi ended because both had run out of sons. Each side wrote down that it had won.
+     [  446 w1] A spear of light came down at Anitoterax, and the Siphaphine elders argued for a long time about what it meant.
+     [  454 w1] Elaxeus spoke in fire over Kousnapa. No one understood the word, but everyone heard it.
+     [  465 w1] The Lightning-Handed threw fire from a clear sky at Kaskupesaxis. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [  471 w1] A bolt of white fire struck at Ekamoteira at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  479 w1] The river by Krisalsi shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [  480 w1] The women of Krisalsi sang at the shrine every evening and asked for rain.
+     [  482 w1] In the 482nd year the granaries of Krisalsi rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [  485 w1] The god's fire fell at Anitoterax. In the town the mothers kept the children indoors, and the dogs hid under the beds.
+     [  490 w1] The long thirst of Krisalsi ended in a storm, and the old people wept.
+     [  503 w1] There was no cloud in the sky, and still the lightning fell at Kousnapa. The Siphaphoi knew whose hand had thrown it.
+     [  506 w1] In Kaskupesaxis the ground cracked like old pottery, and the Siphaphoi carried water from far away.
+     [  507 w1] In Derixasenth they burned fat and asked Elaxeus for rain.
+     [  509 w1] At Derixasenth there was hunger, three years running.
+     [  513 w2] When the anger of Elaxeus fell on the Siphaphoi, they looked for someone to blame, and found the Dirasmoi. The war began that summer.
+     [  516 w1] Clouds came back over Kaskupesaxis, and the dry river filled in a single night.
+     [  517 w1] The Siphaphoi came against Paxariseum and were thrown back.
+     [  517 w1] The Dirasmoi attacked Anitoterax at dawn and were beaten by its old men and boys.
+     [  517 w1] Lightning came down at Ekamoteira on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [  525 w1] The Dirasmoi held Paxariseum against the Siphaphoi, and sang about it for a hundred years.
+     [  525 w1] Before Anitoterax, the Dirasmoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [  528 w1] The sky struck Anitoterax without a cloud in it, and the old people said the god had a long memory.
+     [  530 w1] At Paxariseum, the Dirasmoi prayed to Elaxeus for peace, and fasted.
+     [  532 w2] In the lands about Derixasenth a new people arose, the Oslalxanoi, descended from the Siphaphoi but no longer their subjects.
+     [  532 w2] In the first songs of the Oslalxanoi, the god was the Lightning-Handed.
+     [  533 w1] At Paxariseum the Dirasmoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  533 w1] Before Anitoterax, the army of the Dirasmoi was broken.
+     [  541 w1] The host of the Siphaphoi came against Paxariseum and broke on its walls like a wave on rock, and went home fewer.
+     [  541 w1] An army of the Dirasmoi besieged Anitoterax and went home with nothing but its wounded.
+     [  542 w1] Lightning fell at Phamismar out of a clear sky. The Siphaphoi said Elaxeus was watching.
+     [  545 w1] Ekamoteira gave up asking Elaxeus for peace. Its people grew bitter.
+     [  545 w1] The people of Paxariseum stopped praying for peace; Elaxeus had not answered them.
+     [  546 w1] The people of Anitoterax climbed to the shrine and prayed to Elaxeus for peace. They prayed loudly, in case the Lightning-Handed was far away.
+     [  550 w1] Elaxeus struck the ground at Ekamoteira with lightning; the Siphaphoi counted it a warning.
+     [  553 w2] The war between the Siphaphoi and the Dirasmoi ended, and neither could say it had won.
+     [  558 w1] A band from Paxariseum crossed the country and founded Kenesoumene in the woods.
+     [  559 w1] Kenesoumene grew from a camp into a village.
+     [  559 w2] The Dirasmoi made their first shrine at Kenesoumene, and kept the name their fathers had given the god: Elaxeus.
+     [  560 w1] Fire came down from a clear sky upon Sepikras, and the Siphaphine priests put ashes on their heads.
+     [  571 w1] Elaxeus spoke in fire over Phamismar. No one understood the word, but everyone heard it.
+     [  576 w1] Kenesoumene was a town now, the busiest of the Dirasmoi.
+     [  576 w1] In Kenesoumene the old shrine was pulled down and a temple to Elaxeus put up in its place.
+     [  584 w1] A spear of light came down upon Anitoterax, and the Siphaphine elders argued for a long time about what it meant.
+     [  592 w1] The god's fire fell at Sepikras. In the village the mothers kept the children indoors, and the dogs hid under the beds.
+     [  594 w1] Far away, on the empty dry grasslands of the south, a mountain was born in fire, and its ash darkened the sky.
+     [  600 w1] A bolt of white fire struck at Kousnapa at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  607 w1] Sotrerupaxis was founded in the 607th year. Its founders swore it would one day be greater than Phamismar. The chronicle notes that all founders swear this.
+     [  607 w1] There were now enough hearths at Sotrerupaxis to call it a village.
+     [  607 w1] At Sotrerupaxis a shrine of wood was made for Elaxeus.
+     [  608 w1] Families of the Dirasmoi who left Krisalsi built their first fires at Martralan, and called it good.
+     [  610 w1] The Lightning-Handed threw fire from a clear sky at Ekamoteira. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [  614 w1] Settlers of the Siphaphoi went out from Sepikras and made a new home at Phosaipophor.
+     [  617 w1] Leditra began as a ring of tents on the dry grasslands, raised by wanderers from Derixasenth.
+     [  617 w1] The tents of Leditra gave way to houses of timber, and it was called a village.
+     [  617 w2] At Leditra, the Oslalxanoi raised their first shrine to Elaxeu, a ring of stones where they could speak to the sky.
+     [  617 w2] A granary was raised in Leditra, and its keepers became the most important people in town. It was the first granary of the Oslalxanoi.
+     [  617 w1] In Leditra a lamb was given to Elaxeu, with a prayer for rain.
+     [  624 w1] So many children were born in Martralan that the elders gave up learning their names. Thus it became a town.
+     [  624 w1] Martralan raised a temple to Elaxeus, and its bells could be heard in the fields.
+     [  629 w1] Out of a blue sky a white spear fell at Phosaipophor, and the cattle would not graze there after. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [  629 w1] Lightning found the pine woods at Phosaipophor, and the forest burned for a season. In the spring, from the ash, it began again.
+     [  637 w1] Sotrerupaxis grew until a man could get lost in it, and they called it a town.
+     [  637 w1] The Siphaphoi of Sotrerupaxis spent ten years on a temple to Elaxeus, and then argued about the colour of the doors.
+     [  637 w1] There was no cloud in the sky, and still the lightning fell at Eustrikes. In the village they spoke of it in whispers.
+     [  639 w2] A temple to Elaxeu was built in Kosiphane. No one among the Oslalxanoi had built a temple before.
+     [  652 w1] Lightning came down at Sotrerupaxis on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [  652 w1] The pine woods at Sotrerupaxis burned, and the sky over the town was brown for days.
+     [  656 w1] The camp at Phosaipophor put down roots and became a village.
+     [  656 w1] The people of Phosaipophor began to store grain in a house of clay, after a hungry winter.
+     [  662 w1] The sky struck Anitoterax without a cloud in it, and the old people said the god had a long memory.
+     [  663 w2] The priests of the Siphaphoi said the god was punishing them for the wickedness of the Dirasmoi. The young believed it, and there was war.
+     [  663 w2] The Siphaphoi counted their dead and their ruined fields, and decided that the Oslalxanoi must have turned Elaxeus against them. They went to undo it with spears.
+     [  664 w1] Fearing the war, Kosiphane ringed itself with a ditch and a palisade. It was the first wall of the Oslalxanoi.
+     [  667 w1] The Siphaphoi came against Paxariseum and were thrown back.
+     [  667 w1] The Dirasmoi attacked Anitoterax at dawn and were beaten by its farmers.
+     [  667 w1] At Anitoterax the Siphaphoi won the day. The Oslalxanoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  671 w1] Lightning fell upon Phosaipophor out of a clear sky. The Siphaphoi said Elaxeus was watching.
+     [  672 w1] The priests of Anitoterax went up to the high places and cried out for peace.
+     [  675 w1] Before Paxariseum, the army of the Siphaphoi was broken.
+     [  675 w1] Before Anitoterax, the Oslalxanoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [  681 w1] Elaxeus struck the ground at Eustrikes with lightning, and the people of the town hid their faces.
+     [  682 w2] Generations passed and the Dirasmoi saw nothing of the Spear of Heaven; they began to call the god the Silent One.
+     [  683 w1] The Dirasmoi held Paxariseum against the Siphaphoi, and sang about it for a hundred years.
+     [  683 w2] After twenty years the Siphaphoi asked for peace, and the Oslalxanoi granted it, and made them pay for the asking.
+     [  684 w1] The Siphaphoi were beaten, and the Dirasmoi took their best fields.
+     [  690 w1] Fire came down from a clear sky upon Phamismar, and no one in the town slept that night.
+     [  704 w1] The sea drew back from the shore at Kosiphane, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [  705 w1] A bolt of white fire struck at Ekamoteira at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  715 w1] The Lightning-Handed threw fire from a clear sky at Phosaipophor. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [  716 w1] Thunder rolled over Ekamoteira, and lightning fell south of the town.
+     [  716 w1] Fire walked through the dry grasslands south of Ekamoteira, and the beasts ran before it.
+     [  734 w1] Out of a blue sky a white spear fell at Kousnapa, and split the old well-stone. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [  745 w1] A storm passed over Martralan, and lightning split an old tree south-west of the town.
+     [  745 w1] A wildfire came close to Martralan, and the people beat it back with green branches.
+     [  746 w2] In the songs of the Dirasmoi, the Silent One became the Spear of Heaven.
+     [  747 w1] Elaxeus spoke in fire over Ekamoteira. No one understood the word, but everyone heard it.
+     [  755 w1] The god's fire fell at Sepikras. In the village the mothers kept the children indoors, and the dogs hid under the beds.
+     [  759 w2] The Siphaphoi made war on the Oslalxanoi, saying that a people the god punishes must punish someone in turn. The chronicle records the saying, not the sense in it.
+     [  763 w1] A spear of light came down at Phosaipophor, and the Siphaphine elders argued for a long time about what it meant.
+     [  763 w1] The host of the Siphaphoi came against Derixasenth and broke on its walls like a wave on rock, and went home fewer.
+     [  763 w1] An army of the Oslalxanoi besieged Anitoterax and went home with nothing but stories.
+     [  771 w1] The Siphaphoi came against Derixasenth and were thrown back.
+     [  771 w1] The Oslalxanoi attacked Anitoterax at dawn and were beaten by its old men and boys.
+     [  772 w1] There was no cloud in the sky, and still the lightning fell at Eustrikes. In the town they spoke of it in whispers.
+     [  776 w1] The Oslalxanoi of Derixasenth wrote their prayer for peace on clay and buried it at the shrine.
+     [  784 w1] Lightning came down at Sotrerupaxis on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [  787 w1] Before Derixasenth, the army of the Siphaphoi was broken.
+     [  787 w1] At Anitoterax the Siphaphoi won the day. The Oslalxanoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  790 w1] A tremor ran through the land about Derixasenth, and pots fell from the shelves.
+     [  791 w1] The prayers of Ekamoteira went up for fifteen years and nothing came down. The Siphaphoi began to wonder whether anyone was listening.
+     [  791 w1] In Derixasenth they said the god was deaf, and stopped asking.
+     [  791 w1] The people of Kousnapa prayed for peace.
+     [  795 w1] Before Derixasenth, the Siphaphoi met the Oslalxanoi. By evening the field belonged to the Oslalxanoi, and to the birds.
+     [  795 w1] The Siphaphoi held Anitoterax against the Oslalxanoi, and sang about it for a hundred years.
+     [  796 w1] The sky struck Sepikras without a cloud in it, and the old people said the god had a long memory.
+     [  799 w2] After much killing the Siphaphoi and the Oslalxanoi agreed that the border was where it had always been.
+     [  802 w1] Lightning fell at Phosaipophor out of a clear sky. The Siphaphoi said Elaxeus was watching.
+     [  813 w1] Elaxeus struck the ground at Kousnapa with lightning, and the people of the town hid their faces.
+     [  819 w1] Kosseti was founded in the deep forest by the Dirasmoi, who had grown too many for Paxariseum.
+     [  820 w1] The houses of Kosseti reached the old boundary stones and did not stop. From this year the Dirasmoi call it a village.
+     [  820 w1] At Kosseti they set stones in a ring and laid the first fruits on them for Elaxeus. It was a small shrine. The Spear of Heaven did not complain.
+     [  824 w1] A new village of the Dirasmoi, Tokraphexion, was raised in the pine woods, where the hunters of Kenesoumene had always camped.
+     [  826 w1] Fire came down from a clear sky at Eustrikes, and no one in the town slept that night.
+     [  832 w1] A spear of light came down upon Sotrerupaxis, and the Siphaphine elders argued for a long time about what it meant.
+     [  844 w1] The fields around Kosseti filled with new houses, and it became a town of the Dirasmoi.
+     [  844 w1] The Dirasmoi of Kosseti built a temple to Elaxeus so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [  844 w1] The god's fire fell upon Phosaipophor. In the village the mothers kept the children indoors, and the dogs hid under the beds.
+     [  853 w1] Elaxeus spoke in fire over Ekamoteira. No one understood the word, but everyone heard it.
+     [  860 w1] The Lightning-Handed threw fire from a clear sky at Eustrikes. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [  862 w1] Lightning walked on the hills north of Anitoterax, and the Siphaphoi stayed indoors.
+     [  862 w1] The country north of Anitoterax burned for many days, and the smoke hung over the town.
+     [  863 w3] The Dirasmian settlers about Kenesoumene had been apart too long. They took a new name, Oroli, and went their own way.
+     [  863 w2] The Oroloi began to speak of Elaxeu as the Lightning-Handed.
+     [  864 w1] The earth opened in the lonely pine woods of the south, where no one lived, and fire poured out for many years.
+     [  868 w1] Wanderers from Phamismar came to Eikreli and stayed.
+     [  868 w1] Eikreli was a village now, with a fence against the wolves.
+     [  868 w1] The elders of Eikreli chose a holy place, and a shrine to Elaxeus was raised there.
+     [  870 w1] In the 870th year, a band went out from Krisalsi with seed corn and quarrels enough for a new town, and founded Kenokaimerax in the deep forest.
+     [  871 w1] Some of the people of Sotrerupaxis grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Philosanthe.
+     [  871 w1] Out of a blue sky a white spear fell at Sotrerupaxis, and split the old well-stone. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [  877 w1] Strasephu grew from a camp into a village.
+     [  877 w1] Strasephu built a small shrine on the hill above the fields, and kept a fire burning in it.
+     [  881 w1] A band from Kaskupesaxis crossed the country and founded Arrisix in the sands.
+     [  882 w1] Lethera was founded in the 882nd year. Its founders swore it would one day be greater than Eustrikes. The chronicle notes that all founders swear this.
+     [  886 w1] A bolt of white fire struck at Sepikras at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  889 w1] In the 889th year Kenokaimerax could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [  894 w1] There was no cloud in the sky, and still the lightning fell at Phamismar. In the town they spoke of it in whispers.
+     [  900 w1] Lightning came down at Phosaipophor on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [  901 w1] There were now enough hearths at Oretrolaxis to call it a village.
+     [  901 w1] Oretrolaxis dug storage pits and lined them with clay, and slept better for it.
+     [  907 w3] Far from their old capital, the people about Sotrerupaxis began to call themselves the Phosiskoi, and spoke a tongue the Siphaphoi could barely follow.
+     [  907 w2] Among the Phosiskoi the god was named the Lightning-Handed.
+     [  909 w2] The Siphaphoi had been struck by the Lightning-Handed and could not strike back at the sky. They struck at the Dirasmoi instead.
+     [  909 w2] The wise of the Siphaphoi could not stay the god's hand, so they pointed at the Oslalxanoi. The young took the hint, and their spears.
+     [  912 w1] Philosanthe became a town, and chose a council of elders, who argued.
+     [  912 w1] In Philosanthe the old shrine was pulled down and a temple to Elaxeus put up in its place.
+     [  913 w1] The host of the Siphaphoi came against Paxariseum and broke on its walls like a wave on rock, and went home fewer.
+     [  913 w1] An army of the Dirasmoi besieged Anitoterax and went home with nothing but its wounded.
+     [  918 w1] The women of Anitoterax tied red threads to the shrine and asked for peace.
+     [  918 w1] The sky struck Ekamoteira without a cloud in it, and the old people said the god had a long memory.
+     [  921 w1] The Siphaphoi came against Paxariseum and were thrown back.
+     [  921 w2] In the lands about Kosiphane a new people arose, the Streuxisoi, children of the Oslalxanoi but no longer their subjects.
+     [  921 w2] The Streuxisoi called the god who had woken their fathers the Lightning-Handed.
+     [  925 w2] The Oroloi remembered an old insult from the Phosiskoi, and went to war over it.
+     [  929 w1] The Dirasmoi attacked Anitoterax on a holy day and were beaten by its old men and boys.
+     [  929 w1] The Oslalxanoi won their war against the Siphaphoi.
+     [  930 w2] In the 929th year Sotrerupaxis opened its gates to the Oroloi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [  930 w1] Before Kenesoumene, the Phosiskoi met the Oroloi. By evening the field belonged to the Oroloi, and to the birds.
+     [  930 w1] The war ended in victory for the Dirasmoi. In Paxariseum there were feasts for a month.
+     [  930 w1] The armies of the Oroloi came home in triumph to Kenesoumene, and the Phosiskoi swore to remember.
+     [  932 w1] Lightning fell upon Eustrikes out of a clear sky. The Siphaphoi said Elaxeus was not pleased.
+     [  934 w1] The old people of Lethera said the fire at the town had been started by a careless shepherd, and kept their buckets full.
+     [  940 w1] Elaxeus struck the ground at Anitoterax with lightning; the Siphaphoi counted it a warning.
+     [  941 w1] The earth groaned under Denupeimante, and the well water turned cloudy.
+     [  942 w1] A wall of water came out of the sea upon Denupeimante.
+     [  950 w1] In those eighty years Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [  950 w1] In a night of thunder a bolt came down west of Derixasenth, and the dogs of the town howled until dawn.
+     [  950 w1] Fire ran through the dry grasslands west of Derixasenth.
+     [  957 w1] The village of Oretrolaxis grew into a town, and its people began to look down on villages.
+     [  957 w1] The priests of Oretrolaxis built a house for the god with a golden roof.
+     [  958 w1] Fire came down from a clear sky upon Phosaipophor, and the Siphaphine priests put ashes on their heads.
+     [  962 w1] The sky over Tokraphexion cracked open with fire, and the old oak north of the town burned like a torch.
+     [  962 w1] The pine woods north of Tokraphexion burned, and the sky over the town was brown for days.
+     [  965 w1] A bolt of white fire struck at Epixostra at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [  970 w2] The Oroloi marched against the Phosiskoi, and the smiths worked day and night.
+     [  972 w1] At Sotrerupaxis the Oroloi won the day. The Phosiskoi tell it differently, in their own chronicle, which no one has asked to read.
+     [  974 w1] Elaxeus spoke in fire over Eustrikes. No one understood the word, but everyone heard it.
+     [  974 w2] The Oroloi took Eikreli from the Phosiskoi.
+     [  975 w2] The Phosiskoi are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [  975 w1] The war ended when there were none of the Phosiskoi left to fight it.
+     [  981 w1] A tree south of Ekamoteira was split by lightning. The wood was kept as a holy thing in the town.
+     [  981 w1] In the month of dust a fire ate the marshes south of Ekamoteira.
+     [  982 w1] A spear of light came down at Lethera, and the Siphaphine elders argued for a long time about what it meant.
+     [  999 w1] The god's fire fell upon Philosanthe. In the town the mothers kept the children indoors, and the dogs hid under the beds.
+     [ 1002 w2] The Oslalxanoi made war on the Dirasmoi.
+     [ 1005 w1] Their towns burned under a clear sky, and the Siphaphoi would not believe it was for nothing. Someone had offended the Lightning-Handed, they said, and it must have been the Oroloi.
+     [ 1010 w1] The Dirasmoi held Paxariseum against the Oslalxanoi, and the field was red.
+     [ 1010 w1] Before Derixasenth, the army of the Dirasmoi was broken.
+     [ 1010 w1] There was drought in the country of Eustrikes, and the Siphaphoi looked at the sky every morning.
+     [ 1011 w1] In Strasephu they burned sweet grass and asked Elaxeus for rain.
+     [ 1011 w1] A great storm walked in from the sea and stood over Phosaipophor for three days, and the roofs learned to fly.
+     [ 1012 w1] The host of the Oroloi came against Phamismar and broke on its walls like a wave on rock, and went home fewer.
+     [ 1015 w1] Far away, in the empty woods of the middle lands, a mountain was born in fire, and its ash darkened the sky.
+     [ 1016 w1] The Lightning-Handed threw fire from a clear sky at Phosaipophor. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [ 1017 w1] The rains came back to Eustrikes, and the Siphaphoi said the god had relented.
+     [ 1019 w1] At Derixasenth, the Oslalxanoi prayed to Elaxeu for peace, and fasted.
+     [ 1020 w3] In the 1020th year the world turned a page: the Siphaphoi, first of all peoples, came into the Age of Iron, and the others began to hurry.
+     [ 1021 w3] Ekamoteira became the first city in the world, and its people did not let anyone forget it.
+     [ 1021 w2] The Siphaphoi raised a market at Ekamoteira, and were proud of it for one generation, which is the usual length of pride. No one among the Siphaphoi had built a market before.
+     [ 1021 w2] The banners of the Siphaphoi were raised over Kenesoumene.
+     [ 1025 w1] Merchants of Lethera reached Oretrolaxis and found that the people there were also people. This was thought remarkable, and then useful.
+     [ 1026 w1] An army of the Oslalxanoi besieged Paxariseum and went home with nothing but stories.
+     [ 1026 w1] Out of a blue sky a white spear fell upon Kenesoumene, and the cattle would not graze there after. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [ 1034 w1] The Oslalxanoi came against Paxariseum and were thrown back.
+     [ 1034 w1] For fifteen years Derixasenth prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1035 w2] The Siphaphoi won their war against the Oroloi.
+     [ 1038 w2] Traders of the Siphaphoi and the Oroloi met at Eikreli, and each thought they had cheated the other.
+     [ 1042 w1] The Oslalxanoi attacked Paxariseum at dawn and were beaten by its farmers.
+     [ 1042 w1] The Oslalxanoi and the Dirasmoi laid down their arms. Nothing had changed but the number of graves.
+     [ 1043 w1] Eustrikes became a city, the pride of the Siphaphoi.
+     [ 1046 w1] The sea sent a howling wind against Kousnapa, and the fishermen did not go out for a month.
+     [ 1046 w2] Elaxeus shook the earth upon Kenesoumene, and the houses of the city fell down.
+     [ 1050 w1] Below the great events of those seventy years, the Dirasmoi lost four battles.
+     [ 1052 w1] There was no cloud in the sky, and still the lightning fell upon Kenesoumene. In the city they spoke of it in whispers.
+     [ 1053 w1] The Oslalxanoi drew iron out of red stone, and the age of iron began among them.
+     [ 1054 w1] Many roads now led to Derixasenth, and it was called a city.
+     [ 1054 w1] Derixasenth built a harbour, and ships came and went. It was the first harbour of the Oslalxanoi.
+     [ 1060 w1] In the 1059th year the first caravan came from Eustrikes to Kousnapa, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1063 w1] Lightning came down at Eustrikes on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [ 1064 w2] The smiths of Paxariseum learned the secret of iron, and the Dirasmoi were never weak again.
+     [ 1065 w1] So many children were born in Paxariseum that the elders gave up learning their names. Thus it became a city.
+     [ 1068 w1] Ox-carts began to creak along the road from Oretrolaxis to Denupeimante, and inns grew up beside it.
+     [ 1072 w1] Leditra became a town, with streets.
+     [ 1074 w1] Merchants began to travel between Strasephu and Martralan, and the road between them grew wide.
+     [ 1075 w1] The sky struck Anitoterax without a cloud in it, and the old people said the god had a long memory.
+     [ 1077 w1] The Streuxisoi put down the tools of their mothers and took up the tools of the Age of Iron. The Lightning-Handed watched, and did not say whether this was wise.
+     [ 1078 w1] The town of Kosiphane grew into a city of the Streuxisoi, full of smoke and music.
+     [ 1078 w1] The Oroloi worked iron, and their ploughs bit deep.
+     [ 1080 w1] Over thirty years, and hardly worth a line each time, the Dirasmoi raised more than a dozen new buildings.
+     [ 1085 w1] Caravans of the Oroloi now came to Kenesoumene of the Siphaphoi as well.
+     [ 1085 w2] Eikreli raised a temple to Elaxeu, and the priests grew fat. No one among the Oroloi had built a temple before.
+     [ 1086 w1] Lightning fell at Philosanthe out of a clear sky. The Siphaphoi said Elaxeus was not pleased.
+     [ 1089 w1] The first caravan from Kosiphane came to Kenokaimerax, and the Streuxisoi and the Dirasmoi learned each other's words for 'price'.
+     [ 1091 w1] The Oslalxanoi of Kaskupesaxis saw their first Streuxisian merchants, and laughed at their hats.
+     [ 1094 w1] The people of Kosiphane stopped praying for healing; Elaxeu had not answered them.
+     [ 1096 w1] Elaxeus struck the ground at Phosaipophor with lightning; the Siphaphoi counted it a warning.
+     [ 1099 w1] The Dirasmoi still kept the shrines, but the priests now spoke of the Silent One, not the Spear of Heaven.
+     [ 1100 w1] Tokraphexion had become a city, with more people in it than there were sheep in the hills.
+     [ 1104 w1] Traders from Kosseti found their way to Anitoterax of the Siphaphoi, where Dirasmian coin was already known.
+     [ 1115 w1] Families of the Siphaphoi who left Philosanthe built their first fires at Tiromer, and called it good.
+     [ 1115 w1] Children were born at Tiromer who had never lived anywhere else, and it became a village.
+     [ 1115 w1] The people of Tiromer raised a shrine to Elaxeus.
+     [ 1118 w1] The people of Maskrepostra climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 1120 w1] Fire came down from a clear sky at Epixostra, and no one in the city slept that night.
+     [ 1122 w1] Another road joined Tokraphexion to Paxariseum of the Dirasmoi, and the tolls on it were argued over.
+     [ 1128 w1] Settlers of the Siphaphoi went out from Lethera and made a new home at Ethope.
+     [ 1129 w2] When the anger of Elaxeus fell on the Siphaphoi, they looked for someone to blame, and found the Oslalxanoi. The war began that summer.
+     [ 1129 w1] The priests of the Siphaphoi said the god was punishing them for the wickedness of the Oroloi. The young believed it, and there was war.
+     [ 1130 w1] The tents of Ketonealo gave way to houses of timber, and it was called a village.
+     [ 1131 w1] The Lightning-Handed threw fire from a clear sky at Eustrikes. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [ 1135 w2] The Siphaphoi marched into Sotrerupaxis, and the Oroline families who could fled to their kin.
+     [ 1135 w1] It is written that Dedixultalo began as a ring of tents on the shore, raised by wanderers from Arrisix.
+     [ 1138 w1] Paxariseum of the Dirasmoi began to buy the goods of Kaskupesaxis, and its merchants learned the Oslalxanine way of haggling.
+     [ 1140 w1] A bolt of white fire struck at Sotrerupaxis at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [ 1145 w1] Tokraphexion was lost by the Oroloi and won by the Siphaphoi, and its market changed hands with it.
+     [ 1146 w1] The camp at Dedixultalo put down roots and became a village.
+     [ 1146 w2] After seventeen years the Oroloi asked for peace, and the Siphaphoi granted it, and made them pay for the asking.
+     [ 1150 w1] The scribes, counting rather than writing, set down that in seventy years the Siphaphoi opened ten new trade roads.
+     [ 1151 w1] Lightning walked on the hills north of Ethope, and the Siphaphoi stayed indoors.
+     [ 1153 w1] The god's fire fell at Tokraphexion. In the city the mothers kept the children indoors, and the dogs hid under the beds.
+     [ 1155 w1] Papepan was a town now, loud and crowded and proud.
+     [ 1155 w1] The long quarrel between the Dirasmoi and the Streuxisoi came to blood.
+     [ 1158 w1] The Siphaphoi were beaten, and the Oslalxanoi took their best fields.
+     [ 1160 w1] Out of a blue sky a white spear fell at Lethera, and split the old well-stone. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [ 1162 w1] Arrisix fell to the Dirasmoi, and its Streuxisian lords were driven out.
+     [ 1162 w1] Ethope outgrew its walls twice and became a city of the Siphaphoi.
+     [ 1163 w1] The god did nothing that the Oroloi could see for longer than anyone remembered, and the Lightning-Handed became the Rumour.
+     [ 1166 w1] Traders from Denethareron found their way to Ketonealo of the Oslalxanoi, where Siphaphine coin was already known.
+     [ 1172 w1] The banners of the Dirasmoi were raised over Kenokaimerax.
+     [ 1172 w1] The war ended in victory for the Dirasmoi. The Streuxisoi paid tribute for a generation.
+     [ 1172 w1] Elaxeus spoke in fire over Philosanthe. No one understood the word, but everyone heard it.
+     [ 1175 w1] Caravans of the Dirasmoi now came to Eustrikes of the Siphaphoi as well.
+     [ 1178 w1] A red night: the deep forest at Ethope burned, and ash fell on the city.
+     [ 1180 w1] Five prayers of the Siphaphoi went unanswered. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 1182 w2] A sickness came to Lethera by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1183 w1] The Siphaphoi of Lethera wrote their prayer for healing on bark and buried it at the shrine.
+     [ 1189 w1] Lightning struck north of Leditra in a summer storm.
+     [ 1189 w1] A spear of light came down at Phamismar, and the Siphaphine elders argued for a long time about what it meant.
+     [ 1194 w1] A hard sun stood over Sotrerupaxis year after year, and the barley died standing.
+     [ 1194 w1] Another road joined Arrisix to Oretrolaxis of the Oslalxanoi, and the inns along it prospered.
+     [ 1195 w1] There was no cloud in the sky, and still the lightning fell upon Epixostra. In the city they spoke of it in whispers.
+     [ 1198 w1] There were too many mouths in Eikreli and too little bread, and the old went hungry so the young could eat.
+     [ 1202 w1] Tiromer of the Siphaphoi grew used to the goods of Purosi, and its merchants learned the Oroline way of haggling.
+     [ 1208 w1] Traders from Maskrepostra found their way to Papepan of the Dirasmoi, where Siphaphine coin was already known.
+     [ 1210 w1] Lightning came down at Eustrikes on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [ 1211 w1] The houses of Ralsarosaxis reached the old boundary stones and did not stop. From this year the Siphaphoi call it a town.
+     [ 1220 w1] The sky struck Kousnapa without a cloud in it, and the old people said the god had a long memory.
+     [ 1228 w1] Caravans of the Siphaphoi now came to Strasephu of the Dirasmoi as well.
+     [ 1234 w3] From the Siphaphoi came the Pikudrenoi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [ 1234 w2] In the first songs of the Pikudrenoi, the god was the Lightning-Handed.
+     [ 1235 w1] Lightning fell at Tokraphexion out of a clear sky. The Siphaphoi said Elaxeus was angry.
+     [ 1244 w1] No rain fell on the lands of Denupeimante. The river showed its stones, and the people counted them.
+     [ 1245 w1] The priests of Denupeimante went up to the high places and cried out for rain.
+     [ 1247 w2] Hunger walked the streets of Denupeimante, and the fields were not enough for all of them.
+     [ 1250 w1] The drought about Denupeimante broke, and the children ran out into the rain.
+     [ 1251 w2] The Oslalxanoi still kept the shrines, but the priests now spoke of the Empty Chair, not the Lightning-Handed.
+     [ 1251 w1] Elaxeus struck the ground at Ethope with lightning; the Siphaphoi counted it a warning.
+     [ 1255 w1] Fever spread through Ethope, and many were buried.
+     [ 1256 w1] In Ethope a lamb was given to Elaxeus, with a prayer for healing.
+     [ 1266 w2] In the 1266th year the Siphaphoi said that the Lightning-Handed had turned against them, and that the Oroloi were the reason. They went to war to set it right.
+     [ 1266 w1] A storm such as the old people had never seen passed over Philosanthe.
+     [ 1268 w1] Before Sotrerupaxis, the army of the Oroloi was broken.
+     [ 1268 w2] At the touch of the god the hills at Anitoterax cracked, and the city was shaken to its roots.
+     [ 1271 w1] Ethope gave up asking Elaxeus for healing. Its people grew bitter.
+     [ 1271 w1] The plague left Ethope as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1272 w1] The Siphaphoi took Eikreli from the Oroloi.
+     [ 1273 w2] The armies of the Siphaphoi came home in triumph to Ekamoteira, and the Oroloi swore to remember.
+     [ 1274 w1] Fire came down from a clear sky at Epixostra, and the Siphaphine priests put ashes on their heads.
+     [ 1281 w1] A bolt of white fire struck at Sotrerupaxis at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [ 1292 w1] Another road joined Purosi to Eikreli of the Siphaphoi, and the inns along it prospered.
+     [ 1297 w1] The Lightning-Handed threw fire from a clear sky at Kousnapa. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [ 1300 w1] The Dirasmoi sharpened their spears and went against the Streuxisoi, though no one could remember who had struck first.
+     [ 1302 w1] The Siphaphoi counted their dead and their ruined fields, and decided that the Dirasmoi must have turned Elaxeus against them. They went to undo it with spears.
+     [ 1305 w1] Before Anitoterax, the Dirasmoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [ 1305 w1] The people of Arrisix prayed for rain.
+     [ 1306 w2] In the 1305th year Kenokaimerax opened its gates to the Streuxisoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1306 w1] Out of a blue sky a white spear fell at Kenesoumene, and the cattle would not graze there after. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [ 1306 w1] The merchants of Kosseti found a road to Krisalsi, and kept the secret of it for a while.
+     [ 1308 w1] The Siphaphoi marched into Taxiostra, and the town paid tribute from that day.
+     [ 1309 w1] Kosiphane was lost by the Streuxisoi and won by the Dirasmoi, and its market changed hands with it.
+     [ 1309 w1] The rains failed around Tiromer.
+     [ 1313 w1] The Siphaphoi held Kousnapa against the Dirasmoi, and the field was red.
+     [ 1314 w1] Kenokaimerax fell to the Dirasmoi, and its Streuxisian lords were driven out.
+     [ 1314 w2] The Dirasmoi won their war against the Streuxisoi.
+     [ 1315 w1] After thirteen years the Dirasmoi asked for peace, and the Siphaphoi granted it, and made them pay for the asking.
+     [ 1315 w1] A spear of light came down upon Taxiostra, and the Siphaphine elders argued for a long time about what it meant.
+     [ 1322 w1] The god's fire fell at Taxiostra. In the city the mothers kept the children indoors, and the dogs hid under the beds.
+     [ 1323 w1] Thunder rolled over Denethareron, and lightning fell south-west of the city.
+     [ 1323 w1] A wildfire came close to Denethareron, and turned only when the wind did.
+     [ 1337 w1] A storm passed over Arrisix, and lightning killed a herd of goats south-east of the town.
+     [ 1337 w1] The country on the plains south-east of Arrisix burned until the rain came, and the smoke hung over the town.
+     [ 1342 w1] The mountain close by Oretrolaxis woke and wept fire.
+     [ 1343 w2] Among the Oslalxanoi, mothers who had once told their children of the Empty Chair now told them of the Lightning-Handed.
+     [ 1343 w1] Elaxeus spoke in fire over Ekamoteira. No one understood the word, but everyone heard it.
+     [ 1343 w3] The mountain opened above Oretrolaxis and its stone ran like honey, though not like honey. The city is beneath it. The new ground is very fertile, the chronicle observes, as though that were a comfort.
+     [ 1345 w1] The women of Sotrerupaxis sang at the shrine every evening and asked for rain.
+     [ 1347 w1] Ash hid the sun from Ember Vale, the summers did not come, and Tiromer went hungry with all its neighbours.
+     [ 1349 w1] A band of settlers of the Oslalxanoi was lost on the shore far to the south of Epixostra.
+     [ 1349 w1] In Philosanthe they burned sweet grass and asked Elaxeus for rain.
+     [ 1354 w1] Wanderers from Martralan came to Linoumoreum and stayed.
+     [ 1354 w1] The fire-mountain south-west of Epixostra fell asleep again.
+     [ 1355 w1] There was no cloud in the sky, and still the lightning fell at Phamismar. The Siphaphoi knew whose hand had thrown it.
+     [ 1362 w1] In the 1361st year, a band went out from Papepan with seed corn and quarrels enough for a new town, and founded Matopor by the water.
+     [ 1362 w1] Matopor was a village now, with a well and a headman.
+     [ 1362 w1] Lightning came down at Sotrerupaxis on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [ 1366 w1] Kenokaimerax of the Dirasmoi grew used to the goods of Arrisix, and its merchants learned the Streuxisian way of haggling.
+     [ 1369 w1] A new village of the Siphaphoi, Axepomene, was raised in the woods, a few days' walk from Lethera.
+     [ 1370 w1] Little of those ninety years was written down, except that the builders of the Dirasmoi finished twelve new halls, granaries and walls.
+     [ 1371 w2] In Taxiostra they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 1373 w1] Healophor grew until a man could get lost in it, and they called it a town.
+     [ 1374 w1] The sky struck Eustrikes without a cloud in it, and the old people said the god had a long memory.
+     [ 1377 w1] Some of the people of Taxiostra grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Komophane.
+     [ 1380 w1] The Siphaphoi made war on the Oslalxanoi, saying that a people the god punishes must punish someone in turn. The chronicle records the saying, not the sense in it.
+     [ 1380 w1] Lightning fell upon Anitoterax out of a clear sky. The Siphaphoi said Elaxeus was watching.
+     [ 1381 w1] The Streuxisoi set up a shrine at Olxedarerax, and left bread there for the god.
+     [ 1385 w1] At Ketonealo the Oslalxanoi won the day. The Siphaphoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1388 w2] Leimatha grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1390 w1] The feet of traders wore a road between Leimatha and Denethareron. Along it went pots and coins and, later, fevers.
+     [ 1393 w1] The host of the Siphaphoi came against Ketonealo and broke on its walls like a wave on rock, and went home fewer.
+     [ 1395 w1] Elaxeus struck the ground at Kenesoumene with lightning; the Siphaphoi counted it a warning.
+     [ 1397 w1] At Ethope, the Siphaphoi prayed to Elaxeus for peace, morning and evening.
+     [ 1399 w2] War came between the Dirasmoi and the Streuxisoi, who had once traded salt and songs.
+     [ 1400 w1] Of the smaller things of those thirty years: the Siphaphoi put up more than a dozen new buildings, each the finest yet by their own account.
+     [ 1400 w1] Envoys of the Pikudrenoi spat on the threshold before the Oroloi, and the war began.
+     [ 1401 w1] An army of the Siphaphoi besieged Ketonealo and went home with nothing but its wounded.
+     [ 1401 w1] Fire came down from a clear sky upon Tokraphexion, and no one in the city slept that night.
+     [ 1403 w3] The Oroloi dwindled and were gone, and other peoples walked in their streets.
+     [ 1403 w1] The Pikudrenoi won their war against the Oroloi, and there was no one left to pay the tribute.
+     [ 1403 w2] The Siphaphine settlers about Sotrerupaxis had been apart too long. They took a new name, Otentes, and went their own way.
+     [ 1403 w2] The Otentesoi began to speak of Elaxeus as the Thunderer.
+     [ 1405 w1] In the 1405th year Missephamene could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1410 w1] The Streuxisoi came against Kosiphane and were thrown back.
+     [ 1415 w1] The Oslalxanoi attacked Anitoterax on a holy day and were beaten by its old men and boys.
+     [ 1416 w1] A spear of light came down at Axepomene, and the Siphaphine elders argued for a long time about what it meant.
+     [ 1417 w1] Before Ketonealo, the Siphaphoi met the Oslalxanoi. By evening the field belonged to the Oslalxanoi, and to the birds.
+     [ 1420 w1] The war of the Siphaphoi and the Oslalxanoi wore itself out, like a fire with nothing left to burn.
+     [ 1421 w1] The people of Dedixultalo climbed to the shrine and prayed to Elaxeu for peace. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 1422 w1] The Streuxisoi were beaten, and the Dirasmoi carried their temple bells home in carts.
+     [ 1422 w1] A bolt of white fire struck at Phamismar at noon. The Siphaphoi said it was Elaxeus clearing the throat of heaven.
+     [ 1426 w1] Caravans of the Siphaphoi now came to Ketonealo of the Oslalxanoi as well.
+     [ 1439 w1] Arrisix and Missephamene began to trade, wine for wool, and both grew fat on it.
+     [ 1449 w2] Elaxeus struck the earth upon Komophane, and the land rang like a drum. The Siphaphoi fell on their faces.
+     [ 1451 w1] The river by Ethope shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 1452 w1] The priests of Ethope went up to the high places and cried out for rain.
+     [ 1452 w1] Merchants began to travel between Axepomene and Denethareron, and the road between them grew wide.
+     [ 1454 w2] Hunger came to Denethareron and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 1454 w1] The fields around Olxedarerax filled with new houses, and it became a town of the Streuxisoi.
+     [ 1454 w1] The Streuxisoi of Olxedarerax spent ten years on a temple to Elaxeu, and then argued about the colour of the doors.
+     [ 1454 w1] Out of a blue sky a white spear fell at Eustrikes, and the cattle would not graze there after. The Siphaphoi said nothing, and brought more bread to the shrine.
+     [ 1459 w1] Traders from Olxedarerax found their way to Leimatha of the Siphaphoi, where Streuxisian coin was already known.
+     [ 1460 w1] In a night of thunder a bolt came down north-east of Krisalsi, and the dogs of the city howled until dawn.
+     [ 1460 w1] The Lightning-Handed threw fire from a clear sky at Kousnapa. No one knew why. The Siphaphoi made more offerings, to be safe.
+     [ 1465 w1] A storm walked inland over the country of Healophor, and left the fields flattened behind it.
+     [ 1471 w1] Elaxeus spoke in fire over Lethera. No one understood the word, but everyone heard it.
+     [ 1476 w1] Another road joined Linoumoreum to Axepomene of the Siphaphoi, and the tolls on it were argued over.
+     [ 1482 w1] Missephamene of the Dirasmoi began to buy the goods of Lethera, and its merchants learned the Siphaphine way of haggling.
+     [ 1482 w1] The god's fire fell upon Leimatha. In the city the mothers kept the children indoors, and the dogs hid under the beds.
+     [ 1492 w1] There was no cloud in the sky, and still the lightning fell upon Anitoterax. In the city they spoke of it in whispers.
+     [ 1496 w1] Caravans of the Streuxisoi now came to Axepomene of the Siphaphoi as well.
+     [ 1500 w1] Lightning came down at Phamismar on a windless day. The Siphaphine priests said it was a warning; the farmers said it was a waste of a good tree.
+     [ 1503 w2] The spotted fever broke out in Healophor, and its neighbours turned travellers away.
+     [ 1504 w1] The Oslalxanoi of Healophor wrote their prayer for healing on bark and buried it at the shrine.
+     [ 1506 w1] In Leimatha the people sickened, and the roads to it were empty.
+     [ 1508 w2] War between the Oslalxanoi and the Dirasmoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 1508 w2] The Oslalxanoi and the Streuxisoi could no longer share the river. They tried to share it with spears instead.
+     [ 1510 w1] The sky over Dedixultalo cracked open with fire, and the old oak south-east of the village burned like a torch.
+     [ 1510 w1] Fire walked through the dry grasslands south-east of Dedixultalo, and left only ash behind it.
+     [ 1512 w1] The Oslalxanoi held Healophor against the Streuxisoi, and sang about it for a hundred years.
+     [ 1512 w1] In the 1512th year Olxedarerax opened its gates to the Oslalxanoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1512 w2] The last of the Streuxisoi passed from the world, and only their ruins remember them.
+     [ 1512 w2] The Oslalxanoi had won: of the Streuxisoi there was no one left to ask for peace.
+     [ 1512 w2] Far from their old capital, the people about Strasephu began to call themselves the Ixotoi, and paid no more taxes to the Dirasmoi.
+     [ 1512 w2] Among the Ixotoi the god was named the Lightning-Handed.
+     [ 1513 w1] Before Paxariseum, the army of the Oslalxanoi was broken.
+     [ 1513 w1] At Derixasenth the Oslalxanoi won the day. The Dirasmoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1513 w1] Smoke rose from the earth west of Leimatha, and then fire. Ash fell on the city like grey snow.
+     [ 1516 w1] In Tiromer a jar of honey was given to Elaxeus, with a prayer for rain.
+     [ 1517 w1] The sky struck Komophane without a cloud in it, and the old people said the god had a long memory.
+     [ 1520 w1] The old people of Leimatha said the fire on the dry grasslands south-west of the city had been started by the god, and kept their buckets full.
+     [ 1523 w1] Lightning fell at Kousnapa out of a clear sky. The Siphaphoi said Elaxeus was not pleased.
+     [ 1524 w1] The people of Kaskupesaxis prayed for peace.
+     [ 1526 w1] The Siphaphoi had been struck by the Lightning-Handed and could not strike back at the sky. They struck at the Dirasmoi instead.
+     [ 1529 w1] The host of the Oslalxanoi came against Paxariseum and broke on its walls like a wave on rock, and went home fewer.
+     [ 1533 w1] In the 1533rd year the first caravan came from Kosseti to Paxariseum, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1534 w1] The Otentesian kings swore an oath against the Ixotoi, and there was war.
+     [ 1534 w1] Generations passed and the Pikudrenoi saw nothing of the Lightning-Handed; they began to call the god the Sleeper.
+     [ 1537 w1] An army of the Oslalxanoi besieged Paxariseum and went home with nothing but stories.
+     [ 1537 w1] The war ended in victory for the Oslalxanoi. In Derixasenth there were feasts for a month.
+     [ 1538 w1] The armies of the Siphaphoi came home in triumph to Ekamoteira, and the Dirasmoi counted what they had lost.
+     [ 1538 w1] Elaxeus struck the ground at Lethera with lightning, and the people of the city hid their faces.
+     [ 1538 w2] Merchants of the Dirasmoi reached Strasephu of the Ixotoi, and the two peoples traded songs and diseases.
+     [ 1540 w1] The chronicle, which cannot write everything, notes only that in those forty years four attacks by the Dirasmoi came to nothing.
+     [ 1544 w1] The Otentesoi took Tokraphexion from the Ixotoi.
+     [ 1544 w1] The women of Strasephu tied red threads to the shrine and asked for peace.
+     [ 1544 w2] The Ixotoi were beaten, and the Otentesoi carried their temple bells home in carts.
+     [ 1544 w1] Fire came down from a clear sky at Denethareron, and no one in the city slept that night.
+     [ 1557 w1] Walls of cut stone went up around Olxedarerax, and the Oslalxanine scribes began to call it a city.
+     [ 1570 w1] Traders from Leditra found their way to Missephamene of the Dirasmoi, where Oslalxanine coin was already known.
+     [ 1577 w1] Black clouds came over Maskrepostra from the sea, and the hail broke the young barley.
+     [ 1580 w1] Among the small news of those forty years: lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 1584 w2] The long quarrel between the Otentesoi and the Ixotoi came to blood.
+     [ 1586 w1] The Ixotoi came against Papepan and were thrown back.
+     [ 1591 w1] The Otentesoi attacked Strasephu on a holy day and were beaten in the river mud.
+     [ 1594 w1] The Otentesoi held Papepan against the Ixotoi, and the field was red.
+     [ 1601 w1] In Kenesoumene they burned incense and asked Elaxeus for peace.
+     [ 1602 w1] Before Papepan, the army of the Ixotoi was broken.
+     [ 1607 w1] Before Strasephu, the Otentesoi met the Ixotoi. By evening the field belonged to the Ixotoi, and to the birds.
+     [ 1610 w1] And there were small things, as there always are: Elaxeus threw lightning at the lands of the Siphaphoi seven times.
+     [ 1610 w1] At Papepan the Otentesoi won the day. The Ixotoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1612 w1] Wind and rain beat upon Kenokaimerax for a week, and the rivers rose.
+     [ 1615 w1] The host of the Otentesoi came against Strasephu and broke on its walls like a wave on rock, and went home fewer.
+     [ 1616 w1] The prayers of Kenesoumene went up for fifteen years and nothing came down. The Otentesoi began to wonder whether anyone was listening.
+     [ 1616 w1] In Strasephu they said the god was deaf, and let the shrine fall into ruin.
+     [ 1616 w1] At Linoumoreum, the Ixotoi prayed to Elaxeus for peace, morning and evening.
+     [ 1620 w1] The wise of the Siphaphoi could not stay the god's hand, so they pointed at the Oslalxanoi. The young took the hint, and their spears.
+     [ 1623 w1] An army of the Otentesoi besieged Strasephu and went home with nothing but its wounded.
+     [ 1623 w1] The Oslalxanoi came against Anitoterax and were thrown back.
+     [ 1624 w2] The war of the Otentesoi and the Ixotoi ended because both had run out of sons. Each side wrote down that it had won.
+     [ 1625 w1] The Siphaphoi attacked Ketonealo at dawn and were beaten in the river mud.
+     [ 1628 w2] A coughing sickness came to Eustrikes with the traders, and lingered.
+     [ 1629 w1] The Siphaphoi of Eustrikes wrote their prayer for healing on bark and buried it at the shrine.
+     [ 1633 w2] The banners of the Siphaphoi were raised over Ketonealo.
+     [ 1633 w1] The people of Derixasenth climbed to the shrine and prayed to Elaxeu for peace. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 1639 w1] Ox-carts began to creak along the road from Phisatoterax to Axepomene, and inns grew up beside it.
+     [ 1640 w1] Another thirty years went into the book, and in them lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 1641 w1] Before Healophor, the army of the Siphaphoi was broken.
+     [ 1647 w1] Before Anitoterax, the Oslalxanoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [ 1649 w1] The Siphaphoi marched into Healophor, and the town paid tribute from that day.
+     [ 1649 w1] The Siphaphoi won their war against the Oslalxanoi.
+     [ 1657 w1] In Matopor they still tell of the great wind, when even the priests were afraid.
+     [ 1670 w1] In those thirty years Elaxeus threw lightning at the lands of the Siphaphoi five times, and five prayers of the Oslalxanoi were not heard, or not answered.
+     [ 1676 w1] The scribes of the Siphaphoi began to write Phisatoterax with the sign for 'city', and its people were insufferable about it.
+     [ 1694 w1] A tree south of Papepan was split by lightning. The children of the city dared each other to touch it.
+     [ 1694 w1] A red night: the woods south of Papepan burned, and ash fell on the city.
+     [ 1700 w1] Between the greater deeds of those thirty years, lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 1703 w2] The god did nothing that the Otentesoi could see for longer than anyone remembered, and the Thunderer became the Sleeper.
+     [ 1710 w3] In the 1710th year the world turned a page: the Siphaphoi, first of all peoples, came into the Age of Sail, and the others began to hurry.
+     [ 1711 w2] An academy was founded at Ekamoteira, where the wise argued about everything, the god included. It was the first academy of the Siphaphoi.
+     [ 1713 w2] The Otentesoi remembered an old insult from the Ixotoi, and went to war over it.
+     [ 1715 w1] At Papepan the Otentesoi won the day. The Ixotoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1716 w1] So many children were born in Phosaipophor that the elders gave up learning their names. Thus it became a town.
+     [ 1718 w1] Lightning walked on the hills south-west of Derixasenth, and no one was hurt, that time.
+     [ 1718 w1] Fire ran through the dry grasslands south-west of Derixasenth.
+     [ 1720 w1] The Ixotoi held Strasephu against the Otentesoi, and the field was red.
+     [ 1722 w1] Another road joined Phosaipophor to Kaskupesaxis of the Oslalxanoi, and the inns along it prospered.
+     [ 1723 w1] The host of the Ixotoi came against Papepan and broke on its walls like a wave on rock, and went home fewer.
+     [ 1728 w1] An army of the Otentesoi besieged Strasephu and went home with nothing but stories.
+     [ 1730 w1] In those thirty years Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 1730 w1] The priests of Kenesoumene went up to the high places and cried out for peace.
+     [ 1731 w1] The Ixotoi came against Papepan and were thrown back.
+     [ 1736 w1] The Otentesoi attacked Strasephu at dawn and were beaten in the river mud.
+     [ 1737 w2] A road was opened between Sotrerupaxis of the Otentesoi and Phamismar of the Siphaphoi, and strange coins began to turn up in both markets.
+     [ 1738 w1] Their towns burned under a clear sky, and the Siphaphoi would not believe it was for nothing. Someone had offended the Lightning-Handed, they said, and it must have been the Dirasmoi.
+     [ 1741 w1] At Anitoterax the Siphaphoi won the day. The Dirasmoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1744 w1] The Ixotoi held Strasephu against the Otentesoi, and sang about it for a hundred years.
+     [ 1747 w1] Before Papepan, the army of the Ixotoi was broken.
+     [ 1751 w1] Missephamene was lost by the Dirasmoi and won by the Siphaphoi, and its market changed hands with it.
+     [ 1753 w2] After much killing the Otentesoi and the Ixotoi agreed that the border was where it had always been.
+     [ 1757 w1] Before Anitoterax, the Dirasmoi met the Siphaphoi. By evening the field belonged to the Siphaphoi, and to the birds.
+     [ 1760 w1] Unopaiximos was founded in the deep forest by the Siphaphoi, who had grown too many for Phosaipophor.
+     [ 1760 w1] Over thirty years lightning from Elaxeus fell on the lands of the Siphaphoi seven times. In the same years five towns of the Otentesoi prayed and heard nothing.
+     [ 1761 w1] After twenty-three years the Dirasmoi asked for peace, and the Siphaphoi granted it, and made them pay for the asking.
+     [ 1763 w1] A band from Phamismar crossed the country and founded Plikorthalos on the dry grasslands.
+     [ 1768 w1] A new thing was learned at Kenesoumene, and then everywhere. So the Age of Sail began among the Otentesoi.
+     [ 1768 w1] A grey sickness settled on Paxariseum. The Dirasmoi said it came from the marshes.
+     [ 1771 w1] Onapomene became a town, and chose a council of elders, who argued.
+     [ 1775 w1] The merchants of Phosaipophor found a road to Anitoterax, and the road found more merchants.
+     [ 1779 w1] A circle of white stones was laid out at Remaxireum, and the Siphaphoi came there to speak to Elaxeus.
+     [ 1783 w1] Perophane was founded in the 1783rd year. Its founders swore it would one day be greater than Healophor. The chronicle notes that all founders swear this.
+     [ 1787 w1] A storm passed over Unopaiximos, and lightning split an old tree north of the village.
+     [ 1790 w1] The scribes, counting rather than writing, set down that in thirty years scores of new buildings went up among the Siphaphoi, and they founded six new settlements.
+     [ 1790 w2] The Dirasmoi raised sails and went out upon the great sea.
+     [ 1791 w2] Scholars gathered at Paxariseum and built a house of learning, and filled it with books. No one among the Dirasmoi had built an academy before.
+     [ 1792 w1] Ten thousand hearths burned in Eikreli. It was a city now, and it knew it.
+     [ 1795 w1] A storm such as the old people had never seen passed over Papepan.
+     [ 1799 w1] A fire-mountain woke south of Eustrikes, and the sky above the city turned the colour of iron.
+     [ 1799 w1] That summer a fire ate the deep forest south of Eustrikes.
+     [ 1803 w1] Dedixultalo became a town, with streets.
+     [ 1807 w1] A temple to Elaxeus was built in Unopaiximos.
+     [ 1811 w1] The fires south of Eustrikes cooled into black stone, and in time the ash made the fields rich.
+     [ 1814 w1] Generations passed and the Oslalxanoi saw nothing of the Lightning-Handed; they began to call the god the Empty Chair.
+     [ 1815 w1] Plikorthalos of the Siphaphoi grew used to the goods of Kesite, and its merchants learned the Otentesian way of haggling.
+     [ 1820 w1] Elaxeus threw lightning at the lands of the Siphaphoi six times. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 1823 w1] Green came back to the fields of Eustrikes, and the wells were sweet again.
+     [ 1823 w1] The first caravan from Puphales came to Philosanthe, and the Otentesoi and the Pikudrenoi learned each other's words for 'price'.
+     [ 1827 w1] The town of Remaxireum grew into a city of the Siphaphoi, with paved streets and quarrelsome councils.
+     [ 1832 w1] The feet of traders wore a road between Pharepe and Aniokerax. Along it went pots and coins and, later, fevers.
+     [ 1835 w1] Families of the Otentesoi who left Tokraphexion built their first fires at Tassenas, and were not sorry.
+     [ 1835 w2] Many roads now led to Puphales, and it was called a city.
+     [ 1839 w1] Settlers of the Dirasmoi went out from Kosiphane and made a new home at Phapounolion.
+     [ 1841 w2] The shipwrights of the Oslalxanoi learned to sail against the wind, and the world grew wider.
+     [ 1843 w1] The wise of the Otentesoi came together at Tokiophor, and wrote down everything they knew.
+     [ 1847 w1] Matopor outgrew its walls twice and became a city of the Dirasmoi.
+     [ 1850 w1] Below the great events of those thirty years, the builders of the Dirasmoi finished more than a dozen new halls, granaries and walls; lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 1851 w1] Merchants of Oxameante reached Tokiophor and found that the people there were also people. This was thought remarkable, and then useful.
+     [ 1852 w1] In the 1852nd year the Siphaphoi said that the Lightning-Handed had turned against them, and that the Oslalxanoi were the reason. They went to war to set it right.
+     [ 1855 w1] The host of the Oslalxanoi came against Anitoterax and broke on its walls like a wave on rock, and went home fewer.
+     [ 1859 w1] The houses of Liosophor reached the old boundary stones and did not stop. From this year the Dirasmoi call it a town.
+     [ 1863 w1] An army of the Oslalxanoi besieged Anitoterax and went home with nothing but its wounded.
+     [ 1863 w2] The Otentesoi marched against the Dirasmoi, and the fields were left unharvested.
+     [ 1867 w1] In the 1867th year Tassenas could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1867 w1] The war ended in victory for the Siphaphoi. In Ekamoteira there were feasts for a month.
+     [ 1871 w1] The rains forgot the country of Kamuni. The children grew up not knowing the smell of rain.
+     [ 1872 w1] The Ixotoi took to the open sea, and came back with strange fruit and stranger stories.
+     [ 1880 w1] Rain returned to Kamuni at last.
+     [ 1880 w1] Martralan and Paxariseum began to trade, wine for wool, and both grew fat on it.
+     [ 1880 w1] The Dirasmoi raised more than a dozen new buildings; and Elaxeus threw lightning at the lands of the Siphaphoi six times. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 1881 w2] Rorakaxent became a city, and its towers could be seen from far off.
+     [ 1886 w1] Lightning struck hard by Tokraphexion in a summer storm.
+     [ 1887 w1] At Sopeosion they built an academy. It took longer than promised and cost more than was said, as is the way of all building.
+     [ 1887 w1] The Otentesian priests gave the god a new name: the Thunderer.
+     [ 1893 w1] In the 1893rd year the Pikudrenoi entered the Age of Sail. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 1894 w1] At Philosanthe a school was opened where the young learned numbers, stars and the names of things. It was the first academy of the Pikudrenoi.
+     [ 1895 w1] For fifteen years Paxariseum prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1899 w1] Traders from Tiromer found their way to Puphales of the Otentesoi, where Pikudrenian coin was already known.
+     [ 1903 w1] So many children were born in Liosophor that the elders gave up learning their names. Thus it became a city.
+     [ 1903 w2] The war between the Otentesoi and the Dirasmoi ended, and neither could say it had won.
+     [ 1907 w1] In Tokiophor the ground cracked like old pottery, and the Otentesoi began to pray for rain.
+     [ 1910 w1] Little of those thirty years was written down, except that lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 1911 w1] In Phisatoterax they painted marks on the doors of the sick, and there were many marks.
+     [ 1915 w1] Thunder rolled over Maskrepostra, and lightning fell in the pine woods north-west of the town.
+     [ 1920 w1] Caravans of the Siphaphoi now came to Oxameante of the Dirasmoi as well.
+     [ 1926 w1] The dry grasslands south-west of Denethareron burned, and the herds fled toward the city.
+     [ 1927 w1] The people of Phisatoterax stopped praying for healing; Elaxeus had not answered them.
+     [ 1933 w1] Another road joined Atosophor to Derixasenth of the Oslalxanoi, and the tolls on it were argued over.
+     [ 1937 w1] It is written that Kalloron began as a ring of tents in the marshes, raised by wanderers from Maskrepostra.
+     [ 1937 w2] The houses of Makiskitonos reached the old boundary stones and did not stop. From this year the Siphaphoi call it a city.
+     [ 1939 w1] In a night of thunder a bolt came down in the woods north-west of Lethera, and in the morning the shepherds found the stones blackened.
+     [ 1940 w1] Over thirty years, and hardly worth a line each time, Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 1943 w1] At Domatrir a shrine of stones was made for Elaxeus.
+     [ 1947 w1] Wanderers from Phamismar came to Iseles and stayed.
+     [ 1952 w1] Some of the people of Plikorthalos grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Pasiphumene.
+     [ 1955 w1] Puphales of the Otentesoi grew used to the goods of Iseles, and its merchants learned the Siphaphine way of haggling.
+     [ 1963 w1] A storm walked inland over the country of Sepikras, and left the fields flattened behind it.
+     [ 1964 w1] Phirmaphi was founded in the woods by the Siphaphoi, who had grown too many for Sepikras.
+     [ 1964 w2] Smoke rose from the earth near Tiromer, and then fire. The Pikudrenoi said the mountain was angry.
+     [ 1965 w1] The Pikudrenoi had called the god the Sleeper. After what they had seen, they called the god the Lightning-Handed.
+     [ 1967 w1] Fire walked through the pine woods west of Tiromer, and the Pikudrenoi prayed for rain.
+     [ 1970 w1] Little of those thirty years was written down, except that the Siphaphoi put up scores of new buildings, each the finest yet by their own account, and that more than a dozen settlements of theirs grew.
+     [ 1971 w1] In the 1971st year Krokrusma could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [ 1972 w1] Tiromer was lost beneath the lava, all but its name.
+     [ 1975 w1] In Maskrepostra a jar of honey was given to Elaxeus, with a prayer for rain.
+     [ 1979 w1] Traders from Unopaiximos found their way to Oxutalos of the Dirasmoi, where Siphaphine coin was already known.
+     [ 1982 w2] Iseles had become a city, with more people in it than anyone could name.
+     [ 1984 w1] Scholars gathered at Strorisi and built a house of learning, and filled it with books.
+     [ 1987 w1] Caravans of the Pikudrenoi now came to Makiskitonos of the Siphaphoi as well.
+     [ 1991 w1] There were now enough hearths at Phonetusion to call it a village.
+     [ 1995 w1] A temple now stands at Salelas, where before there was only mud and opinion.
+     [ 1999 w1] The sea sent a howling wind against Pharepe, and the fishermen did not go out for a month.
+     [ 2000 w1] Another thirty years went into the book: more than a dozen new buildings went up among the Siphaphoi, and lightning from Elaxeus fell on their lands seven times.
+     [ 2003 w1] Makrinesmene grew from a camp into a village.
+     [ 2008 w1] Traders of the Otentesoi and the Oslalxanoi met at Umasostra, and each thought they had cheated the other.
+     [ 2011 w1] The village of Straseketion grew into a town; it had a name even among strangers.
+     [ 2013 w2] The Otentesoi made war on the Ixotoi.
+     [ 2015 w1] The Siphaphoi of Tounola built a temple to Elaxeus so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [ 2019 w1] Merchants began to travel between Phirmaphi and Iseles, and the road between them grew wide.
+     [ 2023 w1] The Ixotoi came against Papepan and were thrown back.
+     [ 2028 w1] A new village of the Dirasmoi, Imetalion, was raised on the dry grasslands, where the hunters of Krisalsi had always camped.
+     [ 2030 w1] Meanwhile, in the smaller news of those years, the Siphaphoi raised more than a dozen new buildings, and nine places of the Dirasmoi outgrew their old names.
+     [ 2031 w1] The Ixotoi attacked Papepan on a holy day and were beaten in the river mud.
+     [ 2031 w2] Domatrir grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 2035 w1] The fields about Losakrakeum could not feed it any longer. The priests asked Elaxeus for bread.
+     [ 2039 w1] Walls of cut stone went up around Dalfelex, and the Pikudrenian scribes began to call it a city.
+     [ 2043 w2] The armies of the Otentesoi came home in triumph to Kenesoumene, and the Ixotoi swore to remember.
+     [ 2044 w1] Another road joined Asneation to Herokeuphane of the Siphaphoi, and the inns along it prospered.
+     [ 2049 w1] So many children were born in Straseketion that the elders gave up learning their names. Thus it became a city.
+     [ 2049 w1] No one destroyed Otasophor. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2052 w1] Dorapan of the Siphaphoi began to buy the goods of Hiniasion, and its merchants learned the Dirasmian way of haggling.
+     [ 2057 w1] The long thirst of Tokraphexion ended in a storm, and the Otentesoi danced in the mud.
+     [ 2060 w1] Those were busy years, if not great ones: the builders of the Dirasmoi finished a score or more new halls, granaries and walls, and Elaxeus threw lightning at the lands of the Siphaphoi seven times.
+     [ 2063 w1] The houses of Letrileimene reached the old boundary stones and did not stop. From this year the Ixotoi call it a town.
+     [ 2063 w1] In the 2063rd year the Ixotoi raised a temple at Letrileimene, and were proud of it for one generation, which is the usual length of pride.
+     [ 2067 w2] When the anger of Elaxeus fell on the Siphaphoi, they looked for someone to blame, and found the Oslalxanoi. The war began that summer.
+     [ 2068 w1] Caravans of the Ixotoi now came to Makiskitonos of the Siphaphoi as well.
+     [ 2072 w1] The scribes of the Pikudrenoi began to write Dafomeisfane with the sign for 'city', and its taxes rose accordingly.
+     [ 2075 w1] The sky over Eustrikes cracked open with fire, and the rain that followed was warm.
+     [ 2080 w2] Ten thousand hearths burned in Tamekretonos. It was a city now, and it knew it.
+     [ 2080 w1] An academy was founded at Tamekretonos, where the wise argued about everything, the god included.
+     [ 2085 w1] Traders from Hiniasion found their way to Umasostra of the Oslalxanoi, where Dirasmian coin was already known.
+     [ 2088 w1] In the 2087th year, a band went out from Makiskitonos with seed corn and quarrels enough for a new town, and founded Pesnekis by the water.
+     [ 2090 w1] Below the great events of those thirty years, lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 2092 w1] Another road joined Dafomeisfane to Eposophor of the Siphaphoi, and the tolls on it were argued over.
+     [ 2097 w1] The Siphaphoi won their war against the Oslalxanoi.
+     [ 2098 w1] The people of Tephatere prayed for healing.
+     [ 2100 w1] The Ixotoi still kept the shrines, but the priests now spoke of the Rumour, not the Lightning-Handed.
+     [ 2103 w1] There was drought in the country of Komophane, and the Siphaphoi looked at the sky every morning.
+     [ 2104 w1] The women of Komophane sang at the shrine every evening and asked for rain.
+     [ 2107 w1] Letrileimene had become a city, with more people in it than anyone could name.
+     [ 2111 w1] Rorakaxent of the Dirasmoi grew used to the goods of Liphexameum, and its merchants learned the Otentesian way of haggling.
+     [ 2119 w1] In Lematalos they burned sweet grass and asked Elaxeus for rain.
+     [ 2120 w1] The scribes, counting rather than writing, set down that in thirty years Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 2123 w1] Traders from Asneation found their way to Proxeumostra of the Dirasmoi, where Oslalxanine coin was already known.
+     [ 2131 w1] A great storm walked in from the sea and stood over Maskrepostra for three days, and the roofs learned to fly.
+     [ 2134 w1] Caravans of the Otentesoi now came to Hiniasion of the Dirasmoi as well.
+     [ 2136 w2] The Ixotoi of Straseketion saw their first Pikudrenian merchants, and bought everything they had.
+     [ 2137 w2] The Otentesoi sharpened their spears and went against the Oslalxanoi, though no one could remember who had struck first.
+     [ 2144 w1] Another road joined Pisoxasaxis to Kaskupesaxis of the Oslalxanoi, and the inns along it prospered.
+     [ 2150 w1] Of the smaller things of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 2150 w1] Phonetusion of the Otentesoi began to buy the goods of Imetalion, and its merchants learned the Dirasmian way of haggling.
+     [ 2150 w1] Fever spread through Kamuni, and the priests could do nothing.
+     [ 2151 w1] At Kamuni, the Dirasmoi prayed to Elaxeus for healing, morning and evening.
+     [ 2152 w1] A sickness came to Makiskitonos by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 2157 w1] A tree north of Kousnapa was split by lightning. The children of the city dared each other to touch it.
+     [ 2157 w1] The woods north of Kousnapa burned, and the sky over the city was brown for days.
+     [ 2160 w1] Kenesoumene fell to the Oslalxanoi, and its people learned new songs.
+     [ 2163 w1] Traders from Toxia found their way to Dafomeisfane of the Pikudrenoi, where Otentesian coin was already known.
+     [ 2167 w2] The Otentesoi were beaten, and the Oslalxanoi carried their temple bells home in carts.
+     [ 2169 w1] Black clouds came over Philosanthe from the sea, and the river ran brown for days.
+     [ 2175 w1] Caravans of the Siphaphoi now came to Proxeumostra of the Dirasmoi as well.
+     [ 2180 w1] The chronicle, which cannot write everything, notes only that in those thirty years Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 2184 w1] Lightning struck in the woods north-west of Domatrir in a summer storm.
+     [ 2184 w1] In a dry season a fire ate the woods north-west of Domatrir.
+     [ 2198 w1] Another road joined Asneation to Makiskitonos of the Siphaphoi, and the tolls on it were argued over.
+     [ 2204 w1] Ox-carts began to creak along the road from Irtethalos to Taxiostra, and inns grew up beside it.
+     [ 2208 w1] A grey wave as tall as a temple broke over the fields of Healophor, and salt lay on them for years.
+     [ 2210 w1] Among the small news of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi seven times.
+     [ 2212 w1] Hiniasion of the Dirasmoi began to buy the goods of Salelas, and its merchants learned the Otentesian way of haggling.
+     [ 2226 w1] Thunder rolled over Tassenas, and lightning fell in the deep forest south of the city.
+     [ 2226 w1] A wildfire came close to Tassenas, and the people beat it back with green branches.
+     [ 2230 w2] The mountain north-east of Denethareron woke and wept fire.
+     [ 2231 w1] In Prerakareum a white goat was given to Elaxeus, with a prayer for rain.
+     [ 2233 w1] At Losakrakeum the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Otentesoi went hungry.
+     [ 2234 w2] War came between the Ixotoi and the Pikudrenoi, the old enemies.
+     [ 2234 w1] Fire ran through the deep forest north-east of Denethareron.
+     [ 2236 w1] The Otentesoi of Eikreli wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2236 w1] Wind and rain beat upon Pasiphumene for three days, and the boats were thrown up on the fields.
+     [ 2237 w2] In the 2236th year Dalfelex opened its gates to the Ixotoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2237 w2] The dust of the sky fell on the fields of Eikreli like a second winter, and there was nothing to harvest but straw.
+     [ 2238 w1] The first caravan came from Onapomene to Domatrir, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2240 w1] And there were small things, as there always are: Elaxeus threw lightning at the lands of the Siphaphoi seven times.
+     [ 2240 w1] Denethareron dwindled to a town. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [ 2242 w1] The mountain in the woods north-east of Denethareron stopped smoking, and the Siphaphoi gave thanks.
+     [ 2246 w1] In the 2246th year the Siphaphoi and the Dirasmoi swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 2250 w1] A storm passed over Axepomene, and lightning killed a herd of goats north-west of the city.
+     [ 2251 w1] Clouds came back over Umasostra, and the dry river filled in a single night.
+     [ 2254 w1] The people of Eikreli climbed to the shrine and prayed to Elaxeus for healing. They prayed loudly, in case the Thunderer was far away.
+     [ 2260 w1] The spotted fever broke out in Kenesoumene, and its neighbours turned travellers away.
+     [ 2261 w1] Envoys of the Otentesoi spat on the threshold before the Ixotoi, and the war began.
+     [ 2263 w1] The banners of the Otentesoi were raised over Linoumoreum.
+     [ 2264 w2] After thirty years the Pikudrenoi asked for peace, and the Ixotoi granted it, and made them pay for the asking.
+     [ 2265 w1] The war ended in victory for the Otentesoi. The Ixotoi paid tribute for a generation.
+     [ 2269 w1] Eikreli gave up asking Elaxeus for healing. They learned to manage without.
+     [ 2270 w1] Of the smaller things of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi five times; and the Pikudrenoi were beaten back four times.
+     [ 2270 w1] The merchants of Sarakra found a road to Klarurthalos, and kept the secret of it for a while.
+     [ 2277 w1] In Denupeimante they still tell of the great wind, when even the priests were afraid.
+     [ 2292 w1] The ground on the high peaks east of Tounola rolled like a wave for the space of a hundred breaths, and walls fell in the city.
+     [ 2294 w1] Lightning walked on the hills north-east of Entreles, and the priests of the city read it as a sign.
+     [ 2294 w1] The country north-east of Entreles burned for many days, and the smoke hung over the city.
+     [ 2300 w1] Another thirty years went into the book, and in them Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 2304 w1] The priests of Tatrenas went up to the high places and cried out for rain.
+     [ 2314 w1] The people of Pirikrineron prayed for rain.
+     [ 2314 w1] A hard sun stood over Losakrakeum all that summer, and the barley died standing.
+     [ 2318 w1] That winter Losakrakeum ate its oxen, and then its dogs.
+     [ 2318 w2] In Kixanilalos the people sickened, and the roads to it were empty.
+     [ 2326 w1] The rains came back to Losakrakeum, and the Otentesoi said the god had relented.
+     [ 2329 w1] In a night of thunder a bolt came down west of Aniokerax, and the dogs of the city howled until dawn.
+     [ 2329 w1] A red night: the plains west of Aniokerax burned, and ash fell on the city.
+     [ 2330 w1] Between the greater deeds of those thirty years, lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 2334 w1] The prayers of Kixanilalos went up for fifteen years and nothing came down. The Siphaphoi began to wonder whether anyone was listening.
+     [ 2334 w1] The sickness went out of Kixanilalos at last, and the bells rang for the living as well as the dead.
+     [ 2337 w2] The god did nothing that the Pikudrenoi could see for longer than anyone remembered, and the Lightning-Handed became the Sleeper.
+     [ 2344 w1] The feet of traders wore a road between Elotimene and Tephatere. Along it went pots and coins and, later, fevers.
+     [ 2346 w2] War between the Otentesoi and the Oslalxanoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 2347 w1] The sea sent a howling wind against Imetalion, and it took the thatch from every roof.
+     [ 2351 w1] The women of Hirisun tied red threads to the shrine and asked for rain.
+     [ 2352 w2] The Oslalxanoi took Sotrerupaxis from the Otentesoi.
+     [ 2355 w1] The rains failed around Losakrakeum.
+     [ 2358 w1] The harvest failed at Umasostra; the children grew thin.
+     [ 2358 w1] There was famine in Losakrakeum. The people looked up and asked the Thunderer for rain, and counted the days, and the days were long.
+     [ 2359 w1] Eikreli and Rakrasetonos began to trade, cloth for copper, and both grew fat on it.
+     [ 2360 w1] Below the great events of those thirty years, Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 2362 w1] The Oslalxanoi marched into Tokraphexion, and the Otentesian families who could fled to their kin.
+     [ 2364 w1] Green came back to the fields of Losakrakeum, and the wells were sweet again.
+     [ 2369 w1] In Strasephu they said the god was deaf, and let the shrine fall into ruin.
+     [ 2369 w1] In Makrinesmene they burned sweet grass and asked Elaxeus for peace.
+     [ 2369 w1] The armies of the Oslalxanoi came home in triumph to Derixasenth, and the Otentesoi swore to remember.
+     [ 2370 w1] The Siphaphoi and the Oslalxanoi could no longer share the river. They tried to share it with spears instead.
+     [ 2373 w1] At Derixasenth, the Oslalxanoi prayed to Elaxeu for peace, morning and evening.
+     [ 2381 w1] The sky over Sopeosion cracked open with fire, and the rain that followed was warm.
+     [ 2381 w1] Fire walked through the plains south-east of Sopeosion, and the Dirasmoi prayed for rain.
+     [ 2384 w1] A storm walked inland over the country of Phirmaphi, and the Siphaphoi counted their dead and their cattle.
+     [ 2387 w1] There was an earthquake on the ice east of Prerakareum, and the people of the town slept outside for a month.
+     [ 2390 w1] The chronicle, which cannot write everything, notes only that in those thirty years lightning from Elaxeus fell on the lands of the Siphaphoi seven times, and six prayers of the Oslalxanoi were not heard, or not answered.
+     [ 2390 w1] A tree south of Pasiphumene was split by lightning. The children of the city dared each other to touch it.
+     [ 2393 w2] Asneation was lost by the Oslalxanoi and won by the Siphaphoi, and its temple was given a new god's name.
+     [ 2393 w2] After twenty-three years the Oslalxanoi asked for peace, and the Siphaphoi granted it, and made them pay for the asking.
+     [ 2393 w1] The alliance of the Siphaphoi and the Dirasmoi was not broken; it was forgotten, like a path no one walks any more.
+     [ 2402 w1] A wildfire came close to Tiaxostra, and the children watched it from the roofs.
+     [ 2411 w1] No rain fell on the lands of Papepan. The river showed its stones, and the people counted them.
+     [ 2412 w1] The Otentesoi of Strasephu wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2417 w1] The drought about Papepan broke, and the children ran out into the rain.
+     [ 2422 w1] Thunder rolled over Tokiophor, and lightning fell in the pine woods north of the city.
+     [ 2422 w1] Fire ran through the pine woods north of Tokiophor.
+     [ 2424 w1] A storm such as the old people had never seen passed over Papepan.
+     [ 2430 w1] In those forty years Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 2431 w2] A coughing sickness came to Ethope in the spring, and did not leave.
+     [ 2432 w1] In Ethope a jar of honey was given to Elaxeus, with a prayer for healing.
+     [ 2438 w1] A grey sickness settled on Denethareron. The healers burned herbs day and night.
+     [ 2447 w1] Ethope gave up asking Elaxeus for healing. Its people grew bitter.
+     [ 2447 w1] In Ethope the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 2448 w1] The river by Domatrir shrank to a string of muddy pools, and the frogs were the first to leave.
+     [ 2449 w1] The people of Domatrir climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 2456 w1] Rain returned to Domatrir at last.
+     [ 2457 w1] A great storm walked in from the sea and stood over Kousnapa for three days, and the roofs learned to fly.
+     [ 2460 w1] Lightning from Elaxeus fell on the lands of the Siphaphoi eight times. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 2461 w1] A storm passed over Domatrir, and lightning split an old tree north-west of the city.
+     [ 2461 w1] The woods north-west of Domatrir burned, and the sky over the city was brown for days.
+     [ 2465 w2] The Otentesian kings swore an oath against the Ixotoi, and there was war.
+     [ 2472 w1] Dalfelex fell to the Otentesoi, and its Ixotine lords were driven out.
+     [ 2473 w1] The priests of Straseketion went up to the high places and cried out for peace.
+     [ 2475 w1] Lightning walked on the hills south-east of Tassenas, and the Otentesoi stayed indoors.
+     [ 2475 w1] In the month of dust a fire ate the woods south-east of Tassenas.
+     [ 2478 w1] The people of Puphales prayed for peace.
+     [ 2482 w2] The Otentesoi took Straseketion from the Ixotoi.
+     [ 2482 w2] The Otentesoi won their war against the Ixotoi.
+     [ 2486 w1] Lightning struck in the marshes south-west of Ekamoteira in a summer storm.
+     [ 2486 w1] The country in the marshes south-west of Ekamoteira burned until the rain came, and the smoke hung over the city.
+     [ 2490 w1] The scribes, counting rather than writing, set down that in thirty years Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 2490 w1] The sea rose up and walked inland at Papepan, taking boats and houses and cattle.
+     [ 2493 w3] In the 2493rd year the world turned a page: the Siphaphoi, first of all peoples, came into the Age of Industry, and the others began to hurry.
+     [ 2494 w1] Chimneys rose over Ekamoteira, and the sky above it turned grey. No one among the Siphaphoi had built a manufactory before.
+     [ 2498 w1] So many children were born in Ralsarosaxis that the elders gave up learning their names. Thus it became a city.
+     [ 2503 w1] In the 2503rd year Lethera could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2508 w1] The long thirst of Kaskupesaxis ended in a storm, and the Oslalxanoi danced in the mud.
+     [ 2511 w2] The Dirasmoi put down the tools of their mothers and took up the tools of the Age of Industry. The Silent One watched, and did not say whether this was wise.
+     [ 2512 w1] Phamismar became a great city such as the world had not seen, numberless as ants.
+     [ 2515 w1] Black clouds came over Maskrepostra from the sea, and the hail broke the young barley.
+     [ 2519 w1] In Pesnekis the old shrine was pulled down and a temple to Elaxeus put up in its place.
+     [ 2520 w1] The scribes, counting rather than writing, set down that in thirty years a score or more villages and towns of the Siphaphoi grew larger, and the Dirasmoi put up more than a dozen new buildings, each the finest yet by their own account.
+     [ 2522 w1] The women of Irtethalos tied red threads to the shrine and asked for rain.
+     [ 2527 w1] Taxiostra grew into a city of towers, its lights seen from the next valley.
+     [ 2529 w1] In the 2529th year the Otentesoi remembered an old insult from the Oslalxanoi, and went to war over it.
+     [ 2532 w1] In Pisoxasaxis they burned sweet grass and asked Elaxeus for rain.
+     [ 2533 w2] The lamps of Martralan drowned out the stars: it had become a great city of the Dirasmoi.
+     [ 2535 w1] Prerakareum built its first manufactory, and the river ran a strange colour.
+     [ 2535 w1] A fire-mountain woke in the sands south-west of Proxeumostra, and the sky above the city turned black.
+     [ 2540 w1] The sun was a pale coin behind the dust, and the granaries of Rakrasetonos stood empty. The Otentesoi remembered those years as the hungry ones.
+     [ 2543 w1] The banners of the Otentesoi were raised over Eikreli.
+     [ 2543 w3] Tamekretonos was left empty. No one could say exactly when.
+     [ 2546 w1] In the dark years the barley would not ripen, and hunger came to Maskrepostra and to many towns of the Siphaphoi.
+     [ 2546 w2] A new thing was learned at Puphales, and then everywhere. So the Age of Industry began among the Otentesoi.
+     [ 2550 w1] Over thirty years eleven new buildings went up among the Otentesoi. In the same years lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 2550 w1] Liphexameum became a city, and its towers could be seen from far off.
+     [ 2551 w1] The Dirasmoi gave up Hiniasion, and the foxes moved in.
+     [ 2552 w1] Pisoxasaxis was abandoned.
+     [ 2552 w1] The last families left Pesnekis, and grass grew in its streets.
+     [ 2552 w1] The Otentesoi were beaten, and the Oslalxanoi took their best fields.
+     [ 2554 w1] The people of Puphales dug into the hills for good stone.
+     [ 2555 w1] No one destroyed Papepan. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2560 w1] So many people lived in Proxeumostra that no one could count them, though the scribes tried.
+     [ 2567 w1] A band from Kosseti crossed the country and founded Patrataponos on the cold barrens.
+     [ 2568 w1] Strasephu became a great city, a sea of roofs from one horizon to the other.
+     [ 2568 w1] Mousete was left empty. No one could say exactly when.
+     [ 2572 w1] Ox-carts began to creak along the road from Strateostra to Strasephu, and inns grew up beside it.
+     [ 2574 w1] At Aniokerax, the Siphaphoi prayed to Elaxeus for rain, morning and evening.
+     [ 2577 w1] The Siphaphoi gave up Irtethalos, and the wind had it.
+     [ 2578 w1] Children were born at Tixaphane who had never lived anywhere else, and it became a village.
+     [ 2579 w1] Akari was abandoned.
+     [ 2580 w1] Little of those thirty years was written down, except that Elaxeus threw lightning at the lands of the Siphaphoi six times, and that the Dirasmoi raised nine new buildings.
+     [ 2581 w1] The last families left Tixaphane, and grass grew in its streets.
+     [ 2582 w1] The fishermen of Axepomene built a stone quay, and the big ships began to call.
+     [ 2586 w2] Famine came to Entreles.
+     [ 2586 w1] The earth shook on the plains north-east of Martralan.
+     [ 2587 w2] No one destroyed Lumiophor. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2591 w1] The priests of Tiante went up to the high places and cried out for rain.
+     [ 2593 w1] Dedixultalo was left empty. Its people had gone to the bigger towns.
+     [ 2593 w2] In the 2593rd year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+     [ 2594 w1] Clouds came back over Axepomene, and the dry river filled in a single night.
+     [ 2596 w1] The Siphaphoi marched against the Oslalxanoi, and the smiths worked day and night.
+     [ 2599 w1] The Pikudrenoi of Purosi wrote their prayer for rain on bark and buried it at the shrine.
+     [ 2600 w1] The Siphaphoi gave up Olxedarerax, and the foxes moved in.
+     [ 2602 w1] In the 2602nd year the first caravan came from Pexeanthe to Taxiostra, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2606 w1] Hunger came to Tiante and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2609 w1] Patrataponos was abandoned.
+     [ 2610 w1] In those thirty years lightning from Elaxeus fell on the lands of the Siphaphoi six times, and the builders of theirs finished eleven new halls, granaries and walls.
+     [ 2610 w1] The tents of Teitrolis gave way to houses of stone, and it was called a village.
+     [ 2614 w1] Sarakra shrank to a town. Its walls were too big for it now.
+     [ 2615 w1] The last families left Linoumoreum, and grass grew in its streets.
+     [ 2619 w1] In the 2619th year Derixasenth opened its gates to the Siphaphoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2619 w1] No one destroyed Pexeanthe. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2619 w1] The war ended in victory for the Siphaphoi. In Ekamoteira there were feasts for a month.
+     [ 2623 w1] Merchants began to travel between Ipamilion and Leimatha, and the road between them grew wide.
+     [ 2626 w1] The people of Krokrusma climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 2627 w2] The Siphaphoi gave up Aniokerax, and the foxes moved in.
+     [ 2630 w1] At Tiante there was hunger, three years running.
+     [ 2630 w2] Many roads now led to Iskona, and it was called a city.
+     [ 2633 w1] Purosi was left empty. No one could say exactly when.
+     [ 2634 w1] Masts filled the bay at Herokeuphane, where a harbour had been built.
+     [ 2637 w1] The long quarrel between the Otentesoi and the Pikudrenoi came to blood.
+     [ 2640 w1] Elaxeus threw lightning at the lands of the Siphaphoi six times; and five prayers of the Oslalxanoi went unanswered. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 2640 w1] The merchants of Toxia found a road to Makrinesmene, and kept the secret of it for a while.
+     [ 2641 w1] The armies of the Otentesoi came home in triumph to Puphales, and the Pikudrenoi counted what they had lost.
+     [ 2644 w1] In Eikreli a lamb was given to Elaxeu, with a prayer for rain.
+     [ 2645 w1] Eikreli was abandoned.
+     [ 2646 w1] The Oslalxanoi founded Lokresnor in the pine woods.
+     [ 2647 w1] The last families left Sarakra, and grass grew in its streets.
+     [ 2651 w1] Tephatere cut a harbour into the shore, and its boats went further every year.
+     [ 2654 w1] The people of Lokresnor prayed for rain.
+     [ 2657 w1] The Siphaphoi gave up Kalloron, and the wind had it.
+     [ 2658 w1] The women of Salelas tied red threads to the shrine and asked for rain.
+     [ 2662 w1] There were too many mouths in Matopor and too little bread, and the old went hungry so the young could eat.
+     [ 2667 w1] Many left Matopor, and it was a town again.
+     [ 2670 w1] Little of those thirty years was written down, except that lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 2670 w2] No one destroyed Lonakokra. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2671 w1] The rains came back to Toxia, and the Otentesoi said the god had relented.
+     [ 2675 w1] The Otentesoi sharpened their spears and went against the Oslalxanoi, though no one could remember who had struck first.
+     [ 2677 w1] The feet of traders wore a road between Phisatoterax and Ipamilion. Along it went pots and coins and, later, fevers.
+     [ 2678 w1] The Otentesoi marched into Kesite, and the Oslalxanine families who could fled to their kin.
+     [ 2681 w2] The ice in the north began to weep, and the summers were cruel.
+     [ 2683 w1] In Kenesoumene they burned fat and asked Elaxeu for peace.
+     [ 2687 w2] Lokresnor was lost by the Oslalxanoi and won by the Otentesoi, and its market changed hands with it.
+     [ 2687 w1] After twelve years the Oslalxanoi asked for peace, and the Otentesoi granted it, and made them pay for the asking.
+     [ 2687 w1] Wind and rain beat upon Prerakareum for a week, and the boats were thrown up on the fields.
+     [ 2690 w1] At Teitrolis, the Dirasmoi prayed to Elaxeus for rain, morning and evening.
+     [ 2694 w1] The people of Iskona climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 2695 w3] Kousnapa was left empty. No one could say exactly when.
+     [ 2696 w1] Arrisix was abandoned.
+     [ 2700 w1] Over thirty years, and hardly worth a line each time, Elaxeus threw lightning at the lands of the Siphaphoi seven times.
+     [ 2700 w1] The Siphaphoi of Anitoterax wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2703 w2] The last families left Matopor, and grass grew in its streets.
+     [ 2705 w1] In Teitrolis a jar of honey was given to Elaxeus, with a prayer for rain.
+     [ 2706 w1] In the 2706th year the granaries of Teitrolis rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2710 w1] The priests of Tatrenas went up to the high places and cried out for rain.
+     [ 2714 w1] In a night of thunder a bolt came down in the pine woods east of Eposophor, and in the morning the shepherds found the stones blackened.
+     [ 2717 w1] No one destroyed Tiante. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2722 w1] The people of Lematalos prayed for rain.
+     [ 2723 w1] Kesite swallowed the villages around it and became a great city of the Otentesoi.
+     [ 2724 w1] In the 2724th year the Oslalxanoi entered the Age of Industry. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 2726 w1] The Otentesoi made war on the Pikudrenoi.
+     [ 2726 w1] War came between the Otentesoi and the Ixotoi, who had once traded salt and songs.
+     [ 2729 w1] Dafomeisfane fell to the Otentesoi, and its Pikudrenian lords were driven out.
+     [ 2729 w2] Of the Pikudrenoi, who once held Purosi, nothing remained but names.
+     [ 2729 w1] The war ended when there were none of the Pikudrenoi left to fight it.
+     [ 2729 w2] From the Siphaphoi came the Kleseloi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [ 2729 w2] The Kleseloi called the god who had woken their fathers the Lightning-Handed.
+     [ 2730 w1] Of the smaller things of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 2730 w1] The women of Martralan sang at the shrine every evening and asked for rain.
+     [ 2731 w2] Hunger walked the streets of Martralan, and the Dirasmoi sold their tools for grain.
+     [ 2733 w1] The Ixotoi were beaten, and the Otentesoi took their best fields.
+     [ 2734 w1] The rains forgot the country of Plikorthalos. The priests climbed the hills and called to them.
+     [ 2738 w1] Ipamilion and Healophor began to trade, pots for fish, and both grew fat on it.
+     [ 2742 w1] Rain returned to Plikorthalos at last.
+     [ 2744 w2] Iskutalos was left empty. No one could say exactly when.
+     [ 2746 w1] In Losakrakeum they burned sweet grass and asked Elaxeus for rain.
+     [ 2755 w1] At Iskona, the Siphaphoi prayed to Elaxeus for rain, and fasted.
+     [ 2756 w1] Kunoseuponos was founded in the 2756th year. Its founders swore it would one day be greater than Kosiphane. The chronicle notes that all founders swear this.
+     [ 2758 w1] The fields about Kunoseuponos could not feed it any longer. The priests asked Elaxeus for bread.
+     [ 2760 w1] The chronicle, which cannot write everything, notes only that in those thirty years Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 2761 w1] The Oslalxanoi gave up Umasostra, and the foxes moved in.
+     [ 2763 w1] In the 2763rd year a new camp of the Oslalxanoi was raised at Pletisimene, in the pine woods.
+     [ 2766 w1] That winter Pletisimene ate its oxen, and then its dogs.
+     [ 2770 w1] The people of Unopaiximos climbed to the shrine and prayed to Elaxeus for rain. They prayed loudly, in case the Lightning-Handed was far away.
+     [ 2774 w1] Perophane was abandoned.
+     [ 2774 w1] The harvest failed at Krokrusma, and the people ate their seed corn.
+     [ 2775 w1] The last families left Imetalion, and grass grew in its streets.
+     [ 2776 w1] Envoys of the Otentesoi threw down their staffs before the Kleseloi, and the war began.
+     [ 2778 w1] The sky over Tephatere cracked open with fire, and the rain that followed was warm.
+     [ 2780 w2] There was famine in Dorapan. The people looked up and asked the Lightning-Handed for rain, and counted the days, and the days were long.
+     [ 2783 w1] The Kleseloi took Strasephu from the Otentesoi.
+     [ 2787 w1] The banners of the Otentesoi were raised over Strasephu.
+     [ 2790 w1] Among the small news of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 2790 w1] The camp at Osilophor put down roots and became a village.
+     [ 2797 w1] Half the houses of Domatrir stood empty, and it was no more than a city.
+     [ 2799 w1] In the 2799th year Strasephu opened its gates to the Kleseloi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2799 w2] The Kleseloi won their war against the Otentesoi.
+     [ 2806 w1] Merchants began to travel between Liphexameum and Puphales, bringing salt and news.
+     [ 2813 w1] Ox-carts began to creak along the road from Osilophor to Makiskitonos, loaded with grain and gossip.
+     [ 2815 w1] Teitrolis grew small and was only a village, and the young went away.
+     [ 2815 w1] In Teitrolis a white goat was given to Elaxeus, with a prayer for rain.
+     [ 2817 w1] War between the Kleseloi and the Dirasmoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 2818 w1] In Strateostra the ground cracked like old pottery, and the Kleseloi began to pray for rain.
+     [ 2819 w1] The priests of the Siphaphoi said the god was punishing them for the wickedness of the Oslalxanoi. The young believed it, and there was war.
+     [ 2820 w1] And there were small things, as there always are: five towns of the Otentesoi prayed and heard nothing.
+     [ 2822 w1] The Oslalxanoi marched into Maskrepostra, and the Siphaphine families who could fled to their kin.
+     [ 2826 w1] The drought about Strateostra broke, and the children ran out into the rain.
+     [ 2830 w2] Phamismar was lost by the Siphaphoi and won by the Oslalxanoi, and its market changed hands with it.
+     [ 2832 w1] Strasephu fell to the Kleseloi, and its people learned new songs.
+     [ 2837 w1] The banners of the Dirasmoi were raised over Strasephu.
+     [ 2837 w2] The war ended in victory for the Dirasmoi. In Paxariseum there were feasts for a month.
+     [ 2838 w1] Famine came to Krokrusma.
+     [ 2842 w1] For fifteen years Anitoterax prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 2845 w1] The armies of the Oslalxanoi came home in triumph to Kenesoumene, and the Siphaphoi swore to remember.
+     [ 2846 w1] A tree south-east of Axepomene was split by lightning. The children of the great city dared each other to touch it.
+     [ 2850 w1] Below the great events of those thirty years, Elaxeus threw lightning at the lands of the Siphaphoi seven times; eleven towns of theirs prayed and waited.
+     [ 2864 w1] In the 2863rd year the first caravan came from Osilophor to Herokeuphane, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2871 w1] Fever spread through Tassenas, and many were buried.
+     [ 2872 w1] The Otentesoi of Tassenas wrote their prayer for healing on clay and buried it at the shrine.
+     [ 2873 w1] In Epixostra they still tell of the great wind, which blew the fires out in every hearth.
+     [ 2875 w1] Families of the Dirasmoi who left Phapounolion built their first fires at Laxapo, and were not sorry.
+     [ 2876 w1] Laxapo was a village now, with its own small quarrels.
+     [ 2876 w1] At Laxapo they set stones in a ring and laid the first fruits on them for Elaxeus. It was a small shrine. The Silent One did not complain.
+     [ 2879 w2] The Ixotoi built engines that breathed fire, and the age of smoke began among them.
+     [ 2880 w1] Another thirty years went into the book, and in them lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 2880 w2] In Letrileimene great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron. It was the first manufactory of the Ixotoi.
+     [ 2883 w1] Lightning struck west of Rorakaxent in a summer storm.
+     [ 2884 w1] A great wave broke south-west of Teitrolis, and the people of the village ran for the hills.
+     [ 2886 w1] At Iskona there was hunger, three years running.
+     [ 2890 w1] In the 2890th year the granaries of Iskona rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2894 w1] Iskona dwindled to a town. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [ 2898 w1] There was drought in the country of Kosiphane, and the Dirasmoi looked at the sky every morning.
+     [ 2908 w1] Green came back to the fields of Kosiphane, and the wells were sweet again.
+     [ 2909 w2] The Kleseloi and the Dirasmoi could no longer share the river. They tried to share it with spears instead.
+     [ 2909 w1] The Kleseline kings swore an oath against the Oslalxanoi, and there was war.
+     [ 2909 w1] Lightning walked on the hills north of Ketonealo, and the priests of the great city read it as a sign.
+     [ 2910 w1] Between the greater deeds of those thirty years, Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 2910 w1] The Otentesoi sharpened their spears and went against the Oslalxanoi, though no one could remember who had struck first.
+     [ 2912 w1] The Oslalxanoi took Sotrerupaxis from the Otentesoi.
+     [ 2916 w1] The town of Laxapo grew into a city of the Dirasmoi, with paved streets and quarrelsome councils.
+     [ 2920 w1] In the 2920th year Tokraphexion opened its gates to the Oslalxanoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2923 w1] The Kleseloi marched into Kosseti, and the town paid tribute from that day.
+     [ 2924 w1] After fourteen years the Oslalxanoi asked for peace, and the Otentesoi granted it, and made them pay for the asking.
+     [ 2924 w1] The Kleseloi won their war against the Oslalxanoi.
+     [ 2924 w1] The Dirasmoi and the Oslalxanoi swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 2928 w1] The merchants of Rakrasetonos found a road to Kesite, and kept the secret of it for a while.
+     [ 2929 w1] The Kleseloi were beaten, and the Dirasmoi carried their temple bells home in carts.
+     [ 2931 w1] The priests of Tatrenas went up to the high places and cried out for rain.
+     [ 2931 w1] Smoke rose from the earth south-east of Ipamilion, and then fire. Ash fell on the city like grey snow.
+     [ 2932 w2] There were too many mouths in Tatrenas and too little bread, and the weak did not see the spring.
+     [ 2934 w1] A wildfire came close to Ipamilion, and the people beat it back with green branches.
+     [ 2938 w1] The people of Kunoseuponos prayed for rain.
+     [ 2940 w1] In those thirty years lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 2942 w1] The women of Rakrasetonos tied red threads to the shrine and asked for rain.
+     [ 2948 w1] A tremor ran through the land about Losakrakeum, and pots fell from the shelves.
+     [ 2950 w1] A hard sun stood over Leditra all that summer, and the barley died standing.
+     [ 2954 w1] The sky stayed grey over Ember Vale for years. The harvest failed at Leditra, and not only there.
+     [ 2955 w1] The oath between the Dirasmoi and the Oslalxanoi lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 2958 w1] The sea sent a howling wind against Tiaxostra, and the fishermen did not go out for a month.
+     [ 2962 w2] The Otentesoi made war on the Ixotoi.
+     [ 2964 w1] Salelas was lost by the Otentesoi and won by the Ixotoi, and its market changed hands with it.
+     [ 2966 w1] Letrileimene fell to the Otentesoi, and its people learned new songs.
+     [ 2967 w1] The war ended in victory for the Otentesoi. In Puphales there were feasts for a month.
+     [ 2970 w1] Below the great events of those thirty years, Elaxeus threw lightning at the lands of the Siphaphoi seven times.
+     [ 2989 w1] A storm passed over Liosophor, and lightning set the grass alight at the great city.
+     [ 2995 w1] The feet of traders wore a road between Krokrusma and Osilophor. Along it went pots and coins and, later, fevers.
+     [ 3000 w1] The scribes, counting rather than writing, set down that in thirty years lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3002 w2] The long quarrel between the Kleseloi and the Oslalxanoi came to blood.
+     [ 3002 w1] Thunder rolled over Eposophor, and lightning fell north-east of the great city.
+     [ 3006 w2] The banners of the Oslalxanoi were raised over Strasephu.
+     [ 3009 w1] In Tatrenas they burned fat and asked Elaxeus for rain.
+     [ 3010 w1] The Kleseloi took Strateostra from the Oslalxanoi.
+     [ 3010 w1] Hunger walked the streets of Tatrenas, and the fields were not enough for all of them.
+     [ 3015 w1] In the 3014th year Strateostra opened its gates to the Oslalxanoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 3015 w1] At Ethope, the Kleseloi prayed to Elaxeu for peace, morning and evening.
+     [ 3017 w1] The Kleseloi marched into Strasephu, and the Oslalxanine families who could fled to their kin.
+     [ 3018 w1] The armies of the Kleseloi came home in triumph to Ethope, and the Oslalxanoi counted what they had lost.
+     [ 3021 w1] The earth groaned under Eposophor, and the well water turned cloudy.
+     [ 3033 w1] Oxutalos and Laxapo began to trade, cloth for copper, and both grew fat on it.
+     [ 3036 w2] In Denethareron they painted marks on the doors of the sick, and there were many marks.
+     [ 3040 w1] Over forty years, and hardly worth a line each time, Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 3041 w1] A storm walked inland over the country of Dekephane, and left the fields flattened behind it.
+     [ 3044 w2] No one destroyed Iskona. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3044 w1] Far from their kin, a band of the Siphaphoi made a home at Keoxophor, on the dry grasslands.
+     [ 3045 w1] There were now enough hearths at Keoxophor to call it a village.
+     [ 3045 w1] The elders of Keoxophor chose a holy place, and a shrine to Elaxeus was raised there.
+     [ 3045 w2] The earth shrugged under Healophor. Pots fell, then roofs, then the walls. The Siphaphoi asked what they had done. No answer came, which was itself an answer.
+     [ 3050 w1] The Siphaphoi marched against the Oslalxanoi, and the fields were left unharvested.
+     [ 3052 w1] The people of Denethareron stopped praying for healing; Elaxeu had not answered them.
+     [ 3052 w1] The sickness went out of Denethareron at last, and the bells rang for the living as well as the dead.
+     [ 3053 w1] Phamismar was lost by the Siphaphoi and won by the Oslalxanoi, and its market changed hands with it.
+     [ 3060 w1] In a night of thunder a bolt came down on the shore north-east of Healophor, and the dogs of the great city howled until dawn.
+     [ 3061 w1] Phamismar fell to the Siphaphoi, and its Oslalxanine lords were driven out.
+     [ 3064 w1] Keoxophor was a town now, the busiest of the Siphaphoi.
+     [ 3064 w1] The priests of Keoxophor built a house for the god of cut stone.
+     [ 3065 w1] The rains failed around Toxia.
+     [ 3069 w1] The banners of the Oslalxanoi were raised over Phamismar.
+     [ 3073 w1] The prayers of Anitoterax went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 3076 w2] After twenty-six years the Siphaphoi asked for peace, and the Oslalxanoi granted it, and made them pay for the asking.
+     [ 3079 w1] In the 3079th year the Kleseloi remembered an old insult from the Dirasmoi, and went to war over it.
+     [ 3080 w1] Another thirty years went into the book: lightning from Elaxeus fell on the lands of the Siphaphoi six times, and eleven towns of theirs turned to prayer.
+     [ 3083 w2] Strasephu opened its gates to the Dirasmoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 3083 w1] The sky over Ketonealo cracked open with fire, and the rain that followed was warm.
+     [ 3083 w1] Fire walked through the woods north-west of Ketonealo, and the Siphaphoi prayed for rain.
+     [ 3085 w1] The Kleseloi took Kosseti from the Dirasmoi.
+     [ 3086 w1] War came between the Otentesoi and the Dirasmoi, who had once traded salt and songs.
+     [ 3090 w1] The Otentesoi marched into Rorakaxent, and the town paid tribute from that day.
+     [ 3094 w1] Strasephu was lost by the Dirasmoi and won by the Kleseloi, and its market changed hands with it.
+     [ 3095 w1] The Otentesoi won their war against the Dirasmoi.
+     [ 3095 w1] The Dirasmoi were beaten, and the Kleseloi took their best fields.
+     [ 3104 w1] In the 3103rd year the first caravan came from Keoxophor to Pharepe, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 3110 w1] Elaxeus threw lightning at the lands of the Siphaphoi six times. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 3112 w1] Hunger came to Keoxophor and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3116 w1] Merchants began to travel between Kunoseuponos and Sotrerupaxis, and the road between them grew wide.
+     [ 3122 w1] A tree east of Pletisimene was split by lightning. The children of the city dared each other to touch it.
+     [ 3122 w1] A red night: the pine woods east of Pletisimene burned, and ash fell on the city.
+     [ 3129 w3] In the 3129th year the world turned a page: the Dirasmoi, first of all peoples, came into the Age of the Atom, and the others began to hurry.
+     [ 3130 w2] The Dirasmoi built at Paxariseum a house where the smallest fire burns. No one among the Dirasmoi had built a power plant before.
+     [ 3130 w1] A storm such as the old people had never seen passed over Laxapo.
+     [ 3132 w2] The Dirasmoi no longer called the god the Silent One; now they said the Spear of Heaven.
+     [ 3134 w1] The river by Kosiphane shrank to a string of muddy pools, and the frogs were the first to leave.
+     [ 3137 w1] The fields about Leditra could not feed it any longer. Some families left in the night.
+     [ 3142 w1] The long thirst of Kosiphane ended in a storm, and the Dirasmoi danced in the mud.
+     [ 3143 w1] Oxutalos grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 3144 w2] In the songs of the Otentesoi, the Thunderer became the God of Our Fathers.
+     [ 3150 w1] Little of those forty years was written down, except that lightning from Elaxeus fell on the lands of the Dirasmoi five times.
+     [ 3152 w1] Thunder rolled over Prerakareum, and lightning fell in the pine woods north-east of the city.
+     [ 3152 w1] A wildfire came close to Prerakareum, and the children watched it from the roofs.
+     [ 3153 w1] The ground on the ice far to the north-east of Prerakareum trembled for the space of a hundred breaths, and cracks opened in the fields of the city.
+     [ 3154 w1] Kenokaimerax became a great city such as the world had not seen, and the sky over it never grew dark.
+     [ 3154 w1] Envoys of the Otentesoi threw down their staffs before the Oslalxanoi, and the war began.
+     [ 3157 w1] At Kunoseuponos they built a mine. It took longer than promised and cost more than was said, as is the way of all building.
+     [ 3157 w1] The Siphaphoi split the smallest thing in the world, and found a fire inside it.
+     [ 3157 w1] War between the Kleseloi and the Oslalxanoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 3157 w1] Lokresnor fell to the Oslalxanoi, and its Otentesian lords were driven out.
+     [ 3161 w1] The lamps of Laxapo drowned out the stars: it had become a great city of the Dirasmoi.
+     [ 3165 w1] In the 3165th year Phamismar opened its gates to the Oslalxanoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 3167 w1] The wise of the Otentesoi learned to wake the fire inside stones, and the god was not consulted.
+     [ 3167 w1] The war ended in victory for the Otentesoi. The Oslalxanoi paid tribute for a generation.
+     [ 3167 w1] The armies of the Kleseloi came home in triumph to Ethope, and the Oslalxanoi swore to remember.
+     [ 3170 w1] A storm passed over Derixasenth, and lightning set the grass alight east of the great city.
+     [ 3173 w1] The houses of Pasiphumene reached the old boundary stones and did not stop. From this year the Siphaphoi call it a great city.
+     [ 3178 w1] The elders of the Siphaphoi and the Dirasmoi clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 3180 w1] Meanwhile, in the smaller news of those years, the Otentesoi put up more than a dozen new buildings, each the finest yet by their own account, and Elaxeus threw lightning at the lands of the Siphaphoi seven times.
+     [ 3183 w2] So many children were born in Letrileimene that the elders gave up learning their names. Thus it became a great city.
+     [ 3187 w2] The Otentesoi and the Ixotoi could no longer share the river. They tried to share it with spears instead.
+     [ 3189 w3] The Dirasmoi gave up Prerakareum, and the wind had it.
+     [ 3190 w1] Omeirtalos was founded in the pine woods by the Dirasmoi, though no one remembered why there.
+     [ 3190 w1] In the 3190th year Omeirtalos could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [ 3190 w1] The people of Omeirtalos raised a shrine to Elaxeus.
+     [ 3191 w1] The Otentesoi took Salelas from the Ixotoi.
+     [ 3191 w2] The Ixotoi are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [ 3191 w1] The Otentesoi won their war against the Ixotoi, and there was no one left to pay the tribute.
+     [ 3191 w2] In the lands about Healophor a new people arose, the Orepesasoi, descended from the Siphaphoi but no longer their subjects.
+     [ 3191 w2] In the first songs of the Orepesasoi, the god was the Lightning-Handed.
+     [ 3195 w1] So many people lived in Remaxireum that no one could count them, though the scribes tried.
+     [ 3199 w1] A sickness came to Maskrepostra by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 3201 w1] The Kleseloi entered the age of the hidden fire, with both hope and fear.
+     [ 3202 w1] A power plant now stands at Lethera, where before there was only mud and opinion. It was the first power plant of the Kleseloi.
+     [ 3210 w1] Of the smaller things of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3210 w1] Sepikras became a great city, a sea of roofs from one horizon to the other.
+     [ 3211 w1] Dalfelex swallowed the villages around it and became a great city of the Otentesoi.
+     [ 3211 w1] The mountain west of Philosanthe woke and wept fire.
+     [ 3212 w1] Among the Otentesoi, mothers who had once told their children of the God of Our Fathers now told them of the Mountain-Maker.
+     [ 3215 w1] In Teitrolis they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 3218 w1] The Siphaphoi and the Dirasmoi were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 3219 w1] Ash hid the sun from Ember Vale, the summers did not come, and Ralsarosaxis went hungry, and many places besides.
+     [ 3223 w1] The fire-mountain in the pine woods west of Philosanthe fell asleep again.
+     [ 3231 w2] The Siphaphoi counted their dead and their ruined fields, and decided that the Orepesasoi must have turned Elaxeus against them. They went to undo it with spears.
+     [ 3232 w2] Leditra grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 3233 w1] The Kleseline kings swore an oath against the Dirasmoi, and there was war.
+     [ 3234 w1] The houses of Omeirtalos reached the old boundary stones and did not stop. From this year the Dirasmoi call it a great city.
+     [ 3237 w1] The banners of the Siphaphoi were raised over Ipamilion.
+     [ 3238 w1] Losakrakeum was left empty. Its people had gone to the bigger towns.
+     [ 3239 w1] The Dirasmoi marched into Lethera, and the town paid tribute from that day.
+     [ 3239 w1] Kosseti was lost by the Dirasmoi and won by the Kleseloi, and its market changed hands with it.
+     [ 3240 w1] The chronicle, which cannot write everything, notes only that in those thirty years Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 3244 w1] Lethera fell to the Kleseloi, and its people learned new songs.
+     [ 3245 w2] The sea was rising, and this time not by any god's hand: the chimneys of the Siphaphoi had warmed the air, and the ice was giving back its water.
+     [ 3250 w2] Ember Vale grew hot as a kiln. The old crops failed and new deserts grew.
+     [ 3252 w1] In those lean years Phonetusion ate its oxen, and then its dogs.
+     [ 3253 w3] In the 3253rd year the Dirasmoi lit a second sun over Ethope. It rose at noon and did not set gently. Afterwards both peoples were very quiet for a long time.
+     [ 3253 w2] Again the sun-fire fell, this time upon Denethareron.
+     [ 3253 w2] The Kleseloi burned Krisalsi of the Dirasmoi with the hidden fire.
+     [ 3253 w2] The fire of the Kleseloi came down on Paxariseum, and the sky over the Dirasmoi was black for a season.
+     [ 3253 w1] The Kleseloi and the Dirasmoi laid down their arms. Nothing had changed but the number of graves.
+     [ 3254 w1] In Ketonealo they said the god was deaf, and let the shrine fall into ruin.
+     [ 3256 w1] The dust of the sky fell on the fields of Maskrepostra like a second winter, and there was nothing to harvest but straw.
+     [ 3256 w1] Krokrusma was abandoned.
+     [ 3261 w1] Settlers of the Siphaphoi went out from Tephatere and made a new home at Keisnopha.
+     [ 3261 w1] Phonetusion shrank to a city. Its walls were too big for it now.
+     [ 3261 w1] The Orepesasoi were beaten, and the Siphaphoi took their best fields.
+     [ 3270 w1] Among the small news of those thirty years: lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3270 w1] Ox-carts began to creak along the road from Keisnopha to Eposophor, loaded with grain and gossip.
+     [ 3271 w1] It is written that Phinetekent began as a ring of tents on the shore, raised by wanderers from Proxeumostra.
+     [ 3276 w2] The last families left Phinetekent, and grass grew in its streets.
+     [ 3281 w1] Lightning walked on the hills north-east of Leimatha, and the priests of the great city read it as a sign.
+     [ 3281 w1] Fire ran through the woods north-east of Leimatha.
+     [ 3282 w1] In the 3282nd year the Otentesoi remembered an old insult from the Dirasmoi, and went to war over it.
+     [ 3285 w2] Rorakaxent opened its gates to the Dirasmoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 3287 w1] Some of the people of Eustrikes grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Dikaphane.
+     [ 3287 w1] Dikaphane grew from a camp into a village.
+     [ 3292 w1] Lightning struck north-west of Ekamoteira in a summer storm.
+     [ 3293 w1] The merchants of Dikaphane found a road to Remaxireum, and kept the secret of it for a while.
+     [ 3296 w3] Osilophor was left empty. No one could say exactly when.
+     [ 3298 w1] The harvest failed at Lematalos; the children grew thin.
+     [ 3300 w1] And there were small things, as there always are: Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 3300 w2] The Dirasmoi burned Puphales of the Otentesoi with the hidden fire.
+     [ 3300 w2] Again the sun-fire fell, this time upon Tassenas.
+     [ 3300 w2] The fire of the Otentesoi came down on Krisalsi, and the sky over the Dirasmoi was black for a season.
+     [ 3300 w2] The Otentesoi burned Kosiphane of the Dirasmoi with the hidden fire.
+     [ 3300 w1] The war of the Otentesoi and the Dirasmoi wore itself out, like a fire with nothing left to burn.
+     [ 3301 w1] A great storm walked in from the sea and stood over Klarurthalos for three days, and the roofs learned to fly.
+     [ 3305 w1] Keisnopha outgrew its walls twice and became a city of the Siphaphoi.
+     [ 3311 w1] In the 3311th year, a band went out from Phirmaphi with seed corn and quarrels enough for a new town, and founded Ploneuphane by the water.
+     [ 3316 w2] The long quarrel between the Kleseloi and the Oslalxanoi came to blood.
+     [ 3316 w1] The Kleseloi made war on the Orepesasoi.
+     [ 3323 w1] In the 3323rd year the Kleseloi raised a power plant at Strasephu, and were proud of it for one generation, which is the usual length of pride.
+     [ 3323 w1] No rain fell on the lands of Martralan. The river showed its stones, and the people counted them.
+     [ 3325 w1] In a night of thunder a bolt came down on the dry grasslands north-west of Ketonealo, and the dogs of the great city howled until dawn.
+     [ 3325 w1] The dry grasslands north-west of Ketonealo burned, and the sky over the great city was brown for days.
+     [ 3328 w1] The Siphaphoi made war on the Oslalxanoi, saying that a people the god punishes must punish someone in turn. The chronicle records the saying, not the sense in it.
+     [ 3328 w1] The Siphaphoi had been struck by the Lightning-Handed and could not strike back at the sky. They struck at the Orepesasoi instead.
+     [ 3329 w1] Clouds came back over Martralan, and the dry river filled in a single night.
+     [ 3330 w1] Those were busy years, if not great ones: hunger came to seven towns of the Dirasmoi, and lightning from Elaxeus fell on the lands of the Siphaphoi seven times.
+     [ 3330 w1] After fourteen years the Orepesasoi asked for peace, and the Kleseloi granted it, and made them pay for the asking.
+     [ 3331 w2] The banners of the Siphaphoi were raised over Phamismar.
+     [ 3332 w1] The Siphaphoi won their war against the Oslalxanoi.
+     [ 3332 w1] The war ended in victory for the Kleseloi. In Ethope there were feasts for a month.
+     [ 3337 w1] Generations passed and the Kleseloi saw nothing of the Lightning-Handed; they began to call the god the Silent One.
+     [ 3338 w1] The spotted fever broke out in Kosiphane, and its gates were shut.
+     [ 3338 w1] In Derixasenth the people sickened, and the roads to it were empty.
+     [ 3341 w1] Ploneuphane grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 3341 w2] The Orepesasoi dwindled and were gone, and no one spoke their tongue any longer.
+     [ 3341 w1] The Siphaphoi had won: of the Orepesasoi there was no one left to ask for peace.
+     [ 3341 w2] The Siphaphine settlers about Plikorthalos had been apart too long. They took a new name, Dallosnu, and went their own way.
+     [ 3341 w2] The Dallosnoi began to speak of Elaxeu as the Lightning-Handed.
+     [ 3349 w1] The feet of traders wore a road between Ploneuphane and Herokeuphane. Along it went pots and coins and, later, fevers.
+     [ 3350 w1] The sky over Strasephu cracked open with fire, and the rain that followed was warm.
+     [ 3354 w1] For fifteen years Derixasenth prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 3358 w2] The Otentesoi sharpened their spears and went against the Dallosnoi, though no one could remember who had struck first.
+     [ 3360 w1] Another thirty years went into the book, and in them Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 3363 w1] Walls of cut stone went up around Dikaphane, and the Siphaphine scribes began to call it a city.
+     [ 3363 w1] The engines of Dikaphane began to turn, and their noise did not stop at night.
+     [ 3364 w1] The Siphaphoi gave up Tounola, and the wind had it.
+     [ 3377 w1] Assexeunerax was founded in the woods by the Dirasmoi, who had grown too many for Liosophor.
+     [ 3378 w1] Children were born at Assexeunerax who had never lived anywhere else, and it became a village.
+     [ 3378 w1] Assexeunerax built a small shrine on the hill above the fields, and kept a fire burning in it.
+     [ 3383 w2] No one destroyed Dikaphane. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3384 w1] Plikorthalos gave up asking Elaxeu for peace. They learned to manage without.
+     [ 3387 w2] The Otentesoi took Plikorthalos from the Dallosnoi.
+     [ 3387 w1] The armies of the Otentesoi came home in triumph to Puphales, and the Dallosnoi swore to remember.
+     [ 3387 w1] Wanderers from Phapounolion came to Tetotalos and stayed.
+     [ 3389 w1] Laxapo was abandoned.
+     [ 3389 w1] Tetotalos grew until a man could get lost in it, and they called it a town.
+     [ 3390 w1] Between the greater deeds of those thirty years, lightning from Elaxeus fell on the lands of the Siphaphoi seven times.
+     [ 3390 w1] There was famine in Dorapan. The people looked up and asked the Lightning-Handed for rain, and counted the days, and the days were long.
+     [ 3395 w1] Merchants of the Dirasmoi reached Onapomene of the Dallosnoi, and the two peoples traded cloth for copper.
+     [ 3401 w1] Famine came to Tetotalos.
+     [ 3401 w1] Black clouds came over Elotimene from the sea, and the river ran brown for days.
+     [ 3404 w1] The wise of the Siphaphoi could not stay the god's hand, so they pointed at the Dallosnoi. The young took the hint, and their spears.
+     [ 3408 w1] Hunger came to Keoxophor and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3411 w1] After seven years the Dallosnoi asked for peace, and the Siphaphoi granted it, and made them pay for the asking.
+     [ 3417 w1] The scribes of the Dirasmoi began to write Assexeunerax with the sign for 'city', and its people were insufferable about it.
+     [ 3417 w1] Assexeunerax built its first manufactory, and the smiths grumbled.
+     [ 3420 w1] In those thirty years Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 3424 w1] A tree at Tiaxostra was split by lightning. The children of the great city dared each other to touch it.
+     [ 3440 w2] A coughing sickness came to Sopeosion in the spring, and lingered.
+     [ 3443 w1] There was an earthquake north of Rorakaxent, and the people of the great city slept outside for a month.
+     [ 3445 w2] The Oslalxanoi split the smallest thing in the world, and found a fire inside it.
+     [ 3446 w1] At Tokraphexion the hidden fire was put to work, and the lamps of a whole country were lit from it. No one among the Oslalxanoi had built a power plant before.
+     [ 3446 w1] At Rorakaxent there was hunger, three years running.
+     [ 3448 w1] The last families left Makrinesmene, and grass grew in its streets.
+     [ 3450 w1] Over thirty years, and hardly worth a line each time, lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 3451 w1] In the 3451st year the granaries of Letrileimene rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 3456 w1] The people of Sopeosion stopped praying for healing; Elaxeus had not answered them.
+     [ 3456 w1] The plague left Sopeosion as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 3458 w1] The rains forgot the country of Pasiphumene. The children grew up not knowing the smell of rain.
+     [ 3461 w1] There were too many mouths in Pasiphumene and too little bread, and the weak did not see the spring.
+     [ 3461 w1] Hunger walked the streets of Toxia, and the Otentesoi sold their tools for grain.
+     [ 3466 w1] Wind and rain beat upon Paxariseum for three days, and the boats were thrown up on the fields.
+     [ 3467 w1] The rains came back to Pasiphumene, and the Siphaphoi said the god had relented.
+     [ 3467 w1] Pletisimene became a great city such as the world had not seen, numberless as ants.
+     [ 3472 w2] The Otentesoi marched against the Oslalxanoi, and the fields were left unharvested.
+     [ 3472 w1] War came between the Otentesoi and the Dallosnoi, the old enemies.
+     [ 3474 w1] Salelas and Toxia began to trade, wine for wool, and both grew fat on it.
+     [ 3477 w3] The last of the Dallosnoi passed from the world, and only their ruins remember them.
+     [ 3477 w1] The war ended when there were none of the Dallosnoi left to fight it.
+     [ 3477 w2] Far from their old capital, the people about Oxutalos began to call themselves the Endolenoi, and paid no more taxes to the Dirasmoi.
+     [ 3477 w2] Among the Endolenoi the god was named the Lightning-Handed.
+     [ 3480 w1] The scribes, counting rather than writing, set down that in thirty years Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 3480 w2] The fields about Tatrenas could not feed it any longer. The priests asked Elaxeus for bread.
+     [ 3480 w1] Lightning walked on the hills outside Phamismar, and the Siphaphoi stayed indoors.
+     [ 3482 w1] In the 3481st year the first caravan came from Keisnopha to Temelophor, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 3487 w1] The Otentesoi won their war against the Oslalxanoi.
+     [ 3492 w1] Envoys of the Kleseloi threw down their staffs before the Oslalxanoi, and the war began.
+     [ 3500 w1] In Tassenas they still tell of the great wind, which carried a goat over the temple.
+     [ 3502 w2] Of the Oslalxanoi, who once held Oretrolaxis, nothing remained but names.
+     [ 3502 w1] The Kleseloi won their war against the Oslalxanoi, and there was no one left to pay the tribute.
+     [ 3502 w2] In the lands about Komophane a new people arose, the Meumerinoi, children of the Siphaphoi but no longer their subjects.
+     [ 3502 w2] In the first songs of the Meumerinoi, the god was the Lightning-Handed.
+     [ 3510 w1] Below the great events of those thirty years, lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3510 w2] Their towns burned under a clear sky, and the Siphaphoi would not believe it was for nothing. Someone had offended the Lightning-Handed, they said, and it must have been the Endolenoi.
+     [ 3519 w1] The Endolenoi were beaten, and the Siphaphoi took their best fields.
+     [ 3522 w1] War between the Kleseloi and the Meumerinoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 3527 w1] Thunder rolled over Lokresnor, and lightning fell north-west of the city.
+     [ 3527 w1] That summer a fire ate the pine woods north-west of Lokresnor.
+     [ 3538 w2] The Kleseloi marched into Komophane, and the town paid tribute from that day.
+     [ 3539 w1] The war ended in victory for the Kleseloi. The Meumerinoi paid tribute for a generation.
+     [ 3540 w1] Little of those thirty years was written down, except that Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 3541 w1] A tremor ran through the land about Sopeosion, and the old wall finally came down.
+     [ 3542 w1] A grey wave as tall as a temple broke over the fields of Sopeosion, and salt lay on them for years.
+     [ 3544 w2] A fire-mountain was born on the dry grasslands north-west of Herokeuphane, and the sky above the great city turned black.
+     [ 3544 w1] The sea drew back from the shore at Phapounolion, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [ 3545 w1] The country north-west of Herokeuphane burned for many days, and the smoke hung over the great city.
+     [ 3545 w1] Many left Rorakaxent, and it was a city again.
+     [ 3545 w1] A vein of ore was found above Herokeuphane, and the town grew loud with hammers.
+     [ 3546 w1] The Otentesoi and the Kleseloi could no longer share the river. They tried to share it with spears instead.
+     [ 3548 w1] The priests of the Siphaphoi said the god was punishing them for the wickedness of the Meumerinoi. The young believed it, and there was war.
+     [ 3549 w1] The sun was a pale coin behind the dust, and the granaries of Maskrepostra stood empty. The Dirasmoi remembered those years as the hungry ones.
+     [ 3549 w1] Half the houses of Herokeuphane stood empty, and it was no more than a city.
+     [ 3553 w1] A grey sickness settled on Ipamilion. The healers burned herbs day and night.
+     [ 3554 w1] Among the Kleseloi the god was no longer the Silent One but the Lightning-Handed, and the old name was forgotten.
+     [ 3556 w1] The armies of the Siphaphoi came home in triumph to Ekamoteira, and the Meumerinoi swore to remember.
+     [ 3559 w1] A storm passed over Tephatere, and lightning killed a herd of goats east of the great city.
+     [ 3567 w1] The Otentesoi were beaten, and the Kleseloi took their best fields.
+     [ 3569 w1] In Ipamilion the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 3570 w1] Lightning from Elaxeus fell on the lands of the Siphaphoi six times. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 3571 w1] The Siphaphoi counted their dead and their ruined fields, and decided that the Endolenoi must have turned Elaxeus against them. They went to undo it with spears.
+     [ 3572 w1] Ten thousand hearths burned in Herokeuphane. It was a city now, and it knew it.
+     [ 3576 w1] Ox-carts began to creak along the road from Ploneuphane to Asneation, loaded with grain and gossip.
+     [ 3579 w2] The Endolenoi faded and were gone, and other peoples walked in their streets.
+     [ 3579 w1] The Siphaphoi had won: of the Endolenoi there was no one left to ask for peace.
+     [ 3579 w2] From the Otentesoi came the Kresimeroi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [ 3579 w2] The Kresimeroi called the god who had woken their fathers the Lightning-Handed.
+     [ 3587 w1] In those lean years Tetotalos ate its oxen, and then its dogs.
+     [ 3590 w1] Lightning struck in the woods south-west of Liosophor in a summer storm.
+     [ 3600 w1] Of the smaller things of those thirty years: Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 3607 w1] In Sopeosion the ground cracked like old pottery, and the Otentesoi carried water from far away.
+     [ 3615 w2] When the anger of Elaxeus fell on the Siphaphoi, they looked for someone to blame, and found the Meumerinoi. The war began that summer.
+     [ 3616 w1] In a night of thunder a bolt came down in the deep forest south-west of Oxameante, and in the morning the shepherds found the stones blackened.
+     [ 3616 w1] The country south-west of Oxameante burned for many days, and the smoke hung over the great city.
+     [ 3619 w1] Green came back to the fields of Sopeosion, and the wells were sweet again.
+     [ 3624 w2] Taxeanthe was lost by the Meumerinoi and won by the Siphaphoi, and its market changed hands with it.
+     [ 3624 w2] The Meumerinoi are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [ 3624 w2] The Siphaphoi won their war against the Meumerinoi, and there was no one left to pay the tribute.
+     [ 3624 w2] The Kleseline settlers about Kenesoumene had been apart too long. They took a new name, Kepamin, and went their own way.
+     [ 3624 w2] The Kepaminoi began to speak of Elaxeu as the Thunderer.
+     [ 3630 w1] The chronicle, which cannot write everything, notes only that in those thirty years lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3630 w2] The lamps of Herokeuphane drowned out the stars: it had become a great city of the Siphaphoi.
+     [ 3638 w1] A road was opened between Assexeunerax of the Dirasmoi and Kesite of the Kresimeroi, and strange coins began to turn up in both markets.
+     [ 3640 w3] The Dirasmoi turned their eyes to the stars, and built towers of fire to reach them. No people had done so before them.
+     [ 3640 w2] The ground at Kenokaimerax heaved like the sea. The Dirasmoi said Elaxeus had stamped upon the earth.
+     [ 3641 w1] In the 3641st year the Dirasmoi stopped calling their god the Spear of Heaven. From now on, in the market and at the hearth, it was the Shaker of Floors.
+     [ 3644 w1] Merchants of Liphexameum reached Kesite and found that the people there were also people. This was thought remarkable, and then useful.
+     [ 3654 w1] So many people lived in Lokresnor that no one could count them, and so they stopped trying.
+     [ 3660 w1] Outside Paxariseum, on flat ground swept clean, the Dirasmian builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+     [ 3660 w3] At Paxariseum the Dirasmoi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3661 w1] The harvest failed at Tatrenas; the children grew thin.
+     [ 3662 w1] In the 3662nd year Kosseti could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 3664 w1] The sky over Denethareron cracked open with fire, and the rain that followed was warm.
+     [ 3664 w1] Fire walked through the woods south of Denethareron, and the Kleseloi prayed for rain.
+     [ 3666 w2] The Otentesoi put down the tools of their mothers and took up the tools of the Age of the Stars. The Mountain-Maker watched, and did not say whether this was wise.
+     [ 3670 w1] Among the small news of those thirty years: Elaxeus threw lightning at the lands of the Dirasmoi five times.
+     [ 3673 w1] The Otentesian kings swore an oath against the Dirasmoi, and there was war.
+     [ 3673 w1] The sea sent a howling wind against Maskrepostra, and it took the thatch from every roof.
+     [ 3674 w1] The Otentesoi marched against the Kresimeroi, and the fields were left unharvested.
+     [ 3675 w1] The first ship of the Siphaphoi went up beyond the sky and came back, and its sailors spoke of the world as a small blue stone.
+     [ 3676 w1] There was famine in Strasephu. The people looked up and asked the Lightning-Handed for rain, and counted the days, and the days were long.
+     [ 3677 w1] Keisnopha became a great city, a sea of roofs from one horizon to the other.
+     [ 3678 w1] The Otentesian priests gave the god a new name: the God of Our Fathers.
+     [ 3680 w2] Salelas swallowed the villages around it and became a great city of the Otentesoi.
+     [ 3681 w1] The Dirasmoi had called the god the Shaker of Floors. After what they had seen, they called the god the Spear of Heaven.
+     [ 3685 w1] After eleven years the Kresimeroi asked for peace, and the Otentesoi granted it, and made them pay for the asking.
+     [ 3686 w1] A launch field was cleared at Puphales, and the Otentesoi began to speak of leaving.
+     [ 3686 w1] The Kresimeroi reached the edge of heaven, and looked back at Ember Vale.
+     [ 3686 w2] The Otentesoi laid the keel of a great ship at Puphales, a ship for the space between the stars.
+     [ 3687 w1] The Dirasmoi won their war against the Otentesoi.
+     [ 3695 w1] The Siphaphoi built a great tower of fire at Ekamoteira. Its makers looked up at night, and the god could not tell whether they were longing or afraid.
+     [ 3695 w2] At Ekamoteira the Siphaphoi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3700 w1] And there were small things, as there always are: lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3706 w1] At Plikorthalos, the Kresimeroi built a tower to throw ships at the stars.
+     [ 3706 w2] The Kresimeroi laid the keel of a great ship at Plikorthalos, a ship for the space between the stars.
+     [ 3710 w1] There was drought in the country of Teitrolis, and the Dirasmoi looked at the sky every morning.
+     [ 3713 w1] Famine came to Teitrolis.
+     [ 3720 w1] Rain returned to Teitrolis at last.
+     [ 3720 w1] Phosaipophor grew into a city of towers, its lights seen from the next valley.
+     [ 3721 w1] A tree near Pirikrineron was split by lightning. The children of the great city dared each other to touch it.
+     [ 3730 w1] Another thirty years went into the book, and in them Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 3732 w2] So many children were born in Rorakaxent that the elders gave up learning their names. Thus it became a great city.
+     [ 3733 w1] The earth groaned under Tephatere, and the temple bell rang by itself.
+     [ 3733 w1] A wall of water came out of the sea upon Tephatere.
+     [ 3734 w1] Elotimene became a great city such as the world had not seen, numberless as ants.
+     [ 3741 w2] The Otentesoi made war on the Kresimeroi.
+     [ 3745 w1] Lightning struck south-west of Kaskupesaxis in a summer storm.
+     [ 3745 w1] A red night: the woods south-west of Kaskupesaxis burned, and ash fell on the great city.
+     [ 3750 w1] The lamps of Ralsarosaxis drowned out the stars: it had become a great city of the Siphaphoi.
+     [ 3751 w2] The war ended in victory for the Otentesoi. In Puphales there were feasts for a month.
+     [ 3751 w1] A great storm walked in from the sea and stood over Oxameante for three days, and the roofs learned to fly.
+     [ 3755 w1] A new thing was learned at Ethope, and then everywhere. So the Age of the Stars began among the Kleseloi.
+     [ 3755 w1] In the 3755th year the Kleseloi remembered an old insult from the Dirasmoi, and went to war over it.
+     [ 3760 w1] Between the greater deeds of those thirty years, lightning from Elaxeus fell on the lands of the Siphaphoi five times.
+     [ 3760 w1] In Proxeumostra they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 3772 w1] Envoys went back and forth between the Siphaphoi and the Dirasmoi until they had worn a road, and at the end of it was an alliance.
+     [ 3775 w1] A launch field was cleared at Ethope, and the Kleseloi began to speak of leaving.
+     [ 3775 w2] At Ethope the Kleseloi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3776 w1] The prayers of Proxeumostra went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 3776 w1] The sickness went out of Proxeumostra at last, and the bells rang for the living as well as the dead.
+     [ 3777 w1] The armies of the Dirasmoi came home in triumph to Paxariseum, and the Kleseloi swore to remember.
+     [ 3778 w1] A hard sun stood over Komophane year after year, and the barley died standing.
+     [ 3781 w1] Merchants began to travel between Keoxophor and Phosaipophor, bringing salt and news.
+     [ 3781 w2] At Ipamilion there was hunger, three years running.
+     [ 3785 w1] The drought about Komophane broke, and the children ran out into the rain.
+     [ 3790 w1] Over thirty years, and hardly worth a line each time, Elaxeus threw lightning at the lands of the Siphaphoi six times.
+     [ 3791 w1] Thunder rolled over Missephamene, and lightning fell in the woods west of the great city.
+     [ 3791 w1] A wildfire came close to Missephamene, and the children watched it from the roofs.
+     [ 3795 w2] The Kepaminoi put down the tools of their mothers and took up the tools of the Age of the Stars. The Thunderer watched, and did not say whether this was wise.
+     [ 3800 w1] So many people lived in Taxeanthe that no one could count them, and so they stopped trying.
+     [ 3815 w1] Outside Kenesoumene, on flat ground swept clean, the Kepaminian builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+     [ 3815 w2] The Kepaminoi laid the keel of a great ship at Kenesoumene, a ship for the space between the stars.
+     [ 3816 w1] The old alliance of the Siphaphoi and the Dirasmoi came apart over a small matter, as old alliances do.
+     [ 3820 w1] In those thirty years lightning from Elaxeus fell on the lands of the Siphaphoi seven times.
+     [ 3826 w1] Lightning walked on the hills south-east of Sopeosion, and the Otentesoi stayed indoors.
+     [ 3826 w1] Fire ran through the pine woods south-east of Sopeosion.
+     [ 3845 w2] The Otentesoi still kept the shrines, but the priests now spoke of the Sleeper, not the God of Our Fathers.
+     [ 3848 w1] The Otentesoi sharpened their spears and went against the Dirasmoi, though no one could remember who had struck first.
+     [ 3848 w1] The river by Axepomene shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 3850 w1] The scribes, counting rather than writing, set down that in thirty years Elaxeus threw lightning at the lands of the Siphaphoi five times.
+     [ 3852 w2] Tetotalos fell to the Otentesoi, and its people learned new songs.
+     [ 3853 w1] The long quarrel between the Otentesoi and the Kresimeroi came to blood.
+     [ 3854 w1] The god did nothing that the Kleseloi could see for longer than anyone remembered, and the Lightning-Handed became the Silent One.
+     [ 3855 w1] Keoxophor became a city, the pride of the Siphaphoi.
+     [ 3855 w1] Chimneys rose over Keoxophor, and the sky above it turned grey.
+     [ 3860 w1] The long thirst of Axepomene ended in a storm, and the Kleseloi danced in the mud.
+     [ 3862 w1] A storm passed over Oxutalos, and lightning split an old tree at the great city.
+     [ 3863 w2] The Dirasmoi won their war against the Otentesoi.
+     [ 3863 w1] After ten years the Otentesoi asked for peace, and the Kresimeroi granted it, and made them pay for the asking.
+     [ 3874 w1] In a night of thunder a bolt came down east of Kunoseuponos, and the dogs of the great city howled until dawn.
+     [ 3874 w1] The pine woods east of Kunoseuponos burned, and the Dirasmoi watched the glow at night.
+     [ 3877 w1] A new village of the Dirasmoi, Pluklipa, was raised in the woods, a few days' walk from Kamuni.
+     [ 3877 w1] The tents of Pluklipa gave way to houses of timber, and it was called a village.
+     [ 3877 w1] The Dirasmoi set up a shrine at Pluklipa, and left bread there for the god.
+     [ 3879 w1] Generations passed and the Kresimeroi saw nothing of the Lightning-Handed; they began to call the god the Empty Chair.
+     [ 3879 w1] The spotted fever broke out in Asneation, and its gates were shut.
+     [ 3880 w1] Little of those thirty years was written down, except that lightning from Elaxeus fell on the lands of the Siphaphoi six times.
+     [ 3886 w1] The earth shook south-east of Anitoterax.
+     [ 3893 w1] A band from Kaskupesaxis crossed the country and founded Mulaphir in the pine woods.
+     [ 3893 w1] The camp at Mulaphir put down roots and became a village.
+     [ 3893 w1] The headmen of Mulaphir ordered a tithe of every harvest kept in a great barn, against the bad years.
+     [ 3894 w3] From Ekamoteira, the Siphaphoi went up into the sky on a pillar of fire, carrying seed and songs and the name of Elaxeus. Those who stayed watched until the light was a star among stars.
+     [ 3894 w3] In the 3894th year the Siphaphoi fled Ember Vale. They built the ship in secret, as far as anything can be secret from a god, and they launched it at night. They did not pray as they rose. On the new world, the mothers will tell the children of the Lightning-Handed, who lived in the sky of the old one, and the children will sleep with the lamp lit, and grow up, and build their houses low.
+
+simrun: 1 run(s) in 661.7 s wall, no non-finite values

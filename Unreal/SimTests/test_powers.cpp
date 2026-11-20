@@ -1207,3 +1207,83 @@ DM_TEST("powers: maps of brush strokes (rain wet, fertility, sculpt amounts) at 
 	eq(seaWet, 0, "no rain on the sea");
 	ok(maxUp > 1 && maxDown < -1, "genesis strokes moved the ground");
 }
+
+DM_TEST("powers (chronicle-diplomacy): a wide Omen calms the people's tense neighbours too, leaves no envy, and may wake in Bronze") {
+	stub::Guard guard(true);
+	if (!stub::stubbed("society") || !stub::stubbed("diplomacy")) return;
+	auto w = histWorld(5);
+	DiplomacyTune& DT = w->tune<DiplomacyTune>();
+	// the defaults keep the v3.1 Omen
+	ok(!DiplomacyTune{}.omenWide && !DiplomacyTune{}.omenNoEnvy && DiplomacyTune{}.omenAge == -1, "defaults: narrow Omen, favour counted, Iron");
+	const int c0 = culture(*w), c1 = culture(*w), c2 = culture(*w), c3 = culture(*w);
+	const int a = findLand(*w, [&](int c) { return w->coast[size_t(c)] >= 3; });
+	const int s0 = town(*w, a, c0, 500);
+	const int b = landAway(*w, { a }, 0.3);
+	const int s1 = town(*w, b, c1, 500);
+	const int d = landAway(*w, { a, b }, 0.3);
+	const int s2 = town(*w, d, c2, 500);
+	const int e = landAway(*w, { a, b, d }, 0.3);
+	const int s3 = town(*w, e, c3, 500);
+	// c0 at war with c1; c2 on the brink with c0 (tense); c3 has nothing to do with it
+	struct P { int a, b; double truce; };
+	std::vector<P> peaces;
+	auto startWar = [&] { society::rel(*w, c0, c1)->war = true; society::rel(*w, c0, c1)->v = -0.8; society::rel(*w, c0, c2)->v = -0.6; };
+	stub::hooks().society_makePeace = [&](World& ww, int x, int y, double truce, int) {
+		peaces.push_back({ x, y, truce });
+		Relation* r = society::rel(ww, x, y);
+		if (r->war) r->v = -0.1;
+		r->war = false;
+		r->truce = ww.year + truce;
+	};
+	stub::hooks().society_tense = [&](const World& ww, int c) {
+		std::vector<int> out;
+		const Relation* r = society::peek(ww, c, c2);
+		if (c == c0 && r && !r->war && r->v <= -0.4) out.push_back(c2);
+		return out;
+	};
+	auto witnessed = [&] {
+		std::vector<int> seen;
+		for (const WCall& k : wcalls()) seen.push_back(civ::at(*w, k.cell));
+		std::sort(seen.begin(), seen.end());
+		return seen;
+	};
+	// the v3.1 Omen: the war only; the tense neighbour waits; its witnesses feed the favour sums
+	startWar();
+	hookWitness();
+	ok(pw::use(*w, "peace", a), "the Omen over c0 at war");
+	eq(int(peaces.size()), 1, "narrow: one peace (the war)");
+	ok(witnessed() == (std::vector<int>{ s0, s1 }), "narrow: the two armies witness (" + show(witnessed()) + ")");
+	for (const WCall& k : wcalls()) ok(k.o.favour, "narrow: the favour is counted");
+	near(society::peek(*w, c0, c2)->v, -0.6, 1e-12, "the brink untouched");
+	// omenWide + omenNoEnvy: the war ends and the brink is calmed (its own 40-year truce, relations +0.4)
+	DT.omenWide = true;
+	DT.omenNoEnvy = true;
+	peaces.clear();
+	startWar();
+	hookWitness();
+	ok(pw::use(*w, "peace", a), "the wide Omen over c0 at war");
+	if (eq(int(peaces.size()), 2, "wide: the war and the brink")) {
+		eq(peaces[0].b, c1, "first the war");
+		near(peaces[0].truce, w->tune<PowersTune>().peaceTruce, 1e-12, "its 80-year truce");
+		eq(peaces[1].b, c2, "then the tense neighbour");
+		near(peaces[1].truce, DT.omenCalmTruce, 1e-12, "a calming truce");
+	}
+	near(society::peek(*w, c0, c2)->v, -0.6 + w->tune<PowersTune>().peaceRel, 1e-9, "the brink + peaceRel");
+	ok(witnessed() == (std::vector<int>{ s0, s1, s2 }), "wide: the armies and the calmed neighbour witness, not c3 (" + show(witnessed()) + ")");
+	for (const WCall& k : wcalls()) { ok(!k.o.favour, "no envy: no favour"); near(k.o.good, 0.8, 1e-12, "a war ended: good 0.8"); }
+	// with no war it calms the brink (as in v3.1), still without favour
+	peaces.clear();
+	society::rel(*w, c0, c2)->v = -0.6;
+	hookWitness();
+	ok(pw::use(*w, "peace", a), "the calming Omen");
+	eq(int(peaces.size()), 1, "the brink only");
+	for (const WCall& k : wcalls()) { ok(!k.o.favour, "no favour"); near(k.o.good, DT.omenCalmGood, 1e-12, "a war averted is felt less"); }
+	// omenAge: the Omen may wake in Bronze
+	w->age = Age::BRONZE;
+	ok(!pw::unlocked(*w, "peace"), "Bronze: asleep by its table (Iron)");
+	DT.omenAge = Age::BRONZE;
+	ok(pw::unlocked(*w, "peace"), "omenAge Bronze: awake");
+	w->age = Age::STONE;
+	ok(!pw::unlocked(*w, "peace"), "not in the Stone age");
+	(void)s3;
+}

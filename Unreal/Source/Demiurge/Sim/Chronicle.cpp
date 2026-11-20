@@ -98,6 +98,9 @@ struct ChronicleScratch {
 		// a lowered town before it emits power:used, so whose drowning it was is decided once the tick is over
 		bool drown = false;
 		int cell = -1, tier = 0;
+		// (chronicle-diplomacy) an alliance that ended (a < b cultures): a war between them declared in the same
+		// tick tells it as a betrayal instead (Diplomacy breaks the alliance just before it emits war:declared)
+		bool ally = false;
 	};
 	// (chronicle budget) the last write was folded into the decade's digest (it was told, in a way)
 	bool foldedLast = false;
@@ -110,6 +113,18 @@ struct ChronicleScratch {
 	int64_t omenTick = -1;
 	double omenYear = -1e9;
 	std::vector<int> omenCultures;
+	// (chronicle-diplomacy) the Omen of Peace cast this tick (power:used comes after its effect, before its
+	// witnesses): the people it was cast on, the town, and the neighbours on the brink it calmed (sworn to peace
+	// now, with no war ended between them); its witnesses tell it once, for that people
+	int64_t omenCastTick = -1;
+	double omenCastYear = -1e9;
+	int omenTarget = -1, omenSid = -1;
+	std::vector<int> omenCalmed;
+	bool omenTold = false;
+	// (chronicle-diplomacy verify) a peace prayer answered (and told) this tick: the answer took the war it ended
+	int64_t peaceAnsTick = -1;
+	double peaceAnsYear = -1e9;
+	int peaceAnsCulture = -1;
 };
 constexpr size_t kRecentTemplates = 10;
 
@@ -914,7 +929,7 @@ int budgetGate(World& w, const char* type, int weight, int culture, Tpl t, Tpl a
 	// their own bucket allows
 	const bool tellable = weight >= 2 && (S.tellNext || ty == "destroyed" || ty == "war" || ty == "peace" || (ty == "age" && weight == 2) ||
 		ty == "prophet" || ty == "prophet-died" || ty == "edict" || ty == "miracle-heal" || ty == "miracle-inspire" ||
-		ty == "miracle-peace" || ty == "wrath-plague");
+		ty == "miracle-peace" || ty == "wrath-plague" || ty == "alliance");
 	S.tellNext = false;
 	// (verify) a people born or dead is epochal while the epochal bucket allows, else notable (never minor): five
 	// peoples born in one Bronze age were 1.4 epochal entries a real minute
@@ -1294,6 +1309,37 @@ const char* const kOmenPeace[] = {
 	"An omen of peace was seen over {s}, and {c} laid down their spears.",
 	"[A white light|A great calm] lay over {s} for a day, and {c} [could not remember why they had been angry|sent envoys instead of armies].",
 	"{g} spoke peace over {s}, and for once {c} listened.",
+};
+// (chronicle-diplomacy) the calming Omen (no war yet): {c} the people the Omen was cast on, {c2} the neighbour on
+// the brink it calmed, {s} the town it was cast over, {ep} / {g} the god of {c}
+const char* const kOmenCalm[] = {
+	"{c} and {c2} had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.",
+	"Before {c} and {c2} could come to blows, {ep} set a light over {s}. Both peoples took it for a warning, and neither wished to be the first to ignore it.",
+	"The quarrel of {c} and {c2} was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.",
+	"A great calm settled on the border of {c} and {c2}. The young, who had been ready to fight, went home and were annoyed about it for years.",
+	"{ep} set a ring of light around the noon sun over {s}. {c} and {c2}, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them.",   // (verify) shorter: with a suffix it ran to 50 words
+	"The envoys of {c} had come to {c2} to declare a war. They saw the sign over {s}, and declared a feast instead.",
+	"Neither {c} nor {c2} would give way, and the war was a summer off, when {g} set a sign between them. That summer the spears stayed in their racks, and so did the next.",
+};
+// ... and its other neighbours on the brink, {others} (suffix of kOmenCalm)
+const char* const kOmenCalmMore[] = {
+	" The same calm came over {others}.",
+	" {others} saw it too, and put away their own grievances.",
+};
+// ... and the Omen that ended a war calmed other neighbours too, {others} (suffix of kOmenPeaceWar)
+const char* const kOmenWarCalmMore[] = {
+	" Even {others}, who had been spoiling for a fight with them, put their grievances away.",
+	" The sign was seen as far as the lands of {others}, and there too the spears were put away.",
+};
+// (chronicle-diplomacy verify) ... and the allies who had joined its war, {allies}, made the same peace (the league
+// makes peace together: Diplomacy ends the wars they joined with it); with or without calmed neighbours {others}
+const char* const kOmenWarAllies[] = {
+	" The allies of {c}, {allies}, went home with them.",
+	" {allies}, who had marched to the war as allies of {c}, made the same peace.",
+};
+const char* const kOmenWarAlliesCalm[] = {
+	" The allies of {c}, {allies}, went home with them, and even {others}, who had been spoiling for a fight, put their grievances away.",
+	" {allies}, who had marched to the war as allies of {c}, made the same peace, and the sign was seen as far as the lands of {others}.",
 };
 // the omen seen by a people at war: {c2} is the enemy they were fighting
 const char* const kOmenPeaceWar[] = {
@@ -1805,7 +1851,8 @@ const char* const kWarDeclared[] = {
 	"The {ca} kings swore an oath against {c2}, and there was war.",
 	"The long quarrel between {c} and {c2} came to blood.",
 	"Envoys of {c} [threw down their staffs|spat on the threshold] before {c2}, and the war began.",
-	"{c} sharpened their spears and went against {c2}, [saying the god was with them|though no one could remember who had struck first].",
+	// (chronicle-diplomacy) the god is named in a war only when the people blamed it (kWarStruck / kWarEnvied)
+	"{c} sharpened their spears and went against {c2}, though no one could remember who had struck first.",
 	"War came between {c} and {c2}, [the old enemies|who had once traded salt and songs].",
 };
 const char* const kWarDraw[] = {
@@ -1828,6 +1875,74 @@ const char* const kWarWon[] = {
 	"The war ended in victory for {c}. [{c2} paid tribute for a generation.|In {s} there were feasts for a month.]",
 	"{c2} were beaten, and {c} [took their best fields|carried their temple bells home in carts].",
 	"The armies of {c} came home in triumph to {s}, and {c2} [counted what they had lost|swore to remember].",
+};
+// (chronicle-diplomacy) war:declared.blamed: the aggressor's people blamed the god for the war. {c} the
+// aggressor, {c2} the attacked, {g} / {ep} the aggressor's god. kWarStruck: the god's anger had fallen on them
+// ("the god struck us"); kWarEnvied: the god had favoured {c2} over them ("the god favoured them").
+const char* const kWarStruck[] = {
+	"{IN}{c} said that {ep} had turned against them, and that {c2} were the reason. They went to war to set it right.",
+	"When the anger of {g} fell on {c}, they looked for someone to blame, and found {c2}. The war began that summer.",
+	"{c} had been struck by {ep} and could not strike back at the sky. They struck at {c2} instead.",
+	"The priests of {c} said the god was punishing them for the wickedness of {c2}. The young believed it, and there was war.",
+	"{c} counted their dead and their ruined fields, and decided that {c2} must have turned {g} against them. They went to undo it with spears.",
+	"Their towns burned under a clear sky, and {c} would not believe it was for nothing. Someone had offended {ep}, they said, and it must have been {c2}.",
+	"The wise of {c} could not stay the god's hand, so they pointed at {c2}. The young took the hint, and their spears.",
+	"{c} made war on {c2}, saying that a people the god punishes must punish someone in turn. The chronicle records the saying, not the sense in it.",
+};
+const char* const kWarEnvied[] = {
+	"{IN}{c} saw how {ep} smiled on {c2}, and could not bear it. They went to war to take the god's favour by the spear.",
+	"The gifts of {g} fell on {c2} and passed {c} by, and {c} said this was not just. They crossed the border to take their share.",
+	"{c} grew jealous of {c2}, whom {ep} seemed to love better, and went to war to be loved instead. The chronicle does not record that it worked.",
+	"Envy is a slow fire. Among {c} it had burned for a generation, watching {g} bless {c2}, and at last it reached the spears.",
+	"\"Why them?\" {c} asked, of the god and of {c2}. The god did not answer, so they asked {c2} with an army.",
+	"{c} said that {ep} loved {c2} too well, and that a little of that love could be taken by force.",
+	"{g} blessed the fields of {c2} and not the fields of {c}. So {c} went to take the fields.",
+};
+// (chronicle-diplomacy) war:declared.ally: {c} joined the war of their ally {c3}, whom {c2} had attacked
+const char* const kWarAlly[] = {
+	"{c} had sworn to stand by {c3}, and when {c2} marched, they kept their word.",
+	"Word came that {c2} had fallen upon {c3}, and {c}, their allies, took their spears down from the wall.",
+	"{c} answered the call of {c3} and went to war against {c2}. An oath is cheap to swear and dear to keep.",
+	"The allies of {c3} came: {c} sent their host against {c2}, as they had promised over wine in better years.",
+};
+// (chronicle-diplomacy) allies who came to blows: the alliance broke in the war's own declaration
+const char* const kWarBetrayal[] = {
+	"{c} turned on {c2}, who had been their allies. The stone on which they had sworn was broken and thrown in the river.",
+	"The alliance of {c} and {c2} ended the way such things end: with {c} at the gates of their old friends.",
+	"{c} forgot the oaths they had sworn to {c2}, and went to war against them. Old friends make the bitterest enemies.",
+};
+// ... and the betrayers blamed the god (suffix): kWarBetrayalStruck its anger, kWarBetrayalEnvied its favour of {c2}
+const char* const kWarBetrayalStruck[] = {
+	" They said {ep} had turned against them, and that their allies were to blame.",
+	" Their priests said the anger of the god had come down on them through {c2}.",
+};
+const char* const kWarBetrayalEnvied[] = {
+	" They said {ep} had come to love {c2} better, and could not forgive it.",
+	" It was envy: {g} had blessed {c2}, and not them.",
+};
+// (chronicle-diplomacy) war:ended.thanked: the victors {c} thanked their god for the victory and the peace;
+// the beaten {c2} blamed it ({wy} how long the war lasted, {s} the victors' capital)
+const char* const kWarThanked[] = {
+	"{c} won their war against {c2}, and gave the glory to {ep}. The priests of {s} had never been so busy, nor so well fed.",
+	"When the war with {c2} was over, {c} gave thanks to {g} for the peace, and for the winning of it, in that order on most days.",
+	"{c} carried the spoils of {c2} up the temple steps of {s}, saying the god had been with them.",
+	"After {wy} the war ended, and {c} said it was {ep} who had won it. {c2} said nothing, and their love for the god grew cold.",
+	"{c} beat {c2}, and built a new altar to {g} out of the stones of the war. The beaten said the god had chosen a side, and never forgot which.",
+};
+// (chronicle-diplomacy) `alliance` formed: {c} and {c2} became allies
+const char* const kAllianceFormed[] = {
+	"{IN}{c} and {c2} swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.",
+	"The elders of {c} and {c2} clasped hands over a fire and swore to stand together. Their neighbours took note.",
+	"{c} and {c2} became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.",
+	"Envoys went back and forth between {c} and {c2} until they had worn a road, and at the end of it was an alliance.",
+	"{c} and {c2} swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.",
+};
+// (chronicle-diplomacy) `alliance` ended in peace (relations cooled; a war between them is kWarBetrayal)
+const char* const kAllianceEnded[] = {
+	"The alliance of {c} and {c2} was not broken; it was forgotten, like a path no one walks any more.",
+	"{c} and {c2} were allies no longer. Neither could say when the friendship had ended, only that it had.",
+	"The oath between {c} and {c2} lapsed. First their envoys stopped visiting, and then their merchants.",
+	"The old alliance of {c} and {c2} came apart over a small matter, as old alliances do.",
 };
 const char* const kTrade[] = {
 	"{IN}the first caravan came from {s} to {s2}, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.",   // v31a
@@ -2477,8 +2592,137 @@ void recordStroke(World& w, int cell, double ang) {
 	double& a = w.vars.num["chronicle_ga.c" + c];
 	a = std::max(fin(a), std::clamp(fin(ang, 0.1), 0.0, 0.5));
 }
+// (chronicle-diplomacy) "the A, the B and the C"
+string peopleList(const World& w, const std::vector<int>& ids, size_t from) {
+	string out;
+	const size_t n = ids.size() > from ? ids.size() - from : 0;
+	for (size_t i = from, k = 0; i < ids.size(); i++, k++) {
+		if (k > 0) out += (k + 1 == n) ? " and " : ", ";
+		out += culturePlural(w, ids[i]);
+	}
+	return out;
+}
+// (chronicle-diplomacy) the Omen of Peace cast at `cell` this tick: whom it was cast on, and the neighbours on
+// the brink it calmed (sworn to peace this very year, no war between them ended this tick)
+void recordOmen(World& w, int cell) {
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	S.omenCastTick = w.tick;
+	S.omenCastYear = fin(w.year);
+	S.omenTold = false;
+	S.omenTarget = -1;
+	S.omenSid = -1;
+	S.omenCalmed.clear();
+	// the town it was cast on (the Omen targets a settlement: its centre cell)
+	const Settlement* s = nullptr;
+	for (const Settlement& o : w.settlements) if (!o.dead && o.cell == cell) { s = &o; break; }
+	if (!s || !cult(w, s->culture)) return;
+	const int cu = s->culture;
+	S.omenTarget = cu;
+	S.omenSid = s->id;
+	const double until = fin(w.year) + fin(w.tune<DiplomacyTune>().omenYears);
+	for (const Culture& o : w.cultures) {
+		if (o.dead || o.id == cu) continue;
+		const double su = society::swornUntil(w, cu, o.id);
+		if (su < 0 || std::fabs(su - until) > 1e-6) continue;
+		bool foe = false;
+		for (const ChronicleScratch::Pending& pe : S.pending)
+			if (pe.war && pe.tick == w.tick && pe.year == fin(w.year) && ((pe.a == cu && pe.b == o.id) || (pe.b == cu && pe.a == o.id))) foe = true;
+		if (!foe) S.omenCalmed.push_back(o.id);
+	}
+}
+
+// (chronicle-diplomacy) the Omen this tick, told once for the people it was cast on: the wars it ended (each
+// with its enemy) and the neighbours it calmed. False when there is no such Omen this tick (a bare witness).
+bool tellOmen(World& w) {
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	if (S.omenCastTick != w.tick || S.omenCastYear != fin(w.year) || S.omenTarget < 0 || !cult(w, S.omenTarget)) return false;
+	if (S.omenTold) return true;
+	S.omenTold = true;
+	const ChronicleTune& T = tuneOf(w);
+	const int cu = S.omenTarget;
+	// the wars it ended: their draws are held back this tick
+	std::vector<int> foes;
+	for (size_t i = 0; i < S.pending.size();) {
+		const ChronicleScratch::Pending& pe = S.pending[i];
+		if (pe.war && (pe.a == cu || pe.b == cu) && pe.tick == w.tick && pe.year == fin(w.year) && cult(w, pe.a == cu ? pe.b : pe.a)) {
+			foes.push_back(pe.a == cu ? pe.b : pe.a);
+			S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+		} else {
+			i++;
+		}
+	}
+	// (chronicle-diplomacy verify) the wars its allies had joined against those enemies ended with it (Diplomacy's
+	// makePeace ends the league's wars together): told with the Omen, not as draws "both had run out of sons"
+	std::vector<int> allies;
+	for (size_t i = 0; i < S.pending.size();) {
+		const ChronicleScratch::Pending& pe = S.pending[i];
+		const bool now = pe.war && pe.tick == w.tick && pe.year == fin(w.year) && pe.a != cu && pe.b != cu;
+		const bool fa = now && std::find(foes.begin(), foes.end(), pe.a) != foes.end();
+		const bool fb = now && std::find(foes.begin(), foes.end(), pe.b) != foes.end();
+		const int j = fa && !fb ? pe.b : fb && !fa ? pe.a : -1;
+		if (j >= 0 && cult(w, j) && !cult(w, j)->dead) {
+			if (std::find(allies.begin(), allies.end(), j) == allies.end()) allies.push_back(j);
+			S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+		} else {
+			i++;
+		}
+	}
+	std::vector<int> calmed;
+	for (int c : S.omenCalmed)
+		if (cult(w, c) && !cult(w, c)->dead && std::find(allies.begin(), allies.end(), c) == allies.end()) calmed.push_back(c);
+	S.omenTick = w.tick;
+	S.omenYear = fin(w.year);
+	S.omenCultures = foes;
+	S.omenCultures.insert(S.omenCultures.end(), allies.begin(), allies.end());
+	S.omenCultures.insert(S.omenCultures.end(), calmed.begin(), calmed.end());
+	S.omenCultures.push_back(cu);
+	// (voice review) one omen per people per minorGap years; the wars it ended are still told, as omens
+	if (foes.empty() && recentNotable(w, "miracle-peace", cu, T.minorGap)) return true;
+	const Settlement* s = sett(w, S.omenSid);
+	const int cell = s ? s->cell : -1;
+	Ctx x;
+	ctxSettlement(x, w, S.omenSid);
+	ctxCulture(x, w, cu);
+	if (cell >= 0) setWhere(x, w, cell, T.nearAng);
+	if (!foes.empty()) {
+		for (size_t i = 0; i < foes.size(); i++) {
+			Ctx xf = x;
+			ctxCulture(xf, w, foes[i], "2");
+			if (i == 0 && !allies.empty()) {
+				xf.set("allies", peopleList(w, allies, 0));
+				if (!calmed.empty()) xf.set("others", peopleList(w, calmed, 0));
+				writeComposed(w, "miracle-peace", 2, cell, cu, tpl(kOmenPeaceWar), "omen-peace-war",
+					calmed.empty() ? tpl(kOmenWarAllies) : tpl(kOmenWarAlliesCalm), calmed.empty() ? "omen-war-allies" : "omen-war-allies-calm", xf);
+			} else if (i == 0 && !calmed.empty()) {
+				xf.set("others", peopleList(w, calmed, 0));
+				writeComposed(w, "miracle-peace", 2, cell, cu, tpl(kOmenPeaceWar), "omen-peace-war", tpl(kOmenWarCalmMore), "omen-war-calm-more", xf);
+			} else {
+				write(w, "miracle-peace", 2, cell, cu, tpl(kOmenPeaceWar), "omen-peace-war", xf);
+			}
+		}
+		return true;
+	}
+	if (!calmed.empty()) {
+		ctxCulture(x, w, calmed[0], "2");
+		if (calmed.size() > 1) {
+			x.set("others", peopleList(w, calmed, 1));
+			writeComposed(w, "miracle-peace", 2, cell, cu, tpl(kOmenCalm), "omen-calm", tpl(kOmenCalmMore), "omen-calm-more", x);
+		} else {
+			write(w, "miracle-peace", 2, cell, cu, tpl(kOmenCalm), "omen-calm", x);
+		}
+		return true;
+	}
+	// (chronicle-diplomacy verify) the people's own peace prayer was answered by this Omen and told this tick ("the
+	// Itindakani prayed for peace, and Yelondo gave it"), and took the war it ended: a second line naming no
+	// enemy ("... and the Itindakani laid down their spears") would only repeat it
+	if (S.peaceAnsTick == w.tick && S.peaceAnsYear == fin(w.year) && S.peaceAnsCulture == cu) return true;
+	write(w, "miracle-peace", 2, cell, cu, tpl(kOmenPeace), "omen-peace", x);
+	return true;
+}
+
 void onPowerUsed(World& w, const EvPowerUsed& e) {
 	if (e.id == "lower" || e.id == "quake" || e.id == "meteor") recordStroke(w, e.cell, e.ang);
+	if (e.id == "peace") recordOmen(w, e.cell);
 }
 bool godStrokeNear(const World& w, int cell) {
 	if (!w.geo || !w.valid(cell)) return false;
@@ -2732,6 +2976,9 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	case PrayerKind::Peace:
 		// (voice review 2) the answer ends the war: a draw held back this tick is told by it
 		if (write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsPeace), "ans-peace", x) || S.foldedLast) {
+			S.peaceAnsTick = w.tick;
+			S.peaceAnsYear = fin(w.year);
+			S.peaceAnsCulture = cid;
 			for (size_t i = 0; i < S.pending.size();) {
 				const ChronicleScratch::Pending& pe = S.pending[i];
 				if (pe.war && (pe.a == cid || pe.b == cid) && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
@@ -2831,11 +3078,78 @@ void onCultureAge(World& w, const EvCultureAge& e) {
 
 void onWarDeclared(World& w, const EvWarDeclared& e) {
 	if (!cult(w, e.a) || !cult(w, e.b)) return;
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
 	Ctx x;
 	ctxCulture(x, w, e.a);
 	ctxCulture(x, w, e.b, "2");
 	w.vars.num[warKey(e.a, e.b)] = fin(w.year);           // (voice {war_years}) read back at war:ended
-	write(w, "war", 2, -1, e.a, tpl(kWarDeclared), "war", x);
+	// (chronicle-diplomacy) allies who came to blows: their alliance ended this tick, just before this war
+	bool betrayal = false;
+	const int lo = std::min(e.a, e.b), hi = std::max(e.a, e.b);
+	for (size_t i = 0; i < S.pending.size(); i++) {
+		const ChronicleScratch::Pending& pe = S.pending[i];
+		if (pe.ally && pe.a == lo && pe.b == hi && pe.tick == w.tick && pe.year == fin(w.year)) {
+			betrayal = true;
+			S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
+			break;
+		}
+	}
+	// an ally answering the call to arms (the ally attacked is {c3}), allies turned enemies, a war the people
+	// blamed on their god (its anger on them, or its favour of the enemy), or an ordinary war: the god is
+	// named only in the blamed ones
+	if (e.ally >= 0 && cult(w, e.ally) && e.ally != e.a && e.ally != e.b) {
+		ctxCulture(x, w, e.ally, "3");
+		write(w, "war", 2, -1, e.a, tpl(kWarAlly), "war-ally", x);
+	} else if (betrayal) {
+		const Tpl sfx = !e.blamed ? Tpl{ nullptr, 0 } : e.envied ? tpl(kWarBetrayalEnvied) : tpl(kWarBetrayalStruck);
+		writeComposed(w, "war", 2, -1, e.a, tpl(kWarBetrayal), "war-betrayal", sfx, e.envied ? "war-betrayal-envied" : "war-betrayal-struck", x);
+	} else if (e.blamed && e.envied) {
+		write(w, "war", 2, -1, e.a, tpl(kWarEnvied), "war-envied", x);
+	} else if (e.blamed) {
+		write(w, "war", 2, -1, e.a, tpl(kWarStruck), "war-struck", x);
+	} else {
+		write(w, "war", 2, -1, e.a, tpl(kWarDeclared), "war", x);
+	}
+}
+
+// (chronicle-diplomacy) `alliance`: a new alliance is told (notable); one that ended is held until the tick is over
+// (a war between the two in the same tick tells it as a betrayal), then told as minor
+void onAlliance(World& w, const EvAlliance& e) {
+	if (!cult(w, e.a) || !cult(w, e.b) || e.a == e.b) return;
+	const ChronicleTune& T = tuneOf(w);
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	const int lo = std::min(e.a, e.b), hi = std::max(e.a, e.b);
+	if (!e.formed) {
+		ChronicleScratch::Pending pe;
+		pe.tick = w.tick;
+		pe.year = fin(w.year);
+		pe.ally = true;
+		pe.a = lo;
+		pe.b = hi;
+		S.pending.push_back(pe);
+		return;
+	}
+	if (cult(w, lo)->dead || cult(w, hi)->dead) return;
+	// a pair that falls out and makes up again, or a people allying twice in a few decades, is told once
+	if (recent(w, "alliance", lo, T.allianceGap) || recent(w, "alliance", hi, T.allianceGap) ||
+		recent(w, "alliance-end", lo, T.allianceGap) || recent(w, "alliance-end", hi, T.allianceGap)) return;
+	Ctx x;
+	ctxCulture(x, w, lo);
+	ctxCulture(x, w, hi, "2");
+	write(w, "alliance", 2, -1, lo, tpl(kAllianceFormed), "alliance", x);
+}
+
+void tellAllianceEnded(World& w, int a, int b) {
+	const ChronicleTune& T = tuneOf(w);
+	const Culture* ca = cult(w, a);
+	const Culture* cb = cult(w, b);
+	if (!ca || !cb || ca->dead || cb->dead) return;          // a people gone: culture:died tells it
+	if (society::atWar(w, a, b)) return;                      // (a war is told by its declaration)
+	if (!minorOk(w, "alliance-end", a, T.allianceGap) || !minorOk(w, "alliance-end", b, T.allianceGap)) return;
+	Ctx x;
+	ctxCulture(x, w, a);
+	ctxCulture(x, w, b, "2");
+	write(w, "alliance-end", 1, -1, a, tpl(kAllianceEnded), "alliance-end", x);
 }
 
 void onWarEnded(World& w, const EvWarEnded& e) {
@@ -2860,6 +3174,7 @@ void onWarEnded(World& w, const EvWarEnded& e) {
 		// (voice review 2) the beaten people died with the war (culture:died comes first): nobody asked for peace
 		const Culture* lc = cult(w, loser);
 		if (lc && lc->dead) write(w, "peace", 2, -1, e.victor, tpl(kWarWonGone), "war-won-gone", x);
+		else if (e.thanked) write(w, "peace", 2, -1, e.victor, tpl(kWarThanked), "war-thanked", x);   // (chronicle-diplomacy)
 		else write(w, "peace", 2, -1, e.victor, tpl(kWarWon), "war-won", x);
 	} else {
 		// (voice review 2) held back: an Omen of Peace that ended it tells both armies' story instead
@@ -3146,7 +3461,7 @@ void onMiracle(World& w, const EvMiracleWitnessed& e) {
 	if (e.kind == "heal") {
 		for (size_t i = 0; i < S.pending.size();) {
 			const ChronicleScratch::Pending& pe = S.pending[i];
-			const Settlement* ps = (pe.war || pe.drown) ? nullptr : sett(w, pe.a);
+			const Settlement* ps = (pe.war || pe.drown || pe.ally) ? nullptr : sett(w, pe.a);
 			const bool here = ps && (ps->cell == e.cell || std::find(e.ids.begin(), e.ids.end(), pe.a) != e.ids.end());
 			if (here && pe.tick == w.tick && pe.year == fin(w.year)) S.pending.erase(S.pending.begin() + std::ptrdiff_t(i));
 			else i++;
@@ -3201,6 +3516,8 @@ void onMiracle(World& w, const EvMiracleWitnessed& e) {
 		if (!minorOk(w, "miracle-inspire", cid, 2)) return;
 		write(w, "miracle-inspire", 2, e.cell, cid, tpl(kInspire), "inspire", x);
 	} else if (k == "peace") {
+		// (chronicle-diplomacy) an Omen cast this tick is told once, for the people it was cast on
+		if (tellOmen(w)) return;
 		// (voice review) one omen per culture per minorGap years: a kind god's omens over twenty towns
 		// in one year wrote twenty entries
 		// (voice review 2) both armies saw one omen: the other people's witness is that entry
@@ -3253,6 +3570,10 @@ void flushPending(World& w, bool all) {
 	for (const ChronicleScratch::Pending& pe : due) {
 		if (pe.drown) {
 			if (sett(w, pe.a)) tellDrowned(w, pe.a, pe.b, pe.cell, pe.tier);
+			continue;
+		}
+		if (pe.ally) {
+			tellAllianceEnded(w, pe.a, pe.b);
 			continue;
 		}
 		if (pe.war) {
@@ -3638,6 +3959,7 @@ void attach(World& w) {
 	sub<EvCultureAge>(w, S, onCultureAge);
 	sub<EvWarDeclared>(w, S, onWarDeclared);
 	sub<EvWarEnded>(w, S, onWarEnded);
+	sub<EvAlliance>(w, S, onAlliance);
 	sub<EvBattle>(w, S, onBattle);
 	sub<EvTradeRoute>(w, S, onTradeRoute);
 	sub<EvProphetRisen>(w, S, onProphetRisen);

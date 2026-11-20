@@ -1,0 +1,63 @@
+--- Unreal/Tools/simrun/Policies.cpp	2026-11-20 06:03:29.343293600 -0500
++++ /c/Users/Relly/AppData/Local/Temp/claude/bd11979cb6e287f2/b43ee37b-dc6e-423f-8237-4b9b719339b0/scratchpad/abuse/Policies.cpp	2026-11-20 08:24:02.840665500 -0500
+@@ -1,3 +1,6 @@
++#include <cstdio>
++#include <string>
++#include <cstdlib>
+ // DEMIURGE — Tools/simrun/Policies.cpp : scripted players (see Policies.h). Owner: sim engineer (A14).
+ #include "Policies.h"
+ 
+@@ -102,7 +105,21 @@
+ bool Policy::click(World& w, const char* id, int cell) {
+ 	if (!powers::can(w, id, cell).ok) return false;
+ 	powers::UseOpts o;
++	const bool dbg = std::getenv("DM_DEBUG_OMEN") && std::string(id) == "peace";
++	int dcu = -1;
++	if (dbg) {
++		for (const Settlement& s : w.settlements) if (!s.dead && s.cell == cell) dcu = s.culture;
++		std::string foes, tn;
++		for (const Culture& c : w.cultures) if (!c.dead && c.id != dcu && society::atWar(w, dcu, c.id)) foes += std::to_string(c.id) + " ";
++		for (int t : society::tense(w, dcu)) tn += std::to_string(t) + " ";
++		std::fprintf(stderr, "OMEN y=%.3f tick=%lld cu=%d foes=[%s] tense=[%s] chron=%zu\n", w.year, (long long)w.tick, dcu, foes.c_str(), tn.c_str(), w.chronicle.size());
++	}
+ 	if (powers::use(w, id, cell, o)) {
++		if (dbg) {
++			std::string sw;
++			for (const Culture& c : w.cultures) if (!c.dead && c.id != dcu) { const double u = society::swornUntil(w, dcu, c.id); if (u > 0) sw += std::to_string(c.id) + ":" + std::to_string(u) + " "; }
++			std::fprintf(stderr, "   sworn=[%s] chron=%zu last=%s\n", sw.c_str(), w.chronicle.size(), w.chronicle.empty() ? "" : w.chronicle.back().text.substr(0, 90).c_str());
++		}
+ 		stats_.clicks++;
+ 		stats_.byPower[id]++;
+ 		return true;
+@@ -421,6 +438,19 @@
+ 
+ void Policy::decidePeacemaker(World& w) {
+ 	if (reawaken(w)) return;
++	const bool inf = std::getenv("DM_ABUSE_AWE") != nullptr;
++	if (std::getenv("DM_ABUSE_SPAM")) {
++		std::vector<int> done;
++		for (int sid : byPop(w)) {
++			const Settlement& s = w.settlements[size_t(sid)];
++			if (std::find(done.begin(), done.end(), s.culture) != done.end()) continue;
++			if (!anyWar(w, s.culture) && society::tense(w, s.culture).empty()) continue;
++			done.push_back(s.culture);
++			if (inf) w.god.awe = w.god.aweMax;
++			click(w, "peace", s.cell);
++		}
++		return;
++	}
+ 	int n = 0;
+ 	std::vector<int> done;                  // one Omen per people a year
+ 	for (int sid : byPop(w)) {
+@@ -462,6 +492,11 @@
+ 	std::vector<int> top(mine.begin(), mine.begin() + std::min<size_t>(24, mine.size()));
+ 	std::stable_sort(top.begin(), top.end(), [&](int a, int b) { return w.settlements[size_t(a)].love < w.settlements[size_t(b)].love; });
+ 	if (!startStroke(w, "bloom", w.settlements[size_t(top[0])].cell, 4)) startStroke(w, "rain", w.settlements[size_t(top[0])].cell, 4);
++	if (std::getenv("DM_ABUSE_FAVOMEN")) {
++		// shield the favourite: an Omen whenever it is at war or on the brink (its oaths stop its neighbours' envy)
++		const Settlement& cap = w.settlements[size_t(mine[0])];
++		if (anyWar(w, chosen_) || !society::tense(w, chosen_).empty()) click(w, "peace", cap.cell);
++	}
+ 	if (w.god.awe > 0.6 * w.god.aweMax)
+ 		for (int sid : top)
+ 			if (w.settlements[size_t(sid)].inspire <= 0 && click(w, "inspire", w.settlements[size_t(sid)].cell)) break;

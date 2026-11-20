@@ -1,0 +1,77 @@
+2026-11-20 chronicle-diplomacy VERIFIED (independent check of chronicle-diplomacy.built.txt; I did not build it). Score 8/10.
+
+Summary. The builder's claims reproduce on 6 new seeds (601-606). kind's peoples are at war less than cruel's on 6/6, which makes 20/22 over all three seed sets. Passive and cruel worlds are unchanged, determinism and save/load hold, and every SPEC-SIM 4, v3 and v3.1 target that passed before still passes. The new chronicle lines read well and stay in the approved voice.
+I found and fixed two chronicle bugs and trimmed one line (Chronicle.cpp only), and I added 2 tests.
+- Bug 1 happens about once per kind game: an Omen that answered a people's own peace prayer was told twice, the second time naming no enemy.
+- Bug 2 is latent: when an Omen ended a war, the wars its allies had joined would have been told as plain draws.
+Trying to abuse the stronger Omen broke nothing. Awe is what limits it: only an unlimited-Awe god can make a world nearly war-free after the Iron age.
+
+Fixes (owned files only; Game/, Names.*, Tools/simrun untouched):
+- Sim/Chronicle.cpp (bug, systematic): the duplicate Omen line.
+  - Cause: when the Omen answers a people's peace prayer, Society emits prayer:answered inside the witness, before miracle:witnessed. The answer ("The Itindakani prayed for peace, and Yelondo gave it.") consumed the war it ended, so tellOmen found no enemy and fell back to a second, enemy-less line ("An omen of peace was seen over Ingawo, and the Itindakani laid down their spears.").
+  - Fix: the chronicle now notes that a peace prayer was answered this tick (ChronicleScratch.peaceAns*). In that case the bare fallback line is not written. The Omen's war and calm lines are unchanged.
+  - Effect on 601-606 x 3,000 y: exactly one duplicate entry removed in each of the 8 kind/peacemaker runs; none in passive or cruel.
+- Sim/Chronicle.cpp (bug, latent): the allies' wars an Omen ended.
+  - Cause: Diplomacy's makePeace also ends the wars allies joined in the war the Omen ended. tellOmen only took the pending draws involving the people the Omen was cast on, so an ally's war was told one tick later as a draw ("ended because both had run out of sons").
+  - Fix: those draws are now taken into the Omen entry with a new suffix family that names the allies, 2 lines plus 2 for when calmed neighbours are named too. Example: "The allies of the Umari, the Vaeli, went home with them."
+  - I did not see this in the four full chronicles I read: joined wars are rare under kind, 0-10 a run.
+- Sim/Chronicle.cpp (style): the "ring of light" calming line is shorter. With a suffix it ran to about 50 words; it is now about 40, inside the guide's 45.
+- Prose only: none of the fixes touches the sim stream. On 601-606 every per-seed row, event count and the diplomacy table are identical before and after; only the chronicle's own count and the fingerprint (which includes the chronicle text) differ.
+
+Tests added (run.ps1 all: 771 passed, 0 failed; 769 before + 2):
+- test_chronicle_diplomacy.cpp, "an Omen tells the allies' wars it ended, and does not repeat an answered peace prayer": one entry naming both armies and the allies, no draw; an answered peace prayer and no second enemy-less Omen line. Fails on the builder's code (both parts).
+- test_diplomacy_omen.cpp, "a sworn peace survives save / load and ends in the same year". It saves a world under an Omen's oath, with the envy rule on and one people the god's favourite, then checks:
+  - swornUntil and the relation are kept exactly;
+  - the original and loaded relations move together year by year (difference 0);
+  - the oath ends in the same year in both;
+  - the ended oath's key is removed.
+
+Re-run on new seeds (601-606 x passive / kind / cruel / peacemaker x 4,500 y; simrun-final-seeds601-606.txt). War share in % of years, min / median / max:
+- passive 5.7 / 15.0 / 23.3.
+- kind 7.8 / 12.4 / 20.6.
+- cruel 13.5 / 22.8 / 33.1.
+- peacemaker 5.5 / 12.0 / 22.8.
+- kind < cruel 6/6, per seed: 8/13 10/19 18/28 14/26 11/19 21/33. kind < passive 5/6 (seed 602: 10.2 vs 5.7).
+- kind: beloved 6/6, Omens 23-49 a game (median 31), thanked >= 1 on 6/6. Blamed on the god: kind 20, cruel 124.
+- Every SPEC-SIM 4, v3 and v3.1 target passes.
+  - review 9 (kind famine) passes 5/6 on these seeds.
+  - Still failing as before: review 4 (Stone-age quiet stretch, 207-312 y) and review 6 (Awe cap 87-89 %).
+  - In the builder-code run, cruel seed 604 had a 30.6 ms max tick (thread CPU, with 12 jobs and the Unreal editor running); the final run passed every tick target.
+- Passive median 15.0 % sits on the top edge of its 8-15 % target. This is not new: passive is unchanged by this work.
+- Wars by age under kind, Stone..Space: 0 / 8.2 / 7.2 / 10.0 / 7.8 / 5.7 / 2.0, against passive's 0.2 / 7.8 / 11.2 / 7.8 / 4.5 / 3.5 / 2.2. The Omen does nothing in Bronze, where a fifth of the wars are.
+
+Trying to abuse the stronger Omen. The abuse players are in a scratch copy of simrun; the diff is in verify/abuse-policies.diff.txt. Tools/simrun itself is unchanged.
+- Omen spam, no limit per year (Awe-limited): 78-92 Omens a game, war 14.0 % median, no better than peacemaker (12.0) or kind (12.4). Awe is the real limit.
+- Omen spam with unlimited Awe (Awe refilled before every cast):
+  - 96-276 Omens a game, war 1.6 / 3.7 / 5.7 %. Wars after Bronze fall to about 0.2-0.3 an age; the Bronze wars stay.
+  - Nothing breaks: no NaN, Ark 6/6, chronicles of normal size (1,085-1,378 entries). It is not a beloved exploit either: beloved 4/6, parting 2/6.
+  - So permanent peace needs unlimited Awe; with real Awe it cannot be reached.
+- The favourite shielded by Omens (bless one people and cast the Omen whenever it is at war or on the brink, so that its oaths stop its neighbours' envy): war went up, from 12.4 to 19.8 % median (wars 34 -> 41). Envy still comes from unsworn neighbours, and the Awe spent on the Omens is not spent on blessings. It ends beloved 6/6, as without the shield. Not an exploit.
+- omenNoEnvy keeps the Omen's grace in the long memory (Ark verdict) and leaves it out only of the fading favour that drives envy. That is intended, but it makes the Omen a love source with no envy cost. The unlimited-Awe run shows it is still not a beloved shortcut.
+
+Determinism and save/load:
+- --hash twice on the final code (601-606 x 4 policies x 3,000 y, --jobs 8 and --jobs 4): 24/24 identical hashes and identical chronicle counts (hash-final-run1/2.sorted.txt). The builder's code also gave 24/24 (hash-builder-run1/2).
+- simrun --saveload on seed 603 kind at years 956 (the year after a calming Omen), 1800 and 2184 (the year after an Omen that ended a war), each twice: the loaded world re-saves identically, and both runs replay to the same hash (98f9c2ec, 13295ad3, 0e6b17ba) with the same chronicle count (saveload.txt).
+
+The full chronicle (seed 603 kind, 1,408 lines; chronicle-seed603-kind.txt):
+- The story is clear: Bronze wars and a people wiped out (566); Iron-age secessions; calming Omens from 955 on; the epithet "the Quiet Between Armies" from 1037; alliances that lapse, form again and lapse ("The oath between the Wibalilani and the Barikarini lapsed. First their envoys stopped visiting, and then their merchants."); an envy war (1596, "Envy is a slow fire..."); thanked victories; ending in the Ark.
+- Unblamed wars never name the god.
+- Weak spots, left as they are:
+  - The same pair (the Barikarini and the Mokoterani) is calmed five times in 2,000 years. The lines vary, but the reader feels the loop. It is a sim pattern: an oath lasts 80 years, then the old border chafes again.
+  - An alliance line came back word for word 1,000 years later (1670, 2677). That is acceptable at that distance.
+
+For the lead:
+- The Omen's war effect is real but modest. With kind's Awe it does not beat peacemaker, and it cannot reach the Bronze wars. If more is wanted, an earlier Omen is still the lever, but the builder's own test of an earlier Omen (omenAge = 1) made things worse. A longer oath (omenYears) would cut the repeated calming of the same pair.
+- The HUD items in the built handoff still stand: war:declared.envied, and the Powers.h table row if the Omen ever wakes in Bronze.
+- Not run: Unreal/build.ps1 (a whole-game check was using Game/). My changes are inside Chronicle.cpp only (no header change), so Game/ is unaffected beyond what the builder reported.
+
+Files changed:
+- Unreal/Source/Demiurge/Sim/Chronicle.cpp: peaceAns* scratch, tellOmen (allies, no duplicate fallback), 4 new suffix lines (kOmenWarAllies, kOmenWarAlliesCalm), 1 shortened calm line.
+- Unreal/SimTests/test_chronicle_diplomacy.cpp: +1 test.
+- Unreal/SimTests/test_diplomacy_omen.cpp: +1 test (and #include "State.h").
+
+Evidence (docs/handoff/chronicle-diplomacy/verify/):
+- simrun-builder-code-seeds601-606.txt, simrun-final-seeds601-606.txt.
+- abuse-omenspam-601-606.txt, abuse-omenspam-infawe-601-606.txt, abuse-favourite-base-601-606.txt, abuse-favourite-omen-601-606.txt, abuse-policies.diff.txt.
+- hash-builder-run1/2(.sorted).txt, hash-final-run1/2(.sorted).txt, saveload.txt, runps1-all.txt.
+- chronicle-seed603-kind.txt (final code), chronicle-seed603-kind-builder-code.txt (shows the duplicate at 2183).

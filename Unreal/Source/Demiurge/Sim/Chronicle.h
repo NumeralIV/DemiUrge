@@ -97,6 +97,8 @@ struct ChronicleTune {
 	double strokeYears = 5;          // a settlement the sea covers within this many years of the god's Lower Land, quake or meteor
 	double strokeAng = 0.12;         // ... within the stroke's radius plus this many radians is the god's drowning (else the sea's)
 	double enginesCo2 = 40;          // w.co2 at or above this while some people burn fuel (factories, plants): the sea rise is the engines'
+	// --- chronicle-diplomacy (sim-findings-2: alliances, calls to arms, blame, thanks and the calming Omen) ---
+	double allianceGap = 20;         // a people's new alliance (notable) / ended alliance (minor): at most one entry per this many years
 };
 
 namespace chronicle {

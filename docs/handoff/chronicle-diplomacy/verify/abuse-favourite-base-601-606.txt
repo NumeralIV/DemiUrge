@@ -1,0 +1,126 @@
+== seed 604  policy favourite  world "Hollowfen"  L 6  calamity 1.00  create 108 ms  start 18 ms
+   ENDING year 3169: ark / beloved (culture 0, settlement 0)
+   result: 3169 years, ending ark / beloved in 3169; ages: Bronze 295 Iron 845 Sail 1437 Industry 2035 Atomic 2538 Space 2950; ark 3169
+   peaks: pop 7.88M, settlements 108, cultures 6; anomaly +3.99 (min -1.72), co2 153.8, dust 0.191, sea +0.286 / -0.009 vs seaBase; largest fire 15 cells (year 676)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.18/yr (a 40-Awe miracle every 9.2 s at 1x), later 2.83/yr (7.1 s), 150 Awe every 26 s once meteors unlock
+   events: founded 132, destroyed 26 ( lava 2 sea 24 ), cultures born 7 / died 2, wars 25, battles 94, nukes 0, prophets 0, wonders 0, trade routes 506, famines 119, plagues 46, fires 394, storms 190, droughts 122, quakes 30, volcanoes 12, impacts 0, people:lost 0, chronicle 1241
+   policy: 23 clicks, 2892 strokes, 0 refused, 0 edicts; bloom 2600 heal 15 inspire 4 peace 4 rain 292
+   timing: 12676 ticks, wall mean 12.141 ms, max 6630.37 ms (year 2753); thread CPU mean 1.758 ms, max 23.23 ms, p99.9 17.30 ms; score 5330; non-finite: none
+   regard now: everyone devotion 0.339 love +0.310 (beloved); Maraslos* 0.323/+0.431 age Space pop 5.60M; Phaparero 0.433/+0.007 age Industry pop 41.8k; Esaxasti 0.349/+0.016 age Atomic pop 324.0k; Loukroske 0.307/+0.010 age Atomic pop 578.0k; Nasekra 0.413/+0.008 age Atomic pop 1.23M; Etrusfi 0.394/+0.026 age Atomic pop 91.2k
+   memory (Ark culture): grace 8.67 wrath 0.00 neglect 0.0 (presence 1.00) lore +0.776 verdict +0.655 silent 0 y prayers 496 answered 437 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 15 lightning 1 quake 159 plague 845 meteor 1437 volcano 2035 heal 1 inspire 159 prophet 845 peace 845 consecrate 295
+   review: settlements @200 4 @400 10; first prayer 46; second culture 259; first war 426, war in 12.0% of years; longest quiet (no weight-2 entry, years 0-1000) 212 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 755, answered 459; rain/bloom answered 431, famine over within 5 y 431; famine entries 43; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Kind Sky'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.323/+0.431; memory grace 8.67 wrath 0.00 lore +0.78 verdict +0.66 silent 0 y prayers 437/496 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 294/0/0%/11.8/2.9,2.04; Bronze 550/7/24%/22.0/6.3,0.87; Iron 592/6/14%/31.6/6.3,1.01; Sail 598/8/18%/49.2/5.8,0.20; Industry 503/3/11%/70.9/7.2,0.95; Atomic 412/0/0%/43.1/6.1,0.87; Space 219/1/1%/29.0/4.4,2.19;
+   diplomacy: alliances formed 28 (peak 2 at once, 46% of years), alliance events 16, wars joined by an ally 0, blamed on the god 0, victor thanked the god 6, nuclear exchanges 0; pace: 26.4 min at 1x (1 without a notable entry), auto-pace 26.0 min (0 without)
+== seed 602  policy favourite  world "Nosela"  L 6  calamity 1.00  create 152 ms  start 22 ms
+   ENDING year 3071: ark / beloved (culture 0, settlement 0)
+   result: 3071 years, ending ark / beloved in 3071; ages: Bronze 290 Iron 796 Sail 1379 Industry 1973 Atomic 2455 Space 2852; ark 3071
+   peaks: pop 9.31M, settlements 112, cultures 6; anomaly +3.85 (min -1.72), co2 147.0, dust 0.191, sea +0.294 / -0.009 vs seaBase; largest fire 23 cells (year 207)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.19/yr (a 40-Awe miracle every 9.1 s at 1x), later 2.84/yr (7.0 s), 150 Awe every 26 s once meteors unlock
+   events: founded 141, destroyed 41 ( famine 1 sea 39 wave 1 ), cultures born 7 / died 2, wars 26, battles 106, nukes 0, prophets 0, wonders 0, trade routes 553, famines 183, plagues 42, fires 350, storms 176, droughts 126, quakes 31, volcanoes 12, impacts 0, people:lost 0, chronicle 1254
+   policy: 24 clicks, 2716 strokes, 0 refused, 0 edicts; bloom 2346 heal 15 inspire 5 peace 4 rain 370
+   timing: 12284 ticks, wall mean 12.911 ms, max 7184.10 ms (year 2698); thread CPU mean 1.762 ms, max 18.33 ms, p99.9 15.61 ms; score 5320; non-finite: none
+   regard now: everyone devotion 0.369 love +0.459 (beloved); Ju'izbita* 0.362/+0.517 age Space pop 7.99M; Zatanvala 0.402/+0.278 age Atomic pop 390.4k; Kifimsuru 0.399/-0.038 age Atomic pop 279.9k; Qiqarzaqu 0.493/+0.243 age Industry pop 79.7k; Fammitufi 0.400/+0.004 age Atomic pop 161.8k; Yuritisnu 0.418/+0.020 age Atomic pop 382.1k
+   memory (Ark culture): grace 8.80 wrath 0.00 neglect 0.0 (presence 1.00) lore +0.779 verdict +0.687 silent 0 y prayers 713 answered 593 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 15 lightning 1 quake 158 plague 796 meteor 1379 volcano 1973 heal 1 inspire 158 prophet 796 peace 796 consecrate 290
+   review: settlements @200 4 @400 11; first prayer 46; second culture 307; first war 388, war in 12.6% of years; longest quiet (no weight-2 entry, years 0-1000) 244 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 963, answered 609; rain/bloom answered 589, famine over within 5 y 588; famine entries 65; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Quiet Between Armies'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.362/+0.517; memory grace 8.80 wrath 0.00 lore +0.78 verdict +0.69 silent 0 y prayers 593/713 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 289/0/0%/14.5/2.1,1.66; Bronze 506/7/21%/38.9/6.6,0.95; Iron 583/6/21%/35.4/6.8,0.82; Sail 594/8/14%/58.6/5.5,0.61; Industry 482/0/0%/74.9/6.5,1.00; Atomic 397/3/9%/61.4/6.0,0.91; Space 219/2/18%/51.0/5.5,2.19;
+   diplomacy: alliances formed 17 (peak 2 at once, 20% of years), alliance events 11, wars joined by an ally 0, blamed on the god 0, victor thanked the god 9, nuclear exchanges 0; pace: 25.6 min at 1x (1 without a notable entry), auto-pace 25.1 min (0 without)
+== seed 606  policy favourite  world "Vespersound"  L 6  calamity 1.00  create 111 ms  start 18 ms
+   ENDING year 3538: ark / beloved (culture 0, settlement 0)
+   result: 3538 years, ending ark / beloved in 3538; ages: Bronze 321 Iron 935 Sail 1676 Industry 2315 Atomic 2869 Space 3319; ark 3538
+   peaks: pop 8.31M, settlements 109, cultures 6; anomaly +4.10 (min -1.72), co2 160.0, dust 0.191, sea +0.277 / -0.018 vs seaBase; largest fire 10 cells (year 657)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.22/yr (a 40-Awe miracle every 9.0 s at 1x), later 2.85/yr (7.0 s), 150 Awe every 26 s once meteors unlock
+   events: founded 129, destroyed 27 ( lava 1 sea 26 ), cultures born 10 / died 5, wars 36, battles 112, nukes 0, prophets 0, wonders 0, trade routes 499, famines 152, plagues 56, fires 353, storms 208, droughts 144, quakes 35, volcanoes 12, impacts 0, people:lost 0, chronicle 1385
+   policy: 28 clicks, 3228 strokes, 0 refused, 0 edicts; bloom 2904 heal 17 inspire 8 peace 3 rain 324
+   timing: 14152 ticks, wall mean 11.324 ms, max 7619.85 ms (year 3202); thread CPU mean 1.677 ms, max 21.18 ms, p99.9 15.81 ms; score 5406; non-finite: none
+   regard now: everyone devotion 0.398 love +0.326 (beloved); Izalu* 0.391/+0.443 age Space pop 6.10M; Afihzush 0.424/+0.002 age Atomic pop 1.26M; Buraqirtu 0.450/+0.002 age Industry pop 5031; Unalu 0.409/+0.001 age Atomic pop 864.4k; Sanamitu 0.471/+0.003 age Industry pop 17.7k; Anazninra 0.427/+0.004 age Industry pop 62.7k
+   memory (Ark culture): grace 9.54 wrath 0.00 neglect 0.0 (presence 1.00) lore +0.792 verdict +0.670 silent 0 y prayers 508 answered 452 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 14 lightning 1 quake 160 plague 935 meteor 1676 volcano 2315 heal 1 inspire 160 prophet 935 peace 935 consecrate 321
+   review: settlements @200 4 @400 14; first prayer 46; second culture 199; first war 400, war in 10.0% of years; longest quiet (no weight-2 entry, years 0-1000) 152 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 826, answered 466; rain/bloom answered 450, famine over within 5 y 450; famine entries 56; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Sower'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.391/+0.443; memory grace 9.54 wrath 0.00 lore +0.79 verdict +0.67 silent 0 y prayers 452/508 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 320/0/0%/11.6/2.6,1.88; Bronze 614/20/33%/45.1/8.2,0.78; Iron 741/16/20%/37.4/6.6,0.81; Sail 639/0/0%/49.2/5.8,0.19; Industry 554/0/0%/45.5/5.2,0.87; Atomic 450/0/0%/36.0/7.2,0.80; Space 219/0/0%/20.8/4.4,2.74;
+   diplomacy: alliances formed 8 (peak 2 at once, 8% of years), alliance events 6, wars joined by an ally 0, blamed on the god 4, victor thanked the god 8, nuclear exchanges 0; pace: 29.5 min at 1x (0 without a notable entry), auto-pace 29.3 min (0 without)
+== seed 601  policy favourite  world "Selaleifia"  L 6  calamity 1.00  create 147 ms  start 22 ms
+   ENDING year 3901: ark / beloved (culture 2, settlement 13)
+   result: 3901 years, ending ark / beloved in 3901; ages: Bronze 317 Iron 1035 Sail 1870 Industry 2597 Atomic 3197 Space 3682; ark 3901
+   peaks: pop 7.73M, settlements 110, cultures 6; anomaly +4.00 (min -1.72), co2 152.3, dust 0.191, sea +0.243 / -0.005 vs seaBase; largest fire 10 cells (year 428)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.21/yr (a 40-Awe miracle every 9.0 s at 1x), later 2.86/yr (7.0 s), 150 Awe every 25 s once meteors unlock
+   events: founded 130, destroyed 31 ( lava 1 sea 29 war 1 ), cultures born 9 / died 4, wars 45, battles 189, nukes 0, prophets 0, wonders 0, trade routes 516, famines 188, plagues 54, fires 463, storms 243, droughts 164, quakes 36, volcanoes 16, impacts 0, people:lost 0, chronicle 1431
+   policy: 20 clicks, 3804 strokes, 0 refused, 0 edicts; bloom 3693 heal 4 inspire 2 peace 14 rain 111
+   timing: 15604 ticks, wall mean 10.878 ms, max 5649.21 ms (year 3130); thread CPU mean 1.621 ms, max 20.65 ms, p99.9 16.12 ms; score 5400; non-finite: none
+   regard now: everyone devotion 0.428 love +0.490 (beloved); Hakaolu 0.427/+0.726 age Space pop 2.55M; Hakapopa 0.488/+0.267 age Space pop 410.4k; Ongulewa* 0.412/+0.502 age Space pop 2.61M; Homamoro 0.431/+0.180 age Space pop 1.63M; Titaolu 0.488/+0.416 age Atomic pop 227.8k; Ngoumongu 0.466/+0.230 age Atomic pop 78.7k
+   memory (Ark culture): grace 4.01 wrath 0.00 neglect 890.0 (presence 0.05) lore +0.079 verdict +0.227 silent 55 y prayers 253 answered 22 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 14 lightning 1 quake 151 plague 1035 meteor 1870 volcano 2597 heal 1 inspire 151 prophet 1035 peace 1035 consecrate 317
+   review: settlements @200 4 @400 8; first prayer 46; second culture 284; first war 384, war in 17.4% of years; longest quiet (no weight-2 entry, years 0-1000) 238 y; aweMax@1000 450; Awe >= 95% of the cap in 0% of years; prayers 733, answered 228; rain/bloom answered 156, famine over within 5 y 156; famine entries 61; HUD mood = lead mood in 78% of years; BELOVED before year 20; epithet 'the Quiet Between Armies'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.412/+0.502; memory grace 4.01 wrath 0.00 lore +0.08 verdict +0.23 silent 55 y prayers 22/253 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 316/0/0%/11.8/2.3,1.90; Bronze 718/10/26%/22.1/6.4,0.67; Iron 835/10/24%/29.0/5.6,0.29; Sail 727/13/26%/50.0/5.9,0.83; Industry 600/8/6%/53.2/7.2,0.60; Atomic 485/2/5%/34.6/5.9,0.74; Space 219/2/17%/44.9/6.6,2.19;
+   diplomacy: alliances formed 51 (peak 5 at once, 47% of years), alliance events 29, wars joined by an ally 3, blamed on the god 3, victor thanked the god 13, nuclear exchanges 0; pace: 32.5 min at 1x (1 without a notable entry), auto-pace 32.0 min (0 without)
+== seed 603  policy favourite  world "Lianothae"  L 6  calamity 1.00  create 101 ms  start 18 ms
+   ENDING year 3403: ark / beloved (culture 0, settlement 0)
+   result: 3403 years, ending ark / beloved in 3403; ages: Bronze 309 Iron 915 Sail 1609 Industry 2232 Atomic 2748 Space 3184; ark 3403
+   peaks: pop 8.23M, settlements 113, cultures 6; anomaly +3.95 (min -1.72), co2 150.2, dust 0.372, sea +0.349 / -0.010 vs seaBase; largest fire 14 cells (year 878)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.20/yr (a 40-Awe miracle every 9.1 s at 1x), later 2.85/yr (7.0 s), 150 Awe every 25 s once meteors unlock
+   events: founded 147, destroyed 45 ( sea 45 ), cultures born 10 / died 5, wars 64, battles 278, nukes 4, prophets 0, wonders 0, trade routes 613, famines 185, plagues 56, fires 459, storms 192, droughts 142, quakes 33, volcanoes 14, impacts 0, people:lost 0, chronicle 1435
+   policy: 24 clicks, 3166 strokes, 0 refused, 0 edicts; bloom 2915 heal 14 inspire 5 peace 5 rain 251
+   timing: 13612 ticks, wall mean 12.974 ms, max 7616.49 ms (year 3025); thread CPU mean 1.755 ms, max 20.68 ms, p99.9 16.65 ms; score 5374; non-finite: none
+   regard now: everyone devotion 0.378 love +0.358 (beloved); Wibalila* 0.377/+0.496 age Space pop 5.40M; Lilikuwa 0.438/+0.006 age Atomic pop 678.1k; Tukosoko 0.373/+0.204 age Atomic pop 600.0k; Ukatuwa 0.447/+0.282 age Atomic pop 113.7k; Ratawoki 0.405/+0.232 age Atomic pop 156.4k; Kolibado 0.345/+0.061 age Space pop 1.29M
+   memory (Ark culture): grace 9.77 wrath 0.00 neglect 0.0 (presence 1.00) lore +0.796 verdict +0.691 silent 0 y prayers 461 answered 396 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 14 lightning 1 quake 162 plague 915 meteor 1609 volcano 2232 heal 1 inspire 162 prophet 915 peace 915 consecrate 309
+   review: settlements @200 4 @400 9; first prayer 46; second culture 252; first war 361, war in 29.4% of years; longest quiet (no weight-2 entry, years 0-1000) 206 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 928, answered 415; rain/bloom answered 391, famine over within 5 y 391; famine entries 51; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Quiet Between Armies'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.377/+0.496; memory grace 9.77 wrath 0.00 lore +0.80 verdict +0.69 silent 0 y prayers 396/461 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 308/0/0%/12.9/2.7,1.95; Bronze 606/7/28%/28.3/6.9,0.79; Iron 694/25/47%/39.4/6.2,0.52; Sail 623/12/35%/61.3/6.7,0.39; Industry 516/6/19%/74.4/7.0,0.93; Atomic 436/10/30%/67.7/7.7,1.10; Space 219/4/25%/53.2/6.6,2.19;
+   diplomacy: alliances formed 10 (peak 2 at once, 11% of years), alliance events 5, wars joined by an ally 0, blamed on the god 0, victor thanked the god 8, nuclear exchanges 1; pace: 28.4 min at 1x (1 without a notable entry), auto-pace 28.0 min (0 without)
+== seed 605  policy favourite  world "Conluvei"  L 6  calamity 1.00  create 117 ms  start 30 ms
+   ENDING year 3269: ark / beloved (culture 0, settlement 0)
+   result: 3269 years, ending ark / beloved in 3269; ages: Bronze 312 Iron 881 Sail 1471 Industry 2092 Atomic 2613 Space 3050; ark 3269
+   peaks: pop 7.54M, settlements 110, cultures 6; anomaly +3.95 (min -1.72), co2 150.9, dust 0.372, sea +0.300 / -0.011 vs seaBase; largest fire 8 cells (year 2092)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.19/yr (a 40-Awe miracle every 9.1 s at 1x), later 2.81/yr (7.1 s), 150 Awe every 26 s once meteors unlock
+   events: founded 130, destroyed 32 ( sea 32 ), cultures born 9 / died 4, wars 33, battles 122, nukes 4, prophets 0, wonders 0, trade routes 508, famines 222, plagues 48, fires 311, storms 194, droughts 126, quakes 29, volcanoes 11, impacts 0, people:lost 0, chronicle 1318
+   policy: 25 clicks, 2838 strokes, 0 refused, 0 edicts; bloom 2391 heal 16 inspire 6 peace 3 rain 447
+   timing: 13076 ticks, wall mean 14.160 ms, max 7475.19 ms (year 2702); thread CPU mean 1.928 ms, max 18.06 ms, p99.9 16.14 ms; score 5344; non-finite: none
+   regard now: everyone devotion 0.317 love +0.411 (beloved); Krematano* 0.314/+0.500 age Space pop 5.70M; Ebukheknu 0.332/+0.216 age Atomic pop 406.9k; Udakuvuz 0.318/+0.002 age Atomic pop 747.4k; Etalogha 0.347/+0.015 age Atomic pop 251.5k; Tagughe 0.334/+0.378 age Atomic pop 296.0k; Keghador 0.289/+0.014 age Space pop 39.2k
+   memory (Ark culture): grace 7.91 wrath 0.00 neglect 0.0 (presence 1.00) lore +0.760 verdict +0.669 silent 0 y prayers 663 answered 567 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 15 lightning 1 quake 151 plague 881 meteor 1471 volcano 2092 heal 1 inspire 151 prophet 881 peace 881 consecrate 312
+   review: settlements @200 4 @400 8; first prayer 46; second culture 569; first war 1188, war in 12.2% of years; longest quiet (no weight-2 entry, years 0-1000) 266 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 960, answered 586; rain/bloom answered 572, famine over within 5 y 570; famine entries 73; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Quiet Between Armies'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.314/+0.500; memory grace 7.91 wrath 0.00 lore +0.76 verdict +0.67 silent 0 y prayers 567/663 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 311/0/0%/10.4/1.9,1.54; Bronze 569/0/0%/13.1/1.7,0.84; Iron 590/1/2%/36.0/6.5,0.61; Sail 621/4/7%/55.5/6.2,0.58; Industry 521/14/35%/91.9/7.4,0.92; Atomic 437/8/23%/68.6/8.2,0.55; Space 219/6/28%/61.4/6.6,2.19;
+   diplomacy: alliances formed 19 (peak 2 at once, 21% of years), alliance events 11, wars joined by an ally 0, blamed on the god 0, victor thanked the god 0, nuclear exchanges 1; pace: 27.2 min at 1x (2 without a notable entry), auto-pace 26.4 min (2 without)
+
+seed policy  | Bronze  Iron  Sail Indus Atom Space   Ark | ending           | pop@500 @1000 @2000 @3000 @3500 | settl@1000 @3000 | cult@2000 | anom+  sea+   | lost<500 | awe<90% cap% | ms mean  max  cpu | nan | hash
+ 601 favourite |    317  1035  1870  2597 3197  3682  3901 | ark/beloved 3901 |   16.3k 28.0k 393.9k 1.54M 4.07M |         16   102 |         6 | +4.00 +0.243 |       no |     100    0 |  10.878 5649.2 20.6 |  ok | 16573758
+ 602 favourite |    290   796  1379  1973 2455  2852  3071 | ark/beloved 3071 |   35.9k 149.5k 1.19M 9.15M     - |         26   102 |         6 | +3.85 +0.294 |       no |     100    0 |  12.911 7184.1 18.3 |  ok | a3844871
+ 603 favourite |    309   915  1609  2232 2748  3184  3403 | ark/beloved 3403 |   24.2k 90.8k 770.7k 3.88M     - |         22   104 |         6 | +3.95 +0.349 |       no |     100    0 |  12.974 7616.5 20.7 |  ok | a1a7446d
+ 604 favourite |    295   845  1437  2035 2538  2950  3169 | ark/beloved 3169 |   31.1k 160.0k 761.3k 6.96M     - |         32   108 |         6 | +3.99 +0.286 |       no |     100    0 |  12.141 6630.4 23.2 |  ok | 18113044
+ 605 favourite |    312   881  1471  2092 2613  3050  3269 | ark/beloved 3269 |   15.7k 107.3k 691.0k 4.23M     - |         29    99 |         6 | +3.95 +0.300 |       no |     100    0 |  14.160 7475.2 18.1 |  ok | f99e65d8
+ 606 favourite |    321   935  1676  2315 2869  3319  3538 | ark/beloved 3538 |   24.5k 55.2k 464.7k 3.94M 8.26M |         25   103 |         6 | +4.10 +0.277 |       no |     100    0 |  11.324 7619.9 21.2 |  ok | cb77ca41
+
+seed policy       | ending           |  Ark | Bronze | s@200 s@400 | pray1 cult2 war1 | quiet | aweMax@1k cap% >=95% | plague meteor volcano | lost fam | end dev/love  | epithet
+ 601 favourite    | ark/beloved 3901 | 3901 |    317 |     4     8 |    46   284  384 |   238 |       450    0     0 |   1035   1870    2597 |    0  61 | 0.41/+0.50 | the Quiet Between Armies
+ 602 favourite    | ark/beloved 3071 | 3071 |    290 |     4    11 |    46   307  388 |   244 |       600    0     0 |    796   1379    1973 |    0  65 | 0.36/+0.52 | the Quiet Between Armies
+ 603 favourite    | ark/beloved 3403 | 3403 |    309 |     4     9 |    46   252  361 |   206 |       600    0     0 |    915   1609    2232 |    0  51 | 0.38/+0.50 | the Quiet Between Armies
+ 604 favourite    | ark/beloved 3169 | 3169 |    295 |     4    10 |    46   259  426 |   212 |       600    0     0 |    845   1437    2035 |    0  43 | 0.32/+0.43 | the Kind Sky
+ 605 favourite    | ark/beloved 3269 | 3269 |    312 |     4     8 |    46   569 1188 |   266 |       600    0     0 |    881   1471    2092 |    0  73 | 0.31/+0.50 | the Quiet Between Armies
+ 606 favourite    | ark/beloved 3538 | 3538 |    321 |     4    14 |    46   199  400 |   152 |       600    0     0 |    935   1676    2315 |    0  56 | 0.39/+0.44 | the Sower
+
+targets (SPEC-SIM 4), policy favourite, 6 seeds:
+  PASS  no non-finite value                                            6/6  []
+  PASS  small miracle (40 Awe) every N s, Stone age in 5..15           6/6  [9.032 9.112 9.071 9.157 9.145 9]
+  PASS  small miracle (40 Awe) every N s, later ages in 3..8           6/6  [6.993 7.038 7.028 7.078 7.105 7.025]
+  PASS  great miracle (150 Awe) every N s once meteors unlock in 25..60 6/6  [25.31 25.65 25.47 25.79 25.85 25.6]
+  PASS  review 11: never constant war (at war in at most a third of the years) 6/6  [17.4 12.6 29.4 12.0 12.2 10.0]
+  PASS  mean tick <= 2.5 ms (thread CPU time)                          6/6  [1.62 1.76 1.75 1.76 1.93 1.68]
+  PASS  max tick <= 30 ms (thread CPU time)                            6/6  [20.6 18.3 20.7 23.2 18.1 21.2]
+  info  max tick, wall clock (informational: includes descheduled time) 0/0  [5649.2 7184.1 7616.5 6630.4 7475.2 7619.9]
+
+diplomacy (design review finding 11; min/median/max over seeds; wars per age = mean declarations in Stone Bronze Iron Sail Industry Atomic Space):
+policy       | war% of years   | wars        | first war        <=1300 | wars per age  S    B    I    Sa   In   At   Sp  | v>=.5 formed peak yrs% | pacts | joined blamed thanked | nuke-ex max | omens
+favourite    | 10.0/12.4/29.4  | 25/34/64    | 361/394/1188      6/6  |  0.0  8.5 10.7  7.5  5.2  3.8  2.5 |          22.2    5   26 |  13.0 |      3      7      44 |           1 |   5.5
+
+pacing (design review finding 13; per real minute at 1x, 120 years a minute, mean over seeds that reached the age: S B I Sa In At Sp):
+policy       | sim moments / min                    | chronicle weight 2 / min             | chronicle weight 3 / min             | war % of the age                     | 1x min      | auto-pace min | 0-notable min 1x / auto
+favourite    | 12.2 28.3 34.8 53.9 68.5 51.9 43.4 |  2.4  6.0  6.3  6.0  6.7  6.9  5.7 |  1.8  0.8  0.7  0.5  0.9  0.8  2.3 |    0   22   21   17   12   11   15 | 25.6/27.8/32.5 | 25.1/27.2/32.0 | 1.0 / 0.3
+
+ending mix (Ark endings by mood; silence; none):
+policy       | beloved feared forgotten parting | silence none
+favourite    |       6      0         0       0 |       0    0
+
+note: tick timings were measured with --jobs 6 (threads contend for the heap and memory): use --jobs 1 for the performance targets
+
+simrun: 6 run(s) in 190.7 s wall, no non-finite values

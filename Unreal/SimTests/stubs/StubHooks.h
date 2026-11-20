@@ -98,7 +98,8 @@
 	X(diplomacy, society_rel, society::rel) X(diplomacy, society_peek, society::peek) \
 	X(diplomacy, society_atWar, society::atWar) X(diplomacy, society_declareWar, society::declareWar) \
 	X(diplomacy, society_makePeace, society::makePeace) X(diplomacy, society_onArrive, society::onArrive) \
-	X(diplomacy, society_diplomacy, society::diplomacy) X(diplomacy, society_swearPeace, society::swearPeace) X(diplomacy, society_tense, society::tense)
+	X(diplomacy, society_diplomacy, society::diplomacy) X(diplomacy, society_swearPeace, society::swearPeace) X(diplomacy, society_tense, society::tense) \
+	X(diplomacy, society_swornUntil, society::swornUntil)
 #define DM_STUBS_POWERS(X) \
 	X(powers, powers_unlocked, powers::unlocked) X(powers, powers_cost, powers::cost) X(powers, powers_can, powers::can) \
 	X(powers, powers_use, powers::use) X(powers, powers_upgrade, powers::upgrade) X(powers, powers_drownRisk, powers::drownRisk)

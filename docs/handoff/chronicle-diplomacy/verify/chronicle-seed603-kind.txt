@@ -1,0 +1,1408 @@
+== seed 603  policy kind  world "Lianothae"  L 6  calamity 1.00  create 119 ms  start 20 ms
+   ENDING year 3479: ark / beloved (culture 0, settlement 0)
+   result: 3479 years, ending ark / beloved in 3479; ages: Bronze 309 Iron 944 Sail 1648 Industry 2296 Atomic 2816 Space 3260; ark 3479
+   peaks: pop 8.06M, settlements 113, cultures 6; anomaly +3.98 (min -1.72), co2 152.4, dust 0.191, sea +0.346 / -0.012 vs seaBase; largest fire 11 cells (year 1097)
+   awe: at cap 0% of years, below 90% 100%; income stone 2.20/yr (a 40-Awe miracle every 9.1 s at 1x), later 2.84/yr (7.0 s), 150 Awe every 25 s once meteors unlock
+   events: founded 147, destroyed 43 ( lava 3 sea 40 ), cultures born 8 / died 3, wars 51, battles 163, nukes 0, prophets 2, wonders 1, trade routes 584, famines 135, plagues 50, fires 336, storms 206, droughts 140, quakes 34, volcanoes 13, impacts 0, people:lost 0, chronicle 1391
+   policy: 73 clicks, 1380 strokes, 0 refused, 2 edicts; bloom 1012 heal 21 inspire 1 peace 49 prophet 2 rain 368
+   timing: 13916 ticks, wall mean 20.135 ms, max 15641.48 ms (year 3179); thread CPU mean 2.065 ms, max 22.87 ms, p99.9 17.24 ms; score 5626; non-finite: none
+   regard now: everyone devotion 0.428 love +0.615 (beloved); Wibalila* 0.437/+0.626 age Space pop 4.99M; Barikari 0.439/+0.660 age Space pop 1.58M; Itindaka 0.466/+0.546 age Atomic pop 255.2k; Mokotera 0.538/+0.741 age Industry pop 57.4k; Tatuwori 0.565/+0.736 age Atomic pop 70.5k; Mokaleka 0.351/+0.502 age Space pop 1.10M
+   memory (Ark culture): grace 8.29 wrath 0.00 neglect 0.0 (presence 1.00) lore +0.768 verdict +0.719 silent 10 y prayers 464 answered 372 -> beloved
+   unlocks: raise 1 lower 1 rain 1 bloom 14 lightning 1 quake 162 plague 944 meteor 1648 volcano 2296 heal 1 inspire 162 prophet 944 peace 944 consecrate 309
+   review: settlements @200 4 @400 9; first prayer 46; second culture 252; first war 361, war in 17.8% of years; longest quiet (no weight-2 entry, years 0-1000) 206 y; aweMax@1000 600; Awe >= 95% of the cap in 0% of years; prayers 873, answered 648; rain/bloom answered 568, famine over within 5 y 568; famine entries 43; HUD mood = lead mood in 100% of years; BELOVED before year 20; epithet 'the Quiet Between Armies'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.437/+0.626; memory grace 8.29 wrath 0.00 lore +0.77 verdict +0.72 silent 10 y prayers 372/464 -> beloved (remembered)
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 308/0/0%/12.9/2.7,1.95; Bronze 635/5/22%/20.2/6.4,0.76; Iron 704/10/19%/33.2/5.8,0.68; Sail 648/14/19%/51.9/5.4,0.56; Industry 520/7/23%/78.2/6.5,0.92; Atomic 444/12/18%/62.4/6.2,0.81; Space 219/3/13%/37.8/7.1,2.19;
+   diplomacy: alliances formed 33 (peak 4 at once, 23% of years), alliance events 13, wars joined by an ally 0, blamed on the god 2, victor thanked the god 3, nuclear exchanges 0; pace: 29.0 min at 1x (1 without a notable entry), auto-pace 28.3 min (0 without)
+   chronicle (last entries):
+     [    0 w3] Then green came out of the wet places of Lianothae, slowly at first, as if it were not sure it was allowed.
+     [    0 w3] Yelondo touched the sleeping clay in the deep forest, and the first of the Wibalilani opened their eyes. They named their camp Lezindeni.
+     [    0 w3] Again the god woke a people: the Wibalilani, at Sezazu.
+     [    0 w3] Here the counting of years begins.
+     [    0 w1] Soft rain fell over Lezindeni.
+     [    1 w2] At Lezindeni they set stones in a ring and laid the first fruits on them for Yelondo. It was a small shrine. The god did not complain.
+     [    1 w2] The Wibalilani called the one who had woken them the Waker.
+     [    6 w2] In the 6th year the Wibalilani stopped calling their god the Waker. From now on, in the market and at the hearth, it was the Cloud-Shepherd.
+     [   14 w1] Sezazu built a small shrine on the hill above the fields, and kept a fire burning in it.
+     [   14 w1] Where the Cloud-Shepherd passed near Lezindeni, the land went green out of season, and the old women said the trees had heard a rumour.
+     [   26 w1] Lezindeni grew from a camp into a village.
+     [   28 w1] The herds about Lezindeni grew fat on grass that had not been there the week before.
+     [   38 w1] There were now enough hearths at Sezazu to call it a village.
+     [   45 w1] No rain fell on the lands of Lezindeni. The river showed its stones, and the people counted them.
+     [   46 w1] The people of Lezindeni climbed to the shrine and prayed to Yelondo for rain. They prayed loudly, in case the Cloud-Shepherd was far away.
+     [   46 w2] The Wibalilani had called the god the Cloud-Shepherd. After what they had seen, they called the god Lord of the Second Spring.
+     [   46 w2] Lezindeni prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [   50 w1] In those ten years Yelondo answered the prayers of seven towns of the Wibalilani.
+     [   52 w1] The rain-dancers of Lezindeni had danced for three days when Yelondo answered them with thunder and a long rain.
+     [   53 w1] Rain returned to Lezindeni at last.
+     [   58 w1] Around Lezindeni the trees bent with fruit, and the Wibalilani said Yelondo had walked there.
+     [   72 w1] The land of Lezindeni bloomed out of season, and the beekeepers grew rich.
+     [   80 w1] Between the greater deeds of those thirty years, Yelondo gave five towns of the Wibalilani what they prayed for.
+     [   85 w1] The fields about Lezindeni grew green as if in a dream.
+     [   98 w1] Near Lezindeni, at the touch of the god, flowers opened in the snow.
+     [  129 w1] Yelondo breathed on the land around Lezindeni, and it flowered.
+     [  142 w1] The herds about Lezindeni grew fat on grass that had not been there the week before.
+     [  150 w1] In the 150th year, a band went out from Lezindeni with seed corn and quarrels enough for a new town, and founded Onjete on the dry grasslands.
+     [  151 w1] The camp at Onjete put down roots and became a village.
+     [  151 w1] The Wibalilani set up a shrine at Onjete, and left small carved birds there for the god.
+     [  156 w1] Where Lord of the Second Spring passed near Onjete, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  162 w1] Families of the Wibalilani who left Sezazu built their first fires at Mbunduni, and were not sorry.
+     [  162 w1] In the 162nd year Mbunduni could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  169 w1] The land of Sezazu blossomed out of season, and the beekeepers grew rich.
+     [  182 w1] Around Mbunduni the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  200 w1] The fields about Sezazu grew green as if in a dream.
+     [  213 w1] Settlers of the Wibalilani went out from Lezindeni and made a new home at Tukonjiri.
+     [  213 w1] Tukonjiri was a village now, with a fence against the wolves.
+     [  213 w1] At Tukonjiri a shrine of wood was made for Yelondo.
+     [  213 w1] Near Sezazu, at the touch of the god, seeds woke in the dry ground.
+     [  223 w1] A band from Sezazu crossed the country and founded Tazuwazi in the deep forest.
+     [  228 w1] Yelondo breathed on the land around Mbunduni, and it flowered.
+     [  241 w1] Where Lord of the Second Spring passed near Tazuwazi, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  242 w1] Far away, in the lonely woods of the middle lands, a mountain was born in fire, and its ash darkened the sky.
+     [  252 w3] From the Wibalilani came the Talowakoni, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  252 w2] The Talowakoni called the god who had woken their fathers the Sower.
+     [  256 w1] The herds about Sezazu grew fat on grass that had not been there the week before.
+     [  269 w1] Nanzangu was founded in the 269th year. Its founders swore it would one day be greater than Onjete. The chronicle notes that all founders swear this.
+     [  270 w1] The tents of Nanzangu gave way to houses of timber, and it was called a village.
+     [  270 w2] At Nanzangu, the Talowakoni raised their first shrine to Yelondo, a ring of stones where they could speak to the sky.
+     [  270 w1] Around Mbunduni the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  281 w1] A new village of the Wibalilani, Tutumbuwo, was raised in the deep forest, a few days' walk from Mbunduni.
+     [  281 w1] Children were born at Tutumbuwo who had never lived anywhere else, and it became a village.
+     [  281 w1] A circle of white stones was laid out at Tutumbuwo, and the Wibalilani came there to speak to Yelondo.
+     [  284 w1] The land of Tutumbuwo blossomed out of season, and the beekeepers grew rich.
+     [  294 w1] Lightning struck north-west of Onjete in a summer storm.
+     [  294 w1] Fire ran through the dry grasslands north-west of Onjete.
+     [  297 w1] The fields about Sezazu grew green overnight.
+     [  307 w1] Wanderers from Tukonjiri came to Wakanji and stayed.
+     [  308 w1] The people of Wakanji raised a shrine to Yelondo.
+     [  309 w3] In the 309th year the world turned a page: the Wibalilani, first of all peoples, came into the Age of Bronze, and the others began to hurry.
+     [  310 w1] Lezindeni became a town, with a market-day.
+     [  310 w2] The Wibalilani raised a temple at Lezindeni, and were proud of it for one generation, which is the usual length of pride. It was the first temple of the Wibalilani.
+     [  310 w1] Near Sezazu, at the touch of the god, seeds woke in the dry ground.
+     [  313 w2] The Talowakoni learned to marry copper and tin, and the age of bronze began among them.
+     [  314 w2] The Talowakoni of Onjete built a temple to Yelondo so tall that the priests must rest twice on the stair, and they said that this was the point. No one among the Talowakoni had built a temple before.
+     [  324 w1] Yelondo breathed on the land around Sezazu, and it flowered.
+     [  327 w1] The houses of Nanzangu reached the old boundary stones and did not stop. From this year the Talowakoni call it a town.
+     [  327 w1] Nanzangu raised a temple to Yelondo, and its bells could be heard in the fields.
+     [  338 w1] Where Lord of the Second Spring passed near Mbunduni, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  354 w1] The herds about Tazuwazi grew fat on grass that had not been there the week before.
+     [  361 w2] In the 361st year the Wibalilani remembered an old insult from the Talowakoni, and went to war over it.
+     [  362 w2] Lezindeni built walls. No one said against whom. Everyone knew. It was the first wall of the Wibalilani.
+     [  362 w1] Onjete raised walls of earth and timber, for there was war. No one among the Talowakoni had built walls before.
+     [  364 w1] The village of Wakanji grew into a town; it had a name even among strangers.
+     [  368 w1] Before Onjete, the Wibalilani met the Talowakoni. By evening the field belonged to the Talowakoni, and to the birds.
+     [  368 w1] Before Sezazu, the army of the Talowakoni was broken.
+     [  368 w1] The land of Sezazu bloomed out of season, and the beekeepers grew rich.
+     [  376 w2] In the 375th year Onjete opened its gates to the Wibalilani, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [  376 w1] The Wibalilani held Sezazu against the Talowakoni, and sang about it for a hundred years.
+     [  376 w1] The priests of Tukonjiri went up to the high places and cried out for peace.
+     [  381 w1] Around Onjete the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  381 w1] The Talowakoni attacked Onjete in the rain and were beaten in the river mud.
+     [  384 w1] In Sezazu they burned sweet grass and asked Yelondo for peace.
+     [  384 w1] The Wibalilani marched into Tukonjiri, and the town paid tribute from that day.
+     [  385 w2] The Wibalilani won their war against the Talowakoni, and gave the glory to Lord of the Second Spring. The priests of Lezindeni had never been so busy, nor so well fed.
+     [  396 w1] The fields about Tukonjiri grew green as if in a dream.
+     [  397 w1] A hard sun stood over Wakanji year after year, and the barley died standing.
+     [  398 w1] The people of Tukonjiri prayed for rain.
+     [  398 w1] Rain answered the prayers of Tukonjiri, warm and heavy and long.
+     [  402 w1] At Wakanji, the Talowakoni prayed to Yelondo for rain, morning and evening.
+     [  404 w1] In Tukonjiri they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [  406 w1] The Sower drew a hand across the sky above Wakanji, and the dry fields drank.
+     [  407 w1] The long thirst of Wakanji ended in a storm, and the Talowakoni danced in the mud.
+     [  410 w1] Near Mbunduni, at the touch of the god, flowers opened in the snow.
+     [  410 w1] In those twenty years five towns of the Wibalilani had their prayers answered, and the prayers of four towns of the Talowakoni were heard.
+     [  423 w1] Yelondo breathed on the land around Onjete, and it flowered.
+     [  424 w3] The Wibalilan settlers about Onjete had been apart too long. They took a new name, Barikari, and went their own way.
+     [  424 w2] Among the Barikarini the god was named Lord of the Second Spring.
+     [  436 w1] Where Lord of the Second Spring passed near Tazuwazi, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  437 w2] In the 437th year the Barikarini saw how Lord of the Second Spring smiled on the Talowakoni, and could not bear it. They went to war to take the god's favour by the spear.
+     [  441 w1] The Barikarini came against Nanzangu and were thrown back.
+     [  441 w1] At Onjete the Barikarini won the day. The Talowakoni tell it differently, in their own chronicle, which no one has asked to read.
+     [  450 w1] Around Tutumbuwo the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  454 w1] In Onjete a white goat was given to Yerondo, with a prayer for peace.
+     [  457 w1] The host of the Barikarini came against Nanzangu and broke on its walls like a wave on rock, and went home fewer.
+     [  457 w1] An army of the Talowakoni besieged Onjete and went home with nothing but stories.
+     [  463 w1] The herds about Mbunduni grew fat on grass that had not been there the week before.
+     [  465 w1] Before Nanzangu, the Barikarini met the Talowakoni. By evening the field belonged to the Talowakoni, and to the birds.
+     [  465 w1] The Talowakoni attacked Onjete on a holy day and were beaten in the river mud.
+     [  469 w1] For fifteen years Onjete prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [  469 w1] In Nanzangu they said the god was deaf, and stopped asking.
+     [  470 w1] The women of Onjete sang at the shrine every evening and asked for peace.
+     [  473 w1] The Talowakoni held Nanzangu against the Barikarini, and sang about it for a hundred years.
+     [  473 w1] Before Onjete, the army of the Talowakoni was broken.
+     [  476 w1] The land of Tazuwazi bloomed out of season, and the beekeepers grew rich.
+     [  477 w2] The war of the Barikarini and the Talowakoni ended because both had run out of sons. Each side wrote down that it had won.
+     [  490 w1] The fields about Sezazu grew green as if in a dream.
+     [  503 w1] Near Mbunduni, at the touch of the god, seeds woke in the dry ground.
+     [  518 w1] Yelondo breathed on the land around Tutumbuwo, and it flowered.
+     [  519 w2] The mountain close by Nanzangu woke and wept fire.
+     [  520 w1] Lightning found the deep forest south of Nanzangu, and the forest burned for a season. In the spring, from the ash, it began again.
+     [  521 w2] The mountain opened above Nanzangu and its stone ran like honey, though not like honey. The town is beneath it. The new ground is very fertile, the chronicle observes, as though that were a comfort.
+     [  528 w1] A wildfire came close to Onjete, and turned only when the wind did.
+     [  529 w1] Some of the people of Onjete grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Nyewinga.
+     [  529 w1] The camp at Nyewinga put down roots and became a village.
+     [  529 w2] The Barikarini made their first shrine at Nyewinga, and called the god by a name of their own: Yerondo.
+     [  529 w2] Nyewinga built a granary against lean years. It was the first granary of the Barikarini.
+     [  531 w1] The fire-mountain in the woods south of Nyewinga fell asleep again.
+     [  532 w1] Around Tazuwazi the trees bent with fruit, and the Wibalilani said Yelondo had walked there.
+     [  542 w1] Ukingoli began as a ring of tents in the deep forest, raised by wanderers from Tazuwazi.
+     [  542 w1] There were now enough hearths at Ukingoli to call it a village.
+     [  542 w1] The elders of Ukingoli chose a holy place, and a shrine to Yelondo was raised there.
+     [  546 w1] Where Lord of the Second Spring passed near Mbunduni, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  551 w2] The Barikarini and the Talowakoni could no longer share the river. They tried to share it with spears instead.
+     [  555 w1] The Talowakoni came against Tukonjiri and were thrown back.
+     [  558 w1] At Wakanji the Talowakoni won the day. The Barikarini tell it differently, in their own chronicle, which no one has asked to read.
+     [  560 w1] Kosetende was founded in the deep forest by the Wibalilani, who had grown too many for Lezindeni.
+     [  560 w1] The herds about Tutumbuwo grew fat on grass that had not been there the week before.
+     [  561 w1] Kosetende grew from a camp into a village.
+     [  561 w1] At Kosetende they set stones in a ring and laid the first fruits on them for Yelondo. It was a small shrine. Lord of the Second Spring did not complain.
+     [  563 w1] The host of the Talowakoni came against Tukonjiri and broke on its walls like a wave on rock, and went home fewer.
+     [  566 w2] The banners of the Barikarini were raised over Wakanji.
+     [  566 w3] The Talowakoni are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [  566 w2] The war ended when there were none of the Talowakoni left to fight it.
+     [  571 w1] In the 571st year, a band went out from Tukonjiri with seed corn and quarrels enough for a new town, and founded Rubekumbe by the water.
+     [  572 w1] Rubekumbe was a village now, with its own small quarrels.
+     [  572 w1] A circle of white stones was laid out at Rubekumbe, and the Barikarini came there to speak to Yerondo.
+     [  574 w1] The land of Ukingoli blossomed out of season, and the beekeepers grew rich.
+     [  582 w2] Far from their old capital, the people about Ukingoli began to call themselves the Itindakani, and paid no more taxes to the Wibalilani.
+     [  582 w2] The Itindakani began to speak of Yelondo as Lord of the Second Spring.
+     [  583 w1] So many children were born in Rubekumbe that the elders gave up learning their names. Thus it became a town.
+     [  587 w1] The fields about Kosetende grew green overnight.
+     [  600 w1] Near Tutumbuwo, at the touch of the god, seeds woke in the dry ground.
+     [  611 w2] In the lands about Wakanji a new people arose, the Mokoterani, children of the Barikarini but no longer their subjects.
+     [  611 w2] In the first songs of the Mokoterani, the god was Lord of the Second Spring.
+     [  614 w1] A great storm walked in from the sea and stood over Tazuwazi for three days, and the roofs learned to fly.
+     [  616 w1] Yelondo breathed on the land around Tazuwazi, and it flowered.
+     [  630 w1] Around Sezazu the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  643 w1] The land of Tutumbuwo blossomed out of season, and the beekeepers grew rich.
+     [  655 w1] The earth opened on the wild ice of the far north, where no one lived, and fire poured out until the sea quenched it.
+     [  656 w1] The herds about Mbunduni grew fat on grass that had not been there the week before.
+     [  671 w1] Where Lord of the Second Spring passed near Tazuwazi, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  686 w1] The fields about Sezazu grew green overnight.
+     [  699 w1] Near Mbunduni, at the touch of the god, seeds woke in the dry ground.
+     [  712 w1] Yelondo breathed on the land around Tazuwazi, and it flowered.
+     [  726 w1] Around Sezazu the trees bent with fruit, and the Wibalilani said Yelondo had walked there.
+     [  739 w1] The land of Kosetende bloomed out of season, and the beekeepers grew rich.
+     [  752 w1] The herds about Mbunduni grew fat on grass that had not been there the week before.
+     [  766 w1] Where Lord of the Second Spring passed near Sezazu, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  779 w1] The fields about Kosetende grew green overnight.
+     [  789 w2] The long quarrel between the Mokoterani and the Barikarini came to blood.
+     [  792 w1] Near Sezazu, at the touch of the god, flowers opened in the snow.
+     [  793 w1] A band from Onjete crossed the country and founded Debuyumbe on the shore.
+     [  793 w1] The tents of Debuyumbe gave way to houses of stone, and it was called a village.
+     [  793 w1] Debuyumbe built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [  798 w1] An army of the Mokoterani besieged Tukonjiri and went home with nothing but its wounded.
+     [  798 w1] Before Wakanji, the army of the Barikarini was broken.
+     [  802 w2] Debuyumbe was lost by the Barikarini and won by the Mokoterani, and its market changed hands with it.
+     [  802 w1] The Barikarini of Nyewinga wrote their prayer for peace on clay and buried it at the shrine.
+     [  803 w1] Tiwonjiri was founded in the 803rd year. Its founders swore it would one day be greater than Tazuwazi. The chronicle notes that all founders swear this.
+     [  803 w1] Children were born at Tiwonjiri who had never lived anywhere else, and it became a village.
+     [  806 w1] Yelondo breathed on the land around Nyekunga, and it flowered.
+     [  806 w1] The Mokoterani held Wakanji against the Barikarini, and sang about it for a hundred years.
+     [  806 w1] The people of Malundaba prayed for rain, and Yelondo sent it.
+     [  807 w2] At Lizuwazi they set stones in a ring and laid the first fruits on them for Yelondo. It was a small shrine. Lord of the Second Spring did not complain.
+     [  807 w2] The headmen of Lizuwazi ordered a tithe of every harvest kept in a great barn, against the bad years. No one among the Itindakani had built a granary before.
+     [  810 w1] Settlers of the Itindakani went out from Zawazu and made a new home at Ingawo.
+     [  810 w2] After twenty-one years the Mokoterani asked for peace, and the Barikarini granted it, and made them pay for the asking.
+     [  820 w1] Around Sezazu the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  820 w2] Generations passed and the Barikarini saw nothing of Lord of the Second Spring; they began to call the god the Silent One.
+     [  826 w1] Families of the Wibalilani who left Kosetende built their first fires at Kabindari, and called it good.
+     [  827 w1] In the 827th year Kabindari could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  827 w1] The Wibalilani set up a shrine at Kabindari, and left bread there for the god.
+     [  833 w1] The land of Tazuwazi blossomed out of season, and the beekeepers grew rich.
+     [  834 w1] Ingawo grew until a man could get lost in it, and they called it a town.
+     [  834 w1] The priests of Ingawo built a house for the god with a hundred steps. It was the first temple of the Itindakani.
+     [  846 w1] Black clouds came over Zawazu from the sea, and the river ran brown for days.
+     [  846 w1] The herds about Malundaba grew fat on grass that had not been there the week before.
+     [  849 w1] Far away, in the empty deep forest of the middle lands, a mountain was born in fire, and its ash darkened the sky.
+     [  860 w1] Where Lord of the Second Spring passed near Tutumbuwo, the land went green out of season, and the old women said the trees had heard a rumour.
+     [  866 w3] From the Wibalilani came the Muwikasani, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  866 w2] Among the Muwikasani the god was named the Green Hand.
+     [  873 w1] The fields about Nyekunga grew green as if in a dream.
+     [  882 w2] The god did nothing that the Itindakani could see for longer than anyone remembered, and Lord of the Second Spring became the Sleeper.
+     [  886 w1] Near Malundaba, at the touch of the god, the orchards fruited twice.
+     [  900 w1] Yelondo breathed on the land around Tiwonjiri, and it flowered.
+     [  907 w2] War between the Itindakani and the Muwikasani. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [  908 w2] The people of Lizuwazi built a wall and a gate, and slept behind them. No one among the Itindakani had built walls before.
+     [  909 w1] The priests of Lizuwazi went up to the high places and cried out for rain.
+     [  910 w2] Yelondo heard the dry fields of Lizuwazi, and opened the sky.
+     [  910 w2] The Itindakan priests gave the god a new name: Lord of the Second Spring.
+     [  911 w1] The Muwikasani attacked Ingawo at dawn and were beaten by its old men and boys.
+     [  911 w2] The Mokoterani still kept the shrines, but the priests now spoke of the Sleeper, not Lord of the Second Spring.
+     [  911 w1] Before Kabindari, the Itindakani met the Muwikasani. By evening the field belonged to the Muwikasani, and to the birds.
+     [  912 w1] Around Mbunduni the grass grew to a man's waist, and the Wibalilani said Yelondo had walked there.
+     [  916 w1] At Tazuwazi the craftsmen woke with ideas they could not explain, and claimed them as their own.
+     [  924 w1] The people of Kosetende prayed for peace.
+     [  926 w1] The land of Nyekunga bloomed out of season, and the beekeepers grew rich.
+     [  927 w1] The Itindakani came against Kabindari and were thrown back.
+     [  927 w1] At Ingawo the Itindakani won the day. The Muwikasani tell it differently, in their own chronicle, which no one has asked to read.
+     [  935 w1] The host of the Muwikasani came against Ingawo and broke on its walls like a wave on rock, and went home fewer.
+     [  935 w1] The earth shook on the dry grasslands west of Onjete.
+     [  935 w1] An army of the Itindakani besieged Kabindari and went home with nothing but stories.
+     [  936 w1] Among the Barikarini the god was no longer the Silent One but Lord of the Second Spring, and the old name was forgotten.
+     [  938 w1] The rains failed around Malundaba.
+     [  939 w1] The people of Ukingoli stopped praying for peace; Yelondo had not answered them.
+     [  939 w1] The prayers of Kosetende went up for fifteen years and nothing came down. The Muwikasani began to wonder whether anyone was listening.
+     [  940 w1] Sezazu had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [  940 w1] The people of Kosetende climbed to the shrine and prayed to Yerondo for peace. They prayed loudly, in case the Green Hand was far away.
+     [  942 w1] Yelondo sent rain on the thirsty fields of Malundaba.
+     [  944 w3] In the 944th year the world turned a page: the Wibalilani, first of all peoples, came into the Age of Iron, and the others began to hurry.
+     [  944 w1] For Sezazu, thirsty and praying, Yelondo gathered the clouds, and the wells filled again.
+     [  944 w1] A sign appeared over the armies of the Muwikasani and the Itindakani, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+     [  945 w3] Lezindeni became the first city in the world, and its people did not let anyone forget it.
+     [  945 w1] Lezindeni built a harbour, and ships came and went. It was the first harbour of the Wibalilani.
+     [  948 w1] The drought about Malundaba broke, and the children ran out into the rain.
+     [  950 w1] The chronicle, which cannot write everything, notes only that in those forty years more than a dozen towns of the Wibalilani prayed to Yelondo and did not pray in vain.
+     [  952 w1] In the 952nd year the first caravan came from Nyekunga to Tiwonjiri, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [  953 w2] Merchants of Tiwonjiri reached Zawazu and found that the people there were also people. This was thought remarkable, and then useful.
+     [  955 w2] The Wibalilani and the Barikarini had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead. The same calm came over the Itindakani.
+     [  956 w1] Among the Itindakani, mothers who had once told their children of Lord of the Second Spring now told them of the Quiet Between Armies.
+     [  961 w1] In Lizuwazi they burned fat and asked Yelondo for rain.
+     [  962 w1] Lizuwazi asked for rain, and Yelondo gave it, and the barley stood up again.
+     [  973 w1] Merchants of the Wibalilani reached Kosetende of the Muwikasani, and the two peoples traded songs and diseases.
+     [  974 w1] Tazuwazi became a city, and its towers could be seen from far off.
+     [  976 w1] The Barikarini no longer called the god Lord of the Second Spring; now they said the Quiet Between Armies.
+     [  981 w1] A tree south-west of Kabindari was split by lightning. The wood was kept as a holy thing in the town.
+     [  981 w1] A red night: the woods south-west of Kabindari burned, and ash fell on the town.
+     [  982 w1] The Muwikasani drew iron out of red stone, and the age of iron began among them.
+     [  983 w1] The houses of Kosetende reached the old boundary stones and did not stop. From this year the Muwikasani call it a city.
+     [  983 w1] Kosetende cut a harbour into the shore, and its boats went further every year. No one among the Muwikasani had built a harbour before.
+     [  986 w1] The priests of Lizuwazi were still singing for rain when it began to fall on them.
+     [  990 w1] So many children were born in Malundaba that the elders gave up learning their names. Thus it became a town.
+     [  990 w1] The Wibalilani of Malundaba spent ten years on a temple to Yelondo, and were very proud of it.
+     [  993 w1] In Sezazu the ground cracked like old pottery, and the Wibalilani began to pray for rain.
+     [  994 w1] Rain answered the prayers of Sezazu, warm and heavy and long.
+     [  996 w1] In the 996th year the granaries of Malundaba rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [  997 w2] The quarrel of the Wibalilani and the Barikarini was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [  998 w1] The Itindakani worked iron, and their swords grew long.
+     [ 1000 w1] Yelondo heard more than a dozen towns of the Wibalilani and answered them; and the Itindakani raised ten new buildings. Of such small things in those fifty years the chronicle keeps nothing more.
+     [ 1000 w1] Caravans of the Muwikasani now came to Nyekunga of the Wibalilani as well.
+     [ 1004 w2] In the 1004th year Zawazu could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1006 w1] The feet of traders wore a road between Malundaba and Sezazu. Along it went pots and coins and, later, fevers.
+     [ 1013 w1] Envoys of the Wibalilani spat on the threshold before the Muwikasani, and the war began.
+     [ 1015 w1] The smiths of Onjete learned the secret of iron, and the Barikarini were never weak again.
+     [ 1016 w1] Onjete outgrew its walls twice and became a city of the Barikarini.
+     [ 1016 w1] A harbour now stands at Onjete, where before there was only mud and opinion. It was the first harbour of the Barikarini.
+     [ 1019 w1] The Wibalilani took Kosetende from the Muwikasani.
+     [ 1019 w1] The Wibalilani carried the spoils of the Muwikasani up the temple steps of Lezindeni, saying the god had been with them.
+     [ 1020 w1] The merchants of Nyewinga found a road to Onjete, and the road found more merchants.
+     [ 1027 w1] Traders from Tazuwazi found their way to Zawazu of the Itindakani, where Wibalilan coin was already known.
+     [ 1036 w2] Lord of the Second Spring set a ring of light around the noon sun over Sezazu. The Wibalilani and the Barikarini, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them.
+     [ 1037 w2] In the songs of the Wibalilani, Lord of the Second Spring became the Quiet Between Armies.
+     [ 1038 w1] At Malundaba, the Wibalilani prayed to Yelondo for rain, and fasted.
+     [ 1038 w1] The people of Malundaba prayed for rain, and Yelondo sent it.
+     [ 1042 w1] Sezazu of the Wibalilani began to buy the goods of Tukonjiri, and its merchants learned the Barikaran way of haggling.
+     [ 1044 w1] A new village of the Wibalilani, Akekumbe, was raised in the pine woods, a few days' walk from Tazuwazi.
+     [ 1045 w1] The houses of Akekumbe reached the old boundary stones and did not stop. From this year the Wibalilani call it a village.
+     [ 1045 w1] At Akekumbe a shrine of wood was made for Yelondo.
+     [ 1052 w1] Wanderers from Nyekunga came to Witonjiri and stayed.
+     [ 1054 w1] Another road joined Kosetende to Ukingoli of the Itindakani, and the tolls on it were argued over.
+     [ 1059 w1] The Wibalilani made war on the Muwikasani.
+     [ 1059 w1] Ingawo and Zawazu began to trade, pots for fish, and both grew fat on it.
+     [ 1060 w1] A white light lay between the armies of the Wibalilani and the Muwikasani for a day, and both sent envoys instead of soldiers.
+     [ 1063 w1] Akekumbe became a town, and chose a council of elders, who argued.
+     [ 1064 w1] Some of the people of Ingawo grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Ndikawazi.
+     [ 1066 w2] Lizuwazi prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1068 w1] In Malundaba a jar of honey was given to Yelondo, with a prayer for rain.
+     [ 1070 w1] Rain fell on Tikangoli out of a clear sky, and the Wibalilani danced in it.
+     [ 1071 w1] The rain-dancers of Tikangoli had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 1075 w1] Merchants began to travel between Akekumbe and Tiwonjiri, bringing salt and news.
+     [ 1076 w1] There were now enough hearths at Zabandu to call it a village.
+     [ 1079 w2] The Mokoterani worked iron, and their swords grew long.
+     [ 1080 w1] Below the great events of those seventy years, Yelondo was asked for help by six towns of the Wibalilani and gave it.
+     [ 1080 w1] Wakanji grew past counting into a city, and its markets never closed.
+     [ 1081 w1] Kosetende prayed for healing, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1084 w1] It is written that Marumba began as a ring of tents in the woods, raised by wanderers from Debuyumbe.
+     [ 1088 w1] Many roads now led to Witonjiri, and it was called a city.
+     [ 1092 w1] Traders from Ndikawazi found their way to Kosetende of the Wibalilani, where Itindakan coin was already known.
+     [ 1095 w1] The earth opened in the empty woods of the south, where no one lived, and fire poured out until the sea quenched it.
+     [ 1096 w1] The women of Lizuwazi sang at the shrine every evening and asked for rain.
+     [ 1096 w1] In Lizuwazi they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1100 w1] Ox-carts began to creak along the road from Akekumbe to Nyekunga, and inns grew up beside it.
+     [ 1106 w1] In the 1106th year the first caravan came from Zabandu to Onjete, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1110 w1] The river by Wakanji shrank to a string of muddy pools, and the frogs were the first to leave.
+     [ 1112 w2] Yerondo heard the dry fields of Tukonjiri, and opened the sky.
+     [ 1114 w1] The Mokoterani of Wakanji wrote their prayer for rain on bark and buried it at the shrine.
+     [ 1114 w2] The Mokoterani had called the god the Sleeper. After what they had seen, they called the god Lord of the Second Spring.
+     [ 1115 w1] A dark cloud stood over the parched fields of Wakanji and rained on them, and on nowhere else.
+     [ 1117 w1] Tukonjiri had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1118 w1] Green came back to the fields of Wakanji, and the wells were sweet again.
+     [ 1120 w1] Another forty years went into the book, and in them four towns of the Barikarini asked Yerondo for help and were answered.
+     [ 1120 w1] Caravans of the Mokoterani now came to Onjete of the Barikarini as well.
+     [ 1126 w1] The scribes of the Barikarini began to write Marumba with the sign for 'city', and its people were insufferable about it.
+     [ 1130 w1] The merchants of Zabandu found a road to Nyewinga, and the road found more merchants.
+     [ 1139 w1] The envoys of the Wibalilani had come to the Barikarini to declare a war. They saw the sign over Sezazu, and declared a feast instead.
+     [ 1140 w1] The people of Lizuwazi prayed for rain.
+     [ 1140 w1] For Lizuwazi, thirsty and praying, Yelondo gathered the clouds, and the wells filled again.
+     [ 1146 w1] The feet of traders wore a road between Rubekumbe and Wakanji. Along it went pots and coins and, later, fevers.
+     [ 1158 w1] The sea sent a howling wind against Zabandu, and it took the thatch from every roof.
+     [ 1162 w1] Lizuwazi asked for rain, and Yelondo gave it, and more besides: the river flooded the lower fields.
+     [ 1162 w1] There was an earthquake hard by Tukonjiri, and the people of the city slept outside for a month.
+     [ 1166 w1] The people of Tukonjiri dug into the hills for ore.
+     [ 1178 w2] Before the Barikarini and the Mokoterani could come to blows, the Quiet Between Armies set a light over Nyewinga. Both peoples took it for a warning, and neither wished to be the first to ignore it.
+     [ 1179 w1] In the 1179th year the Mokoterani stopped calling their god Lord of the Second Spring. From now on, in the market and at the hearth, it was the Peacemaker.
+     [ 1182 w1] War came between the Itindakani and the Muwikasani, who had once traded salt and songs.
+     [ 1185 w1] Before Kabindari, the Itindakani met the Muwikasani. By evening the field belonged to the Muwikasani, and to the birds.
+     [ 1185 w1] The Muwikasani attacked Ingawo at dawn and were beaten in the river mud.
+     [ 1186 w1] The priests of Lizuwazi were still singing for rain when it began to fall on them.
+     [ 1192 w2] A sickness came to Sezazu by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1192 w2] The Quiet Between Armies laid a hand on Sezazu, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 1193 w1] Before Kabindari, the army of the Itindakani was broken.
+     [ 1193 w1] The Itindakani held Ingawo against the Muwikasani, and sang about it for a hundred years.
+     [ 1199 w1] The people of Kabindari climbed to the shrine and prayed to Yerondo for peace. They prayed loudly, in case the Green Hand was far away.
+     [ 1201 w1] The Itindakani came against Kabindari and were thrown back.
+     [ 1201 w1] At Ingawo the Itindakani won the day. The Muwikasani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1213 w2] Famine came to Lizuwazi.
+     [ 1214 w1] Ukingoli gave up asking Yelondo for peace. Its people grew bitter.
+     [ 1214 w1] The people of Kabindari stopped praying for peace; Yerondo had not answered them.
+     [ 1215 w1] The priests of Kabindari went up to the high places and cried out for peace.
+     [ 1216 w1] Ukingoli prayed for peace, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1220 w1] Yelondo gave four towns of the Itindakani what they prayed for. Of such small things in those twenty years the chronicle keeps nothing more.
+     [ 1222 w1] The people of Lizuwazi prayed for rain, and Yelondo sent it.
+     [ 1223 w1] Wind and rain beat upon Zabandu for three days, and the rivers rose.
+     [ 1227 w1] The Wibalilan kings swore an oath against the Muwikasani, and there was war.
+     [ 1228 w1] In Kabindari they burned incense and asked Yerondo for peace.
+     [ 1230 w1] The host of the Muwikasani came against Kosetende and broke on its walls like a wave on rock, and went home fewer.
+     [ 1235 w1] An army of the Wibalilani besieged Kabindari and went home with nothing but its wounded.
+     [ 1238 w1] Before Kosetende, the Muwikasani met the Wibalilani. By evening the field belonged to the Wibalilani, and to the birds.
+     [ 1243 w1] For fifteen years Kabindari prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1243 w1] The Wibalilani attacked Kabindari in the rain and were beaten in the river mud.
+     [ 1244 w1] At Tiwonjiri, the Wibalilani prayed to Yelondo for peace, morning and evening.
+     [ 1246 w1] The Wibalilani held Kosetende against the Muwikasani, and the field was red.
+     [ 1246 w2] The armies of the Wibalilani came home in triumph to Lezindeni, and the Muwikasani counted what they had lost.
+     [ 1248 w1] In Lizuwazi a white goat was given to Yelondo, with a prayer for rain.
+     [ 1248 w1] Lizuwazi prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1249 w1] Onjete of the Barikarini began to buy the goods of Tazuwazi, and its merchants learned the Wibalilan way of haggling.
+     [ 1252 w2] The spotted fever broke out in Rubekumbe, and its gates were shut.
+     [ 1252 w1] In Rubekumbe the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+     [ 1253 w1] Among the Mokoterani the god was no longer the Peacemaker but He Who Keeps the Lamp Lit, and the old name was forgotten.
+     [ 1275 w1] The women of Lizuwazi sang at the shrine every evening and asked for rain.
+     [ 1276 w1] In Lizuwazi they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1286 w2] In the 1286th year a prophet named Mbizolu stood up in the market of Lezindeni and said that Yelondo had spoken. Some believed. The rest moved their stalls.
+     [ 1286 w1] Mbizolu spoke for the Quiet Between Armies: "Build a thing that can be seen from the sky." And the Wibalilani began to quarry the hills.
+     [ 1287 w1] The herds about Tutumbuwo grew fat on grass that had not been there the week before.
+     [ 1293 w1] Ndilude was founded in the woods by the Wibalilani, who had grown too many for Akekumbe.
+     [ 1293 w1] Ndilude grew from a camp into a village.
+     [ 1293 w1] The people of Ndilude raised a shrine to Yelondo.
+     [ 1298 w1] Kasokumbe and Witonjiri began to trade, wine for wool, and both grew fat on it.
+     [ 1300 w1] Where the Quiet Between Armies passed near Nyekunga, the land went green out of season, and the old women said the trees had heard a rumour.
+     [ 1303 w1] The Itindakani of Lizuwazi wrote their prayer for rain on bark and buried it at the shrine.
+     [ 1304 w1] Rain answered the prayers of Lizuwazi, warm and heavy and long.
+     [ 1313 w1] The fields about Akekumbe grew green overnight.
+     [ 1315 w2] Smoke rose from the earth close by Debuyumbe, and then fire. The Barikarini said the mountain was angry.
+     [ 1316 w3] In the 1316th year the Wibalilani finished the Great Temple of Zanzundu at Lezindeni. It took three lifetimes. The first did not live to see it; the last complained of the dust.
+     [ 1316 w1] The rains forgot the country of Zabandu. The priests climbed the hills and called to them.
+     [ 1317 w2] Walls of cut stone went up around Kasokumbe, and the Wibalilan scribes began to call it a city.
+     [ 1319 w1] Debuyumbe dwindled to a town. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [ 1320 w1] Another road joined Kasokumbe to Ingawo of the Itindakani, and the tolls on it were argued over.
+     [ 1324 w1] The rain-dancers of Lizuwazi had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 1326 w1] Near Mbunduni, at the touch of the god, seeds woke in the dry ground.
+     [ 1327 w1] Clouds came back over Zabandu, and the dry river filled in a single night.
+     [ 1327 w1] The fires hard by Debuyumbe cooled into black stone, and the people of the camp went back to their fields.
+     [ 1328 w1] Ndilude was a town now, loud and crowded and proud.
+     [ 1328 w1] In Ndilude the old shrine was pulled down and a temple to Yelondo put up in its place.
+     [ 1331 w1] In the 1331st year, a band went out from Marumba with seed corn and quarrels enough for a new town, and founded Kunyukani by the water.
+     [ 1339 w1] Merchants began to travel between Marumba and Kunyukani, bringing salt and news.
+     [ 1340 w1] Yelondo breathed on the land around Tutumbuwo, and it flowered.
+     [ 1342 w1] Lightning walked on the hills north-east of Rubekumbe, and the priests of the city read it as a sign.
+     [ 1342 w1] The deep forest north-east of Rubekumbe burned, and the sky over the city was brown for days.
+     [ 1346 w1] Yelondo heard the dry fields of Lizuwazi, and opened the sky.
+     [ 1346 w1] Mbizolu the prophet died, and was buried facing the sunrise. The Wibalilani argued over every word Mbizolu had said, which is how they knew the words were holy.
+     [ 1347 w1] Caravans of the Wibalilani now came to Lizuwazi of the Itindakani as well.
+     [ 1362 w2] A coughing sickness came to Nyewinga with the traders, and did not leave.
+     [ 1362 w2] The fever left Nyewinga in a single night. The Barikarini said Yerondo had walked through the streets.
+     [ 1363 w1] Families of the Mokoterani who left Wakanji built their first fires at Solambiri, and called it good.
+     [ 1363 w1] The camp at Solambiri put down roots and became a village.
+     [ 1363 w1] At Solambiri, the Mokoterani raised their first shrine to Yerondo, a heap of white stones where they could speak to the sky.
+     [ 1363 w1] The priests of Solambiri went up to the high places and cried out for rain.
+     [ 1364 w1] Solambiri had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1368 w1] The god let rain fall on Lizuwazi, though it had not been asked for. The children made mud houses.
+     [ 1369 w1] Ten thousand hearths burned in Kunyukani. It was a city now, the jewel of the Barikarini.
+     [ 1371 w1] Traders from Solambiri found their way to Zabandu of the Barikarini, where Mokoteran coin was already known.
+     [ 1379 w1] No one destroyed Solambiri. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 1380 w1] For Rubekumbe, thirsty and praying, Yerondo gathered the clouds, and the wells filled again.
+     [ 1383 w1] So many children were born in Ndilude that the elders gave up learning their names. Thus it became a city.
+     [ 1384 w1] The Wibalilani marched against the Muwikasani, and the smiths worked day and night.
+     [ 1384 w1] An omen of peace was seen over Sezazu, and the Wibalilani and the Muwikasani laid down their spears. Even the Barikarini, who had been spoiling for a fight with them, put their grievances away.
+     [ 1393 w1] In Lizuwazi they burned sweet grass and asked Yelondo for rain.
+     [ 1394 w1] Lizuwazi asked for rain, and Yelondo gave it, and the barley stood up again.
+     [ 1394 w2] The Itindakani sharpened their spears and went against the Muwikasani, though no one could remember who had struck first.
+     [ 1397 w1] Before Kabindari, the army of the Itindakani was broken.
+     [ 1397 w1] The Muwikasani came against Ingawo and were thrown back.
+     [ 1405 w1] At Kabindari the Muwikasani won the day. The Itindakani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1405 w1] The host of the Muwikasani came against Ingawo and broke on its walls like a wave on rock, and went home fewer.
+     [ 1411 w1] The people of Kabindari climbed to the shrine and prayed to Yerondo for peace. They prayed loudly, in case the Green Hand was far away.
+     [ 1412 w3] The Wibalilan settlers about Akekumbe had been apart too long. They took a new name, Aranoki, and went their own way.
+     [ 1412 w2] The Aranokini called the god who had woken their fathers Lord of the Second Spring.
+     [ 1413 w1] An army of the Itindakani besieged Kabindari and went home with nothing but stories.
+     [ 1413 w1] The Muwikasani attacked Ingawo in the rain and were beaten by its old men and boys.
+     [ 1416 w2] In those lean years Lizuwazi ate its oxen, and then its dogs.
+     [ 1418 w1] The houses of Debuyumbe reached the old boundary stones and did not stop. From this year the Barikarini call it a town.
+     [ 1420 w1] Ukingoli had prayed for an end to the war, and the god heard. The spears were hung on the walls again.
+     [ 1425 w1] Rain came to Lizuwazi. The fields were glad of it.
+     [ 1429 w1] Thunder rolled over Nyekunga, and lightning fell west of the city.
+     [ 1429 w1] Fire walked through the dry grasslands west of Nyekunga, and the Wibalilani prayed for rain.
+     [ 1430 w1] The scribes, counting rather than writing, set down that in seventy years six towns of the Itindakani had their prayers answered.
+     [ 1441 w1] Ox-carts began to creak along the road from Kunyukani to Debuyumbe, and inns grew up beside it.
+     [ 1446 w1] The people of Lizuwazi prayed for rain.
+     [ 1446 w1] The priests of Lizuwazi were still singing for rain when it began to fall on them.
+     [ 1447 w1] Fever spread through Sezazu, and many were buried.
+     [ 1447 w2] Sezazu was healed by Yelondo. Its people carved a hand on the temple wall.
+     [ 1459 w2] The town of Debuyumbe grew into a city of the Barikarini, full of smoke and music.
+     [ 1470 w1] The people of Lizuwazi prayed for rain, and Yelondo sent it.
+     [ 1472 w1] The earth groaned under Kasokumbe, and the well water turned cloudy.
+     [ 1473 w1] The sea drew back from the shore at Kasokumbe, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [ 1489 w2] A great calm settled on the border of the Barikarini and the Mokoterani. The young, who had been ready to fight, went home and were annoyed about it for years.
+     [ 1490 w1] The Mokoteran priests gave the god a new name: the Peacemaker.
+     [ 1492 w1] There was drought in the country of Tazuwazi, and the Wibalilani looked at the sky every morning.
+     [ 1493 w1] At Tazuwazi, the Wibalilani prayed to Yelondo for rain, and fasted.
+     [ 1494 w1] Rain answered the prayers of Ukingoli, warm and heavy and long.
+     [ 1495 w1] There were too many mouths in Lizuwazi and too little bread, and the old went hungry so the young could eat.
+     [ 1496 w1] It rained on Lizuwazi, gently and for a long time, and the Itindakani said it was a blessing.
+     [ 1498 w1] The rain-dancers of Tazuwazi had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 1498 w1] The rains came back to Tazuwazi, as rains do, in their own time.
+     [ 1500 w1] Below the great events of those ten years, the prayers of five towns of the Itindakani were heard; Yelondo answered the prayers of four towns of the Wibalilani.
+     [ 1516 w1] Lizuwazi prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1524 w1] Gwindanya was founded in the 1524th year. Its founders swore it would one day be greater than Witonjiri. The chronicle notes that all founders swear this.
+     [ 1524 w1] Gwindanya was a village now, with a well and a headman.
+     [ 1524 w1] The elders of Gwindanya chose a holy place, and a shrine to Yelondo was raised there.
+     [ 1531 w1] A band from Debuyumbe crossed the country and founded Ribekani in the sands.
+     [ 1531 w1] The tents of Ribekani gave way to houses of stone, and it was called a village.
+     [ 1531 w1] At Ribekani they set stones in a ring and laid the first fruits on them for Yerondo. It was a small shrine. The Quiet Between Armies did not complain.
+     [ 1531 w1] In Ribekani a lamb was given to Yerondo, with a prayer for rain.
+     [ 1531 w2] A voice cried out in the market of Lezindeni: it was Gwanzunu, who said the god had chosen the Wibalilani.
+     [ 1531 w1] Gwanzunu commanded the Wibalilani to build a wonder worthy of Yelondo.
+     [ 1532 w1] In Ribekani they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1533 w1] In the 1533rd year the first caravan came from Gwindanya to Witonjiri, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1534 w2] In Wakanji they painted marks on the doors of the sick, and there were many marks.
+     [ 1536 w1] Settlers of the Aranokini went out from Ndilude and made a new home at Nzawatolo.
+     [ 1538 w1] Yelondo heard the dry fields of Lizuwazi, and opened the sky.
+     [ 1542 w1] The merchants of Ribekani found a road to Kunyukani, and kept the secret of it for a while.
+     [ 1544 w1] The fields around Bukada filled with new houses, and it became a town of the Wibalilani.
+     [ 1550 w1] And there were small things, as there always are: Yelondo greened the fields of eleven towns of the Wibalilani.
+     [ 1550 w1] In Wakanji they said the god was deaf, and let the shrine fall into ruin.
+     [ 1552 w1] A storm such as the old people had never seen passed over Nyewinga.
+     [ 1554 w2] The first caravan from Nzawatolo came to Tukonjiri, and the Aranokini and the Barikarini learned each other's words for 'price'.
+     [ 1558 w1] Lizuwazi had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [ 1560 w1] Gwindanya had become a city, with more people in it than anyone could name.
+     [ 1560 w1] Mines were opened near Gwindanya, and the hills were never quite the same.
+     [ 1562 w1] A warm rain fell on Ribekani for three days, and the roofs leaked, and nobody minded.
+     [ 1570 w1] A road was opened between Nzawatolo of the Aranokini and Tiwonjiri of the Wibalilani, and the two peoples began to borrow each other's words.
+     [ 1570 w1] A new village of the Barikarini, Kwarowazi, was raised in the woods, where the hunters of Marumba had always camped.
+     [ 1572 w1] Kwarowazi became a town, with a market-day.
+     [ 1572 w1] For Kunyukani, thirsty and praying, Yerondo gathered the clouds, and the wells filled again.
+     [ 1577 w1] The drought about Kunyukani broke, and the children ran out into the rain.
+     [ 1580 w1] Lizuwazi asked for rain, and Yelondo gave it, and more besides: the river flooded the lower fields.
+     [ 1580 w1] Of the smaller things of those thirty years: spring came early to more than a dozen towns of the Wibalilani, by the will of Yelondo; and the Barikarini put up more than a dozen new buildings, each the finest yet by their own account.
+     [ 1585 w1] Nzawatolo became a city, the pride of the Aranokini.
+     [ 1585 w1] Many roads now led to Bukada, and it was called a city.
+     [ 1589 w1] The feet of traders wore a road between Mbidengo and Marumba. Along it went pots and coins and, later, fevers.
+     [ 1592 w1] The priests of Ribekani were still singing for rain when it began to fall on them.
+     [ 1596 w2] Envy is a slow fire. Among the Barikarini it had burned for a generation, watching Yerondo bless the Wibalilani, and at last it reached the spears.
+     [ 1597 w2] Gwanzunu the prophet went into the hills and did not come back. The Wibalilani said Yelondo had taken the prophet home.
+     [ 1597 w1] In Nzawatolo they still tell of the great wind, which blew the fires out in every hearth.
+     [ 1600 w1] The Barikarini held Onjete against the Wibalilani, and the field was red.
+     [ 1600 w1] Lizuwazi prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1601 w1] Malundaba fell to the Barikarini, and its people learned new songs.
+     [ 1603 w1] In the 1603rd year the Wibalilani and the Aranokini swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 1604 w1] The women of Tiwonjiri tied red threads to the shrine and asked for peace.
+     [ 1607 w2] The Wibalilani marched into Malundaba, and the town paid tribute from that day.
+     [ 1608 w1] Kwarowazi outgrew its walls twice and became a city of the Barikarini.
+     [ 1610 w1] Over thirty years, and hardly worth a line each time, Yelondo made the fields of eleven towns of the Wibalilani bloom.
+     [ 1614 w1] A great calm lay between the armies of the Wibalilani and the Barikarini for a day, and both sent envoys instead of soldiers.
+     [ 1614 w1] The Wibalilani had asked Yelondo to end the war, and the god put a weariness on both armies until they went home.
+     [ 1616 w1] Ukingoli of the Itindakani grew used to the goods of Mbunduni, and its merchants learned the Wibalilan way of haggling.
+     [ 1621 w1] The Barikarini of Ribekani wrote their prayer for rain on bark and buried it at the shrine.
+     [ 1622 w1] The rain-dancers of Lizuwazi had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 1623 w1] At Ribekani there was hunger, three years running.
+     [ 1625 w1] Mist and rain came to Ribekani, and the hills around it ran with little streams.
+     [ 1625 w1] War between the Barikarini and the Aranokini. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 1626 w1] Walls rose around Nzawatolo, and the Aranokan watchmen stood upon them at night. No one among the Aranokini had built walls before.
+     [ 1630 w1] Before Kunyukani, the army of the Aranokini was broken.
+     [ 1632 w2] The long quarrel between the Itindakani and the Aranokini came to blood.
+     [ 1634 w1] Before Nzawatolo, the Barikarini met the Aranokini. By evening the field belonged to the Aranokini, and to the birds.
+     [ 1634 w1] The alliance of the Wibalilani and the Itindakani was not broken; it was forgotten, like a path no one walks any more.
+     [ 1637 w1] In the 1637th year Akekumbe opened its gates to the Itindakani, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1640 w1] Among the small news of those thirty years: five towns of the Wibalilani prayed to Yelondo and did not pray in vain.
+     [ 1642 w1] The Barikarini came against Nzawatolo and were thrown back.
+     [ 1644 w1] There was famine in Lizuwazi. The people looked up and asked the Quiet Between Armies for rain, and counted the days, and the days were long.
+     [ 1645 w1] A cool wind passed through Bukada, and in every house the fevered slept and woke well.
+     [ 1646 w1] The Barikarini won their war against the Aranokini.
+     [ 1646 w1] The Aranokini were beaten, and the Itindakani carried their temple bells home in carts.
+     [ 1646 w1] Envoys of the Mokoterani spat on the threshold before the Aranokini, and the war began.
+     [ 1647 w1] The war ended in victory for the Mokoterani. The Aranokini paid tribute for a generation.
+     [ 1648 w1] Rain answered the prayers of Sezazu, warm and heavy and long.
+     [ 1648 w3] In the 1648th year the world turned a page: the Wibalilani, first of all peoples, came into the Age of Sail, and the others began to hurry.
+     [ 1648 w1] The people of Lizuwazi climbed to the shrine and prayed to Yelondo for rain. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 1650 w1] A warm rain fell on Lizuwazi all through the night, and the roofs leaked, and nobody minded.
+     [ 1652 w2] The people of Sezazu prayed for rain, and Yelondo sent it.
+     [ 1652 w1] The long thirst of Sezazu ended in a storm, and the old people wept.
+     [ 1660 w1] The Itindakani and the Muwikasani could no longer share the river. They tried to share it with spears instead.
+     [ 1663 w1] At Kabindari the Muwikasani won the day. The Itindakani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1663 w1] The host of the Muwikasani came against Ingawo and broke on its walls like a wave on rock, and went home fewer.
+     [ 1666 w1] Far away, on the wild shore of the north, a mountain was born in fire, and its ash darkened the sky.
+     [ 1670 w1] The chronicle, which cannot write everything, notes only that in those thirty years Yelondo heard more than a dozen towns of the Wibalilani and answered them, and more than a dozen new buildings went up among them.
+     [ 1670 w1] The people of Lizuwazi prayed for rain.
+     [ 1670 w2] Envoys went back and forth between the Wibalilani and the Barikarini until they had worn a road, and at the end of it was an alliance.
+     [ 1670 w1] In Lizuwazi they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1671 w1] An army of the Itindakani besieged Kabindari and went home with nothing but its wounded.
+     [ 1674 w1] A sign appeared over the armies of the Muwikasani and the Itindakani, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come. The sign was seen as far as the lands of the Wibalilani, and there too the spears were put away.
+     [ 1675 w1] In Ribekani they burned incense and asked Yerondo for rain.
+     [ 1675 w1] Among the Muwikasani, mothers who had once told their children of the Green Hand now told them of the Breaker of Spears.
+     [ 1676 w1] Yerondo heard the dry fields of Ribekani, and opened the sky.
+     [ 1678 w1] Wanderers from Lezindeni came to Nzulutolo and stayed.
+     [ 1680 w1] The village of Nzulutolo grew into a town, and its people began to look down on villages.
+     [ 1680 w1] The old alliance of the Wibalilani and the Barikarini came apart over a small matter, as old alliances do.
+     [ 1684 w1] A storm passed over Kabindari, and lightning split an old tree west of the city.
+     [ 1691 w1] Some of the people of Tutumbuwo grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Angandari.
+     [ 1692 w1] Lizuwazi had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [ 1692 w1] Angandari grew until a man could get lost in it, and they called it a town.
+     [ 1696 w1] The Wibalilani set up a shrine at Dingonzi, and left small carved birds there for the god.
+     [ 1697 w1] For Ribekani, thirsty and praying, Yerondo sent a long grey rain, and the wells filled again.
+     [ 1697 w1] In the 1697th year the Wibalilani remembered an old insult from the Aranokini, and went to war over it.
+     [ 1700 w1] Those were busy years, if not great ones: the builders of the Wibalilani finished scores of new halls, granaries and walls, and they founded six new settlements.
+     [ 1702 w1] Another road joined Mikenjiri to Debuyumbe of the Barikarini, and the tolls on it were argued over.
+     [ 1704 w2] The banners of the Wibalilani were raised over Nzawatolo.
+     [ 1704 w1] In the 1704th year Kilisi could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [ 1704 w1] The armies of the Wibalilani came home in triumph to Lezindeni, and the Aranokini swore to remember.
+     [ 1705 w1] The Mokoterani made war on the Aranokini.
+     [ 1709 w1] At Nzombola they built a temple. It took longer than promised and cost more than was said, as is the way of all building.
+     [ 1710 w2] The Aranokini raised sails and went out upon the great sea.
+     [ 1712 w1] Lizuwazi asked for rain, and Yelondo gave it, and the barley stood up again.
+     [ 1713 w1] So many children were born in Nzulutolo that the elders gave up learning their names. Thus it became a city.
+     [ 1716 w1] An omen of peace was seen over Rubekumbe, and the Mokoterani and the Aranokini laid down their spears. Even the Barikarini, who had been spoiling for a fight with them, put their grievances away.
+     [ 1717 w1] The priests of Kwarowazi were still singing for rain when it began to fall on them.
+     [ 1719 w1] The fields about Ribekani could not feed it any longer. The priests asked Yerondo for bread.
+     [ 1722 w1] Mist and rain came to Ribekani, and the hills around it ran with little streams.
+     [ 1722 w1] Wilasungu began as a ring of tents in the pine woods, raised by wanderers from Bukada.
+     [ 1722 w1] In Kwarowazi they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1723 w1] War came between the Barikarini and the Aranokini, who had once traded salt and songs.
+     [ 1724 w1] Lombitunu became a town, and chose a council of elders, who argued.
+     [ 1725 w1] The Itindakan kings swore an oath against the Aranokini, and there was war.
+     [ 1728 w1] Ndanunye and Tikangoli began to trade, pots for fish, and both grew fat on it.
+     [ 1730 w1] Meanwhile, in the smaller news of those years, Yerondo was asked for help by nine towns of the Barikarini and gave it, and the Wibalilani put up twelve new buildings, each the finest yet by their own account.
+     [ 1732 w1] Before Mbidengo, the Aranokini met the Barikarini. By evening the field belonged to the Barikarini, and to the birds.
+     [ 1735 w1] The Itindakani won their war against the Aranokini.
+     [ 1736 w1] The Barikarini beat the Aranokini, and built a new altar to Yerondo out of the stones of the war. The beaten said the god had chosen a side, and never forgot which.
+     [ 1739 w1] The scribes of the Wibalilani began to write Dingonzi with the sign for 'city', and its taxes rose accordingly.
+     [ 1740 w1] The rain-dancers of Lizuwazi had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 1742 w1] Nzombola grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1751 w1] Caravans of the Wibalilani now came to Nyewinga of the Barikarini as well.
+     [ 1759 w2] Walls of cut stone went up around Lombitunu, and the Wibalilan scribes began to call it a city.
+     [ 1759 w1] An academy was founded at Lombitunu, where the wise argued about everything, the god included.
+     [ 1761 w1] Traders from Debuyumbe found their way to Nzawatolo of the Wibalilani, where Barikaran coin was already known.
+     [ 1763 w1] Tuzimbiri was founded on the plains by the Wibalilani, who had grown too many for Nzawatolo.
+     [ 1765 w1] The priests of Lizuwazi went up to the high places and cried out for rain.
+     [ 1766 w1] Rain answered the prayers of Lizuwazi, so suddenly that the priests were soaked at the altar.
+     [ 1767 w1] The harvest failed at Ribekani; the children grew thin.
+     [ 1768 w1] Just when the wells of Ribekani were failing, the god sent rain, and the frogs sang all night.
+     [ 1771 w1] In the 1771st year Akekumbe could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1773 w1] No rain fell on the lands of Dowendaba. The river showed its stones, and the people counted them.
+     [ 1774 w1] Dowendaba prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1777 w1] Families of the Itindakani who left Ndilude built their first fires at Iyumbola, and were not sorry.
+     [ 1777 w2] The Quiet Between Armies laid a hand on Tutumbuwo, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 1780 w1] Little of those fifty years was written down, except that five towns of the Wibalilani asked Yelondo for help and were answered.
+     [ 1780 w1] In the 1780th year the Barikarini entered the Age of Sail. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 1780 w1] Rain came to Dowendaba. The fields were glad of it.
+     [ 1781 w1] The wise of the Barikarini came together at Onjete, and wrote down everything they knew. It was the first academy of the Barikarini.
+     [ 1787 w1] The Itindakani put down the tools of their mothers and took up the tools of the Age of Sail. The Quiet Between Armies watched, and did not say whether this was wise.
+     [ 1788 w1] Scholars gathered at Ukingoli and built a house of learning, and filled it with books. No one among the Itindakani had built an academy before.
+     [ 1791 w1] Iyumbola was a town now, loud and crowded and proud.
+     [ 1793 w1] At Ribekani, the Barikarini prayed to Yerondo for rain, and fasted.
+     [ 1794 w1] The people of Ribekani prayed for rain, and Yerondo sent it.
+     [ 1796 w1] Inyambora was founded in the 1796th year. Its founders swore it would one day be greater than Ribekani. The chronicle notes that all founders swear this.
+     [ 1798 w2] Neither the Wibalilani nor the Barikarini would give way, and the war was a summer off, when Yelondo set a sign between them. That summer the spears stayed in their racks, and so did the next. The Mokoterani saw it too, and put away their own grievances.
+     [ 1801 w1] Merchants began to travel between Inyambora and Marumba, and the road between them grew wide.
+     [ 1804 w2] Ten thousand hearths burned in Wilasungu. It was a city now, the jewel of the Wibalilani.
+     [ 1804 w1] An academy now stands at Wilasungu, where before there was only mud and opinion.
+     [ 1813 w1] In a night of thunder a bolt came down on the dry grasslands west of Lezindeni, and the dogs of the city howled until dawn.
+     [ 1813 w1] The country west of Lezindeni burned until the rain came, and the smoke hung over the city.
+     [ 1815 w1] The Itindakani marched against the Aranokini, and the fields were left unharvested.
+     [ 1818 w1] Zanguti of the Aranokini grew used to the goods of Wilasungu, and its merchants learned the Wibalilan way of haggling.
+     [ 1818 w1] Yerondo heard the dry fields of Ribekani, and opened the sky.
+     [ 1820 w1] The Aranokini attacked Ndilude in the rain and were beaten by its farmers.
+     [ 1821 w1] After six years the Aranokini asked for peace, and the Itindakani granted it, and made them pay for the asking.
+     [ 1824 w1] The fields around Bindezi filled with new houses, and it became a town of the Barikarini.
+     [ 1824 w1] The Wibalilani and the Barikarini became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 1828 w1] A temple to Yerondo was built in Gwikotolo.
+     [ 1830 w1] Of the smaller things of those forty years: the Barikarini raised more than a dozen new buildings.
+     [ 1832 w1] Another road joined Ndilude to Tuzimbiri of the Wibalilani, and the inns along it prospered.
+     [ 1835 w2] The Barikarini and the Mokoterani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [ 1837 w1] The town of Iyumbola grew into a city of the Itindakani, full of smoke and music.
+     [ 1840 w1] Ribekani had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1842 w1] A storm walked inland over the country of Lizuwazi, and the Itindakani counted their dead and their cattle.
+     [ 1846 w1] Traders from Zanguti found their way to Bukada of the Wibalilani, where Aranokan coin was already known.
+     [ 1852 w2] In Ndanunye the people sickened, and the roads to it were empty.
+     [ 1852 w1] The fever left Ndanunye in a single night. The Wibalilani said Yelondo had walked through the streets.
+     [ 1855 w1] Bindezi had become a city, with more people in it than anyone could name.
+     [ 1855 w1] At Bindezi a school was opened where the young learned numbers, stars and the names of things.
+     [ 1860 w1] For Ribekani, thirsty and praying, Yerondo gathered the clouds, and the wells filled again.
+     [ 1861 w1] Many roads now led to Wandizu, and it was called a city.
+     [ 1862 w1] A band from Lezindeni crossed the country and founded Welilango on the dry grasslands.
+     [ 1864 w1] The priests of Welilango built a house for the god with a hundred steps.
+     [ 1866 w1] Tutingoli asked for rain, and Yelondo gave it, and more besides: the river flooded the lower fields.
+     [ 1868 w1] Children were born at Iwondaba who had never lived anywhere else, and it became a village.
+     [ 1872 w2] The Wibalilani sharpened their spears and went against the Muwikasani, though no one could remember who had struck first.
+     [ 1872 w1] Caravans of the Wibalilani now came to Gwikotolo of the Barikarini as well.
+     [ 1874 w1] A sign appeared over the armies of the Wibalilani and the Muwikasani, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+     [ 1876 w1] In the 1876th year, a band went out from Tutumbuwo with seed corn and quarrels enough for a new town, and founded Tanduwo by the water.
+     [ 1880 w1] Another fifty years went into the book, and in them more than a dozen new buildings went up among the Wibalilani.
+     [ 1880 w1] Settlers of the Wibalilani went out from Tazuwazi and made a new home at Mamuli.
+     [ 1882 w1] The priests of Ribekani were still singing for rain when it began to fall on them.
+     [ 1884 w1] The village of Singado grew into a town; it had a name even among strangers.
+     [ 1888 w1] Magwase raised a temple to Yelondo, and its bells could be heard in the fields.
+     [ 1893 w1] Ox-carts began to creak along the road from Alange to Wilasungu, loaded with grain and gossip.
+     [ 1897 w1] Welilango became a city, and its people forgot they had ever lived in tents.
+     [ 1900 w1] In Tiwonjiri they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 1900 w1] In Lizuwazi a white goat was given to Yelondo, with a prayer for rain.
+     [ 1901 w1] The long quarrel between the Wibalilani and the Aranokini came to blood.
+     [ 1902 w2] Hunger came to Akekumbe and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 1903 w1] Clouds gathered over Lizuwazi where no clouds had been, and wept on the dry fields. The Itindakani gave thanks to Yelondo.
+     [ 1904 w1] The Wibalilani of Tonzezu built a temple to Yelondo so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [ 1905 w1] Rain answered the prayers of Tiwonjiri, warm and heavy and long.
+     [ 1906 w3] The last of the Aranokini passed from the world, and their songs with them.
+     [ 1906 w1] The Wibalilani had won: of the Aranokini there was no one left to ask for peace.
+     [ 1906 w3] Far from their old capital, the people about Kasokumbe began to call themselves the Tatuworini, and spoke a tongue the Wibalilani could barely follow.
+     [ 1906 w2] The Tatuworini began to speak of Yerondo as the Breaker of Spears.
+     [ 1907 w1] In Ndikawazi the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+     [ 1908 w1] A new village of the Wibalilani, Muketende, was raised on the plains, a few days' walk from Wilasungu.
+     [ 1910 w1] Another thirty years went into the book: the builders of the Wibalilani finished a score or more new halls, granaries and walls, and more than a dozen settlements of theirs grew.
+     [ 1914 w1] The merchants of Tonzezu found a road to Tubeli, and kept the secret of it for a while.
+     [ 1917 w1] Iwondaba grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1920 w1] The scribes of the Wibalilani began to write Tabiyumbe with the sign for 'city', and its taxes rose accordingly.
+     [ 1924 w1] The Wibalilani of Muketende spent ten years on a temple to Yelondo, and were very proud of it.
+     [ 1926 w1] Ribekani prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 1930 w1] Wanderers from Ndikawazi came to Ilutindi and did not go back.
+     [ 1932 w2] In the 1932nd year the Barikarini remembered an old insult from the Itindakani, and went to war over it.
+     [ 1932 w1] The Itindakani and the Tatuworini could no longer share the river. They tried to share it with spears instead.
+     [ 1932 w1] A white light lay between the armies of the Barikarini and the Itindakani for a day, and both sent envoys instead of soldiers. The sign was seen as far as the lands of the Mokoterani, and there too the spears were put away.
+     [ 1934 w1] The Itindakani held Lizuwazi against the Tatuworini, and sang about it for a hundred years.
+     [ 1936 w1] The houses of Nditumbo reached the old boundary stones and did not stop. From this year the Itindakani call it a city.
+     [ 1940 w1] The scribes, counting rather than writing, set down that in thirty years the Barikarini raised more than a dozen new buildings, and eight places of the Wibalilani outgrew their old names.
+     [ 1940 w1] In Nawinga the old shrine was pulled down and a temple to Yerondo put up in its place.
+     [ 1942 w1] The people of Lizuwazi prayed for rain, and Yelondo sent it.
+     [ 1944 w1] Wandizu of the Barikarini grew used to the goods of Takingoli, and its merchants learned the Itindakan way of haggling.
+     [ 1949 w1] Hunger walked the streets of Ribekani, and the Barikarini sold their tools for grain.
+     [ 1953 w1] Another road joined Dudewengo to Kasokumbe of the Tatuworini, and the inns along it prospered.
+     [ 1953 w1] The oath between the Wibalilani and the Barikarini lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 1953 w2] A fire-mountain woke near Ndikawazi, and the sky above the city turned the colour of iron.
+     [ 1956 w1] The sky over Magwase cracked open with fire, and the old oak outside the city burned like a torch.
+     [ 1958 w1] The rain-dancers of Mbidengo had danced for three days when Yerondo answered them with thunder and a long rain.
+     [ 1959 w2] Ash hid the sun from Lianothae, the summers did not come, and Ndanunye went hungry with all its neighbours.
+     [ 1960 w1] Muketende outgrew its walls twice and became a city of the Wibalilani.
+     [ 1962 w1] The Itindakani were beaten, and the Tatuworini took their best fields.
+     [ 1964 w1] Yelondo heard the dry fields of Bewosungu, and opened the sky.
+     [ 1965 w1] The mountain near Ndikawazi stopped smoking, and the Itindakani gave thanks.
+     [ 1967 w1] The god let rain fall on Lizuwazi, though it had not been asked for. The children made mud houses.
+     [ 1969 w1] Some of the people of Iyumbola grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Tizundaba.
+     [ 1970 w1] Little of those thirty years was written down, except that the Wibalilani put up more than a dozen new buildings, each the finest yet by their own account, and that six prayers of the Itindakani went unanswered.
+     [ 1974 w1] Traders from Muketende found their way to Takingoli of the Itindakani, where Wibalilan coin was already known.
+     [ 1980 w1] Caravans of the Barikarini now came to Nzayaze of the Wibalilani as well.
+     [ 1981 w1] Tingondo began as a ring of tents in the woods, raised by wanderers from Ribekani.
+     [ 1985 w1] Walengoli was founded on the plains by the Wibalilani, who had grown too many for Zanguti.
+     [ 1985 w1] The Quiet Between Armies set a ring of light around the noon sun over Mbidengo. The Barikarini and the Mokoterani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them.
+     [ 1986 w1] Lizuwazi had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 1988 w1] Walls of cut stone went up around Nongindu, and the Barikaran scribes began to call it a city.
+     [ 1992 w1] A temple to Yelondo was built in Walengoli.
+     [ 1998 w1] Ilutindi of the Itindakani grew used to the goods of Walengoli, and its merchants learned the Wibalilan way of haggling.
+     [ 2000 w1] The chronicle, which cannot write everything, notes only that in those thirty years twelve new buildings went up among the Barikarini.
+     [ 2000 w1] The rains failed around Mbunduni.
+     [ 2002 w1] For Sezazu, thirsty and praying, Yelondo sent a long grey rain, and the wells filled again.
+     [ 2007 w1] Rain returned to Mbunduni at last.
+     [ 2008 w1] The camp at Kiwibo put down roots and became a village.
+     [ 2009 w1] Soft rain fell over Tutumbuwo.
+     [ 2009 w2] There were too many mouths in Lizuwazi and too little bread, and the weak did not see the spring.
+     [ 2009 w2] A new thing was learned at Kabindari, and then everywhere. So the Age of Sail began among the Muwikasani.
+     [ 2012 w1] The Barikarini of Totezumbe built a temple to Yerondo so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [ 2015 w1] Bewosungu was healed by Yelondo. Its people carved a hand on the temple wall.
+     [ 2017 w1] Settlers of the Barikarini went out from Wandizu and made a new home at Ngubutolo.
+     [ 2018 w1] The elders of the Wibalilani and the Itindakani clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 2020 w1] Ndikawazi became a town, with a wall of thorns.
+     [ 2026 w1] Ten thousand hearths burned in Mangaro. It was a city now, and it knew it.
+     [ 2028 w1] An academy was founded at Tingondo, where the wise argued about everything, the god included.
+     [ 2029 w2] War between the Itindakani and the Muwikasani. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 2029 w1] An omen of peace was seen over Ingawo, and the Itindakani and the Muwikasani laid down their spears. Even the Barikarini, who had been spoiling for a fight with them, put their grievances away.
+     [ 2030 w1] Over thirty years Yelondo gave a score or more towns of the Wibalilani what they prayed for. In the same years the builders of the Barikarini finished more than a dozen new halls, granaries and walls.
+     [ 2030 w1] Lizuwazi asked for rain, and Yerondo gave it, and the barley stood up again.
+     [ 2032 w1] The town of Totezumbe grew into a city of the Barikarini, with paved streets and quarrelsome councils.
+     [ 2037 w1] Another road joined Kiwibo to Ilutindi of the Itindakani, and the inns along it prospered.
+     [ 2037 w1] The Mokoterani put down the tools of their mothers and took up the tools of the Age of Sail. The Peacemaker watched, and did not say whether this was wise.
+     [ 2042 w1] Edembaru had become a city, with more people in it than anyone could name.
+     [ 2044 w1] At Nedonjiri a shrine of bones and flowers was made for Yelondo.
+     [ 2048 w1] So many children were born in Nenjobi that the elders gave up learning their names. Thus it became a town.
+     [ 2050 w1] The priests of Nduteda were still singing for rain when it began to fall on them.
+     [ 2052 w1] In Tiwonjiri the ground cracked like old pottery, and the Wibalilani carried water from far away.
+     [ 2052 w1] A long gentle rain came to Lizuwazi, and the Tatuworini said it was a blessing.
+     [ 2054 w2] The scribes of the Itindakani began to write Ndikawazi with the sign for 'city', and its people were insufferable about it.
+     [ 2055 w1] The rain-dancers of Tiwonjiri had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 2056 w1] In the 2056th year, a band went out from Tazuwazi with seed corn and quarrels enough for a new town, and founded Alako by the water.
+     [ 2056 w1] The Wibalilani and the Itindakani were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 2057 w1] A warm rain fell on Suliyumbe all through the night, and the roofs leaked, and nobody minded.
+     [ 2060 w1] In those thirty years twelve new settlements were founded by the Wibalilani, and Yelondo answered the prayers of seven towns of theirs.
+     [ 2060 w1] A band from Zatendeni crossed the country and founded Duyulo in the pine woods.
+     [ 2062 w1] In Tiwonjiri they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 2064 w1] Traders from Ndizingo found their way to Kiwibo of the Barikarini, where Wibalilan coin was already known.
+     [ 2068 w1] Lokindaba grew until a man could get lost in it, and they called it a town.
+     [ 2070 w1] Mist and rain came to Tunduzu, and the hills around it turned a deeper green.
+     [ 2072 w1] The women of Lizuwazi tied red threads to the shrine and asked for rain.
+     [ 2074 w1] Lizuwazi prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 2076 w1] The priests of Wobuyumbe built a house for the god with a golden roof.
+     [ 2080 w1] Caravans of the Itindakani now came to Nzayaze of the Wibalilani as well.
+     [ 2084 w2] Smoke rose from the earth south-west of Tukonjiri, and then fire. The Barikarini said the mountain was angry.
+     [ 2086 w1] Rain answered the prayers of Suliyumbe, so suddenly that the priests were soaked at the altar.
+     [ 2086 w1] Nongindu of the Barikarini grew used to the goods of Ndizingo, and its merchants learned the Wibalilan way of haggling.
+     [ 2088 w1] The sun was a pale coin behind the dust, and the granaries of Nduteda stood empty. The Wibalilani remembered those years as the hungry ones.
+     [ 2088 w1] The god let rain fall on Tuzimbiri, though it had not been asked for. The children made mud houses.
+     [ 2090 w1] Of the smaller things of those thirty years: the Wibalilani put up scores of new buildings, each the finest yet by their own account; and seven towns of theirs had their prayers answered.
+     [ 2091 w1] The Wibalilani and the Itindakani swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 2092 w1] The people of Bewosungu prayed for rain, and Yelondo sent it.
+     [ 2092 w1] Tukonjiri grew small and was only a village, and the young went away.
+     [ 2096 w1] The fire-mountain south-west of Tukonjiri fell asleep again.
+     [ 2096 w1] Rain came to Lizuwazi. The fields were glad of it.
+     [ 2102 w1] A tremor ran through the land about Ikisu, and the old wall finally came down.
+     [ 2104 w1] The quarrel of the Barikarini and the Mokoterani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 2104 w1] The feet of traders wore a road between Kiwibo and Ngubutolo. Along it went pots and coins and, later, fevers.
+     [ 2109 w1] The miners of Nawinga went deep into the mountain, and some did not come back.
+     [ 2112 w1] Yelondo heard the dry fields of Ingawo, and opened the sky.
+     [ 2113 w2] In those lean years Zawazu ate its oxen, and then its dogs.
+     [ 2113 w1] At Nyekunga there was hunger, three years running.
+     [ 2115 w1] The dry country about Zawazu drank rain sent by Yelondo, and turned green again.
+     [ 2116 w1] The Tatuworini of Lizuwazi wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2119 w2] A cool wind passed through Kiliwe, and in every house the fevered slept and woke well.
+     [ 2120 w1] The prayers of seven towns of the Itindakani were heard; and hunger came to four towns of the Wibalilani. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 2120 w1] Soft rain fell over Nyekunga.
+     [ 2121 w1] Wind and rain beat upon Tisambalu for a week, and the rivers rose.
+     [ 2125 w1] Another road joined Nzayaze to Tingondo of the Barikarini, and the tolls on it were argued over.
+     [ 2130 w1] Wobuyumbe outgrew its walls twice and became a city of the Wibalilani.
+     [ 2135 w1] The wise of the Wibalilani came together at Engida, and wrote down everything they knew.
+     [ 2138 w1] Lightning walked on the hills north-west of Ndaletolo, and the Wibalilani stayed indoors.
+     [ 2145 w1] In Lizuwazi they burned fat and asked Yerondo for rain.
+     [ 2146 w1] Lizuwazi had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [ 2149 w1] In the 2148th year the first caravan came from Engida to Tukoze, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2150 w2] Envoys of the Barikarini spat on the threshold before the Itindakani, and the war began.
+     [ 2150 w1] The alliance of the Wibalilani and the Itindakani was not broken; it was forgotten, like a path no one walks any more.
+     [ 2150 w1] A white light lay between the armies of the Itindakani and the Barikarini for a day, and both sent envoys instead of soldiers. The sign was seen as far as the lands of the Muwikasani, and there too the spears were put away.
+     [ 2154 w1] Edembaru and Tingondo began to trade, wine for wool, and both grew fat on it.
+     [ 2155 w2] Many roads now led to Lokindaba, and it was called a city.
+     [ 2155 w1] Scholars gathered at Lokindaba and built a house of learning, and filled it with books.
+     [ 2156 w1] A great storm walked in from the sea and stood over Magwase for three days, and the roofs learned to fly.
+     [ 2164 w1] The Itindakani made war on the Tatuworini.
+     [ 2164 w1] For Tunduzu, thirsty and praying, Yerondo gathered the clouds, and the wells filled again.
+     [ 2167 w1] In the 2167th year Tukonjiri could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 2168 w1] Before Tikangoli, the army of the Itindakani was broken.
+     [ 2168 w1] A long gentle rain came to Lizuwazi, and the Tatuworini said it was a blessing.
+     [ 2173 w1] Caravans of the Wibalilani now came to Edembaru of the Barikarini as well.
+     [ 2176 w1] The Itindakani came against Tikangoli and were thrown back.
+     [ 2178 w1] A tree west of Tuzimbiri was split by lightning. The children of the city dared each other to touch it.
+     [ 2181 w1] The people of Ingawo climbed to the shrine and prayed to Yelondo for peace. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 2183 w1] The Itindakani prayed for peace, and Yelondo gave it.
+     [ 2185 w1] Famine came to Elunjiri.
+     [ 2187 w1] Ndaletolo asked for rain, and Yelondo gave it, and the barley stood up again.
+     [ 2189 w1] In the 2189th year the granaries of Lizuwazi rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2190 w1] A warm rain fell on Zatendeni all through the night, and the roofs leaked, and nobody minded.
+     [ 2190 w1] Between the greater deeds of those seventy years, six towns of the Wibalilani prayed to Yelondo and did not pray in vain.
+     [ 2192 w1] The people of Gwikotolo prayed for healing.
+     [ 2194 w1] The priests of Lizuwazi were still singing for rain when it began to fall on them.
+     [ 2196 w1] Traders from Tunduzu found their way to Tanduwo of the Wibalilani, where Tatuworan coin was already known.
+     [ 2201 w1] Thunder rolled over Takingoli, and lightning fell north of the city.
+     [ 2203 w1] The people of Gwikotolo prayed to be healed, and they were, and they did not forget it.
+     [ 2207 w1] Merchants began to travel between Nenjobi and Walengoli, and the road between them grew wide.
+     [ 2213 w1] Lightning struck hard by Tukoze in a summer storm.
+     [ 2218 w1] In Lizuwazi they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 2226 w1] The ground on the dry grasslands east of Singado rolled like a wave for the space of a hundred breaths, and walls fell in the city.
+     [ 2233 w1] Totezumbe of the Barikarini began to buy the goods of Matiya, and its merchants learned the Wibalilan way of haggling.
+     [ 2235 w1] The sea sent a howling wind against Elunjiri, and the fishermen did not go out for a month.
+     [ 2238 w1] The people of Tunduzu prayed for rain, and Yerondo sent it.
+     [ 2240 w1] Mist and rain came to Lizuwazi, and the hills around it ran with little streams.
+     [ 2241 w1] A hard sun stood over Tunduzu all that summer, and the barley died standing.
+     [ 2242 w1] The priests of Ndaletolo went up to the high places and cried out for rain.
+     [ 2242 w1] The rain-dancers of Ndaletolo had danced for three days when Yelondo answered them with thunder and a long rain.
+     [ 2244 w2] The Wibalilani gave up Walisungu, and the foxes moved in.
+     [ 2244 w1] The Wibalilani founded Mudimbiri on the shore.
+     [ 2245 w1] Mudimbiri grew from a camp into a village.
+     [ 2245 w1] A circle of white stones was laid out at Mudimbiri, and the Wibalilani came there to speak to Yelondo.
+     [ 2247 w1] There was famine in Mudimbiri. The people looked up and asked the Quiet Between Armies for rain, and counted the days, and the days were long.
+     [ 2250 w1] Below the great events of those sixty years, Yerondo heard six towns of the Tatuworini and answered them; Yelondo was asked for help by five towns of the Wibalilani and gave it.
+     [ 2252 w1] Rain fell on Ndaletolo out of a clear sky, and the Wibalilani danced in it.
+     [ 2252 w1] Green came back to the fields of Tunduzu, and the wells were sweet again.
+     [ 2252 w2] Elunjiri became a city, and its people forgot they had ever lived in tents.
+     [ 2257 w1] Ox-carts began to creak along the road from Nawinga to Kiwibo, loaded with grain and gossip.
+     [ 2257 w1] A storm passed over Nenjobi, and lightning set the grass alight west of the city.
+     [ 2260 w1] Lizuwazi prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 2263 w2] The envoys of the Barikarini had come to the Mokoterani to declare a war. They saw the sign over Mbidengo, and declared a feast instead.
+     [ 2264 w1] In the 2263rd year the first caravan came from Elunjiri to Tanduwo, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2274 w2] War came between the Wibalilani and the Muwikasani, the old enemies.
+     [ 2274 w1] Rain answered the prayers of Tunduzu, so suddenly that the priests were soaked at the altar.
+     [ 2276 w1] At Kosetende the Wibalilani won the day. The Muwikasani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 2277 w1] In a night of thunder a bolt came down west of Iyumbola, and the dogs of the city howled until dawn.
+     [ 2277 w1] In a dry season a fire ate the pine woods west of Iyumbola.
+     [ 2279 w1] The feet of traders wore a road between Takingoli and Tizundaba. Along it went pots and coins and, later, fevers.
+     [ 2281 w1] The host of the Wibalilani came against Kabindari and broke on its walls like a wave on rock, and went home fewer.
+     [ 2284 w1] Mudimbiri was abandoned.
+     [ 2284 w1] An army of the Muwikasani besieged Kosetende and went home with nothing but stories.
+     [ 2285 w1] A sign appeared over the armies of the Wibalilani and the Muwikasani, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come. Even the Mokoterani, who had been spoiling for a fight with them, put their grievances away.
+     [ 2286 w1] Yerondo heard the dry fields of Lizuwazi, and opened the sky.
+     [ 2296 w3] The Wibalilani built engines that breathed fire, and the age of smoke began among them. No people had done so before them.
+     [ 2297 w2] Chimneys rose over Lezindeni, and the sky above it turned grey. It was the first manufactory of the Wibalilani.
+     [ 2297 w1] Sezazu became a great city such as the world had not seen, numberless as ants.
+     [ 2298 w1] The river by Tiwonjiri shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 2299 w1] At Tiwonjiri, the Wibalilani prayed to Yelondo for rain, morning and evening.
+     [ 2300 w1] Tiwonjiri had prayed for rain, and the rain came in the night, and no one slept for joy.
+     [ 2300 w1] Onumbuka grew into a city of towers, its lights seen from the next valley.
+     [ 2302 w2] The houses of Lezindeni reached the old boundary stones and did not stop. From this year the Wibalilani call it a great city.
+     [ 2303 w1] A dark cloud stood over the parched fields of Ndilude and rained on them, and on nowhere else.
+     [ 2303 w1] In Ngubutolo the sick were healed, between one breath and the next, and the healers lost their trade for a while.
+     [ 2305 w1] For Tiwonjiri, thirsty and praying, Yelondo sent a long grey rain, and the wells filled again.
+     [ 2306 w1] Clouds came back over Tiwonjiri, and the dry river filled in a single night.
+     [ 2308 w1] The god let rain fall on Lizuwazi, though it had not been asked for. The children made mud houses.
+     [ 2310 w1] The chronicle, which cannot write everything, notes only that in those sixty years six towns of the Wibalilani asked Yelondo for help and were answered, and ten villages and towns of theirs grew larger.
+     [ 2310 w1] Masts filled the bay at Nzilambu, where a harbour had been built.
+     [ 2313 w1] The merchants of Wobuyumbe found a road to Ikisu, and the road found more merchants.
+     [ 2320 w1] The sky over Dowendaba cracked open with fire, and the old oak north-west of the city burned like a torch.
+     [ 2320 w1] A wildfire came close to Dowendaba, and turned only when the wind did.
+     [ 2324 w1] So many children were born in Tubeli that the elders gave up learning their names. Thus it became a great city.
+     [ 2326 w1] Ndilude asked for rain, and Yelondo gave it, and the barley stood up again.
+     [ 2328 w1] In Lizuwazi a lamb was given to Yerondo, with a prayer for rain.
+     [ 2332 w2] The Barikaran kings swore an oath against the Itindakani, and there was war.
+     [ 2334 w1] The women of Nzeniwazi sang at the shrine every evening and asked for rain.
+     [ 2334 w1] The priests of Nzeniwazi were still singing for rain when it began to fall on them.
+     [ 2337 w1] Iyumbola was lost by the Itindakani and won by the Barikarini, and its market changed hands with it.
+     [ 2337 w1] Rain came to Alako. The old people said it smelled of the god.
+     [ 2343 w1] The Barikarini held Edembaru against the Itindakani, and sang about it for a hundred years.
+     [ 2346 w1] Nedonjiri was left empty. Its people had gone to the bigger towns.
+     [ 2346 w1] Wanderers of the Wibalilani settled at Mbuwiye, in the woods.
+     [ 2347 w1] An omen of peace was seen over Mbidengo, and the Barikarini and the Itindakani laid down their spears. The sign was seen as far as the lands of the Mokoterani, and there too the spears were put away.
+     [ 2347 w1] The mothers of Ukingoli prayed for peace, and Yelondo put a quiet on both armies.
+     [ 2348 w1] Welilango and Kilisi began to trade, wine for wool, and both grew fat on it.
+     [ 2350 w1] Soft rain fell over Mbuwiye.
+     [ 2350 w1] Those were busy years, if not great ones: Yelondo answered the prayers of five towns of the Itindakani, and the Wibalilani raised ten new buildings.
+     [ 2359 w2] The last families left Mbuwiye, and grass grew in its streets.
+     [ 2360 w1] The people of Matiya prayed for rain, and Yelondo sent it.
+     [ 2362 w1] Duyulo was abandoned.
+     [ 2362 w1] The Barikarini of Totezumbe wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2363 w1] A long gentle rain came to Totezumbe, and the Barikarini said it was a blessing.
+     [ 2365 w1] The Wibalilani gave up Nzeniwazi, and the wind had it.
+     [ 2365 w2] A grey sickness settled on Iwondaba. The Wibalilani said it came from the marshes.
+     [ 2365 w1] Far from their kin, a band of the Wibalilani made a home at Adewazi, on the cold barrens.
+     [ 2366 w1] Alako prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 2366 w1] Adewazi built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [ 2366 w1] The Itindakani marched against the Tatuworini, and the smiths worked day and night.
+     [ 2369 w1] The Quiet Between Armies drew a hand across the sky above Adewazi, and the dry fields drank.
+     [ 2369 w1] No one destroyed Alako. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2370 w1] The Itindakani attacked Tikangoli in the rain and were beaten by its old men and boys.
+     [ 2370 w1] Before Ingawo, the Tatuworini met the Itindakani. By evening the field belonged to the Itindakani, and to the birds.
+     [ 2370 w3] Nyekunga was left empty. Its people had gone to the bigger towns.
+     [ 2370 w1] The rain-dancers of Tunduzu had danced for three days when Yerondo answered them with thunder and a long rain.
+     [ 2372 w1] There were now enough hearths at Wimbali to call it a village.
+     [ 2373 w1] A long gentle rain came to Lizuwazi, and the Tatuworini said it was a blessing.
+     [ 2374 w1] The last families left Matiya, and grass grew in its streets.
+     [ 2378 w1] Before Tikangoli, the army of the Itindakani was broken.
+     [ 2381 w1] Another road joined Ndizusungu to Nongindu of the Barikarini, and the tolls on it were argued over.
+     [ 2382 w1] Adewazi was abandoned.
+     [ 2384 w1] The rains forgot the country of Ribekani. The children grew up not knowing the smell of rain.
+     [ 2389 w2] No one destroyed Bunondari. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2391 w1] Traders from Tikangoli found their way to Wimbali of the Wibalilani, where Tatuworan coin was already known.
+     [ 2392 w1] The Wibalilani gave up Malundaba, and the foxes moved in.
+     [ 2393 w1] Benembola was founded in the 2392nd year. Its founders swore it would one day be greater than Lezindeni. The chronicle notes that all founders swear this.
+     [ 2394 w1] Rain answered the prayers of Lizuwazi, so suddenly that the priests were soaked at the altar.
+     [ 2396 w1] The fields about Totezumbe could not feed it any longer. The priests asked Yerondo for bread.
+     [ 2400 w1] Meanwhile, in the smaller news of those years, more than a dozen new buildings went up among the Wibalilani, and six prayers of the Itindakani were not heard, or not answered.
+     [ 2400 w1] Kutamba became a town, and built a gate, though it had no wall yet.
+     [ 2402 w1] The war ended in victory for the Tatuworini. The Itindakani paid tribute for a generation.
+     [ 2404 w1] Merchants began to travel between Tulingo and Walengoli, bringing salt and news.
+     [ 2406 w1] In Totezumbe they had prayed for rain until their voices broke. Then the sky darkened, and it came.
+     [ 2406 w2] Tutingoli grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 2409 w1] A warm rain fell on Wimbali for three days, and the roofs leaked, and nobody minded.
+     [ 2409 w1] A port was made at Rubekumbe, and the Mokoteran sailors learned the winds.
+     [ 2409 w1] Ndizusungu was left empty. Its people had gone to the bigger towns.
+     [ 2411 w1] In Tikangoli the first engines turned, and the Tatuworini did more work in a day than their grandfathers in a year.
+     [ 2411 w2] In the 2411th year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+     [ 2412 w1] In Lizuwazi great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron. No one among the Tatuworini had built a manufactory before.
+     [ 2412 w1] The last families left Benembola, and grass grew in its streets.
+     [ 2413 w1] Yerondo heard the dry fields of Mangaro, and opened the sky.
+     [ 2416 w1] Lizuwazi swallowed the villages around it and became a great city of the Tatuworini.
+     [ 2422 w1] There was drought in the country of Ndaletolo, and the Wibalilani looked at the sky every morning.
+     [ 2424 w1] Ndaletolo had prayed for rain, and the rain came in the night, and the priests were proven right.
+     [ 2424 w1] In Tunduzu they burned fat and asked Yerondo for rain.
+     [ 2427 w1] Yelondo sent rain on the thirsty fields of Iwondaba.
+     [ 2428 w1] Ox-carts began to creak along the road from Anjambola to Wobuyumbe, and inns grew up beside it.
+     [ 2430 w1] For Totezumbe, thirsty and praying, Yerondo sent a long grey rain, and the wells filled again.
+     [ 2430 w1] In those thirty years seven towns of the Wibalilani had their prayers answered.
+     [ 2432 w1] In the 2432nd year Gwindanya could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2433 w2] Before the Wibalilani and the Mokoterani could come to blows, the Quiet Between Armies set a light over Elosandari. Both peoples took it for a warning, and neither wished to be the first to ignore it.
+     [ 2434 w1] Mist and rain came to Ndilude, and the hills around it ran with little streams.
+     [ 2436 w1] Debuyumbe asked for rain, and Yerondo gave it, and more besides: the river flooded the lower fields.
+     [ 2437 w1] A tree west of Nyewinga was split by lightning. The children of the city dared each other to touch it.
+     [ 2440 w1] The priests of Wimbali were still singing for rain when it began to fall on them.
+     [ 2443 w1] Just when the wells of Zodakumbe were failing, the god sent rain; the priests said they had known it would come.
+     [ 2445 w1] The mountain west of Ndilude woke and wept fire.
+     [ 2445 w1] The old people of Ndilude said the fire in the woods west of the city had been started by a careless shepherd, and argued about it all winter.
+     [ 2448 w1] Families of the Wibalilani who left Ndizingo built their first fires at Kimilo, and called it good.
+     [ 2448 w1] Kimilo was a village now, with a well and a headman.
+     [ 2450 w1] The god let rain fall on Wawata, though it had not been asked for. The farmers said it was too much.
+     [ 2451 w1] Envoys went back and forth between the Wibalilani and the Tatuworini until they had worn a road, and at the end of it was an alliance.
+     [ 2453 w2] In Bewosungu they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 2455 w1] The people of Ndanunye climbed to the shrine and prayed to Yerondo for rain. They prayed loudly, in case the Breaker of Spears was far away.
+     [ 2456 w1] The feet of traders wore a road between Tulingo and Lokindaba. Along it went pots and coins and, later, fevers.
+     [ 2460 w1] Another thirty years went into the book: the prayers of ten towns of the Wibalilani were heard, and the builders of theirs finished eleven new halls, granaries and walls.
+     [ 2461 w1] The Barikarini harnessed fire and steam. The forests grew thin and the cities grew tall.
+     [ 2462 w1] The houses of Onjete reached the old boundary stones and did not stop. From this year the Barikarini call it a great city.
+     [ 2464 w1] Soft rain fell over Lombitunu.
+     [ 2468 w1] A vein of ore was found above Ngubutolo, and the town grew loud with hammers.
+     [ 2470 w1] Marumba became a great city, a sea of roofs from one horizon to the other.
+     [ 2470 w1] The old alliance of the Wibalilani and the Tatuworini came apart over a small matter, as old alliances do.
+     [ 2473 w1] The spotted fever broke out in Kasokumbe, and its gates were shut.
+     [ 2473 w1] Rain came to Ukingoli. The fields were glad of it.
+     [ 2473 w2] The Breaker of Spears laid a hand on Kasokumbe, and the sick rose from their beds, puzzled, and asked what there was to eat.
+     [ 2476 w1] The merchants of Kutamba found a road to Wimbali, and the road found more merchants.
+     [ 2481 w1] Thunder rolled over Kabindari, and lightning fell in the woods south-east of the city.
+     [ 2482 w1] Udukumbe was abandoned.
+     [ 2484 w1] So many children were born in Edembaru that the elders gave up learning their names. Thus it became a great city.
+     [ 2488 w1] The priests of Zodakumbe went up to the high places and cried out for rain.
+     [ 2489 w1] Soft rain fell over Zodakumbe.
+     [ 2490 w1] The scribes, counting rather than writing, set down that in thirty years the Barikarini raised a score or more new buildings, and Yelondo gave six towns of the Wibalilani what they prayed for.
+     [ 2492 w1] The harvest failed at Debuyumbe; the children grew thin.
+     [ 2494 w1] Clouds gathered over Wimbali where no clouds had been, and wept on the dry fields. The Wibalilani gave thanks to Yelondo.
+     [ 2496 w1] The people of Ingawo prayed for rain.
+     [ 2502 w1] The rains came back to Wimbali, and the Wibalilani said the god had relented.
+     [ 2503 w2] So many people lived in Zabandu that no one could count them, though the scribes tried.
+     [ 2504 w3] The Wibalilani gave up Onumbuka, and the foxes moved in.
+     [ 2504 w1] Lightning walked on the hills north of Kiliwe, and the Wibalilani stayed indoors.
+     [ 2506 w1] The Itindakani sharpened their spears and went against the Muwikasani, though no one could remember who had struck first.
+     [ 2506 w1] A sign appeared over the armies of the Muwikasani and the Itindakani, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come. Even the Wibalilani, who had been spoiling for a fight with them, put their grievances away.
+     [ 2508 w1] It rained on Ukingoli, gently and for a long time, and the Itindakani did not complain.
+     [ 2508 w1] Walls of cut stone went up around Wikindeni, and the Wibalilan scribes began to call it a city.
+     [ 2510 w2] No one destroyed Wawata. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2514 w1] Anjambola was left empty. Its people had gone to the bigger towns.
+     [ 2515 w1] At Zodakumbe, the Barikarini prayed to Yerondo for rain, morning and evening.
+     [ 2515 w1] In the 2515th year the Wibalilani and the Tatuworini swore an alliance, and mixed their wine in one bowl, and each drank, and each watched the other drink.
+     [ 2516 w1] Hunger came to Zodakumbe and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2516 w1] A warm rain fell on Muketende all through the night, and the roofs leaked, and nobody minded.
+     [ 2520 w1] Little of those thirty years was written down, except that twelve towns of the Wibalilani prayed to Yelondo and did not pray in vain, and that they put up nine new buildings, each the finest yet by their own account.
+     [ 2520 w1] Rain came to Zodakumbe. The fields were glad of it.
+     [ 2521 w1] In the 2520th year the first caravan came from Tanduwo to Wikindeni, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2524 w1] Hunger walked the streets of Nzelasu, and the fields were not enough for all of them.
+     [ 2526 w1] Mist and rain came to Ndilude, and the hills around it turned a deeper green.
+     [ 2527 w1] The last families left Ribekani, and grass grew in its streets.
+     [ 2528 w1] Lightning struck south-west of Ikisu in a summer storm.
+     [ 2531 w1] The dry country about Nduteda drank rain sent by Yelondo, and turned green again.
+     [ 2532 w1] The tents of Madungi gave way to houses of mud and reed, and it was called a village.
+     [ 2536 w1] In the 2536th year the Itindakani entered the Age of Industry. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 2536 w2] The ice in the north began to weep, and the summers were cruel.
+     [ 2537 w1] Ukingoli built its first manufactory, and the river ran a strange colour. It was the first manufactory of the Itindakani.
+     [ 2542 w1] Madungi and Kunyukani began to trade, pots for fish, and both grew fat on it.
+     [ 2543 w1] The god let rain fall on Debuyumbe, though it had not been asked for. The children made mud houses.
+     [ 2548 w1] In Rutiwazi a jar of honey was given to Yerondo, with a prayer for rain.
+     [ 2550 w1] Yelondo heard five towns of the Wibalilani and answered them. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 2550 w2] In the 2550th year the Itindakani remembered an old insult from the Tatuworini, and went to war over it.
+     [ 2550 w1] The oath between the Wibalilani and the Tatuworini lapsed. First their envoys stopped visiting, and then their merchants.
+     [ 2550 w1] Merchants began to travel between Welilango and Wikindeni, bringing salt and news.
+     [ 2552 w1] A white light lay between the armies of the Tatuworini and the Itindakani for a day, and both sent envoys instead of soldiers.
+     [ 2555 w2] In the 2555th year Ndikawazi could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2557 w1] The women of Tunduzu sang at the shrine every evening and asked for rain.
+     [ 2558 w1] A warm rain fell on Tunduzu all through the night, and the roofs leaked, and nobody minded.
+     [ 2559 w1] The Tatuworini gave up Tikangoli, and the wind had it.
+     [ 2559 w1] At Nzelasu there was hunger, three years running.
+     [ 2560 w1] Fever spread through Ndikawazi, and many were buried.
+     [ 2564 w1] No one destroyed Nditumbo. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2564 w1] Children were born at Binukumbe who had never lived anywhere else, and it became a village.
+     [ 2566 w1] Tadizi was abandoned.
+     [ 2568 w1] The Barikarini of Bindezi wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2568 w1] Rain came to Wimbali. The fields were glad of it.
+     [ 2573 w1] Black clouds came over Dingonzi from the sea, and the hail broke the young barley.
+     [ 2574 w1] War between the Barikarini and the Tatuworini. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 2574 w2] The sea was rising, and this time not by any god's hand: the chimneys of the Wibalilani had warmed the air, and the ice was giving back its water.
+     [ 2576 w1] The prayers of Kabindari went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 2579 w1] Soft rain fell over Debuyumbe.
+     [ 2580 w1] Over thirty years more than a dozen new buildings went up among the Wibalilani. In the same years Yelondo was asked for help by five towns of theirs and gave it.
+     [ 2582 w1] The Barikarini took Tunduzu from the Tatuworini.
+     [ 2584 w1] The earth groaned under Kinzinje, and the temple bell rang by itself.
+     [ 2586 w1] A long gentle rain came to Ukingoli, and the Itindakani did not complain.
+     [ 2588 w1] The lamps of Madungi drowned out the stars: it had become a great city of the Barikarini.
+     [ 2593 w2] Tisambalu was left empty. Its people had gone to the bigger towns.
+     [ 2593 w1] Famine came to Kimilo.
+     [ 2595 w1] After twenty-one years the Tatuworini asked for peace, and the Barikarini granted it, and made them pay for the asking.
+     [ 2596 w1] Ten thousand hearths burned in Uzata. It was a city now, and it knew it.
+     [ 2598 w1] Mist and rain came to Wilasungu, and the hills around it turned a deeper green.
+     [ 2600 w1] The rains failed around Binukumbe.
+     [ 2605 w1] Ox-carts began to creak along the road from Kiliwe to Lokindaba, and inns grew up beside it.
+     [ 2609 w1] The last families left Kutamba, and grass grew in its streets.
+     [ 2609 w1] There were too many mouths in Ziwinjiri and too little bread, and the old went hungry so the young could eat.
+     [ 2610 w1] Twelve towns of the Wibalilani asked Yelondo for help and were answered; and four towns of theirs went hungry. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 2610 w1] A dark cloud stood over the parched fields of Tabiyumbe and rained on them, and on nowhere else.
+     [ 2612 w1] Rain returned to Binukumbe at last.
+     [ 2613 w2] Alange became a great city such as the world had not seen, lit all night.
+     [ 2620 w1] Caravans of the Tatuworini now came to Wimbali of the Wibalilani as well.
+     [ 2622 w1] A new village of the Itindakani, Umbisungu, was raised on the shore, a few days' walk from Takingoli.
+     [ 2626 w1] A warm rain fell on Binukumbe for three days, and the roofs leaked, and nobody minded.
+     [ 2626 w1] A great calm settled on the border of the Barikarini and the Itindakani. The young, who had been ready to fight, went home and were annoyed about it for years. The same calm came over the Mokoterani.
+     [ 2628 w1] Wimbali of the Wibalilani grew used to the goods of Umbisungu, and its merchants learned the Itindakan way of haggling.
+     [ 2628 w1] A storm such as the old people had never seen passed over Tizundaba.
+     [ 2634 w3] No one destroyed Elunjiri. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2638 w1] In the 2638th year the first caravan came from Marumba to Madungi, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2640 w1] Below the great events of those thirty years, eight towns of the Wibalilani had their prayers answered.
+     [ 2646 w1] The god let rain fall on Tutingoli, though it had not been asked for. The children made mud houses.
+     [ 2649 w1] In the 2649th year the granaries of Tabiyumbe rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2650 w1] In those lean years Wimbali ate its oxen, and then its dogs.
+     [ 2650 w1] The people of Gwindanya climbed to the shrine and prayed to Yerondo for rain. They prayed loudly, in case the Breaker of Spears was far away.
+     [ 2651 w1] There was famine in Gwindanya. The people looked up and asked the Breaker of Spears for rain, and counted the days, and the days were long.
+     [ 2652 w2] The fields about Takingoli could not feed it any longer. The priests asked Yelondo for bread.
+     [ 2652 w1] Mist and rain came to Gwindanya, and the hills around it ran with little streams.
+     [ 2655 w1] The people of Wandizu prayed for rain.
+     [ 2656 w1] No rain fell on the lands of Rubekumbe. The river showed its stones, and the people counted them.
+     [ 2657 w1] A long gentle rain came to Wandizu, and the Barikarini did not complain.
+     [ 2660 w1] In Rubekumbe they burned incense and asked Yerondo for rain.
+     [ 2666 w1] The merchants of Wimbali found a road to Witonjiri, and the road found more merchants.
+     [ 2668 w1] Soft rain fell over Wobuyumbe.
+     [ 2668 w1] Timbinju was a town now, loud and crowded and proud.
+     [ 2670 w1] The chronicle, which cannot write everything, notes only that in those thirty years the prayers of six towns of the Barikarini were heard, and the builders of the Itindakani finished nine new halls, granaries and walls.
+     [ 2672 w1] A storm passed over Ndanunye, and lightning set the grass alight south of the city.
+     [ 2677 w2] The Wibalilani and the Barikarini became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 2679 w1] The harvest failed at Suliyumbe, and the people ate their seed corn.
+     [ 2680 w1] Rain came to Ngubutolo. The fields were glad of it.
+     [ 2680 w1] The priests of Zawazu went up to the high places and cried out for rain.
+     [ 2686 w1] Another road joined Timbinju to Walengoli of the Wibalilani, and the inns along it prospered.
+     [ 2686 w1] It rained on Tabiyumbe, gently and for a long time, and the Wibalilani did not complain.
+     [ 2688 w2] Neither the Itindakani nor the Muwikasani would give way, and the war was a summer off, when Yelondo set a sign between them. That summer the spears stayed in their racks, and so did the next.
+     [ 2695 w1] The town of Timbinju grew into a city of the Itindakani, full of smoke and music.
+     [ 2695 w1] The engines of Timbinju began to turn, and their noise did not stop at night.
+     [ 2697 w1] In a night of thunder a bolt came down north of Marumba, and the dogs of the great city howled until dawn.
+     [ 2698 w1] The fever left Kiwibo in a single night. The Barikarini said Yerondo had walked through the streets.
+     [ 2698 w1] Mist and rain came to Wobuyumbe, and the hills around it turned a deeper green.
+     [ 2700 w1] The scribes, counting rather than writing, set down that in thirty years Yelondo gave six towns of the Wibalilani what they prayed for.
+     [ 2703 w1] In Tukonjiri they still tell of the great wind, which blew the fires out in every hearth.
+     [ 2708 w1] A wall of water came out of the sea upon Dowendaba.
+     [ 2708 w1] Takingoli shrank to a city. Its young had gone to other places.
+     [ 2708 w1] A warm rain fell on Ukingoli all through the night, and the roofs leaked, and nobody minded.
+     [ 2713 w2] The long quarrel between the Barikarini and the Itindakani came to blood.
+     [ 2716 w1] The Itindakani came against Edembaru and were thrown back.
+     [ 2717 w1] The sky over Wimbali cracked open with fire, and the old oak north of the great city burned like a torch.
+     [ 2719 w2] Ndilude fell to the Barikarini, and its Itindakan lords were driven out.
+     [ 2719 w1] Munyulu was abandoned.
+     [ 2720 w1] There were now enough hearths at Tongitolo to call it a village.
+     [ 2722 w1] The god let rain fall on Uzata, though it had not been asked for. The children made mud houses.
+     [ 2724 w1] Hunger came to Wimbali and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2728 w1] Lightning walked on the hills outside Tizundaba, and no one was hurt, that time.
+     [ 2732 w1] An omen of peace was seen over Mbidengo, and the Barikarini and the Itindakani laid down their spears. The sign was seen as far as the lands of the Mokoterani, and there too the spears were put away.
+     [ 2732 w1] The prayers of Ukingoli for peace were answered, and the war ended as if a door had closed.
+     [ 2733 w1] Hunger walked the streets of Suliyumbe, and the fields were not enough for all of them.
+     [ 2734 w1] Soft rain fell over Suliyumbe.
+     [ 2740 w1] Of the smaller things of those forty years: Yelondo answered the prayers of seven towns of the Wibalilani; and the granaries of four towns of theirs ran low.
+     [ 2743 w1] A hard sun stood over Engida all that summer, and the barley died standing.
+     [ 2745 w1] The feet of traders wore a road between Tongitolo and Nzombola. Along it went pots and coins and, later, fevers.
+     [ 2748 w1] Rain fell on Engida out of a clear sky, and the Wibalilani danced in it.
+     [ 2750 w1] The drought about Engida broke, and the children ran out into the rain.
+     [ 2757 w1] Many left Mbiliwa, and it was a city again.
+     [ 2758 w1] Wanderers from Tonzezu came to Ekembuka and stayed.
+     [ 2758 w1] The camp at Ekembuka put down roots and became a village.
+     [ 2760 w1] Rain came to Inyambora. The fields were glad of it.
+     [ 2762 w2] In the 2762nd year the granaries of Nduteda rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2765 w1] Timbinju grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 2765 w1] The Wibalilani and the Barikarini were allies no longer. Neither could say when the friendship had ended, only that it had.
+     [ 2765 w1] It rained on Nduteda, gently and for a long time, and the Wibalilani said it was a blessing.
+     [ 2767 w1] Caravans of the Wibalilani now came to Marumba of the Barikarini as well.
+     [ 2770 w1] And there were small things, as there always are: more than a dozen towns of the Wibalilani prayed to Yelondo and did not pray in vain.
+     [ 2771 w2] Envoys of the Barikarini threw down their staffs before the Tatuworini, and the war began.
+     [ 2773 w1] The Tatuworini marched into Akekumbe, and the Barikaran families who could fled to their kin.
+     [ 2775 w1] A fire-mountain woke east of Wakanji, and the sky above the city turned black.
+     [ 2775 w1] In a dry season a fire ate the deep forest east of Wakanji.
+     [ 2776 w1] At Wakanji, the Mokoterani prayed to Yerondo for rain, and fasted.
+     [ 2778 w1] Soft rain fell over Wakanji.
+     [ 2780 w1] The sky stayed grey over Lianothae for years. The harvest failed at Ndanunye, and not only there.
+     [ 2782 w1] Mist and rain came to Alange, and the hills around it turned a deeper green.
+     [ 2784 w1] At Wimbali the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Wibalilani went hungry.
+     [ 2789 w1] In the 2788th year Akekumbe opened its gates to the Tatuworini, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2792 w2] The armies of the Tatuworini came home in triumph to Gwindanya, and the Barikarini counted what they had lost.
+     [ 2792 w1] Onjete had prayed for an end to the war, and the god heard. The spears were hung on the walls again.
+     [ 2792 w1] The envoys of the Barikarini had come to the Mokoterani to declare a war. They saw the sign over Mbidengo, and declared a feast instead.
+     [ 2793 w1] In Wimbali a lamb was given to Yelondo, with a prayer for rain.
+     [ 2794 w1] Rain came to Wimbali. The fields were glad of it.
+     [ 2796 w1] Traders from Singado found their way to Timbinju of the Itindakani, where Wibalilan coin was already known.
+     [ 2800 w1] Over thirty years, and hardly worth a line each time, Yerondo heard seven towns of the Barikarini and answered them.
+     [ 2800 w1] Lightning struck close by Tubeli in a summer storm.
+     [ 2809 w2] Wakanji had become a city, with more people in it than anyone could name.
+     [ 2810 w1] In Engida the ground cracked like old pottery, and the Wibalilani began to pray for rain.
+     [ 2811 w1] The women of Engida tied red threads to the shrine and asked for rain.
+     [ 2812 w1] Lokindaba of the Wibalilani began to buy the goods of Timbinju, and its merchants learned the Itindakan way of haggling.
+     [ 2816 w3] The Wibalilani split the smallest thing in the world, and found a fire inside it. The other peoples of Lianothae had not yet dreamed of it.
+     [ 2816 w1] Fire walked through the pine woods east of Iwondaba, and the Wibalilani prayed for rain.
+     [ 2818 w1] The Wibalilani and the Muwikasani could no longer share the river. They tried to share it with spears instead.
+     [ 2820 w1] Yelondo sent rain on the thirsty fields of Engida.
+     [ 2820 w1] At Kosetende the Wibalilani won the day. The Muwikasani tell it differently, in their own chronicle, which no one has asked to read.
+     [ 2823 w1] Wilasungu was healed by Yelondo. Its people carved a hand on the temple wall.
+     [ 2825 w1] The banners of the Wibalilani were raised over Kabindari.
+     [ 2825 w2] The Muwikasani dwindled and were gone, and other peoples walked in their streets.
+     [ 2825 w1] The Wibalilani won their war against the Muwikasani, and there was no one left to pay the tribute.
+     [ 2825 w2] In the lands about Wobuyumbe a new people arose, the Mokalekani, descended from the Wibalilani but no longer their subjects.
+     [ 2825 w2] In the first songs of the Mokalekani, the god was the Quiet Between Armies.
+     [ 2829 w1] Another road joined Kasokumbe to Wimbali of the Wibalilani, and the tolls on it were argued over.
+     [ 2830 w1] In those twenty years the Wibalilani raised scores of new buildings, and Yelondo was asked for help by nine towns of theirs and gave it.
+     [ 2833 w1] The houses of Dudewengo reached the old boundary stones and did not stop. From this year the Wibalilani call it a great city.
+     [ 2837 w1] There was an earthquake in the hills south-east of Engida, and the people of the city slept outside for a month.
+     [ 2844 w1] So many children were born in Welilango that the elders gave up learning their names. Thus it became a great city.
+     [ 2849 w1] The Wibalilani of Wimbali wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2850 w1] A warm rain fell on Wimbali all through the night, and the roofs leaked, and nobody minded.
+     [ 2853 w2] Uzata swallowed the villages around it and became a great city of the Wibalilani.
+     [ 2857 w2] Lianothae grew hot as a kiln. The forests of the south withered.
+     [ 2864 w2] The Wibalilani and the Mokoterani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [ 2866 w1] The Barikarini made war on the Mokalekani.
+     [ 2868 w1] Edembaru was lost by the Barikarini and won by the Mokalekani, and its temple was given a new god's name.
+     [ 2868 w1] The Mokalekani built at Edembaru a house where the smallest fire burns. No one among the Mokalekani had built a power plant before.
+     [ 2868 w1] Thunder rolled over Ingawo, and lightning fell north of the great city.
+     [ 2871 w2] War came between the Wibalilani and the Tatuworini, the old enemies.
+     [ 2871 w1] Some of the people of Nzelasu grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Ludinde.
+     [ 2872 w1] The Itindakan kings swore an oath against the Tatuworini, and there was war.
+     [ 2873 w1] The host of the Barikarini came against Tubeli and broke on its walls like a wave on rock, and went home fewer.
+     [ 2873 w1] In Mbidengo they burned fat and asked Yerondo for peace.
+     [ 2873 w1] The Mokalekani marched against the Itindakani, and the fields were left unharvested.
+     [ 2874 w1] An army of the Tatuworini besieged Wimbali and went home with nothing but its wounded.
+     [ 2876 w1] The Wibalilani took Akekumbe from the Tatuworini.
+     [ 2880 w1] The Barikarini attacked Edembaru on a holy day and were beaten by its farmers.
+     [ 2884 w1] At Gwindanya the hidden fire was put to work, and the lamps of a whole country were lit from it.
+     [ 2884 w1] The Wibalilani won their war against the Tatuworini.
+     [ 2884 w1] The Tatuworini were beaten, and the Itindakani took their best fields.
+     [ 2884 w1] A sign appeared over the armies of the Mokalekani and the Barikarini, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+     [ 2884 w1] A great calm lay between the armies of the Mokalekani and the Itindakani for a day, and both sent envoys instead of soldiers.
+     [ 2884 w1] Nyewinga prayed for peace, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 2886 w1] The Quiet Between Armies drew a hand across the sky above Wimbali, and the dry fields drank.
+     [ 2890 w1] Below the great events of those sixty years, four towns of the Wibalilani asked Yelondo for help and were answered; the prayers of four towns of the Barikarini were heard.
+     [ 2891 w1] A tree north of Wimbali was split by lightning. The children of the great city dared each other to touch it.
+     [ 2892 w1] The Itindakani gave up Umbisungu, and the foxes moved in.
+     [ 2894 w1] The people of Ukingoli climbed to the shrine and prayed to Yelondo for rain. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 2896 w1] A sickness came to Nzawatolo by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 2899 w1] In Nzawatolo the sick had prayed, and one morning they woke well.
+     [ 2902 w1] Iwozimba began as a ring of tents on the dry grasslands, raised by wanderers from Kilisi.
+     [ 2904 w1] Tulingo was left empty. No one could say exactly when.
+     [ 2907 w1] Ndizingo and Lokindaba began to trade, cloth for copper, and both grew fat on it.
+     [ 2908 w1] The river by Rubekumbe shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 2912 w1] The priests of Rubekumbe went up to the high places and cried out for rain.
+     [ 2913 w1] Just when the wells of Rubekumbe were failing, the god sent rain; the priests said they had known it would come.
+     [ 2915 w2] There were too many mouths in Takingoli and too little bread, and the old went hungry so the young could eat.
+     [ 2916 w1] The fields around Kimilo filled with new houses, and it became a town of the Wibalilani.
+     [ 2920 w1] Those were busy years, if not great ones: Yerondo answered the prayers of eight towns of the Mokoterani, and the Wibalilani put up nine new buildings, each the finest yet by their own account.
+     [ 2921 w1] In the 2921st year the Wibalilani raised a granary at Ludinde, and were proud of it for one generation, which is the usual length of pride.
+     [ 2922 w2] The last families left Tukonjiri, and grass grew in its streets.
+     [ 2925 w1] The people of Onjete prayed for rain.
+     [ 2930 w1] The god let rain fall on Engida, though it had not been asked for. The farmers said it was too much.
+     [ 2931 w1] No one destroyed Engida. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2932 w1] The Wibalilani gave up Nenjobi, and the wind had it.
+     [ 2934 w1] Merchants began to travel between Iwozimba and Tiwonjiri, and the road between them grew wide.
+     [ 2934 w1] Many roads now led to Iwozimba, and it was called a city.
+     [ 2937 w1] At Takingoli, the Itindakani prayed to Yelondo for rain, and fasted.
+     [ 2942 w1] A warm rain fell on Lokindaba for three days, and the roofs leaked, and nobody minded.
+     [ 2942 w1] Enjekani was founded in the woods by the Barikarini, who had grown too many for Nyewinga.
+     [ 2944 w1] The houses of Enjekani reached the old boundary stones and did not stop. From this year the Barikarini call it a town.
+     [ 2949 w2] The mountain near Marumba woke and wept fire.
+     [ 2950 w1] Among the small news of those thirty years: Yelondo gave six towns of the Wibalilani what they prayed for.
+     [ 2950 w1] A red night: the hills close by Marumba burned, and ash fell on the great city.
+     [ 2951 w1] Rivers of fire ran through Marumba and buried it.
+     [ 2953 w1] In Rutiwazi a lamb was given to Yerondo, with a prayer for rain.
+     [ 2955 w2] In the dark years the barley would not ripen, and hunger came to Ndanunye and to many towns of the Tatuworini.
+     [ 2955 w1] The god let rain fall on Wimbali, though it had not been asked for. The children made mud houses.
+     [ 2958 w1] The quarrel of the Wibalilani and the Itindakani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise. The Mokoterani saw it too, and put away their own grievances.
+     [ 2959 w1] In the 2958th year, a band went out from Ziwinjiri with seed corn and quarrels enough for a new town, and founded Dukengoli on the dry grasslands.
+     [ 2961 w1] The fires in the woods south-east of Dukengoli cooled into black stone, and the people of the camp went back to their fields.
+     [ 2962 w1] Clouds gathered over Rutiwazi where no clouds had been, and wept on the dry fields. The Tatuworini gave thanks to Yerondo.
+     [ 2964 w1] The dust of the sky fell on the fields of Lizuwazi like a second winter, and there was nothing to harvest but straw.
+     [ 2968 w1] The women of Lizuwazi sang at the shrine every evening and asked for rain.
+     [ 2969 w1] The dry country about Lizuwazi drank rain sent by Yelondo, and turned green again.
+     [ 2970 w1] In Wakanji the first engines turned, and the Mokoterani did more work in a day than their grandfathers in a year.
+     [ 2972 w1] Rubekumbe became a great city, a sea of roofs from one horizon to the other.
+     [ 2980 w1] Meanwhile, in the smaller news of those years, more than a dozen towns of the Wibalilani had their prayers answered, and ten new buildings went up among them.
+     [ 2983 w1] The scribes of the Barikarini began to write Enjekani with the sign for 'city', and its people were insufferable about it.
+     [ 2983 w1] Chimneys rose over Enjekani, and the sky above it turned grey.
+     [ 2985 w1] The Wibalilani sharpened their spears and went against the Tatuworini, though no one could remember who had struck first.
+     [ 2985 w1] An omen of peace was seen over Elosandari, and the Wibalilani and the Tatuworini laid down their spears. Even the Mokalekani, who had been spoiling for a fight with them, put their grievances away.
+     [ 2986 w1] So many people lived in Wakanji that no one could count them, though the scribes tried.
+     [ 2989 w2] Envoys of the Mokalekani threw down their staffs before the Itindakani, and the war began.
+     [ 2992 w3] Uzata was abandoned.
+     [ 2992 w1] Takingoli fell to the Mokalekani, and its Itindakan lords were driven out.
+     [ 2993 w1] Before Tubeli, the army of the Itindakani was broken.
+     [ 2997 w1] The Itindakani of Ingawo wrote their prayer for peace on clay and buried it at the shrine.
+     [ 3001 w1] The Mokalekani held Tubeli against the Itindakani, and sang about it for a hundred years.
+     [ 3002 w2] The Mokalekani marched into Ilutindi, and the Itindakan families who could fled to their kin.
+     [ 3004 w1] A new thing was learned at Onjete, and then everywhere. So the Age of the Atom began among the Barikarini.
+     [ 3005 w1] A great power plant hummed at Onjete, and its lights never went out. It was the first power plant of the Barikarini.
+     [ 3007 w1] The elders of the Wibalilani and the Tatuworini clasped hands over a fire and swore to stand together. Their neighbours took note.
+     [ 3008 w1] A storm walked inland over the country of Ukingoli, and left the fields flattened behind it.
+     [ 3009 w1] The war ended in victory for the Mokalekani. The Itindakani paid tribute for a generation.
+     [ 3012 w1] Kirundu grew from a camp into a village.
+     [ 3013 w1] The long quarrel between the Barikarini and the Mokalekani came to blood.
+     [ 3017 w1] In the 3017th year Wandizu opened its gates to the Mokalekani, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 3021 w1] A great calm lay between the armies of the Mokalekani and the Barikarini for a day, and both sent envoys instead of soldiers.
+     [ 3021 w1] The Mokalekani had asked Yelondo to end the war, and the god put a weariness on both armies until they went home.
+     [ 3025 w1] Ox-carts began to creak along the road from Iwozimba to Kosetende, loaded with grain and gossip.
+     [ 3025 w1] The lamps of Totezumbe drowned out the stars: it had become a great city of the Barikarini.
+     [ 3030 w1] Another fifty years went into the book: five towns of the Mokalekani prayed to Yelondo and did not pray in vain, and the god sent rain over six towns of the Wibalilani.
+     [ 3032 w1] In the 3032nd year Iyumbola could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 3034 w1] A coughing sickness came to Wimbali with the traders, and lingered.
+     [ 3035 w1] The healers of Wimbali had given up, but Yelondo had not. The fever left the town in a single night.
+     [ 3039 w2] Kimilo was left empty. No one could say exactly when.
+     [ 3040 w1] Watulu was founded in the pine woods by the Wibalilani, who had walked a long way to find it.
+     [ 3040 w1] Watulu was a village now, with its own small quarrels.
+     [ 3041 w1] The last families left Kirundu, and grass grew in its streets.
+     [ 3044 w1] So many children were born in Wandizu that the elders gave up learning their names. Thus it became a great city.
+     [ 3046 w1] Rain fell on Elosandari out of a clear sky, and the Wibalilani danced in it.
+     [ 3050 w1] The long thirst of Ikisu ended in a storm, and the old people wept.
+     [ 3058 w1] A storm passed over Nzelasu, and lightning killed a herd of goats west of the village.
+     [ 3058 w1] Fire ran through the pine woods west of Nzelasu.
+     [ 3060 w1] Little of those thirty years was written down, except that Yelondo heard ten towns of the Wibalilani and answered them.
+     [ 3069 w1] The merchants of Watulu found a road to Lokindaba, and the road found more merchants.
+     [ 3071 w1] The village of Nzelasu grew into a town, and its people began to look down on villages.
+     [ 3071 w1] At Nzelasu they built a temple. It took longer than promised and cost more than was said, as is the way of all building.
+     [ 3071 w2] The Mokoterani of Rubekumbe saw their first Wibalilan merchants, and laughed at their hats.
+     [ 3082 w1] Zaruwi swallowed the villages around it and became a great city of the Barikarini.
+     [ 3084 w2] The Itindakani and the Tatuworini could no longer share the river. They tried to share it with spears instead.
+     [ 3084 w1] A sign appeared over the armies of the Itindakani and the Tatuworini, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come. The sign was seen as far as the lands of the Barikarini and the Mokalekani, and there too the spears were put away.
+     [ 3085 w1] The alliance of the Wibalilani and the Itindakani was not broken; it was forgotten, like a path no one walks any more.
+     [ 3094 w1] The feet of traders wore a road between Ekembuka and Dukengoli. Along it went pots and coins and, later, fevers.
+     [ 3100 w1] No one destroyed Mbiliwa. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3101 w1] The people of Nawinga climbed to the shrine and prayed to Yerondo for rain. They prayed loudly, in case the Quiet Between Armies was far away.
+     [ 3101 w1] In the 3101st year a new camp of the Wibalilani was raised at Itinjiri, in the deep forest.
+     [ 3102 w1] The tents of Itinjiri gave way to houses of timber, and it was called a village.
+     [ 3102 w1] The people of Itinjiri raised a shrine to Yelondo.
+     [ 3104 w2] Itinjiri grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 3104 w1] The Tatuworini entered the age of the hidden fire, with great fears.
+     [ 3105 w1] The Tatuworini built at Kasokumbe a house where the smallest fire burns. No one among the Tatuworini had built a power plant before.
+     [ 3111 w1] In the 3111th year Ndanunye could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 3118 w1] The first caravan came from Ludinde to Iwondaba, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 3122 w2] The Quiet Between Armies set a ring of light around the noon sun over Mbidengo. The Barikarini and the Mokoterani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them.
+     [ 3123 w1] Wind and rain beat upon Elosandari for a week, and the rivers rose.
+     [ 3125 w1] In a night of thunder a bolt came down north of Zawazu, and in the morning the shepherds found the stones blackened.
+     [ 3125 w1] The woods north of Zawazu burned, and the sky over the city was brown for days.
+     [ 3129 w1] The houses of Itinjiri reached the old boundary stones and did not stop. From this year the Wibalilani call it a great city.
+     [ 3134 w3] The Wibalilani gave up Binukumbe, and the foxes moved in.
+     [ 3135 w1] The people of Ndizingo prayed for rain.
+     [ 3135 w1] The earth shook in the deep forest far to the north-west of Bindezi.
+     [ 3137 w1] In those lean years Wilasungu ate its oxen, and then its dogs.
+     [ 3138 w1] The rains forgot the country of Tanduwo. The children grew up not knowing the smell of rain.
+     [ 3140 w1] Of the smaller things of those eighty years: Yelondo was asked for help by four towns of the Wibalilani and gave it.
+     [ 3141 w1] A band from Nzayaze crossed the country and founded Ndunzazu in the pine woods.
+     [ 3145 w1] The Itindakani put down the tools of their mothers and took up the tools of the Age of the Atom. The Quiet Between Armies watched, and did not say whether this was wise.
+     [ 3146 w1] At Ukingoli the hidden fire was put to work, and the lamps of a whole country were lit from it. It was the first power plant of the Itindakani.
+     [ 3148 w1] Ludinde was abandoned.
+     [ 3149 w1] A great storm walked in from the sea and stood over Ngubutolo for three days, and the roofs learned to fly.
+     [ 3156 w1] The sky over Kiwibo cracked open with fire, and the rain that followed was warm.
+     [ 3158 w2] In Kabindari they painted marks on the doors of the sick, and there were many marks.
+     [ 3158 w2] A cool wind passed through Kabindari, and in every house the fevered slept and woke well.
+     [ 3166 w1] Itinjiri and Ndaletolo began to trade, cloth for copper, and both grew fat on it.
+     [ 3170 w1] The scribes, counting rather than writing, set down that in thirty years nine towns of the Wibalilani asked Yelondo for help and were answered, and the god watered the fields of five towns of theirs.
+     [ 3170 w1] Tunduzu was left empty. Its people had gone to the bigger towns.
+     [ 3173 w1] Lightning walked on the hills south-west of Lezindeni, and no one was hurt, that time.
+     [ 3173 w1] The country south-west of Lezindeni burned until the rain came, and the smoke hung over the great city.
+     [ 3174 w1] In Enjekani they burned incense and asked Yerondo for rain.
+     [ 3174 w1] Smoke rose from the earth on the plains south-east of Nzilambu, and then fire. The Mokalekani said the mountain was angry.
+     [ 3176 w1] Before the Wibalilani and the Mokoterani could come to blows, the Quiet Between Armies set a light over Kabindari. Both peoples took it for a warning, and neither wished to be the first to ignore it.
+     [ 3178 w1] In the 3178th year the Mokalekani remembered an old insult from the Itindakani, and went to war over it.
+     [ 3179 w1] Half the houses of Nzilambu stood empty, and it was no more than a city.
+     [ 3179 w1] In Nzelasu they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 3180 w1] Nzilambu was lost beneath the lava, and the black stone kept its shape.
+     [ 3181 w1] The priests of Ndanunye went up to the high places and cried out for rain.
+     [ 3185 w1] Children were born at Kadembuka who had never lived anywhere else, and it became a village.
+     [ 3186 w1] War between the Barikarini and the Mokalekani. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 3188 w1] The Barikarini made war on the Itindakani.
+     [ 3190 w1] Merchants began to travel between Enjekani and Ngubutolo, bringing salt and news.
+     [ 3193 w1] Before Iyumbola, the Itindakani met the Barikarini. By evening the field belonged to the Barikarini, and to the birds.
+     [ 3194 w2] The armies of the Barikarini came home in triumph to Onjete, and the Itindakani counted what they had lost.
+     [ 3194 w1] After sixteen years the Itindakani asked for peace, and the Mokalekani granted it, and made them pay for the asking.
+     [ 3199 w1] The Mokalekani came against Kiwibo and were thrown back.
+     [ 3200 w1] Little of those thirty years was written down, except that rain fell by the hand of Yelondo on six towns of the Wibalilani, and that four towns of theirs had their prayers answered.
+     [ 3200 w1] The Barikarini won their war against the Mokalekani.
+     [ 3200 w1] A great calm settled on the border of the Barikarini and the Mokoterani. The young, who had been ready to fight, went home and were annoyed about it for years.
+     [ 3200 w1] The Barikarini prayed for peace, and Yerondo gave it.
+     [ 3202 w1] Green came back to the fields of Gwindanya, and the wells were sweet again.
+     [ 3207 w1] Wengiwetu was founded in the 3207th year. Its founders swore it would one day be greater than Wikindeni. The chronicle notes that all founders swear this.
+     [ 3210 w1] Ox-carts began to creak along the road from Kadembuka to Tuzimbiri, loaded with grain and gossip.
+     [ 3211 w2] Ndilude became a great city such as the world had not seen, and the sky over it never grew dark.
+     [ 3213 w1] The sea sent a howling wind against Tonzezu, and the fishermen did not go out for a month.
+     [ 3218 w1] At Nzawatolo, the Wibalilani prayed to Yelondo for rain, and fasted.
+     [ 3227 w1] The merchants of Rutiwazi found a road to Ndanunye, and kept the secret of it for a while.
+     [ 3230 w1] Over thirty years the builders of the Wibalilani finished ten new halls, granaries and walls. In the same years Yerondo gave four towns of the Barikarini what they prayed for.
+     [ 3235 w1] Traders of the Tatuworini and the Barikarini met at Iyumbola, and each thought they had cheated the other.
+     [ 3237 w1] Ndunzazu outgrew its walls twice and became a city of the Wibalilani.
+     [ 3237 w1] In Ndunzazu great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron.
+     [ 3237 w1] A tree east of Ziwinjiri was split by lightning. The wood was kept as a holy thing in the village.
+     [ 3241 w1] The feet of traders wore a road between Wengiwetu and Iwondaba. Along it went pots and coins and, later, fevers.
+     [ 3249 w2] Neither the Barikarini nor the Mokalekani would give way, and the war was a summer off, when Yerondo set a sign between them. That summer the spears stayed in their racks, and so did the next.
+     [ 3254 w1] The last families left Debuyumbe, and grass grew in its streets.
+     [ 3258 w1] A tremor ran through the land about Sezazu, and pots fell from the shelves.
+     [ 3259 w1] In Zanguti a lamb was given to Yelondo, with a prayer for rain.
+     [ 3260 w2] Wengiwetu became a city, and its people forgot they had ever lived in tents.
+     [ 3260 w1] Wengiwetu built its first manufactory, and the river ran a strange colour.
+     [ 3260 w3] The Wibalilani turned their eyes to the stars, and built towers of fire to reach them. They were the first in all the world.
+     [ 3265 w1] The women of Zodakumbe sang at the shrine every evening and asked for rain.
+     [ 3270 w2] The Wibalilani and the Barikarini swore to be friends to each other's friends and enemies to each other's enemies, which seemed simple at the time.
+     [ 3270 w1] Lightning struck in the woods north of Dukengoli in a summer storm.
+     [ 3270 w1] Fire walked through the woods north of Dukengoli, and the beasts ran before it.
+     [ 3274 w1] Walls of cut stone went up around Ndayutolo, and the Tatuworan scribes began to call it a city.
+     [ 3274 w1] A manufactory now stands at Ndayutolo, where before there was only mud and opinion.
+     [ 3280 w1] Outside Lezindeni, on flat ground swept clean, the Wibalilan builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+     [ 3280 w3] At Lezindeni the Wibalilani began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3285 w1] The Wibalilani and the Mokoterani had begun to sharpen their spears, but a sign stood in the sky between them for three nights, and on the fourth they sent envoys instead.
+     [ 3295 w1] War came between the Barikarini and the Tatuworini, the old enemies.
+     [ 3297 w1] Thunder rolled over Iwondaba, and lightning fell in the pine woods east of the great city.
+     [ 3297 w1] A red night: the pine woods east of Iwondaba burned, and ash fell on the great city.
+     [ 3298 w1] There was drought in the country of Madungi, and the Barikarini looked at the sky every morning.
+     [ 3300 w1] The Quiet Between Armies drew a hand across the sky above Madungi, and the dry fields drank.
+     [ 3301 w1] The banners of the Tatuworini were raised over Ndilude.
+     [ 3301 w1] Rutiwazi was lost by the Tatuworini and won by the Barikarini, and its market changed hands with it.
+     [ 3301 w1] At Kunyukani there was hunger, three years running.
+     [ 3306 w2] The Tatuworini took Rutiwazi from the Barikarini.
+     [ 3306 w1] Clouds came back over Madungi, and the dry river filled in a single night.
+     [ 3309 w2] An omen of peace was seen over Mbidengo, and the Barikarini and the Tatuworini laid down their spears. Even the Mokoterani, who had been spoiling for a fight with them, put their grievances away.
+     [ 3310 w1] Below the great events of those eighty years, Yerondo answered the prayers of more than a dozen towns of the Barikarini.
+     [ 3328 w1] In the 3328th year the first caravan came from Nzawatolo to Kadembuka, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 3347 w1] Ndayutolo grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 3348 w1] A storm passed over Tabiyumbe, and lightning killed a herd of goats near the great city.
+     [ 3348 w1] In the month of dust a fire ate the woods near Tabiyumbe.
+     [ 3349 w1] Black clouds came over Bukada from the sea, and the hail broke the young barley.
+     [ 3351 w1] In Tazuwazi the people sickened, and the roads to it were empty.
+     [ 3351 w2] The fever left Tazuwazi in a single night. The Wibalilani said Yelondo had walked through the streets.
+     [ 3361 w1] The Barikaran kings swore an oath against the Mokalekani, and there was war.
+     [ 3361 w1] A sign appeared over the armies of the Barikarini and the Mokalekani, and both sides lowered their spears to look at it. When they looked down again, neither remembered why they had come.
+     [ 3365 w1] No rain fell on the lands of Ziwinjiri. The river showed its stones, and the people counted them.
+     [ 3366 w1] The Mokalekani reached the edge of heaven, and looked back at Lianothae.
+     [ 3366 w1] The Wibalilani of Ziwinjiri wrote their prayer for rain on bark and buried it at the shrine.
+     [ 3366 w1] In a night of thunder a bolt came down in the deep forest west of Kiwibo, and in the morning the shepherds found the stones blackened.
+     [ 3366 w1] A wildfire came close to Kiwibo, and the children watched it from the roofs.
+     [ 3366 w2] Ziwinjiri prayed for rain, and it was given. The priests were as surprised as anyone, but hid it well.
+     [ 3374 w1] The rains came back to Ziwinjiri, and the Wibalilani said the god had relented.
+     [ 3380 w1] In those seventy years the prayers of seven towns of the Wibalilani were heard.
+     [ 3380 w1] The old alliance of the Wibalilani and the Barikarini came apart over a small matter, as old alliances do.
+     [ 3385 w1] Generations passed and the Itindakani saw nothing of the Quiet Between Armies; they began to call the god the Sleeper.
+     [ 3386 w1] The Mokalekani built a great tower of fire at Tizundaba. Its makers looked up at night, and the god could not tell whether they were longing or afraid.
+     [ 3386 w2] The Mokalekani laid the keel of a great ship at Tizundaba, a ship for the space between the stars.
+     [ 3399 w1] The sky over Wengiwetu cracked open with fire, and the rain that followed was warm.
+     [ 3399 w1] Fire ran through the pine woods close by Wengiwetu.
+     [ 3409 w2] The quarrel of the Wibalilani and the Mokoterani was nearly a war when the omen came. Afterwards each side said the other had been about to apologise.
+     [ 3412 w1] The rains failed around Welilango.
+     [ 3414 w1] A tree north-west of Alange was split by lightning. The wood was kept as a holy thing in the great city.
+     [ 3414 w1] The country in the woods north-west of Alange burned for many days, and the smoke hung over the great city.
+     [ 3415 w2] Famine came to Welilango.
+     [ 3416 w1] Yelondo sent rain on the thirsty fields of Tanduwo.
+     [ 3420 w1] Another forty years went into the book, and in them eight towns of the Wibalilani prayed to Yelondo and did not pray in vain.
+     [ 3420 w1] The long thirst of Welilango ended in a storm, and the old people wept.
+     [ 3429 w1] Lightning struck south-east of Kadembuka in a summer storm.
+     [ 3429 w1] The plains south-east of Kadembuka burned, and the Wibalilani watched the glow at night.
+     [ 3434 w1] Settlers of the Barikarini went out from Zodakumbe and made a new home at Etikani.
+     [ 3434 w1] Kinzinje became a great city, a sea of roofs from one horizon to the other.
+     [ 3434 w1] The elders of Etikani chose a holy place, and a shrine to Yerondo was raised there.
+     [ 3439 w1] The ground near Muketende trembled for the space of a hundred breaths, and walls fell in the great city.
+     [ 3447 w2] The first ship of the Barikarini went up beyond the sky and came back, and the priests were very quiet.
+     [ 3448 w1] The Quiet Between Armies set a ring of light around the noon sun over Mbidengo. The Barikarini and the Mokoterani, who had been counting each other's spears, counted the days of the omen instead, and the anger went out of them. The same calm came over the Tatuworini.
+     [ 3451 w1] A storm such as the old people had never seen passed over Kinzinje.
+     [ 3453 w1] Lightning walked on the hills north-east of Tabiyumbe, and no one was hurt, that time.
+     [ 3453 w1] Fire walked through the dry grasslands north-east of Tabiyumbe, and the beasts ran before it.
+     [ 3458 w1] The Wibalilani marched against the Tatuworini, and the fields were left unharvested.
+     [ 3459 w2] So many people lived in Inyambora that no one could count them, though the scribes tried.
+     [ 3460 w1] At Gwindanya the Wibalilani won the day. The Tatuworini tell it differently, in their own chronicle, which no one has asked to read.
+     [ 3464 w1] Kasokumbe fell to the Wibalilani, and its people learned new songs.
+     [ 3467 w1] At Onjete, the Barikarini built a tower to throw ships at the stars.
+     [ 3467 w2] At Onjete the Barikarini began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3468 w1] The host of the Tatuworini came against Kasokumbe and broke on its walls like a wave on rock, and went home fewer.
+     [ 3469 w2] A white light lay between the armies of the Wibalilani and the Tatuworini for a day, and both sent envoys instead of soldiers. The sign was seen as far as the lands of the Itindakani and the Mokoterani, and there too the spears were put away.
+     [ 3470 w1] Yerondo heard five towns of the Tatuworini and answered them. Of such small things in those fifty years the chronicle keeps nothing more.
+     [ 3470 w1] The Itindakani no longer called the god the Sleeper; now they said the Quiet Between Armies.
+     [ 3473 w1] The Wibalilani and the Tatuworini became allies. They exchanged hostages, gifts and recipes, and kept the hostages longest.
+     [ 3479 w3] From Lezindeni, the Wibalilani went up into the sky on a pillar of fire, carrying seed and songs and the name of Yelondo. Those who stayed watched until the light was a star among stars.
+     [ 3479 w3] In the 3479th year the Wibalilani rose from Lezindeni on a pillar of light. They carried seed, and songs, and a carved stone bearing the name of Yelondo, whom they called the Quiet Between Armies. Before the clouds closed below them, they looked back at Lianothae and wept, not from grief, but because they had been loved, and knew it, and were taking that with them too. Wherever they land, there will be a shrine before there is a house.
+
+simrun: 1 run(s) in 281.4 s wall, no non-finite values
