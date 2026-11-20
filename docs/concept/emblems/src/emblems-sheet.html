@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Cinzel;src:url(../../../../assets/fonts/cinzel/Cinzel%5Bwght%5D.ttf)}
+@font-face{font-family:Inter;src:url(../../../../assets/fonts/inter/Inter-Regular.ttf)}
+@font-face{font-family:Corm;src:url(../../../../assets/fonts/cormorant-garamond/CormorantGaramond-Italic.otf)}
+html,body{margin:0;width:1920px;height:1080px;background:radial-gradient(ellipse at 30% 20%,#18202e,#0b0f17 70%);color:#e9e4d6;font-family:Inter;overflow:hidden}
+h1{position:absolute;left:64px;top:34px;margin:0;font-family:Cinzel;font-weight:500;font-size:30px;letter-spacing:.18em;color:#fff1c9}
+.sub{position:absolute;left:66px;top:80px;font-family:Corm;font-style:italic;font-size:21px;color:#e8cd96}
+.grid{position:absolute;left:64px;top:130px;display:grid;grid-template-columns:repeat(8,212px);gap:26px 4px}
+.t{display:flex;flex-direction:column;align-items:center}
+.b{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 40% 35%,#1b2434,#0b0f17);box-shadow:0 0 0 2.5px var(--c),0 0 0 6px #0b0f17,0 0 0 7px rgba(232,205,150,.35),0 6px 18px rgba(0,0,0,.5)}
+.b svg{width:84px;height:84px;color:var(--c)}
+.n{margin-top:14px;font-family:Cinzel;font-size:16px;white-space:nowrap;letter-spacing:.12em;color:#e8cd96;text-transform:uppercase}
+.k{font-size:11px;color:#b3b9c4;margin-top:2px}
+.panel{position:absolute;background:rgba(19,26,38,.85);border:1px solid #1b2434;border-radius:10px;padding:16px 20px}
+.lab{font-family:Cinzel;font-size:13px;letter-spacing:.14em;color:#e8cd96;text-transform:uppercase;margin-bottom:10px}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:nowrap}
+.f{border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--c);color:#0b0f17}
+.o{border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0b0f17;color:var(--c);box-shadow:0 0 0 1.5px var(--c)}
+.cap{font-size:11px;color:#b3b9c4;margin-top:6px}
+</style></head><body>
+<h1>Culture emblems</h1><div class="sub">Sixteen signs a people may raise. Any sign, any colour.</div>
+<div class="grid" id="g"></div>
+<div class="panel" style="left:64px;top:650px;width:1110px" id="p16"><div class="lab">At game size: 16 px on the map, 24 px in panels</div></div>
+<div class="panel" style="left:1214px;top:650px;width:600px" id="pc"><div class="lab">One sign in the six culture colours</div></div>
+<div class="panel" style="left:64px;top:850px;width:1750px"><div class="lab">The bare 16 px signs, pixels enlarged four times</div><img id="z" src="zoom16.png" style="image-rendering:pixelated;display:block" onerror="this.style.display='none'"></div>
+<script src="emblems.js"></script>
+<script>
+const C=['#e69f00','#56b4e9','#009e73','#f0e442','#d55e00','#cc79a7'];
+const NAMES=['The Swell','The Anvil Pass','The Lake Birch','The Star Road','The Claw Sail','The Shade Tree','The Curled Prow','The Lamp of Law','The Stacked Spire','The Cliff Stair','The Braid','The Antler Crown','The Sheaf','The Rain Stair','The Hearth Ring','The Hive'];
+const g=document.getElementById('g');
+EMBLEMS.forEach((e,i)=>{const t=document.createElement('div');t.className='t';t.style.setProperty('--c',C[i%6]);
+ t.innerHTML=`<div class="b">${svg(e)}</div><div class="n">${NAMES[i]}</div><div class="k">emblem-${String(i+1).padStart(2,'0')}</div>`;g.appendChild(t);});
+// 16 px and 24 px strips: filled badge (colour disc, ink sign) and outline badge (ink disc, colour sign)
+const p=document.getElementById('p16');
+for(const [sz,ic] of [[16,11],[24,16]]){const r=document.createElement('div');r.className='row';r.style.marginBottom='12px';
+ EMBLEMS.forEach((e,i)=>{const d=document.createElement('div');d.className=(sz==16?'f':'o');d.style.setProperty('--c',C[i%6]);d.style.width=d.style.height=sz+'px';
+  d.innerHTML=svg(e,ic);r.appendChild(d);});
+ // raw sign at true size too
+ p.appendChild(r);}
+const raw=document.createElement('div');raw.className='row';raw.id='raw';raw.style.gap='8px';raw.style.display='inline-flex';EMBLEMS.forEach((e,i)=>{const d=document.createElement('div');d.style.color=C[i%6];d.style.width=d.style.height='16px';d.innerHTML=svg(e,16);raw.appendChild(d);});p.appendChild(raw);
+const rr=raw.getBoundingClientRect();document.title=[rr.left,rr.top,rr.right,rr.bottom].map(Math.round).join(',');
+const cap=document.createElement('div');cap.className='cap';cap.textContent='Top: 16 px filled badges (sign 11 px, the smallest marker). Middle: 24 px outline badges (sign 16 px). Bottom: the bare signs at 16 px.';p.appendChild(cap);
+const pc=document.getElementById('pc');const r2=document.createElement('div');r2.className='row';r2.style.gap='18px';
+C.forEach(c=>{const d=document.createElement('div');d.className='f';d.style.setProperty('--c',c);d.style.width=d.style.height='64px';d.innerHTML=svg(EMBLEMS[11],40);r2.appendChild(d);});pc.appendChild(r2);
+const r3=document.createElement('div');r3.className='row';r3.style.gap='18px';r3.style.marginTop='12px';
+C.forEach(c=>{const d=document.createElement('div');d.className='o';d.style.setProperty('--c',c);d.style.width=d.style.height='64px';d.innerHTML=svg(EMBLEMS[11],40);r3.appendChild(d);});pc.appendChild(r3);
+</script></body></html>
