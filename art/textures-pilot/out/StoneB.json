@@ -1,0 +1,35 @@
+{
+ "source": "flow/stone-b.jpg",
+ "name": "StoneB",
+ "kind": "stone",
+ "tile_m": 2.0,
+ "seam_before": {
+  "x_wrap": 1.53,
+  "x_worst": 1.53,
+  "y_wrap": 1.78,
+  "y_worst": 1.78
+ },
+ "light_repeat_before": 0.0281,
+ "overlap_px": [
+  327,
+  327
+ ],
+ "cut_cost": [
+  0.717,
+  1.681
+ ],
+ "albedo_mean": "#876d51",
+ "albedo_target": "#8a6c4c",
+ "seam_after": {
+  "x_wrap": 0.93,
+  "x_worst": 1.35,
+  "y_wrap": 0.83,
+  "y_worst": 1.35
+ },
+ "light_repeat_after": 0.0139,
+ "normal_strength": 0.327,
+ "normal_tilt_deg": 24.0,
+ "rough_mean": 0.891,
+ "ao_mean": 0.89,
+ "seconds": 34.6
+}

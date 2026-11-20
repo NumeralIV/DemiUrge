@@ -1,0 +1,4967 @@
+{
+ "family": "Prop",
+ "generated_by": "art/props/build_props.py",
+ "blender": "5.2.1 LTS",
+ "units": "metres, Z up, front -Y, pivot = footprint centre at ground (Z = 0)",
+ "texture_sets": {
+  "T_Prop_Rock": {
+   "tile_m": 2.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Moss": {
+   "tile_m": 1.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Stone": {
+   "tile_m": 2.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Metal": {
+   "tile_m": 1.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Steel": {
+   "tile_m": 1.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Cloth": {
+   "tile_m": 0.5,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Wood": {
+   "tile_m": 1.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Straw": {
+   "tile_m": 2.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": false
+  },
+  "T_Prop_Leaf": {
+   "tile_m": 0.6,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": true
+  },
+  "T_Prop_Stalk": {
+   "tile_m": 1.0,
+   "size": 1024,
+   "maps": [
+    "D",
+    "N",
+    "ORM"
+   ],
+   "alpha_in_D": true
+  }
+ },
+ "material_instances": {
+  "M_Prop_Rock": {
+   "Granite": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "Sandstone": {
+    "tint": [
+     1.32,
+     0.86,
+     0.62
+    ]
+   },
+   "Basalt": {
+    "tint": [
+     0.5,
+     0.5,
+     0.53
+    ]
+   },
+   "Limestone": {
+    "tint": [
+     1.38,
+     1.33,
+     1.22
+    ]
+   }
+  },
+  "M_Prop_RockTile": {
+   "Granite": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "Sandstone": {
+    "tint": [
+     1.32,
+     0.86,
+     0.62
+    ]
+   },
+   "Basalt": {
+    "tint": [
+     0.5,
+     0.5,
+     0.53
+    ]
+   },
+   "Limestone": {
+    "tint": [
+     1.38,
+     1.33,
+     1.22
+    ]
+   }
+  },
+  "M_Prop_Wood": {
+   "Valley": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "CliffTerrace": {
+    "tint": [
+     1.12,
+     0.94,
+     0.8
+    ]
+   },
+   "LagoonWeaver": {
+    "tint": [
+     0.78,
+     0.82,
+     0.86
+    ]
+   },
+   "RingBuilder": {
+    "tint": [
+     0.92,
+     0.94,
+     0.98
+    ]
+   }
+  },
+  "M_Prop_Stone": {
+   "Valley": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "CliffTerrace": {
+    "tint": [
+     1.08,
+     0.8,
+     0.68
+    ]
+   },
+   "LagoonWeaver": {
+    "tint": [
+     0.86,
+     0.9,
+     0.92
+    ]
+   },
+   "RingBuilder": {
+    "tint": [
+     1.06,
+     1.07,
+     1.1
+    ]
+   },
+   "Marble": {
+    "tint": [
+     1.18,
+     1.17,
+     1.14
+    ]
+   },
+   "Concrete": {
+    "tint": [
+     0.82,
+     0.82,
+     0.8
+    ]
+   },
+   "Terracotta": {
+    "tint": [
+     1.15,
+     0.62,
+     0.42
+    ]
+   }
+  },
+  "M_Prop_Cloth": {
+   "Valley": {
+    "tint": [
+     0.82,
+     0.34,
+     0.24
+    ]
+   },
+   "CliffTerrace": {
+    "tint": [
+     0.22,
+     0.32,
+     0.72
+    ]
+   },
+   "LagoonWeaver": {
+    "tint": [
+     1.05,
+     0.66,
+     0.2
+    ]
+   },
+   "RingBuilder": {
+    "tint": [
+     0.52,
+     0.42,
+     0.6
+    ]
+   },
+   "Burlap": {
+    "tint": [
+     0.88,
+     0.74,
+     0.55
+    ]
+   },
+   "Undyed": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "M_Prop_Straw": {
+   "Ripe": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "Weathered": {
+    "tint": [
+     0.72,
+     0.68,
+     0.62
+    ]
+   }
+  },
+  "M_Prop_Crop": {
+   "Ripe": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "Green": {
+    "tint": [
+     0.55,
+     0.85,
+     0.32
+    ]
+   },
+   "Barley": {
+    "tint": [
+     1.08,
+     1.0,
+     0.82
+    ]
+   }
+  },
+  "M_Prop_Foliage": {
+   "Summer": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "Autumn": {
+    "tint": [
+     1.5,
+     0.95,
+     0.45
+    ]
+   },
+   "Dry": {
+    "tint": [
+     1.3,
+     1.1,
+     0.6
+    ]
+   },
+   "Cabbage": {
+    "tint": [
+     0.8,
+     1.05,
+     1.0
+    ]
+   }
+  },
+  "M_Prop_Metal": {
+   "Iron": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "PaintedGreen": {
+    "tint": [
+     0.42,
+     0.7,
+     0.5
+    ],
+    "metallic": 0.0,
+    "roughness": 0.8
+   },
+   "PaintedBlack": {
+    "tint": [
+     0.45,
+     0.45,
+     0.45
+    ],
+    "metallic": 0.0,
+    "roughness": 0.75
+   }
+  },
+  "M_Prop_Steel": {
+   "Brushed": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "Galvanised": {
+    "tint": [
+     0.85,
+     0.87,
+     0.88
+    ],
+    "metallic": 1.0,
+    "roughness": 1.6
+   },
+   "PaintedWhite": {
+    "tint": [
+     2.6,
+     2.6,
+     2.55
+    ],
+    "metallic": 0.0,
+    "roughness": 1.4
+   },
+   "PaintedGrey": {
+    "tint": [
+     0.75,
+     0.76,
+     0.78
+    ],
+    "metallic": 0.0,
+    "roughness": 1.5
+   }
+  },
+  "M_Prop_Glow": {
+   "Fire": {
+    "tint": [
+     1.0,
+     0.42,
+     0.1
+    ]
+   },
+   "Oil": {
+    "tint": [
+     1.0,
+     0.62,
+     0.3
+    ]
+   },
+   "Gas": {
+    "tint": [
+     1.0,
+     0.82,
+     0.58
+    ]
+   },
+   "Sodium": {
+    "tint": [
+     1.0,
+     0.55,
+     0.16
+    ]
+   },
+   "LED": {
+    "tint": [
+     0.85,
+     0.92,
+     1.0
+    ]
+   }
+  }
+ },
+ "meshes": [
+  {
+   "name": "SM_Prop_Barrel",
+   "family": "Prop",
+   "category": "storage",
+   "description": "Coopered barrel",
+   "fbx": "art/props/export/SM_Prop_Barrel.fbx",
+   "lods": 3,
+   "tris": [
+    608,
+    242,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.71,
+    0.71
+   ],
+   "height_m": 0.9,
+   "below_ground_m": 0.0,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Metal"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "quays, market squares, inn yards",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Barrel_Stack",
+   "family": "Prop",
+   "category": "storage",
+   "description": "Three barrels stacked on their sides",
+   "fbx": "art/props/export/SM_Prop_Barrel_Stack.fbx",
+   "lods": 3,
+   "tris": [
+    780,
+    312,
+    92
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.43,
+    0.93
+   ],
+   "height_m": 1.28,
+   "below_ground_m": 0.01,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Metal"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "quays and warehouses",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Cart_Hand",
+   "family": "Prop",
+   "category": "cart",
+   "description": "Two-wheeled handcart, shafts resting on the ground",
+   "fbx": "art/props/export/SM_Prop_Cart_Hand.fbx",
+   "lods": 3,
+   "tris": [
+    916,
+    548,
+    484
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.6,
+    2.78
+   ],
+   "height_m": 1.21,
+   "below_ground_m": 0.01,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Metal"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "lanes, farmyards, markets",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Cart_Wagon",
+   "family": "Prop",
+   "category": "cart",
+   "description": "Four-wheeled covered wagon (vehicle budget)",
+   "fbx": "art/props/export/SM_Prop_Cart_Wagon.fbx",
+   "lods": 3,
+   "tris": [
+    2052,
+    820,
+    540
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.92,
+    5.17
+   ],
+   "height_m": 2.37,
+   "below_ground_m": 0.01,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Cloth"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Metal"
+    }
+   ],
+   "textures": [
+    "T_Prop_Cloth_D",
+    "T_Prop_Cloth_N",
+    "T_Prop_Cloth_ORM",
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Cloth": [
+     "Burlap",
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Undyed",
+     "Valley"
+    ],
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (cover MI per culture)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "roads, caravan camps, market edges",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "budget_note": "a vehicle: the 1-4k triangle vehicle budget applies"
+  },
+  {
+   "name": "SM_Prop_Cliff_A",
+   "family": "Prop",
+   "category": "cliff",
+   "description": "Cliff chunk, stratified wall",
+   "fbx": "art/props/export/SM_Prop_Cliff_A.fbx",
+   "lods": 4,
+   "tris": [
+    1998,
+    800,
+    240,
+    68
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    20.35,
+    7.34
+   ],
+   "height_m": 12.72,
+   "below_ground_m": 1.44,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_CliffA_N",
+    "T_Prop_CliffA_ORM",
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "terrain dressing on steep slopes, coasts and canyon walls; rotate freely about Z, scale 0.7-1.4, sink up to 2 m",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "budget_note": "terrain-scale (10-22 m): budgeted like a house (~2k) rather than a small prop; LOD3 hull for > 10 m",
+   "baked_maps": {
+    "normal": "T_Prop_CliffA_N",
+    "orm": "T_Prop_CliffA_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 375468
+  },
+  {
+   "name": "SM_Prop_Cliff_B",
+   "family": "Prop",
+   "category": "cliff",
+   "description": "Cliff chunk, tall buttress",
+   "fbx": "art/props/export/SM_Prop_Cliff_B.fbx",
+   "lods": 4,
+   "tris": [
+    1994,
+    800,
+    240,
+    210
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    11.42,
+    9.25
+   ],
+   "height_m": 16.21,
+   "below_ground_m": 1.56,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_CliffB_N",
+    "T_Prop_CliffB_ORM",
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "terrain dressing on steep slopes, coasts and canyon walls; rotate freely about Z, scale 0.7-1.4, sink up to 2 m",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "budget_note": "terrain-scale (10-22 m): budgeted like a house (~2k) rather than a small prop; LOD3 hull for > 10 m",
+   "baked_maps": {
+    "normal": "T_Prop_CliffB_N",
+    "orm": "T_Prop_CliffB_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 473084
+  },
+  {
+   "name": "SM_Prop_Cliff_C",
+   "family": "Prop",
+   "category": "cliff",
+   "description": "Cliff chunk, long ledge",
+   "fbx": "art/props/export/SM_Prop_Cliff_C.fbx",
+   "lods": 4,
+   "tris": [
+    1998,
+    800,
+    240,
+    70
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    24.65,
+    8.77
+   ],
+   "height_m": 7.44,
+   "below_ground_m": 1.46,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_CliffC_N",
+    "T_Prop_CliffC_ORM",
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "terrain dressing on steep slopes, coasts and canyon walls; rotate freely about Z, scale 0.7-1.4, sink up to 2 m",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "budget_note": "terrain-scale (10-22 m): budgeted like a house (~2k) rather than a small prop; LOD3 hull for > 10 m",
+   "baked_maps": {
+    "normal": "T_Prop_CliffC_N",
+    "orm": "T_Prop_CliffC_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 196408
+  },
+  {
+   "name": "SM_Prop_Cliff_D",
+   "family": "Prop",
+   "category": "cliff",
+   "description": "Cliff chunk, jointed block",
+   "fbx": "art/props/export/SM_Prop_Cliff_D.fbx",
+   "lods": 4,
+   "tris": [
+    1998,
+    800,
+    240,
+    70
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    15.55,
+    10.72
+   ],
+   "height_m": 12.77,
+   "below_ground_m": 1.4,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_CliffD_N",
+    "T_Prop_CliffD_ORM",
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "terrain dressing on steep slopes, coasts and canyon walls; rotate freely about Z, scale 0.7-1.4, sink up to 2 m",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "budget_note": "terrain-scale (10-22 m): budgeted like a house (~2k) rather than a small prop; LOD3 hull for > 10 m",
+   "baked_maps": {
+    "normal": "T_Prop_CliffD_N",
+    "orm": "T_Prop_CliffD_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 377540
+  },
+  {
+   "name": "SM_Prop_Crate_Stack",
+   "family": "Prop",
+   "category": "storage",
+   "description": "Stack of five wooden crates",
+   "fbx": "art/props/export/SM_Prop_Crate_Stack.fbx",
+   "lods": 3,
+   "tris": [
+    460,
+    184,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.6,
+    1.33
+   ],
+   "height_m": 1.1,
+   "below_ground_m": 0.0,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "quays, warehouses, market backs",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Crop_Grain",
+   "family": "Prop",
+   "category": "crop",
+   "description": "Grain rows (wheat / barley), 4 x 4 m tile",
+   "fbx": "art/props/export/SM_Prop_Crop_Grain.fbx",
+   "lods": 3,
+   "tris": [
+    112,
+    48,
+    16
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.0,
+    3.98
+   ],
+   "height_m": 1.05,
+   "below_ground_m": 0.0,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Crop"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stalk_D",
+    "T_Prop_Stalk_N",
+    "T_Prop_Stalk_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Crop": [
+     "Barley",
+     "Green",
+     "Ripe"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "tile 4 x 4 m over a field polygon, rows along local X; clip at the field edge; MI Green (spring) / Ripe (summer) / Barley",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0
+  },
+  {
+   "name": "SM_Prop_Crop_Veg",
+   "family": "Prop",
+   "category": "crop",
+   "description": "Vegetable rows (cabbage-like heads), 4 x 4 m tile, MI Cabbage",
+   "fbx": "art/props/export/SM_Prop_Crop_Veg.fbx",
+   "lods": 3,
+   "tris": [
+    1008,
+    480,
+    120
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    3.88,
+    3.75
+   ],
+   "height_m": 0.49,
+   "below_ground_m": 0.06,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Foliage"
+    }
+   ],
+   "textures": [
+    "T_Prop_Leaf_D",
+    "T_Prop_Leaf_N",
+    "T_Prop_Leaf_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Foliage": [
+     "Autumn",
+     "Cabbage",
+     "Dry",
+     "Summer"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "tile 4 x 4 m over a field polygon, rows along local X; clip at the field edge; MI Green (spring) / Ripe (summer) / Barley",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0
+  },
+  {
+   "name": "SM_Prop_Crop_Vine",
+   "family": "Prop",
+   "category": "crop",
+   "description": "Vineyard row on posts and wires, 4 m (rows 2 m apart)",
+   "fbx": "art/props/export/SM_Prop_Crop_Vine.fbx",
+   "lods": 3,
+   "tris": [
+    428,
+    204,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.44,
+    1.11
+   ],
+   "height_m": 1.84,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Foliage"
+    }
+   ],
+   "textures": [
+    "T_Prop_Leaf_D",
+    "T_Prop_Leaf_N",
+    "T_Prop_Leaf_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Foliage": [
+     "Autumn",
+     "Cabbage",
+     "Dry",
+     "Summer"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "rows at 2 m spacing along local X; Sail age onward on warm slopes",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0
+  },
+  {
+   "name": "SM_Prop_Fence_DryStone",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Dry-stone wall with on-edge coping",
+   "fbx": "art/props/export/SM_Prop_Fence_DryStone.fbx",
+   "lods": 3,
+   "tris": [
+    1128,
+    992,
+    28
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.03,
+    0.83
+   ],
+   "height_m": 1.33,
+   "below_ground_m": 0.27,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_RockTile"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_RockTile": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any; signature of RingBuilder",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Fence_DryStone",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_DryStone",
+    "Damaged": "SM_Prop_Fence_DryStone_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_DryStone_Damaged",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Dry-stone wall with on-edge coping, damaged",
+   "fbx": "art/props/export/SM_Prop_Fence_DryStone_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    876,
+    770,
+    124
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.05,
+    2.14
+   ],
+   "height_m": 1.32,
+   "below_ground_m": 0.27,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_RockTile"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_RockTile": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any; signature of RingBuilder",
+   "state": "Damaged",
+   "states_of": "Fence_DryStone",
+   "variant_group": "Fence_DryStone",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_DryStone",
+    "Damaged": "SM_Prop_Fence_DryStone_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_Iron",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Cast-iron railing with spear tips (MI PaintedGreen or Iron)",
+   "fbx": "art/props/export/SM_Prop_Fence_Iron.fbx",
+   "lods": 3,
+   "tris": [
+    760,
+    372,
+    196
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.14,
+    0.14
+   ],
+   "height_m": 1.65,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Metal"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ]
+   },
+   "ages": [
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Fence_Iron",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_Iron",
+    "Damaged": "SM_Prop_Fence_Iron_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_Iron_Damaged",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Cast-iron railing with spear tips (MI PaintedGreen or Iron), damaged",
+   "fbx": "art/props/export/SM_Prop_Fence_Iron_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    720,
+    352,
+    184
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.14,
+    0.45
+   ],
+   "height_m": 1.65,
+   "below_ground_m": 0.31,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Metal"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ]
+   },
+   "ages": [
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Damaged",
+   "states_of": "Fence_Iron",
+   "variant_group": "Fence_Iron",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_Iron",
+    "Damaged": "SM_Prop_Fence_Iron_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_Rail",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Post-and-rail timber fence",
+   "fbx": "art/props/export/SM_Prop_Fence_Rail.fbx",
+   "lods": 3,
+   "tris": [
+    396,
+    108,
+    108
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.15,
+    0.21
+   ],
+   "height_m": 1.35,
+   "below_ground_m": 0.35,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Fence_Rail",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_Rail",
+    "Damaged": "SM_Prop_Fence_Rail_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_Rail_Damaged",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Post-and-rail timber fence, damaged",
+   "fbx": "art/props/export/SM_Prop_Fence_Rail_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    244,
+    84,
+    84
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.15,
+    1.07
+   ],
+   "height_m": 1.36,
+   "below_ground_m": 0.36,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Damaged",
+   "states_of": "Fence_Rail",
+   "variant_group": "Fence_Rail",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_Rail",
+    "Damaged": "SM_Prop_Fence_Rail_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_Wattle",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Woven wattle hurdle (stakes and rods)",
+   "fbx": "art/props/export/SM_Prop_Fence_Wattle.fbx",
+   "lods": 3,
+   "tris": [
+    670,
+    328,
+    108
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.06,
+    0.2
+   ],
+   "height_m": 1.34,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze",
+    "Iron"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Fence_Wattle",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_Wattle",
+    "Damaged": "SM_Prop_Fence_Wattle_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Fence_Wattle_Damaged",
+   "family": "Prop",
+   "category": "fence",
+   "description": "Woven wattle hurdle (stakes and rods), damaged",
+   "fbx": "art/props/export/SM_Prop_Fence_Wattle_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    590,
+    280,
+    90
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.06,
+    1.15
+   ],
+   "height_m": 1.32,
+   "below_ground_m": 0.31,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze",
+    "Iron"
+   ],
+   "cultures": "any",
+   "state": "Damaged",
+   "states_of": "Fence_Wattle",
+   "variant_group": "Fence_Wattle",
+   "placement": "tile along field and lane edges at 4.0 m pitch along local X; segments share their end posts; rotate 180 degrees about Z at random to break repetition",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0,
+   "states": {
+    "Intact": "SM_Prop_Fence_Wattle",
+    "Damaged": "SM_Prop_Fence_Wattle_Damaged"
+   }
+  },
+  {
+   "name": "SM_Prop_Goods_Baskets",
+   "family": "Prop",
+   "category": "goods",
+   "description": "Three wicker baskets of produce",
+   "fbx": "art/props/export/SM_Prop_Goods_Baskets.fbx",
+   "lods": 3,
+   "tris": [
+    972,
+    388,
+    116
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.32,
+    1.27
+   ],
+   "height_m": 0.32,
+   "below_ground_m": 0.0,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Straw"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM",
+    "T_Prop_Straw_D",
+    "T_Prop_Straw_N",
+    "T_Prop_Straw_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Straw": [
+     "Ripe",
+     "Weathered"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "markets, farm gates",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Goods_Pots",
+   "family": "Prop",
+   "category": "goods",
+   "description": "Amphorae and jars (MI Terracotta)",
+   "fbx": "art/props/export/SM_Prop_Goods_Pots.fbx",
+   "lods": 3,
+   "tris": [
+    1100,
+    440,
+    198
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.73,
+    1.11
+   ],
+   "height_m": 0.98,
+   "below_ground_m": 0.0,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "markets and quays (Bronze to Sail)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Goods_Sacks",
+   "family": "Prop",
+   "category": "goods",
+   "description": "Pile of grain sacks (MI Burlap)",
+   "fbx": "art/props/export/SM_Prop_Goods_Sacks.fbx",
+   "lods": 3,
+   "tris": [
+    560,
+    200,
+    92
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.97,
+    1.19
+   ],
+   "height_m": 0.96,
+   "below_ground_m": 0.06,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Cloth"
+    }
+   ],
+   "textures": [
+    "T_Prop_Cloth_D",
+    "T_Prop_Cloth_N",
+    "T_Prop_Cloth_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Cloth": [
+     "Burlap",
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Undyed",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "markets, quays, granaries, mills",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Hay_Bales",
+   "family": "Prop",
+   "category": "hay",
+   "description": "Three round bales",
+   "fbx": "art/props/export/SM_Prop_Hay_Bales.fbx",
+   "lods": 3,
+   "tris": [
+    480,
+    192,
+    56
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    3.13,
+    1.36
+   ],
+   "height_m": 2.75,
+   "below_ground_m": 0.03,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Straw"
+    }
+   ],
+   "textures": [
+    "T_Prop_Straw_D",
+    "T_Prop_Straw_N",
+    "T_Prop_Straw_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Straw": [
+     "Ripe",
+     "Weathered"
+    ]
+   },
+   "ages": [
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on harvested fields in loose lines",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Hay_Stack",
+   "family": "Prop",
+   "category": "hay",
+   "description": "Conical hay rick with pole and tie ropes",
+   "fbx": "art/props/export/SM_Prop_Hay_Stack.fbx",
+   "lods": 3,
+   "tris": [
+    350,
+    150,
+    42
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    3.56,
+    3.53
+   ],
+   "height_m": 3.9,
+   "below_ground_m": 0.12,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Straw"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Straw_D",
+    "T_Prop_Straw_N",
+    "T_Prop_Straw_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Straw": [
+     "Ripe",
+     "Weathered"
+    ],
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze",
+    "Iron",
+    "Sail"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "farmyards and field corners, 1-4 together",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Hay_Stook",
+   "family": "Prop",
+   "category": "hay",
+   "description": "Stook of eight sheaves",
+   "fbx": "art/props/export/SM_Prop_Hay_Stook.fbx",
+   "lods": 3,
+   "tris": [
+    576,
+    230,
+    102
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.79,
+    0.76
+   ],
+   "height_m": 1.24,
+   "below_ground_m": 0.06,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Straw"
+    }
+   ],
+   "textures": [
+    "T_Prop_Straw_D",
+    "T_Prop_Straw_N",
+    "T_Prop_Straw_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Straw": [
+     "Ripe",
+     "Weathered"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "rows of stooks 4-6 m apart on harvested grain fields",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Hedge_A",
+   "family": "Prop",
+   "category": "hedgerow",
+   "description": "Hedgerow segment, 1.7 m",
+   "fbx": "art/props/export/SM_Prop_Hedge_A.fbx",
+   "lods": 3,
+   "tris": [
+    780,
+    240,
+    132
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    5.04,
+    1.92
+   ],
+   "height_m": 1.87,
+   "below_ground_m": 0.01,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Foliage"
+    }
+   ],
+   "textures": [
+    "T_Prop_Leaf_D",
+    "T_Prop_Leaf_N",
+    "T_Prop_Leaf_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Foliage": [
+     "Autumn",
+     "Cabbage",
+     "Dry",
+     "Summer"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "tile along field edges at 4.0 m pitch (cards overhang 0.2 m each end); mix A and B about 4:1; MI Summer / Autumn / Dry by season and biome",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0
+  },
+  {
+   "name": "SM_Prop_Hedge_B",
+   "family": "Prop",
+   "category": "hedgerow",
+   "description": "Hedgerow segment with a hedgerow tree, 4 m",
+   "fbx": "art/props/export/SM_Prop_Hedge_B.fbx",
+   "lods": 3,
+   "tris": [
+    932,
+    396,
+    248
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    5.1,
+    2.55
+   ],
+   "height_m": 4.41,
+   "below_ground_m": 0.21,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Foliage"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Leaf_D",
+    "T_Prop_Leaf_N",
+    "T_Prop_Leaf_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Foliage": [
+     "Autumn",
+     "Cabbage",
+     "Dry",
+     "Summer"
+    ],
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "tile along field edges at 4.0 m pitch (cards overhang 0.2 m each end); mix A and B about 4:1; MI Summer / Autumn / Dry by season and biome",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "tile_length_m": 4.0
+  },
+  {
+   "name": "SM_Prop_Lamp_Age0",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Pitch torch on a stake",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age0.fbx",
+   "lods": 3,
+   "tris": [
+    190,
+    70,
+    50
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.14,
+    0.15
+   ],
+   "height_m": 2.03,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Straw"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Straw_D",
+    "T_Prop_Straw_N",
+    "T_Prop_Straw_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Straw": [
+     "Ripe",
+     "Weathered"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Stone"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "Fire",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Lamp_Age1",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Clay fire bowl on a lashed tripod",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age1.fbx",
+   "lods": 3,
+   "tris": [
+    364,
+    144,
+    144
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.78,
+    0.83
+   ],
+   "height_m": 1.7,
+   "below_ground_m": 0.06,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Stone"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Bronze"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "Fire",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Lamp_Age2",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Iron cresset on a timber post",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age2.fbx",
+   "lods": 3,
+   "tris": [
+    392,
+    240,
+    240
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.62,
+    0.62
+   ],
+   "height_m": 3.18,
+   "below_ground_m": 0.4,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Metal"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Iron"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "Fire",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Lamp_Age3",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Oil lantern on a bracket post",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age3.fbx",
+   "lods": 3,
+   "tris": [
+    184,
+    108,
+    108
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.46,
+    0.98
+   ],
+   "height_m": 2.9,
+   "below_ground_m": 0.4,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Metal"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Sail"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "Oil",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Lamp_Age4",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Cast-iron gas lamp (MI PaintedGreen)",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age4.fbx",
+   "lods": 3,
+   "tris": [
+    524,
+    200,
+    200
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.7,
+    0.65
+   ],
+   "height_m": 4.12,
+   "below_ground_m": 0.2,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Metal"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Metal_D",
+    "T_Prop_Metal_N",
+    "T_Prop_Metal_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Metal": [
+     "Iron",
+     "PaintedBlack",
+     "PaintedGreen"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "Gas",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Lamp_Age5",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Steel street light with sodium cobra head, 9 m (MI Galvanised)",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age5.fbx",
+   "lods": 3,
+   "tris": [
+    242,
+    96,
+    42
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.42,
+    2.91
+   ],
+   "height_m": 9.04,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Steel"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Steel_D",
+    "T_Prop_Steel_N",
+    "T_Prop_Steel_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Steel": [
+     "Brushed",
+     "Galvanised",
+     "PaintedGrey",
+     "PaintedWhite"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Atomic"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "Sodium",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Lamp_Age6",
+   "family": "Prop",
+   "category": "lamp",
+   "description": "Curved white pole with an LED ring, 7 m (MI PaintedWhite)",
+   "fbx": "art/props/export/SM_Prop_Lamp_Age6.fbx",
+   "lods": 3,
+   "tris": [
+    600,
+    239,
+    108
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.99,
+    1.87
+   ],
+   "height_m": 6.63,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Steel"
+    },
+    {
+     "index": 1,
+     "slot": "Detail",
+     "material": "M_Prop_Glow"
+    }
+   ],
+   "textures": [
+    "T_Prop_Steel_D",
+    "T_Prop_Steel_N",
+    "T_Prop_Steel_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Steel": [
+     "Brushed",
+     "Galvanised",
+     "PaintedGrey",
+     "PaintedWhite"
+    ],
+    "M_Prop_Glow": [
+     "Fire",
+     "Gas",
+     "LED",
+     "Oil",
+     "Sodium"
+    ]
+   },
+   "ages": [
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "along streets and plazas every 12-25 m (torches and braziers at doors and the hearth)",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "emissive": {
+    "slot": "Detail",
+    "material": "M_Prop_Glow",
+    "instance": "LED",
+    "note": "emissive at night only (scale by the night factor); the Detail slot is the light"
+   }
+  },
+  {
+   "name": "SM_Prop_Market_Stall",
+   "family": "Prop",
+   "category": "market",
+   "description": "Market stall with awning and goods",
+   "fbx": "art/props/export/SM_Prop_Market_Stall.fbx",
+   "lods": 3,
+   "tris": [
+    960,
+    383,
+    115
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    3.2,
+    2.26
+   ],
+   "height_m": 2.38,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Cloth"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Cloth_D",
+    "T_Prop_Cloth_N",
+    "T_Prop_Cloth_ORM",
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Cloth": [
+     "Burlap",
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Undyed",
+     "Valley"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (awning MI per culture: Valley, CliffTerrace, LagoonWeaver, RingBuilder)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Market_Stall",
+   "placement": "rows around a market square, awning front (-Y) to the square",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Market_Stall",
+    "Damaged": "SM_Prop_Market_Stall_Damaged",
+    "Burnt": "SM_Prop_Market_Stall_Burnt"
+   }
+  },
+  {
+   "name": "SM_Prop_Market_Stall_Burnt",
+   "family": "Prop",
+   "category": "market",
+   "description": "Market stall with awning and goods (burnt)",
+   "fbx": "art/props/export/SM_Prop_Market_Stall_Burnt.fbx",
+   "lods": 3,
+   "tris": [
+    360,
+    143,
+    143
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    3.21,
+    2.5
+   ],
+   "height_m": 2.35,
+   "below_ground_m": 0.31,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Cloth"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Cloth_D",
+    "T_Prop_Cloth_N",
+    "T_Prop_Cloth_ORM",
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Cloth": [
+     "Burlap",
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Undyed",
+     "Valley"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (awning MI per culture: Valley, CliffTerrace, LagoonWeaver, RingBuilder)",
+   "state": "Burnt",
+   "states_of": "Market_Stall",
+   "variant_group": "Market_Stall",
+   "placement": "rows around a market square, awning front (-Y) to the square",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Market_Stall",
+    "Damaged": "SM_Prop_Market_Stall_Damaged",
+    "Burnt": "SM_Prop_Market_Stall_Burnt"
+   }
+  },
+  {
+   "name": "SM_Prop_Market_Stall_Damaged",
+   "family": "Prop",
+   "category": "market",
+   "description": "Market stall with awning and goods (damaged)",
+   "fbx": "art/props/export/SM_Prop_Market_Stall_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    1240,
+    484,
+    148
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    3.31,
+    2.82
+   ],
+   "height_m": 2.38,
+   "below_ground_m": 0.31,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Cloth"
+    },
+    {
+     "index": 2,
+     "slot": "Detail",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Cloth_D",
+    "T_Prop_Cloth_N",
+    "T_Prop_Cloth_ORM",
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM",
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ],
+    "M_Prop_Cloth": [
+     "Burlap",
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Undyed",
+     "Valley"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (awning MI per culture: Valley, CliffTerrace, LagoonWeaver, RingBuilder)",
+   "state": "Damaged",
+   "states_of": "Market_Stall",
+   "variant_group": "Market_Stall",
+   "placement": "rows around a market square, awning front (-Y) to the square",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Market_Stall",
+    "Damaged": "SM_Prop_Market_Stall_Damaged",
+    "Burnt": "SM_Prop_Market_Stall_Burnt"
+   }
+  },
+  {
+   "name": "SM_Prop_Rock_A",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Boulder, rounded granite",
+   "fbx": "art/props/export/SM_Prop_Rock_A.fbx",
+   "lods": 3,
+   "tris": [
+    900,
+    360,
+    108
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.63,
+    2.59
+   ],
+   "height_m": 1.79,
+   "below_ground_m": 0.32,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockA_N",
+    "T_Prop_RockA_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockA_N",
+    "orm": "T_Prop_RockA_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 81920
+  },
+  {
+   "name": "SM_Prop_Rock_B",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Boulder, angular fractured",
+   "fbx": "art/props/export/SM_Prop_Rock_B.fbx",
+   "lods": 3,
+   "tris": [
+    850,
+    340,
+    102
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.21,
+    1.68
+   ],
+   "height_m": 1.29,
+   "below_ground_m": 0.22,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockB_N",
+    "T_Prop_RockB_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockB_N",
+    "orm": "T_Prop_RockB_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 81920
+  },
+  {
+   "name": "SM_Prop_Rock_C",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Slab, layered",
+   "fbx": "art/props/export/SM_Prop_Rock_C.fbx",
+   "lods": 3,
+   "tris": [
+    700,
+    280,
+    84
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.79,
+    1.98
+   ],
+   "height_m": 0.62,
+   "below_ground_m": 0.2,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockC_N",
+    "T_Prop_RockC_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockC_N",
+    "orm": "T_Prop_RockC_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 81920
+  },
+  {
+   "name": "SM_Prop_Rock_D",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Standing rock, tall",
+   "fbx": "art/props/export/SM_Prop_Rock_D.fbx",
+   "lods": 3,
+   "tris": [
+    800,
+    320,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.3,
+    1.07
+   ],
+   "height_m": 2.72,
+   "below_ground_m": 0.29,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockD_N",
+    "T_Prop_RockD_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockD_N",
+    "orm": "T_Prop_RockD_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 81920
+  },
+  {
+   "name": "SM_Prop_Rock_E",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Small rock",
+   "fbx": "art/props/export/SM_Prop_Rock_E.fbx",
+   "lods": 3,
+   "tris": [
+    320,
+    128,
+    38
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.91,
+    0.76
+   ],
+   "height_m": 0.46,
+   "below_ground_m": 0.1,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockE_N",
+    "T_Prop_RockE_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockE_N",
+    "orm": "T_Prop_RockE_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 20480
+  },
+  {
+   "name": "SM_Prop_Rock_F",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Split boulder (two halves)",
+   "fbx": "art/props/export/SM_Prop_Rock_F.fbx",
+   "lods": 3,
+   "tris": [
+    950,
+    380,
+    114
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.73,
+    2.11
+   ],
+   "height_m": 1.48,
+   "below_ground_m": 0.26,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockF_N",
+    "T_Prop_RockF_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockF_N",
+    "orm": "T_Prop_RockF_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 163840
+  },
+  {
+   "name": "SM_Prop_Rock_G",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Rock cluster (three stones)",
+   "fbx": "art/props/export/SM_Prop_Rock_G.fbx",
+   "lods": 3,
+   "tris": [
+    980,
+    392,
+    116
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.82,
+    1.87
+   ],
+   "height_m": 1.49,
+   "below_ground_m": 0.26,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockG_N",
+    "T_Prop_RockG_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockG_N",
+    "orm": "T_Prop_RockG_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 61440
+  },
+  {
+   "name": "SM_Prop_Rock_H",
+   "family": "Prop",
+   "category": "rock",
+   "description": "Scree pile (fourteen stones)",
+   "fbx": "art/props/export/SM_Prop_Rock_H.fbx",
+   "lods": 3,
+   "tris": [
+    1000,
+    400,
+    120
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.34,
+    1.61
+   ],
+   "height_m": 0.5,
+   "below_ground_m": 0.06,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Rock"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_RockH_N",
+    "T_Prop_RockH_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Rock": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": "any",
+   "cultures": "any (biome tint by material instance: Granite, Sandstone, Basalt, Limestone)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "scatter on slopes, riverbanks, field edges and moorland; any Z rotation, scale 0.6-1.5, tilt up to 10 degrees",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVUnique = 0..1 non-overlapping (baked N / ORM, tangent basis), UV1 UVMap = tiling rock detail (2 m tiles)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "baked_maps": {
+    "normal": "T_Prop_RockH_N",
+    "orm": "T_Prop_RockH_ORM",
+    "uv": "UVUnique"
+   },
+   "sculpt_tris": 71680
+  },
+  {
+   "name": "SM_Prop_Sign_Cairn",
+   "family": "Prop",
+   "category": "sign",
+   "description": "Waymark cairn",
+   "fbx": "art/props/export/SM_Prop_Sign_Cairn.fbx",
+   "lods": 3,
+   "tris": [
+    720,
+    180,
+    128
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.9,
+    0.81
+   ],
+   "height_m": 1.4,
+   "below_ground_m": 0.09,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_RockTile"
+    }
+   ],
+   "textures": [
+    "T_Prop_Moss_D",
+    "T_Prop_Moss_N",
+    "T_Prop_Moss_ORM",
+    "T_Prop_Rock_D",
+    "T_Prop_Rock_N",
+    "T_Prop_Rock_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_RockTile": [
+     "Basalt",
+     "Granite",
+     "Limestone",
+     "Sandstone"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "path forks and passes",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Sign_Fingerpost",
+   "family": "Prop",
+   "category": "sign",
+   "description": "Timber fingerpost (blank boards)",
+   "fbx": "art/props/export/SM_Prop_Sign_Fingerpost.fbx",
+   "lods": 3,
+   "tris": [
+    106,
+    58,
+    58
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.54,
+    1.36
+   ],
+   "height_m": 2.67,
+   "below_ground_m": 0.45,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "road junctions and town gates",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Sign_Milestone",
+   "family": "Prop",
+   "category": "sign",
+   "description": "Stone milestone",
+   "fbx": "art/props/export/SM_Prop_Sign_Milestone.fbx",
+   "lods": 3,
+   "tris": [
+    104,
+    40,
+    26
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.46,
+    0.32
+   ],
+   "height_m": 0.7,
+   "below_ground_m": 0.25,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "roadside, one per km",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Sign_Street",
+   "family": "Prop",
+   "category": "sign",
+   "description": "Street sign pole (blank plates, MI PaintedGrey)",
+   "fbx": "art/props/export/SM_Prop_Sign_Street.fbx",
+   "lods": 3,
+   "tris": [
+    184,
+    72,
+    48
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    0.69,
+    0.69
+   ],
+   "height_m": 2.88,
+   "below_ground_m": 0.4,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Steel"
+    }
+   ],
+   "textures": [
+    "T_Prop_Steel_D",
+    "T_Prop_Steel_N",
+    "T_Prop_Steel_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Steel": [
+     "Brushed",
+     "Galvanised",
+     "PaintedGrey",
+     "PaintedWhite"
+    ]
+   },
+   "ages": [
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": null,
+   "placement": "street corners",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py"
+  },
+  {
+   "name": "SM_Prop_Statue_Figure",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Robed figure with arms raised to the sky, on a stepped plinth (MI Marble)",
+   "fbx": "art/props/export/SM_Prop_Statue_Figure.fbx",
+   "lods": 3,
+   "tris": [
+    800,
+    320,
+    90
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.3,
+    2.3
+   ],
+   "height_m": 5.67,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Statue_Figure",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Figure",
+    "Damaged": "SM_Prop_Statue_Figure_Damaged",
+    "Ruin": "SM_Prop_Statue_Figure_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Figure_Damaged",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Robed figure with arms raised to the sky, on a stepped plinth (MI Marble) (damaged)",
+   "fbx": "art/props/export/SM_Prop_Statue_Figure_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    592,
+    236,
+    102
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    4.02,
+    3.59
+   ],
+   "height_m": 4.62,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Damaged",
+   "states_of": "Statue_Figure",
+   "variant_group": "Statue_Figure",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Figure",
+    "Damaged": "SM_Prop_Statue_Figure_Damaged",
+    "Ruin": "SM_Prop_Statue_Figure_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Figure_Ruin",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Robed figure with arms raised to the sky, on a stepped plinth (MI Marble) (ruin)",
+   "fbx": "art/props/export/SM_Prop_Statue_Figure_Ruin.fbx",
+   "lods": 3,
+   "tris": [
+    500,
+    200,
+    90
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    5.2,
+    5.13
+   ],
+   "height_m": 2.8,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Iron",
+    "Sail",
+    "Industry"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Ruin",
+   "states_of": "Statue_Figure",
+   "variant_group": "Statue_Figure",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Figure",
+    "Damaged": "SM_Prop_Statue_Figure_Damaged",
+    "Ruin": "SM_Prop_Statue_Figure_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Idol",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Seated stone idol on a plinth",
+   "fbx": "art/props/export/SM_Prop_Statue_Idol.fbx",
+   "lods": 3,
+   "tris": [
+    408,
+    162,
+    46
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.3,
+    1.3
+   ],
+   "height_m": 2.42,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Statue_Idol",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Idol",
+    "Damaged": "SM_Prop_Statue_Idol_Damaged",
+    "Ruin": "SM_Prop_Statue_Idol_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Idol_Damaged",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Seated stone idol on a plinth (damaged)",
+   "fbx": "art/props/export/SM_Prop_Statue_Idol_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    336,
+    134,
+    84
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.64,
+    2.09
+   ],
+   "height_m": 1.75,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Damaged",
+   "states_of": "Statue_Idol",
+   "variant_group": "Statue_Idol",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Idol",
+    "Damaged": "SM_Prop_Statue_Idol_Damaged",
+    "Ruin": "SM_Prop_Statue_Idol_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Idol_Ruin",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Seated stone idol on a plinth (ruin)",
+   "fbx": "art/props/export/SM_Prop_Statue_Idol_Ruin.fbx",
+   "lods": 3,
+   "tris": [
+    332,
+    132,
+    86
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.94,
+    1.8
+   ],
+   "height_m": 1.22,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Bronze",
+    "Iron"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Ruin",
+   "states_of": "Statue_Idol",
+   "variant_group": "Statue_Idol",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Idol",
+    "Damaged": "SM_Prop_Statue_Idol_Damaged",
+    "Ruin": "SM_Prop_Statue_Idol_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Monument",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Brushed-steel arc monument on a plaza disc (Stone MI Concrete)",
+   "fbx": "art/props/export/SM_Prop_Statue_Monument.fbx",
+   "lods": 3,
+   "tris": [
+    724,
+    288,
+    86
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    6.0,
+    6.0
+   ],
+   "height_m": 6.08,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Steel"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Steel_D",
+    "T_Prop_Steel_N",
+    "T_Prop_Steel_ORM",
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Steel": [
+     "Brushed",
+     "Galvanised",
+     "PaintedGrey",
+     "PaintedWhite"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Statue_Monument",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Monument",
+    "Damaged": "SM_Prop_Statue_Monument_Damaged",
+    "Ruin": "SM_Prop_Statue_Monument_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Monument_Damaged",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Brushed-steel arc monument on a plaza disc (Stone MI Concrete) (damaged)",
+   "fbx": "art/props/export/SM_Prop_Statue_Monument_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    516,
+    206,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    6.0,
+    6.0
+   ],
+   "height_m": 6.08,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Steel"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Steel_D",
+    "T_Prop_Steel_N",
+    "T_Prop_Steel_ORM",
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Steel": [
+     "Brushed",
+     "Galvanised",
+     "PaintedGrey",
+     "PaintedWhite"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Damaged",
+   "states_of": "Statue_Monument",
+   "variant_group": "Statue_Monument",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Monument",
+    "Damaged": "SM_Prop_Statue_Monument_Damaged",
+    "Ruin": "SM_Prop_Statue_Monument_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Monument_Ruin",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Brushed-steel arc monument on a plaza disc (Stone MI Concrete) (ruin)",
+   "fbx": "art/props/export/SM_Prop_Statue_Monument_Ruin.fbx",
+   "lods": 3,
+   "tris": [
+    488,
+    194,
+    52
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    6.0,
+    6.0
+   ],
+   "height_m": 3.81,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Steel"
+    },
+    {
+     "index": 1,
+     "slot": "Roof",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Steel_D",
+    "T_Prop_Steel_N",
+    "T_Prop_Steel_ORM",
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Steel": [
+     "Brushed",
+     "Galvanised",
+     "PaintedGrey",
+     "PaintedWhite"
+    ],
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Atomic",
+    "Space"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Ruin",
+   "states_of": "Statue_Monument",
+   "variant_group": "Statue_Monument",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Monument",
+    "Damaged": "SM_Prop_Statue_Monument_Damaged",
+    "Ruin": "SM_Prop_Statue_Monument_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Obelisk",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Obelisk on a plinth, 9 m",
+   "fbx": "art/props/export/SM_Prop_Statue_Obelisk.fbx",
+   "lods": 3,
+   "tris": [
+    104,
+    40,
+    40
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.4,
+    2.4
+   ],
+   "height_m": 9.45,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Sail",
+    "Industry",
+    "Atomic"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Statue_Obelisk",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Obelisk",
+    "Damaged": "SM_Prop_Statue_Obelisk_Damaged",
+    "Ruin": "SM_Prop_Statue_Obelisk_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Obelisk_Damaged",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Obelisk on a plinth, 9 m (damaged)",
+   "fbx": "art/props/export/SM_Prop_Statue_Obelisk_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    128,
+    50,
+    50
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    5.54,
+    3.41
+   ],
+   "height_m": 6.22,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Sail",
+    "Industry",
+    "Atomic"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Damaged",
+   "states_of": "Statue_Obelisk",
+   "variant_group": "Statue_Obelisk",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Obelisk",
+    "Damaged": "SM_Prop_Statue_Obelisk_Damaged",
+    "Ruin": "SM_Prop_Statue_Obelisk_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Obelisk_Ruin",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Obelisk on a plinth, 9 m (ruin)",
+   "fbx": "art/props/export/SM_Prop_Statue_Obelisk_Ruin.fbx",
+   "lods": 3,
+   "tris": [
+    320,
+    128,
+    80
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    5.03,
+    6.21
+   ],
+   "height_m": 2.62,
+   "below_ground_m": 0.3,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Stone"
+    }
+   ],
+   "textures": [
+    "T_Prop_Stone_D",
+    "T_Prop_Stone_N",
+    "T_Prop_Stone_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Stone": [
+     "CliffTerrace",
+     "Concrete",
+     "LagoonWeaver",
+     "Marble",
+     "RingBuilder",
+     "Terracotta",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Sail",
+    "Industry",
+    "Atomic"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Ruin",
+   "states_of": "Statue_Obelisk",
+   "variant_group": "Statue_Obelisk",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Obelisk",
+    "Damaged": "SM_Prop_Statue_Obelisk_Damaged",
+    "Ruin": "SM_Prop_Statue_Obelisk_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Totem",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Carved timber totem with wing boards",
+   "fbx": "art/props/export/SM_Prop_Statue_Totem.fbx",
+   "lods": 3,
+   "tris": [
+    364,
+    218,
+    196
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.02,
+    0.77
+   ],
+   "height_m": 3.85,
+   "below_ground_m": 0.4,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Intact",
+   "states_of": null,
+   "variant_group": "Statue_Totem",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Totem",
+    "Damaged": "SM_Prop_Statue_Totem_Damaged",
+    "Ruin": "SM_Prop_Statue_Totem_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Totem_Damaged",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Carved timber totem with wing boards (damaged)",
+   "fbx": "art/props/export/SM_Prop_Statue_Totem_Damaged.fbx",
+   "lods": 3,
+   "tris": [
+    300,
+    120,
+    54
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    2.47,
+    2.9
+   ],
+   "height_m": 1.95,
+   "below_ground_m": 0.44,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Damaged",
+   "states_of": "Statue_Totem",
+   "variant_group": "Statue_Totem",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Totem",
+    "Damaged": "SM_Prop_Statue_Totem_Damaged",
+    "Ruin": "SM_Prop_Statue_Totem_Ruin"
+   }
+  },
+  {
+   "name": "SM_Prop_Statue_Totem_Ruin",
+   "family": "Prop",
+   "category": "statue",
+   "description": "Carved timber totem with wing boards (ruin)",
+   "fbx": "art/props/export/SM_Prop_Statue_Totem_Ruin.fbx",
+   "lods": 3,
+   "tris": [
+    240,
+    96,
+    42
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "footprint_m": [
+    1.7,
+    1.99
+   ],
+   "height_m": 0.75,
+   "below_ground_m": 0.4,
+   "materials": [
+    {
+     "index": 0,
+     "slot": "Structure",
+     "material": "M_Prop_Wood"
+    }
+   ],
+   "textures": [
+    "T_Prop_Wood_D",
+    "T_Prop_Wood_N",
+    "T_Prop_Wood_ORM"
+   ],
+   "material_instances": {
+    "M_Prop_Wood": [
+     "CliffTerrace",
+     "LagoonWeaver",
+     "RingBuilder",
+     "Valley"
+    ]
+   },
+   "ages": [
+    "Stone",
+    "Bronze"
+   ],
+   "cultures": "any (stone MI per culture)",
+   "state": "Ruin",
+   "states_of": "Statue_Totem",
+   "variant_group": "Statue_Totem",
+   "placement": "plaza centres, temple approaches, crossroads; front faces -Y",
+   "vertex_colour": "Col: RGB = albedo tint multiplier, A = moss / grime mask",
+   "uv": "UV0 UVMap = tiling (texture tiles), UV1 UVUnique = 0..1 non-overlapping (bake / lightmap)",
+   "licence": "original",
+   "script": "art/props/build_props.py",
+   "states": {
+    "Intact": "SM_Prop_Statue_Totem",
+    "Damaged": "SM_Prop_Statue_Totem_Damaged",
+    "Ruin": "SM_Prop_Statue_Totem_Ruin"
+   }
+  }
+ ]
+}

@@ -1,0 +1,42 @@
+2026-11-19 wave3-perf verified (key wave3-perf, track "perf"; fresh lane perf3-verify, synced with lane.ps1 sync perf3-verify -Force (Config/** and Game/Core/** are also claimed by the bridge, as for perf3); main Unreal/build.ps1 Succeeded 0 errors / 0 warnings; package.ps1 BUILD SUCCESSFUL, exit 0 in 129 s (incremental cook, 0.99 GB), then 35 s after a test-only change).
+
+RE-MEASURED (perf-ab, editor -game, 1080p, sim paused, 3 interleaved rounds x 90 frames, GPU at 98 % from other agents; median GPU ms)
+view    Epic(base) High(tier2) Medium Low
+orbit   10.3       10.2        8.3    6.7
+term    10.7       10.7        8.7    6.9
+mid     14.3       14.3        11.6   9.2
+low     13.9       14.0        11.5   8.8
+close   14.3       14.3        11.6   8.6
+night   15.0       14.8        12.3   9.0
+The builder's table holds (equal or a little better). Every view is under 16.7 ms on High; Medium has 4.4-5.1 ms to spare and Low 7.6-10.0 ms.
+Packaged perf-play, Auto (Epic), GPU busy with other agents' renders: GPU avg 11.7 / 15.8 / 14.9 / 15.9 ms (orbit / mid / low / close), p95 13.6 / 17.4 / 17.6 / 17.7. So the GPU fits 60 fps on average, but the p95 in close / mid / low goes past 16.7 ms when the GPU is shared. Frame time is NOT 60: the render thread averaged 43-72 ms and the game thread 7-20 ms, with two 4.7 s stalls, on a machine running three other editors (CPU load 55 %). perf-play RESULT FAIL, the same as the builder's runs and the old baseline. The quiet-machine timing is still owed: no quiet slot was available.
+
+FOUND AND FIXED (Config/DefaultScalability.ini, Game/Core/DmPerfScenarios.cpp)
+1. High was NOT identical to Epic, though the file and report said it was. The engine's base file still set 16 keys differently at level 2, among them r.SceneColorFormat (3 = R11G11B10 at High, 4 = RGBA16F at Epic), r.DetailMode 1 vs 3, the DOF kernels, heterogeneous volumes, grass and emitter density. So the settings screen's "High" and "Auto" were two different looks. I wrote them out with Epic's values at levels 2 and 3, and with explicit values at 0 and 1. Some keys were set by one level and left alone by others, which made the result depend on the previous tier. Cost: the scene colour format A/B (scf3 vs base) is within +/-0.2 ms in all six views, and the pictures differ by less than 1.3 grey levels on average.
+2. New regression check: shot.ps1 perf-tiers -noshot, ending "DmTiers RESULT PASS". It checks:
+   - all 16 ordered tier pairs give the right resolution (Low 50, Medium 62, High / Epic the display default) and the right GetTier();
+   - the settings screen's path Low -> Auto -> High (non-forced levels);
+   - every tier gives the same cvars whichever tier came before;
+   - High == Epic on all 156 scalability cvars, and Medium / Low really differ;
+   - -tier= temporary levels switch on and off cleanly.
+   Before the fix it FAILED on High == Epic (it listed the 16 keys). After: PASS on the lane, on main, and on the lane with -tier=low. The packaged game with -tier=low applies Low temporarily and leaves GameUserSettings.ini at Epic (sg.* = 3, ResolutionQuality 0).
+
+CHECKED AND HOLDS
+- -tier= / dm.tier / GetTier.
+- The resolution sink (Low -> High returns to the display-default percentage).
+- -gpulog in the packaged game.
+- screen-flow in perf3's log.
+- Lumen GI the same in every tier.
+- Medium with Epic-quality TSR costs about 0 ms, but looks no better in a still, so it was left alone.
+- Pictures (shots/ue-ab-<view>-{base,tier2,tier1,tier0}.png, contact sheets checked): High is indistinguishable from Epic. Medium and Low keep the lighting, the city and the atmosphere. They are softer, with some stair-stepping on the edges of field patches up close, which is acceptable for those tiers.
+
+OPEN (other owners' files; the builder's suggestions confirmed)
+- planet: the land / water shader is the remaining GPU budget (8-10 ms from mid to close). Tier its octaves through DmRenderTiers::GetTier().
+- sky:
+  - the cloud ray cap is still 512 for every tier (DefaultEngine [SystemSettings] plus code), as is the 4096 shadow map;
+  - the "night" view (sun 25 deg below) reads as bright cream daylight with dark cloud-shadow blotches. That comes from the moonlight plus the night exposure lift (DmSkyActor NightEv / MoonLux) and is the same in every tier.
+- nature / towns: the packaged ensure UVChannelData.bInitialized on runtime static meshes (seen again once in this run).
+- screens: a tier picked in the settings is still saved in GameUserSettings, so "Auto" after a restart captures it.
+- CPU / render thread: profile on a quiet machine.
+
+SCORE 7/10. The GPU work is real and reproduces, and the tiers are now consistent and covered by a test. The CPU frame time and 60 fps in live play are unproven on this shared machine.

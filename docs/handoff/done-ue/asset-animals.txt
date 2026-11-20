@@ -1,0 +1,102 @@
+date: 2026-11-19
+family: animals (Animal, art/animals/), independent adversarial verification
+verdict: holds after fixes; ready for integration (check the import facing on one asset first, see below)
+score: 7/10
+
+summary:
+- Reproducible.
+  - Rebuilt from a clean `python art/animals/run_all.py` (headless Blender 5.2, every build, check and render through
+    tools/render_slot.py).
+  - As delivered, the rebuild matched the builder's triangle counts per LOD and sizes exactly for all 11 assets.
+  - After the fixes, two further full runs gave the same counts and sizes.
+  - `check_animals.py` re-imports all 22 FBX files: 11/11 OK.
+- Checked against docs/ASSETS.md:
+  - Names: SM_/SK_Animal_<Asset>_<Variant>, T_Animal_<AssetVariant>_{D,N,ORM}, AS_ actions.
+  - One material slot, Structure, on every LOD.
+  - Z up, front -Y (head bone at -Y on every asset), 1 unit = 1 m, object transforms identity.
+  - Pivots:
+    - walkers at ground level between the hooves (lowest point -0.8 to +1.2 cm);
+    - birds and fish at the body centre;
+    - whale on the sea surface.
+  - UV0 inside 0-1 with overlap under 0.4 %. UV1 AnimWeights runs 0-1, as M_NatureCreature expects.
+  - Vertex colour is present, normals point outward (positive volume, no inconsistent winding).
+  - Skin: at most 3 influences per vertex, all summing to 1, no unweighted vertices.
+  - Every action loops exactly (frame 0 = last frame). Shape keys default to 0.
+  - Manifest is complete per mesh (size, footprint, height, triangles per LOD, screen sizes, slots, textures, bones,
+    animations, shape keys, biome tints, flock scale, checks, licence, script).
+- Scale against the 1.8 m figure reads right:
+  - wildebeest 1.44 m, bison 1.77 m, stag 2.15 m with antlers, lion 1.36 m;
+  - egret span 1.42 m, humpback 15.2 m.
+- Triangles:
+  - LOD0: 160-766 each, 6,334 in total. The quadrupeds and the whale are within the 300-800 budget; birds and fish
+    are below the floor on purpose (instanced crowds).
+  - All LODs: LOD1 2,504, LOD2 1,178, LOD3 38 (whale only).
+
+fixes (all in art/animals/, recorded in README.md "Verification pass"):
+1. Far LODs had lost their silhouette (the real defect: these are the LODs seen from 300 m to 2 km).
+   - The quadric collapse flattened thin parts into zero-volume strips, which clean_degenerate then deleted.
+   - Grazers and deer had no legs at LOD2 (wildebeest's lowest point 0.49 m up, stag's 0.22 m).
+   - The birds had no wings at LOD2 (egret span 0.33 m instead of 1.42 m, starling 0.09 m instead of 0.39 m), so the
+     flap shape keys and the UV1 flap were dead.
+   - The whale's LOD2 and LOD3 had lost the flippers, and LOD3 had lost the fluke too.
+   - Fix (build_animals.py make_lod / lod_keep_weights): the LODs are chained; each one tries plain and
+     extremity-protected collapse, with and without symmetry, and keeps the candidate closest to the LOD0 surface.
+   - Walkers and birds now go to LOD2 at 20 % (species_animals.py default), not 12 %: at 12 % the legs webbed into
+     skirts.
+2. Open edges.
+   - Every LOD but the fish's had 6-36 duplicate edges on the x = 0 seam, left by the symmetric collapse.
+   - clean_degenerate now ends with Mesh.validate; every LOD is closed. A few edges where tubes meet the body are
+     shared by three faces (at most 6 per mesh).
+3. Bird normal maps.
+   - 8 % (starling) and 3 % (egret) of normal texels were tilted past 70 deg, some facing inward, which gave a black
+     patch on the egret's wing.
+   - Inward normals are now flat, every map is limited to ~70 deg of tilt, and birds keep a third of the baked tilt
+     (write_textures).
+4. Preview: the bait ball's fish pointed radially (a starburst). They now mill tangentially, as in wildlife-sea.png
+   (preview_animals.py).
+5. check_animals.py now also fails on:
+   - open edges;
+   - walkers whose LOD1 or LOD2 has lost its legs;
+   - birds or the whale whose LOD1 or LOD2 has lost its span.
+6. README integration note corrected (axes, below), and a note added that Unreal drops morph targets on static meshes
+   (the shape keys work from the SK_ files).
+
+for the integration agent:
+- Axes, check first.
+  - docs/ASSETS.md says Blender -Y lands on Unreal +X.
+  - The shrine (docs/lab/asset-pipeline.md, measured in AssetLab) found Blender -Y arriving as Unreal +Y unless
+    turned.
+  - Import one animal and look before mapping all of them.
+- What the material needs.
+  - M_NatureCreature needs grazers facing local +X, and birds and fish facing local +Y.
+  - The flight circle and the fish tail beat are computed in local space, so put any correcting rotation into the mesh
+    (import rotation), never onto the instance.
+- FBX settings: written with FBX_SCALE_ALL, like the shrine (some age families use FBX_SCALE_NONE or
+  FBX_SCALE_UNITS). Import with convert scene units.
+- The normal maps are OpenGL: flip green.
+
+art direction (judged against docs/concept/units/wildlife-*.png):
+- Reads well at game range.
+  - The 1 km wildebeest herd is the concept's dark curving ribbon of 2-3 px dots.
+  - The 40 m group reads as wildebeest.
+  - The whale and calf read in #22303a with visible flippers and fluke.
+  - The bait ball now mills.
+  - The egret V reads white over the delta green.
+- Weaker up close (under 10 m):
+  - LOD0 is faceted at 700 triangles, with smooth fur and no hair cards.
+  - The lion's face is a pale blob inside the mane, with no readable nose or eyes.
+  - The doe's coat is a saturated orange, and its head is long.
+  - The birds' wings shade a little faceted.
+  - Grazing muzzles sink 3-6 cm below ground in HeadDown and Graze, and hooves up to 4.5 cm in the walk cycle.
+  - The gaits are generic (no run or gallop, no root motion).
+- At 1 km a real-size starling is under a pixel: use the documented larger flock scale or point sprites.
+- The score reflects solid game-range assets with a modest close-up finish.
+
+files:
+- art/animals/build_animals.py, species_animals.py, preview_animals.py, check_animals.py (edited); run_all.py
+  (unchanged)
+- art/animals/README.md, art/animals/manifest.json (regenerated)
+- art/animals/export/ (22 FBX), art/animals/textures/ (33 PNG), art/animals/source/ (.blend, .json,
+  export-check.json): all regenerated
+- shots/asset-animals-<key>-{close,40m,300m,1km,anim}.png (55) and shots/asset-animals-lineup-close.png: re-rendered
+  after the fixes

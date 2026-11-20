@@ -1,0 +1,4481 @@
+{
+ "family": "Age2",
+ "title": "Iron Age kit (stone houses, town walls, gatehouse, market, temple, academy)",
+ "generated": "2026-11-19",
+ "script": "art/age2/build_age2.py",
+ "blender": "5.2.1 LTS",
+ "licence": "original (procedural geometry and textures, no external inputs)",
+ "units": "metres (1 Blender unit = 1 m), Z up, front -Y, pivot at footprint centre on the ground; foundations reach 0.3-1.2 m below Z=0",
+ "material_slots": "exactly 3 on every mesh, state and LOD, in the order Structure, Roof, Detail (index 0, 1, 2); a slot may carry no faces (ruins have no roof, props use only Detail): see slots_with_faces",
+ "vertex_colour": "Col (RGB): baked grime/occlusion and scorch multiplier for base colour (1 = clean)",
+ "lods": {
+  "screen_sizes": [
+   1.0,
+   0.35,
+   0.12,
+   0.04
+  ],
+  "note": "LOD3 (massing hull) on every building and wall piece, props stop at LOD2; FBX holds an LodGroup with children _LOD0.._LODn"
+ },
+ "states": [
+  "Intact",
+  "Construction",
+  "Damaged",
+  "Ruin"
+ ],
+ "cultures": {
+  "Valley": "default material set (age-2 concept)",
+  "A": "Cliff-Terrace (warm rose-ochre)",
+  "B": "Lagoon-Weaver (silver-grey, mossy)",
+  "C": "Ring-Builder (pale stone, blue-grey slate roofs via texture override)"
+ },
+ "materials": {
+  "M_Age2_Ashlar": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Ashlar_D.png",
+    "N": "art/age2/textures/T_Age2_Ashlar_N.png",
+    "ORM": "art/age2/textures/T_Age2_Ashlar_ORM.png"
+   },
+   "uv_tile_m": 4.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_Limestone": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Limestone_D.png",
+    "N": "art/age2/textures/T_Age2_Limestone_N.png",
+    "ORM": "art/age2/textures/T_Age2_Limestone_ORM.png"
+   },
+   "uv_tile_m": 4.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_Rubble": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Rubble_D.png",
+    "N": "art/age2/textures/T_Age2_Rubble_N.png",
+    "ORM": "art/age2/textures/T_Age2_Rubble_ORM.png"
+   },
+   "uv_tile_m": 3.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_Shingle": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Shingle_D.png",
+    "N": "art/age2/textures/T_Age2_Shingle_N.png",
+    "ORM": "art/age2/textures/T_Age2_Shingle_ORM.png"
+   },
+   "uv_tile_m": 2.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_Slate": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Slate_D.png",
+    "N": "art/age2/textures/T_Age2_Slate_N.png",
+    "ORM": "art/age2/textures/T_Age2_Slate_ORM.png"
+   },
+   "uv_tile_m": 2.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_Thatch": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Thatch_D.png",
+    "N": "art/age2/textures/T_Age2_Thatch_N.png",
+    "ORM": "art/age2/textures/T_Age2_Thatch_ORM.png"
+   },
+   "uv_tile_m": 3.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_TileClay": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_TileClay_D.png",
+    "N": "art/age2/textures/T_Age2_TileClay_N.png",
+    "ORM": "art/age2/textures/T_Age2_TileClay_ORM.png"
+   },
+   "uv_tile_m": 2.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_TileStone": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_TileStone_D.png",
+    "N": "art/age2/textures/T_Age2_TileStone_N.png",
+    "ORM": "art/age2/textures/T_Age2_TileStone_ORM.png"
+   },
+   "uv_tile_m": 2.0,
+   "notes": "tileable in U and V"
+  },
+  "M_Age2_Trim": {
+   "textures": {
+    "D": "art/age2/textures/T_Age2_Trim_D.png",
+    "N": "art/age2/textures/T_Age2_Trim_N.png",
+    "ORM": "art/age2/textures/T_Age2_Trim_ORM.png",
+    "M": "art/age2/textures/T_Age2_Trim_M.png"
+   },
+   "uv_tile_m": 2.0,
+   "notes": "trim sheet: horizontal bands tile in U only (2.0 m per U); M.R = night-window emissive mask"
+  }
+ },
+ "material_instances": {
+  "MI_Age2_Rubble_A": {
+   "parent": "M_Age2_Rubble",
+   "tint_linear": [
+    1.16,
+    0.98,
+    0.82
+   ],
+   "saturation": 1.15,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Ashlar_A": {
+   "parent": "M_Age2_Ashlar",
+   "tint_linear": [
+    1.14,
+    0.98,
+    0.84
+   ],
+   "saturation": 1.2,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Limestone_A": {
+   "parent": "M_Age2_Limestone",
+   "tint_linear": [
+    1.06,
+    0.95,
+    0.84
+   ],
+   "saturation": 1.25,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Thatch_A": {
+   "parent": "M_Age2_Thatch",
+   "tint_linear": [
+    1.15,
+    1.02,
+    0.84
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Shingle_A": {
+   "parent": "M_Age2_Shingle",
+   "tint_linear": [
+    1.25,
+    1.05,
+    0.85
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_TileClay_A": {
+   "parent": "M_Age2_TileClay",
+   "tint_linear": [
+    1.1,
+    0.95,
+    0.85
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Trim_A": {
+   "parent": "M_Age2_Trim",
+   "tint_linear": [
+    1.05,
+    1.0,
+    0.95
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Rubble_B": {
+   "parent": "M_Age2_Rubble",
+   "tint_linear": [
+    0.92,
+    0.97,
+    1.0
+   ],
+   "saturation": 0.75,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Ashlar_B": {
+   "parent": "M_Age2_Ashlar",
+   "tint_linear": [
+    0.95,
+    0.98,
+    1.0
+   ],
+   "saturation": 0.8,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Limestone_B": {
+   "parent": "M_Age2_Limestone",
+   "tint_linear": [
+    0.96,
+    0.98,
+    1.0
+   ],
+   "saturation": 0.8,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Thatch_B": {
+   "parent": "M_Age2_Thatch",
+   "tint_linear": [
+    0.9,
+    0.95,
+    0.92
+   ],
+   "saturation": 0.6,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Shingle_B": {
+   "parent": "M_Age2_Shingle",
+   "tint_linear": [
+    1.35,
+    1.38,
+    1.42
+   ],
+   "saturation": 0.35,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_TileClay_B": {
+   "parent": "M_Age2_TileClay",
+   "tint_linear": [
+    0.95,
+    0.95,
+    0.95
+   ],
+   "saturation": 0.7,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Trim_B": {
+   "parent": "M_Age2_Trim",
+   "tint_linear": [
+    0.95,
+    0.98,
+    1.0
+   ],
+   "saturation": 0.85,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Rubble_C": {
+   "parent": "M_Age2_Rubble",
+   "tint_linear": [
+    1.28,
+    1.24,
+    1.16
+   ],
+   "saturation": 0.6,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Ashlar_C": {
+   "parent": "M_Age2_Ashlar",
+   "tint_linear": [
+    1.2,
+    1.18,
+    1.14
+   ],
+   "saturation": 0.6,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Limestone_C": {
+   "parent": "M_Age2_Limestone",
+   "tint_linear": [
+    1.02,
+    1.02,
+    1.02
+   ],
+   "saturation": 0.7,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  },
+  "MI_Age2_Thatch_C": {
+   "parent": "M_Age2_Thatch",
+   "tint_linear": [
+    0.95,
+    1.0,
+    1.08
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": "T_Age2_Slate_*"
+  },
+  "MI_Age2_Shingle_C": {
+   "parent": "M_Age2_Shingle",
+   "tint_linear": [
+    0.95,
+    1.0,
+    1.08
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": "T_Age2_Slate_*"
+  },
+  "MI_Age2_TileClay_C": {
+   "parent": "M_Age2_TileClay",
+   "tint_linear": [
+    1.0,
+    1.0,
+    1.05
+   ],
+   "saturation": 1.0,
+   "roughness_scale": 1.0,
+   "texture_override": "T_Age2_Slate_*"
+  },
+  "MI_Age2_Trim_C": {
+   "parent": "M_Age2_Trim",
+   "tint_linear": [
+    1,
+    1,
+    1
+   ],
+   "saturation": 0.9,
+   "roughness_scale": 1.0,
+   "texture_override": null
+  }
+ },
+ "assets": {
+  "House_A": {
+   "description": "Small rubble-stone cottage with a steep reed-thatch gable roof and a stone chimney.",
+   "kind": "house",
+   "states": {
+    "Intact": "SM_Age2_House_A_Intact",
+    "Construction": "SM_Age2_House_A_Construction",
+    "Damaged": "SM_Age2_House_A_Damaged",
+    "Ruin": "SM_Age2_House_A_Ruin"
+   },
+   "structure_texture": "Rubble",
+   "roof_texture": "Thatch",
+   "maps_to": "EDmTownMesh::Cottage (Age 2, small); dm house tiers 0-1"
+  },
+  "House_B": {
+   "description": "Stone longhouse with a dark split-shingle roof, a shingled door porch and a central chimney.",
+   "kind": "house",
+   "states": {
+    "Intact": "SM_Age2_House_B_Intact",
+    "Construction": "SM_Age2_House_B_Construction",
+    "Damaged": "SM_Age2_House_B_Damaged",
+    "Ruin": "SM_Age2_House_B_Ruin"
+   },
+   "structure_texture": "Rubble",
+   "roof_texture": "Shingle",
+   "maps_to": "EDmTownMesh::Cottage (Age 2, long) / Longhouse replacement in Age 2"
+  },
+  "House_C": {
+   "description": "Two-storey house: rubble ground floor, jettied timber-framed lime-plaster upper floor, shingle roof gable-end to the street.",
+   "kind": "house",
+   "states": {
+    "Intact": "SM_Age2_House_C_Intact",
+    "Construction": "SM_Age2_House_C_Construction",
+    "Damaged": "SM_Age2_House_C_Damaged",
+    "Ruin": "SM_Age2_House_C_Ruin"
+   },
+   "structure_texture": "Rubble",
+   "roof_texture": "Shingle",
+   "maps_to": "EDmTownMesh::Cottage (Age 2, two storeys); town cores, tier >= 2"
+  },
+  "House_D": {
+   "description": "Farmstead: thatched hip-roofed hall, thatched back wing, low walled yard and a woodshed.",
+   "kind": "house",
+   "states": {
+    "Intact": "SM_Age2_House_D_Intact",
+    "Construction": "SM_Age2_House_D_Construction",
+    "Damaged": "SM_Age2_House_D_Damaged",
+    "Ruin": "SM_Age2_House_D_Ruin"
+   },
+   "structure_texture": "Rubble",
+   "roof_texture": "Thatch",
+   "maps_to": "EDmTownMesh::Cottage (Age 2, farmstead); town edges and villages"
+  },
+  "WallSeg": {
+   "description": "16 m town-wall unit: 3.2 m thick, 7.6 m walkway, crenellated outer parapet, battered base; tiles along X.",
+   "kind": "wall",
+   "states": {
+    "Intact": "SM_Age2_WallSeg_Intact",
+    "Construction": "SM_Age2_WallSeg_Construction",
+    "Damaged": "SM_Age2_WallSeg_Damaged",
+    "Ruin": "SM_Age2_WallSeg_Ruin"
+   },
+   "structure_texture": "Ashlar",
+   "roof_texture": "TileClay",
+   "maps_to": "EDmTownMesh::WallSeg variant 1 (Iron); same 16 m unit along X, outer face -Y, planner scales X"
+  },
+  "WallTower_A": {
+   "description": "9 x 9 m hollow square wall tower, 15 m, crenellated top, arrow slits, doors to the wall walk.",
+   "kind": "wall",
+   "states": {
+    "Intact": "SM_Age2_WallTower_A_Intact",
+    "Construction": "SM_Age2_WallTower_A_Construction",
+    "Damaged": "SM_Age2_WallTower_A_Damaged",
+    "Ruin": "SM_Age2_WallTower_A_Ruin"
+   },
+   "structure_texture": "Ashlar",
+   "roof_texture": "TileClay",
+   "maps_to": "EDmTownMesh::WallTower variant 1 (Iron), crenellated"
+  },
+  "WallTower_B": {
+   "description": "9 x 9 m square wall tower with timber hoarding on corbels and a pyramidal clay-tile roof.",
+   "kind": "wall",
+   "states": {
+    "Intact": "SM_Age2_WallTower_B_Intact",
+    "Construction": "SM_Age2_WallTower_B_Construction",
+    "Damaged": "SM_Age2_WallTower_B_Damaged",
+    "Ruin": "SM_Age2_WallTower_B_Ruin"
+   },
+   "structure_texture": "Ashlar",
+   "roof_texture": "TileClay",
+   "maps_to": "EDmTownMesh::WallTower variant 1 alternate (hoarded, roofed) - mix 1 in 3, or for Age 2 culture variety"
+  },
+  "Gatehouse": {
+   "description": "Twin-tower gatehouse: round-arched passage with portcullis and open gate leaves, timber gallery roof, hoarded towers.",
+   "kind": "wall",
+   "states": {
+    "Intact": "SM_Age2_Gatehouse_Intact",
+    "Construction": "SM_Age2_Gatehouse_Construction",
+    "Damaged": "SM_Age2_Gatehouse_Damaged",
+    "Ruin": "SM_Age2_Gatehouse_Ruin"
+   },
+   "structure_texture": "Ashlar",
+   "roof_texture": "TileClay",
+   "maps_to": "EDmTownMesh::Gatehouse variant 1 (Iron); road along Y through the arch"
+  },
+  "Market": {
+   "description": "Colonnaded market square: clay-tiled galleries on timber posts round a paved court, striped-awning stalls, round fountain.",
+   "kind": "civic",
+   "states": {
+    "Intact": "SM_Age2_Market_Intact",
+    "Construction": "SM_Age2_Market_Construction",
+    "Damaged": "SM_Age2_Market_Damaged",
+    "Ruin": "SM_Age2_Market_Ruin"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "EDmTownMesh::Market (Age 2-3), dm::Building::MARKET"
+  },
+  "Temple": {
+   "description": "Peripteral stone temple, 6 x 11 columns on a three-step stylobate, pale stone-slab roof with pediments, altar in front.",
+   "kind": "civic",
+   "states": {
+    "Intact": "SM_Age2_Temple_Intact",
+    "Construction": "SM_Age2_Temple_Construction",
+    "Damaged": "SM_Age2_Temple_Damaged",
+    "Ruin": "SM_Age2_Temple_Ruin"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileStone",
+   "maps_to": "EDmTownMesh::TempleClassic variant 0 (Age 2), dm::Building::TEMPLE"
+  },
+  "Academy": {
+   "description": "Cloistered limestone quadrangle with slate roofs, garden court with an armillary sphere, columned porch and a verdigris-domed observatory tower.",
+   "kind": "civic",
+   "states": {
+    "Intact": "SM_Age2_Academy_Intact",
+    "Construction": "SM_Age2_Academy_Construction",
+    "Damaged": "SM_Age2_Academy_Damaged",
+    "Ruin": "SM_Age2_Academy_Ruin"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "Slate",
+   "maps_to": "EDmTownMesh::Academy (Age 2 form), dm::Building::ACADEMY"
+  },
+  "MarketStall_A": {
+   "description": "Market stall: counter on four posts under a madder-striped gable awning.",
+   "kind": "prop",
+   "states": {
+    "Intact": "SM_Age2_MarketStall_A_Intact"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "market dressing / scatter prop (gable awning stall)"
+  },
+  "MarketStall_B": {
+   "description": "Market stall: lean-to ochre-striped canopy over a counter with a back board and baskets.",
+   "kind": "prop",
+   "states": {
+    "Intact": "SM_Age2_MarketStall_B_Intact"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "market dressing / scatter prop (lean-to canopy stall)"
+  },
+  "MarketStall_C": {
+   "description": "Market stall: two-wheeled hand cart with an indigo-striped flat canopy.",
+   "kind": "prop",
+   "states": {
+    "Intact": "SM_Age2_MarketStall_C_Intact"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "market dressing / scatter prop (cart stall)"
+  },
+  "Ornament_A": {
+   "description": "Ridge finial, Cliff-Terrace culture: plaster dome with a cobalt knob.",
+   "kind": "prop",
+   "states": {
+    "Intact": "SM_Age2_Ornament_A_Intact"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "culture A (Cliff-Terrace) ridge ornament: attach at each house ridge end (manifest ridge_ends)"
+  },
+  "Ornament_B": {
+   "description": "Ridge horn, Lagoon-Weaver culture: upswept carved timber horn with a saffron ribbon.",
+   "kind": "prop",
+   "states": {
+    "Intact": "SM_Age2_Ornament_B_Intact"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "culture B (Lagoon-Weaver) ridge ornament: attach at each ridge end, local -Y pointing outward along the ridge"
+  },
+  "Ornament_C": {
+   "description": "Ridge finial, Ring-Builder culture: pale stone ring on a short post.",
+   "kind": "prop",
+   "states": {
+    "Intact": "SM_Age2_Ornament_C_Intact"
+   },
+   "structure_texture": "Limestone",
+   "roof_texture": "TileClay",
+   "maps_to": "culture C (Ring-Builder) ridge ornament: attach at each ridge end"
+  }
+ },
+ "meshes": {
+  "SM_Age2_Academy_Construction": {
+   "asset": "Academy",
+   "state": "Construction",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Academy_Construction.fbx",
+   "footprint_m": [
+    49.47,
+    43.8
+   ],
+   "bounds_m": [
+    -26.11,
+    23.36,
+    -23.6,
+    20.2,
+    -0.35,
+    9.0
+   ],
+   "height_m": 9.0,
+   "triangles": [
+    5520,
+    2153,
+    662,
+    98
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_Slate",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_Slate_D.png",
+    "art/age2/textures/T_Age2_Slate_N.png",
+    "art/age2/textures/T_Age2_Slate_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Academy_Intact",
+    "Construction": "SM_Age2_Academy_Construction",
+    "Damaged": "SM_Age2_Academy_Damaged",
+    "Ruin": "SM_Age2_Academy_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Academy_Damaged": {
+   "asset": "Academy",
+   "state": "Damaged",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Academy_Damaged.fbx",
+   "footprint_m": [
+    49.67,
+    42.6
+   ],
+   "bounds_m": [
+    -22.53,
+    27.14,
+    -23.6,
+    19.0,
+    -0.35,
+    22.32
+   ],
+   "height_m": 22.32,
+   "triangles": [
+    14472,
+    5787,
+    2286,
+    120
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_Slate",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_Slate_D.png",
+    "art/age2/textures/T_Age2_Slate_N.png",
+    "art/age2/textures/T_Age2_Slate_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Academy_Intact",
+    "Construction": "SM_Age2_Academy_Construction",
+    "Damaged": "SM_Age2_Academy_Damaged",
+    "Ruin": "SM_Age2_Academy_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Academy_Intact": {
+   "asset": "Academy",
+   "state": "Intact",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Academy_Intact.fbx",
+   "footprint_m": [
+    45.06,
+    42.6
+   ],
+   "bounds_m": [
+    -22.53,
+    22.53,
+    -23.6,
+    19.0,
+    -0.35,
+    22.32
+   ],
+   "height_m": 22.32,
+   "triangles": [
+    12716,
+    5086,
+    1528,
+    138
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_Slate",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_Slate_D.png",
+    "art/age2/textures/T_Age2_Slate_N.png",
+    "art/age2/textures/T_Age2_Slate_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Academy_Intact",
+    "Construction": "SM_Age2_Academy_Construction",
+    "Damaged": "SM_Age2_Academy_Damaged",
+    "Ruin": "SM_Age2_Academy_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Academy_Ruin": {
+   "asset": "Academy",
+   "state": "Ruin",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Academy_Ruin.fbx",
+   "footprint_m": [
+    56.76,
+    48.26
+   ],
+   "bounds_m": [
+    -28.35,
+    28.41,
+    -24.4,
+    23.86,
+    -0.35,
+    6.5
+   ],
+   "height_m": 6.5,
+   "triangles": [
+    7566,
+    3026,
+    906,
+    98
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_Slate",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_Slate_D.png",
+    "art/age2/textures/T_Age2_Slate_N.png",
+    "art/age2/textures/T_Age2_Slate_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Academy_Intact",
+    "Construction": "SM_Age2_Academy_Construction",
+    "Damaged": "SM_Age2_Academy_Damaged",
+    "Ruin": "SM_Age2_Academy_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Gatehouse_Construction": {
+   "asset": "Gatehouse",
+   "state": "Construction",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_Gatehouse_Construction.fbx",
+   "footprint_m": [
+    29.57,
+    14.6
+   ],
+   "bounds_m": [
+    -13.26,
+    16.31,
+    -7.8,
+    6.8,
+    -1.2,
+    10.35
+   ],
+   "height_m": 10.35,
+   "triangles": [
+    2112,
+    1114,
+    253,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Gatehouse_Intact",
+    "Construction": "SM_Age2_Gatehouse_Construction",
+    "Damaged": "SM_Age2_Gatehouse_Damaged",
+    "Ruin": "SM_Age2_Gatehouse_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Gatehouse_Damaged": {
+   "asset": "Gatehouse",
+   "state": "Damaged",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_Gatehouse_Damaged.fbx",
+   "footprint_m": [
+    28.49,
+    17.45
+   ],
+   "bounds_m": [
+    -14.24,
+    14.24,
+    -10.65,
+    6.8,
+    -1.2,
+    25.53
+   ],
+   "height_m": 25.53,
+   "triangles": [
+    6002,
+    2399,
+    720,
+    126
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Gatehouse_Intact",
+    "Construction": "SM_Age2_Gatehouse_Construction",
+    "Damaged": "SM_Age2_Gatehouse_Damaged",
+    "Ruin": "SM_Age2_Gatehouse_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Gatehouse_Intact": {
+   "asset": "Gatehouse",
+   "state": "Intact",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_Gatehouse_Intact.fbx",
+   "footprint_m": [
+    28.47,
+    14.6
+   ],
+   "bounds_m": [
+    -14.23,
+    14.23,
+    -7.8,
+    6.8,
+    -1.2,
+    25.53
+   ],
+   "height_m": 25.53,
+   "triangles": [
+    4230,
+    1692,
+    538,
+    136
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Gatehouse_Intact",
+    "Construction": "SM_Age2_Gatehouse_Construction",
+    "Damaged": "SM_Age2_Gatehouse_Damaged",
+    "Ruin": "SM_Age2_Gatehouse_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Gatehouse_Ruin": {
+   "asset": "Gatehouse",
+   "state": "Ruin",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_Gatehouse_Ruin.fbx",
+   "footprint_m": [
+    27.64,
+    22.01
+   ],
+   "bounds_m": [
+    -13.6,
+    14.04,
+    -12.13,
+    9.88,
+    -1.2,
+    8.7
+   ],
+   "height_m": 8.7,
+   "triangles": [
+    2414,
+    1208,
+    288,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Gatehouse_Intact",
+    "Construction": "SM_Age2_Gatehouse_Construction",
+    "Damaged": "SM_Age2_Gatehouse_Damaged",
+    "Ruin": "SM_Age2_Gatehouse_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_A_Construction": {
+   "asset": "House_A",
+   "state": "Construction",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_A_Construction.fbx",
+   "footprint_m": [
+    10.91,
+    8.56
+   ],
+   "bounds_m": [
+    -4.9,
+    6.01,
+    -3.76,
+    4.8,
+    -0.35,
+    3.03
+   ],
+   "height_m": 3.03,
+   "triangles": [
+    730,
+    348,
+    50,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_A_Intact",
+    "Construction": "SM_Age2_House_A_Construction",
+    "Damaged": "SM_Age2_House_A_Damaged",
+    "Ruin": "SM_Age2_House_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_A_Damaged": {
+   "asset": "House_A",
+   "state": "Damaged",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_A_Damaged.fbx",
+   "footprint_m": [
+    9.25,
+    7.53
+   ],
+   "bounds_m": [
+    -4.9,
+    4.35,
+    -4.24,
+    3.29,
+    -0.35,
+    7.05
+   ],
+   "height_m": 7.05,
+   "triangles": [
+    1954,
+    706,
+    166,
+    42
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_A_Intact",
+    "Construction": "SM_Age2_House_A_Construction",
+    "Damaged": "SM_Age2_House_A_Damaged",
+    "Ruin": "SM_Age2_House_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_A_Intact": {
+   "asset": "House_A",
+   "state": "Intact",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_A_Intact.fbx",
+   "footprint_m": [
+    9.25,
+    6.62
+   ],
+   "bounds_m": [
+    -4.9,
+    4.35,
+    -3.33,
+    3.29,
+    -0.35,
+    7.05
+   ],
+   "height_m": 7.05,
+   "triangles": [
+    2018,
+    804,
+    98,
+    42
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_A_Intact",
+    "Construction": "SM_Age2_House_A_Construction",
+    "Damaged": "SM_Age2_House_A_Damaged",
+    "Ruin": "SM_Age2_House_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [
+    [
+     [
+      -3.75,
+      0.0,
+      6.519
+     ],
+     [
+      3.75,
+      0.0,
+      6.519
+     ]
+    ]
+   ],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_A_Ruin": {
+   "asset": "House_A",
+   "state": "Ruin",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_A_Ruin.fbx",
+   "footprint_m": [
+    8.95,
+    7.45
+   ],
+   "bounds_m": [
+    -5.3,
+    3.65,
+    -4.7,
+    2.75,
+    -0.35,
+    2.47
+   ],
+   "height_m": 2.47,
+   "triangles": [
+    600,
+    334,
+    88,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_A_Intact",
+    "Construction": "SM_Age2_House_A_Construction",
+    "Damaged": "SM_Age2_House_A_Damaged",
+    "Ruin": "SM_Age2_House_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_B_Construction": {
+   "asset": "House_B",
+   "state": "Construction",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_B_Construction.fbx",
+   "footprint_m": [
+    13.98,
+    11.69
+   ],
+   "bounds_m": [
+    -7.85,
+    6.13,
+    -4.69,
+    7.0,
+    -0.35,
+    2.96
+   ],
+   "height_m": 2.96,
+   "triangles": [
+    1190,
+    570,
+    122,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_B_Intact",
+    "Construction": "SM_Age2_House_B_Construction",
+    "Damaged": "SM_Age2_House_B_Damaged",
+    "Ruin": "SM_Age2_House_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_B_Damaged": {
+   "asset": "House_B",
+   "state": "Damaged",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_B_Damaged.fbx",
+   "footprint_m": [
+    11.77,
+    11.85
+   ],
+   "bounds_m": [
+    -5.64,
+    6.13,
+    -4.85,
+    7.0,
+    -0.35,
+    6.95
+   ],
+   "height_m": 6.95,
+   "triangles": [
+    2300,
+    1118,
+    274,
+    40
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_B_Intact",
+    "Construction": "SM_Age2_House_B_Construction",
+    "Damaged": "SM_Age2_House_B_Damaged",
+    "Ruin": "SM_Age2_House_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_B_Intact": {
+   "asset": "House_B",
+   "state": "Intact",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_B_Intact.fbx",
+   "footprint_m": [
+    11.77,
+    11.85
+   ],
+   "bounds_m": [
+    -5.64,
+    6.13,
+    -4.85,
+    7.0,
+    -0.35,
+    6.95
+   ],
+   "height_m": 6.95,
+   "triangles": [
+    2290,
+    1158,
+    176,
+    42
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_B_Intact",
+    "Construction": "SM_Age2_House_B_Construction",
+    "Damaged": "SM_Age2_House_B_Damaged",
+    "Ruin": "SM_Age2_House_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [
+    [
+     [
+      -5.45,
+      0.0,
+      6.07
+     ],
+     [
+      5.45,
+      0.0,
+      6.07
+     ]
+    ]
+   ],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_B_Ruin": {
+   "asset": "House_B",
+   "state": "Ruin",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_B_Ruin.fbx",
+   "footprint_m": [
+    10.82,
+    11.79
+   ],
+   "bounds_m": [
+    -5.42,
+    5.4,
+    -4.79,
+    7.0,
+    -0.35,
+    3.52
+   ],
+   "height_m": 3.52,
+   "triangles": [
+    826,
+    468,
+    153,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_B_Intact",
+    "Construction": "SM_Age2_House_B_Construction",
+    "Damaged": "SM_Age2_House_B_Damaged",
+    "Ruin": "SM_Age2_House_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_C_Construction": {
+   "asset": "House_C",
+   "state": "Construction",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_C_Construction.fbx",
+   "footprint_m": [
+    10.35,
+    8.21
+   ],
+   "bounds_m": [
+    -4.04,
+    6.31,
+    -4.46,
+    3.75,
+    -0.35,
+    5.8
+   ],
+   "height_m": 5.8,
+   "triangles": [
+    568,
+    334,
+    80,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_C_Intact",
+    "Construction": "SM_Age2_House_C_Construction",
+    "Damaged": "SM_Age2_House_C_Damaged",
+    "Ruin": "SM_Age2_House_C_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_C_Damaged": {
+   "asset": "House_C",
+   "state": "Damaged",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_C_Damaged.fbx",
+   "footprint_m": [
+    9.06,
+    9.68
+   ],
+   "bounds_m": [
+    -4.46,
+    4.6,
+    -5.54,
+    4.14,
+    -0.35,
+    11.49
+   ],
+   "height_m": 11.49,
+   "triangles": [
+    2404,
+    961,
+    266,
+    74
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_C_Intact",
+    "Construction": "SM_Age2_House_C_Construction",
+    "Damaged": "SM_Age2_House_C_Damaged",
+    "Ruin": "SM_Age2_House_C_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_C_Intact": {
+   "asset": "House_C",
+   "state": "Intact",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_C_Intact.fbx",
+   "footprint_m": [
+    9.06,
+    8.28
+   ],
+   "bounds_m": [
+    -4.46,
+    4.6,
+    -4.14,
+    4.14,
+    -0.35,
+    11.49
+   ],
+   "height_m": 11.49,
+   "triangles": [
+    2410,
+    964,
+    154,
+    76
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_C_Intact",
+    "Construction": "SM_Age2_House_C_Construction",
+    "Damaged": "SM_Age2_House_C_Damaged",
+    "Ruin": "SM_Age2_House_C_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [
+    [
+     [
+      -0.0,
+      -3.95,
+      11.013
+     ],
+     [
+      0.0,
+      3.95,
+      11.013
+     ]
+    ]
+   ],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_C_Ruin": {
+   "asset": "House_C",
+   "state": "Ruin",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_C_Ruin.fbx",
+   "footprint_m": [
+    7.9,
+    9.57
+   ],
+   "bounds_m": [
+    -3.95,
+    3.95,
+    -6.01,
+    3.56,
+    -0.35,
+    1.8
+   ],
+   "height_m": 1.8,
+   "triangles": [
+    652,
+    258,
+    92,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Shingle",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Shingle_D.png",
+    "art/age2/textures/T_Age2_Shingle_N.png",
+    "art/age2/textures/T_Age2_Shingle_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_C_Intact",
+    "Construction": "SM_Age2_House_C_Construction",
+    "Damaged": "SM_Age2_House_C_Damaged",
+    "Ruin": "SM_Age2_House_C_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Shingle_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Shingle_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Shingle_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_D_Construction": {
+   "asset": "House_D",
+   "state": "Construction",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_D_Construction.fbx",
+   "footprint_m": [
+    14.23,
+    12.76
+   ],
+   "bounds_m": [
+    -7.3,
+    6.93,
+    -6.66,
+    6.1,
+    -0.35,
+    2.96
+   ],
+   "height_m": 2.96,
+   "triangles": [
+    1356,
+    602,
+    140,
+    68
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_D_Intact",
+    "Construction": "SM_Age2_House_D_Construction",
+    "Damaged": "SM_Age2_House_D_Damaged",
+    "Ruin": "SM_Age2_House_D_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_D_Damaged": {
+   "asset": "House_D",
+   "state": "Damaged",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_D_Damaged.fbx",
+   "footprint_m": [
+    12.83,
+    13.52
+   ],
+   "bounds_m": [
+    -5.79,
+    7.04,
+    -7.31,
+    6.21,
+    -0.35,
+    7.25
+   ],
+   "height_m": 7.25,
+   "triangles": [
+    4836,
+    1560,
+    334,
+    74
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_D_Intact",
+    "Construction": "SM_Age2_House_D_Construction",
+    "Damaged": "SM_Age2_House_D_Damaged",
+    "Ruin": "SM_Age2_House_D_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_D_Intact": {
+   "asset": "House_D",
+   "state": "Intact",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_D_Intact.fbx",
+   "footprint_m": [
+    12.83,
+    12.44
+   ],
+   "bounds_m": [
+    -5.79,
+    7.04,
+    -6.23,
+    6.21,
+    -0.35,
+    7.25
+   ],
+   "height_m": 7.25,
+   "triangles": [
+    4954,
+    1514,
+    220,
+    80
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_D_Intact",
+    "Construction": "SM_Age2_House_D_Construction",
+    "Damaged": "SM_Age2_House_D_Damaged",
+    "Ruin": "SM_Age2_House_D_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [
+    [
+     [
+      -1.9,
+      -2.3,
+      6.762
+     ],
+     [
+      1.9,
+      -2.3,
+      6.762
+     ]
+    ],
+    [
+     [
+      -2.8,
+      0.45,
+      5.241
+     ],
+     [
+      -2.8,
+      5.85,
+      5.241
+     ]
+    ]
+   ],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_House_D_Ruin": {
+   "asset": "House_D",
+   "state": "Ruin",
+   "kind": "house",
+   "fbx": "art/age2/export/SM_Age2_House_D_Ruin.fbx",
+   "footprint_m": [
+    10.5,
+    13.65
+   ],
+   "bounds_m": [
+    -5.25,
+    5.25,
+    -8.05,
+    5.6,
+    -0.35,
+    3.3
+   ],
+   "height_m": 3.3,
+   "triangles": [
+    954,
+    544,
+    168,
+    68
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Rubble",
+    "Roof": "M_Age2_Thatch",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Rubble_D.png",
+    "art/age2/textures/T_Age2_Rubble_N.png",
+    "art/age2/textures/T_Age2_Rubble_ORM.png",
+    "art/age2/textures/T_Age2_Thatch_D.png",
+    "art/age2/textures/T_Age2_Thatch_N.png",
+    "art/age2/textures/T_Age2_Thatch_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_House_D_Intact",
+    "Construction": "SM_Age2_House_D_Construction",
+    "Damaged": "SM_Age2_House_D_Damaged",
+    "Ruin": "SM_Age2_House_D_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Rubble_A",
+     "Roof": "MI_Age2_Thatch_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Rubble_B",
+     "Roof": "MI_Age2_Thatch_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Rubble_C",
+     "Roof": "MI_Age2_Thatch_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_MarketStall_A_Intact": {
+   "asset": "MarketStall_A",
+   "state": "Intact",
+   "kind": "prop",
+   "fbx": "art/age2/export/SM_Age2_MarketStall_A_Intact.fbx",
+   "footprint_m": [
+    3.81,
+    2.31
+   ],
+   "bounds_m": [
+    -1.55,
+    2.26,
+    -1.16,
+    1.15,
+    0.0,
+    2.76
+   ],
+   "height_m": 2.76,
+   "triangles": [
+    148,
+    76,
+    18
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_MarketStall_A_Intact"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_MarketStall_B_Intact": {
+   "asset": "MarketStall_B",
+   "state": "Intact",
+   "kind": "prop",
+   "fbx": "art/age2/export/SM_Age2_MarketStall_B_Intact.fbx",
+   "footprint_m": [
+    3.2,
+    2.64
+   ],
+   "bounds_m": [
+    -1.6,
+    1.6,
+    -1.78,
+    0.86,
+    0.0,
+    2.6
+   ],
+   "height_m": 2.6,
+   "triangles": [
+    124,
+    48,
+    19
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_MarketStall_B_Intact"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_MarketStall_C_Intact": {
+   "asset": "MarketStall_C",
+   "state": "Intact",
+   "kind": "prop",
+   "fbx": "art/age2/export/SM_Age2_MarketStall_C_Intact.fbx",
+   "footprint_m": [
+    4.61,
+    1.9
+   ],
+   "bounds_m": [
+    -3.11,
+    1.5,
+    -0.95,
+    0.95,
+    0.05,
+    2.4
+   ],
+   "height_m": 2.4,
+   "triangles": [
+    184,
+    110,
+    14
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_MarketStall_C_Intact"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Market_Construction": {
+   "asset": "Market",
+   "state": "Construction",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Market_Construction.fbx",
+   "footprint_m": [
+    36.4,
+    28.4
+   ],
+   "bounds_m": [
+    -19.2,
+    17.2,
+    -13.2,
+    15.2,
+    -0.4,
+    3.35
+   ],
+   "height_m": 3.35,
+   "triangles": [
+    2006,
+    1334,
+    240,
+    46
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Market_Intact",
+    "Construction": "SM_Age2_Market_Construction",
+    "Damaged": "SM_Age2_Market_Damaged",
+    "Ruin": "SM_Age2_Market_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Market_Damaged": {
+   "asset": "Market",
+   "state": "Damaged",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Market_Damaged.fbx",
+   "footprint_m": [
+    35.03,
+    34.78
+   ],
+   "bounds_m": [
+    -17.51,
+    17.51,
+    -17.55,
+    17.23,
+    -0.4,
+    4.92
+   ],
+   "height_m": 4.92,
+   "triangles": [
+    11112,
+    5090,
+    1386,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Market_Intact",
+    "Construction": "SM_Age2_Market_Construction",
+    "Damaged": "SM_Age2_Market_Damaged",
+    "Ruin": "SM_Age2_Market_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Market_Intact": {
+   "asset": "Market",
+   "state": "Intact",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Market_Intact.fbx",
+   "footprint_m": [
+    35.03,
+    34.78
+   ],
+   "bounds_m": [
+    -17.51,
+    17.51,
+    -17.55,
+    17.23,
+    -0.4,
+    4.92
+   ],
+   "height_m": 4.92,
+   "triangles": [
+    12192,
+    4260,
+    936,
+    78
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Market_Intact",
+    "Construction": "SM_Age2_Market_Construction",
+    "Damaged": "SM_Age2_Market_Damaged",
+    "Ruin": "SM_Age2_Market_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Market_Ruin": {
+   "asset": "Market",
+   "state": "Ruin",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Market_Ruin.fbx",
+   "footprint_m": [
+    35.6,
+    27.5
+   ],
+   "bounds_m": [
+    -17.2,
+    18.4,
+    -13.49,
+    14.01,
+    -0.4,
+    2.6
+   ],
+   "height_m": 2.6,
+   "triangles": [
+    2438,
+    931,
+    279,
+    46
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Market_Intact",
+    "Construction": "SM_Age2_Market_Construction",
+    "Damaged": "SM_Age2_Market_Damaged",
+    "Ruin": "SM_Age2_Market_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Ornament_A_Intact": {
+   "asset": "Ornament_A",
+   "state": "Intact",
+   "kind": "prop",
+   "fbx": "art/age2/export/SM_Age2_Ornament_A_Intact.fbx",
+   "footprint_m": [
+    0.76,
+    0.72
+   ],
+   "bounds_m": [
+    -0.38,
+    0.38,
+    -0.36,
+    0.36,
+    -0.21,
+    1.02
+   ],
+   "height_m": 1.02,
+   "triangles": [
+    120,
+    60,
+    34
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Ornament_A_Intact"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Ornament_B_Intact": {
+   "asset": "Ornament_B",
+   "state": "Intact",
+   "kind": "prop",
+   "fbx": "art/age2/export/SM_Age2_Ornament_B_Intact.fbx",
+   "footprint_m": [
+    0.24,
+    1.34
+   ],
+   "bounds_m": [
+    -0.13,
+    0.11,
+    -0.78,
+    0.56,
+    -0.35,
+    1.16
+   ],
+   "height_m": 1.16,
+   "triangles": [
+    82,
+    32,
+    8
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Ornament_B_Intact"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Ornament_C_Intact": {
+   "asset": "Ornament_C",
+   "state": "Intact",
+   "kind": "prop",
+   "fbx": "art/age2/export/SM_Age2_Ornament_C_Intact.fbx",
+   "footprint_m": [
+    0.34,
+    1.03
+   ],
+   "bounds_m": [
+    -0.17,
+    0.17,
+    -0.52,
+    0.51,
+    -0.14,
+    1.44
+   ],
+   "height_m": 1.44,
+   "triangles": [
+    136,
+    46,
+    16
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Ornament_C_Intact"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Temple_Construction": {
+   "asset": "Temple",
+   "state": "Construction",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Temple_Construction.fbx",
+   "footprint_m": [
+    29.21,
+    43.0
+   ],
+   "bounds_m": [
+    -14.6,
+    14.61,
+    -24.0,
+    19.0,
+    -0.35,
+    8.95
+   ],
+   "height_m": 8.95,
+   "triangles": [
+    3830,
+    2050,
+    459,
+    54
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileStone",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileStone_D.png",
+    "art/age2/textures/T_Age2_TileStone_N.png",
+    "art/age2/textures/T_Age2_TileStone_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Temple_Intact",
+    "Construction": "SM_Age2_Temple_Construction",
+    "Damaged": "SM_Age2_Temple_Damaged",
+    "Ruin": "SM_Age2_Temple_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Temple_Damaged": {
+   "asset": "Temple",
+   "state": "Damaged",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Temple_Damaged.fbx",
+   "footprint_m": [
+    25.82,
+    43.0
+   ],
+   "bounds_m": [
+    -11.6,
+    14.22,
+    -24.0,
+    19.0,
+    -0.35,
+    14.64
+   ],
+   "height_m": 14.64,
+   "triangles": [
+    8784,
+    2496,
+    592,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileStone",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileStone_D.png",
+    "art/age2/textures/T_Age2_TileStone_N.png",
+    "art/age2/textures/T_Age2_TileStone_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Temple_Intact",
+    "Construction": "SM_Age2_Temple_Construction",
+    "Damaged": "SM_Age2_Temple_Damaged",
+    "Ruin": "SM_Age2_Temple_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Temple_Intact": {
+   "asset": "Temple",
+   "state": "Intact",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Temple_Intact.fbx",
+   "footprint_m": [
+    23.2,
+    43.0
+   ],
+   "bounds_m": [
+    -11.6,
+    11.6,
+    -24.0,
+    19.0,
+    -0.35,
+    14.64
+   ],
+   "height_m": 14.64,
+   "triangles": [
+    9118,
+    2394,
+    500,
+    74
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileStone",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileStone_D.png",
+    "art/age2/textures/T_Age2_TileStone_N.png",
+    "art/age2/textures/T_Age2_TileStone_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Temple_Intact",
+    "Construction": "SM_Age2_Temple_Construction",
+    "Damaged": "SM_Age2_Temple_Damaged",
+    "Ruin": "SM_Age2_Temple_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_Temple_Ruin": {
+   "asset": "Temple",
+   "state": "Ruin",
+   "kind": "civic",
+   "fbx": "art/age2/export/SM_Age2_Temple_Ruin.fbx",
+   "footprint_m": [
+    31.83,
+    47.08
+   ],
+   "bounds_m": [
+    -16.21,
+    15.62,
+    -24.0,
+    23.08,
+    -0.35,
+    8.95
+   ],
+   "height_m": 8.95,
+   "triangles": [
+    5146,
+    2494,
+    718,
+    54
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Limestone",
+    "Roof": "M_Age2_TileStone",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Limestone_D.png",
+    "art/age2/textures/T_Age2_Limestone_N.png",
+    "art/age2/textures/T_Age2_Limestone_ORM.png",
+    "art/age2/textures/T_Age2_TileStone_D.png",
+    "art/age2/textures/T_Age2_TileStone_N.png",
+    "art/age2/textures/T_Age2_TileStone_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_Temple_Intact",
+    "Construction": "SM_Age2_Temple_Construction",
+    "Damaged": "SM_Age2_Temple_Damaged",
+    "Ruin": "SM_Age2_Temple_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Limestone_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Limestone_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Limestone_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallSeg_Construction": {
+   "asset": "WallSeg",
+   "state": "Construction",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallSeg_Construction.fbx",
+   "footprint_m": [
+    16.12,
+    7.57
+   ],
+   "bounds_m": [
+    -8.06,
+    8.06,
+    -1.6,
+    5.97,
+    -1.2,
+    6.5
+   ],
+   "height_m": 6.5,
+   "triangles": [
+    508,
+    196,
+    48,
+    6
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallSeg_Intact",
+    "Construction": "SM_Age2_WallSeg_Construction",
+    "Damaged": "SM_Age2_WallSeg_Damaged",
+    "Ruin": "SM_Age2_WallSeg_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallSeg_Damaged": {
+   "asset": "WallSeg",
+   "state": "Damaged",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallSeg_Damaged.fbx",
+   "footprint_m": [
+    18.21,
+    8.31
+   ],
+   "bounds_m": [
+    -8.0,
+    10.21,
+    -6.71,
+    1.6,
+    -1.2,
+    9.6
+   ],
+   "height_m": 9.6,
+   "triangles": [
+    450,
+    180,
+    70,
+    6
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallSeg_Intact",
+    "Construction": "SM_Age2_WallSeg_Construction",
+    "Damaged": "SM_Age2_WallSeg_Damaged",
+    "Ruin": "SM_Age2_WallSeg_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallSeg_Intact": {
+   "asset": "WallSeg",
+   "state": "Intact",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallSeg_Intact.fbx",
+   "footprint_m": [
+    16.0,
+    3.9
+   ],
+   "bounds_m": [
+    -8.0,
+    8.0,
+    -2.3,
+    1.6,
+    -1.2,
+    9.6
+   ],
+   "height_m": 9.6,
+   "triangles": [
+    274,
+    170,
+    65,
+    6
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallSeg_Intact",
+    "Construction": "SM_Age2_WallSeg_Construction",
+    "Damaged": "SM_Age2_WallSeg_Damaged",
+    "Ruin": "SM_Age2_WallSeg_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallSeg_Ruin": {
+   "asset": "WallSeg",
+   "state": "Ruin",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallSeg_Ruin.fbx",
+   "footprint_m": [
+    17.13,
+    13.67
+   ],
+   "bounds_m": [
+    -8.08,
+    9.05,
+    -7.36,
+    6.32,
+    -1.2,
+    3.9
+   ],
+   "height_m": 3.9,
+   "triangles": [
+    854,
+    400,
+    60,
+    6
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallSeg_Intact",
+    "Construction": "SM_Age2_WallSeg_Construction",
+    "Damaged": "SM_Age2_WallSeg_Damaged",
+    "Ruin": "SM_Age2_WallSeg_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_A_Construction": {
+   "asset": "WallTower_A",
+   "state": "Construction",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_A_Construction.fbx",
+   "footprint_m": [
+    12.57,
+    10.76
+   ],
+   "bounds_m": [
+    -4.76,
+    7.81,
+    -6.26,
+    4.5,
+    -1.2,
+    10.5
+   ],
+   "height_m": 10.5,
+   "triangles": [
+    806,
+    318,
+    158,
+    24
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_A_Intact",
+    "Construction": "SM_Age2_WallTower_A_Construction",
+    "Damaged": "SM_Age2_WallTower_A_Damaged",
+    "Ruin": "SM_Age2_WallTower_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_A_Damaged": {
+   "asset": "WallTower_A",
+   "state": "Damaged",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_A_Damaged.fbx",
+   "footprint_m": [
+    10.2,
+    13.69
+   ],
+   "bounds_m": [
+    -5.1,
+    5.1,
+    -8.59,
+    5.1,
+    -1.2,
+    15.0
+   ],
+   "height_m": 15.0,
+   "triangles": [
+    1210,
+    496,
+    251,
+    24
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_A_Intact",
+    "Construction": "SM_Age2_WallTower_A_Construction",
+    "Damaged": "SM_Age2_WallTower_A_Damaged",
+    "Ruin": "SM_Age2_WallTower_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_A_Intact": {
+   "asset": "WallTower_A",
+   "state": "Intact",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_A_Intact.fbx",
+   "footprint_m": [
+    10.2,
+    10.2
+   ],
+   "bounds_m": [
+    -5.1,
+    5.1,
+    -5.1,
+    5.1,
+    -1.2,
+    15.0
+   ],
+   "height_m": 15.0,
+   "triangles": [
+    594,
+    266,
+    144,
+    24
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_A_Intact",
+    "Construction": "SM_Age2_WallTower_A_Construction",
+    "Damaged": "SM_Age2_WallTower_A_Damaged",
+    "Ruin": "SM_Age2_WallTower_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_A_Ruin": {
+   "asset": "WallTower_A",
+   "state": "Ruin",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_A_Ruin.fbx",
+   "footprint_m": [
+    10.56,
+    20.2
+   ],
+   "bounds_m": [
+    -5.1,
+    5.46,
+    -10.93,
+    9.26,
+    -1.2,
+    9.3
+   ],
+   "height_m": 9.3,
+   "triangles": [
+    808,
+    322,
+    161,
+    24
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_A_Intact",
+    "Construction": "SM_Age2_WallTower_A_Construction",
+    "Damaged": "SM_Age2_WallTower_A_Damaged",
+    "Ruin": "SM_Age2_WallTower_A_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_B_Construction": {
+   "asset": "WallTower_B",
+   "state": "Construction",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_B_Construction.fbx",
+   "footprint_m": [
+    12.57,
+    10.76
+   ],
+   "bounds_m": [
+    -4.76,
+    7.81,
+    -6.26,
+    4.5,
+    -1.2,
+    10.5
+   ],
+   "height_m": 10.5,
+   "triangles": [
+    640,
+    252,
+    98,
+    24
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_B_Intact",
+    "Construction": "SM_Age2_WallTower_B_Construction",
+    "Damaged": "SM_Age2_WallTower_B_Damaged",
+    "Ruin": "SM_Age2_WallTower_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_B_Damaged": {
+   "asset": "WallTower_B",
+   "state": "Damaged",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_B_Damaged.fbx",
+   "footprint_m": [
+    11.47,
+    13.98
+   ],
+   "bounds_m": [
+    -5.73,
+    5.73,
+    -8.25,
+    5.73,
+    -1.2,
+    24.53
+   ],
+   "height_m": 24.53,
+   "triangles": [
+    2460,
+    984,
+    295,
+    51
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_B_Intact",
+    "Construction": "SM_Age2_WallTower_B_Construction",
+    "Damaged": "SM_Age2_WallTower_B_Damaged",
+    "Ruin": "SM_Age2_WallTower_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_B_Intact": {
+   "asset": "WallTower_B",
+   "state": "Intact",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_B_Intact.fbx",
+   "footprint_m": [
+    11.47,
+    11.47
+   ],
+   "bounds_m": [
+    -5.73,
+    5.73,
+    -5.73,
+    5.73,
+    -1.2,
+    24.53
+   ],
+   "height_m": 24.53,
+   "triangles": [
+    1728,
+    690,
+    228,
+    52
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_B_Intact",
+    "Construction": "SM_Age2_WallTower_B_Construction",
+    "Damaged": "SM_Age2_WallTower_B_Damaged",
+    "Ruin": "SM_Age2_WallTower_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  },
+  "SM_Age2_WallTower_B_Ruin": {
+   "asset": "WallTower_B",
+   "state": "Ruin",
+   "kind": "wall",
+   "fbx": "art/age2/export/SM_Age2_WallTower_B_Ruin.fbx",
+   "footprint_m": [
+    10.74,
+    18.98
+   ],
+   "bounds_m": [
+    -5.1,
+    5.64,
+    -9.26,
+    9.72,
+    -1.2,
+    8.4
+   ],
+   "height_m": 8.4,
+   "triangles": [
+    900,
+    414,
+    106,
+    24
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Age2_Ashlar",
+    "Roof": "M_Age2_TileClay",
+    "Detail": "M_Age2_Trim"
+   },
+   "slots_with_faces": [
+    "Structure"
+   ],
+   "textures": [
+    "art/age2/textures/T_Age2_Ashlar_D.png",
+    "art/age2/textures/T_Age2_Ashlar_N.png",
+    "art/age2/textures/T_Age2_Ashlar_ORM.png",
+    "art/age2/textures/T_Age2_TileClay_D.png",
+    "art/age2/textures/T_Age2_TileClay_N.png",
+    "art/age2/textures/T_Age2_TileClay_ORM.png",
+    "art/age2/textures/T_Age2_Trim_D.png",
+    "art/age2/textures/T_Age2_Trim_N.png",
+    "art/age2/textures/T_Age2_Trim_ORM.png",
+    "art/age2/textures/T_Age2_Trim_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Age2_WallTower_B_Intact",
+    "Construction": "SM_Age2_WallTower_B_Construction",
+    "Damaged": "SM_Age2_WallTower_B_Damaged",
+    "Ruin": "SM_Age2_WallTower_B_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "Structure": "MI_Age2_Ashlar_A",
+     "Roof": "MI_Age2_TileClay_A",
+     "Detail": "MI_Age2_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age2_Ashlar_B",
+     "Roof": "MI_Age2_TileClay_B",
+     "Detail": "MI_Age2_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age2_Ashlar_C",
+     "Roof": "MI_Age2_TileClay_C",
+     "Detail": "MI_Age2_Trim_C"
+    }
+   },
+   "ridge_ends": [],
+   "licence": "original",
+   "script": "art/age2/build_age2.py"
+  }
+ },
+ "triangle_totals": {
+  "LOD0": 151726,
+  "LOD1": 60817,
+  "LOD2": 16665,
+  "LOD3": 2401
+ }
+}

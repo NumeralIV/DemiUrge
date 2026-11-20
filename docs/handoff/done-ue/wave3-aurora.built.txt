@@ -1,0 +1,25 @@
+2026-11-19 wave3-aurora built (lane aurora3, synced to main; main build OK).
+
+The aurora is now its own scene part "aurora" (ADmAurora, Game/Sky/DmSkyAurora.h/.cpp, scenarios in
+DmSkyAuroraScenarios.cpp) drawn by M_Aurora (Scripts/aurora.py + Scripts/aurora/aurora.hlsl ->
+/Game/Sky/Aurora/M_Aurora, cooked with /Game/Sky). It replaces the sky's ribbon aurora: a ray-marched volume
+over each magnetic pole (open spherical caps carry the material; each pixel marches its view ray through the
+3..14 km slab in the planet frame, clipped by the sea sphere). Three folded arcs of thin vertical sheets with a
+sharp green lower border, violet tops 5..12 km up and vertical rays drifting along the arcs, a faint diffuse
+oval, brightest at local midnight; per-sample night weight (0 at the terminator, 1 with the sun 12 deg down)
+so there is none on the day side; sheets widened to the march step and a luminance soft clamp, so grazing
+rays at the limb are soft curtains, not aliased neon lines. Boost: ADmAurora::Boost(), and (until the sky
+routes it) the sky's BoostAurora is read back from its ribbon material, so the FX surge, comets and nukes
+still work. ADmAurora hides ADmSky::Aurora at runtime.
+
+Evidence: shot.ps1 aurora-check -noshot -> "DmAuroraCheck RESULT PASS (14 checks)" in the lane and on main.
+Before / after shots: shots/ue-aurora3-before-{orbit,orbitnight,pole,poleoblique,terminator}.png and
+ue-aurora3-after-{orbit,orbitnight,pole,poleoblique,terminator,curtains,limb,surge,oval-orbit}.png;
+-noaurora references ue-aurora3-off-{orbit,pole,terminator}.png. Light added on the day side vs -noaurora:
+mean +0.0000..-0.0001 luminance (0.05 % of px > 0.02, same as an aurora-free control box); night polar
+region +0.028 (terminator) / +0.035 (pole midnight sector) mean, 25-26 % of px lit (old ribbons: 2.8-6.6 %).
+
+Ownership: lanes/aurora3.owned lists only the aurora files; Game/Sky/** of sky3 overlaps them (sync used
+-Force for these six new files only). Follow-ups for the sky track (not done here, their files): delete
+MakeAuroraRings / M_SkyAurora / AuroraMID from DmSkyActor + sky.py and forward ADmSky::BoostAurora to
+ADmAurora::Boost; keep ADmSky::Aurora public and Tune.AuroraGain until then (DmSkyAurora.cpp reads both).

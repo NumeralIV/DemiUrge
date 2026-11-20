@@ -1,0 +1,1652 @@
+{
+ "family": "Unit",
+ "folder": "art/units-land",
+ "generated": "2026-11-19",
+ "script": "art/units-land/build_units-land.py",
+ "licence": "original (procedural, made in Blender 5.2 by script; no external inputs)",
+ "material_model": {
+  "master": "M_Unit_Trim (one master; slots Structure, Roof, Detail all use the same trim sheet)",
+  "slots": {
+   "0 Structure": "figures, animals, wood, metal, glass",
+   "1 Roof": "canvas, white hulls, smoke, robes",
+   "2 Detail": "culture-coloured cloth and paint, the ground ring, gold, emissive glows"
+  },
+  "base_color": "T_D * lerp(1, CultureColor, T_M.G)",
+  "emissive": "BaseColor * (T_M.B * EmissiveStrength + T_M.R * NightFactor * WindowStrength)",
+  "masks_T_M": {
+   "R": "night windows (vehicle glass)",
+   "G": "culture tint mask",
+   "B": "always-on glow (halo, engines, plume, lamps, ring at 0.12)"
+  },
+  "ORM": "R ambient occlusion, G roughness, B metallic (linear)",
+  "normal": "OpenGL (+Y up); flip green on import into Unreal",
+  "instances": [
+   "MI_Unit_Structure",
+   "MI_Unit_Roof",
+   "MI_Unit_Detail_Amber (CultureColor #e69f00)",
+   "MI_Unit_Detail_Sky (CultureColor #56b4e9)",
+   "MI_Unit_Detail_Teal (CultureColor #009e73)",
+   "MI_Unit_Detail_Yellow (CultureColor #f0e442)",
+   "MI_Unit_Detail_Vermilion (CultureColor #d55e00)",
+   "MI_Unit_Detail_Rose (CultureColor #cc79a7)"
+  ]
+ },
+ "cultures": {
+  "Amber": "#e69f00",
+  "Sky": "#56b4e9",
+  "Teal": "#009e73",
+  "Yellow": "#f0e442",
+  "Vermilion": "#d55e00",
+  "Rose": "#cc79a7"
+ },
+ "sim_mapping": {
+  "Settler": {
+   "0-1": "SM_Unit_Settlers_Ancient",
+   "2-3": "SM_Unit_Settlers_Classical",
+   "4-5": "SM_Unit_Settlers_Modern",
+   "6": "SM_Unit_Settlers_Space"
+  },
+  "Trader": {
+   "0-1": "SM_Unit_Traders_Ancient",
+   "2-3": "SM_Unit_Traders_Classical",
+   "4-5": "SM_Unit_Traders_Modern",
+   "6": "SM_Unit_Traders_Space"
+  },
+  "Army": {
+   "0-1": "SM_Unit_Army_Ancient",
+   "2-3": "SM_Unit_Army_Classical",
+   "4-5": "SM_Unit_Army_Modern",
+   "6": "SM_Unit_Army_Space"
+  },
+  "Prophet": {
+   "0-6": "SM_Unit_Prophet_A"
+  },
+  "decorative air traffic": {
+   "5": "SM_Unit_Aircraft_Prop",
+   "5-6": "SM_Unit_Aircraft_Jet",
+   "ring": "SM_Unit_GroundRing_A"
+  },
+  "space launch / ark": {
+   "launch": "SM_Unit_Rocket_A_Pad -> SM_Unit_Rocket_A_Launch",
+   "ark": "SM_Unit_Ark_A_Construction / _Intact / _Damaged"
+  }
+ },
+ "meshes": {
+  "SM_Unit_Aircraft_Jet": {
+   "footprint_m": [
+    31.0,
+    32.6
+   ],
+   "height_m": 9.6,
+   "bbox_m": [
+    -15.5,
+    -16.0,
+    0.02,
+    15.5,
+    16.6,
+    9.62
+   ],
+   "triangles": {
+    "LOD0": 396,
+    "LOD1": 276,
+    "LOD2": 168,
+    "LOD3": 88
+   },
+   "lod_ratio": [
+    1.0,
+    0.697,
+    0.424,
+    0.222
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Air",
+   "ages": [
+    5,
+    6
+   ],
+   "age_names": [
+    "Atomic",
+    "Space"
+   ],
+   "description": "swept-wing jet airliner, culture cheat line and fin; flies, pair with SM_Unit_GroundRing_A",
+   "ground_ring": "none: place SM_Unit_GroundRing_A on the ground below, scaled about x1.9 so it clears the wingspan (as in the previews)",
+   "flying": true,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Aircraft_Jet.fbx",
+   "sheet_px": 56,
+   "sheet_measure": "length",
+   "sheet_metres": 32.6,
+   "suggested_unit_scale": 0.711
+  },
+  "SM_Unit_Aircraft_Prop": {
+   "footprint_m": [
+    28.0,
+    22.42
+   ],
+   "height_m": 6.52,
+   "bbox_m": [
+    -14.0,
+    -11.0,
+    -0.07,
+    14.0,
+    11.42,
+    6.52
+   ],
+   "triangles": {
+    "LOD0": 416,
+    "LOD1": 280,
+    "LOD2": 144,
+    "LOD3": 80
+   },
+   "lod_ratio": [
+    1.0,
+    0.673,
+    0.346,
+    0.192
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Air",
+   "ages": [
+    5
+   ],
+   "age_names": [
+    "Atomic"
+   ],
+   "description": "twin-prop high-wing cargo aircraft, culture fin; flies (origin under the belly), pair with SM_Unit_GroundRing_A",
+   "ground_ring": "none: place SM_Unit_GroundRing_A on the ground below, scaled about x1.9 so it clears the wingspan (as in the previews)",
+   "flying": true,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Aircraft_Prop.fbx",
+   "sheet_px": 56,
+   "sheet_measure": "length",
+   "sheet_metres": 28.0,
+   "suggested_unit_scale": 0.827
+  },
+  "SM_Unit_Ark_A_Construction": {
+   "footprint_m": [
+    77.2,
+    77.2
+   ],
+   "height_m": 114.6,
+   "bbox_m": [
+    -38.6,
+    -38.6,
+    -0.3,
+    38.6,
+    38.6,
+    114.6
+   ],
+   "triangles": {
+    "LOD0": 4924,
+    "LOD1": 2006,
+    "LOD2": 934,
+    "LOD3": 314
+   },
+   "lod_ratio": [
+    1.0,
+    0.407,
+    0.19,
+    0.064
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [
+    "Construction",
+    "Intact",
+    "Damaged"
+   ],
+   "unit_type": "Ark",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "the ark half-built: lower hull in the gantry, scaffold ring above, hull sections on the apron",
+   "ground_ring": "built in (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "wonder 30-80k (landmark, ~66 px)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Ark_A_Construction.fbx",
+   "sheet_px": 66,
+   "sheet_measure": "height",
+   "sheet_metres": 114.6,
+   "suggested_unit_scale": 0.238
+  },
+  "SM_Unit_Ark_A_Damaged": {
+   "footprint_m": [
+    77.2,
+    77.2
+   ],
+   "height_m": 109.08,
+   "bbox_m": [
+    -38.6,
+    -38.6,
+    -0.3,
+    38.6,
+    38.6,
+    109.08
+   ],
+   "triangles": {
+    "LOD0": 3902,
+    "LOD1": 1828,
+    "LOD2": 800,
+    "LOD3": 266
+   },
+   "lod_ratio": [
+    1.0,
+    0.468,
+    0.205,
+    0.068
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [
+    "Construction",
+    "Intact",
+    "Damaged"
+   ],
+   "unit_type": "Ark",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "the ark damaged: scorched breach in the hull, broken gantry and crane, debris and smoke",
+   "ground_ring": "built in (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "wonder 30-80k (landmark, ~66 px)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Ark_A_Damaged.fbx",
+   "sheet_px": 66,
+   "sheet_measure": "height",
+   "sheet_metres": 109.08,
+   "suggested_unit_scale": 0.25
+  },
+  "SM_Unit_Ark_A_Intact": {
+   "footprint_m": [
+    77.2,
+    77.2
+   ],
+   "height_m": 114.6,
+   "bbox_m": [
+    -38.6,
+    -38.6,
+    -0.3,
+    38.6,
+    38.6,
+    114.6
+   ],
+   "triangles": {
+    "LOD0": 3826,
+    "LOD1": 1668,
+    "LOD2": 792,
+    "LOD3": 252
+   },
+   "lod_ratio": [
+    1.0,
+    0.436,
+    0.207,
+    0.066
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [
+    "Construction",
+    "Intact",
+    "Damaged"
+   ],
+   "unit_type": "Ark",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "the ark complete in its gantry: white-and-gold hull, culture stripes, cranes on top",
+   "ground_ring": "built in (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "wonder 30-80k (landmark, ~66 px)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Ark_A_Intact.fbx",
+   "sheet_px": 66,
+   "sheet_measure": "height",
+   "sheet_metres": 114.6,
+   "suggested_unit_scale": 0.238
+  },
+  "SM_Unit_Army_Ancient": {
+   "footprint_m": [
+    6.7,
+    8.65
+   ],
+   "height_m": 4.6,
+   "bbox_m": [
+    -3.35,
+    -4.32,
+    -0.01,
+    3.35,
+    4.32,
+    4.6
+   ],
+   "triangles": {
+    "LOD0": 3910,
+    "LOD1": 1777,
+    "LOD2": 695,
+    "LOD3": 56
+   },
+   "lod_ratio": [
+    1.0,
+    0.454,
+    0.178,
+    0.014
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Army",
+   "ages": [
+    0,
+    1
+   ],
+   "age_names": [
+    "Stone",
+    "Bronze"
+   ],
+   "description": "warband: 30 spearmen in a ragged dark block, hide shields on the outside, one tall culture pennant",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Army_Ancient.fbx",
+   "sheet_px": 46,
+   "sheet_measure": "length",
+   "sheet_metres": 8.65,
+   "suggested_unit_scale": 2.2
+  },
+  "SM_Unit_Army_Classical": {
+   "footprint_m": [
+    7.71,
+    13.48
+   ],
+   "height_m": 6.1,
+   "bbox_m": [
+    -3.86,
+    -6.74,
+    0.0,
+    3.86,
+    6.74,
+    6.1
+   ],
+   "triangles": {
+    "LOD0": 3734,
+    "LOD1": 1430,
+    "LOD2": 280,
+    "LOD3": 76
+   },
+   "lod_ratio": [
+    1.0,
+    0.383,
+    0.075,
+    0.02
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Army",
+   "ages": [
+    2,
+    3
+   ],
+   "age_names": [
+    "Iron",
+    "Sail"
+   ],
+   "description": "army formation: 50 helmeted spearmen in a parallelogram, three tall culture banners, two riders on the flank",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Army_Classical.fbx",
+   "sheet_px": 50,
+   "sheet_measure": "length",
+   "sheet_metres": 13.48,
+   "suggested_unit_scale": 1.534
+  },
+  "SM_Unit_Army_Modern": {
+   "footprint_m": [
+    5.35,
+    33.58
+   ],
+   "height_m": 4.7,
+   "bbox_m": [
+    -2.67,
+    -16.79,
+    0.0,
+    2.67,
+    16.79,
+    4.7
+   ],
+   "triangles": {
+    "LOD0": 1720,
+    "LOD1": 668,
+    "LOD2": 500,
+    "LOD3": 100
+   },
+   "lod_ratio": [
+    1.0,
+    0.388,
+    0.291,
+    0.058
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Army",
+   "ages": [
+    4,
+    5
+   ],
+   "age_names": [
+    "Industry",
+    "Atomic"
+   ],
+   "description": "truck column: four olive trucks, the lead with culture canvas and a pennant",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Army_Modern.fbx",
+   "sheet_px": 34,
+   "sheet_measure": "length",
+   "sheet_metres": 33.58,
+   "suggested_unit_scale": 0.419
+  },
+  "SM_Unit_Army_Space": {
+   "footprint_m": [
+    14.76,
+    21.31
+   ],
+   "height_m": 4.94,
+   "bbox_m": [
+    -7.38,
+    -10.66,
+    0.06,
+    7.38,
+    10.66,
+    5.0
+   ],
+   "triangles": {
+    "LOD0": 406,
+    "LOD1": 222,
+    "LOD2": 130,
+    "LOD3": 62
+   },
+   "lod_ratio": [
+    1.0,
+    0.547,
+    0.32,
+    0.153
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Army",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "armed hover transport: dark armoured wedge with culture fin and blue drive glow, two escorts",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level; craft hovers above it",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Army_Space.fbx",
+   "sheet_px": 48,
+   "sheet_measure": "length",
+   "sheet_metres": 21.31,
+   "suggested_unit_scale": 0.932
+  },
+  "SM_Unit_GroundRing_A": {
+   "footprint_m": [
+    16.55,
+    16.55
+   ],
+   "height_m": 0.0,
+   "bbox_m": [
+    -8.27,
+    -8.27,
+    0.06,
+    8.27,
+    8.27,
+    0.06
+   ],
+   "triangles": {
+    "LOD0": 64,
+    "LOD1": 40,
+    "LOD2": 32,
+    "LOD3": 16
+   },
+   "lod_ratio": [
+    1.0,
+    0.625,
+    0.5,
+    0.25
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Ring",
+   "ages": [],
+   "age_names": [],
+   "description": "culture ground ring alone (radius 8 m, 0.55 m wide) for flying units: place on the ground under the aircraft",
+   "ground_ring": "this mesh is the ring",
+   "flying": false,
+   "budget": "prop 50-1k",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_GroundRing_A.fbx"
+  },
+  "SM_Unit_Prophet_A": {
+   "footprint_m": [
+    5.35,
+    12.73
+   ],
+   "height_m": 2.35,
+   "bbox_m": [
+    -2.67,
+    -6.37,
+    -0.01,
+    2.67,
+    6.37,
+    2.35
+   ],
+   "triangles": {
+    "LOD0": 1250,
+    "LOD1": 512,
+    "LOD2": 180,
+    "LOD3": 42
+   },
+   "lod_ratio": [
+    1.0,
+    0.41,
+    0.144,
+    0.034
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Prophet",
+   "ages": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "age_names": [
+    "Stone",
+    "Bronze",
+    "Iron",
+    "Sail",
+    "Industry",
+    "Atomic",
+    "Space"
+   ],
+   "description": "prophet in a white robe with a gold halo and staff, seven followers; timeless, same at every age",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Prophet_A.fbx",
+   "sheet_px": 48,
+   "sheet_measure": "length",
+   "sheet_metres": 12.73,
+   "suggested_unit_scale": 1.56
+  },
+  "SM_Unit_Rocket_A_Launch": {
+   "footprint_m": [
+    32.8,
+    32.8
+   ],
+   "height_m": 66.0,
+   "bbox_m": [
+    -16.4,
+    -16.4,
+    -0.3,
+    16.4,
+    16.4,
+    66.0
+   ],
+   "triangles": {
+    "LOD0": 2450,
+    "LOD1": 834,
+    "LOD2": 350,
+    "LOD3": 214
+   },
+   "lod_ratio": [
+    1.0,
+    0.34,
+    0.143,
+    0.087
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [
+    "Pad",
+    "Launch"
+   ],
+   "unit_type": "Launch",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "rocket rising on a white-gold plume over a smoke ring; origin at the ground, the game lifts it",
+   "ground_ring": "built in (Detail slot, culture tint)",
+   "flying": true,
+   "budget": "vehicle+plume (landmark-ish)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Rocket_A_Launch.fbx",
+   "sheet_px": 66,
+   "sheet_measure": "height",
+   "sheet_metres": 66.0,
+   "suggested_unit_scale": 0.414
+  },
+  "SM_Unit_Rocket_A_Pad": {
+   "footprint_m": [
+    30.8,
+    30.8
+   ],
+   "height_m": 49.33,
+   "bbox_m": [
+    -15.4,
+    -15.4,
+    -0.3,
+    15.4,
+    15.4,
+    49.33
+   ],
+   "triangles": {
+    "LOD0": 1634,
+    "LOD1": 714,
+    "LOD2": 392,
+    "LOD3": 178
+   },
+   "lod_ratio": [
+    1.0,
+    0.437,
+    0.24,
+    0.109
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [
+    "Pad",
+    "Launch"
+   ],
+   "unit_type": "Launch",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "rocket on its launch mount with an umbilical tower, culture band",
+   "ground_ring": "built in (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle+pad (landmark-ish)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Rocket_A_Pad.fbx",
+   "sheet_px": 66,
+   "sheet_measure": "height",
+   "sheet_metres": 49.33,
+   "suggested_unit_scale": 0.553
+  },
+  "SM_Unit_Settlers_Ancient": {
+   "footprint_m": [
+    5.99,
+    19.03
+   ],
+   "height_m": 3.4,
+   "bbox_m": [
+    -3.0,
+    -9.52,
+    -0.01,
+    3.0,
+    9.52,
+    3.4
+   ],
+   "triangles": {
+    "LOD0": 3341,
+    "LOD1": 1257,
+    "LOD2": 505,
+    "LOD3": 56
+   },
+   "lod_ratio": [
+    1.0,
+    0.376,
+    0.151,
+    0.017
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Settler",
+   "ages": [
+    0,
+    1
+   ],
+   "age_names": [
+    "Stone",
+    "Bronze"
+   ],
+   "description": "settler band with ox cart: pennant bearer, 12 walkers with loads, 3 goats, two oxen, a disc-wheeled cart",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Settlers_Ancient.fbx",
+   "sheet_px": 46,
+   "sheet_measure": "length",
+   "sheet_metres": 19.03,
+   "suggested_unit_scale": 1.0
+  },
+  "SM_Unit_Settlers_Classical": {
+   "footprint_m": [
+    5.35,
+    14.92
+   ],
+   "height_m": 3.5,
+   "bbox_m": [
+    -2.67,
+    -7.46,
+    -0.01,
+    2.67,
+    7.46,
+    3.5
+   ],
+   "triangles": {
+    "LOD0": 1804,
+    "LOD1": 688,
+    "LOD2": 311,
+    "LOD3": 50
+   },
+   "lod_ratio": [
+    1.0,
+    0.381,
+    0.172,
+    0.028
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Settler",
+   "ages": [
+    2,
+    3
+   ],
+   "age_names": [
+    "Iron",
+    "Sail"
+   ],
+   "description": "covered wagon with a culture band on the canvas, two oxen, driver, 6 walkers",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Settlers_Classical.fbx",
+   "sheet_px": 46,
+   "sheet_measure": "length",
+   "sheet_metres": 14.92,
+   "suggested_unit_scale": 1.275
+  },
+  "SM_Unit_Settlers_Modern": {
+   "footprint_m": [
+    5.45,
+    37.04
+   ],
+   "height_m": 4.5,
+   "bbox_m": [
+    -2.72,
+    -18.52,
+    0.0,
+    2.72,
+    18.52,
+    4.5
+   ],
+   "triangles": {
+    "LOD0": 1076,
+    "LOD1": 430,
+    "LOD2": 266,
+    "LOD3": 50
+   },
+   "lod_ratio": [
+    1.0,
+    0.4,
+    0.247,
+    0.046
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Settler",
+   "ages": [
+    4,
+    5
+   ],
+   "age_names": [
+    "Industry",
+    "Atomic"
+   ],
+   "description": "bus convoy: three buses, culture window band and roof, roof rack and pennant on the lead",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Settlers_Modern.fbx",
+   "sheet_px": 40,
+   "sheet_measure": "length",
+   "sheet_metres": 37.04,
+   "suggested_unit_scale": 0.447
+  },
+  "SM_Unit_Settlers_Space": {
+   "footprint_m": [
+    11.5,
+    19.21
+   ],
+   "height_m": 6.09,
+   "bbox_m": [
+    -5.75,
+    -9.6,
+    0.06,
+    5.75,
+    9.6,
+    6.15
+   ],
+   "triangles": {
+    "LOD0": 540,
+    "LOD1": 304,
+    "LOD2": 140,
+    "LOD3": 96
+   },
+   "lod_ratio": [
+    1.0,
+    0.563,
+    0.259,
+    0.178
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Settler",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "aerial transport: white lifting body, blue engine pods, culture stripe and fin, hovers 4 m up",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level; craft hovers above it",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Settlers_Space.fbx",
+   "sheet_px": 48,
+   "sheet_measure": "length",
+   "sheet_metres": 19.21,
+   "suggested_unit_scale": 1.034
+  },
+  "SM_Unit_Traders_Ancient": {
+   "footprint_m": [
+    5.35,
+    14.13
+   ],
+   "height_m": 1.86,
+   "bbox_m": [
+    -2.67,
+    -7.07,
+    -0.0,
+    2.67,
+    7.07,
+    1.86
+   ],
+   "triangles": {
+    "LOD0": 1790,
+    "LOD1": 659,
+    "LOD2": 286,
+    "LOD3": 40
+   },
+   "lod_ratio": [
+    1.0,
+    0.368,
+    0.16,
+    0.022
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Trader",
+   "ages": [
+    0,
+    1
+   ],
+   "age_names": [
+    "Stone",
+    "Bronze"
+   ],
+   "description": "pack-animal trader train: four donkeys with culture-coloured panniers, two drovers",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Traders_Ancient.fbx",
+   "sheet_px": 42,
+   "sheet_measure": "length",
+   "sheet_metres": 14.13,
+   "suggested_unit_scale": 1.23
+  },
+  "SM_Unit_Traders_Classical": {
+   "footprint_m": [
+    5.35,
+    17.21
+   ],
+   "height_m": 2.57,
+   "bbox_m": [
+    -2.67,
+    -8.61,
+    -0.01,
+    2.67,
+    8.61,
+    2.57
+   ],
+   "triangles": {
+    "LOD0": 2014,
+    "LOD1": 679,
+    "LOD2": 286,
+    "LOD3": 40
+   },
+   "lod_ratio": [
+    1.0,
+    0.337,
+    0.142,
+    0.02
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Trader",
+   "ages": [
+    2,
+    3
+   ],
+   "age_names": [
+    "Iron",
+    "Sail"
+   ],
+   "description": "camel caravan: four camels with culture-coloured packs, two robed handlers",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Traders_Classical.fbx",
+   "sheet_px": 44,
+   "sheet_measure": "length",
+   "sheet_metres": 17.21,
+   "suggested_unit_scale": 1.058
+  },
+  "SM_Unit_Traders_Modern": {
+   "footprint_m": [
+    5.95,
+    46.05
+   ],
+   "height_m": 7.42,
+   "bbox_m": [
+    -2.98,
+    -23.02,
+    0.0,
+    2.98,
+    23.02,
+    7.42
+   ],
+   "triangles": {
+    "LOD0": 2376,
+    "LOD1": 1163,
+    "LOD2": 551,
+    "LOD3": 140
+   },
+   "lod_ratio": [
+    1.0,
+    0.489,
+    0.232,
+    0.059
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Trader",
+   "ages": [
+    4,
+    5
+   ],
+   "age_names": [
+    "Industry",
+    "Atomic"
+   ],
+   "description": "freight train: steam locomotive and tender, red boxcar with culture band, ochre boxcar, container flat (one culture container), on its own track strip",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Traders_Modern.fbx",
+   "sheet_px": 40,
+   "sheet_measure": "length",
+   "sheet_metres": 46.05,
+   "suggested_unit_scale": 0.359
+  },
+  "SM_Unit_Traders_Space": {
+   "footprint_m": [
+    6.15,
+    38.95
+   ],
+   "height_m": 4.6,
+   "bbox_m": [
+    -3.07,
+    -19.48,
+    0.0,
+    3.07,
+    19.48,
+    4.6
+   ],
+   "triangles": {
+    "LOD0": 472,
+    "LOD1": 312,
+    "LOD2": 122,
+    "LOD3": 82
+   },
+   "lod_ratio": [
+    1.0,
+    0.661,
+    0.258,
+    0.174
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "M_Unit_Structure",
+    "M_Unit_Roof",
+    "M_Unit_Detail"
+   ],
+   "textures": [
+    "T_Unit_Trim_D",
+    "T_Unit_Trim_N",
+    "T_Unit_Trim_ORM",
+    "T_Unit_Trim_M"
+   ],
+   "culture_variants": [
+    "MI_Unit_Detail_Amber",
+    "MI_Unit_Detail_Sky",
+    "MI_Unit_Detail_Teal",
+    "MI_Unit_Detail_Yellow",
+    "MI_Unit_Detail_Vermilion",
+    "MI_Unit_Detail_Rose"
+   ],
+   "states": [],
+   "unit_type": "Trader",
+   "ages": [
+    6
+   ],
+   "age_names": [
+    "Space"
+   ],
+   "description": "maglev: three white cars with culture stripe and glass band on a guideway beam with a blue glow",
+   "ground_ring": "built in round the footprint (Detail slot, culture tint)",
+   "flying": false,
+   "budget": "vehicle 1-4k (a unit is a group)",
+   "facing": "-Y in Blender (+X in Unreal)",
+   "pivot": "centre of the footprint at ground level",
+   "licence": "original",
+   "script": "art/units-land/build_units-land.py",
+   "export": "art/units-land/export/SM_Unit_Traders_Space.fbx",
+   "sheet_px": 44,
+   "sheet_measure": "length",
+   "sheet_metres": 38.95,
+   "suggested_unit_scale": 0.467
+  }
+ },
+ "suggested_unit_scale_note": "The units layer draws every unit at one distance-dependent scale. Multiply by suggested_unit_scale per mesh to match the silhouette sheet, where a freight train is no longer than a settler band (the ark and launch stay landmarks)."
+}

@@ -1,0 +1,5688 @@
+{
+ "family": "Age3",
+ "generated": "2026-11-19",
+ "units": "metres (1 BU = 1 m; Unreal imports x100)",
+ "axes": "Z up, front faces -Y (street / water side)",
+ "pivot": "centre of the footprint at ground level; quays and pier: top surface at Z=0",
+ "water_z": -1.8,
+ "lod_import": "each FBX holds an Empty with fbx_type=LodGroup and its children <mesh>_LOD0..LOD3 (Unreal: Import Mesh LODs)",
+ "materials": {
+  "M_Age3_Structure": "trim sheet: plaster, ashlar, rusticated quay stone, planks, beam, dressed stone, rubble",
+  "M_Age3_Roof": "four covering bands: terracotta (0), slate (1), timber shingle (2), lead (3); RoofBand shifts UV V by 0.25 * k",
+  "M_Age3_Detail": "4x4 atlas: windows, doors, arcade, lantern glass, iron, rope, canvas, gilt, crate, charred, boarded, broken window"
+ },
+ "material_parameters": {
+  "Structure": "PlasterTint (where T_Age3_Structure_M.G), StoneTint (elsewhere)",
+  "Roof": "RoofBand (0-3, V offset 0.25 * k; only on meshes with roof_band_swappable), RoofTint",
+  "Detail": "PaintTint (where T_Age3_Detail_M.G); night emissive = T_Age3_Detail_M.R"
+ },
+ "vertex_colour": "Col (corner, sRGB bytes): multiply into base colour (ground grime, wet quay foot below the water line, soot on damaged states)",
+ "textures": {
+  "dir": "art/age3/textures",
+  "size": 1024,
+  "srgb": "D only",
+  "normal": "OpenGL (+Y), flip green on import to Unreal",
+  "bands": {
+   "plaster": {
+    "slot": "Structure",
+    "v0": 0.0,
+    "v1": 0.25,
+    "metres_tall": 2.5,
+    "metres_wide": 10.0
+   },
+   "ashlar": {
+    "slot": "Structure",
+    "v0": 0.25,
+    "v1": 0.5,
+    "metres_tall": 2.5,
+    "metres_wide": 10.0
+   },
+   "quay": {
+    "slot": "Structure",
+    "v0": 0.5,
+    "v1": 0.75,
+    "metres_tall": 2.5,
+    "metres_wide": 10.0
+   },
+   "planks": {
+    "slot": "Structure",
+    "v0": 0.75,
+    "v1": 0.8125,
+    "metres_tall": 0.625,
+    "metres_wide": 10.0
+   },
+   "beam": {
+    "slot": "Structure",
+    "v0": 0.8125,
+    "v1": 0.875,
+    "metres_tall": 0.625,
+    "metres_wide": 10.0
+   },
+   "dressed": {
+    "slot": "Structure",
+    "v0": 0.875,
+    "v1": 0.9375,
+    "metres_tall": 0.625,
+    "metres_wide": 10.0
+   },
+   "rubble": {
+    "slot": "Structure",
+    "v0": 0.9375,
+    "v1": 1.0,
+    "metres_tall": 0.625,
+    "metres_wide": 10.0
+   },
+   "tile": {
+    "slot": "Roof",
+    "v0": 0.0,
+    "v1": 0.25,
+    "metres_tall": 2.0,
+    "metres_wide": 8.0
+   },
+   "slate": {
+    "slot": "Roof",
+    "v0": 0.25,
+    "v1": 0.5,
+    "metres_tall": 2.0,
+    "metres_wide": 8.0
+   },
+   "shingle": {
+    "slot": "Roof",
+    "v0": 0.5,
+    "v1": 0.75,
+    "metres_tall": 2.0,
+    "metres_wide": 8.0
+   },
+   "lead": {
+    "slot": "Roof",
+    "v0": 0.75,
+    "v1": 1.0,
+    "metres_tall": 2.0,
+    "metres_wide": 8.0
+   }
+  },
+  "detail_cells": [
+   "window",
+   "window_shut",
+   "window_arch",
+   "shutter",
+   "door",
+   "door_wide",
+   "arcade",
+   "lantern",
+   "iron",
+   "rope",
+   "canvas",
+   "gilt",
+   "crate",
+   "charred",
+   "boarded",
+   "window_broken"
+  ]
+ },
+ "cultures": {
+  "Base": {
+   "note": "Sail-age default: cream limewash, honey stone, terracotta, lead",
+   "PlasterTint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "StoneTint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "RoofBand": 0,
+   "RoofTint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "PaintTint": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "CultureA": {
+   "note": "Cliff-Terrace people (warm red canyon): ochre-red plaster, deep red tiles, ochre paint",
+   "PlasterTint": [
+    1.08,
+    0.8,
+    0.62
+   ],
+   "StoneTint": [
+    1.06,
+    0.92,
+    0.82
+   ],
+   "RoofBand": 0,
+   "RoofTint": [
+    0.92,
+    0.78,
+    0.72
+   ],
+   "PaintTint": [
+    1.5,
+    1.0,
+    0.45
+   ]
+  },
+  "CultureB": {
+   "note": "Lagoon-Weaver people: silver-grey limewash, moss-grey timber shingle roofs, saffron paint",
+   "PlasterTint": [
+    0.88,
+    0.92,
+    0.93
+   ],
+   "StoneTint": [
+    0.92,
+    0.94,
+    0.95
+   ],
+   "RoofBand": 2,
+   "RoofTint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "PaintTint": [
+    1.9,
+    1.25,
+    0.3
+   ]
+  },
+  "CultureC": {
+   "note": "Ring-Builder people (cool highland): pale cool limestone, blue-grey slate, blue paint",
+   "PlasterTint": [
+    0.9,
+    0.93,
+    0.98
+   ],
+   "StoneTint": [
+    0.93,
+    0.95,
+    1.0
+   ],
+   "RoofBand": 1,
+   "RoofTint": [
+    1.0,
+    1.0,
+    1.05
+   ],
+   "PaintTint": [
+    0.55,
+    0.8,
+    1.35
+   ]
+  }
+ },
+ "meshes": {
+  "SM_Age3_Townhouse_A_Intact": {
+   "asset": "Townhouse_A",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "house",
+   "description": "Narrow gable-fronted townhouse, 3 storeys, stone ground floor, balcony",
+   "footprint_m": [
+    7.4,
+    12.35
+   ],
+   "height_m": 14.56,
+   "bounds_lod0": [
+    -3.7,
+    -6.4,
+    -0.3,
+    3.7,
+    5.95,
+    14.56
+   ],
+   "tris": [
+    2168,
+    696,
+    174,
+    86
+   ],
+   "lod_ratio": [
+    1.0,
+    0.321,
+    0.08,
+    0.04
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -3.7,
+      -6.4,
+      -0.3,
+      3.7,
+      5.95,
+      14.56
+     ],
+     "boundary_edges": 1732,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.6,
+      -5.8,
+      -0.3,
+      3.6,
+      5.8,
+      13.22
+     ],
+     "boundary_edges": 146,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    6.6,
+    11.0
+   ],
+   "eave": 10.25,
+   "ridge": 13.22
+  },
+  "SM_Age3_Townhouse_A_Construction": {
+   "asset": "Townhouse_A",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "house",
+   "description": "Narrow gable-fronted townhouse, 3 storeys, stone ground floor, balcony",
+   "footprint_m": [
+    11.72,
+    14.89
+   ],
+   "height_m": 8.31,
+   "bounds_lod0": [
+    -4.37,
+    -8.32,
+    -0.3,
+    7.35,
+    6.57,
+    8.31
+   ],
+   "tris": [
+    1616,
+    1050,
+    412,
+    260
+   ],
+   "lod_ratio": [
+    1.0,
+    0.65,
+    0.255,
+    0.161
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -4.37,
+      -8.32,
+      -0.3,
+      7.35,
+      6.57,
+      8.31
+     ],
+     "boundary_edges": 954,
+     "nonmanifold_edges": 38,
+     "v_range": [
+      0.002,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.34,
+      -5.54,
+      -0.3,
+      3.34,
+      5.54,
+      6.65
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    6.6,
+    11.0
+   ],
+   "eave": 10.25,
+   "ridge": 13.22
+  },
+  "SM_Age3_Townhouse_A_Damaged": {
+   "asset": "Townhouse_A",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "house",
+   "description": "Narrow gable-fronted townhouse, 3 storeys, stone ground floor, balcony",
+   "footprint_m": [
+    10.33,
+    13.78
+   ],
+   "height_m": 14.56,
+   "bounds_lod0": [
+    -5.42,
+    -7.83,
+    -0.3,
+    4.91,
+    5.95,
+    14.56
+   ],
+   "tris": [
+    2652,
+    1154,
+    441,
+    86
+   ],
+   "lod_ratio": [
+    1.0,
+    0.435,
+    0.166,
+    0.032
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.42,
+      -7.83,
+      -0.3,
+      4.91,
+      5.95,
+      14.56
+     ],
+     "boundary_edges": 2280,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.6,
+      -5.8,
+      -0.3,
+      3.6,
+      5.8,
+      13.22
+     ],
+     "boundary_edges": 146,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    6.6,
+    11.0
+   ],
+   "eave": 10.25,
+   "ridge": 13.22
+  },
+  "SM_Age3_Townhouse_A_Ruin": {
+   "asset": "Townhouse_A",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "house",
+   "description": "Narrow gable-fronted townhouse, 3 storeys, stone ground floor, balcony",
+   "footprint_m": [
+    9.25,
+    16.8
+   ],
+   "height_m": 6.98,
+   "bounds_lod0": [
+    -3.42,
+    -8.4,
+    -0.3,
+    5.83,
+    8.4,
+    6.98
+   ],
+   "tris": [
+    1072,
+    707,
+    309,
+    220
+   ],
+   "lod_ratio": [
+    1.0,
+    0.66,
+    0.288,
+    0.205
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -3.42,
+      -8.4,
+      -0.3,
+      5.83,
+      8.4,
+      6.98
+     ],
+     "boundary_edges": 614,
+     "nonmanifold_edges": 27,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.34,
+      -5.54,
+      -0.3,
+      3.34,
+      5.54,
+      6.65
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    6.6,
+    11.0
+   ],
+   "eave": 10.25,
+   "ridge": 13.22
+  },
+  "SM_Age3_Townhouse_B_Intact": {
+   "asset": "Townhouse_B",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "house",
+   "description": "Merchant house, 4 storeys, arcaded rusticated ground floor, hip roof",
+   "footprint_m": [
+    11.26,
+    11.63
+   ],
+   "height_m": 17.58,
+   "bounds_lod0": [
+    -5.63,
+    -6.0,
+    -0.3,
+    5.63,
+    5.63,
+    17.58
+   ],
+   "tris": [
+    3282,
+    960,
+    250,
+    126
+   ],
+   "lod_ratio": [
+    1.0,
+    0.293,
+    0.076,
+    0.038
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.63,
+      -6.0,
+      -0.3,
+      5.63,
+      5.63,
+      17.58
+     ],
+     "boundary_edges": 2324,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.3,
+      -5.3,
+      -0.3,
+      5.3,
+      5.3,
+      16.74
+     ],
+     "boundary_edges": 200,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 13.85,
+   "ridge": 16.74
+  },
+  "SM_Age3_Townhouse_B_Construction": {
+   "asset": "Townhouse_B",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "house",
+   "description": "Merchant house, 4 storeys, arcaded rusticated ground floor, hip roof",
+   "footprint_m": [
+    15.12,
+    13.89
+   ],
+   "height_m": 10.54,
+   "bounds_lod0": [
+    -6.07,
+    -7.82,
+    -0.3,
+    9.05,
+    6.07,
+    10.54
+   ],
+   "tris": [
+    2026,
+    1156,
+    546,
+    356
+   ],
+   "lod_ratio": [
+    1.0,
+    0.571,
+    0.269,
+    0.176
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -6.07,
+      -7.82,
+      -0.3,
+      9.05,
+      6.07,
+      10.54
+     ],
+     "boundary_edges": 1048,
+     "nonmanifold_edges": 79,
+     "v_range": [
+      0.002,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.04,
+      -5.04,
+      -0.3,
+      5.04,
+      5.04,
+      8.94
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 13.85,
+   "ridge": 16.74
+  },
+  "SM_Age3_Townhouse_B_Damaged": {
+   "asset": "Townhouse_B",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "house",
+   "description": "Merchant house, 4 storeys, arcaded rusticated ground floor, hip roof",
+   "footprint_m": [
+    13.82,
+    13.18
+   ],
+   "height_m": 17.58,
+   "bounds_lod0": [
+    -6.91,
+    -6.0,
+    -0.3,
+    6.91,
+    7.18,
+    17.58
+   ],
+   "tris": [
+    3839,
+    1531,
+    562,
+    126
+   ],
+   "lod_ratio": [
+    1.0,
+    0.399,
+    0.146,
+    0.033
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -6.91,
+      -6.0,
+      -0.3,
+      6.91,
+      7.18,
+      17.58
+     ],
+     "boundary_edges": 2901,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.3,
+      -5.3,
+      -0.3,
+      5.3,
+      5.3,
+      16.74
+     ],
+     "boundary_edges": 200,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 13.85,
+   "ridge": 16.74
+  },
+  "SM_Age3_Townhouse_B_Ruin": {
+   "asset": "Townhouse_B",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "house",
+   "description": "Merchant house, 4 storeys, arcaded rusticated ground floor, hip roof",
+   "footprint_m": [
+    12.62,
+    15.32
+   ],
+   "height_m": 8.61,
+   "bounds_lod0": [
+    -7.5,
+    -7.7,
+    -0.3,
+    5.12,
+    7.62,
+    8.61
+   ],
+   "tris": [
+    1298,
+    729,
+    367,
+    256
+   ],
+   "lod_ratio": [
+    1.0,
+    0.562,
+    0.283,
+    0.197
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.5,
+      -7.7,
+      -0.3,
+      5.12,
+      7.62,
+      8.61
+     ],
+     "boundary_edges": 612,
+     "nonmanifold_edges": 38,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.04,
+      -5.04,
+      -0.3,
+      5.04,
+      5.04,
+      7.28
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 13.85,
+   "ridge": 16.74
+  },
+  "SM_Age3_Townhouse_C_Intact": {
+   "asset": "Townhouse_C",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "house",
+   "description": "Ashlar house with eaves to the street, two dormers, gable chimneys",
+   "footprint_m": [
+    9.8,
+    9.3
+   ],
+   "height_m": 15.44,
+   "bounds_lod0": [
+    -4.9,
+    -4.65,
+    -0.3,
+    4.9,
+    4.65,
+    15.44
+   ],
+   "tris": [
+    2422,
+    622,
+    218,
+    94
+   ],
+   "lod_ratio": [
+    1.0,
+    0.257,
+    0.09,
+    0.039
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_C_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -4.9,
+      -4.65,
+      -0.3,
+      4.9,
+      4.65,
+      15.44
+     ],
+     "boundary_edges": 1194,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -4.8,
+      -4.55,
+      -0.3,
+      4.8,
+      4.55,
+      14.2
+     ],
+     "boundary_edges": 154,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    9.0,
+    8.5
+   ],
+   "eave": 9.8,
+   "ridge": 14.2
+  },
+  "SM_Age3_Townhouse_C_Construction": {
+   "asset": "Townhouse_C",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "house",
+   "description": "Ashlar house with eaves to the street, two dormers, gable chimneys",
+   "footprint_m": [
+    14.12,
+    12.39
+   ],
+   "height_m": 7.51,
+   "bounds_lod0": [
+    -5.57,
+    -7.07,
+    -0.3,
+    8.55,
+    5.32,
+    7.51
+   ],
+   "tris": [
+    1884,
+    790,
+    422,
+    260
+   ],
+   "lod_ratio": [
+    1.0,
+    0.419,
+    0.224,
+    0.138
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_C_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.57,
+      -7.07,
+      -0.3,
+      8.55,
+      5.32,
+      7.51
+     ],
+     "boundary_edges": 946,
+     "nonmanifold_edges": 34,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -4.54,
+      -4.29,
+      -0.3,
+      4.54,
+      4.29,
+      5.91
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    9.0,
+    8.5
+   ],
+   "eave": 9.8,
+   "ridge": 14.2
+  },
+  "SM_Age3_Townhouse_C_Damaged": {
+   "asset": "Townhouse_C",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "house",
+   "description": "Ashlar house with eaves to the street, two dormers, gable chimneys",
+   "footprint_m": [
+    11.43,
+    12.68
+   ],
+   "height_m": 15.44,
+   "bounds_lod0": [
+    -6.53,
+    -6.5,
+    -0.3,
+    4.9,
+    6.18,
+    15.44
+   ],
+   "tris": [
+    3021,
+    1229,
+    532,
+    94
+   ],
+   "lod_ratio": [
+    1.0,
+    0.407,
+    0.176,
+    0.031
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_C_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -6.53,
+      -6.5,
+      -0.3,
+      4.9,
+      6.18,
+      15.44
+     ],
+     "boundary_edges": 1795,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -4.8,
+      -4.55,
+      -0.3,
+      4.8,
+      4.55,
+      14.2
+     ],
+     "boundary_edges": 154,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    9.0,
+    8.5
+   ],
+   "eave": 9.8,
+   "ridge": 14.2
+  },
+  "SM_Age3_Townhouse_C_Ruin": {
+   "asset": "Townhouse_C",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "house",
+   "description": "Ashlar house with eaves to the street, two dormers, gable chimneys",
+   "footprint_m": [
+    15.44,
+    13.83
+   ],
+   "height_m": 7.23,
+   "bounds_lod0": [
+    -7.84,
+    -6.24,
+    -0.3,
+    7.6,
+    7.59,
+    7.23
+   ],
+   "tris": [
+    1660,
+    603,
+    375,
+    244
+   ],
+   "lod_ratio": [
+    1.0,
+    0.363,
+    0.226,
+    0.147
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_C_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.84,
+      -6.24,
+      -0.3,
+      7.6,
+      7.59,
+      7.23
+     ],
+     "boundary_edges": 606,
+     "nonmanifold_edges": 33,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -4.54,
+      -4.29,
+      -0.3,
+      4.54,
+      4.29,
+      8.16
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    9.0,
+    8.5
+   ],
+   "eave": 9.8,
+   "ridge": 14.2
+  },
+  "SM_Age3_Townhouse_D_Intact": {
+   "asset": "Townhouse_D",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "house",
+   "description": "L-shaped corner block round a back yard with a belvedere tower",
+   "footprint_m": [
+    14.1,
+    14.11
+   ],
+   "height_m": 15.22,
+   "bounds_lod0": [
+    -7.19,
+    -7.25,
+    -0.3,
+    6.91,
+    6.86,
+    15.22
+   ],
+   "tris": [
+    3564,
+    1158,
+    388,
+    150
+   ],
+   "lod_ratio": [
+    1.0,
+    0.325,
+    0.109,
+    0.042
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_D_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.19,
+      -7.25,
+      -0.3,
+      6.91,
+      6.86,
+      15.22
+     ],
+     "boundary_edges": 2462,
+     "nonmanifold_edges": 6,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -6.97,
+      -6.97,
+      -0.3,
+      6.63,
+      6.63,
+      15.1
+     ],
+     "boundary_edges": 168,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    13.0,
+    13.0
+   ],
+   "eave": 10.3,
+   "ridge": 15.6
+  },
+  "SM_Age3_Townhouse_D_Construction": {
+   "asset": "Townhouse_D",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "house",
+   "description": "L-shaped corner block round a back yard with a belvedere tower",
+   "footprint_m": [
+    18.12,
+    16.89
+   ],
+   "height_m": 7.77,
+   "bounds_lod0": [
+    -7.74,
+    -9.49,
+    -0.3,
+    10.38,
+    7.4,
+    7.77
+   ],
+   "tris": [
+    2280,
+    1446,
+    742,
+    376
+   ],
+   "lod_ratio": [
+    1.0,
+    0.634,
+    0.325,
+    0.165
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_D_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.74,
+      -9.49,
+      -0.3,
+      10.38,
+      7.4,
+      7.77
+     ],
+     "boundary_edges": 1269,
+     "nonmanifold_edges": 77,
+     "v_range": [
+      0.002,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -6.71,
+      -6.71,
+      -0.3,
+      6.37,
+      6.33,
+      6.17
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 1,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    13.0,
+    13.0
+   ],
+   "eave": 10.3,
+   "ridge": 15.6
+  },
+  "SM_Age3_Townhouse_D_Damaged": {
+   "asset": "Townhouse_D",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "house",
+   "description": "L-shaped corner block round a back yard with a belvedere tower",
+   "footprint_m": [
+    15.69,
+    15.9
+   ],
+   "height_m": 15.22,
+   "bounds_lod0": [
+    -7.19,
+    -7.25,
+    -0.3,
+    8.5,
+    8.65,
+    15.22
+   ],
+   "tris": [
+    4497,
+    2038,
+    863,
+    150
+   ],
+   "lod_ratio": [
+    1.0,
+    0.453,
+    0.192,
+    0.033
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_D_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.19,
+      -7.25,
+      -0.3,
+      8.5,
+      8.65,
+      15.22
+     ],
+     "boundary_edges": 3189,
+     "nonmanifold_edges": 6,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -6.97,
+      -6.97,
+      -0.3,
+      6.63,
+      6.63,
+      15.1
+     ],
+     "boundary_edges": 168,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    13.0,
+    13.0
+   ],
+   "eave": 10.3,
+   "ridge": 15.6
+  },
+  "SM_Age3_Townhouse_D_Ruin": {
+   "asset": "Townhouse_D",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "house",
+   "description": "L-shaped corner block round a back yard with a belvedere tower",
+   "footprint_m": [
+    17.12,
+    18.62
+   ],
+   "height_m": 8.31,
+   "bounds_lod0": [
+    -8.72,
+    -9.42,
+    -0.3,
+    8.4,
+    9.2,
+    8.31
+   ],
+   "tris": [
+    1820,
+    1025,
+    517,
+    340
+   ],
+   "lod_ratio": [
+    1.0,
+    0.563,
+    0.284,
+    0.187
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Townhouse_D_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -8.72,
+      -9.42,
+      -0.3,
+      8.4,
+      9.2,
+      8.31
+     ],
+     "boundary_edges": 625,
+     "nonmanifold_edges": 67,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -6.71,
+      -6.71,
+      -0.3,
+      6.37,
+      6.33,
+      9.75
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 1,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    13.0,
+    13.0
+   ],
+   "eave": 10.3,
+   "ridge": 15.6
+  },
+  "SM_Age3_Warehouse_A_Intact": {
+   "asset": "Warehouse_A",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "warehouse",
+   "description": "Long quayside warehouse, 2 storeys, 3 loading doors, hoist dormer",
+   "footprint_m": [
+    24.8,
+    14.95
+   ],
+   "height_m": 12.78,
+   "bounds_lod0": [
+    -12.4,
+    -8.45,
+    -0.3,
+    12.4,
+    6.5,
+    12.78
+   ],
+   "tris": [
+    1967,
+    873,
+    164,
+    62
+   ],
+   "lod_ratio": [
+    1.0,
+    0.444,
+    0.083,
+    0.032
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -12.4,
+      -8.45,
+      -0.3,
+      12.4,
+      6.5,
+      12.78
+     ],
+     "boundary_edges": 1299,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -12.3,
+      -6.3,
+      -0.3,
+      12.3,
+      6.3,
+      11.74
+     ],
+     "boundary_edges": 90,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    24.0,
+    12.0
+   ],
+   "eave": 8.55,
+   "ridge": 11.74
+  },
+  "SM_Age3_Warehouse_A_Construction": {
+   "asset": "Warehouse_A",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "warehouse",
+   "description": "Long quayside warehouse, 2 storeys, 3 loading doors, hoist dormer",
+   "footprint_m": [
+    29.12,
+    15.89
+   ],
+   "height_m": 7.67,
+   "bounds_lod0": [
+    -13.07,
+    -8.82,
+    -0.3,
+    16.05,
+    7.07,
+    7.67
+   ],
+   "tris": [
+    1980,
+    1422,
+    452,
+    92
+   ],
+   "lod_ratio": [
+    1.0,
+    0.718,
+    0.228,
+    0.046
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -13.07,
+      -8.82,
+      -0.3,
+      16.05,
+      7.07,
+      7.67
+     ],
+     "boundary_edges": 1214,
+     "nonmanifold_edges": 40,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -12.04,
+      -6.04,
+      -0.3,
+      12.0,
+      6.04,
+      6.07
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.502,
+      0.756
+     ]
+    }
+   },
+   "footprint_design_m": [
+    24.0,
+    12.0
+   ],
+   "eave": 8.55,
+   "ridge": 11.74
+  },
+  "SM_Age3_Warehouse_A_Damaged": {
+   "asset": "Warehouse_A",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "warehouse",
+   "description": "Long quayside warehouse, 2 storeys, 3 loading doors, hoist dormer",
+   "footprint_m": [
+    27.0,
+    16.52
+   ],
+   "height_m": 12.78,
+   "bounds_lod0": [
+    -14.6,
+    -8.45,
+    -0.3,
+    12.4,
+    8.07,
+    12.78
+   ],
+   "tris": [
+    2594,
+    1480,
+    484,
+    62
+   ],
+   "lod_ratio": [
+    1.0,
+    0.571,
+    0.187,
+    0.024
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -14.6,
+      -8.45,
+      -0.3,
+      12.4,
+      8.07,
+      12.78
+     ],
+     "boundary_edges": 1894,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -12.3,
+      -6.3,
+      -0.3,
+      12.3,
+      6.3,
+      11.74
+     ],
+     "boundary_edges": 90,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    24.0,
+    12.0
+   ],
+   "eave": 8.55,
+   "ridge": 11.74
+  },
+  "SM_Age3_Warehouse_A_Ruin": {
+   "asset": "Warehouse_A",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "warehouse",
+   "description": "Long quayside warehouse, 2 storeys, 3 loading doors, hoist dormer",
+   "footprint_m": [
+    29.84,
+    16.79
+   ],
+   "height_m": 8.04,
+   "bounds_lod0": [
+    -15.06,
+    -8.22,
+    -0.3,
+    14.78,
+    8.57,
+    8.04
+   ],
+   "tris": [
+    1566,
+    1073,
+    291,
+    72
+   ],
+   "lod_ratio": [
+    1.0,
+    0.685,
+    0.186,
+    0.046
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -15.06,
+      -8.22,
+      -0.3,
+      14.78,
+      8.57,
+      8.04
+     ],
+     "boundary_edges": 622,
+     "nonmanifold_edges": 32,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -12.04,
+      -6.0,
+      -0.3,
+      12.04,
+      6.04,
+      7.25
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.502,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    24.0,
+    12.0
+   ],
+   "eave": 8.55,
+   "ridge": 11.74
+  },
+  "SM_Age3_Warehouse_B_Intact": {
+   "asset": "Warehouse_B",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "warehouse",
+   "description": "Tall gable-fronted stack warehouse, stacked loading doors, apex hoist",
+   "footprint_m": [
+    11.8,
+    19.0
+   ],
+   "height_m": 17.41,
+   "bounds_lod0": [
+    -5.9,
+    -10.5,
+    -0.3,
+    5.9,
+    8.5,
+    17.41
+   ],
+   "tris": [
+    2486,
+    786,
+    202,
+    126
+   ],
+   "lod_ratio": [
+    1.0,
+    0.316,
+    0.081,
+    0.051
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.9,
+      -10.5,
+      -0.3,
+      5.9,
+      8.5,
+      17.41
+     ],
+     "boundary_edges": 1596,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.8,
+      -8.3,
+      -0.3,
+      5.8,
+      8.3,
+      17.26
+     ],
+     "boundary_edges": 210,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    11.0,
+    16.0
+   ],
+   "eave": 11.15,
+   "ridge": 17.26
+  },
+  "SM_Age3_Warehouse_B_Construction": {
+   "asset": "Warehouse_B",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "warehouse",
+   "description": "Tall gable-fronted stack warehouse, stacked loading doors, apex hoist",
+   "footprint_m": [
+    16.12,
+    19.89
+   ],
+   "height_m": 8.78,
+   "bounds_lod0": [
+    -6.57,
+    -10.82,
+    -0.3,
+    9.55,
+    9.07,
+    8.78
+   ],
+   "tris": [
+    1772,
+    1118,
+    556,
+    356
+   ],
+   "lod_ratio": [
+    1.0,
+    0.631,
+    0.314,
+    0.201
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -6.57,
+      -10.82,
+      -0.3,
+      9.55,
+      9.07,
+      8.78
+     ],
+     "boundary_edges": 1098,
+     "nonmanifold_edges": 31,
+     "v_range": [
+      0.002,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.54,
+      -8.04,
+      -0.3,
+      5.54,
+      8.04,
+      7.18
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    11.0,
+    16.0
+   ],
+   "eave": 11.15,
+   "ridge": 17.26
+  },
+  "SM_Age3_Warehouse_B_Damaged": {
+   "asset": "Warehouse_B",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "warehouse",
+   "description": "Tall gable-fronted stack warehouse, stacked loading doors, apex hoist",
+   "footprint_m": [
+    13.95,
+    20.77
+   ],
+   "height_m": 17.41,
+   "bounds_lod0": [
+    -6.61,
+    -10.5,
+    -0.3,
+    7.34,
+    10.27,
+    17.41
+   ],
+   "tris": [
+    3059,
+    1343,
+    534,
+    126
+   ],
+   "lod_ratio": [
+    1.0,
+    0.439,
+    0.175,
+    0.041
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -6.61,
+      -10.5,
+      -0.3,
+      7.34,
+      10.27,
+      17.41
+     ],
+     "boundary_edges": 2155,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.8,
+      -8.3,
+      -0.3,
+      5.8,
+      8.3,
+      17.26
+     ],
+     "boundary_edges": 210,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    11.0,
+    16.0
+   ],
+   "eave": 11.15,
+   "ridge": 17.26
+  },
+  "SM_Age3_Warehouse_B_Ruin": {
+   "asset": "Warehouse_B",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "warehouse",
+   "description": "Tall gable-fronted stack warehouse, stacked loading doors, apex hoist",
+   "footprint_m": [
+    15.68,
+    18.97
+   ],
+   "height_m": 9.01,
+   "bounds_lod0": [
+    -7.22,
+    -10.85,
+    -0.3,
+    8.46,
+    8.12,
+    9.01
+   ],
+   "tris": [
+    1288,
+    771,
+    437,
+    288
+   ],
+   "lod_ratio": [
+    1.0,
+    0.599,
+    0.339,
+    0.224
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_Warehouse_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.22,
+      -10.85,
+      -0.3,
+      8.46,
+      8.12,
+      9.01
+     ],
+     "boundary_edges": 630,
+     "nonmanifold_edges": 27,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.54,
+      -8.04,
+      -0.3,
+      5.54,
+      8.04,
+      9.66
+     ],
+     "boundary_edges": 0,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    11.0,
+    16.0
+   ],
+   "eave": 11.15,
+   "ridge": 17.26
+  },
+  "SM_Age3_Quay_Straight_Intact": {
+   "asset": "Quay_Straight",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "quay",
+   "description": "Stone quay wall, 20 m frontage, bollards, fenders, ladder",
+   "footprint_m": [
+    20.0,
+    10.28
+   ],
+   "height_m": 0.87,
+   "bounds_lod0": [
+    -10.0,
+    -5.28,
+    -5.5,
+    10.0,
+    5.0,
+    0.87
+   ],
+   "tris": [
+    312,
+    214,
+    120,
+    10
+   ],
+   "lod_ratio": [
+    1.0,
+    0.686,
+    0.385,
+    0.032
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Straight_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -10.0,
+      -5.28,
+      -5.5,
+      10.0,
+      5.0,
+      0.87
+     ],
+     "boundary_edges": 390,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -10.0,
+      -5.0,
+      -5.5,
+      10.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 4,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    20.0,
+    10.0
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Straight_Damaged": {
+   "asset": "Quay_Straight",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "quay",
+   "description": "Stone quay wall, 20 m frontage, bollards, fenders, ladder",
+   "footprint_m": [
+    20.0,
+    10.28
+   ],
+   "height_m": 0.87,
+   "bounds_lod0": [
+    -10.0,
+    -5.28,
+    -5.5,
+    10.0,
+    5.0,
+    0.87
+   ],
+   "tris": [
+    364,
+    264,
+    122,
+    10
+   ],
+   "lod_ratio": [
+    1.0,
+    0.725,
+    0.335,
+    0.027
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Straight_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -10.0,
+      -5.28,
+      -5.5,
+      10.0,
+      5.0,
+      0.87
+     ],
+     "boundary_edges": 356,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -10.0,
+      -5.0,
+      -5.5,
+      10.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 4,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    20.0,
+    10.0
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Straight_Ruin": {
+   "asset": "Quay_Straight",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "quay",
+   "description": "Stone quay wall, 20 m frontage, bollards, fenders, ladder",
+   "footprint_m": [
+    20.0,
+    13.46
+   ],
+   "height_m": 0.58,
+   "bounds_lod0": [
+    -10.0,
+    -8.46,
+    -5.5,
+    10.0,
+    5.0,
+    0.58
+   ],
+   "tris": [
+    483,
+    429,
+    171,
+    10
+   ],
+   "lod_ratio": [
+    1.0,
+    0.888,
+    0.354,
+    0.021
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure"
+   ],
+   "material_names": [
+    "M_Age3_Structure"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Straight_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -10.0,
+      -8.46,
+      -5.5,
+      10.0,
+      5.0,
+      0.58
+     ],
+     "boundary_edges": 197,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -10.0,
+      -5.0,
+      -5.5,
+      10.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 4,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    20.0,
+    10.0
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Corner_Intact": {
+   "asset": "Quay_Corner",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "quay",
+   "description": "Outer quay corner with a rounded nose, 10 x 10 m",
+   "footprint_m": [
+    10.06,
+    10.28
+   ],
+   "height_m": 0.87,
+   "bounds_lod0": [
+    -5.0,
+    -5.28,
+    -5.5,
+    5.06,
+    5.0,
+    0.87
+   ],
+   "tris": [
+    258,
+    200,
+    138,
+    16
+   ],
+   "lod_ratio": [
+    1.0,
+    0.775,
+    0.535,
+    0.062
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Corner_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.0,
+      -5.28,
+      -5.5,
+      5.06,
+      5.0,
+      0.87
+     ],
+     "boundary_edges": 236,
+     "nonmanifold_edges": 6,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -5.5,
+      5.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 6,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Corner_Damaged": {
+   "asset": "Quay_Corner",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "quay",
+   "description": "Outer quay corner with a rounded nose, 10 x 10 m",
+   "footprint_m": [
+    10.06,
+    10.06
+   ],
+   "height_m": 0.87,
+   "bounds_lod0": [
+    -5.0,
+    -5.06,
+    -5.5,
+    5.06,
+    5.0,
+    0.87
+   ],
+   "tris": [
+    348,
+    278,
+    168,
+    16
+   ],
+   "lod_ratio": [
+    1.0,
+    0.799,
+    0.483,
+    0.046
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Corner_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.0,
+      -5.06,
+      -5.5,
+      5.06,
+      5.0,
+      0.87
+     ],
+     "boundary_edges": 274,
+     "nonmanifold_edges": 6,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -5.5,
+      5.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 6,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Corner_Ruin": {
+   "asset": "Quay_Corner",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "quay",
+   "description": "Outer quay corner with a rounded nose, 10 x 10 m",
+   "footprint_m": [
+    11.8,
+    13.14
+   ],
+   "height_m": 0.54,
+   "bounds_lod0": [
+    -5.0,
+    -8.14,
+    -5.5,
+    6.8,
+    5.0,
+    0.54
+   ],
+   "tris": [
+    500,
+    424,
+    174,
+    16
+   ],
+   "lod_ratio": [
+    1.0,
+    0.848,
+    0.348,
+    0.032
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure"
+   ],
+   "material_names": [
+    "M_Age3_Structure"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Corner_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.0,
+      -8.14,
+      -5.5,
+      6.8,
+      5.0,
+      0.54
+     ],
+     "boundary_edges": 156,
+     "nonmanifold_edges": 6,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -5.5,
+      5.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 6,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Stairs_Intact": {
+   "asset": "Quay_Stairs",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "quay",
+   "description": "Quay segment with a flight of water stairs along its face",
+   "footprint_m": [
+    20.0,
+    12.2
+   ],
+   "height_m": 0.87,
+   "bounds_lod0": [
+    -10.0,
+    -7.2,
+    -5.5,
+    10.0,
+    5.0,
+    0.87
+   ],
+   "tris": [
+    500,
+    402,
+    252,
+    20
+   ],
+   "lod_ratio": [
+    1.0,
+    0.804,
+    0.504,
+    0.04
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Stairs_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -10.0,
+      -7.2,
+      -5.5,
+      10.0,
+      5.0,
+      0.87
+     ],
+     "boundary_edges": 580,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -10.0,
+      -7.2,
+      -5.5,
+      10.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 8,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    20.0,
+    12.2
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Stairs_Damaged": {
+   "asset": "Quay_Stairs",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "quay",
+   "description": "Quay segment with a flight of water stairs along its face",
+   "footprint_m": [
+    20.0,
+    12.2
+   ],
+   "height_m": 0.87,
+   "bounds_lod0": [
+    -10.0,
+    -7.2,
+    -5.5,
+    10.0,
+    5.0,
+    0.87
+   ],
+   "tris": [
+    576,
+    476,
+    254,
+    20
+   ],
+   "lod_ratio": [
+    1.0,
+    0.826,
+    0.441,
+    0.035
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Stairs_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -10.0,
+      -7.2,
+      -5.5,
+      10.0,
+      5.0,
+      0.87
+     ],
+     "boundary_edges": 528,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -10.0,
+      -7.2,
+      -5.5,
+      10.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 8,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    20.0,
+    12.2
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Quay_Stairs_Ruin": {
+   "asset": "Quay_Stairs",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "quay",
+   "description": "Quay segment with a flight of water stairs along its face",
+   "footprint_m": [
+    20.0,
+    13.04
+   ],
+   "height_m": 0.59,
+   "bounds_lod0": [
+    -10.0,
+    -8.04,
+    -5.5,
+    10.0,
+    5.0,
+    0.59
+   ],
+   "tris": [
+    591,
+    537,
+    279,
+    20
+   ],
+   "lod_ratio": [
+    1.0,
+    0.909,
+    0.472,
+    0.034
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure"
+   ],
+   "material_names": [
+    "M_Age3_Structure"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Quay_Stairs_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -10.0,
+      -8.04,
+      -5.5,
+      10.0,
+      5.0,
+      0.59
+     ],
+     "boundary_edges": 295,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -10.0,
+      -7.2,
+      -5.5,
+      10.0,
+      5.0,
+      0.0
+     ],
+     "boundary_edges": 8,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    20.0,
+    12.2
+   ],
+   "eave": 0.0,
+   "ridge": 0.25,
+   "water_z": -1.8
+  },
+  "SM_Age3_Pier_Intact": {
+   "asset": "Pier",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "pier",
+   "description": "Timber pier on piles, 5 x 24 m, mooring posts, cargo",
+   "footprint_m": [
+    5.2,
+    23.4
+   ],
+   "height_m": 0.8,
+   "bounds_lod0": [
+    -2.6,
+    -11.7,
+    -4.3,
+    2.6,
+    11.7,
+    0.8
+   ],
+   "tris": [
+    782,
+    570,
+    324,
+    60
+   ],
+   "lod_ratio": [
+    1.0,
+    0.729,
+    0.414,
+    0.077
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Pier_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -2.6,
+      -11.7,
+      -4.3,
+      2.6,
+      11.7,
+      0.8
+     ],
+     "boundary_edges": 494,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.003,
+      0.873
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -2.5,
+      -12.0,
+      -3.8,
+      2.5,
+      12.0,
+      0.0
+     ],
+     "boundary_edges": 48,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.752,
+      0.873
+     ]
+    }
+   },
+   "footprint_design_m": [
+    5.0,
+    24.0
+   ],
+   "eave": 0.0,
+   "ridge": 1.0,
+   "water_z": -1.8
+  },
+  "SM_Age3_Pier_Damaged": {
+   "asset": "Pier",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "pier",
+   "description": "Timber pier on piles, 5 x 24 m, mooring posts, cargo",
+   "footprint_m": [
+    5.2,
+    23.4
+   ],
+   "height_m": 0.8,
+   "bounds_lod0": [
+    -2.6,
+    -11.7,
+    -4.3,
+    2.6,
+    11.7,
+    0.8
+   ],
+   "tris": [
+    778,
+    565,
+    318,
+    60
+   ],
+   "lod_ratio": [
+    1.0,
+    0.726,
+    0.409,
+    0.077
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Pier_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -2.6,
+      -11.7,
+      -4.3,
+      2.6,
+      11.7,
+      0.8
+     ],
+     "boundary_edges": 510,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.003,
+      0.873
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -2.5,
+      -12.0,
+      -3.8,
+      2.5,
+      12.0,
+      0.0
+     ],
+     "boundary_edges": 48,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.752,
+      0.873
+     ]
+    }
+   },
+   "footprint_design_m": [
+    5.0,
+    24.0
+   ],
+   "eave": 0.0,
+   "ridge": 1.0,
+   "water_z": -1.8
+  },
+  "SM_Age3_Pier_Ruin": {
+   "asset": "Pier",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "pier",
+   "description": "Timber pier on piles, 5 x 24 m, mooring posts, cargo",
+   "footprint_m": [
+    5.2,
+    23.34
+   ],
+   "height_m": 0.0,
+   "bounds_lod0": [
+    -2.6,
+    -11.67,
+    -4.3,
+    2.6,
+    11.67,
+    0.0
+   ],
+   "tris": [
+    394,
+    322,
+    238,
+    60
+   ],
+   "lod_ratio": [
+    1.0,
+    0.817,
+    0.604,
+    0.152
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure"
+   ],
+   "material_names": [
+    "M_Age3_Structure"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M"
+   ],
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Pier_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -2.6,
+      -11.67,
+      -4.3,
+      2.6,
+      11.67,
+      0.0
+     ],
+     "boundary_edges": 188,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.752,
+      0.873
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -2.5,
+      -12.0,
+      -3.8,
+      2.5,
+      12.0,
+      0.0
+     ],
+     "boundary_edges": 48,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.752,
+      0.873
+     ]
+    }
+   },
+   "footprint_design_m": [
+    5.0,
+    24.0
+   ],
+   "eave": 0.0,
+   "ridge": 1.0,
+   "water_z": -1.8
+  },
+  "SM_Age3_PortCrane_Intact": {
+   "asset": "PortCrane",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "crane",
+   "description": "Treadwheel harbour crane: stone base, braced tower, slewing cab, jib",
+   "footprint_m": [
+    7.17,
+    14.67
+   ],
+   "height_m": 15.09,
+   "bounds_lod0": [
+    -3.32,
+    -11.35,
+    -0.3,
+    3.85,
+    3.32,
+    15.09
+   ],
+   "tris": [
+    1200,
+    750,
+    420,
+    60
+   ],
+   "lod_ratio": [
+    1.0,
+    0.625,
+    0.35,
+    0.05
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_PortCrane_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -3.32,
+      -11.35,
+      -0.3,
+      3.85,
+      3.32,
+      15.09
+     ],
+     "boundary_edges": 990,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.997
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.2,
+      -11.09,
+      -0.3,
+      3.2,
+      3.2,
+      14.94
+     ],
+     "boundary_edges": 42,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.936
+     ]
+    }
+   },
+   "footprint_design_m": [
+    7.0,
+    7.0
+   ],
+   "eave": 13.4,
+   "ridge": 14.94
+  },
+  "SM_Age3_PortCrane_Construction": {
+   "asset": "PortCrane",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "crane",
+   "description": "Treadwheel harbour crane: stone base, braced tower, slewing cab, jib",
+   "footprint_m": [
+    11.55,
+    14.1
+   ],
+   "height_m": 8.7,
+   "bounds_lod0": [
+    -4.0,
+    -10.78,
+    -0.3,
+    7.55,
+    3.32,
+    8.7
+   ],
+   "tris": [
+    444,
+    350,
+    64,
+    14
+   ],
+   "lod_ratio": [
+    1.0,
+    0.788,
+    0.144,
+    0.032
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_PortCrane_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -4.0,
+      -10.78,
+      -0.3,
+      7.55,
+      3.32,
+      8.7
+     ],
+     "boundary_edges": 532,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.2,
+      -3.2,
+      -0.3,
+      3.2,
+      3.2,
+      8.7
+     ],
+     "boundary_edges": 10,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.502,
+      0.936
+     ]
+    }
+   },
+   "footprint_design_m": [
+    7.0,
+    7.0
+   ],
+   "eave": 13.4,
+   "ridge": 14.94
+  },
+  "SM_Age3_PortCrane_Damaged": {
+   "asset": "PortCrane",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "crane",
+   "description": "Treadwheel harbour crane: stone base, braced tower, slewing cab, jib",
+   "footprint_m": [
+    9.43,
+    18.2
+   ],
+   "height_m": 15.09,
+   "bounds_lod0": [
+    -5.58,
+    -12.56,
+    -0.3,
+    3.85,
+    5.64,
+    15.09
+   ],
+   "tris": [
+    1656,
+    1144,
+    631,
+    72
+   ],
+   "lod_ratio": [
+    1.0,
+    0.691,
+    0.381,
+    0.043
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_PortCrane_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.58,
+      -12.56,
+      -0.3,
+      3.85,
+      5.64,
+      15.09
+     ],
+     "boundary_edges": 1568,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.2,
+      -12.56,
+      -0.3,
+      3.2,
+      3.2,
+      14.94
+     ],
+     "boundary_edges": 90,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.936
+     ]
+    }
+   },
+   "footprint_design_m": [
+    7.0,
+    7.0
+   ],
+   "eave": 13.4,
+   "ridge": 14.94
+  },
+  "SM_Age3_PortCrane_Ruin": {
+   "asset": "PortCrane",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "crane",
+   "description": "Treadwheel harbour crane: stone base, braced tower, slewing cab, jib",
+   "footprint_m": [
+    11.52,
+    17.3
+   ],
+   "height_m": 6.33,
+   "bounds_lod0": [
+    -6.13,
+    -10.78,
+    -0.3,
+    5.39,
+    6.52,
+    6.33
+   ],
+   "tris": [
+    502,
+    371,
+    109,
+    14
+   ],
+   "lod_ratio": [
+    1.0,
+    0.739,
+    0.217,
+    0.028
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": true,
+   "fbx": "art/age3/export/SM_Age3_PortCrane_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -6.13,
+      -10.78,
+      -0.3,
+      5.39,
+      6.52,
+      6.33
+     ],
+     "boundary_edges": 800,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -3.2,
+      -3.2,
+      -0.3,
+      3.2,
+      3.2,
+      7.3
+     ],
+     "boundary_edges": 12,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.502,
+      0.936
+     ]
+    }
+   },
+   "footprint_design_m": [
+    7.0,
+    7.0
+   ],
+   "eave": 13.4,
+   "ridge": 14.94
+  },
+  "SM_Age3_Lighthouse_Intact": {
+   "asset": "Lighthouse",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "lighthouse",
+   "description": "Octagonal ashlar lighthouse with gallery, glazed lantern, lead cap",
+   "footprint_m": [
+    10.3,
+    11.55
+   ],
+   "height_m": 30.66,
+   "bounds_lod0": [
+    -5.15,
+    -6.4,
+    -0.3,
+    5.15,
+    5.15,
+    30.66
+   ],
+   "tris": [
+    814,
+    702,
+    314,
+    72
+   ],
+   "lod_ratio": [
+    1.0,
+    0.862,
+    0.386,
+    0.088
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Lighthouse_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.15,
+      -6.4,
+      -0.3,
+      5.15,
+      5.15,
+      30.66
+     ],
+     "boundary_edges": 662,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.252,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -0.3,
+      5.0,
+      5.0,
+      28.2
+     ],
+     "boundary_edges": 68,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.998
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 23.0,
+   "ridge": 30.66,
+   "light": [
+    0.0,
+    0.0,
+    25.35
+   ]
+  },
+  "SM_Age3_Lighthouse_Construction": {
+   "asset": "Lighthouse",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "lighthouse",
+   "description": "Octagonal ashlar lighthouse with gallery, glazed lantern, lead cap",
+   "footprint_m": [
+    14.92,
+    13.69
+   ],
+   "height_m": 13.61,
+   "bounds_lod0": [
+    -5.87,
+    -7.82,
+    -0.3,
+    9.05,
+    5.87,
+    13.61
+   ],
+   "tris": [
+    976,
+    902,
+    310,
+    58
+   ],
+   "lod_ratio": [
+    1.0,
+    0.924,
+    0.318,
+    0.059
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure"
+   ],
+   "material_names": [
+    "M_Age3_Structure"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Lighthouse_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -5.87,
+      -7.82,
+      -0.3,
+      9.05,
+      5.87,
+      13.61
+     ],
+     "boundary_edges": 1208,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -0.3,
+      5.0,
+      5.0,
+      12.01
+     ],
+     "boundary_edges": 4,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 23.0,
+   "ridge": 30.66,
+   "light": [
+    0.0,
+    0.0,
+    25.35
+   ]
+  },
+  "SM_Age3_Lighthouse_Damaged": {
+   "asset": "Lighthouse",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "lighthouse",
+   "description": "Octagonal ashlar lighthouse with gallery, glazed lantern, lead cap",
+   "footprint_m": [
+    14.25,
+    14.32
+   ],
+   "height_m": 30.66,
+   "bounds_lod0": [
+    -7.26,
+    -6.92,
+    -0.3,
+    6.99,
+    7.4,
+    30.66
+   ],
+   "tris": [
+    940,
+    816,
+    344,
+    72
+   ],
+   "lod_ratio": [
+    1.0,
+    0.868,
+    0.366,
+    0.077
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Lighthouse_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.26,
+      -6.92,
+      -0.3,
+      6.99,
+      7.4,
+      30.66
+     ],
+     "boundary_edges": 928,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -0.3,
+      5.0,
+      5.0,
+      28.2
+     ],
+     "boundary_edges": 68,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 23.0,
+   "ridge": 30.66,
+   "light": [
+    0.0,
+    0.0,
+    25.35
+   ]
+  },
+  "SM_Age3_Lighthouse_Ruin": {
+   "asset": "Lighthouse",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "lighthouse",
+   "description": "Octagonal ashlar lighthouse with gallery, glazed lantern, lead cap",
+   "footprint_m": [
+    14.67,
+    14.75
+   ],
+   "height_m": 12.67,
+   "bounds_lod0": [
+    -7.28,
+    -6.4,
+    -0.3,
+    7.39,
+    8.35,
+    12.67
+   ],
+   "tris": [
+    600,
+    519,
+    223,
+    54
+   ],
+   "lod_ratio": [
+    1.0,
+    0.865,
+    0.372,
+    0.09
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_Lighthouse_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -7.28,
+      -6.4,
+      -0.3,
+      7.39,
+      8.35,
+      12.67
+     ],
+     "boundary_edges": 612,
+     "nonmanifold_edges": 2,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -5.0,
+      -5.0,
+      -0.3,
+      5.0,
+      5.0,
+      13.46
+     ],
+     "boundary_edges": 4,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.748
+     ]
+    }
+   },
+   "footprint_design_m": [
+    10.0,
+    10.0
+   ],
+   "eave": 23.0,
+   "ridge": 30.66,
+   "light": [
+    0.0,
+    0.0,
+    25.35
+   ]
+  },
+  "SM_Age3_CivicDome_Intact": {
+   "asset": "CivicDome",
+   "family": "Age3",
+   "state": "Intact",
+   "kind": "civic",
+   "description": "Domed civic temple: portico and pediment, aisles, drum, ribbed lead dome, lantern",
+   "footprint_m": [
+    32.4,
+    42.54
+   ],
+   "height_m": 38.59,
+   "bounds_lod0": [
+    -16.2,
+    -22.09,
+    -0.3,
+    16.2,
+    20.45,
+    38.59
+   ],
+   "tris": [
+    9310,
+    3336,
+    998,
+    172
+   ],
+   "lod_ratio": [
+    1.0,
+    0.358,
+    0.107,
+    0.018
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_CivicDome_Intact.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -16.2,
+      -22.09,
+      -0.3,
+      16.2,
+      20.45,
+      38.59
+     ],
+     "boundary_edges": 6354,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -15.0,
+      -19.25,
+      -0.3,
+      15.0,
+      19.25,
+      30.0
+     ],
+     "boundary_edges": 126,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    }
+   },
+   "footprint_design_m": [
+    30.0,
+    38.5
+   ],
+   "eave": 14.5,
+   "ridge": 38.59
+  },
+  "SM_Age3_CivicDome_Construction": {
+   "asset": "CivicDome",
+   "family": "Age3",
+   "state": "Construction",
+   "kind": "civic",
+   "description": "Domed civic temple: portico and pediment, aisles, drum, ribbed lead dome, lantern",
+   "footprint_m": [
+    35.25,
+    42.54
+   ],
+   "height_m": 9.44,
+   "bounds_lod0": [
+    -16.2,
+    -22.09,
+    -0.3,
+    19.05,
+    20.45,
+    9.44
+   ],
+   "tris": [
+    2462,
+    1624,
+    948,
+    210
+   ],
+   "lod_ratio": [
+    1.0,
+    0.66,
+    0.385,
+    0.085
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_CivicDome_Construction.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -16.2,
+      -22.09,
+      -0.3,
+      19.05,
+      20.45,
+      9.44
+     ],
+     "boundary_edges": 1984,
+     "nonmanifold_edges": 34,
+     "v_range": [
+      0.252,
+      0.936
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -15.0,
+      -19.25,
+      -0.3,
+      15.0,
+      19.25,
+      7.84
+     ],
+     "boundary_edges": 4,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.988
+     ]
+    }
+   },
+   "footprint_design_m": [
+    30.0,
+    38.5
+   ],
+   "eave": 14.5,
+   "ridge": 38.59
+  },
+  "SM_Age3_CivicDome_Damaged": {
+   "asset": "CivicDome",
+   "family": "Age3",
+   "state": "Damaged",
+   "kind": "civic",
+   "description": "Domed civic temple: portico and pediment, aisles, drum, ribbed lead dome, lantern",
+   "footprint_m": [
+    33.6,
+    44.02
+   ],
+   "height_m": 38.59,
+   "bounds_lod0": [
+    -16.2,
+    -22.09,
+    -0.3,
+    17.4,
+    21.93,
+    38.59
+   ],
+   "tris": [
+    13529,
+    6120,
+    2607,
+    172
+   ],
+   "lod_ratio": [
+    1.0,
+    0.452,
+    0.193,
+    0.013
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Roof",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Roof_D",
+    "T_Age3_Roof_N",
+    "T_Age3_Roof_ORM",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_CivicDome_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -16.2,
+      -22.09,
+      -0.3,
+      17.4,
+      21.93,
+      38.59
+     ],
+     "boundary_edges": 7507,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -15.0,
+      -19.25,
+      -0.3,
+      15.0,
+      19.25,
+      30.0
+     ],
+     "boundary_edges": 126,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.002,
+      0.998
+     ]
+    }
+   },
+   "footprint_design_m": [
+    30.0,
+    38.5
+   ],
+   "eave": 14.5,
+   "ridge": 38.59
+  },
+  "SM_Age3_CivicDome_Ruin": {
+   "asset": "CivicDome",
+   "family": "Age3",
+   "state": "Ruin",
+   "kind": "civic",
+   "description": "Domed civic temple: portico and pediment, aisles, drum, ribbed lead dome, lantern",
+   "footprint_m": [
+    33.91,
+    44.67
+   ],
+   "height_m": 12.92,
+   "bounds_lod0": [
+    -16.2,
+    -22.09,
+    -0.3,
+    17.71,
+    22.58,
+    12.92
+   ],
+   "tris": [
+    3573,
+    1940,
+    878,
+    222
+   ],
+   "lod_ratio": [
+    1.0,
+    0.543,
+    0.246,
+    0.062
+   ],
+   "lod_screen_size": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": [
+    "Structure",
+    "Detail"
+   ],
+   "material_names": [
+    "M_Age3_Structure",
+    "M_Age3_Detail"
+   ],
+   "textures": [
+    "T_Age3_Structure_D",
+    "T_Age3_Structure_N",
+    "T_Age3_Structure_ORM",
+    "T_Age3_Structure_M",
+    "T_Age3_Detail_D",
+    "T_Age3_Detail_N",
+    "T_Age3_Detail_ORM",
+    "T_Age3_Detail_M"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Base",
+    "CultureA",
+    "CultureB",
+    "CultureC"
+   ],
+   "roof_band_swappable": false,
+   "fbx": "art/age3/export/SM_Age3_CivicDome_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age3/build_age3.py",
+   "checks": {
+    "lod0": {
+     "bounds": [
+      -16.2,
+      -22.09,
+      -0.3,
+      17.71,
+      22.58,
+      12.92
+     ],
+     "boundary_edges": 1509,
+     "nonmanifold_edges": 42,
+     "v_range": [
+      0.003,
+      0.998
+     ]
+    },
+    "lod3": {
+     "bounds": [
+      -15.0,
+      -19.25,
+      -0.3,
+      15.0,
+      19.25,
+      12.83
+     ],
+     "boundary_edges": 8,
+     "nonmanifold_edges": 0,
+     "v_range": [
+      0.252,
+      0.997
+     ]
+    }
+   },
+   "footprint_design_m": [
+    30.0,
+    38.5
+   ],
+   "eave": 14.5,
+   "ridge": 22.91
+  }
+ },
+ "mapping_hint": {
+  "Townhouse": "EDmTownMesh::Townhouse variants (Age 3): A, B, C, D",
+  "Warehouse": "EDmTownMesh::Warehouse variant 0 (Age 3): A, B",
+  "Pier": "EDmTownMesh::Pier variant 0 (deck at Z=0 here, pivot at the centre, not the shore end)",
+  "Quay": "port frontage segments (no stand-in id yet)",
+  "PortCrane": "EDmTownMesh::Crane (Age 3)",
+  "Lighthouse": "EDmTownMesh::Lighthouse (Age 3)",
+  "CivicDome": "EDmTownMesh::TempleClassic variant 1 (Age 3 domed temple)"
+ }
+}

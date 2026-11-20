@@ -1,0 +1,33 @@
+{
+ "source": "flow/stone-a.jpg",
+ "name": "StoneA",
+ "kind": "stone",
+ "tile_m": 1.4,
+ "seam_before": {
+  "x_wrap": 1.57,
+  "x_worst": 1.57,
+  "y_wrap": 1.58,
+  "y_worst": 1.58
+ },
+ "light_repeat_before": 0.034,
+ "overlap_px": [
+  327,
+  327
+ ],
+ "cut_cost": [
+  1.156,
+  1.971
+ ],
+ "albedo_mean": "#886d50",
+ "albedo_target": "#8a6c4c",
+ "seam_after": {
+  "x_wrap": 0.82,
+  "x_worst": 1.33,
+  "y_wrap": 1.09,
+  "y_worst": 1.3
+ },
+ "light_repeat_after": 0.0139,
+ "rough_mean": 0.829,
+ "ao_mean": 0.89,
+ "seconds": 41.9
+}

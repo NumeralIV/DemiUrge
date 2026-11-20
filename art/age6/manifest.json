@@ -1,0 +1,6053 @@
+{
+ "family": "Age6",
+ "generated": "2026-11-19T19:03:39",
+ "units": "1 Blender unit = 1 m; Z up; front faces -Y; pivot at footprint centre, ground Z = 0; plinth to Z = -0.3",
+ "fbx": "one file per mesh: an LodGroup empty <mesh> (fbx_type = LodGroup) with children <mesh>_LOD0..LOD3 (triangulated, smoothing groups, tangents, vertex colour Col); import with Import Mesh LODs",
+ "materials": {
+  "M_Age6_Facade": {
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_Facade_M"
+   ],
+   "tile_m": 7.2,
+   "culture_tinted": true
+  },
+  "M_Age6_GreenRoof": {
+   "textures": [
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "tile_m": 8.0,
+   "culture_tinted": true
+  },
+  "M_Age6_Tech": {
+   "textures": [
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM",
+    "T_Age6_Tech_M"
+   ],
+   "tile_m": null,
+   "culture_tinted": true
+  },
+  "M_Age6_Concrete": {
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM"
+   ],
+   "tile_m": 16.0,
+   "culture_tinted": false
+  },
+  "M_Age6_Hull": {
+   "textures": [
+    "T_Age6_Hull_D",
+    "T_Age6_Hull_N",
+    "T_Age6_Hull_ORM"
+   ],
+   "tile_m": 6.0,
+   "culture_tinted": false
+  },
+  "M_Age6_Cladding": {
+   "textures": [
+    "T_Age6_Cladding_D",
+    "T_Age6_Cladding_N",
+    "T_Age6_Cladding_ORM"
+   ],
+   "tile_m": 12.0,
+   "culture_tinted": false
+  },
+  "M_Age6_RoofMetal": {
+   "textures": [
+    "T_Age6_Cladding_D",
+    "T_Age6_Cladding_N",
+    "T_Age6_Cladding_ORM"
+   ],
+   "tile_m": 12.0,
+   "culture_tinted": false
+  }
+ },
+ "material_notes": {
+  "M channel": "R emissive (lit windows / lamps at night), G culture tint mask, B accent (pale gold) mask",
+  "ORM": "R ambient occlusion, G roughness, B metallic (linear)",
+  "N": "tangent space, OpenGL (+Y); flip green on UE import",
+  "UVs": "tiling world-scale UVs (not 0..1; nothing is baked) except the Tech atlas, which is region-mapped",
+  "M_Age6_RoofMetal": "same textures as M_Age6_Cladding, albedo x0.62"
+ },
+ "culture_instances": {
+  "Default": {
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "accent": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "roof": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "note": "white and warm-cream facades, pale gold, blue solar glass (concept age-6-space)"
+  },
+  "CliffTerrace": {
+   "tint": [
+    1.0,
+    0.76,
+    0.6
+   ],
+   "accent": [
+    1.15,
+    0.7,
+    0.45
+   ],
+   "roof": [
+    1.12,
+    0.98,
+    0.78
+   ],
+   "note": "rose-ochre plaster tone, copper accents, drier planting (culture A)"
+  },
+  "LagoonWeaver": {
+   "tint": [
+    0.82,
+    0.95,
+    1.0
+   ],
+   "accent": [
+    1.25,
+    0.8,
+    0.25
+   ],
+   "roof": [
+    0.8,
+    1.08,
+    1.02
+   ],
+   "note": "silver-white with saffron accents, lush aqua-green planting (culture B)"
+  },
+  "RingBuilder": {
+   "tint": [
+    0.74,
+    0.78,
+    0.86
+   ],
+   "accent": [
+    0.7,
+    0.78,
+    1.0
+   ],
+   "roof": [
+    0.92,
+    0.85,
+    1.0
+   ],
+   "note": "cool pale stone, slate-blue silver accents, heather-toned planting (culture C)"
+  }
+ },
+ "launch_site_layout": {
+  "note": "suggested placement relative to the LaunchPad pivot (metres, yaw degrees); the rocket stands on the pad socket rocket_mount",
+  "SM_Age6_Rocket_Intact": [
+   0,
+   0,
+   9.0,
+   0
+  ],
+  "SM_Age6_AssemblyHall": [
+   -3.0,
+   -294.1,
+   0,
+   180
+  ],
+  "SM_Age6_ControlBunker": [
+   150,
+   -60,
+   0,
+   200
+  ],
+  "SM_Age6_Crawlerway_Intact": "chain 3 segments along -Y from the pad socket crawlerway, rotated 90"
+ },
+ "meshes": {
+  "SM_Age6_ArcologyTower_A_Construction": {
+   "asset": "SM_Age6_ArcologyTower_A",
+   "state": "Construction",
+   "sim_mapping": "Tower v0 (Age 6, tier 3+)",
+   "footprint_m": [
+    32,
+    28
+   ],
+   "height_m": 89.42,
+   "bounds_m": {
+    "x": [
+     -25.21,
+     26.4
+    ],
+    "y": [
+     -16.09,
+     21.89
+    ],
+    "z": [
+     -0.3,
+     89.42
+    ]
+   },
+   "triangles_per_lod": [
+    1544,
+    615,
+    167,
+    104
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_A_Intact",
+    "SM_Age6_ArcologyTower_A_Construction",
+    "SM_Age6_ArcologyTower_A_Damaged",
+    "SM_Age6_ArcologyTower_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     119.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 27754.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_A_Damaged": {
+   "asset": "SM_Age6_ArcologyTower_A",
+   "state": "Damaged",
+   "sim_mapping": "Tower v0 (Age 6, tier 3+)",
+   "footprint_m": [
+    32,
+    28
+   ],
+   "height_m": 96.01,
+   "bounds_m": {
+    "x": [
+     -24.32,
+     16.99
+    ],
+    "y": [
+     -25.85,
+     15.02
+    ],
+    "z": [
+     -0.3,
+     96.01
+    ]
+   },
+   "triangles_per_lod": [
+    6200,
+    1732,
+    520,
+    104
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_A_Intact",
+    "SM_Age6_ArcologyTower_A_Construction",
+    "SM_Age6_ArcologyTower_A_Damaged",
+    "SM_Age6_ArcologyTower_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     119.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 36803.5,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_A_Intact": {
+   "asset": "SM_Age6_ArcologyTower_A",
+   "state": "Intact",
+   "sim_mapping": "Tower v0 (Age 6, tier 3+)",
+   "footprint_m": [
+    32,
+    28
+   ],
+   "height_m": 136.2,
+   "bounds_m": {
+    "x": [
+     -17.24,
+     16.99
+    ],
+    "y": [
+     -14.68,
+     15.02
+    ],
+    "z": [
+     -0.3,
+     136.2
+    ]
+   },
+   "triangles_per_lod": [
+    8656,
+    2160,
+    636,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_A_Intact",
+    "SM_Age6_ArcologyTower_A_Construction",
+    "SM_Age6_ArcologyTower_A_Damaged",
+    "SM_Age6_ArcologyTower_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     119.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 47006.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_A_Ruin": {
+   "asset": "SM_Age6_ArcologyTower_A",
+   "state": "Ruin",
+   "sim_mapping": "Tower v0 (Age 6, tier 3+)",
+   "footprint_m": [
+    32,
+    28
+   ],
+   "height_m": 39.7,
+   "bounds_m": {
+    "x": [
+     -19.55,
+     19.52
+    ],
+    "y": [
+     -17.1,
+     18.01
+    ],
+    "z": [
+     -0.3,
+     39.7
+    ]
+   },
+   "triangles_per_lod": [
+    4028,
+    1424,
+    482,
+    168
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_A_Intact",
+    "SM_Age6_ArcologyTower_A_Construction",
+    "SM_Age6_ArcologyTower_A_Damaged",
+    "SM_Age6_ArcologyTower_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     119.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 18328.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_B_Construction": {
+   "asset": "SM_Age6_ArcologyTower_B",
+   "state": "Construction",
+   "sim_mapping": "Tower v1",
+   "footprint_m": [
+    38,
+    32
+   ],
+   "height_m": 82.22,
+   "bounds_m": {
+    "x": [
+     -19.0,
+     30.89
+    ],
+    "y": [
+     -21.4,
+     24.35
+    ],
+    "z": [
+     -0.3,
+     82.22
+    ]
+   },
+   "triangles_per_lod": [
+    1564,
+    624,
+    173,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_B_Intact",
+    "SM_Age6_ArcologyTower_B_Construction",
+    "SM_Age6_ArcologyTower_B_Damaged",
+    "SM_Age6_ArcologyTower_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     108.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 53748.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_B_Damaged": {
+   "asset": "SM_Age6_ArcologyTower_B",
+   "state": "Damaged",
+   "sim_mapping": "Tower v1",
+   "footprint_m": [
+    38,
+    32
+   ],
+   "height_m": 88.23,
+   "bounds_m": {
+    "x": [
+     -34.21,
+     19.84
+    ],
+    "y": [
+     -16.63,
+     28.31
+    ],
+    "z": [
+     -0.3,
+     88.23
+    ]
+   },
+   "triangles_per_lod": [
+    4800,
+    1656,
+    440,
+    124
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_B_Intact",
+    "SM_Age6_ArcologyTower_B_Construction",
+    "SM_Age6_ArcologyTower_B_Damaged",
+    "SM_Age6_ArcologyTower_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     108.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 63365.5,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_B_Intact": {
+   "asset": "SM_Age6_ArcologyTower_B",
+   "state": "Intact",
+   "sim_mapping": "Tower v1",
+   "footprint_m": [
+    38,
+    32
+   ],
+   "height_m": 124.2,
+   "bounds_m": {
+    "x": [
+     -20.01,
+     19.84
+    ],
+    "y": [
+     -16.94,
+     17.57
+    ],
+    "z": [
+     -0.3,
+     124.2
+    ]
+   },
+   "triangles_per_lod": [
+    6764,
+    2276,
+    580,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_B_Intact",
+    "SM_Age6_ArcologyTower_B_Construction",
+    "SM_Age6_ArcologyTower_B_Damaged",
+    "SM_Age6_ArcologyTower_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     108.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 69956.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_B_Ruin": {
+   "asset": "SM_Age6_ArcologyTower_B",
+   "state": "Ruin",
+   "sim_mapping": "Tower v1",
+   "footprint_m": [
+    38,
+    32
+   ],
+   "height_m": 37.8,
+   "bounds_m": {
+    "x": [
+     -24.01,
+     24.43
+    ],
+    "y": [
+     -19.92,
+     21.64
+    ],
+    "z": [
+     -0.3,
+     37.8
+    ]
+   },
+   "triangles_per_lod": [
+    2804,
+    1212,
+    336,
+    112
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_B_Intact",
+    "SM_Age6_ArcologyTower_B_Construction",
+    "SM_Age6_ArcologyTower_B_Damaged",
+    "SM_Age6_ArcologyTower_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     108.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 36114.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_C_Construction": {
+   "asset": "SM_Age6_ArcologyTower_C",
+   "state": "Construction",
+   "sim_mapping": "Tower v2 (round)",
+   "footprint_m": [
+    28.8,
+    28.8
+   ],
+   "height_m": 111.02,
+   "bounds_m": {
+    "x": [
+     -25.55,
+     27.79
+    ],
+    "y": [
+     -26.75,
+     23.49
+    ],
+    "z": [
+     -0.3,
+     111.02
+    ]
+   },
+   "triangles_per_lod": [
+    1636,
+    645,
+    178,
+    100
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_C_Intact",
+    "SM_Age6_ArcologyTower_C_Construction",
+    "SM_Age6_ArcologyTower_C_Damaged",
+    "SM_Age6_ArcologyTower_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     155.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 33860.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_C_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_C_Damaged": {
+   "asset": "SM_Age6_ArcologyTower_C",
+   "state": "Damaged",
+   "sim_mapping": "Tower v2 (round)",
+   "footprint_m": [
+    28.8,
+    28.8
+   ],
+   "height_m": 123.66,
+   "bounds_m": {
+    "x": [
+     -22.87,
+     14.4
+    ],
+    "y": [
+     -14.4,
+     27.67
+    ],
+    "z": [
+     -0.3,
+     123.66
+    ]
+   },
+   "triangles_per_lod": [
+    4192,
+    1556,
+    576,
+    100
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_C_Intact",
+    "SM_Age6_ArcologyTower_C_Construction",
+    "SM_Age6_ArcologyTower_C_Damaged",
+    "SM_Age6_ArcologyTower_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     155.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 44744.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_C_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_C_Intact": {
+   "asset": "SM_Age6_ArcologyTower_C",
+   "state": "Intact",
+   "sim_mapping": "Tower v2 (round)",
+   "footprint_m": [
+    28.8,
+    28.8
+   ],
+   "height_m": 176.2,
+   "bounds_m": {
+    "x": [
+     -14.4,
+     14.4
+    ],
+    "y": [
+     -14.66,
+     14.6
+    ],
+    "z": [
+     -0.3,
+     176.2
+    ]
+   },
+   "triangles_per_lod": [
+    5236,
+    1852,
+    600,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_C_Intact",
+    "SM_Age6_ArcologyTower_C_Construction",
+    "SM_Age6_ArcologyTower_C_Damaged",
+    "SM_Age6_ArcologyTower_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     155.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 59372.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_C_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_C_Ruin": {
+   "asset": "SM_Age6_ArcologyTower_C",
+   "state": "Ruin",
+   "sim_mapping": "Tower v2 (round)",
+   "footprint_m": [
+    28.8,
+    28.8
+   ],
+   "height_m": 49.64,
+   "bounds_m": {
+    "x": [
+     -17.14,
+     17.31
+    ],
+    "y": [
+     -19.98,
+     17.99
+    ],
+    "z": [
+     -0.3,
+     49.64
+    ]
+   },
+   "triangles_per_lod": [
+    2692,
+    1120,
+    322,
+    106
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_C_Intact",
+    "SM_Age6_ArcologyTower_C_Construction",
+    "SM_Age6_ArcologyTower_C_Damaged",
+    "SM_Age6_ArcologyTower_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     155.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 18834.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_C_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_D_Construction": {
+   "asset": "SM_Age6_ArcologyTower_D",
+   "state": "Construction",
+   "sim_mapping": "Tower v3",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 75.02,
+   "bounds_m": {
+    "x": [
+     -28.98,
+     29.57
+    ],
+    "y": [
+     -29.2,
+     24.59
+    ],
+    "z": [
+     -0.3,
+     75.02
+    ]
+   },
+   "triangles_per_lod": [
+    1852,
+    740,
+    206,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_D_Intact",
+    "SM_Age6_ArcologyTower_D_Construction",
+    "SM_Age6_ArcologyTower_D_Damaged",
+    "SM_Age6_ArcologyTower_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     10.0,
+     93.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 41764.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_D_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_D_Damaged": {
+   "asset": "SM_Age6_ArcologyTower_D",
+   "state": "Damaged",
+   "sim_mapping": "Tower v3",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 80.63,
+   "bounds_m": {
+    "x": [
+     -40.67,
+     25.23
+    ],
+    "y": [
+     -21.04,
+     28.06
+    ],
+    "z": [
+     -0.3,
+     80.63
+    ]
+   },
+   "triangles_per_lod": [
+    4172,
+    1788,
+    572,
+    156
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_D_Intact",
+    "SM_Age6_ArcologyTower_D_Construction",
+    "SM_Age6_ArcologyTower_D_Damaged",
+    "SM_Age6_ArcologyTower_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     10.0,
+     93.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 55776.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_D_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_D_Intact": {
+   "asset": "SM_Age6_ArcologyTower_D",
+   "state": "Intact",
+   "sim_mapping": "Tower v3",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 103.2,
+   "bounds_m": {
+    "x": [
+     -24.9,
+     25.36
+    ],
+    "y": [
+     -21.16,
+     20.87
+    ],
+    "z": [
+     -0.3,
+     103.2
+    ]
+   },
+   "triangles_per_lod": [
+    6568,
+    2404,
+    576,
+    84
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_D_Intact",
+    "SM_Age6_ArcologyTower_D_Construction",
+    "SM_Age6_ArcologyTower_D_Damaged",
+    "SM_Age6_ArcologyTower_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     10.0,
+     93.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 66140.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_D_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_D_Ruin": {
+   "asset": "SM_Age6_ArcologyTower_D",
+   "state": "Ruin",
+   "sim_mapping": "Tower v3",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 34.3,
+   "bounds_m": {
+    "x": [
+     -27.9,
+     29.8
+    ],
+    "y": [
+     -25.9,
+     26.73
+    ],
+    "z": [
+     -0.3,
+     34.3
+    ]
+   },
+   "triangles_per_lod": [
+    2756,
+    1104,
+    330,
+    110
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_D_Intact",
+    "SM_Age6_ArcologyTower_D_Construction",
+    "SM_Age6_ArcologyTower_D_Damaged",
+    "SM_Age6_ArcologyTower_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     10.0,
+     93.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 28489.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_D_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_E_Construction": {
+   "asset": "SM_Age6_ArcologyTower_E",
+   "state": "Construction",
+   "sim_mapping": "Tower v4 (hero, capital core)",
+   "footprint_m": [
+    48,
+    44
+   ],
+   "height_m": 103.82,
+   "bounds_m": {
+    "x": [
+     -27.83,
+     26.1
+    ],
+    "y": [
+     -28.24,
+     29.61
+    ],
+    "z": [
+     -0.3,
+     103.82
+    ]
+   },
+   "triangles_per_lod": [
+    4888,
+    1954,
+    496,
+    176
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_E_Intact",
+    "SM_Age6_ArcologyTower_E_Construction",
+    "SM_Age6_ArcologyTower_E_Damaged",
+    "SM_Age6_ArcologyTower_E_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     173.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 65263.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_E_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_E_Damaged": {
+   "asset": "SM_Age6_ArcologyTower_E",
+   "state": "Damaged",
+   "sim_mapping": "Tower v4 (hero, capital core)",
+   "footprint_m": [
+    48,
+    44
+   ],
+   "height_m": 136.33,
+   "bounds_m": {
+    "x": [
+     -38.42,
+     25.2
+    ],
+    "y": [
+     -23.49,
+     35.63
+    ],
+    "z": [
+     -0.3,
+     136.33
+    ]
+   },
+   "triangles_per_lod": [
+    14676,
+    5192,
+    1164,
+    188
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_E_Intact",
+    "SM_Age6_ArcologyTower_E_Construction",
+    "SM_Age6_ArcologyTower_E_Damaged",
+    "SM_Age6_ArcologyTower_E_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     173.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 83070.3,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_E_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_E_Intact": {
+   "asset": "SM_Age6_ArcologyTower_E",
+   "state": "Intact",
+   "sim_mapping": "Tower v4 (hero, capital core)",
+   "footprint_m": [
+    48,
+    44
+   ],
+   "height_m": 191.4,
+   "bounds_m": {
+    "x": [
+     -25.0,
+     25.26
+    ],
+    "y": [
+     -23.49,
+     23.49
+    ],
+    "z": [
+     -0.3,
+     191.4
+    ]
+   },
+   "triangles_per_lod": [
+    18990,
+    6546,
+    1642,
+    190
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_E_Intact",
+    "SM_Age6_ArcologyTower_E_Construction",
+    "SM_Age6_ArcologyTower_E_Damaged",
+    "SM_Age6_ArcologyTower_E_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     173.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 97105.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_E_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ArcologyTower_E_Ruin": {
+   "asset": "SM_Age6_ArcologyTower_E",
+   "state": "Ruin",
+   "sim_mapping": "Tower v4 (hero, capital core)",
+   "footprint_m": [
+    48,
+    44
+   ],
+   "height_m": 55.33,
+   "bounds_m": {
+    "x": [
+     -30.53,
+     30.94
+    ],
+    "y": [
+     -28.05,
+     28.04
+    ],
+    "z": [
+     -0.3,
+     55.33
+    ]
+   },
+   "triangles_per_lod": [
+    9872,
+    2684,
+    628,
+    232
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ArcologyTower_E_Intact",
+    "SM_Age6_ArcologyTower_E_Construction",
+    "SM_Age6_ArcologyTower_E_Damaged",
+    "SM_Age6_ArcologyTower_E_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "crown": [
+     0.0,
+     0.0,
+     173.6
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 58772.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ArcologyTower_E_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_AssemblyHall_Construction": {
+   "asset": "SM_Age6_AssemblyHall",
+   "state": "Construction",
+   "sim_mapping": "b.launch: assembly hall",
+   "footprint_m": [
+    222.0,
+    106.0
+   ],
+   "height_m": 57.02,
+   "bounds_m": {
+    "x": [
+     -111.0,
+     136.4
+    ],
+    "y": [
+     -56.07,
+     66.01
+    ],
+    "z": [
+     -0.3,
+     57.02
+    ]
+   },
+   "triangles_per_lod": [
+    2420,
+    966,
+    248,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Cladding",
+    "Roof": "M_Age6_RoofMetal",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Cladding_D",
+    "T_Age6_Cladding_N",
+    "T_Age6_Cladding_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_AssemblyHall_Intact",
+    "SM_Age6_AssemblyHall_Construction",
+    "SM_Age6_AssemblyHall_Damaged",
+    "SM_Age6_AssemblyHall_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "doors": [
+     -3.0,
+     -52.1,
+     0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 631436.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_AssemblyHall_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_AssemblyHall_Damaged": {
+   "asset": "SM_Age6_AssemblyHall",
+   "state": "Damaged",
+   "sim_mapping": "b.launch: assembly hall",
+   "footprint_m": [
+    222.0,
+    106.0
+   ],
+   "height_m": 64.4,
+   "bounds_m": {
+    "x": [
+     -111.0,
+     186.81
+    ],
+    "y": [
+     -79.44,
+     113.08
+    ],
+    "z": [
+     -0.3,
+     64.4
+    ]
+   },
+   "triangles_per_lod": [
+    2144,
+    848,
+    256,
+    93
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Cladding",
+    "Roof": "M_Age6_RoofMetal",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Cladding_D",
+    "T_Age6_Cladding_N",
+    "T_Age6_Cladding_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_AssemblyHall_Intact",
+    "SM_Age6_AssemblyHall_Construction",
+    "SM_Age6_AssemblyHall_Damaged",
+    "SM_Age6_AssemblyHall_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "doors": [
+     -3.0,
+     -52.1,
+     0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 819887.6,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_AssemblyHall_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_AssemblyHall_Intact": {
+   "asset": "SM_Age6_AssemblyHall",
+   "state": "Intact",
+   "sim_mapping": "b.launch: assembly hall",
+   "footprint_m": [
+    222.0,
+    106.0
+   ],
+   "height_m": 65.0,
+   "bounds_m": {
+    "x": [
+     -111.0,
+     111.0
+    ],
+    "y": [
+     -52.9,
+     52.9
+    ],
+    "z": [
+     -0.3,
+     65.0
+    ]
+   },
+   "triangles_per_lod": [
+    1060,
+    415,
+    126,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Cladding",
+    "Roof": "M_Age6_RoofMetal",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Cladding_D",
+    "T_Age6_Cladding_N",
+    "T_Age6_Cladding_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_AssemblyHall_Intact",
+    "SM_Age6_AssemblyHall_Construction",
+    "SM_Age6_AssemblyHall_Damaged",
+    "SM_Age6_AssemblyHall_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "doors": [
+     -3.0,
+     -52.1,
+     0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 1112505.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_AssemblyHall_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_AssemblyHall_Ruin": {
+   "asset": "SM_Age6_AssemblyHall",
+   "state": "Ruin",
+   "sim_mapping": "b.launch: assembly hall",
+   "footprint_m": [
+    222.0,
+    106.0
+   ],
+   "height_m": 39.53,
+   "bounds_m": {
+    "x": [
+     -121.18,
+     127.21
+    ],
+    "y": [
+     -60.41,
+     64.54
+    ],
+    "z": [
+     -0.3,
+     39.53
+    ]
+   },
+   "triangles_per_lod": [
+    2212,
+    884,
+    262,
+    93
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Cladding",
+    "Roof": "M_Age6_RoofMetal",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Cladding_D",
+    "T_Age6_Cladding_N",
+    "T_Age6_Cladding_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_AssemblyHall_Intact",
+    "SM_Age6_AssemblyHall_Construction",
+    "SM_Age6_AssemblyHall_Damaged",
+    "SM_Age6_AssemblyHall_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "doors": [
+     -3.0,
+     -52.1,
+     0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 259423.0,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_AssemblyHall_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ControlBunker_Construction": {
+   "asset": "SM_Age6_ControlBunker",
+   "state": "Construction",
+   "sim_mapping": "b.launch: control bunker",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 31.82,
+   "bounds_m": {
+    "x": [
+     -36.24,
+     41.46
+    ],
+    "y": [
+     -28.52,
+     30.49
+    ],
+    "z": [
+     -0.3,
+     31.82
+    ]
+   },
+   "triangles_per_lod": [
+    916,
+    366,
+    85,
+    84
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ControlBunker_Intact",
+    "SM_Age6_ControlBunker_Construction",
+    "SM_Age6_ControlBunker_Damaged",
+    "SM_Age6_ControlBunker_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 10863.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ControlBunker_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ControlBunker_Damaged": {
+   "asset": "SM_Age6_ControlBunker",
+   "state": "Damaged",
+   "sim_mapping": "b.launch: control bunker",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 16.2,
+   "bounds_m": {
+    "x": [
+     -24.0,
+     31.19
+    ],
+    "y": [
+     -43.13,
+     20.56
+    ],
+    "z": [
+     -0.3,
+     16.2
+    ]
+   },
+   "triangles_per_lod": [
+    1428,
+    570,
+    170,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ControlBunker_Intact",
+    "SM_Age6_ControlBunker_Construction",
+    "SM_Age6_ControlBunker_Damaged",
+    "SM_Age6_ControlBunker_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 12958.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ControlBunker_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ControlBunker_Intact": {
+   "asset": "SM_Age6_ControlBunker",
+   "state": "Intact",
+   "sim_mapping": "b.launch: control bunker",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 30.4,
+   "bounds_m": {
+    "x": [
+     -24.0,
+     24.0
+    ],
+    "y": [
+     -24.0,
+     20.0
+    ],
+    "z": [
+     -0.3,
+     30.4
+    ]
+   },
+   "triangles_per_lod": [
+    330,
+    129,
+    96,
+    56
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_ControlBunker_Intact",
+    "SM_Age6_ControlBunker_Construction",
+    "SM_Age6_ControlBunker_Damaged",
+    "SM_Age6_ControlBunker_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 13147.3,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ControlBunker_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_ControlBunker_Ruin": {
+   "asset": "SM_Age6_ControlBunker",
+   "state": "Ruin",
+   "sim_mapping": "b.launch: control bunker",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 9.76,
+   "bounds_m": {
+    "x": [
+     -28.43,
+     29.88
+    ],
+    "y": [
+     -25.73,
+     22.64
+    ],
+    "z": [
+     -0.3,
+     9.76
+    ]
+   },
+   "triangles_per_lod": [
+    1944,
+    872,
+    231,
+    95
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_ControlBunker_Intact",
+    "SM_Age6_ControlBunker_Construction",
+    "SM_Age6_ControlBunker_Damaged",
+    "SM_Age6_ControlBunker_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 7648.6,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_ControlBunker_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_Crawlerway_Intact": {
+   "asset": "SM_Age6_Crawlerway",
+   "state": "Intact",
+   "sim_mapping": "b.launch: crawler road, 60 m",
+   "footprint_m": [
+    60,
+    33
+   ],
+   "height_m": 0.3,
+   "bounds_m": {
+    "x": [
+     -30.0,
+     30.0
+    ],
+    "y": [
+     -16.5,
+     16.5
+    ],
+    "z": [
+     -0.3,
+     0.3
+    ]
+   },
+   "triangles_per_lod": [
+    156,
+    84,
+    36,
+    36
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM"
+   ],
+   "states": [
+    "SM_Age6_Crawlerway_Intact"
+   ],
+   "culture_variants": [
+    "Default"
+   ],
+   "sockets": {
+    "start": [
+     -30.0,
+     0.0,
+     0.3,
+     180.0
+    ],
+    "end": [
+     30.0,
+     0.0,
+     0.3,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 1107.0,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_Crawlerway_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_A_Construction": {
+   "asset": "SM_Age6_GreenBlock_A",
+   "state": "Construction",
+   "sim_mapping": "Apartment v0 (Age 6)",
+   "footprint_m": [
+    44,
+    28
+   ],
+   "height_m": 35.42,
+   "bounds_m": {
+    "x": [
+     -31.26,
+     38.55
+    ],
+    "y": [
+     -21.23,
+     24.16
+    ],
+    "z": [
+     -0.3,
+     35.42
+    ]
+   },
+   "triangles_per_lod": [
+    2064,
+    824,
+    246,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_A_Intact",
+    "SM_Age6_GreenBlock_A_Construction",
+    "SM_Age6_GreenBlock_A_Damaged",
+    "SM_Age6_GreenBlock_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 9298.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_A_Damaged": {
+   "asset": "SM_Age6_GreenBlock_A",
+   "state": "Damaged",
+   "sim_mapping": "Apartment v0 (Age 6)",
+   "footprint_m": [
+    44,
+    28
+   ],
+   "height_m": 18.94,
+   "bounds_m": {
+    "x": [
+     -23.23,
+     23.13
+    ],
+    "y": [
+     -15.01,
+     37.08
+    ],
+    "z": [
+     -0.3,
+     18.94
+    ]
+   },
+   "triangles_per_lod": [
+    6648,
+    2532,
+    680,
+    160
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_A_Intact",
+    "SM_Age6_GreenBlock_A_Construction",
+    "SM_Age6_GreenBlock_A_Damaged",
+    "SM_Age6_GreenBlock_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 11811.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_A_Intact": {
+   "asset": "SM_Age6_GreenBlock_A",
+   "state": "Intact",
+   "sim_mapping": "Apartment v0 (Age 6)",
+   "footprint_m": [
+    44,
+    28
+   ],
+   "height_m": 21.5,
+   "bounds_m": {
+    "x": [
+     -23.23,
+     23.13
+    ],
+    "y": [
+     -15.01,
+     14.7
+    ],
+    "z": [
+     -0.3,
+     21.5
+    ]
+   },
+   "triangles_per_lod": [
+    8248,
+    2648,
+    664,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_A_Intact",
+    "SM_Age6_GreenBlock_A_Construction",
+    "SM_Age6_GreenBlock_A_Damaged",
+    "SM_Age6_GreenBlock_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 12309.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_A_Ruin": {
+   "asset": "SM_Age6_GreenBlock_A",
+   "state": "Ruin",
+   "sim_mapping": "Apartment v0 (Age 6)",
+   "footprint_m": [
+    44,
+    28
+   ],
+   "height_m": 9.88,
+   "bounds_m": {
+    "x": [
+     -27.85,
+     28.88
+    ],
+    "y": [
+     -18.46,
+     18.51
+    ],
+    "z": [
+     -0.3,
+     9.88
+    ]
+   },
+   "triangles_per_lod": [
+    2572,
+    900,
+    308,
+    102
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_A_Intact",
+    "SM_Age6_GreenBlock_A_Construction",
+    "SM_Age6_GreenBlock_A_Damaged",
+    "SM_Age6_GreenBlock_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 6384.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_B_Construction": {
+   "asset": "SM_Age6_GreenBlock_B",
+   "state": "Construction",
+   "sim_mapping": "Apartment v1 (Age 6, street front)",
+   "footprint_m": [
+    40,
+    30
+   ],
+   "height_m": 39.02,
+   "bounds_m": {
+    "x": [
+     -22.01,
+     35.63
+    ],
+    "y": [
+     -21.25,
+     24.82
+    ],
+    "z": [
+     -0.3,
+     39.02
+    ]
+   },
+   "triangles_per_lod": [
+    1680,
+    672,
+    182,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_B_Intact",
+    "SM_Age6_GreenBlock_B_Construction",
+    "SM_Age6_GreenBlock_B_Damaged",
+    "SM_Age6_GreenBlock_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 14218.3,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_B_Damaged": {
+   "asset": "SM_Age6_GreenBlock_B",
+   "state": "Damaged",
+   "sim_mapping": "Apartment v1 (Age 6, street front)",
+   "footprint_m": [
+    40,
+    30
+   ],
+   "height_m": 24.36,
+   "bounds_m": {
+    "x": [
+     -32.3,
+     20.6
+    ],
+    "y": [
+     -30.5,
+     16.04
+    ],
+    "z": [
+     -0.3,
+     24.36
+    ]
+   },
+   "triangles_per_lod": [
+    4172,
+    1668,
+    500,
+    180
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_B_Intact",
+    "SM_Age6_GreenBlock_B_Construction",
+    "SM_Age6_GreenBlock_B_Damaged",
+    "SM_Age6_GreenBlock_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 16566.0,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_B_Intact": {
+   "asset": "SM_Age6_GreenBlock_B",
+   "state": "Intact",
+   "sim_mapping": "Apartment v1 (Age 6, street front)",
+   "footprint_m": [
+    40,
+    30
+   ],
+   "height_m": 24.89,
+   "bounds_m": {
+    "x": [
+     -20.72,
+     21.04
+    ],
+    "y": [
+     -16.06,
+     16.04
+    ],
+    "z": [
+     -0.3,
+     24.89
+    ]
+   },
+   "triangles_per_lod": [
+    6868,
+    2084,
+    608,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_B_Intact",
+    "SM_Age6_GreenBlock_B_Construction",
+    "SM_Age6_GreenBlock_B_Damaged",
+    "SM_Age6_GreenBlock_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 18182.2,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_B_Ruin": {
+   "asset": "SM_Age6_GreenBlock_B",
+   "state": "Ruin",
+   "sim_mapping": "Apartment v1 (Age 6, street front)",
+   "footprint_m": [
+    40,
+    30
+   ],
+   "height_m": 13.0,
+   "bounds_m": {
+    "x": [
+     -26.03,
+     24.39
+    ],
+    "y": [
+     -19.52,
+     20.2
+    ],
+    "z": [
+     -0.3,
+     13.0
+    ]
+   },
+   "triangles_per_lod": [
+    2272,
+    920,
+    272,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_B_Intact",
+    "SM_Age6_GreenBlock_B_Construction",
+    "SM_Age6_GreenBlock_B_Damaged",
+    "SM_Age6_GreenBlock_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 8247.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_C_Construction": {
+   "asset": "SM_Age6_GreenBlock_C",
+   "state": "Construction",
+   "sim_mapping": "Apartment v2 (Age 6, round)",
+   "footprint_m": [
+    32,
+    32
+   ],
+   "height_m": 39.02,
+   "bounds_m": {
+    "x": [
+     -22.1,
+     29.81
+    ],
+    "y": [
+     -17.33,
+     26.42
+    ],
+    "z": [
+     -0.3,
+     39.02
+    ]
+   },
+   "triangles_per_lod": [
+    1524,
+    608,
+    166,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_C_Intact",
+    "SM_Age6_GreenBlock_C_Construction",
+    "SM_Age6_GreenBlock_C_Damaged",
+    "SM_Age6_GreenBlock_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 10758.2,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_C_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_C_Damaged": {
+   "asset": "SM_Age6_GreenBlock_C",
+   "state": "Damaged",
+   "sim_mapping": "Apartment v2 (Age 6, round)",
+   "footprint_m": [
+    32,
+    32
+   ],
+   "height_m": 29.42,
+   "bounds_m": {
+    "x": [
+     -16.0,
+     28.17
+    ],
+    "y": [
+     -18.36,
+     16.86
+    ],
+    "z": [
+     -0.3,
+     29.42
+    ]
+   },
+   "triangles_per_lod": [
+    4108,
+    1852,
+    492,
+    160
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_C_Intact",
+    "SM_Age6_GreenBlock_C_Construction",
+    "SM_Age6_GreenBlock_C_Damaged",
+    "SM_Age6_GreenBlock_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 14722.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_C_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_C_Intact": {
+   "asset": "SM_Age6_GreenBlock_C",
+   "state": "Intact",
+   "sim_mapping": "Apartment v2 (Age 6, round)",
+   "footprint_m": [
+    32,
+    32
+   ],
+   "height_m": 36.2,
+   "bounds_m": {
+    "x": [
+     -16.35,
+     16.93
+    ],
+    "y": [
+     -16.71,
+     16.86
+    ],
+    "z": [
+     -0.3,
+     36.2
+    ]
+   },
+   "triangles_per_lod": [
+    7090,
+    2342,
+    706,
+    134
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_C_Intact",
+    "SM_Age6_GreenBlock_C_Construction",
+    "SM_Age6_GreenBlock_C_Damaged",
+    "SM_Age6_GreenBlock_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 17949.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_C_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_C_Ruin": {
+   "asset": "SM_Age6_GreenBlock_C",
+   "state": "Ruin",
+   "sim_mapping": "Apartment v2 (Age 6, round)",
+   "footprint_m": [
+    32,
+    32
+   ],
+   "height_m": 13.65,
+   "bounds_m": {
+    "x": [
+     -20.99,
+     18.9
+    ],
+    "y": [
+     -23.02,
+     20.31
+    ],
+    "z": [
+     -0.3,
+     13.65
+    ]
+   },
+   "triangles_per_lod": [
+    2488,
+    908,
+    298,
+    98
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_C_Intact",
+    "SM_Age6_GreenBlock_C_Construction",
+    "SM_Age6_GreenBlock_C_Damaged",
+    "SM_Age6_GreenBlock_C_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 8213.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_C_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_D_Construction": {
+   "asset": "SM_Age6_GreenBlock_D",
+   "state": "Construction",
+   "sim_mapping": "Apartment v3 (Age 6, courtyard)",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 39.02,
+   "bounds_m": {
+    "x": [
+     -25.33,
+     41.46
+    ],
+    "y": [
+     -29.62,
+     30.49
+    ],
+    "z": [
+     -0.3,
+     39.02
+    ]
+   },
+   "triangles_per_lod": [
+    1036,
+    414,
+    97,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_D_Intact",
+    "SM_Age6_GreenBlock_D_Construction",
+    "SM_Age6_GreenBlock_D_Damaged",
+    "SM_Age6_GreenBlock_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 20277.6,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_D_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_D_Damaged": {
+   "asset": "SM_Age6_GreenBlock_D",
+   "state": "Damaged",
+   "sim_mapping": "Apartment v3 (Age 6, courtyard)",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 23.21,
+   "bounds_m": {
+    "x": [
+     -44.06,
+     25.36
+    ],
+    "y": [
+     -36.01,
+     21.49
+    ],
+    "z": [
+     -0.3,
+     23.21
+    ]
+   },
+   "triangles_per_lod": [
+    4044,
+    1464,
+    484,
+    184
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_D_Intact",
+    "SM_Age6_GreenBlock_D_Construction",
+    "SM_Age6_GreenBlock_D_Damaged",
+    "SM_Age6_GreenBlock_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 20332.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_D_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_D_Intact": {
+   "asset": "SM_Age6_GreenBlock_D",
+   "state": "Intact",
+   "sim_mapping": "Apartment v3 (Age 6, courtyard)",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 23.21,
+   "bounds_m": {
+    "x": [
+     -25.06,
+     25.36
+    ],
+    "y": [
+     -21.53,
+     21.61
+    ],
+    "z": [
+     -0.3,
+     23.21
+    ]
+   },
+   "triangles_per_lod": [
+    7468,
+    2288,
+    648,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_D_Intact",
+    "SM_Age6_GreenBlock_D_Construction",
+    "SM_Age6_GreenBlock_D_Damaged",
+    "SM_Age6_GreenBlock_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 25400.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_D_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_GreenBlock_D_Ruin": {
+   "asset": "SM_Age6_GreenBlock_D",
+   "state": "Ruin",
+   "sim_mapping": "Apartment v3 (Age 6, courtyard)",
+   "footprint_m": [
+    48,
+    40
+   ],
+   "height_m": 15.46,
+   "bounds_m": {
+    "x": [
+     -29.71,
+     28.46
+    ],
+    "y": [
+     -25.95,
+     23.91
+    ],
+    "z": [
+     -0.3,
+     15.46
+    ]
+   },
+   "triangles_per_lod": [
+    2300,
+    960,
+    276,
+    95
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM"
+   ],
+   "states": [
+    "SM_Age6_GreenBlock_D_Intact",
+    "SM_Age6_GreenBlock_D_Construction",
+    "SM_Age6_GreenBlock_D_Damaged",
+    "SM_Age6_GreenBlock_D_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 8604.2,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_GreenBlock_D_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_LaunchPad_Construction": {
+   "asset": "SM_Age6_LaunchPad",
+   "state": "Construction",
+   "sim_mapping": "b.launch: Gantry",
+   "footprint_m": [
+    140,
+    124
+   ],
+   "height_m": 75.02,
+   "bounds_m": {
+    "x": [
+     -70.0,
+     81.17
+    ],
+    "y": [
+     -62.0,
+     62.64
+    ],
+    "z": [
+     -0.33,
+     75.02
+    ]
+   },
+   "triangles_per_lod": [
+    5660,
+    2494,
+    632,
+    221
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_LaunchPad_Intact",
+    "SM_Age6_LaunchPad_Construction",
+    "SM_Age6_LaunchPad_Damaged",
+    "SM_Age6_LaunchPad_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "rocket_mount": [
+     0.0,
+     0.0,
+     9.0
+    ],
+    "crawlerway": [
+     0.0,
+     -62.0,
+     0.4
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 43485.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_LaunchPad_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_LaunchPad_Damaged": {
+   "asset": "SM_Age6_LaunchPad",
+   "state": "Damaged",
+   "sim_mapping": "b.launch: Gantry",
+   "footprint_m": [
+    140,
+    124
+   ],
+   "height_m": 79.25,
+   "bounds_m": {
+    "x": [
+     -70.0,
+     70.0
+    ],
+    "y": [
+     -62.0,
+     62.0
+    ],
+    "z": [
+     -0.33,
+     79.25
+    ]
+   },
+   "triangles_per_lod": [
+    6692,
+    2794,
+    769,
+    264
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_LaunchPad_Intact",
+    "SM_Age6_LaunchPad_Construction",
+    "SM_Age6_LaunchPad_Damaged",
+    "SM_Age6_LaunchPad_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "rocket_mount": [
+     0.0,
+     0.0,
+     9.0
+    ],
+    "crawlerway": [
+     0.0,
+     -62.0,
+     0.4
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 43959.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_LaunchPad_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_LaunchPad_Intact": {
+   "asset": "SM_Age6_LaunchPad",
+   "state": "Intact",
+   "sim_mapping": "b.launch: Gantry",
+   "footprint_m": [
+    140,
+    124
+   ],
+   "height_m": 115.0,
+   "bounds_m": {
+    "x": [
+     -70.0,
+     70.0
+    ],
+    "y": [
+     -62.0,
+     62.0
+    ],
+    "z": [
+     -0.33,
+     115.0
+    ]
+   },
+   "triangles_per_lod": [
+    6340,
+    2554,
+    733,
+    252
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_LaunchPad_Intact",
+    "SM_Age6_LaunchPad_Construction",
+    "SM_Age6_LaunchPad_Damaged",
+    "SM_Age6_LaunchPad_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "rocket_mount": [
+     0.0,
+     0.0,
+     9.0
+    ],
+    "crawlerway": [
+     0.0,
+     -62.0,
+     0.4
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 43881.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_LaunchPad_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_LaunchPad_Ruin": {
+   "asset": "SM_Age6_LaunchPad",
+   "state": "Ruin",
+   "sim_mapping": "b.launch: Gantry",
+   "footprint_m": [
+    140,
+    124
+   ],
+   "height_m": 32.93,
+   "bounds_m": {
+    "x": [
+     -70.0,
+     70.0
+    ],
+    "y": [
+     -62.0,
+     62.0
+    ],
+    "z": [
+     -0.33,
+     32.93
+    ]
+   },
+   "triangles_per_lod": [
+    5118,
+    2336,
+    596,
+    193
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_LaunchPad_Intact",
+    "SM_Age6_LaunchPad_Construction",
+    "SM_Age6_LaunchPad_Damaged",
+    "SM_Age6_LaunchPad_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "rocket_mount": [
+     0.0,
+     0.0,
+     9.0
+    ],
+    "crawlerway": [
+     0.0,
+     -62.0,
+     0.4
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 42854.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_LaunchPad_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevStation_A_Construction": {
+   "asset": "SM_Age6_MaglevStation_A",
+   "state": "Construction",
+   "sim_mapping": "transit station (Age 6)",
+   "footprint_m": [
+    90,
+    54
+   ],
+   "height_m": 35.42,
+   "bounds_m": {
+    "x": [
+     -46.33,
+     73.07
+    ],
+    "y": [
+     -36.24,
+     40.98
+    ],
+    "z": [
+     -0.3,
+     35.42
+    ]
+   },
+   "triangles_per_lod": [
+    2656,
+    1062,
+    284,
+    87
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevStation_A_Intact",
+    "SM_Age6_MaglevStation_A_Construction",
+    "SM_Age6_MaglevStation_A_Damaged",
+    "SM_Age6_MaglevStation_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -45.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     45.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 12078.3,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevStation_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevStation_A_Damaged": {
+   "asset": "SM_Age6_MaglevStation_A",
+   "state": "Damaged",
+   "sim_mapping": "transit station (Age 6)",
+   "footprint_m": [
+    90,
+    54
+   ],
+   "height_m": 18.94,
+   "bounds_m": {
+    "x": [
+     -75.98,
+     45.0
+    ],
+    "y": [
+     -28.4,
+     68.37
+    ],
+    "z": [
+     -0.3,
+     18.94
+    ]
+   },
+   "triangles_per_lod": [
+    5132,
+    2092,
+    614,
+    202
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevStation_A_Intact",
+    "SM_Age6_MaglevStation_A_Construction",
+    "SM_Age6_MaglevStation_A_Damaged",
+    "SM_Age6_MaglevStation_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -45.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     45.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 12131.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevStation_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevStation_A_Intact": {
+   "asset": "SM_Age6_MaglevStation_A",
+   "state": "Intact",
+   "sim_mapping": "transit station (Age 6)",
+   "footprint_m": [
+    90,
+    54
+   ],
+   "height_m": 18.25,
+   "bounds_m": {
+    "x": [
+     -45.0,
+     45.0
+    ],
+    "y": [
+     -28.4,
+     28.06
+    ],
+    "z": [
+     -0.3,
+     18.25
+    ]
+   },
+   "triangles_per_lod": [
+    6392,
+    2312,
+    766,
+    254
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevStation_A_Intact",
+    "SM_Age6_MaglevStation_A_Construction",
+    "SM_Age6_MaglevStation_A_Damaged",
+    "SM_Age6_MaglevStation_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -45.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     45.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 13185.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevStation_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevStation_A_Ruin": {
+   "asset": "SM_Age6_MaglevStation_A",
+   "state": "Ruin",
+   "sim_mapping": "transit station (Age 6)",
+   "footprint_m": [
+    90,
+    54
+   ],
+   "height_m": 18.38,
+   "bounds_m": {
+    "x": [
+     -55.02,
+     52.87
+    ],
+    "y": [
+     -33.86,
+     33.79
+    ],
+    "z": [
+     -0.3,
+     18.38
+    ]
+   },
+   "triangles_per_lod": [
+    2512,
+    1002,
+    296,
+    81
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Facade",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Facade_D",
+    "T_Age6_Facade_M",
+    "T_Age6_Facade_N",
+    "T_Age6_Facade_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevStation_A_Intact",
+    "SM_Age6_MaglevStation_A_Construction",
+    "SM_Age6_MaglevStation_A_Damaged",
+    "SM_Age6_MaglevStation_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -45.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     45.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 6858.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevStation_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Curve_Construction": {
+   "asset": "SM_Age6_MaglevTrack_Curve",
+   "state": "Construction",
+   "sim_mapping": "elevated maglev guideway, 40 m arc R160",
+   "footprint_m": [
+    40,
+    10.5
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.44,
+     21.56
+    ],
+    "y": [
+     -5.0,
+     5.72
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    596,
+    238,
+    96,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Curve_Intact",
+    "SM_Age6_MaglevTrack_Curve_Construction",
+    "SM_Age6_MaglevTrack_Curve_Damaged",
+    "SM_Age6_MaglevTrack_Curve_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -19.95,
+     1.25,
+     10.0,
+     172.8380275608647
+    ],
+    "end": [
+     19.95,
+     1.25,
+     10.0,
+     7.16197243913529
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 220.5,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Curve_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Curve_Damaged": {
+   "asset": "SM_Age6_MaglevTrack_Curve",
+   "state": "Damaged",
+   "sim_mapping": "elevated maglev guideway, 40 m arc R160",
+   "footprint_m": [
+    40,
+    10.5
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.44,
+     20.44
+    ],
+    "y": [
+     -5.0,
+     9.87
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    708,
+    282,
+    96,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Curve_Intact",
+    "SM_Age6_MaglevTrack_Curve_Construction",
+    "SM_Age6_MaglevTrack_Curve_Damaged",
+    "SM_Age6_MaglevTrack_Curve_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -19.95,
+     1.25,
+     10.0,
+     172.8380275608647
+    ],
+    "end": [
+     19.95,
+     1.25,
+     10.0,
+     7.16197243913529
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 345.3,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Curve_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Curve_Intact": {
+   "asset": "SM_Age6_MaglevTrack_Curve",
+   "state": "Intact",
+   "sim_mapping": "elevated maglev guideway, 40 m arc R160",
+   "footprint_m": [
+    40,
+    10.5
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.44,
+     20.44
+    ],
+    "y": [
+     -5.0,
+     5.72
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    568,
+    226,
+    96,
+    88
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Curve_Intact",
+    "SM_Age6_MaglevTrack_Curve_Construction",
+    "SM_Age6_MaglevTrack_Curve_Damaged",
+    "SM_Age6_MaglevTrack_Curve_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -19.95,
+     1.25,
+     10.0,
+     172.8380275608647
+    ],
+    "end": [
+     19.95,
+     1.25,
+     10.0,
+     7.16197243913529
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 327.1,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Curve_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Curve_Ruin": {
+   "asset": "SM_Age6_MaglevTrack_Curve",
+   "state": "Ruin",
+   "sim_mapping": "elevated maglev guideway, 40 m arc R160",
+   "footprint_m": [
+    40,
+    10.5
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.41,
+     20.41
+    ],
+    "y": [
+     -6.81,
+     6.49
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    612,
+    244,
+    108,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Curve_Intact",
+    "SM_Age6_MaglevTrack_Curve_Construction",
+    "SM_Age6_MaglevTrack_Curve_Damaged",
+    "SM_Age6_MaglevTrack_Curve_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -19.95,
+     1.25,
+     10.0,
+     172.8380275608647
+    ],
+    "end": [
+     19.95,
+     1.25,
+     10.0,
+     7.16197243913529
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 117.7,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Curve_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Straight_Construction": {
+   "asset": "SM_Age6_MaglevTrack_Straight",
+   "state": "Construction",
+   "sim_mapping": "elevated maglev guideway, 40 m",
+   "footprint_m": [
+    40,
+    9.2
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.0,
+     21.94
+    ],
+    "y": [
+     -5.9,
+     5.36
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    276,
+    108,
+    96,
+    84
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Straight_Intact",
+    "SM_Age6_MaglevTrack_Straight_Construction",
+    "SM_Age6_MaglevTrack_Straight_Damaged",
+    "SM_Age6_MaglevTrack_Straight_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -20.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     20.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 211.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Straight_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Straight_Damaged": {
+   "asset": "SM_Age6_MaglevTrack_Straight",
+   "state": "Damaged",
+   "sim_mapping": "elevated maglev guideway, 40 m",
+   "footprint_m": [
+    40,
+    9.2
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.0,
+     20.0
+    ],
+    "y": [
+     -5.0,
+     8.71
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    476,
+    189,
+    96,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Straight_Intact",
+    "SM_Age6_MaglevTrack_Straight_Construction",
+    "SM_Age6_MaglevTrack_Straight_Damaged",
+    "SM_Age6_MaglevTrack_Straight_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -20.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     20.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 311.8,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Straight_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Straight_Intact": {
+   "asset": "SM_Age6_MaglevTrack_Straight",
+   "state": "Intact",
+   "sim_mapping": "elevated maglev guideway, 40 m",
+   "footprint_m": [
+    40,
+    9.2
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.0,
+     20.0
+    ],
+    "y": [
+     -5.0,
+     5.0
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    176,
+    96,
+    96,
+    64
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Straight_Intact",
+    "SM_Age6_MaglevTrack_Straight_Construction",
+    "SM_Age6_MaglevTrack_Straight_Damaged",
+    "SM_Age6_MaglevTrack_Straight_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -20.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     20.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 327.2,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Straight_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_MaglevTrack_Straight_Ruin": {
+   "asset": "SM_Age6_MaglevTrack_Straight",
+   "state": "Ruin",
+   "sim_mapping": "elevated maglev guideway, 40 m",
+   "footprint_m": [
+    40,
+    9.2
+   ],
+   "height_m": 10.18,
+   "bounds_m": {
+    "x": [
+     -20.0,
+     20.0
+    ],
+    "y": [
+     -6.05,
+     5.76
+    ],
+    "z": [
+     -0.3,
+     10.18
+    ]
+   },
+   "triangles_per_lod": [
+    568,
+    226,
+    108,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_MaglevTrack_Straight_Intact",
+    "SM_Age6_MaglevTrack_Straight_Construction",
+    "SM_Age6_MaglevTrack_Straight_Damaged",
+    "SM_Age6_MaglevTrack_Straight_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {
+    "start": [
+     -20.0,
+     0.0,
+     10.0,
+     180.0
+    ],
+    "end": [
+     20.0,
+     0.0,
+     10.0,
+     0.0
+    ]
+   },
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 166.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_MaglevTrack_Straight_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_Rocket_Intact": {
+   "asset": "SM_Age6_Rocket",
+   "state": "Intact",
+   "sim_mapping": "b.launch: Rocket (Z scaled by ark progress)",
+   "footprint_m": [
+    7.2,
+    14.6
+   ],
+   "height_m": 82.0,
+   "bounds_m": {
+    "x": [
+     -3.91,
+     3.91
+    ],
+    "y": [
+     -7.3,
+     7.3
+    ],
+    "z": [
+     0.0,
+     82.0
+    ]
+   },
+   "triangles_per_lod": [
+    1486,
+    594,
+    178,
+    96
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "vehicle",
+   "budget_lod0": [
+    1000,
+    4000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Hull",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Hull_D",
+    "T_Age6_Hull_N",
+    "T_Age6_Hull_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_Rocket_Intact"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 3522.9,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_Rocket_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_A_Construction": {
+   "asset": "SM_Age6_SolarArray_A",
+   "state": "Construction",
+   "sim_mapping": "solar field module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 2.32,
+   "bounds_m": {
+    "x": [
+     -22.3,
+     25.84
+    ],
+    "y": [
+     -14.16,
+     14.16
+    ],
+    "z": [
+     -0.3,
+     2.32
+    ]
+   },
+   "triangles_per_lod": [
+    3268,
+    760,
+    92,
+    32
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_A_Intact",
+    "SM_Age6_SolarArray_A_Construction",
+    "SM_Age6_SolarArray_A_Damaged",
+    "SM_Age6_SolarArray_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 86.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_A_Damaged": {
+   "asset": "SM_Age6_SolarArray_A",
+   "state": "Damaged",
+   "sim_mapping": "solar field module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 2.32,
+   "bounds_m": {
+    "x": [
+     -22.3,
+     22.3
+    ],
+    "y": [
+     -14.16,
+     14.16
+    ],
+    "z": [
+     -0.3,
+     2.32
+    ]
+   },
+   "triangles_per_lod": [
+    3196,
+    828,
+    100,
+    52
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_A_Intact",
+    "SM_Age6_SolarArray_A_Construction",
+    "SM_Age6_SolarArray_A_Damaged",
+    "SM_Age6_SolarArray_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 136.5,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_A_Intact": {
+   "asset": "SM_Age6_SolarArray_A",
+   "state": "Intact",
+   "sim_mapping": "solar field module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 2.32,
+   "bounds_m": {
+    "x": [
+     -22.3,
+     22.3
+    ],
+    "y": [
+     -14.16,
+     14.16
+    ],
+    "z": [
+     -0.3,
+     2.32
+    ]
+   },
+   "triangles_per_lod": [
+    4824,
+    1080,
+    72,
+    12
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_A_Intact",
+    "SM_Age6_SolarArray_A_Construction",
+    "SM_Age6_SolarArray_A_Damaged",
+    "SM_Age6_SolarArray_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 131.0,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_A_Ruin": {
+   "asset": "SM_Age6_SolarArray_A",
+   "state": "Ruin",
+   "sim_mapping": "solar field module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 2.32,
+   "bounds_m": {
+    "x": [
+     -22.3,
+     24.28
+    ],
+    "y": [
+     -14.16,
+     14.16
+    ],
+    "z": [
+     -0.3,
+     2.32
+    ]
+   },
+   "triangles_per_lod": [
+    1708,
+    504,
+    112,
+    60
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_A_Intact",
+    "SM_Age6_SolarArray_A_Construction",
+    "SM_Age6_SolarArray_A_Damaged",
+    "SM_Age6_SolarArray_A_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 154.4,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_B_Construction": {
+   "asset": "SM_Age6_SolarArray_B",
+   "state": "Construction",
+   "sim_mapping": "agrivoltaic canopy module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 4.94,
+   "bounds_m": {
+    "x": [
+     -22.12,
+     24.23
+    ],
+    "y": [
+     -13.43,
+     15.75
+    ],
+    "z": [
+     -0.3,
+     4.94
+    ]
+   },
+   "triangles_per_lod": [
+    820,
+    328,
+    98,
+    32
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_B_Intact",
+    "SM_Age6_SolarArray_B_Construction",
+    "SM_Age6_SolarArray_B_Damaged",
+    "SM_Age6_SolarArray_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 326.2,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_B_Damaged": {
+   "asset": "SM_Age6_SolarArray_B",
+   "state": "Damaged",
+   "sim_mapping": "agrivoltaic canopy module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 4.94,
+   "bounds_m": {
+    "x": [
+     -22.12,
+     22.12
+    ],
+    "y": [
+     -13.43,
+     15.75
+    ],
+    "z": [
+     -0.3,
+     4.94
+    ]
+   },
+   "triangles_per_lod": [
+    880,
+    352,
+    104,
+    52
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_B_Intact",
+    "SM_Age6_SolarArray_B_Construction",
+    "SM_Age6_SolarArray_B_Damaged",
+    "SM_Age6_SolarArray_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 352.0,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_B_Intact": {
+   "asset": "SM_Age6_SolarArray_B",
+   "state": "Intact",
+   "sim_mapping": "agrivoltaic canopy module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 4.94,
+   "bounds_m": {
+    "x": [
+     -22.12,
+     22.12
+    ],
+    "y": [
+     -13.43,
+     15.75
+    ],
+    "z": [
+     -0.3,
+     4.94
+    ]
+   },
+   "triangles_per_lod": [
+    864,
+    344,
+    96,
+    12
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_B_Intact",
+    "SM_Age6_SolarArray_B_Construction",
+    "SM_Age6_SolarArray_B_Damaged",
+    "SM_Age6_SolarArray_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 353.5,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  },
+  "SM_Age6_SolarArray_B_Ruin": {
+   "asset": "SM_Age6_SolarArray_B",
+   "state": "Ruin",
+   "sim_mapping": "agrivoltaic canopy module",
+   "footprint_m": [
+    46,
+    30
+   ],
+   "height_m": 4.94,
+   "bounds_m": {
+    "x": [
+     -24.36,
+     22.58
+    ],
+    "y": [
+     -14.91,
+     15.84
+    ],
+    "z": [
+     -0.3,
+     4.94
+    ]
+   },
+   "triangles_per_lod": [
+    920,
+    368,
+    110,
+    72
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "budget_class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "material_slots": {
+    "Structure": "M_Age6_Concrete",
+    "Roof": "M_Age6_GreenRoof",
+    "Detail": "M_Age6_Tech"
+   },
+   "textures": [
+    "T_Age6_Concrete_D",
+    "T_Age6_Concrete_N",
+    "T_Age6_Concrete_ORM",
+    "T_Age6_GreenRoof_D",
+    "T_Age6_GreenRoof_N",
+    "T_Age6_GreenRoof_ORM",
+    "T_Age6_Tech_D",
+    "T_Age6_Tech_M",
+    "T_Age6_Tech_N",
+    "T_Age6_Tech_ORM"
+   ],
+   "states": [
+    "SM_Age6_SolarArray_B_Intact",
+    "SM_Age6_SolarArray_B_Construction",
+    "SM_Age6_SolarArray_B_Damaged",
+    "SM_Age6_SolarArray_B_Ruin"
+   ],
+   "culture_variants": [
+    "Default",
+    "MI_Age6_*_CliffTerrace",
+    "MI_Age6_*_LagoonWeaver",
+    "MI_Age6_*_RingBuilder"
+   ],
+   "sockets": {},
+   "vertex_colour": "R=G=B multiplier on albedo (1 clean, down to 0.12 scorched)",
+   "checks": {
+    "signed_volume_m3": 447.5,
+    "open_edges_lod0": 0,
+    "pivot_ground": true
+   },
+   "fbx": "art/age6/export/SM_Age6_SolarArray_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age6/build_age6.py"
+  }
+ }
+}

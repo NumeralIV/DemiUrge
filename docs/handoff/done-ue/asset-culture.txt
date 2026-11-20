@@ -1,0 +1,38 @@
+2026-11-19, asset-culture (family Culture: Age2/Age3 culture overlays for A Cliff-Terrace, B Lagoon-Weaver, C Ring-Builder; art/culture) verified by an independent asset verifier. Score: 6/10.
+
+Summary. 57 assets in 195 meshes (one per asset and state), each one FBX in art/culture/export. They include per-host roof overlays for the 8 published houses (Age2 House_A-D and Age3 Townhouse_A-D) in all three cultures, B pile platforms, and the culture kits: A terrace, stair, cistern, niche temple and door ornaments; B boardwalks, bridge, raft, breakwater, spiral pier temple and facade panels; C drum houses, cones, ring walls, disc spire and standing stones. At 300 m the three towns read as their concepts. C is the strongest: rings of pale drums with dark cones around the stacked-disc spire. B has the upswept silver saddle roofs on piles round the water courts. A is plaster cubes with domes stepped up sandstone terraces. Close up (40 m) they hold as a clean procedural kit rather than near-photoreal. The overlay approach (a culture roof enclosing the host's baked-in roof) works, but it was leaking badly. Several real defects were fixed in the scripts.
+
+Reproducibility. Before changing anything, I rebuilt with --tex from scratch. Every asset that does not depend on Age2 came back identical to the builder's manifest. The Age2-dependent overlays changed because the Age2 kit was re-exported after the builder's run, with per-face slots restored, so its houses are now measured by material. The pier temple's convex-hull LOD3 varied by 2 triangles. After the fixes, two more --tex builds gave byte-identical textures and the same manifest, apart from that hull. A full build takes about 2-6 minutes. All renders, including my debug sheets, went through tools/render_slot.py. The builds ran directly, as the README documents.
+
+Independent audit. My own scripts re-imported all 195 FBX into empty scenes. They checked:
+- the LodGroup and LOD naming
+- triangles against the manifest
+- loose, degenerate and duplicate geometry
+- the winding of closed islands
+- UV layers and material slots
+- transforms
+- back faces seen from the game camera's hemisphere
+They also ran a ray-cast poke-through test: each host's LOD0 plus the overlay's LOD0, both from their FBX, for Intact and Damaged, measuring how much of the visible roof is the host's. Debug sheets drew the host roof in red. I also rendered all 11 previews (a/b/c at 40m, 300m and 1km, states-40m, kit-40m) and compared them with culture-a/b/c.png.
+
+Fixes (all in art/culture; listed in art/culture/README.md under "Verification"):
+1. None of the 195 FBX files had a LodGroup node. Unreal would combine LOD0-LOD3 or import them as four meshes. The export now writes an fbx_type=LodGroup empty with the children _LOD0..3, as every other family does.
+2. The C roofs leaked on every Age2 house. 31-38 % of the visible roof on C2 House_A-D was host thatch, because the bell-cast kick ran below the host roof; the C3 townhouses showed 2-8 %. The C roof now widens, and only if needed lifts, until it clears the host by 0.12 m.
+3. The wrong ridge axis for the second wing of Age2 House_D left the host gable sticking out of all three cultures (10 %). The axis is now fitted, and the wing is extended along its ridge.
+4. The rectangle model missed the Age2 straw fringe, asymmetric eaves and Age3 dormers. Hosts now record a measured cross-ridge profile, which the B and C roofs clear. Intact poke-through is now 0-2 % everywhere, except the host porch canopies and lean-tos and the intended Townhouse_D belvedere (up to 7 % on House_B).
+5. The damaged B3 Townhouse_B saddle lost its whole front slope to a misfiring boolean (35 % host roof showing). Runaway booleans are now rejected (now 0.7 %).
+6. Decimation junk: folded duplicate faces in LOD1-3 (up to 30 % of a LOD), loose vertices in 32 LODs, and 6 inside-out convex-hull LOD3s (the pier temple's hull rendered inverted). Every LOD is now cleaned, and manifest triangle counts match the FBX exactly.
+7. The cistern water faced down, so it was culled from above. It now faces up.
+8. The LOD count is now decided per asset rather than per state.
+9. Scale against the 1.8 m figure: the boardwalk and bridge decks were raised from 1.3 m to 1.8 m, level with the house pile decks they join. The terrace stair now has 15 risers of 0.2 m instead of 10 of 0.3 m.
+
+Checks that hold. Units are metres, Z is up and the front faces -Y, with the same FBX axis settings as the host kits, so host-space overlays line up. Overlays are modelled in host space. Structures have foundations to z -0.3, and the water pieces have piles below the water. Every mesh has at most 3 slots, named Structure, Roof and Detail. Each has one UV map: world-scale tiling, with nothing baked (documented). The manifest is complete: name, footprint, height, bounds, triangles per LOD, slot-to-MI map, textures, states, culture, licence, script and host pairing. 164 meshes have 4 LODs and 31 have 3 (all under 10 m). Totals: LOD0 269,790 / LOD1 109,885 / LOD2 28,690 / LOD3 9,285; the Intact LOD0 sum is 81,712.
+
+Open for others or later passes:
+- Budget. Because the host roof stays hidden inside each overlay, host + overlay (+ B platform) LOD0 runs from 2.9k to 10.8k. 18 of the 48 Intact/Damaged pairings exceed the 6k house budget. A roofless body variant from the Age2/Age3 owners would fix both the cost and the remaining poke-through. One overlay is just over the 4k roof part: A3RoofTownhouseD_Damaged has 4,014.
+- Host porch canopies and lean-tos (Age2 House_B and House_D) keep the host's roof material.
+- Holes in Damaged roofs show the host's own roof underneath.
+- The ornaments have no door sockets, because the host manifests publish none.
+- The Age3 hosts only take culture tints, so tall plastered townhouses under saddle roofs or attics break the B and A reads at 300 m.
+- No Unreal .uasset MIs are made here.
+- The Construction-state timbers have tiny open tube ends.
+- The textures and look are a clean procedural kit, not yet the near-photoreal target. The preview terrain is placeholder.

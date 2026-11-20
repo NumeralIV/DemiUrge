@@ -1,0 +1,79 @@
+date: 2026-11-19
+family: props (Prop, art/props/), independent adversarial verification
+verdict: holds after fixes; ready for integration
+score: 7/10
+
+summary:
+- Reproducible.
+  - Rebuilt from a clean `art/props/build_props.py -- --textures` run (headless, factory startup, every
+    build and render through tools/render_slot.py).
+  - As delivered, the rebuild matched the builder's output: the manifest was identical, the FBX geometry
+    identical (the files differ only in embedded timestamps) and the textures identical, except
+    T_Prop_Straw_D (up to 6/255, because the shared art/tools/make_textures.py changed after the builder ran).
+  - After the fixes, two further full builds give an identical manifest.
+- Checked on all 65 FBX files and all 199 LOD meshes after re-import into Blender:
+  - LodGroup empty (fbx_type) with meshes _LOD0.._LOD2, plus _LOD3 on the 4 cliffs;
+  - at most 3 slots, the same on every LOD;
+  - pivot at the footprint centre with Z = 0 at the ground; nothing floats; posts, plinths and rocks go
+    0.2-0.45 m below ground (cliffs 1.4-1.6 m); unit scale;
+  - front faces -Y (stall fronts, statues, lamp arms and cart shafts);
+  - no n-gons, degenerate faces, loose vertices, inverted closed parts or inconsistent winding;
+  - UVUnique 0-1 without overlaps; UV0 under 13 tiles;
+  - manifest triangle counts equal the FBX for every LOD;
+  - manifest complete per mesh (footprint, height, depth below ground, tris per LOD, screen sizes, slots and
+    materials, textures, material instances, ages, cultures, states, placement, licence, script).
+- Triangles:
+  - LOD0 44,308, LOD1 19,141, LOD2 7,806, LOD3 418.
+  - Within budget except the documented cliffs (about 2.0k each, terrain scale) and Cart_Wagon (2,052, a
+    vehicle).
+  - Four sit at 1.0-1.24k: Fence_DryStone, Market_Stall_Damaged, Goods_Pots and Crop_Veg.
+- Scale against the 1.8 m figure reads right: barrel 0.9 m, stall 2.4 m, hedge 1.9 m, hay rick 3.9 m, fingerpost
+  2.7 m, gas lamp 4.1 m, sodium light 9 m, wagon 5.2 m long.
+- Fixes, all in art/props/ and recorded in its README (Verification section):
+  1. LODs were folded into sheets. Collapse-decimating LOD0 straight to 12 % left duplicate-face sheets in 53 of
+     the 199 LOD meshes, so the manifest triangle counts did not match the FBX for 34 meshes. The worst cases:
+     - Fence_DryStone LOD2: all 94 stones had become flaps;
+     - Hay_Stack LOD2: only the pole and slivers were left;
+     - Crate_Stack LOD2: the crates were sheets.
+     The fix:
+     - LOD k is built from gen(k), and a decimation is accepted only if it keeps the bounding box, the surface
+       area and the silhouette;
+     - clean_mesh deletes duplicate faces and loose vertices;
+     - native LOD2s for the dry-stone wall (a wall hull), crates and the hay rick;
+     - no LOD is heavier than the one before.
+  2. Loose vertices in 12 LOD meshes (decimated LOD2s, and the torn awnings of the damaged and burnt stalls).
+  3. Cliff_B LOD3 equalled LOD2 (256); it is now 210 (decimated in a chain).
+  4. Rock and cliff fissures read as black inked cells (a "giraffe" pattern on the cliffs at 40 m). The cliffs now
+     have vertical joints, half as deep, and each rock's cracks follow one direction; all 12 sets were re-baked.
+  5. The Crop_Vine canopy was an ellipsoid tapering at the tile ends, so tiled rows read as sausage links every
+     4 m. It is now a continuous, seamless row.
+  6. Crop_Veg LOD2 was 360 triangles per 4 m tile; it is now 120.
+  7. Barrel_Stack (7 mm) and Hedge_A (5 mm) floated above the ground.
+  8. Lighter lamp and totem LODs.
+  9. props_preview.py gained the verifier scenes.
+- Previews:
+  - All 19 builder previews were re-rendered after the fixes: shots/asset-props-{rocks,farm,village,lamps,
+    statues,night}-{40m,300m,1km}.png and shots/asset-props-lineup-close.png.
+  - Verifier views: shots/asset-props-verify-lods-{fields,goods,signs,statues,rocks,cliffs}.png and
+    shots/asset-props-verify-bakes.png.
+- Against the concept:
+  - At 300 m the farm reads as the Iron-age hedged patchwork (golden grain, dark vine and vegetable rows,
+    hedgerows with hedgerow trees, stooks).
+  - The market stalls carry the four culture awning colours.
+  - Rocks and cliffs read as weathered outcrops with moss on top.
+  - At night the lamp chains read at 1 km.
+- Held back from a higher score:
+  - The grain tiles read as uniform flat slabs with hard vertical edges at 40 m.
+  - The vine canopy is a smooth green log with sparse cards up close.
+  - The base rock texture is blotchy (camouflage-like) at 40 m, and Cliff_A carries a cantilevered top slab.
+  - Awning cloth reads a little like roof tiles.
+  - The totem and the idol are simple.
+  - Fence tiles put coincident posts at both ends of neighbouring tiles, so expect slight z-fighting.
+  - With the ASSETS.md screen sizes, small props reach LOD2 at about 25-30 m. The game camera mostly sees LOD1
+    and LOD2, not the LOD0 that the builder's 40 m previews show.
+  - Normal bakes keep a few inverted texels, but only in deep crevices or below ground (under 1 % of the lit
+    surface).
+- Untested here (no Unreal):
+  - the LodGroup import ("Import Mesh LODs");
+  - the green flip of the OpenGL normal maps;
+  - the masked two-sided foliage material.

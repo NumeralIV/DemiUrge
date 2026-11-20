@@ -1,0 +1,3 @@
+# regenerated intermediates (renders, per-view impostor bakes) and Blender backups
+build/
+*.blend1

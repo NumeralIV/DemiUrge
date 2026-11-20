@@ -1,0 +1,1963 @@
+{
+ "family": "wonders-a",
+ "unreal_family": "Wonder",
+ "generated": "2026-11-19",
+ "script": "art/wonders-a/build_wonders_a.py",
+ "licence": "original (procedural, no external inputs)",
+ "conventions": {
+  "units": "1 Blender unit = 1 m; Unreal imports at x100",
+  "axes": "Z up, front faces -Y",
+  "pivot": "centre of footprint at ground level (Z = 0); the Sea Gate pivot is at mean water level",
+  "fbx": "one file per mesh: an FBX LodGroup node with children <name>_LOD0..3; smoothing groups, tangents, linear vertex colours",
+  "material_slots": "0 Structure, 1 Roof, 2 Detail",
+  "vertex_color": "Col: R = flicker phase 0..1, G = 1 on flame / glow geometry (animate only these), B = 0",
+  "detail_mask": "T_Wonder_DetailA_M: R = night emissive mask, G = culture-colour mask (hides), B = flame mask",
+  "emissive": "Emissive = D * M.R * lerp(1, EmissiveTint, 0.4) * EmissiveStrength * NightFactor (fires also burn by day at about 1/8 of night strength: 1/7 to 1/11 by wonder)",
+  "uv": "Structure/Roof: tiling world-scale UVs (not 0-1), Detail: inside 0-1 atlas cells; no baked lightmaps (use UE generated lightmap UVs if needed)"
+ },
+ "materials": {
+  "M_Wonder_DetailA": {
+   "textures": [
+    "T_Wonder_DetailA_D",
+    "T_Wonder_DetailA_N",
+    "T_Wonder_DetailA_ORM",
+    "T_Wonder_DetailA_M"
+   ],
+   "slot": "Detail"
+  },
+  "M_Wonder_GateBronze": {
+   "textures": [
+    "T_Wonder_GateBronze_D",
+    "T_Wonder_GateBronze_N",
+    "T_Wonder_GateBronze_ORM"
+   ],
+   "slot": "Roof"
+  },
+  "M_Wonder_GateLimestone": {
+   "textures": [
+    "T_Wonder_GateLimestone_D",
+    "T_Wonder_GateLimestone_N",
+    "T_Wonder_GateLimestone_ORM"
+   ],
+   "slot": "Structure"
+  },
+  "M_Wonder_HearthBank": {
+   "textures": [
+    "T_Wonder_HearthBank_D",
+    "T_Wonder_HearthBank_N",
+    "T_Wonder_HearthBank_ORM"
+   ],
+   "slot": "Structure"
+  },
+  "M_Wonder_HearthCone": {
+   "textures": [
+    "T_Wonder_HearthCone_D",
+    "T_Wonder_HearthCone_N",
+    "T_Wonder_HearthCone_ORM"
+   ],
+   "slot": "Roof"
+  },
+  "M_Wonder_HiveBronze": {
+   "textures": [
+    "T_Wonder_HiveBronze_D",
+    "T_Wonder_HiveBronze_N",
+    "T_Wonder_HiveBronze_ORM"
+   ],
+   "slot": "Roof"
+  },
+  "M_Wonder_HivePlaster": {
+   "textures": [
+    "T_Wonder_HivePlaster_D",
+    "T_Wonder_HivePlaster_N",
+    "T_Wonder_HivePlaster_ORM"
+   ],
+   "slot": "Structure"
+  },
+  "M_Wonder_SevenGranite": {
+   "textures": [
+    "T_Wonder_SevenGranite_D",
+    "T_Wonder_SevenGranite_N",
+    "T_Wonder_SevenGranite_ORM"
+   ],
+   "slot": "Roof"
+  },
+  "M_Wonder_SevenPaving": {
+   "textures": [
+    "T_Wonder_SevenPaving_D",
+    "T_Wonder_SevenPaving_N",
+    "T_Wonder_SevenPaving_ORM"
+   ],
+   "slot": "Structure"
+  }
+ },
+ "culture_variants": {
+  "styles": {
+   "Temperate": {
+    "tint": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "rough_add": 0.0
+   },
+   "Arid": {
+    "tint": [
+     1.08,
+     1.02,
+     0.9
+    ],
+    "rough_add": 0.04
+   },
+   "Tropical": {
+    "tint": [
+     0.96,
+     1.03,
+     0.94
+    ],
+    "rough_add": -0.03
+   },
+   "Cold": {
+    "tint": [
+     0.93,
+     0.96,
+     1.02
+    ],
+    "rough_add": 0.02
+   }
+  },
+  "naming": "MI_Wonder_<Set>_<Style>",
+  "detail_param": "CultureColor (linear RGB) multiplies D where M.G = 1"
+ },
+ "lod_screen_sizes": [
+  1.0,
+  0.35,
+  0.12,
+  0.04
+ ],
+ "meshes": [
+  {
+   "name": "SM_Wonder_Hearth_Intact",
+   "family": "Wonder",
+   "asset": "Hearth",
+   "title": "The Hearth of Many Fires",
+   "wonder_index": 0,
+   "age": "Stone",
+   "state": "Intact",
+   "concept": "docs/concept/wonders/wonder-0-stone.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_Hearth_Intact.fbx",
+   "lods": [
+    "SM_Wonder_Hearth_Intact_LOD0",
+    "SM_Wonder_Hearth_Intact_LOD1",
+    "SM_Wonder_Hearth_Intact_LOD2",
+    "SM_Wonder_Hearth_Intact_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    158.4,
+    158.1
+   ],
+   "height_m": 28.5,
+   "below_ground_m": 0.35,
+   "triangles": {
+    "LOD0": 58890,
+    "LOD1": 20164,
+    "LOD2": 3272,
+    "LOD3": 388
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HearthBank",
+     "textures": [
+      "T_Wonder_HearthBank_D",
+      "T_Wonder_HearthBank_N",
+      "T_Wonder_HearthBank_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HearthCone",
+     "textures": [
+      "T_Wonder_HearthCone_D",
+      "T_Wonder_HearthCone_N",
+      "T_Wonder_HearthCone_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_Hearth_Intact",
+    "SM_Wonder_Hearth_Construction",
+    "SM_Wonder_Hearth_Damaged",
+    "SM_Wonder_Hearth_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HearthBank_Temperate",
+    "MI_Wonder_HearthBank_Arid",
+    "MI_Wonder_HearthBank_Tropical",
+    "MI_Wonder_HearthBank_Cold",
+    "MI_Wonder_HearthCone_Temperate",
+    "MI_Wonder_HearthCone_Arid",
+    "MI_Wonder_HearthCone_Tropical",
+    "MI_Wonder_HearthCone_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff8c38",
+    "lights_file": "art/wonders-a/export/SM_Wonder_Hearth_Intact_lights.json",
+    "light_count": 229,
+    "kind": "fire pit"
+   },
+   "checks": {
+    "tris": 58890,
+    "nonmanifold_edges": 0,
+    "open_edges": 6582,
+    "closed_shells": 2445,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -79.39,
+     -78.96,
+     -0.35
+    ],
+    "bbox_max": [
+     79.02,
+     79.19,
+     28.52
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_Hearth_Construction",
+   "family": "Wonder",
+   "asset": "Hearth",
+   "title": "The Hearth of Many Fires",
+   "wonder_index": 0,
+   "age": "Stone",
+   "state": "Construction",
+   "concept": "docs/concept/wonders/wonder-0-stone.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_Hearth_Construction.fbx",
+   "lods": [
+    "SM_Wonder_Hearth_Construction_LOD0",
+    "SM_Wonder_Hearth_Construction_LOD1",
+    "SM_Wonder_Hearth_Construction_LOD2",
+    "SM_Wonder_Hearth_Construction_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    158.1,
+    158.1
+   ],
+   "height_m": 28.6,
+   "below_ground_m": 0.35,
+   "triangles": {
+    "LOD0": 20576,
+    "LOD1": 5954,
+    "LOD2": 1246,
+    "LOD3": 476
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HearthBank",
+     "textures": [
+      "T_Wonder_HearthBank_D",
+      "T_Wonder_HearthBank_N",
+      "T_Wonder_HearthBank_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HearthCone",
+     "textures": [
+      "T_Wonder_HearthCone_D",
+      "T_Wonder_HearthCone_N",
+      "T_Wonder_HearthCone_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_Hearth_Intact",
+    "SM_Wonder_Hearth_Construction",
+    "SM_Wonder_Hearth_Damaged",
+    "SM_Wonder_Hearth_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HearthBank_Temperate",
+    "MI_Wonder_HearthBank_Arid",
+    "MI_Wonder_HearthBank_Tropical",
+    "MI_Wonder_HearthBank_Cold",
+    "MI_Wonder_HearthCone_Temperate",
+    "MI_Wonder_HearthCone_Arid",
+    "MI_Wonder_HearthCone_Tropical",
+    "MI_Wonder_HearthCone_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff8c38",
+    "lights_file": "art/wonders-a/export/SM_Wonder_Hearth_Construction_lights.json",
+    "light_count": 17,
+    "kind": "fire pit"
+   },
+   "checks": {
+    "tris": 20576,
+    "nonmanifold_edges": 0,
+    "open_edges": 2498,
+    "closed_shells": 810,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -79.2,
+     -78.96,
+     -0.35
+    ],
+    "bbox_max": [
+     78.91,
+     79.19,
+     28.61
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_Hearth_Damaged",
+   "family": "Wonder",
+   "asset": "Hearth",
+   "title": "The Hearth of Many Fires",
+   "wonder_index": 0,
+   "age": "Stone",
+   "state": "Damaged",
+   "concept": "docs/concept/wonders/wonder-0-stone.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_Hearth_Damaged.fbx",
+   "lods": [
+    "SM_Wonder_Hearth_Damaged_LOD0",
+    "SM_Wonder_Hearth_Damaged_LOD1",
+    "SM_Wonder_Hearth_Damaged_LOD2",
+    "SM_Wonder_Hearth_Damaged_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    158.4,
+    158.4
+   ],
+   "height_m": 28.6,
+   "below_ground_m": 0.35,
+   "triangles": {
+    "LOD0": 44395,
+    "LOD1": 14105,
+    "LOD2": 2180,
+    "LOD3": 351
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HearthBank",
+     "textures": [
+      "T_Wonder_HearthBank_D",
+      "T_Wonder_HearthBank_N",
+      "T_Wonder_HearthBank_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HearthCone",
+     "textures": [
+      "T_Wonder_HearthCone_D",
+      "T_Wonder_HearthCone_N",
+      "T_Wonder_HearthCone_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_Hearth_Intact",
+    "SM_Wonder_Hearth_Construction",
+    "SM_Wonder_Hearth_Damaged",
+    "SM_Wonder_Hearth_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HearthBank_Temperate",
+    "MI_Wonder_HearthBank_Arid",
+    "MI_Wonder_HearthBank_Tropical",
+    "MI_Wonder_HearthBank_Cold",
+    "MI_Wonder_HearthCone_Temperate",
+    "MI_Wonder_HearthCone_Arid",
+    "MI_Wonder_HearthCone_Tropical",
+    "MI_Wonder_HearthCone_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff8c38",
+    "lights_file": "art/wonders-a/export/SM_Wonder_Hearth_Damaged_lights.json",
+    "light_count": 93,
+    "kind": "fire pit"
+   },
+   "checks": {
+    "tris": 44395,
+    "nonmanifold_edges": 0,
+    "open_edges": 5933,
+    "closed_shells": 1982,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -79.51,
+     -78.96,
+     -0.35
+    ],
+    "bbox_max": [
+     78.92,
+     79.49,
+     28.6
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_Hearth_Ruin",
+   "family": "Wonder",
+   "asset": "Hearth",
+   "title": "The Hearth of Many Fires",
+   "wonder_index": 0,
+   "age": "Stone",
+   "state": "Ruin",
+   "concept": "docs/concept/wonders/wonder-0-stone.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_Hearth_Ruin.fbx",
+   "lods": [
+    "SM_Wonder_Hearth_Ruin_LOD0",
+    "SM_Wonder_Hearth_Ruin_LOD1",
+    "SM_Wonder_Hearth_Ruin_LOD2",
+    "SM_Wonder_Hearth_Ruin_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    160.9,
+    160.4
+   ],
+   "height_m": 3.1,
+   "below_ground_m": 0.37,
+   "triangles": {
+    "LOD0": 15640,
+    "LOD1": 3464,
+    "LOD2": 842,
+    "LOD3": 250
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HearthBank",
+     "textures": [
+      "T_Wonder_HearthBank_D",
+      "T_Wonder_HearthBank_N",
+      "T_Wonder_HearthBank_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HearthCone",
+     "textures": [
+      "T_Wonder_HearthCone_D",
+      "T_Wonder_HearthCone_N",
+      "T_Wonder_HearthCone_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_Hearth_Intact",
+    "SM_Wonder_Hearth_Construction",
+    "SM_Wonder_Hearth_Damaged",
+    "SM_Wonder_Hearth_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HearthBank_Temperate",
+    "MI_Wonder_HearthBank_Arid",
+    "MI_Wonder_HearthBank_Tropical",
+    "MI_Wonder_HearthBank_Cold",
+    "MI_Wonder_HearthCone_Temperate",
+    "MI_Wonder_HearthCone_Arid",
+    "MI_Wonder_HearthCone_Tropical",
+    "MI_Wonder_HearthCone_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff8c38",
+    "lights_file": "art/wonders-a/export/SM_Wonder_Hearth_Ruin_lights.json",
+    "light_count": 0,
+    "kind": "fire pit"
+   },
+   "checks": {
+    "tris": 15640,
+    "nonmanifold_edges": 0,
+    "open_edges": 1022,
+    "closed_shells": 257,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -80.81,
+     -80.05,
+     -0.37
+    ],
+    "bbox_max": [
+     80.04,
+     80.35,
+     3.13
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_GreatHive_Intact",
+   "family": "Wonder",
+   "asset": "GreatHive",
+   "title": "The Great Hive",
+   "wonder_index": 1,
+   "age": "Bronze",
+   "state": "Intact",
+   "concept": "docs/concept/wonders/wonder-1-bronze.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_GreatHive_Intact.fbx",
+   "lods": [
+    "SM_Wonder_GreatHive_Intact_LOD0",
+    "SM_Wonder_GreatHive_Intact_LOD1",
+    "SM_Wonder_GreatHive_Intact_LOD2",
+    "SM_Wonder_GreatHive_Intact_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    49.4,
+    50.6
+   ],
+   "height_m": 55.0,
+   "below_ground_m": 0.3,
+   "triangles": {
+    "LOD0": 22824,
+    "LOD1": 6768,
+    "LOD2": 2402,
+    "LOD3": 766
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HivePlaster",
+     "textures": [
+      "T_Wonder_HivePlaster_D",
+      "T_Wonder_HivePlaster_N",
+      "T_Wonder_HivePlaster_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HiveBronze",
+     "textures": [
+      "T_Wonder_HiveBronze_D",
+      "T_Wonder_HiveBronze_N",
+      "T_Wonder_HiveBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_GreatHive_Intact",
+    "SM_Wonder_GreatHive_Construction",
+    "SM_Wonder_GreatHive_Damaged",
+    "SM_Wonder_GreatHive_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HivePlaster_Temperate",
+    "MI_Wonder_HivePlaster_Arid",
+    "MI_Wonder_HivePlaster_Tropical",
+    "MI_Wonder_HivePlaster_Cold",
+    "MI_Wonder_HiveBronze_Temperate",
+    "MI_Wonder_HiveBronze_Arid",
+    "MI_Wonder_HiveBronze_Tropical",
+    "MI_Wonder_HiveBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffad52",
+    "lights_file": "art/wonders-a/export/SM_Wonder_GreatHive_Intact_lights.json",
+    "light_count": 13,
+    "kind": "oil lamp in doorway"
+   },
+   "checks": {
+    "tris": 22824,
+    "nonmanifold_edges": 0,
+    "open_edges": 756,
+    "closed_shells": 2,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -24.7,
+     -25.92,
+     -0.3
+    ],
+    "bbox_max": [
+     24.7,
+     24.7,
+     54.95
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_GreatHive_Construction",
+   "family": "Wonder",
+   "asset": "GreatHive",
+   "title": "The Great Hive",
+   "wonder_index": 1,
+   "age": "Bronze",
+   "state": "Construction",
+   "concept": "docs/concept/wonders/wonder-1-bronze.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_GreatHive_Construction.fbx",
+   "lods": [
+    "SM_Wonder_GreatHive_Construction_LOD0",
+    "SM_Wonder_GreatHive_Construction_LOD1",
+    "SM_Wonder_GreatHive_Construction_LOD2",
+    "SM_Wonder_GreatHive_Construction_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    63.0,
+    61.7
+   ],
+   "height_m": 27.0,
+   "below_ground_m": 0.3,
+   "triangles": {
+    "LOD0": 11193,
+    "LOD1": 3463,
+    "LOD2": 1291,
+    "LOD3": 438
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HivePlaster",
+     "textures": [
+      "T_Wonder_HivePlaster_D",
+      "T_Wonder_HivePlaster_N",
+      "T_Wonder_HivePlaster_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HiveBronze",
+     "textures": [
+      "T_Wonder_HiveBronze_D",
+      "T_Wonder_HiveBronze_N",
+      "T_Wonder_HiveBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_GreatHive_Intact",
+    "SM_Wonder_GreatHive_Construction",
+    "SM_Wonder_GreatHive_Damaged",
+    "SM_Wonder_GreatHive_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HivePlaster_Temperate",
+    "MI_Wonder_HivePlaster_Arid",
+    "MI_Wonder_HivePlaster_Tropical",
+    "MI_Wonder_HivePlaster_Cold",
+    "MI_Wonder_HiveBronze_Temperate",
+    "MI_Wonder_HiveBronze_Arid",
+    "MI_Wonder_HiveBronze_Tropical",
+    "MI_Wonder_HiveBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffad52",
+    "lights_file": "art/wonders-a/export/SM_Wonder_GreatHive_Construction_lights.json",
+    "light_count": 3,
+    "kind": "oil lamp in doorway"
+   },
+   "checks": {
+    "tris": 11193,
+    "nonmanifold_edges": 0,
+    "open_edges": 1071,
+    "closed_shells": 51,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -29.44,
+     -25.85,
+     -0.3
+    ],
+    "bbox_max": [
+     33.61,
+     35.82,
+     27.0
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_GreatHive_Damaged",
+   "family": "Wonder",
+   "asset": "GreatHive",
+   "title": "The Great Hive",
+   "wonder_index": 1,
+   "age": "Bronze",
+   "state": "Damaged",
+   "concept": "docs/concept/wonders/wonder-1-bronze.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_GreatHive_Damaged.fbx",
+   "lods": [
+    "SM_Wonder_GreatHive_Damaged_LOD0",
+    "SM_Wonder_GreatHive_Damaged_LOD1",
+    "SM_Wonder_GreatHive_Damaged_LOD2",
+    "SM_Wonder_GreatHive_Damaged_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    65.2,
+    57.6
+   ],
+   "height_m": 43.9,
+   "below_ground_m": 3.06,
+   "triangles": {
+    "LOD0": 22264,
+    "LOD1": 6438,
+    "LOD2": 2454,
+    "LOD3": 976
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HivePlaster",
+     "textures": [
+      "T_Wonder_HivePlaster_D",
+      "T_Wonder_HivePlaster_N",
+      "T_Wonder_HivePlaster_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HiveBronze",
+     "textures": [
+      "T_Wonder_HiveBronze_D",
+      "T_Wonder_HiveBronze_N",
+      "T_Wonder_HiveBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_GreatHive_Intact",
+    "SM_Wonder_GreatHive_Construction",
+    "SM_Wonder_GreatHive_Damaged",
+    "SM_Wonder_GreatHive_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HivePlaster_Temperate",
+    "MI_Wonder_HivePlaster_Arid",
+    "MI_Wonder_HivePlaster_Tropical",
+    "MI_Wonder_HivePlaster_Cold",
+    "MI_Wonder_HiveBronze_Temperate",
+    "MI_Wonder_HiveBronze_Arid",
+    "MI_Wonder_HiveBronze_Tropical",
+    "MI_Wonder_HiveBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffad52",
+    "lights_file": "art/wonders-a/export/SM_Wonder_GreatHive_Damaged_lights.json",
+    "light_count": 6,
+    "kind": "oil lamp in doorway"
+   },
+   "checks": {
+    "tris": 22264,
+    "nonmanifold_edges": 0,
+    "open_edges": 668,
+    "closed_shells": 74,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -24.71,
+     -32.94,
+     -3.06
+    ],
+    "bbox_max": [
+     40.5,
+     24.7,
+     43.9
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_GreatHive_Ruin",
+   "family": "Wonder",
+   "asset": "GreatHive",
+   "title": "The Great Hive",
+   "wonder_index": 1,
+   "age": "Bronze",
+   "state": "Ruin",
+   "concept": "docs/concept/wonders/wonder-1-bronze.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_GreatHive_Ruin.fbx",
+   "lods": [
+    "SM_Wonder_GreatHive_Ruin_LOD0",
+    "SM_Wonder_GreatHive_Ruin_LOD1",
+    "SM_Wonder_GreatHive_Ruin_LOD2",
+    "SM_Wonder_GreatHive_Ruin_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    67.0,
+    66.6
+   ],
+   "height_m": 14.7,
+   "below_ground_m": 0.47,
+   "triangles": {
+    "LOD0": 8672,
+    "LOD1": 2396,
+    "LOD2": 1036,
+    "LOD3": 378
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_HivePlaster",
+     "textures": [
+      "T_Wonder_HivePlaster_D",
+      "T_Wonder_HivePlaster_N",
+      "T_Wonder_HivePlaster_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_HiveBronze",
+     "textures": [
+      "T_Wonder_HiveBronze_D",
+      "T_Wonder_HiveBronze_N",
+      "T_Wonder_HiveBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_GreatHive_Intact",
+    "SM_Wonder_GreatHive_Construction",
+    "SM_Wonder_GreatHive_Damaged",
+    "SM_Wonder_GreatHive_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_HivePlaster_Temperate",
+    "MI_Wonder_HivePlaster_Arid",
+    "MI_Wonder_HivePlaster_Tropical",
+    "MI_Wonder_HivePlaster_Cold",
+    "MI_Wonder_HiveBronze_Temperate",
+    "MI_Wonder_HiveBronze_Arid",
+    "MI_Wonder_HiveBronze_Tropical",
+    "MI_Wonder_HiveBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffad52",
+    "lights_file": "art/wonders-a/export/SM_Wonder_GreatHive_Ruin_lights.json",
+    "light_count": 0,
+    "kind": "oil lamp in doorway"
+   },
+   "checks": {
+    "tris": 8672,
+    "nonmanifold_edges": 0,
+    "open_edges": 296,
+    "closed_shells": 173,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -30.31,
+     -33.8,
+     -0.47
+    ],
+    "bbox_max": [
+     36.67,
+     32.79,
+     14.68
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SevenWatchers_Intact",
+   "family": "Wonder",
+   "asset": "SevenWatchers",
+   "title": "The Seven Who Keep Watch",
+   "wonder_index": 2,
+   "age": "Iron",
+   "state": "Intact",
+   "concept": "docs/concept/wonders/wonder-2-iron.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SevenWatchers_Intact.fbx",
+   "lods": [
+    "SM_Wonder_SevenWatchers_Intact_LOD0",
+    "SM_Wonder_SevenWatchers_Intact_LOD1",
+    "SM_Wonder_SevenWatchers_Intact_LOD2",
+    "SM_Wonder_SevenWatchers_Intact_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    91.4,
+    96.9
+   ],
+   "height_m": 40.1,
+   "below_ground_m": 0.3,
+   "triangles": {
+    "LOD0": 63328,
+    "LOD1": 13328,
+    "LOD2": 3460,
+    "LOD3": 1160
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_SevenPaving",
+     "textures": [
+      "T_Wonder_SevenPaving_D",
+      "T_Wonder_SevenPaving_N",
+      "T_Wonder_SevenPaving_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_SevenGranite",
+     "textures": [
+      "T_Wonder_SevenGranite_D",
+      "T_Wonder_SevenGranite_N",
+      "T_Wonder_SevenGranite_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SevenWatchers_Intact",
+    "SM_Wonder_SevenWatchers_Construction",
+    "SM_Wonder_SevenWatchers_Damaged",
+    "SM_Wonder_SevenWatchers_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_SevenPaving_Temperate",
+    "MI_Wonder_SevenPaving_Arid",
+    "MI_Wonder_SevenPaving_Tropical",
+    "MI_Wonder_SevenPaving_Cold",
+    "MI_Wonder_SevenGranite_Temperate",
+    "MI_Wonder_SevenGranite_Arid",
+    "MI_Wonder_SevenGranite_Tropical",
+    "MI_Wonder_SevenGranite_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff9a40",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SevenWatchers_Intact_lights.json",
+    "light_count": 7,
+    "kind": "fire bowl"
+   },
+   "checks": {
+    "tris": 63328,
+    "nonmanifold_edges": 0,
+    "open_edges": 548,
+    "closed_shells": 77,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -45.7,
+     -45.7,
+     -0.3
+    ],
+    "bbox_max": [
+     45.7,
+     51.22,
+     40.07
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SevenWatchers_Construction",
+   "family": "Wonder",
+   "asset": "SevenWatchers",
+   "title": "The Seven Who Keep Watch",
+   "wonder_index": 2,
+   "age": "Iron",
+   "state": "Construction",
+   "concept": "docs/concept/wonders/wonder-2-iron.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SevenWatchers_Construction.fbx",
+   "lods": [
+    "SM_Wonder_SevenWatchers_Construction_LOD0",
+    "SM_Wonder_SevenWatchers_Construction_LOD1",
+    "SM_Wonder_SevenWatchers_Construction_LOD2",
+    "SM_Wonder_SevenWatchers_Construction_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    91.4,
+    96.9
+   ],
+   "height_m": 39.4,
+   "below_ground_m": 0.3,
+   "triangles": {
+    "LOD0": 28348,
+    "LOD1": 6844,
+    "LOD2": 1816,
+    "LOD3": 538
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_SevenPaving",
+     "textures": [
+      "T_Wonder_SevenPaving_D",
+      "T_Wonder_SevenPaving_N",
+      "T_Wonder_SevenPaving_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_SevenGranite",
+     "textures": [
+      "T_Wonder_SevenGranite_D",
+      "T_Wonder_SevenGranite_N",
+      "T_Wonder_SevenGranite_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SevenWatchers_Intact",
+    "SM_Wonder_SevenWatchers_Construction",
+    "SM_Wonder_SevenWatchers_Damaged",
+    "SM_Wonder_SevenWatchers_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_SevenPaving_Temperate",
+    "MI_Wonder_SevenPaving_Arid",
+    "MI_Wonder_SevenPaving_Tropical",
+    "MI_Wonder_SevenPaving_Cold",
+    "MI_Wonder_SevenGranite_Temperate",
+    "MI_Wonder_SevenGranite_Arid",
+    "MI_Wonder_SevenGranite_Tropical",
+    "MI_Wonder_SevenGranite_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff9a40",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SevenWatchers_Construction_lights.json",
+    "light_count": 1,
+    "kind": "fire bowl"
+   },
+   "checks": {
+    "tris": 28348,
+    "nonmanifold_edges": 0,
+    "open_edges": 560,
+    "closed_shells": 54,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -45.7,
+     -45.7,
+     -0.3
+    ],
+    "bbox_max": [
+     45.7,
+     51.22,
+     39.4
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SevenWatchers_Damaged",
+   "family": "Wonder",
+   "asset": "SevenWatchers",
+   "title": "The Seven Who Keep Watch",
+   "wonder_index": 2,
+   "age": "Iron",
+   "state": "Damaged",
+   "concept": "docs/concept/wonders/wonder-2-iron.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SevenWatchers_Damaged.fbx",
+   "lods": [
+    "SM_Wonder_SevenWatchers_Damaged_LOD0",
+    "SM_Wonder_SevenWatchers_Damaged_LOD1",
+    "SM_Wonder_SevenWatchers_Damaged_LOD2",
+    "SM_Wonder_SevenWatchers_Damaged_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    91.4,
+    96.9
+   ],
+   "height_m": 39.4,
+   "below_ground_m": 0.3,
+   "triangles": {
+    "LOD0": 62566,
+    "LOD1": 13242,
+    "LOD2": 3544,
+    "LOD3": 1214
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_SevenPaving",
+     "textures": [
+      "T_Wonder_SevenPaving_D",
+      "T_Wonder_SevenPaving_N",
+      "T_Wonder_SevenPaving_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_SevenGranite",
+     "textures": [
+      "T_Wonder_SevenGranite_D",
+      "T_Wonder_SevenGranite_N",
+      "T_Wonder_SevenGranite_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SevenWatchers_Intact",
+    "SM_Wonder_SevenWatchers_Construction",
+    "SM_Wonder_SevenWatchers_Damaged",
+    "SM_Wonder_SevenWatchers_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_SevenPaving_Temperate",
+    "MI_Wonder_SevenPaving_Arid",
+    "MI_Wonder_SevenPaving_Tropical",
+    "MI_Wonder_SevenPaving_Cold",
+    "MI_Wonder_SevenGranite_Temperate",
+    "MI_Wonder_SevenGranite_Arid",
+    "MI_Wonder_SevenGranite_Tropical",
+    "MI_Wonder_SevenGranite_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff9a40",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SevenWatchers_Damaged_lights.json",
+    "light_count": 4,
+    "kind": "fire bowl"
+   },
+   "checks": {
+    "tris": 62566,
+    "nonmanifold_edges": 0,
+    "open_edges": 548,
+    "closed_shells": 96,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -45.7,
+     -45.7,
+     -0.3
+    ],
+    "bbox_max": [
+     45.7,
+     51.22,
+     39.4
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SevenWatchers_Ruin",
+   "family": "Wonder",
+   "asset": "SevenWatchers",
+   "title": "The Seven Who Keep Watch",
+   "wonder_index": 2,
+   "age": "Iron",
+   "state": "Ruin",
+   "concept": "docs/concept/wonders/wonder-2-iron.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SevenWatchers_Ruin.fbx",
+   "lods": [
+    "SM_Wonder_SevenWatchers_Ruin_LOD0",
+    "SM_Wonder_SevenWatchers_Ruin_LOD1",
+    "SM_Wonder_SevenWatchers_Ruin_LOD2",
+    "SM_Wonder_SevenWatchers_Ruin_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    103.7,
+    97.8
+   ],
+   "height_m": 18.8,
+   "below_ground_m": 2.06,
+   "triangles": {
+    "LOD0": 22480,
+    "LOD1": 4968,
+    "LOD2": 1557,
+    "LOD3": 482
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_SevenPaving",
+     "textures": [
+      "T_Wonder_SevenPaving_D",
+      "T_Wonder_SevenPaving_N",
+      "T_Wonder_SevenPaving_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_SevenGranite",
+     "textures": [
+      "T_Wonder_SevenGranite_D",
+      "T_Wonder_SevenGranite_N",
+      "T_Wonder_SevenGranite_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SevenWatchers_Intact",
+    "SM_Wonder_SevenWatchers_Construction",
+    "SM_Wonder_SevenWatchers_Damaged",
+    "SM_Wonder_SevenWatchers_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_SevenPaving_Temperate",
+    "MI_Wonder_SevenPaving_Arid",
+    "MI_Wonder_SevenPaving_Tropical",
+    "MI_Wonder_SevenPaving_Cold",
+    "MI_Wonder_SevenGranite_Temperate",
+    "MI_Wonder_SevenGranite_Arid",
+    "MI_Wonder_SevenGranite_Tropical",
+    "MI_Wonder_SevenGranite_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ff9a40",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SevenWatchers_Ruin_lights.json",
+    "light_count": 0,
+    "kind": "fire bowl"
+   },
+   "checks": {
+    "tris": 22480,
+    "nonmanifold_edges": 0,
+    "open_edges": 136,
+    "closed_shells": 124,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -48.22,
+     -46.63,
+     -2.06
+    ],
+    "bbox_max": [
+     55.5,
+     51.22,
+     18.8
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SeaGate_Intact",
+   "family": "Wonder",
+   "asset": "SeaGate",
+   "title": "The Sea Gate",
+   "wonder_index": 3,
+   "age": "Sail",
+   "state": "Intact",
+   "concept": "docs/concept/wonders/wonder-3-sail.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SeaGate_Intact.fbx",
+   "lods": [
+    "SM_Wonder_SeaGate_Intact_LOD0",
+    "SM_Wonder_SeaGate_Intact_LOD1",
+    "SM_Wonder_SeaGate_Intact_LOD2",
+    "SM_Wonder_SeaGate_Intact_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    217.0,
+    38.0
+   ],
+   "height_m": 77.2,
+   "below_ground_m": 8.58,
+   "triangles": {
+    "LOD0": 22668,
+    "LOD1": 6928,
+    "LOD2": 1948,
+    "LOD3": 740
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_GateLimestone",
+     "textures": [
+      "T_Wonder_GateLimestone_D",
+      "T_Wonder_GateLimestone_N",
+      "T_Wonder_GateLimestone_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_GateBronze",
+     "textures": [
+      "T_Wonder_GateBronze_D",
+      "T_Wonder_GateBronze_N",
+      "T_Wonder_GateBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SeaGate_Intact",
+    "SM_Wonder_SeaGate_Construction",
+    "SM_Wonder_SeaGate_Damaged",
+    "SM_Wonder_SeaGate_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_GateLimestone_Temperate",
+    "MI_Wonder_GateLimestone_Arid",
+    "MI_Wonder_GateLimestone_Tropical",
+    "MI_Wonder_GateLimestone_Cold",
+    "MI_Wonder_GateBronze_Temperate",
+    "MI_Wonder_GateBronze_Arid",
+    "MI_Wonder_GateBronze_Tropical",
+    "MI_Wonder_GateBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffb050",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SeaGate_Intact_lights.json",
+    "light_count": 17,
+    "kind": "lantern (lighthouse) and tower windows"
+   },
+   "checks": {
+    "tris": 22668,
+    "nonmanifold_edges": 0,
+    "open_edges": 3832,
+    "closed_shells": 365,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -108.84,
+     -19.02,
+     -8.58
+    ],
+    "bbox_max": [
+     108.18,
+     18.95,
+     77.23
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SeaGate_Construction",
+   "family": "Wonder",
+   "asset": "SeaGate",
+   "title": "The Sea Gate",
+   "wonder_index": 3,
+   "age": "Sail",
+   "state": "Construction",
+   "concept": "docs/concept/wonders/wonder-3-sail.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SeaGate_Construction.fbx",
+   "lods": [
+    "SM_Wonder_SeaGate_Construction_LOD0",
+    "SM_Wonder_SeaGate_Construction_LOD1",
+    "SM_Wonder_SeaGate_Construction_LOD2",
+    "SM_Wonder_SeaGate_Construction_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    217.0,
+    38.0
+   ],
+   "height_m": 50.0,
+   "below_ground_m": 8.58,
+   "triangles": {
+    "LOD0": 21776,
+    "LOD1": 5872,
+    "LOD2": 1662,
+    "LOD3": 364
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_GateLimestone",
+     "textures": [
+      "T_Wonder_GateLimestone_D",
+      "T_Wonder_GateLimestone_N",
+      "T_Wonder_GateLimestone_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_GateBronze",
+     "textures": [
+      "T_Wonder_GateBronze_D",
+      "T_Wonder_GateBronze_N",
+      "T_Wonder_GateBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SeaGate_Intact",
+    "SM_Wonder_SeaGate_Construction",
+    "SM_Wonder_SeaGate_Damaged",
+    "SM_Wonder_SeaGate_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_GateLimestone_Temperate",
+    "MI_Wonder_GateLimestone_Arid",
+    "MI_Wonder_GateLimestone_Tropical",
+    "MI_Wonder_GateLimestone_Cold",
+    "MI_Wonder_GateBronze_Temperate",
+    "MI_Wonder_GateBronze_Arid",
+    "MI_Wonder_GateBronze_Tropical",
+    "MI_Wonder_GateBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffb050",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SeaGate_Construction_lights.json",
+    "light_count": 2,
+    "kind": "lantern (lighthouse) and tower windows"
+   },
+   "checks": {
+    "tris": 21776,
+    "nonmanifold_edges": 0,
+    "open_edges": 1460,
+    "closed_shells": 386,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -108.84,
+     -19.06,
+     -8.58
+    ],
+    "bbox_max": [
+     108.18,
+     18.95,
+     50.0
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SeaGate_Damaged",
+   "family": "Wonder",
+   "asset": "SeaGate",
+   "title": "The Sea Gate",
+   "wonder_index": 3,
+   "age": "Sail",
+   "state": "Damaged",
+   "concept": "docs/concept/wonders/wonder-3-sail.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SeaGate_Damaged.fbx",
+   "lods": [
+    "SM_Wonder_SeaGate_Damaged_LOD0",
+    "SM_Wonder_SeaGate_Damaged_LOD1",
+    "SM_Wonder_SeaGate_Damaged_LOD2",
+    "SM_Wonder_SeaGate_Damaged_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    217.0,
+    38.0
+   ],
+   "height_m": 69.2,
+   "below_ground_m": 10.1,
+   "triangles": {
+    "LOD0": 23952,
+    "LOD1": 7188,
+    "LOD2": 2094,
+    "LOD3": 480
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_GateLimestone",
+     "textures": [
+      "T_Wonder_GateLimestone_D",
+      "T_Wonder_GateLimestone_N",
+      "T_Wonder_GateLimestone_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_GateBronze",
+     "textures": [
+      "T_Wonder_GateBronze_D",
+      "T_Wonder_GateBronze_N",
+      "T_Wonder_GateBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SeaGate_Intact",
+    "SM_Wonder_SeaGate_Construction",
+    "SM_Wonder_SeaGate_Damaged",
+    "SM_Wonder_SeaGate_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_GateLimestone_Temperate",
+    "MI_Wonder_GateLimestone_Arid",
+    "MI_Wonder_GateLimestone_Tropical",
+    "MI_Wonder_GateLimestone_Cold",
+    "MI_Wonder_GateBronze_Temperate",
+    "MI_Wonder_GateBronze_Arid",
+    "MI_Wonder_GateBronze_Tropical",
+    "MI_Wonder_GateBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffb050",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SeaGate_Damaged_lights.json",
+    "light_count": 4,
+    "kind": "lantern (lighthouse) and tower windows"
+   },
+   "checks": {
+    "tris": 23952,
+    "nonmanifold_edges": 0,
+    "open_edges": 3134,
+    "closed_shells": 428,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -108.84,
+     -19.06,
+     -10.1
+    ],
+    "bbox_max": [
+     108.18,
+     18.95,
+     69.2
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  },
+  {
+   "name": "SM_Wonder_SeaGate_Ruin",
+   "family": "Wonder",
+   "asset": "SeaGate",
+   "title": "The Sea Gate",
+   "wonder_index": 3,
+   "age": "Sail",
+   "state": "Ruin",
+   "concept": "docs/concept/wonders/wonder-3-sail.png",
+   "fbx": "art/wonders-a/export/SM_Wonder_SeaGate_Ruin.fbx",
+   "lods": [
+    "SM_Wonder_SeaGate_Ruin_LOD0",
+    "SM_Wonder_SeaGate_Ruin_LOD1",
+    "SM_Wonder_SeaGate_Ruin_LOD2",
+    "SM_Wonder_SeaGate_Ruin_LOD3"
+   ],
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "footprint_m": [
+    228.1,
+    41.5
+   ],
+   "height_m": 33.6,
+   "below_ground_m": 8.58,
+   "triangles": {
+    "LOD0": 22985,
+    "LOD1": 6013,
+    "LOD2": 1663,
+    "LOD3": 324
+   },
+   "materials": [
+    {
+     "slot": "Structure",
+     "index": 0,
+     "material": "M_Wonder_GateLimestone",
+     "textures": [
+      "T_Wonder_GateLimestone_D",
+      "T_Wonder_GateLimestone_N",
+      "T_Wonder_GateLimestone_ORM"
+     ]
+    },
+    {
+     "slot": "Roof",
+     "index": 1,
+     "material": "M_Wonder_GateBronze",
+     "textures": [
+      "T_Wonder_GateBronze_D",
+      "T_Wonder_GateBronze_N",
+      "T_Wonder_GateBronze_ORM"
+     ]
+    },
+    {
+     "slot": "Detail",
+     "index": 2,
+     "material": "M_Wonder_DetailA",
+     "textures": [
+      "T_Wonder_DetailA_D",
+      "T_Wonder_DetailA_N",
+      "T_Wonder_DetailA_ORM",
+      "T_Wonder_DetailA_M"
+     ]
+    }
+   ],
+   "states": [
+    "SM_Wonder_SeaGate_Intact",
+    "SM_Wonder_SeaGate_Construction",
+    "SM_Wonder_SeaGate_Damaged",
+    "SM_Wonder_SeaGate_Ruin"
+   ],
+   "culture_variants": [
+    "MI_Wonder_GateLimestone_Temperate",
+    "MI_Wonder_GateLimestone_Arid",
+    "MI_Wonder_GateLimestone_Tropical",
+    "MI_Wonder_GateLimestone_Cold",
+    "MI_Wonder_GateBronze_Temperate",
+    "MI_Wonder_GateBronze_Arid",
+    "MI_Wonder_GateBronze_Tropical",
+    "MI_Wonder_GateBronze_Cold",
+    "MI_Wonder_DetailA_Temperate",
+    "MI_Wonder_DetailA_Arid",
+    "MI_Wonder_DetailA_Tropical",
+    "MI_Wonder_DetailA_Cold"
+   ],
+   "night": {
+    "emissive_mask": "T_Wonder_DetailA_M (R)",
+    "emissive_tint": "#ffb050",
+    "lights_file": "art/wonders-a/export/SM_Wonder_SeaGate_Ruin_lights.json",
+    "light_count": 0,
+    "kind": "lantern (lighthouse) and tower windows"
+   },
+   "checks": {
+    "tris": 22985,
+    "nonmanifold_edges": 0,
+    "open_edges": 53,
+    "closed_shells": 498,
+    "inverted_shells": 0,
+    "bbox_min": [
+     -114.12,
+     -20.61,
+     -8.58
+    ],
+    "bbox_max": [
+     113.93,
+     20.86,
+     33.56
+    ]
+   },
+   "licence": "original",
+   "script": "art/wonders-a/build_wonders_a.py"
+  }
+ ]
+}

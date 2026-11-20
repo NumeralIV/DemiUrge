@@ -1,0 +1,7828 @@
+{
+ "meshes": {
+  "SM_Wonder_ChoirOfChimneys_Intact": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys",
+   "kind": "wonder",
+   "state": "Intact",
+   "family": "Wonder",
+   "footprint_m": [
+    180.0,
+    180.0
+   ],
+   "height_m": 97.4,
+   "base_z_m": -1.5,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 35836,
+    "LOD1": 12050,
+    "LOD2": 3538,
+    "LOD3": 1368
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_ChoirOfChimneys_Intact",
+    "Construction": "SM_Wonder_ChoirOfChimneys_Construction",
+    "Damaged": "SM_Wonder_ChoirOfChimneys_Damaged",
+    "Ruin": "SM_Wonder_ChoirOfChimneys_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_A",
+      "MI_Wonder_ChoirOfChimneysRoof_A",
+      "MI_Wonder_ChoirOfChimneysDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_B",
+      "MI_Wonder_ChoirOfChimneysRoof_B",
+      "MI_Wonder_ChoirOfChimneysDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_C",
+      "MI_Wonder_ChoirOfChimneysRoof_C",
+      "MI_Wonder_ChoirOfChimneysDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "chimney_cap",
+    "transforms": [
+     {
+      "pos": [
+       19.411,
+       -72.444,
+       60.6
+      ],
+      "rot_z_deg": 15.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       53.033,
+       -53.033,
+       68.13
+      ],
+      "rot_z_deg": 45.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       72.444,
+       -19.411,
+       72.97
+      ],
+      "rot_z_deg": 75.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       72.444,
+       19.411,
+       85.03
+      ],
+      "rot_z_deg": 105.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       53.033,
+       53.033,
+       89.87
+      ],
+      "rot_z_deg": 135.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       19.411,
+       72.444,
+       97.4
+      ],
+      "rot_z_deg": 165.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -19.411,
+       72.444,
+       94.4
+      ],
+      "rot_z_deg": 195.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -53.033,
+       53.033,
+       92.87
+      ],
+      "rot_z_deg": 225.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -72.444,
+       19.411,
+       82.03
+      ],
+      "rot_z_deg": 255.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -72.444,
+       -19.411,
+       75.97
+      ],
+      "rot_z_deg": 285.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -53.033,
+       -53.033,
+       65.13
+      ],
+      "rot_z_deg": 315.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -19.411,
+       -72.444,
+       63.6
+      ],
+      "rot_z_deg": 345.0,
+      "slot": "chimney_cap"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "dome_glow",
+     "pos": [
+      0,
+      0,
+      33.59
+     ],
+     "kind": "point_light",
+     "note": "warm interior light #ffc766, night only"
+    },
+    {
+     "name": "steam_00",
+     "pos": [
+      19.411,
+      -72.444,
+      63.8
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_01",
+     "pos": [
+      53.033,
+      -53.033,
+      71.33
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_02",
+     "pos": [
+      72.444,
+      -19.411,
+      76.17
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_03",
+     "pos": [
+      72.444,
+      19.411,
+      88.23
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_04",
+     "pos": [
+      53.033,
+      53.033,
+      93.07
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_05",
+     "pos": [
+      19.411,
+      72.444,
+      100.6
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_06",
+     "pos": [
+      -19.411,
+      72.444,
+      97.6
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_07",
+     "pos": [
+      -53.033,
+      53.033,
+      96.07
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_08",
+     "pos": [
+      -72.444,
+      19.411,
+      85.23
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_09",
+     "pos": [
+      -72.444,
+      -19.411,
+      79.17
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_10",
+     "pos": [
+      -53.033,
+      -53.033,
+      68.33
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_11",
+     "pos": [
+      -19.411,
+      -72.444,
+      66.8
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "fire_marker",
+     "pos": [
+      0,
+      0,
+      30
+     ],
+     "kind": "night_marker",
+     "note": "dome glows #ffc766 at night; steam lit orange from below"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-4-industry.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_Intact.fbx",
+   "checks": {
+    "non_manifold_edges": 2656,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_ChoirOfChimneys_Construction": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys",
+   "kind": "wonder",
+   "state": "Construction",
+   "family": "Wonder",
+   "footprint_m": [
+    180.0,
+    180.0
+   ],
+   "height_m": 64.08,
+   "base_z_m": -1.5,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 28332,
+    "LOD1": 11810,
+    "LOD2": 3356,
+    "LOD3": 1310
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_ChoirOfChimneys_Intact",
+    "Construction": "SM_Wonder_ChoirOfChimneys_Construction",
+    "Damaged": "SM_Wonder_ChoirOfChimneys_Damaged",
+    "Ruin": "SM_Wonder_ChoirOfChimneys_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_A",
+      "MI_Wonder_ChoirOfChimneysRoof_A",
+      "MI_Wonder_ChoirOfChimneysDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_B",
+      "MI_Wonder_ChoirOfChimneysRoof_B",
+      "MI_Wonder_ChoirOfChimneysDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_C",
+      "MI_Wonder_ChoirOfChimneysRoof_C",
+      "MI_Wonder_ChoirOfChimneysDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "chimney_cap",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "fire_marker",
+     "pos": [
+      0,
+      0,
+      30
+     ],
+     "kind": "night_marker",
+     "note": "dome glows #ffc766 at night; steam lit orange from below"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-4-industry.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_Construction.fbx",
+   "checks": {
+    "non_manifold_edges": 4274,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_ChoirOfChimneys_Damaged": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys",
+   "kind": "wonder",
+   "state": "Damaged",
+   "family": "Wonder",
+   "footprint_m": [
+    180.0,
+    180.0
+   ],
+   "height_m": 97.4,
+   "base_z_m": -1.5,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 39778,
+    "LOD1": 13516,
+    "LOD2": 3872,
+    "LOD3": 1590
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_ChoirOfChimneys_Intact",
+    "Construction": "SM_Wonder_ChoirOfChimneys_Construction",
+    "Damaged": "SM_Wonder_ChoirOfChimneys_Damaged",
+    "Ruin": "SM_Wonder_ChoirOfChimneys_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_A",
+      "MI_Wonder_ChoirOfChimneysRoof_A",
+      "MI_Wonder_ChoirOfChimneysDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_B",
+      "MI_Wonder_ChoirOfChimneysRoof_B",
+      "MI_Wonder_ChoirOfChimneysDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_C",
+      "MI_Wonder_ChoirOfChimneysRoof_C",
+      "MI_Wonder_ChoirOfChimneysDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "chimney_cap",
+    "transforms": [
+     {
+      "pos": [
+       19.411,
+       -72.444,
+       60.6
+      ],
+      "rot_z_deg": 15.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       72.444,
+       -19.411,
+       72.97
+      ],
+      "rot_z_deg": 75.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       72.444,
+       19.411,
+       85.03
+      ],
+      "rot_z_deg": 105.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       19.411,
+       72.444,
+       97.4
+      ],
+      "rot_z_deg": 165.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -19.411,
+       72.444,
+       94.4
+      ],
+      "rot_z_deg": 195.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -72.444,
+       19.411,
+       82.03
+      ],
+      "rot_z_deg": 255.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -72.444,
+       -19.411,
+       75.97
+      ],
+      "rot_z_deg": 285.0,
+      "slot": "chimney_cap"
+     },
+     {
+      "pos": [
+       -19.411,
+       -72.444,
+       63.6
+      ],
+      "rot_z_deg": 345.0,
+      "slot": "chimney_cap"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "dome_glow",
+     "pos": [
+      0,
+      0,
+      33.59
+     ],
+     "kind": "point_light",
+     "note": "warm interior light #ffc766, night only"
+    },
+    {
+     "name": "steam_00",
+     "pos": [
+      19.411,
+      -72.444,
+      63.8
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_02",
+     "pos": [
+      72.444,
+      -19.411,
+      76.17
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_03",
+     "pos": [
+      72.444,
+      19.411,
+      88.23
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_05",
+     "pos": [
+      19.411,
+      72.444,
+      100.6
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_06",
+     "pos": [
+      -19.411,
+      72.444,
+      97.6
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_08",
+     "pos": [
+      -72.444,
+      19.411,
+      85.23
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_09",
+     "pos": [
+      -72.444,
+      -19.411,
+      79.17
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "steam_11",
+     "pos": [
+      -19.411,
+      -72.444,
+      66.8
+     ],
+     "kind": "steam_plume",
+     "note": "white #f0ece6; plumes lean together downwind into one cloud 300-600 m; lit orange from below at night"
+    },
+    {
+     "name": "fire_marker",
+     "pos": [
+      0,
+      0,
+      30
+     ],
+     "kind": "night_marker",
+     "note": "dome glows #ffc766 at night; steam lit orange from below"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-4-industry.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_Damaged.fbx",
+   "checks": {
+    "non_manifold_edges": 3028,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_ChoirOfChimneys_Ruin": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys",
+   "kind": "wonder",
+   "state": "Ruin",
+   "family": "Wonder",
+   "footprint_m": [
+    180.0,
+    180.0
+   ],
+   "height_m": 57.28,
+   "base_z_m": -1.5,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 20706,
+    "LOD1": 7670,
+    "LOD2": 2442,
+    "LOD3": 1552
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_ChoirOfChimneys_Intact",
+    "Construction": "SM_Wonder_ChoirOfChimneys_Construction",
+    "Damaged": "SM_Wonder_ChoirOfChimneys_Damaged",
+    "Ruin": "SM_Wonder_ChoirOfChimneys_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_A",
+      "MI_Wonder_ChoirOfChimneysRoof_A",
+      "MI_Wonder_ChoirOfChimneysDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_B",
+      "MI_Wonder_ChoirOfChimneysRoof_B",
+      "MI_Wonder_ChoirOfChimneysDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_ChoirOfChimneysStructure_C",
+      "MI_Wonder_ChoirOfChimneysRoof_C",
+      "MI_Wonder_ChoirOfChimneysDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_ChoirOfChimneys_CapC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "chimney_cap",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "fire_marker",
+     "pos": [
+      0,
+      0,
+      30
+     ],
+     "kind": "night_marker",
+     "note": "dome glows #ffc766 at night; steam lit orange from below"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-4-industry.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_Ruin.fbx",
+   "checks": {
+    "non_manifold_edges": 1862,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_ChoirOfChimneys_CapA": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys - culture ornament A",
+   "kind": "ornament",
+   "culture": "A",
+   "socket_slot": "chimney_cap",
+   "footprint_m": [
+    7.84,
+    7.84
+   ],
+   "height_m": 4.4,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 304,
+    "LOD1": 208,
+    "LOD2": 136
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_ChoirOfChimneysStructure_A",
+    "MI_Wonder_ChoirOfChimneysRoof_A",
+    "MI_Wonder_ChoirOfChimneysDetail_A"
+   ],
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_CapA.fbx"
+  },
+  "SM_Wonder_ChoirOfChimneys_CapB": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys - culture ornament B",
+   "kind": "ornament",
+   "culture": "B",
+   "socket_slot": "chimney_cap",
+   "footprint_m": [
+    6.6,
+    6.6
+   ],
+   "height_m": 4.2,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 472,
+    "LOD1": 312,
+    "LOD2": 168
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_ChoirOfChimneysStructure_B",
+    "MI_Wonder_ChoirOfChimneysRoof_B",
+    "MI_Wonder_ChoirOfChimneysDetail_B"
+   ],
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_CapB.fbx"
+  },
+  "SM_Wonder_ChoirOfChimneys_CapC": {
+   "asset_id": "wonder-4-industry",
+   "title": "The Choir of Chimneys - culture ornament C",
+   "kind": "ornament",
+   "culture": "C",
+   "socket_slot": "chimney_cap",
+   "footprint_m": [
+    7.2,
+    7.2
+   ],
+   "height_m": 6.7,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 300,
+    "LOD1": 196,
+    "LOD2": 118
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_ChoirOfChimneysStructure",
+    "Roof": "M_Wonder_ChoirOfChimneysRoof",
+    "Detail": "M_Wonder_ChoirOfChimneysDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_ChoirOfChimneysStructure_C",
+    "MI_Wonder_ChoirOfChimneysRoof_C",
+    "MI_Wonder_ChoirOfChimneysDetail_C"
+   ],
+   "textures": [
+    "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "T_Wonder_ChoirOfChimneysStructure_M.png",
+    "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "T_Wonder_ChoirOfChimneysRoof_M.png",
+    "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "T_Wonder_ChoirOfChimneysDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_ChoirOfChimneys_CapC.fbx"
+  },
+  "SM_Wonder_EarOfTheSky_Intact": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky",
+   "kind": "wonder",
+   "state": "Intact",
+   "family": "Wonder",
+   "footprint_m": [
+    362.54,
+    408.9
+   ],
+   "height_m": 110.6,
+   "base_z_m": -0.5,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 16012,
+    "LOD1": 6060,
+    "LOD2": 1712,
+    "LOD3": 862
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_EarOfTheSky_Intact",
+    "Construction": "SM_Wonder_EarOfTheSky_Construction",
+    "Damaged": "SM_Wonder_EarOfTheSky_Damaged",
+    "Ruin": "SM_Wonder_EarOfTheSky_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_A",
+      "MI_Wonder_EarOfTheSkyRoof_A",
+      "MI_Wonder_EarOfTheSkyDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_B",
+      "MI_Wonder_EarOfTheSkyRoof_B",
+      "MI_Wonder_EarOfTheSkyDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_C",
+      "MI_Wonder_EarOfTheSkyRoof_C",
+      "MI_Wonder_EarOfTheSkyDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pylon_collar",
+    "transforms": [
+     {
+      "pos": [
+       0.0,
+       133.0,
+       103.6
+      ],
+      "rot_z_deg": 90.0,
+      "slot": "pylon_collar"
+     },
+     {
+      "pos": [
+       -115.181,
+       -66.5,
+       103.6
+      ],
+      "rot_z_deg": 210.0,
+      "slot": "pylon_collar"
+     },
+     {
+      "pos": [
+       115.181,
+       -66.5,
+       103.6
+      ],
+      "rot_z_deg": 330.0,
+      "slot": "pylon_collar"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [],
+   "lights": [
+    {
+     "name": "aviation_0",
+     "pos": [
+      0.0,
+      133.0,
+      110.4
+     ],
+     "color": "#ff3a2a",
+     "blink": "1 s on, 1 s off",
+     "phase_s": 0.0
+    },
+    {
+     "name": "aviation_1",
+     "pos": [
+      -115.181,
+      -66.5,
+      110.4
+     ],
+     "color": "#ff3a2a",
+     "blink": "1 s on, 1 s off",
+     "phase_s": 0.667
+    },
+    {
+     "name": "aviation_2",
+     "pos": [
+      115.181,
+      -66.5,
+      110.4
+     ],
+     "color": "#ff3a2a",
+     "blink": "1 s on, 1 s off",
+     "phase_s": 1.334
+    }
+   ],
+   "tree_sockets": [
+    {
+     "pos": [
+      150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      0.0,
+      160.0,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    }
+   ],
+   "concept": "docs/concept/wonders/wonder-5-atomic.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_Intact.fbx",
+   "checks": {
+    "non_manifold_edges": 1414,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own grassy berm (r 123-178 m); the dish floor sits at +1 m, so flatten the ground inside r 178 m"
+  },
+  "SM_Wonder_EarOfTheSky_Construction": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky",
+   "kind": "wonder",
+   "state": "Construction",
+   "family": "Wonder",
+   "footprint_m": [
+    356.0,
+    404.0
+   ],
+   "height_m": 88.13,
+   "base_z_m": -0.5,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 23088,
+    "LOD1": 10756,
+    "LOD2": 4630,
+    "LOD3": 634
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_EarOfTheSky_Intact",
+    "Construction": "SM_Wonder_EarOfTheSky_Construction",
+    "Damaged": "SM_Wonder_EarOfTheSky_Damaged",
+    "Ruin": "SM_Wonder_EarOfTheSky_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_A",
+      "MI_Wonder_EarOfTheSkyRoof_A",
+      "MI_Wonder_EarOfTheSkyDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_B",
+      "MI_Wonder_EarOfTheSkyRoof_B",
+      "MI_Wonder_EarOfTheSkyDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_C",
+      "MI_Wonder_EarOfTheSkyRoof_C",
+      "MI_Wonder_EarOfTheSkyDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pylon_collar",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [],
+   "lights": [],
+   "tree_sockets": [
+    {
+     "pos": [
+      150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      0.0,
+      160.0,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    }
+   ],
+   "concept": "docs/concept/wonders/wonder-5-atomic.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_Construction.fbx",
+   "checks": {
+    "non_manifold_edges": 3788,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own grassy berm (r 123-178 m); the dish floor sits at +1 m, so flatten the ground inside r 178 m"
+  },
+  "SM_Wonder_EarOfTheSky_Damaged": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky",
+   "kind": "wonder",
+   "state": "Damaged",
+   "family": "Wonder",
+   "footprint_m": [
+    359.27,
+    408.9
+   ],
+   "height_m": 110.6,
+   "base_z_m": -0.99,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 21378,
+    "LOD1": 8620,
+    "LOD2": 2912,
+    "LOD3": 856
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_EarOfTheSky_Intact",
+    "Construction": "SM_Wonder_EarOfTheSky_Construction",
+    "Damaged": "SM_Wonder_EarOfTheSky_Damaged",
+    "Ruin": "SM_Wonder_EarOfTheSky_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_A",
+      "MI_Wonder_EarOfTheSkyRoof_A",
+      "MI_Wonder_EarOfTheSkyDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_B",
+      "MI_Wonder_EarOfTheSkyRoof_B",
+      "MI_Wonder_EarOfTheSkyDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_C",
+      "MI_Wonder_EarOfTheSkyRoof_C",
+      "MI_Wonder_EarOfTheSkyDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pylon_collar",
+    "transforms": [
+     {
+      "pos": [
+       0.0,
+       133.0,
+       103.6
+      ],
+      "rot_z_deg": 90.0,
+      "slot": "pylon_collar"
+     },
+     {
+      "pos": [
+       -115.181,
+       -66.5,
+       103.6
+      ],
+      "rot_z_deg": 210.0,
+      "slot": "pylon_collar"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [],
+   "lights": [
+    {
+     "name": "aviation_0",
+     "pos": [
+      0.0,
+      133.0,
+      110.4
+     ],
+     "color": "#ff3a2a",
+     "blink": "1 s on, 1 s off",
+     "phase_s": 0.0
+    },
+    {
+     "name": "aviation_1",
+     "pos": [
+      -115.181,
+      -66.5,
+      110.4
+     ],
+     "color": "#ff3a2a",
+     "blink": "1 s on, 1 s off",
+     "phase_s": 0.667
+    }
+   ],
+   "tree_sockets": [
+    {
+     "pos": [
+      150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      0.0,
+      160.0,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    }
+   ],
+   "concept": "docs/concept/wonders/wonder-5-atomic.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_Damaged.fbx",
+   "checks": {
+    "non_manifold_edges": 1940,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own grassy berm (r 123-178 m); the dish floor sits at +1 m, so flatten the ground inside r 178 m"
+  },
+  "SM_Wonder_EarOfTheSky_Ruin": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky",
+   "kind": "wonder",
+   "state": "Ruin",
+   "family": "Wonder",
+   "footprint_m": [
+    356.0,
+    404.0
+   ],
+   "height_m": 45.91,
+   "base_z_m": -4.45,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 20936,
+    "LOD1": 9010,
+    "LOD2": 3726,
+    "LOD3": 720
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_EarOfTheSky_Intact",
+    "Construction": "SM_Wonder_EarOfTheSky_Construction",
+    "Damaged": "SM_Wonder_EarOfTheSky_Damaged",
+    "Ruin": "SM_Wonder_EarOfTheSky_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_A",
+      "MI_Wonder_EarOfTheSkyRoof_A",
+      "MI_Wonder_EarOfTheSkyDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_B",
+      "MI_Wonder_EarOfTheSkyRoof_B",
+      "MI_Wonder_EarOfTheSkyDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_EarOfTheSkyStructure_C",
+      "MI_Wonder_EarOfTheSkyRoof_C",
+      "MI_Wonder_EarOfTheSkyDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_EarOfTheSky_CollarC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pylon_collar",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [],
+   "lights": [],
+   "tree_sockets": [
+    {
+     "pos": [
+      150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      0.0,
+      160.0,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -150.0,
+      0.0,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      -33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      33.38,
+      -146.24,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      69.42,
+      -144.16,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      93.52,
+      -117.27,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      125.09,
+      -99.76,
+      5.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      135.15,
+      -65.08,
+      8.0
+     ],
+     "kind": "broadleaf"
+    },
+    {
+     "pos": [
+      155.99,
+      -35.6,
+      5.0
+     ],
+     "kind": "broadleaf"
+    }
+   ],
+   "concept": "docs/concept/wonders/wonder-5-atomic.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_Ruin.fbx",
+   "checks": {
+    "non_manifold_edges": 2408,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own grassy berm (r 123-178 m); the dish floor sits at +1 m, so flatten the ground inside r 178 m"
+  },
+  "SM_Wonder_EarOfTheSky_CollarA": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky - culture ornament A",
+   "kind": "ornament",
+   "culture": "A",
+   "socket_slot": "pylon_collar",
+   "footprint_m": [
+    7.25,
+    7.25
+   ],
+   "height_m": 4.4,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 280,
+    "LOD1": 216,
+    "LOD2": 168
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_EarOfTheSkyStructure_A",
+    "MI_Wonder_EarOfTheSkyRoof_A",
+    "MI_Wonder_EarOfTheSkyDetail_A"
+   ],
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_CollarA.fbx"
+  },
+  "SM_Wonder_EarOfTheSky_CollarB": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky - culture ornament B",
+   "kind": "ornament",
+   "culture": "B",
+   "socket_slot": "pylon_collar",
+   "footprint_m": [
+    10.95,
+    10.95
+   ],
+   "height_m": 2.92,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 432,
+    "LOD1": 264,
+    "LOD2": 144
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_EarOfTheSkyStructure_B",
+    "MI_Wonder_EarOfTheSkyRoof_B",
+    "MI_Wonder_EarOfTheSkyDetail_B"
+   ],
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_CollarB.fbx"
+  },
+  "SM_Wonder_EarOfTheSky_CollarC": {
+   "asset_id": "wonder-5-atomic",
+   "title": "The Ear of the Sky - culture ornament C",
+   "kind": "ornament",
+   "culture": "C",
+   "socket_slot": "pylon_collar",
+   "footprint_m": [
+    8.0,
+    8.0
+   ],
+   "height_m": 4.0,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 280,
+    "LOD1": 168,
+    "LOD2": 84
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_EarOfTheSkyStructure",
+    "Roof": "M_Wonder_EarOfTheSkyRoof",
+    "Detail": "M_Wonder_EarOfTheSkyDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_EarOfTheSkyStructure_C",
+    "MI_Wonder_EarOfTheSkyRoof_C",
+    "MI_Wonder_EarOfTheSkyDetail_C"
+   ],
+   "textures": [
+    "T_Wonder_EarOfTheSkyStructure_D.png",
+    "T_Wonder_EarOfTheSkyStructure_N.png",
+    "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "T_Wonder_EarOfTheSkyStructure_M.png",
+    "T_Wonder_EarOfTheSkyRoof_D.png",
+    "T_Wonder_EarOfTheSkyRoof_N.png",
+    "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "T_Wonder_EarOfTheSkyRoof_M.png",
+    "T_Wonder_EarOfTheSkyDetail_D.png",
+    "T_Wonder_EarOfTheSkyDetail_N.png",
+    "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "T_Wonder_EarOfTheSkyDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_EarOfTheSky_CollarC.fbx"
+  },
+  "SM_Wonder_Ladder_Intact": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder",
+   "kind": "wonder",
+   "state": "Intact",
+   "family": "Wonder",
+   "footprint_m": [
+    404.4,
+    404.4
+   ],
+   "height_m": 26.0,
+   "base_z_m": -0.3,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 20560,
+    "LOD1": 8648,
+    "LOD2": 2696,
+    "LOD3": 416
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Ladder_Intact",
+    "Construction": "SM_Wonder_Ladder_Construction",
+    "Damaged": "SM_Wonder_Ladder_Damaged",
+    "Ruin": "SM_Wonder_Ladder_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_A",
+      "MI_Wonder_LadderRoof_A",
+      "MI_Wonder_LadderDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_B",
+      "MI_Wonder_LadderRoof_B",
+      "MI_Wonder_LadderDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_C",
+      "MI_Wonder_LadderRoof_C",
+      "MI_Wonder_LadderDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "anchor_crown",
+    "transforms": [
+     {
+      "pos": [
+       0.0,
+       0.0,
+       22.6
+      ],
+      "rot_z_deg": 0.0,
+      "slot": "anchor_crown"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "anchor_glow",
+     "pos": [
+      0,
+      0,
+      3.0
+     ],
+     "kind": "point_light",
+     "note": "ring of light at the tether foot, #fffaf0"
+    },
+    {
+     "name": "tether_light_line",
+     "pos": [
+      0,
+      0,
+      26.0
+     ],
+     "kind": "beam_line",
+     "note": "a faint pulse running up the tether (UE panner on the Detail emissive)"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [
+    {
+     "pos": [
+      162.95,
+      4.0,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      170.71,
+      21.05,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      176.6,
+      39.66,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      154.77,
+      51.13,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      157.24,
+      69.7,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      157.49,
+      89.21,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      133.27,
+      93.86,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      130.24,
+      112.35,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      124.81,
+      131.09,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      100.28,
+      128.5,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      92.02,
+      145.31,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      81.38,
+      161.67,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      58.66,
+      152.08,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      45.87,
+      165.77,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      30.94,
+      178.34,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      11.99,
+      162.56,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -4.22,
+      171.95,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -22.16,
+      179.64,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -35.71,
+      159.04,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -53.95,
+      163.32,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -73.35,
+      165.47,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -80.34,
+      141.82,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -99.04,
+      140.62,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -118.22,
+      137.05,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -118.05,
+      112.4,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -135.6,
+      105.82,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -152.92,
+      96.83,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -145.6,
+      73.29,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -160.47,
+      61.9,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -174.44,
+      48.28,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -160.6,
+      27.87,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -171.53,
+      12.65,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -180.95,
+      -4.44,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -161.77,
+      -19.95,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -167.82,
+      -37.69,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -171.86,
+      -56.78,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -149.02,
+      -66.05,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -149.65,
+      -84.78,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -147.98,
+      -104.22,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -123.43,
+      -106.47,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -118.6,
+      -124.57,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -111.36,
+      -142.69,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -87.2,
+      -137.71,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -77.33,
+      -153.63,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -65.14,
+      -168.87,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -43.47,
+      -157.1,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -29.41,
+      -169.47,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      -13.32,
+      -180.51,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      4.0,
+      -162.95,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      21.05,
+      -170.71,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      39.66,
+      -176.6,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      51.13,
+      -154.77,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      69.7,
+      -157.24,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      89.21,
+      -157.49,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      93.86,
+      -133.27,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      112.35,
+      -130.24,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      131.09,
+      -124.81,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      128.5,
+      -100.28,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      145.31,
+      -92.02,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      161.67,
+      -81.38,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      152.08,
+      -58.66,
+      25.0
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      165.77,
+      -45.87,
+      23.6
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      178.34,
+      -30.94,
+      22.2
+     ],
+     "kind": "garden_small"
+    },
+    {
+     "pos": [
+      162.56,
+      -11.99,
+      25.0
+     ],
+     "kind": "garden_small"
+    }
+   ],
+   "concept": "docs/concept/wonders/wonder-6-space.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Intact.fbx",
+   "checks": {
+    "non_manifold_edges": 1240,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_Ladder_Construction": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder",
+   "kind": "wonder",
+   "state": "Construction",
+   "family": "Wonder",
+   "footprint_m": [
+    405.84,
+    405.84
+   ],
+   "height_m": 68.08,
+   "base_z_m": -0.3,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 21996,
+    "LOD1": 10824,
+    "LOD2": 3868,
+    "LOD3": 416
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Ladder_Intact",
+    "Construction": "SM_Wonder_Ladder_Construction",
+    "Damaged": "SM_Wonder_Ladder_Damaged",
+    "Ruin": "SM_Wonder_Ladder_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_A",
+      "MI_Wonder_LadderRoof_A",
+      "MI_Wonder_LadderDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_B",
+      "MI_Wonder_LadderRoof_B",
+      "MI_Wonder_LadderDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_C",
+      "MI_Wonder_LadderRoof_C",
+      "MI_Wonder_LadderDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "anchor_crown",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "anchor_glow",
+     "pos": [
+      0,
+      0,
+      3.0
+     ],
+     "kind": "point_light",
+     "note": "ring of light at the tether foot, #fffaf0"
+    },
+    {
+     "name": "tether_light_line",
+     "pos": [
+      0,
+      0,
+      26.0
+     ],
+     "kind": "beam_line",
+     "note": "a faint pulse running up the tether (UE panner on the Detail emissive)"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-6-space.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Construction.fbx",
+   "checks": {
+    "non_manifold_edges": 2912,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_Ladder_Damaged": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder",
+   "kind": "wonder",
+   "state": "Damaged",
+   "family": "Wonder",
+   "footprint_m": [
+    404.4,
+    404.4
+   ],
+   "height_m": 26.0,
+   "base_z_m": -0.33,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 20474,
+    "LOD1": 8774,
+    "LOD2": 2766,
+    "LOD3": 416
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Ladder_Intact",
+    "Construction": "SM_Wonder_Ladder_Construction",
+    "Damaged": "SM_Wonder_Ladder_Damaged",
+    "Ruin": "SM_Wonder_Ladder_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_A",
+      "MI_Wonder_LadderRoof_A",
+      "MI_Wonder_LadderDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_B",
+      "MI_Wonder_LadderRoof_B",
+      "MI_Wonder_LadderDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_C",
+      "MI_Wonder_LadderRoof_C",
+      "MI_Wonder_LadderDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "anchor_crown",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "anchor_glow",
+     "pos": [
+      0,
+      0,
+      3.0
+     ],
+     "kind": "point_light",
+     "note": "ring of light at the tether foot, #fffaf0"
+    },
+    {
+     "name": "tether_light_line",
+     "pos": [
+      0,
+      0,
+      26.0
+     ],
+     "kind": "beam_line",
+     "note": "a faint pulse running up the tether (UE panner on the Detail emissive)"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-6-space.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Damaged.fbx",
+   "checks": {
+    "non_manifold_edges": 1192,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_Ladder_Ruin": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder",
+   "kind": "wonder",
+   "state": "Ruin",
+   "family": "Wonder",
+   "footprint_m": [
+    404.8,
+    404.8
+   ],
+   "height_m": 10.88,
+   "base_z_m": -0.34,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 17994,
+    "LOD1": 9376,
+    "LOD2": 3260,
+    "LOD3": 290
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Ladder_Intact",
+    "Construction": "SM_Wonder_Ladder_Construction",
+    "Damaged": "SM_Wonder_Ladder_Damaged",
+    "Ruin": "SM_Wonder_Ladder_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_A",
+      "MI_Wonder_LadderRoof_A",
+      "MI_Wonder_LadderDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_B",
+      "MI_Wonder_LadderRoof_B",
+      "MI_Wonder_LadderDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_LadderStructure_C",
+      "MI_Wonder_LadderRoof_C",
+      "MI_Wonder_LadderDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Ladder_CrownC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "anchor_crown",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "anchor_glow",
+     "pos": [
+      0,
+      0,
+      3.0
+     ],
+     "kind": "point_light",
+     "note": "ring of light at the tether foot, #fffaf0"
+    },
+    {
+     "name": "tether_light_line",
+     "pos": [
+      0,
+      0,
+      26.0
+     ],
+     "kind": "beam_line",
+     "note": "a faint pulse running up the tether (UE panner on the Detail emissive)"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/wonders/wonder-6-space.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Ruin.fbx",
+   "checks": {
+    "non_manifold_edges": 4586,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   }
+  },
+  "SM_Wonder_Ladder_CrownA": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - culture ornament A",
+   "kind": "ornament",
+   "culture": "A",
+   "socket_slot": "anchor_crown",
+   "footprint_m": [
+    15.39,
+    15.39
+   ],
+   "height_m": 7.27,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 704,
+    "LOD1": 648,
+    "LOD2": 608
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_LadderStructure_A",
+    "MI_Wonder_LadderRoof_A",
+    "MI_Wonder_LadderDetail_A"
+   ],
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_CrownA.fbx"
+  },
+  "SM_Wonder_Ladder_CrownB": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - culture ornament B",
+   "kind": "ornament",
+   "culture": "B",
+   "socket_slot": "anchor_crown",
+   "footprint_m": [
+    15.6,
+    15.6
+   ],
+   "height_m": 3.8,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 960,
+    "LOD1": 608,
+    "LOD2": 352
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_LadderStructure_B",
+    "MI_Wonder_LadderRoof_B",
+    "MI_Wonder_LadderDetail_B"
+   ],
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_CrownB.fbx"
+  },
+  "SM_Wonder_Ladder_CrownC": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - culture ornament C",
+   "kind": "ornament",
+   "culture": "C",
+   "socket_slot": "anchor_crown",
+   "footprint_m": [
+    15.0,
+    15.0
+   ],
+   "height_m": 6.4,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 832,
+    "LOD1": 432,
+    "LOD2": 192
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_LadderStructure_C",
+    "MI_Wonder_LadderRoof_C",
+    "MI_Wonder_LadderDetail_C"
+   ],
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_CrownC.fbx"
+  },
+  "SM_Wonder_Ladder_Tether_Intact": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - Tether_Intact",
+   "kind": "extra",
+   "state": "Intact",
+   "footprint_m": [
+    2.0,
+    2.0
+   ],
+   "height_m": 3000.0,
+   "base_z_m": 26.0,
+   "triangles": {
+    "LOD0": 160,
+    "LOD1": 80,
+    "LOD2": 80
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Tether_Intact.fbx",
+   "note": "the tether: emissive core (Detail band 3, tether_core); vertex colour Fade (1 at 1.8 km to 0 at 3 km) for the fade-out; bounds are 3 km tall"
+  },
+  "SM_Wonder_Ladder_Tether_Construction": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - Tether_Construction",
+   "kind": "extra",
+   "state": "Construction",
+   "footprint_m": [
+    2.0,
+    2.0
+   ],
+   "height_m": 190.0,
+   "base_z_m": 26.0,
+   "triangles": {
+    "LOD0": 80,
+    "LOD1": 40,
+    "LOD2": 40
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Tether_Construction.fbx",
+   "note": "the tether: emissive core (Detail band 3, tether_core); vertex colour Fade (1 at 1.8 km to 0 at 3 km) for the fade-out; bounds are 3 km tall"
+  },
+  "SM_Wonder_Ladder_Tether_Damaged": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - Tether_Damaged",
+   "kind": "extra",
+   "state": "Damaged",
+   "footprint_m": [
+    4.89,
+    5.18
+   ],
+   "height_m": 432.04,
+   "base_z_m": 26.0,
+   "triangles": {
+    "LOD0": 126,
+    "LOD1": 78,
+    "LOD2": 48
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Tether_Damaged.fbx",
+   "note": "the tether: emissive core (Detail band 3, tether_core); vertex colour Fade (1 at 1.8 km to 0 at 3 km) for the fade-out; bounds are 3 km tall"
+  },
+  "SM_Wonder_Ladder_Tether_Ruin": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - Tether_Ruin",
+   "kind": "extra",
+   "state": "Ruin",
+   "footprint_m": [
+    4.89,
+    5.18
+   ],
+   "height_m": 70.04,
+   "base_z_m": 26.0,
+   "triangles": {
+    "LOD0": 78,
+    "LOD1": 54,
+    "LOD2": 24
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Tether_Ruin.fbx",
+   "note": "the tether: emissive core (Detail band 3, tether_core); vertex colour Fade (1 at 1.8 km to 0 at 3 km) for the fade-out; bounds are 3 km tall"
+  },
+  "SM_Wonder_Ladder_Climber": {
+   "asset_id": "wonder-6-space",
+   "title": "The Ladder - Climber",
+   "kind": "extra",
+   "state": null,
+   "footprint_m": [
+    4.9,
+    4.9
+   ],
+   "height_m": 10.0,
+   "base_z_m": 0.0,
+   "triangles": {
+    "LOD0": 544,
+    "LOD1": 176,
+    "LOD2": 84
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LadderStructure",
+    "Roof": "M_Wonder_LadderRoof",
+    "Detail": "M_Wonder_LadderDetail"
+   },
+   "textures": [
+    "T_Wonder_LadderStructure_D.png",
+    "T_Wonder_LadderStructure_N.png",
+    "T_Wonder_LadderStructure_ORM.png",
+    "T_Wonder_LadderStructure_M.png",
+    "T_Wonder_LadderRoof_D.png",
+    "T_Wonder_LadderRoof_N.png",
+    "T_Wonder_LadderRoof_ORM.png",
+    "T_Wonder_LadderRoof_M.png",
+    "T_Wonder_LadderDetail_D.png",
+    "T_Wonder_LadderDetail_N.png",
+    "T_Wonder_LadderDetail_ORM.png",
+    "T_Wonder_LadderDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Ladder_Climber.fbx",
+   "note": "climber capsule, 10 m; slides on the tether (bore radius 1.3 m); animate along Z"
+  },
+  "SM_Wonder_Sunwell_Intact": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell",
+   "kind": "wonder",
+   "state": "Intact",
+   "family": "Wonder",
+   "footprint_m": [
+    352.0,
+    352.0
+   ],
+   "height_m": 50.0,
+   "base_z_m": -27.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 45256,
+    "LOD1": 20480,
+    "LOD2": 5832,
+    "LOD3": 542
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Sunwell_Intact",
+    "Construction": "SM_Wonder_Sunwell_Construction",
+    "Damaged": "SM_Wonder_Sunwell_Damaged",
+    "Ruin": "SM_Wonder_Sunwell_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_A",
+      "MI_Wonder_SunwellRoof_A",
+      "MI_Wonder_SunwellDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_B",
+      "MI_Wonder_SunwellRoof_B",
+      "MI_Wonder_SunwellDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_C",
+      "MI_Wonder_SunwellRoof_C",
+      "MI_Wonder_SunwellDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "sun_disc",
+    "transforms": [
+     {
+      "pos": [
+       0.0,
+       0.0,
+       50.0
+      ],
+      "rot_z_deg": 0.0,
+      "slot": "sun_disc"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "sky_beam",
+     "pos": [
+      0.0,
+      0.0,
+      57.0
+     ],
+     "kind": "light_shaft",
+     "note": "SM_Wonder_Sunwell_Beam, additive gold-white #fff1c8, pulses when devotion is high"
+    },
+    {
+     "name": "pool_glow",
+     "pos": [
+      0.0,
+      0.0,
+      -26.4
+     ],
+     "kind": "night_marker",
+     "note": "pool and rim lamps glow warm at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [
+    {
+     "pos": [
+      -8.0,
+      -118.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      -126.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      -134.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      -142.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      -150.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      -158.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      -166.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      -174.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      -118.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      -126.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      -134.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      -142.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      -150.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      -158.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      -166.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      -174.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      118.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      126.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      134.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      142.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      150.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      158.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      166.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      174.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      118.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      126.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      134.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      142.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      150.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      158.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      166.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      174.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      118.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      126.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      134.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      142.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      150.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      158.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      8.0,
+      166.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      8.0,
+      174.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      118.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      126.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      134.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      142.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      150.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      158.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -8.0,
+      166.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -8.0,
+      174.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -118.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -126.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -134.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -142.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -150.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -158.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -166.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -174.0,
+      8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -118.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -126.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -134.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -142.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -150.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -158.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      -166.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_broadleaf"
+    },
+    {
+     "pos": [
+      -174.0,
+      -8.0,
+      0.75
+     ],
+     "kind": "avenue_cypress"
+    },
+    {
+     "pos": [
+      106.83,
+      15.85,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      104.76,
+      26.24,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      101.69,
+      36.38,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      97.63,
+      46.18,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      92.63,
+      55.52,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      86.75,
+      64.34,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      80.02,
+      72.53,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      72.53,
+      80.02,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      64.34,
+      86.75,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      55.52,
+      92.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      46.18,
+      97.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      36.38,
+      101.69,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      26.24,
+      104.76,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      15.85,
+      106.83,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -15.85,
+      106.83,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -26.24,
+      104.76,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -36.38,
+      101.69,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -46.18,
+      97.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -55.52,
+      92.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -64.34,
+      86.75,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -72.53,
+      80.02,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -80.02,
+      72.53,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -86.75,
+      64.34,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -92.63,
+      55.52,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -97.63,
+      46.18,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -101.69,
+      36.38,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -104.76,
+      26.24,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -106.83,
+      15.85,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -106.83,
+      -15.85,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -104.76,
+      -26.24,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -101.69,
+      -36.38,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -97.63,
+      -46.18,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -92.63,
+      -55.52,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -86.75,
+      -64.34,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -80.02,
+      -72.53,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -72.53,
+      -80.02,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -64.34,
+      -86.75,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -55.52,
+      -92.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -46.18,
+      -97.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -36.38,
+      -101.69,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -26.24,
+      -104.76,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      -15.85,
+      -106.83,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      15.85,
+      -106.83,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      26.24,
+      -104.76,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      36.38,
+      -101.69,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      46.18,
+      -97.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      55.52,
+      -92.63,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      64.34,
+      -86.75,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      72.53,
+      -80.02,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      80.02,
+      -72.53,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      86.75,
+      -64.34,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      92.63,
+      -55.52,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      97.63,
+      -46.18,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      101.69,
+      -36.38,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      104.76,
+      -26.24,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      106.83,
+      -15.85,
+      1.45
+     ],
+     "kind": "ring_broadleaf"
+    },
+    {
+     "pos": [
+      59.31,
+      14.24,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      56.36,
+      23.34,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      52.01,
+      31.87,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      46.38,
+      39.62,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      39.62,
+      46.38,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      31.87,
+      52.01,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      23.34,
+      56.36,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      14.24,
+      59.31,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -14.24,
+      59.31,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -23.34,
+      56.36,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -31.87,
+      52.01,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -39.62,
+      46.38,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -46.38,
+      39.62,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -52.01,
+      31.87,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -56.36,
+      23.34,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -59.31,
+      14.24,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -59.31,
+      -14.24,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -56.36,
+      -23.34,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -52.01,
+      -31.87,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -46.38,
+      -39.62,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -39.62,
+      -46.38,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -31.87,
+      -52.01,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -23.34,
+      -56.36,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      -14.24,
+      -59.31,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      14.24,
+      -59.31,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      23.34,
+      -56.36,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      31.87,
+      -52.01,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      39.62,
+      -46.38,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      46.38,
+      -39.62,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      52.01,
+      -31.87,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      56.36,
+      -23.34,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    },
+    {
+     "pos": [
+      59.31,
+      -14.24,
+      -12.55
+     ],
+     "kind": "terrace_small"
+    }
+   ],
+   "concept": "docs/concept/landmarks/wonder-sunwell.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_Intact.fbx",
+   "checks": {
+    "non_manifold_edges": 3224,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_cut": {
+    "shape": "disc",
+    "radius_m": 101.0,
+    "floor_z_m": -27.0,
+    "note": "the Sunwell is a pit: lower or hide terrain inside radius 101 m down to -27 m"
+   }
+  },
+  "SM_Wonder_Sunwell_Construction": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell",
+   "kind": "wonder",
+   "state": "Construction",
+   "family": "Wonder",
+   "footprint_m": [
+    352.0,
+    352.0
+   ],
+   "height_m": 46.08,
+   "base_z_m": -27.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 25344,
+    "LOD1": 12450,
+    "LOD2": 4378,
+    "LOD3": 542
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Sunwell_Intact",
+    "Construction": "SM_Wonder_Sunwell_Construction",
+    "Damaged": "SM_Wonder_Sunwell_Damaged",
+    "Ruin": "SM_Wonder_Sunwell_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_A",
+      "MI_Wonder_SunwellRoof_A",
+      "MI_Wonder_SunwellDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_B",
+      "MI_Wonder_SunwellRoof_B",
+      "MI_Wonder_SunwellDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_C",
+      "MI_Wonder_SunwellRoof_C",
+      "MI_Wonder_SunwellDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "sun_disc",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "pool_glow",
+     "pos": [
+      0.0,
+      0.0,
+      -26.4
+     ],
+     "kind": "night_marker",
+     "note": "pool and rim lamps glow warm at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-sunwell.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_Construction.fbx",
+   "checks": {
+    "non_manifold_edges": 2134,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_cut": {
+    "shape": "disc",
+    "radius_m": 101.0,
+    "floor_z_m": -27.0,
+    "note": "the Sunwell is a pit: lower or hide terrain inside radius 101 m down to -27 m"
+   }
+  },
+  "SM_Wonder_Sunwell_Damaged": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell",
+   "kind": "wonder",
+   "state": "Damaged",
+   "family": "Wonder",
+   "footprint_m": [
+    352.0,
+    352.0
+   ],
+   "height_m": 18.0,
+   "base_z_m": -27.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 38816,
+    "LOD1": 18790,
+    "LOD2": 5320,
+    "LOD3": 542
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Sunwell_Intact",
+    "Construction": "SM_Wonder_Sunwell_Construction",
+    "Damaged": "SM_Wonder_Sunwell_Damaged",
+    "Ruin": "SM_Wonder_Sunwell_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_A",
+      "MI_Wonder_SunwellRoof_A",
+      "MI_Wonder_SunwellDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_B",
+      "MI_Wonder_SunwellRoof_B",
+      "MI_Wonder_SunwellDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_C",
+      "MI_Wonder_SunwellRoof_C",
+      "MI_Wonder_SunwellDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "sun_disc",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "pool_glow",
+     "pos": [
+      0.0,
+      0.0,
+      -26.4
+     ],
+     "kind": "night_marker",
+     "note": "pool and rim lamps glow warm at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-sunwell.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_Damaged.fbx",
+   "checks": {
+    "non_manifold_edges": 3226,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_cut": {
+    "shape": "disc",
+    "radius_m": 101.0,
+    "floor_z_m": -27.0,
+    "note": "the Sunwell is a pit: lower or hide terrain inside radius 101 m down to -27 m"
+   }
+  },
+  "SM_Wonder_Sunwell_Ruin": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell",
+   "kind": "wonder",
+   "state": "Ruin",
+   "family": "Wonder",
+   "footprint_m": [
+    352.0,
+    352.0
+   ],
+   "height_m": 1.4,
+   "base_z_m": -27.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 29191,
+    "LOD1": 14411,
+    "LOD2": 4169,
+    "LOD3": 542
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_Sunwell_Intact",
+    "Construction": "SM_Wonder_Sunwell_Construction",
+    "Damaged": "SM_Wonder_Sunwell_Damaged",
+    "Ruin": "SM_Wonder_Sunwell_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_A",
+      "MI_Wonder_SunwellRoof_A",
+      "MI_Wonder_SunwellDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_B",
+      "MI_Wonder_SunwellRoof_B",
+      "MI_Wonder_SunwellDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_SunwellStructure_C",
+      "MI_Wonder_SunwellRoof_C",
+      "MI_Wonder_SunwellDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_Sunwell_DiscC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "sun_disc",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "pool_glow",
+     "pos": [
+      0.0,
+      0.0,
+      -26.4
+     ],
+     "kind": "night_marker",
+     "note": "pool and rim lamps glow warm at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-sunwell.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_Ruin.fbx",
+   "checks": {
+    "non_manifold_edges": 1883,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_cut": {
+    "shape": "disc",
+    "radius_m": 101.0,
+    "floor_z_m": -27.0,
+    "note": "the Sunwell is a pit: lower or hide terrain inside radius 101 m down to -27 m"
+   }
+  },
+  "SM_Wonder_Sunwell_DiscA": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell - culture ornament A",
+   "kind": "ornament",
+   "culture": "A",
+   "socket_slot": "sun_disc",
+   "footprint_m": [
+    22.0,
+    9.37
+   ],
+   "height_m": 17.19,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 1544,
+    "LOD1": 842,
+    "LOD2": 556
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_SunwellStructure_A",
+    "MI_Wonder_SunwellRoof_A",
+    "MI_Wonder_SunwellDetail_A"
+   ],
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_DiscA.fbx"
+  },
+  "SM_Wonder_Sunwell_DiscB": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell - culture ornament B",
+   "kind": "ornament",
+   "culture": "B",
+   "socket_slot": "sun_disc",
+   "footprint_m": [
+    16.28,
+    7.31
+   ],
+   "height_m": 14.66,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 1312,
+    "LOD1": 610,
+    "LOD2": 324
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_SunwellStructure_B",
+    "MI_Wonder_SunwellRoof_B",
+    "MI_Wonder_SunwellDetail_B"
+   ],
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_DiscB.fbx"
+  },
+  "SM_Wonder_Sunwell_DiscC": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell - culture ornament C",
+   "kind": "ornament",
+   "culture": "C",
+   "socket_slot": "sun_disc",
+   "footprint_m": [
+    18.81,
+    8.65
+   ],
+   "height_m": 15.55,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 1960,
+    "LOD1": 962,
+    "LOD2": 540
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_SunwellStructure",
+    "Roof": "M_Wonder_SunwellRoof",
+    "Detail": "M_Wonder_SunwellDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_SunwellStructure_C",
+    "MI_Wonder_SunwellRoof_C",
+    "MI_Wonder_SunwellDetail_C"
+   ],
+   "textures": [
+    "T_Wonder_SunwellStructure_D.png",
+    "T_Wonder_SunwellStructure_N.png",
+    "T_Wonder_SunwellStructure_ORM.png",
+    "T_Wonder_SunwellStructure_M.png",
+    "T_Wonder_SunwellRoof_D.png",
+    "T_Wonder_SunwellRoof_N.png",
+    "T_Wonder_SunwellRoof_ORM.png",
+    "T_Wonder_SunwellRoof_M.png",
+    "T_Wonder_SunwellDetail_D.png",
+    "T_Wonder_SunwellDetail_N.png",
+    "T_Wonder_SunwellDetail_ORM.png",
+    "T_Wonder_SunwellDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_DiscC.fbx"
+  },
+  "SM_Wonder_Sunwell_Beam": {
+   "asset_id": "wonder-sunwell",
+   "title": "The Sunwell - Beam",
+   "kind": "extra",
+   "state": null,
+   "footprint_m": [
+    8.0,
+    8.0
+   ],
+   "height_m": 1500.0,
+   "base_z_m": 57.0,
+   "triangles": {
+    "LOD0": 120,
+    "LOD1": 70,
+    "LOD2": 60
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_LightShaft"
+   },
+   "textures": [],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_Sunwell_Beam.fbx",
+   "note": "sky beam from the mirror (z 57 m) to 1.5 km; additive translucent; vertex colour Fade; pulse with devotion"
+  },
+  "SM_Wonder_StairOfRains_Intact": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains",
+   "kind": "wonder",
+   "state": "Intact",
+   "family": "Wonder",
+   "footprint_m": [
+    311.71,
+    304.97
+   ],
+   "height_m": 127.6,
+   "base_z_m": -2.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 71836,
+    "LOD1": 23896,
+    "LOD2": 5256,
+    "LOD3": 360
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_StairOfRains_Intact",
+    "Construction": "SM_Wonder_StairOfRains_Construction",
+    "Damaged": "SM_Wonder_StairOfRains_Damaged",
+    "Ruin": "SM_Wonder_StairOfRains_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_A",
+      "MI_Wonder_StairOfRainsRoof_A",
+      "MI_Wonder_StairOfRainsDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_B",
+      "MI_Wonder_StairOfRainsRoof_B",
+      "MI_Wonder_StairOfRainsDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_C",
+      "MI_Wonder_StairOfRainsRoof_C",
+      "MI_Wonder_StairOfRainsDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pavilion_canopy",
+    "transforms": [
+     {
+      "pos": [
+       0.0,
+       0.0,
+       127.6
+      ],
+      "rot_z_deg": 0.0,
+      "slot": "pavilion_canopy"
+     }
+    ],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "mist_0_1",
+     "pos": [
+      0.0,
+      -104.81,
+      29.2
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_2",
+     "pos": [
+      0.0,
+      -94.22,
+      41.4
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_3",
+     "pos": [
+      0.0,
+      -84.07,
+      53.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_4",
+     "pos": [
+      0.0,
+      -74.4,
+      64.3
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_5",
+     "pos": [
+      0.0,
+      -65.24,
+      75.0
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "rainbow",
+     "pos": [
+      9.04,
+      -74.94,
+      80.0
+     ],
+     "kind": "rainbow",
+     "note": "faint rainbow in the spray, low sun only"
+    },
+    {
+     "name": "mist_0_6",
+     "pos": [
+      0.0,
+      -56.61,
+      85.2
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_7",
+     "pos": [
+      0.0,
+      -48.49,
+      94.9
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_8",
+     "pos": [
+      0.0,
+      -40.86,
+      104.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_1_2",
+     "pos": [
+      45.95,
+      -79.58,
+      41.4
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_1_3",
+     "pos": [
+      40.76,
+      -70.61,
+      53.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_1_4",
+     "pos": [
+      35.87,
+      -62.13,
+      64.3
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_1_5",
+     "pos": [
+      31.29,
+      -54.2,
+      75.0
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "pavilion_glow",
+     "pos": [
+      0.0,
+      0.0,
+      122.8
+     ],
+     "kind": "night_marker",
+     "note": "lantern-lit pavilion; lit pools down the falls at night"
+    }
+   ],
+   "lights": [
+    {
+     "name": "pavilion_lantern",
+     "pos": [
+      0.0,
+      0.0,
+      123.4
+     ],
+     "color": "#ffc77a",
+     "blink": null
+    }
+   ],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-stair-of-rains.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_Intact.fbx",
+   "checks": {
+    "non_manifold_edges": 942,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own terraced mountain (footprint 304 m, summit about 118 m); blend its skirt (r 150-152 m, z 0 to -2) into the terrain; best on a hill or slope"
+  },
+  "SM_Wonder_StairOfRains_Construction": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains",
+   "kind": "wonder",
+   "state": "Construction",
+   "family": "Wonder",
+   "footprint_m": [
+    311.71,
+    304.97
+   ],
+   "height_m": 121.08,
+   "base_z_m": -2.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 45710,
+    "LOD1": 15650,
+    "LOD2": 3594,
+    "LOD3": 360
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_StairOfRains_Intact",
+    "Construction": "SM_Wonder_StairOfRains_Construction",
+    "Damaged": "SM_Wonder_StairOfRains_Damaged",
+    "Ruin": "SM_Wonder_StairOfRains_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_A",
+      "MI_Wonder_StairOfRainsRoof_A",
+      "MI_Wonder_StairOfRainsDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_B",
+      "MI_Wonder_StairOfRainsRoof_B",
+      "MI_Wonder_StairOfRainsDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_C",
+      "MI_Wonder_StairOfRainsRoof_C",
+      "MI_Wonder_StairOfRainsDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pavilion_canopy",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "mist_0_1",
+     "pos": [
+      0.0,
+      -104.81,
+      29.2
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_2",
+     "pos": [
+      0.0,
+      -94.22,
+      41.4
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_3",
+     "pos": [
+      0.0,
+      -84.07,
+      53.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_4",
+     "pos": [
+      0.0,
+      -74.4,
+      64.3
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "pavilion_glow",
+     "pos": [
+      0.0,
+      0.0,
+      122.8
+     ],
+     "kind": "night_marker",
+     "note": "lantern-lit pavilion; lit pools down the falls at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-stair-of-rains.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_Construction.fbx",
+   "checks": {
+    "non_manifold_edges": 1198,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own terraced mountain (footprint 304 m, summit about 118 m); blend its skirt (r 150-152 m, z 0 to -2) into the terrain; best on a hill or slope"
+  },
+  "SM_Wonder_StairOfRains_Damaged": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains",
+   "kind": "wonder",
+   "state": "Damaged",
+   "family": "Wonder",
+   "footprint_m": [
+    311.71,
+    304.97
+   ],
+   "height_m": 126.3,
+   "base_z_m": -2.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 65882,
+    "LOD1": 22034,
+    "LOD2": 4898,
+    "LOD3": 360
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_StairOfRains_Intact",
+    "Construction": "SM_Wonder_StairOfRains_Construction",
+    "Damaged": "SM_Wonder_StairOfRains_Damaged",
+    "Ruin": "SM_Wonder_StairOfRains_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_A",
+      "MI_Wonder_StairOfRainsRoof_A",
+      "MI_Wonder_StairOfRainsDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_B",
+      "MI_Wonder_StairOfRainsRoof_B",
+      "MI_Wonder_StairOfRainsDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_C",
+      "MI_Wonder_StairOfRainsRoof_C",
+      "MI_Wonder_StairOfRainsDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pavilion_canopy",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "mist_0_1",
+     "pos": [
+      0.0,
+      -104.81,
+      29.2
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_2",
+     "pos": [
+      0.0,
+      -94.22,
+      41.4
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_3",
+     "pos": [
+      0.0,
+      -84.07,
+      53.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_4",
+     "pos": [
+      0.0,
+      -74.4,
+      64.3
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_5",
+     "pos": [
+      0.0,
+      -65.24,
+      75.0
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "rainbow",
+     "pos": [
+      9.04,
+      -74.94,
+      80.0
+     ],
+     "kind": "rainbow",
+     "note": "faint rainbow in the spray, low sun only"
+    },
+    {
+     "name": "mist_0_6",
+     "pos": [
+      0.0,
+      -56.61,
+      85.2
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_7",
+     "pos": [
+      0.0,
+      -48.49,
+      94.9
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_8",
+     "pos": [
+      0.0,
+      -40.86,
+      104.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "pavilion_glow",
+     "pos": [
+      0.0,
+      0.0,
+      122.8
+     ],
+     "kind": "night_marker",
+     "note": "lantern-lit pavilion; lit pools down the falls at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-stair-of-rains.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_Damaged.fbx",
+   "checks": {
+    "non_manifold_edges": 728,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own terraced mountain (footprint 304 m, summit about 118 m); blend its skirt (r 150-152 m, z 0 to -2) into the terrain; best on a hill or slope"
+  },
+  "SM_Wonder_StairOfRains_Ruin": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains",
+   "kind": "wonder",
+   "state": "Ruin",
+   "family": "Wonder",
+   "footprint_m": [
+    311.71,
+    304.97
+   ],
+   "height_m": 122.8,
+   "base_z_m": -2.0,
+   "pivot": "footprint centre at ground level (Z = 0)",
+   "triangles": {
+    "LOD0": 29154,
+    "LOD1": 13322,
+    "LOD2": 3898,
+    "LOD3": 360
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "states": {
+    "Intact": "SM_Wonder_StairOfRains_Intact",
+    "Construction": "SM_Wonder_StairOfRains_Construction",
+    "Damaged": "SM_Wonder_StairOfRains_Damaged",
+    "Ruin": "SM_Wonder_StairOfRains_Ruin"
+   },
+   "culture_variants": {
+    "A": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_A",
+      "MI_Wonder_StairOfRainsRoof_A",
+      "MI_Wonder_StairOfRainsDetail_A"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyA",
+     "label": "Cliff-Terrace (warm rose-ochre)"
+    },
+    "B": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_B",
+      "MI_Wonder_StairOfRainsRoof_B",
+      "MI_Wonder_StairOfRainsDetail_B"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyB",
+     "label": "Lagoon-Weaver (silver and verdigris)"
+    },
+    "C": {
+     "material_instances": [
+      "MI_Wonder_StairOfRainsStructure_C",
+      "MI_Wonder_StairOfRainsRoof_C",
+      "MI_Wonder_StairOfRainsDetail_C"
+     ],
+     "ornament_mesh": "SM_Wonder_StairOfRains_CanopyC",
+     "label": "Ring-Builder (cool slate and pewter)"
+    }
+   },
+   "ornament_sockets": {
+    "slot": "pavilion_canopy",
+    "transforms": [],
+    "note": "instance the culture ornament mesh at every transform (rotation about Z in degrees)"
+   },
+   "fx_sockets": [
+    {
+     "name": "mist_0_2",
+     "pos": [
+      0.0,
+      -94.22,
+      41.4
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_4",
+     "pos": [
+      0.0,
+      -74.4,
+      64.3
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_6",
+     "pos": [
+      0.0,
+      -56.61,
+      85.2
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_0_8",
+     "pos": [
+      0.0,
+      -40.86,
+      104.1
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_1_2",
+     "pos": [
+      45.95,
+      -79.58,
+      41.4
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "mist_1_4",
+     "pos": [
+      35.87,
+      -62.13,
+      64.3
+     ],
+     "kind": "mist",
+     "note": "spray where the fall lands"
+    },
+    {
+     "name": "pavilion_glow",
+     "pos": [
+      0.0,
+      0.0,
+      122.8
+     ],
+     "kind": "night_marker",
+     "note": "lantern-lit pavilion; lit pools down the falls at night"
+    }
+   ],
+   "lights": [],
+   "tree_sockets": [],
+   "concept": "docs/concept/landmarks/wonder-stair-of-rains.png",
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_Ruin.fbx",
+   "checks": {
+    "non_manifold_edges": 376,
+    "uv_v_range": [
+     0.0059,
+     0.9941
+    ]
+   },
+   "terrain_note": "brings its own terraced mountain (footprint 304 m, summit about 118 m); blend its skirt (r 150-152 m, z 0 to -2) into the terrain; best on a hill or slope"
+  },
+  "SM_Wonder_StairOfRains_CanopyA": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains - culture ornament A",
+   "kind": "ornament",
+   "culture": "A",
+   "socket_slot": "pavilion_canopy",
+   "footprint_m": [
+    20.8,
+    20.8
+   ],
+   "height_m": 9.0,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 1982,
+    "LOD1": 226,
+    "LOD2": 90
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_StairOfRainsStructure_A",
+    "MI_Wonder_StairOfRainsRoof_A",
+    "MI_Wonder_StairOfRainsDetail_A"
+   ],
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_CanopyA.fbx"
+  },
+  "SM_Wonder_StairOfRains_CanopyB": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains - culture ornament B",
+   "kind": "ornament",
+   "culture": "B",
+   "socket_slot": "pavilion_canopy",
+   "footprint_m": [
+    25.76,
+    22.4
+   ],
+   "height_m": 4.0,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 720,
+    "LOD1": 168,
+    "LOD2": 60
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_StairOfRainsStructure_B",
+    "MI_Wonder_StairOfRainsRoof_B",
+    "MI_Wonder_StairOfRainsDetail_B"
+   ],
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_CanopyB.fbx"
+  },
+  "SM_Wonder_StairOfRains_CanopyC": {
+   "asset_id": "wonder-stair-of-rains",
+   "title": "The Stair of Rains - culture ornament C",
+   "kind": "ornament",
+   "culture": "C",
+   "socket_slot": "pavilion_canopy",
+   "footprint_m": [
+    21.2,
+    21.2
+   ],
+   "height_m": 11.6,
+   "pivot": "socket origin (sits on the socket point)",
+   "triangles": {
+    "LOD0": 608,
+    "LOD1": 176,
+    "LOD2": 56
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12
+   ],
+   "materials": {
+    "Structure": "M_Wonder_StairOfRainsStructure",
+    "Roof": "M_Wonder_StairOfRainsRoof",
+    "Detail": "M_Wonder_StairOfRainsDetail"
+   },
+   "material_instances": [
+    "MI_Wonder_StairOfRainsStructure_C",
+    "MI_Wonder_StairOfRainsRoof_C",
+    "MI_Wonder_StairOfRainsDetail_C"
+   ],
+   "textures": [
+    "T_Wonder_StairOfRainsStructure_D.png",
+    "T_Wonder_StairOfRainsStructure_N.png",
+    "T_Wonder_StairOfRainsStructure_ORM.png",
+    "T_Wonder_StairOfRainsStructure_M.png",
+    "T_Wonder_StairOfRainsRoof_D.png",
+    "T_Wonder_StairOfRainsRoof_N.png",
+    "T_Wonder_StairOfRainsRoof_ORM.png",
+    "T_Wonder_StairOfRainsRoof_M.png",
+    "T_Wonder_StairOfRainsDetail_D.png",
+    "T_Wonder_StairOfRainsDetail_N.png",
+    "T_Wonder_StairOfRainsDetail_ORM.png",
+    "T_Wonder_StairOfRainsDetail_M.png"
+   ],
+   "licence": "original",
+   "script": "art/wonders-b/build_wonders-b.py",
+   "export": "art/wonders-b/export/SM_Wonder_StairOfRains_CanopyC.fbx"
+  }
+ },
+ "materials": {
+  "M_Wonder_ChoirOfChimneysStructure": {
+   "asset": "wonder-4-industry",
+   "slot": "Structure",
+   "textures": {
+    "D": "T_Wonder_ChoirOfChimneysStructure_D.png",
+    "N": "T_Wonder_ChoirOfChimneysStructure_N.png",
+    "ORM": "T_Wonder_ChoirOfChimneysStructure_ORM.png",
+    "M": "T_Wonder_ChoirOfChimneysStructure_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "brick",
+     "size_m": [
+      12.0,
+      3.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "brick_soot",
+     "size_m": [
+      12.0,
+      3.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "ashlar",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "slate",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffc766",
+    "EmissiveB": "#ff9a40",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 0.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_ChoirOfChimneysStructure_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_ChoirOfChimneysStructure_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_ChoirOfChimneysStructure_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_ChoirOfChimneysRoof": {
+   "asset": "wonder-4-industry",
+   "slot": "Roof",
+   "textures": {
+    "D": "T_Wonder_ChoirOfChimneysRoof_D.png",
+    "N": "T_Wonder_ChoirOfChimneysRoof_N.png",
+    "ORM": "T_Wonder_ChoirOfChimneysRoof_ORM.png",
+    "M": "T_Wonder_ChoirOfChimneysRoof_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "dome_glass",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "lantern_glass",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "lead",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "ironplate",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffcf88",
+    "EmissiveB": "#ffc766",
+    "EmissiveDay": 0.45,
+    "EmissiveNight": 9.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_ChoirOfChimneysRoof_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_ChoirOfChimneysRoof_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_ChoirOfChimneysRoof_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_ChoirOfChimneysDetail": {
+   "asset": "wonder-4-industry",
+   "slot": "Detail",
+   "textures": {
+    "D": "T_Wonder_ChoirOfChimneysDetail_D.png",
+    "N": "T_Wonder_ChoirOfChimneysDetail_N.png",
+    "ORM": "T_Wonder_ChoirOfChimneysDetail_ORM.png",
+    "M": "T_Wonder_ChoirOfChimneysDetail_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "brass",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "castiron",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "arch_windows",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "setts",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffc766",
+    "EmissiveB": "#ffb050",
+    "EmissiveDay": 0.5,
+    "EmissiveNight": 7.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_ChoirOfChimneysDetail_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_ChoirOfChimneysDetail_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_ChoirOfChimneysDetail_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_EarOfTheSkyStructure": {
+   "asset": "wonder-5-atomic",
+   "slot": "Structure",
+   "textures": {
+    "D": "T_Wonder_EarOfTheSkyStructure_D.png",
+    "N": "T_Wonder_EarOfTheSkyStructure_N.png",
+    "ORM": "T_Wonder_EarOfTheSkyStructure_ORM.png",
+    "M": "T_Wonder_EarOfTheSkyStructure_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "concrete",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "concrete_weathered",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "concrete_smooth",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "asphalt",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffd9a0",
+    "EmissiveB": "#ff3a2a",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 0.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_EarOfTheSkyStructure_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_EarOfTheSkyStructure_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_EarOfTheSkyStructure_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_EarOfTheSkyRoof": {
+   "asset": "wonder-5-atomic",
+   "slot": "Roof",
+   "textures": {
+    "D": "T_Wonder_EarOfTheSkyRoof_D.png",
+    "N": "T_Wonder_EarOfTheSkyRoof_N.png",
+    "ORM": "T_Wonder_EarOfTheSkyRoof_ORM.png",
+    "M": "T_Wonder_EarOfTheSkyRoof_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "dish_panels",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "dish_panels_dark",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "dish_rib",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "grate",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffd9a0",
+    "EmissiveB": "#ff3a2a",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 0.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_EarOfTheSkyRoof_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_EarOfTheSkyRoof_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_EarOfTheSkyRoof_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_EarOfTheSkyDetail": {
+   "asset": "wonder-5-atomic",
+   "slot": "Detail",
+   "textures": {
+    "D": "T_Wonder_EarOfTheSkyDetail_D.png",
+    "N": "T_Wonder_EarOfTheSkyDetail_N.png",
+    "ORM": "T_Wonder_EarOfTheSkyDetail_ORM.png",
+    "M": "T_Wonder_EarOfTheSkyDetail_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "steel",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "grass_berm",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "office_windows",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "aviation_red",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffd9a0",
+    "EmissiveB": "#ff3a2a",
+    "EmissiveDay": 2.0,
+    "EmissiveNight": 25.0,
+    "EmissiveBBlink": "1 s on / 1 s off, phase by pylon socket (0, 0.667, 1.334 s: one third of the 2 s period each, as in the lights list)"
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_EarOfTheSkyDetail_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_EarOfTheSkyDetail_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_EarOfTheSkyDetail_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_LadderStructure": {
+   "asset": "wonder-6-space",
+   "slot": "Structure",
+   "textures": {
+    "D": "T_Wonder_LadderStructure_D.png",
+    "N": "T_Wonder_LadderStructure_N.png",
+    "ORM": "T_Wonder_LadderStructure_ORM.png",
+    "M": "T_Wonder_LadderStructure_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "composite",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "glazing",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "composite_smooth",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "plaza_paving",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#fff0d1",
+    "EmissiveB": "#e8f0ff",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 6.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_LadderStructure_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_LadderStructure_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_LadderStructure_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_LadderRoof": {
+   "asset": "wonder-6-space",
+   "slot": "Roof",
+   "textures": {
+    "D": "T_Wonder_LadderRoof_D.png",
+    "N": "T_Wonder_LadderRoof_N.png",
+    "ORM": "T_Wonder_LadderRoof_ORM.png",
+    "M": "T_Wonder_LadderRoof_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "garden_solar",
+     "size_m": [
+      48.0,
+      12.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "solar",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "garden",
+     "size_m": [
+      48.0,
+      12.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "reflecting_pool",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#fff0d1",
+    "EmissiveB": "#e8f0ff",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 0.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_LadderRoof_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_LadderRoof_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_LadderRoof_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_LadderDetail": {
+   "asset": "wonder-6-space",
+   "slot": "Detail",
+   "textures": {
+    "D": "T_Wonder_LadderDetail_D.png",
+    "N": "T_Wonder_LadderDetail_N.png",
+    "ORM": "T_Wonder_LadderDetail_ORM.png",
+    "M": "T_Wonder_LadderDetail_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "gold",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "climber",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "light_slit",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "tether_core",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#fffaf0",
+    "EmissiveB": "#e8f0ff",
+    "EmissiveDay": 12.0,
+    "EmissiveNight": 14.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_LadderDetail_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_LadderDetail_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_LadderDetail_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_SunwellStructure": {
+   "asset": "wonder-sunwell",
+   "slot": "Structure",
+   "textures": {
+    "D": "T_Wonder_SunwellStructure_D.png",
+    "N": "T_Wonder_SunwellStructure_N.png",
+    "ORM": "T_Wonder_SunwellStructure_ORM.png",
+    "M": "T_Wonder_SunwellStructure_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "white_stone",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "riser_gold",
+     "size_m": [
+      5.6,
+      1.4
+     ]
+    },
+    {
+     "band": 2,
+     "name": "balustrade",
+     "size_m": [
+      4.8,
+      1.2
+     ]
+    },
+    {
+     "band": 3,
+     "name": "avenue_paving",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffcf80",
+    "EmissiveB": "#ffe8b0",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 3.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_SunwellStructure_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_SunwellStructure_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_SunwellStructure_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_SunwellRoof": {
+   "asset": "wonder-sunwell",
+   "slot": "Roof",
+   "textures": {
+    "D": "T_Wonder_SunwellRoof_D.png",
+    "N": "T_Wonder_SunwellRoof_N.png",
+    "ORM": "T_Wonder_SunwellRoof_ORM.png",
+    "M": "T_Wonder_SunwellRoof_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "pool_water",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "gold_leaf",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "planter_grass",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "earth_cut",
+     "size_m": [
+      24.0,
+      6.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffcf80",
+    "EmissiveB": "#7fd0e0",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 1.5
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_SunwellRoof_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_SunwellRoof_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_SunwellRoof_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_SunwellDetail": {
+   "asset": "wonder-sunwell",
+   "slot": "Detail",
+   "textures": {
+    "D": "T_Wonder_SunwellDetail_D.png",
+    "N": "T_Wonder_SunwellDetail_N.png",
+    "ORM": "T_Wonder_SunwellDetail_ORM.png",
+    "M": "T_Wonder_SunwellDetail_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "bronze",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "lamp",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "beam_core",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "mirror",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#fff1c8",
+    "EmissiveB": "#ffcf80",
+    "EmissiveDay": 6.0,
+    "EmissiveNight": 10.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_SunwellDetail_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_SunwellDetail_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_SunwellDetail_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_LightShaft": {
+   "asset": "wonder-sunwell",
+   "slot": "Structure",
+   "textures": {},
+   "params": {
+    "Color": "#fff1c8",
+    "EmissiveDay": 6.0,
+    "EmissiveNight": 10.0
+   },
+   "note": "additive translucent; opacity = vertex colour Fade x view-facing falloff"
+  },
+  "M_Wonder_StairOfRainsStructure": {
+   "asset": "wonder-stair-of-rains",
+   "slot": "Structure",
+   "textures": {
+    "D": "T_Wonder_StairOfRainsStructure_D.png",
+    "N": "T_Wonder_StairOfRainsStructure_N.png",
+    "ORM": "T_Wonder_StairOfRainsStructure_ORM.png",
+    "M": "T_Wonder_StairOfRainsStructure_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "honey_stone",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "honey_vines",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "rock",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "marble",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffc77a",
+    "EmissiveB": "#7fe0e0",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 2.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_StairOfRainsStructure_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_StairOfRainsStructure_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_StairOfRainsStructure_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_StairOfRainsRoof": {
+   "asset": "wonder-stair-of-rains",
+   "slot": "Roof",
+   "textures": {
+    "D": "T_Wonder_StairOfRainsRoof_D.png",
+    "N": "T_Wonder_StairOfRainsRoof_N.png",
+    "ORM": "T_Wonder_StairOfRainsRoof_ORM.png",
+    "M": "T_Wonder_StairOfRainsRoof_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "garden_terrace",
+     "size_m": [
+      32.0,
+      8.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "blossom_pink",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "blossom_lilac",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "foliage",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffc77a",
+    "EmissiveB": "#7fe0e0",
+    "EmissiveDay": 0.0,
+    "EmissiveNight": 0.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_StairOfRainsRoof_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_StairOfRainsRoof_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_StairOfRainsRoof_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  },
+  "M_Wonder_StairOfRainsDetail": {
+   "asset": "wonder-stair-of-rains",
+   "slot": "Detail",
+   "textures": {
+    "D": "T_Wonder_StairOfRainsDetail_D.png",
+    "N": "T_Wonder_StairOfRainsDetail_N.png",
+    "ORM": "T_Wonder_StairOfRainsDetail_ORM.png",
+    "M": "T_Wonder_StairOfRainsDetail_M.png"
+   },
+   "bands": [
+    {
+     "band": 0,
+     "name": "waterfall",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 1,
+     "name": "pool_water",
+     "size_m": [
+      16.0,
+      4.0
+     ]
+    },
+    {
+     "band": 2,
+     "name": "lattice",
+     "size_m": [
+      8.0,
+      2.0
+     ]
+    },
+    {
+     "band": 3,
+     "name": "lantern",
+     "size_m": [
+      4.0,
+      1.0
+     ]
+    }
+   ],
+   "params": {
+    "EmissiveA": "#ffc77a",
+    "EmissiveB": "#7fe0e0",
+    "EmissiveDay": 0.25,
+    "EmissiveNight": 5.0
+   },
+   "instances": {
+    "A": {
+     "name": "MI_Wonder_StairOfRainsDetail_A",
+     "BaseTint": "#fff1e6",
+     "AccentTint": "#f0b890",
+     "RoughnessScale": 1.0
+    },
+    "B": {
+     "name": "MI_Wonder_StairOfRainsDetail_B",
+     "BaseTint": "#eef3f2",
+     "AccentTint": "#86c0ae",
+     "RoughnessScale": 0.9
+    },
+    "C": {
+     "name": "MI_Wonder_StairOfRainsDetail_C",
+     "BaseTint": "#e9edf3",
+     "AccentTint": "#98a2b4",
+     "RoughnessScale": 1.1
+    }
+   }
+  }
+ },
+ "family": "wonders-b",
+ "generated": "2026-11-19",
+ "script": "art/wonders-b/build_wonders-b.py",
+ "regenerate": "\"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe\" -b --factory-startup --python art/wonders-b/build_wonders-b.py -- [--assets choir,ear,ladder,sunwell,stair] [--retex]",
+ "conventions": {
+  "units": "1 Blender unit = 1 m; Z up; front faces -Y; FBX exported with the standard axis settings",
+  "material_slots": [
+   "Structure",
+   "Roof",
+   "Detail"
+  ],
+  "atlas": "each slot texture is a 2048x2048 atlas of four 2048x512 bands (band k = UV v in [k/4,(k+1)/4]); u tiles (UVs run past 0..1 in u by design), v stays inside one band; band k covers U x V metres as listed per material. Use Wrap addressing.",
+  "M_channels": {
+   "R": "night emissive mask",
+   "G": "emissive colour select (0 EmissiveA, 1 EmissiveB)",
+   "B": "culture accent mask (AccentTint applies here)"
+  },
+  "ORM_channels": {
+   "R": "ambient occlusion (cavity)",
+   "G": "roughness",
+   "B": "metallic"
+  },
+  "normal": "tangent space, OpenGL (+Y up): flip green on import into Unreal",
+  "emissive": "Emissive = M.R * lerp(EmissiveA, EmissiveB, M.G) * (EmissiveDay or EmissiveNight by sun)",
+  "culture": "BaseColor = D * lerp(BaseTint, AccentTint, M.B); Roughness = ORM.G * RoughnessScale",
+  "lod_screen_sizes": [
+   1.0,
+   0.35,
+   0.12,
+   0.04
+  ]
+ },
+ "culture_instances": {
+  "A": {
+   "label": "Cliff-Terrace (warm rose-ochre)",
+   "BaseTint": "#fff1e6",
+   "AccentTint": "#f0b890",
+   "RoughnessScale": 1.0
+  },
+  "B": {
+   "label": "Lagoon-Weaver (silver and verdigris)",
+   "BaseTint": "#eef3f2",
+   "AccentTint": "#86c0ae",
+   "RoughnessScale": 0.9
+  },
+  "C": {
+   "label": "Ring-Builder (cool slate and pewter)",
+   "BaseTint": "#e9edf3",
+   "AccentTint": "#98a2b4",
+   "RoughnessScale": 1.1
+  }
+ }
+}

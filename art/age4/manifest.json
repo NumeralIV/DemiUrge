@@ -1,0 +1,4306 @@
+{
+ "assets": {
+  "Terrace_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Terrace_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Terrace_A_Intact.fbx",
+     "triangles": [
+      3596,
+      1112,
+      312,
+      112
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 11.11,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Gable_0",
+       "kind": "ornament",
+       "location": [
+        -9.84,
+        -2.45,
+        9.695
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Gable_1",
+       "kind": "ornament",
+       "location": [
+        9.84,
+        -2.45,
+        9.695
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -9.65,
+        -2.625,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -9.65,
+        -2.275,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -9.65,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.844,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.581,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.319,
+        11.115
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.056,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -5.0,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.844,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.581,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.319,
+        11.115
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.056,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        0.0,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_10",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.844,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_11",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.581,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_12",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.319,
+        11.115
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_13",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.056,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        5.0,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_14",
+       "kind": "smoke",
+       "location": [
+        9.65,
+        -2.625,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_15",
+       "kind": "smoke",
+       "location": [
+        9.65,
+        -2.275,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_4",
+       "kind": "ornament",
+       "location": [
+        9.65,
+        -2.45,
+        10.415
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Terrace_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_Terrace_A_Construction.fbx",
+     "triangles": [
+      3498,
+      1222,
+      586,
+      104
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 6.8,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Terrace_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Terrace_A_Damaged.fbx",
+     "triangles": [
+      4986,
+      2350,
+      1154,
+      112
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 11.11,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Gable_0",
+       "kind": "ornament",
+       "location": [
+        -9.84,
+        -2.45,
+        9.695
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Gable_1",
+       "kind": "ornament",
+       "location": [
+        9.84,
+        -2.45,
+        9.695
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -9.65,
+        -2.625,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -9.65,
+        -2.275,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -9.65,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.844,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.581,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.319,
+        11.115
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        -5.0,
+        -2.056,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -5.0,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.844,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.581,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.319,
+        11.115
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.056,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        0.0,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_10",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.844,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_11",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.581,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_12",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.319,
+        11.115
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_13",
+       "kind": "smoke",
+       "location": [
+        5.0,
+        -2.056,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        5.0,
+        -2.45,
+        10.415
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_14",
+       "kind": "smoke",
+       "location": [
+        9.65,
+        -2.625,
+        10.965
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_15",
+       "kind": "smoke",
+       "location": [
+        9.65,
+        -2.275,
+        11.04
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_4",
+       "kind": "ornament",
+       "location": [
+        9.65,
+        -2.45,
+        10.415
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Terrace_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Terrace_A_Ruin.fbx",
+     "triangles": [
+      3819,
+      1750,
+      706,
+      264
+     ],
+     "nonmanifold_edges_lod0": 5,
+     "zmin": -0.3,
+     "height": 3.44,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    20.1,
+    14.09
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.14
+   ],
+   "height_m": 11.11,
+   "name": "SM_Age4_Terrace_A",
+   "family": "Age4",
+   "class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Terrace_A.blend",
+   "sim": {
+    "building": "house",
+    "age": "Industry",
+    "tier": "terrace row (4 dwellings, 2 storeys)",
+    "towns_kit_id": "Rowhouse",
+    "kit_variant": 0
+   },
+   "dwellings": 4,
+   "storeys": 2,
+   "notes": "Plot = front steps + main block + rear outshots + walled yards with privies. Rows butt end to end along X (the end walls are party walls); back-to-back rows meet at the yard walls."
+  },
+  "Terrace_B": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Terrace_B_Intact",
+     "fbx": "art/age4/export/SM_Age4_Terrace_B_Intact.fbx",
+     "triangles": [
+      4010,
+      1330,
+      480,
+      136
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 11.06,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -12.65,
+        -2.625,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -12.65,
+        -2.275,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -12.65,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -7.8,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        -2.6,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_10",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_11",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_12",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_13",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        2.6,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_14",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_15",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_16",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_17",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_4",
+       "kind": "ornament",
+       "location": [
+        7.8,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_18",
+       "kind": "smoke",
+       "location": [
+        12.65,
+        -2.625,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_19",
+       "kind": "smoke",
+       "location": [
+        12.65,
+        -2.275,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_5",
+       "kind": "ornament",
+       "location": [
+        12.65,
+        -2.45,
+        10.36
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Terrace_B_Construction",
+     "fbx": "art/age4/export/SM_Age4_Terrace_B_Construction.fbx",
+     "triangles": [
+      3466,
+      1438,
+      760,
+      250
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 6.11,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Terrace_B_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Terrace_B_Damaged.fbx",
+     "triangles": [
+      5419,
+      2507,
+      1357,
+      136
+     ],
+     "nonmanifold_edges_lod0": 5,
+     "zmin": -0.3,
+     "height": 11.06,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -12.65,
+        -2.625,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -12.65,
+        -2.275,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -12.65,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        -7.8,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -7.8,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        -2.6,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        -2.6,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_10",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_11",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_12",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_13",
+       "kind": "smoke",
+       "location": [
+        2.6,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        2.6,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_14",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.844,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_15",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.581,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_16",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.319,
+        11.06
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_17",
+       "kind": "smoke",
+       "location": [
+        7.8,
+        -2.056,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_4",
+       "kind": "ornament",
+       "location": [
+        7.8,
+        -2.45,
+        10.36
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_18",
+       "kind": "smoke",
+       "location": [
+        12.65,
+        -2.625,
+        10.91
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_19",
+       "kind": "smoke",
+       "location": [
+        12.65,
+        -2.275,
+        10.985
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_5",
+       "kind": "ornament",
+       "location": [
+        12.65,
+        -2.45,
+        10.36
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Terrace_B_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Terrace_B_Ruin.fbx",
+     "triangles": [
+      4376,
+      2058,
+      1004,
+      318
+     ],
+     "nonmanifold_edges_lod0": 8,
+     "zmin": -0.3,
+     "height": 3.8,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    26.1,
+    14.59
+   ],
+   "footprint_centre_offset_m": [
+    0.01,
+    -0.01
+   ],
+   "height_m": 11.06,
+   "name": "SM_Age4_Terrace_B",
+   "family": "Age4",
+   "class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Terrace_B.blend",
+   "sim": {
+    "building": "house",
+    "age": "Industry",
+    "tier": "terrace row (5 dwellings, 2 storeys)",
+    "towns_kit_id": "Rowhouse",
+    "kit_variant": 1
+   },
+   "dwellings": 5,
+   "storeys": 2,
+   "notes": "Plot = front steps + main block + rear outshots + walled yards with privies. Rows butt end to end along X (the end walls are party walls); back-to-back rows meet at the yard walls."
+  },
+  "Terrace_C": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Terrace_C_Intact",
+     "fbx": "art/age4/export/SM_Age4_Terrace_C_Intact.fbx",
+     "triangles": [
+      6228,
+      1616,
+      440,
+      136
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 13.61,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Gable_0",
+       "kind": "ornament",
+       "location": [
+        -14.24,
+        -2.45,
+        12.187
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Gable_1",
+       "kind": "ornament",
+       "location": [
+        14.24,
+        -2.45,
+        12.187
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -14.05,
+        -2.625,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -14.05,
+        -2.275,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -14.05,
+        -2.45,
+        12.907
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -4.8,
+        -2.8,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -4.8,
+        -2.45,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -4.8,
+        -2.1,
+        13.607
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -4.8,
+        -2.45,
+        12.907
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        4.8,
+        -2.8,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        4.8,
+        -2.45,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        4.8,
+        -2.1,
+        13.607
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        4.8,
+        -2.45,
+        12.907
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        14.05,
+        -2.625,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        14.05,
+        -2.275,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        14.05,
+        -2.45,
+        12.907
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Terrace_C_Construction",
+     "fbx": "art/age4/export/SM_Age4_Terrace_C_Construction.fbx",
+     "triangles": [
+      6934,
+      2418,
+      1282,
+      340
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 7.76,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Terrace_C_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Terrace_C_Damaged.fbx",
+     "triangles": [
+      7898,
+      3056,
+      1516,
+      136
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 13.61,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Gable_0",
+       "kind": "ornament",
+       "location": [
+        -14.24,
+        -2.45,
+        12.187
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Gable_1",
+       "kind": "ornament",
+       "location": [
+        14.24,
+        -2.45,
+        12.187
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -14.05,
+        -2.625,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -14.05,
+        -2.275,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -14.05,
+        -2.45,
+        12.907
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -4.8,
+        -2.8,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -4.8,
+        -2.45,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -4.8,
+        -2.1,
+        13.607
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -4.8,
+        -2.45,
+        12.907
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        4.8,
+        -2.8,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        4.8,
+        -2.45,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        4.8,
+        -2.1,
+        13.607
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        4.8,
+        -2.45,
+        12.907
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        14.05,
+        -2.625,
+        13.457
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        14.05,
+        -2.275,
+        13.532
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        14.05,
+        -2.45,
+        12.907
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Terrace_C_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Terrace_C_Ruin.fbx",
+     "triangles": [
+      6499,
+      2514,
+      1064,
+      372
+     ],
+     "nonmanifold_edges_lod0": 18,
+     "zmin": -0.3,
+     "height": 5.11,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    28.9,
+    14.69
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.14
+   ],
+   "height_m": 13.61,
+   "name": "SM_Age4_Terrace_C",
+   "family": "Age4",
+   "class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Terrace_C.blend",
+   "sim": {
+    "building": "house",
+    "age": "Industry",
+    "tier": "terrace row (6 dwellings, 3 storeys)",
+    "towns_kit_id": "Rowhouse",
+    "kit_variant": 2
+   },
+   "dwellings": 6,
+   "storeys": 3,
+   "notes": "Plot = front steps + main block + rear outshots + walled yards with privies. Rows butt end to end along X (the end walls are party walls); back-to-back rows meet at the yard walls."
+  },
+  "Terrace_D": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Terrace_D_Intact",
+     "fbx": "art/age4/export/SM_Age4_Terrace_D_Intact.fbx",
+     "triangles": [
+      5550,
+      1520,
+      396,
+      112
+     ],
+     "nonmanifold_edges_lod0": 6,
+     "zmin": -0.3,
+     "height": 13.69,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -10.85,
+        -2.625,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -10.85,
+        -2.275,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -10.85,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.844,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.581,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.319,
+        13.694
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.056,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -5.6,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.844,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.581,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.319,
+        13.694
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.056,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        0.0,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_10",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.844,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_11",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.581,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_12",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.319,
+        13.694
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_13",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.056,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        5.6,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_14",
+       "kind": "smoke",
+       "location": [
+        10.85,
+        -2.625,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_15",
+       "kind": "smoke",
+       "location": [
+        10.85,
+        -2.275,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_4",
+       "kind": "ornament",
+       "location": [
+        10.85,
+        -2.45,
+        12.994
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Terrace_D_Construction",
+     "fbx": "art/age4/export/SM_Age4_Terrace_D_Construction.fbx",
+     "triangles": [
+      5606,
+      1992,
+      988,
+      242
+     ],
+     "nonmanifold_edges_lod0": 2,
+     "zmin": -0.3,
+     "height": 8.21,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Terrace_D_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Terrace_D_Damaged.fbx",
+     "triangles": [
+      6930,
+      2696,
+      1262,
+      112
+     ],
+     "nonmanifold_edges_lod0": 3,
+     "zmin": -0.3,
+     "height": 13.69,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -10.85,
+        -2.625,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        -10.85,
+        -2.275,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_0",
+       "kind": "ornament",
+       "location": [
+        -10.85,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.844,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_3",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.581,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_4",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.319,
+        13.694
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_5",
+       "kind": "smoke",
+       "location": [
+        -5.6,
+        -2.056,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_1",
+       "kind": "ornament",
+       "location": [
+        -5.6,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_6",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.844,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_7",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.581,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_8",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.319,
+        13.694
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_9",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        -2.056,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_2",
+       "kind": "ornament",
+       "location": [
+        0.0,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_10",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.844,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_11",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.581,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_12",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.319,
+        13.694
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_13",
+       "kind": "smoke",
+       "location": [
+        5.6,
+        -2.056,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_3",
+       "kind": "ornament",
+       "location": [
+        5.6,
+        -2.45,
+        12.994
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_14",
+       "kind": "smoke",
+       "location": [
+        10.85,
+        -2.625,
+        13.544
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_15",
+       "kind": "smoke",
+       "location": [
+        10.85,
+        -2.275,
+        13.619
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Chimney_4",
+       "kind": "ornament",
+       "location": [
+        10.85,
+        -2.45,
+        12.994
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Terrace_D_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Terrace_D_Ruin.fbx",
+     "triangles": [
+      5049,
+      2102,
+      790,
+      274
+     ],
+     "nonmanifold_edges_lod0": 18,
+     "zmin": -0.3,
+     "height": 5.04,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    22.64,
+    15.09
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.14
+   ],
+   "height_m": 13.69,
+   "name": "SM_Age4_Terrace_D",
+   "family": "Age4",
+   "class": "house",
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Terrace_D.blend",
+   "sim": {
+    "building": "house",
+    "age": "Industry",
+    "tier": "terrace row (4 dwellings, 3 storeys)",
+    "towns_kit_id": "Rowhouse",
+    "kit_variant": 3
+   },
+   "dwellings": 4,
+   "storeys": 3,
+   "notes": "Plot = front steps + main block + rear outshots + walled yards with privies. Rows butt end to end along X (the end walls are party walls); back-to-back rows meet at the yard walls."
+  },
+  "Factory_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Factory_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Factory_A_Intact.fbx",
+     "triangles": [
+      8364,
+      2880,
+      756,
+      420
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.315,
+     "height": 58.0,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -16.975,
+        17.5,
+        50.5
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        3.525,
+        18.5,
+        58.5
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        22.025,
+        17.5,
+        46.5
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Factory_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_Factory_A_Construction.fbx",
+     "triangles": [
+      8868,
+      3850,
+      1520,
+      460
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 8.15,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Factory_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Factory_A_Damaged.fbx",
+     "triangles": [
+      9794,
+      4168,
+      1558,
+      420
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.315,
+     "height": 58.0,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        -16.975,
+        17.5,
+        50.5
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_1",
+       "kind": "smoke",
+       "location": [
+        3.525,
+        18.5,
+        58.5
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_2",
+       "kind": "smoke",
+       "location": [
+        22.025,
+        17.5,
+        46.5
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Factory_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Factory_A_Ruin.fbx",
+     "triangles": [
+      7627,
+      3726,
+      1056,
+      558
+     ],
+     "nonmanifold_edges_lod0": 3,
+     "zmin": -0.3,
+     "height": 6.26,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    78.55,
+    42.7
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 58.0,
+   "name": "SM_Age4_Factory_A",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Factory_A.blend",
+   "sim": {
+    "building": "b.factory",
+    "age": "Industry",
+    "tier": "large mill",
+    "towns_kit_id": "Factory",
+    "kit_variant": 2
+   },
+   "notes": "Two-storey sawtooth mill, engine house, office, three stacks (the tallest elements, 46-58 m), water tower. SOCKET_Smoke_* on every stack for the smoke FX."
+  },
+  "Factory_B": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Factory_B_Intact",
+     "fbx": "art/age4/export/SM_Age4_Factory_B_Intact.fbx",
+     "triangles": [
+      3220,
+      1156,
+      272,
+      164
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 44.0,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        18.0,
+        11.485,
+        44.5
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Factory_B_Construction",
+     "fbx": "art/age4/export/SM_Age4_Factory_B_Construction.fbx",
+     "triangles": [
+      4002,
+      1850,
+      868,
+      216
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 5.87,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Factory_B_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Factory_B_Damaged.fbx",
+     "triangles": [
+      4025,
+      1891,
+      709,
+      164
+     ],
+     "nonmanifold_edges_lod0": 3,
+     "zmin": -0.3,
+     "height": 44.0,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        18.0,
+        11.485,
+        44.5
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Factory_B_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Factory_B_Ruin.fbx",
+     "triangles": [
+      3611,
+      1780,
+      536,
+      214
+     ],
+     "nonmanifold_edges_lod0": 3,
+     "zmin": -0.3,
+     "height": 4.0,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    46.6,
+    28.47
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 44.0,
+   "name": "SM_Age4_Factory_B",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Factory_B.blend",
+   "sim": {
+    "building": "b.factory",
+    "age": "Industry",
+    "tier": "small works",
+    "towns_kit_id": "Factory",
+    "kit_variant": 0
+   },
+   "notes": "Single-storey sawtooth shed, boiler house, one 44 m stack."
+  },
+  "Stack_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Stack_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Stack_A_Intact.fbx",
+     "triangles": [
+      676,
+      184,
+      100,
+      52
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 52.0,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        0.0,
+        52.5
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Stack_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_Stack_A_Construction.fbx",
+     "triangles": [
+      1652,
+      530,
+      446,
+      80
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 25.7,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Stack_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Stack_A_Damaged.fbx",
+     "triangles": [
+      746,
+      264,
+      140,
+      52
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 51.17,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        0.0,
+        0.0,
+        51.672
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Stack_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Stack_A_Ruin.fbx",
+     "triangles": [
+      1004,
+      590,
+      174,
+      112
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 13.85,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    6.3,
+    6.3
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 52.0,
+   "name": "SM_Age4_Stack_A",
+   "family": "Age4",
+   "class": "prop-tall",
+   "budget_lod0": [
+    300,
+    1500
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Stack_A.blend",
+   "sim": {
+    "building": "factory chimney (stand-alone)",
+    "age": "Industry",
+    "towns_kit_id": "Stack",
+    "kit_variant": 1
+   },
+   "notes": "52 m tapered round brick chimney on a square plinth; SOCKET_Smoke_0 at the top."
+  },
+  "Warehouse_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Warehouse_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_A_Intact.fbx",
+     "triangles": [
+      8408,
+      3684,
+      348,
+      48
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 20.45,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Gable_0",
+       "kind": "ornament",
+       "location": [
+        -15.0,
+        -4.0,
+        20.65
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Gable_1",
+       "kind": "ornament",
+       "location": [
+        15.0,
+        -4.0,
+        20.65
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Warehouse_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_A_Construction.fbx",
+     "triangles": [
+      6322,
+      2826,
+      566,
+      94
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 11.07,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Warehouse_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_A_Damaged.fbx",
+     "triangles": [
+      9139,
+      4298,
+      680,
+      48
+     ],
+     "nonmanifold_edges_lod0": 3,
+     "zmin": -0.3,
+     "height": 20.45,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Gable_0",
+       "kind": "ornament",
+       "location": [
+        -15.0,
+        -4.0,
+        20.65
+       ]
+      },
+      {
+       "name": "SOCKET_Ornament_Gable_1",
+       "kind": "ornament",
+       "location": [
+        15.0,
+        -4.0,
+        20.65
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Warehouse_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_A_Ruin.fbx",
+     "triangles": [
+      5864,
+      2864,
+      294,
+      126
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 9.81,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    30.5,
+    18.9
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    -1.15
+   ],
+   "height_m": 20.45,
+   "name": "SM_Age4_Warehouse_A",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    4000,
+    14000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Warehouse_A.blend",
+   "sim": {
+    "building": "warehouse / dock store",
+    "age": "Industry",
+    "towns_kit_id": "Warehouse",
+    "kit_variant": 1
+   },
+   "notes": "Five-storey dock warehouse, double-pile roof, loading doors stacked under a projecting cathead with hoist."
+  },
+  "Warehouse_B": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Warehouse_B_Intact",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_B_Intact.fbx",
+     "triangles": [
+      2140,
+      1148,
+      108,
+      44
+     ],
+     "nonmanifold_edges_lod0": 8,
+     "zmin": -0.45,
+     "height": 9.98,
+     "sockets": []
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Warehouse_B_Construction",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_B_Construction.fbx",
+     "triangles": [
+      2958,
+      1472,
+      578,
+      118
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.45,
+     "height": 6.26,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Warehouse_B_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_B_Damaged.fbx",
+     "triangles": [
+      2834,
+      1738,
+      484,
+      44
+     ],
+     "nonmanifold_edges_lod0": 8,
+     "zmin": -0.45,
+     "height": 9.98,
+     "sockets": []
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Warehouse_B_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Warehouse_B_Ruin.fbx",
+     "triangles": [
+      2822,
+      1512,
+      366,
+      150
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.45,
+     "height": 3.75,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    52.0,
+    22.2
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 9.98,
+   "name": "SM_Age4_Warehouse_B",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    4000,
+    14000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Warehouse_B.blend",
+   "sim": {
+    "building": "goods shed",
+    "age": "Industry",
+    "towns_kit_id": "Warehouse",
+    "kit_variant": 2
+   },
+   "notes": "Single-storey goods shed with rooflights, raised loading platform and canopy, siding track (rail top at Z = 0)."
+  },
+  "Station_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Station_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Station_A_Intact.fbx",
+     "triangles": [
+      7024,
+      3216,
+      810,
+      282
+     ],
+     "nonmanifold_edges_lod0": 20,
+     "zmin": -0.45,
+     "height": 35.52,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Spire_0",
+       "kind": "ornament",
+       "location": [
+        0.0,
+        -12.4,
+        33.024
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Station_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_Station_A_Construction.fbx",
+     "triangles": [
+      7442,
+      3678,
+      1626,
+      466
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.45,
+     "height": 8.02,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Station_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Station_A_Damaged.fbx",
+     "triangles": [
+      8520,
+      4488,
+      1642,
+      282
+     ],
+     "nonmanifold_edges_lod0": 20,
+     "zmin": -0.45,
+     "height": 35.52,
+     "sockets": [
+      {
+       "name": "SOCKET_Ornament_Spire_0",
+       "kind": "ornament",
+       "location": [
+        0.0,
+        -12.4,
+        33.024
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Station_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Station_A_Ruin.fbx",
+     "triangles": [
+      6596,
+      3583,
+      1146,
+      520
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.45,
+     "height": 5.87,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    92.0,
+    51.8
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 35.52,
+   "name": "SM_Age4_Station_A",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Station_A.blend",
+   "sim": {
+    "building": "rail station",
+    "age": "Industry",
+    "tier": "through station",
+    "towns_kit_id": null
+   },
+   "notes": "Glass-and-iron barrel-vault train shed (32 m span) over four tracks and three platforms, front building with a clock tower and end pavilions. Tracks run along X and leave the footprint at both ends (rail top Z = 0, centre lines at local Y = 0.75, 9.25, 12.75, 21.25 before centring; see sockets-free track ends in the .blend)."
+  },
+  "MineHead_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_MineHead_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_MineHead_A_Intact.fbx",
+     "triangles": [
+      3656,
+      1972,
+      730,
+      228
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.451,
+     "height": 34.0,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        32.575,
+        5.725,
+        34.5
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_Winding",
+       "kind": "steam",
+       "location": [
+        12.075,
+        2.725,
+        14.968
+       ]
+      }
+     ]
+    },
+    "Construction": {
+     "mesh": "SM_Age4_MineHead_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_MineHead_A_Construction.fbx",
+     "triangles": [
+      3808,
+      1958,
+      926,
+      162
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 8.07,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_MineHead_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_MineHead_A_Damaged.fbx",
+     "triangles": [
+      3674,
+      2098,
+      836,
+      228
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.451,
+     "height": 31.63,
+     "sockets": [
+      {
+       "name": "SOCKET_Smoke_0",
+       "kind": "smoke",
+       "location": [
+        32.575,
+        5.725,
+        32.129
+       ]
+      },
+      {
+       "name": "SOCKET_Smoke_Winding",
+       "kind": "steam",
+       "location": [
+        12.075,
+        2.725,
+        14.381
+       ]
+      }
+     ]
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_MineHead_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_MineHead_A_Ruin.fbx",
+     "triangles": [
+      4200,
+      2510,
+      956,
+      232
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.3,
+     "height": 6.14,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    69.85,
+    18.15
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 34.0,
+   "name": "SM_Age4_MineHead_A",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/MineHead_A.blend",
+   "sim": {
+    "building": "b.mine",
+    "age": "Industry",
+    "tier": "deep shaft colliery",
+    "towns_kit_id": "MineHead",
+    "kit_variant": 1
+   },
+   "notes": "Steel lattice headframe with twin sheave wheels and back-stays, heapstead, winding engine house, boiler house and 34 m stack, ore bin. Pair with SM_Age4_Spoil_A."
+  },
+  "Spoil_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Spoil_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Spoil_A_Intact.fbx",
+     "triangles": [
+      1542,
+      530,
+      118,
+      46
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.5,
+     "height": 14.5,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    52.72,
+    33.29
+   ],
+   "footprint_centre_offset_m": [
+    3.73,
+    -1.7
+   ],
+   "height_m": 14.5,
+   "name": "SM_Age4_Spoil_A",
+   "family": "Age4",
+   "class": "landmark-prop",
+   "budget_lod0": [
+    300,
+    3000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Gravel",
+    "Roof": "M_Age4_Gravel",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Gravel_D",
+    "T_Age4_Gravel_N",
+    "T_Age4_Gravel_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Gravel_Base",
+     "Roof": "MI_Age4_Gravel_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Gravel_A",
+     "Roof": "MI_Age4_Gravel_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Gravel_B",
+     "Roof": "MI_Age4_Gravel_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Gravel_C",
+     "Roof": "MI_Age4_Gravel_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Spoil_A.blend",
+   "sim": {
+    "building": "spoil / coal / ore heap",
+    "age": "Industry",
+    "towns_kit_id": "Spoil"
+   },
+   "material_variants": {
+    "spoil": "MI_Age4_Gravel_<Culture>",
+    "coal": "MI_Age4_Gravel_Coal",
+    "ore": "MI_Age4_Gravel_Ore"
+   },
+   "notes": "44 x 34 m, 15 m high colliery tip with tipping track. Roof slot unused (same material as Structure)."
+  },
+  "Spoil_B": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Spoil_B_Intact",
+     "fbx": "art/age4/export/SM_Age4_Spoil_B_Intact.fbx",
+     "triangles": [
+      250,
+      118,
+      46,
+      22
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.5,
+     "height": 4.5,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    14.2,
+    10.55
+   ],
+   "footprint_centre_offset_m": [
+    -0.1,
+    -0.52
+   ],
+   "height_m": 4.5,
+   "name": "SM_Age4_Spoil_B",
+   "family": "Age4",
+   "class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Gravel",
+    "Roof": "M_Age4_Gravel",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Gravel_D",
+    "T_Age4_Gravel_N",
+    "T_Age4_Gravel_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Gravel_Base",
+     "Roof": "MI_Age4_Gravel_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Gravel_A",
+     "Roof": "MI_Age4_Gravel_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Gravel_B",
+     "Roof": "MI_Age4_Gravel_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Gravel_C",
+     "Roof": "MI_Age4_Gravel_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Spoil_B.blend",
+   "sim": {
+    "building": "spoil / coal / ore heap",
+    "age": "Industry",
+    "towns_kit_id": "Spoil"
+   },
+   "material_variants": {
+    "spoil": "MI_Age4_Gravel_<Culture>",
+    "coal": "MI_Age4_Gravel_Coal",
+    "ore": "MI_Age4_Gravel_Ore"
+   },
+   "notes": "14 x 11 m, 4 m high yard heap. Roof slot unused (same material as Structure)."
+  },
+  "Bridge_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Bridge_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Bridge_A_Intact.fbx",
+     "triangles": [
+      980,
+      656,
+      584,
+      132
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.0,
+     "height": 7.05,
+     "sockets": []
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Bridge_A_Construction",
+     "fbx": "art/age4/export/SM_Age4_Bridge_A_Construction.fbx",
+     "triangles": [
+      1100,
+      734,
+      600,
+      184
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.086,
+     "height": 7.05,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Bridge_A_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Bridge_A_Damaged.fbx",
+     "triangles": [
+      1326,
+      896,
+      694,
+      132
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.0,
+     "height": 7.05,
+     "sockets": []
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Bridge_A_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Bridge_A_Ruin.fbx",
+     "triangles": [
+      1716,
+      888,
+      792,
+      288
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.0,
+     "height": 4.75,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    43.4,
+    15.6
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 7.05,
+   "name": "SM_Age4_Bridge_A",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    3000,
+    15000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Stone",
+    "Roof": "M_Age4_Gravel",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Gravel_D",
+    "T_Age4_Gravel_N",
+    "T_Age4_Gravel_ORM",
+    "T_Age4_Stone_D",
+    "T_Age4_Stone_N",
+    "T_Age4_Stone_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Stone_Base",
+     "Roof": "MI_Age4_Gravel_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Stone_A",
+     "Roof": "MI_Age4_Gravel_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Stone_B",
+     "Roof": "MI_Age4_Gravel_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Stone_C",
+     "Roof": "MI_Age4_Gravel_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Bridge_A.blend",
+   "sim": {
+    "building": "rail bridge segment",
+    "age": "Industry",
+    "towns_kit_id": null
+   },
+   "pivot": "deck centre at rail level; piers reach 16 m below the rails",
+   "modular": "segment pitch 43 m along X (40 m Pratt through-truss + a half pier at each end); chain copies at X + 43 m",
+   "notes": "Double-track iron through-truss; Ruin = span broken off one pier and tilted into the river."
+  },
+  "Bridge_B": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Bridge_B_Intact",
+     "fbx": "art/age4/export/SM_Age4_Bridge_B_Intact.fbx",
+     "triangles": [
+      1164,
+      360,
+      204,
+      132
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.0,
+     "height": 1.24,
+     "sockets": []
+    },
+    "Construction": {
+     "mesh": "SM_Age4_Bridge_B_Construction",
+     "fbx": "art/age4/export/SM_Age4_Bridge_B_Construction.fbx",
+     "triangles": [
+      2134,
+      1248,
+      552,
+      126
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.0,
+     "height": -0.42,
+     "sockets": []
+    },
+    "Damaged": {
+     "mesh": "SM_Age4_Bridge_B_Damaged",
+     "fbx": "art/age4/export/SM_Age4_Bridge_B_Damaged.fbx",
+     "triangles": [
+      1822,
+      920,
+      626,
+      132
+     ],
+     "nonmanifold_edges_lod0": 1,
+     "zmin": -16.0,
+     "height": 1.24,
+     "sockets": []
+    },
+    "Ruin": {
+     "mesh": "SM_Age4_Bridge_B_Ruin",
+     "fbx": "art/age4/export/SM_Age4_Bridge_B_Ruin.fbx",
+     "triangles": [
+      2456,
+      1124,
+      556,
+      322
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -16.3,
+     "height": -1.37,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    36.44,
+    9.64
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 1.24,
+   "name": "SM_Age4_Bridge_B",
+   "family": "Age4",
+   "class": "civic",
+   "budget_lod0": [
+    2000,
+    12000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Gravel",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Gravel_D",
+    "T_Age4_Gravel_N",
+    "T_Age4_Gravel_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Gravel_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Gravel_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Gravel_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Gravel_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Bridge_B.blend",
+   "sim": {
+    "building": "rail viaduct segment",
+    "age": "Industry",
+    "towns_kit_id": null
+   },
+   "pivot": "deck centre at rail level; piers reach 16 m below the rails",
+   "modular": "segment pitch 36 m along X (three 9.6 m brick arches, half piers at the ends)",
+   "notes": "Brick arch viaduct for the approaches of the truss bridge or valley crossings."
+  },
+  "Ornament_A": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Ornament_A_Intact",
+     "fbx": "art/age4/export/SM_Age4_Ornament_A_Intact.fbx",
+     "triangles": [
+      144,
+      84,
+      52,
+      28
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": 0.0,
+     "height": 0.95,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    0.84,
+    0.8
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 0.95,
+   "name": "SM_Age4_Ornament_A",
+   "family": "Age4",
+   "class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Ornament_A.blend",
+   "sim": {
+    "building": "culture ornament",
+    "culture": "A"
+   },
+   "notes": "SM_Age4_Ornament_A (domed clay chimney cap); snaps to SOCKET_Ornament_* (pivot at its base)."
+  },
+  "Ornament_B": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Ornament_B_Intact",
+     "fbx": "art/age4/export/SM_Age4_Ornament_B_Intact.fbx",
+     "triangles": [
+      144,
+      96,
+      72,
+      48
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": -0.01,
+     "height": 1.32,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    1.36,
+    0.12
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 1.32,
+   "name": "SM_Age4_Ornament_B",
+   "family": "Age4",
+   "class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Ornament_B.blend",
+   "sim": {
+    "building": "culture ornament",
+    "culture": "B"
+   },
+   "notes": "SM_Age4_Ornament_B (upswept timber gable horns); snaps to SOCKET_Ornament_* (pivot at its base)."
+  },
+  "Ornament_C": {
+   "states": {
+    "Intact": {
+     "mesh": "SM_Age4_Ornament_C_Intact",
+     "fbx": "art/age4/export/SM_Age4_Ornament_C_Intact.fbx",
+     "triangles": [
+      54,
+      42,
+      30,
+      18
+     ],
+     "nonmanifold_edges_lod0": 0,
+     "zmin": 0.0,
+     "height": 1.13,
+     "sockets": []
+    }
+   },
+   "footprint_m": [
+    0.6,
+    0.57
+   ],
+   "footprint_centre_offset_m": [
+    0.0,
+    0.0
+   ],
+   "height_m": 1.13,
+   "name": "SM_Age4_Ornament_C",
+   "family": "Age4",
+   "class": "prop",
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "materials": {
+    "Structure": "M_Age4_Brick",
+    "Roof": "M_Age4_Slate",
+    "Detail": "M_Age4_Trim"
+   },
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM",
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM",
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_M",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM"
+   ],
+   "culture_variants": {
+    "Base": {
+     "Structure": "MI_Age4_Brick_Base",
+     "Roof": "MI_Age4_Slate_Base",
+     "Detail": "MI_Age4_Trim_Base"
+    },
+    "A": {
+     "Structure": "MI_Age4_Brick_A",
+     "Roof": "MI_Age4_Slate_A",
+     "Detail": "MI_Age4_Trim_A"
+    },
+    "B": {
+     "Structure": "MI_Age4_Brick_B",
+     "Roof": "MI_Age4_Slate_B",
+     "Detail": "MI_Age4_Trim_B"
+    },
+    "C": {
+     "Structure": "MI_Age4_Brick_C",
+     "Roof": "MI_Age4_Slate_C",
+     "Detail": "MI_Age4_Trim_C"
+    }
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "licence": "original",
+   "script": "art/age4/build_age4.py",
+   "source_blend": "art/age4/blend/Ornament_C.blend",
+   "sim": {
+    "building": "culture ornament",
+    "culture": "C"
+   },
+   "notes": "SM_Age4_Ornament_C (conical stone finial); snaps to SOCKET_Ornament_* (pivot at its base)."
+  }
+ },
+ "family": "Age4",
+ "description": "Industry age kit: brick terraces, factories and stacks, rail station, mine headframe, spoil heaps, warehouses, bridges.",
+ "conventions": {
+  "units": "metres (Unreal imports x100)",
+  "axes": "Z up, front -Y (Unreal +X after the standard FBX import)",
+  "pivot": "footprint centre at ground level; bridges: deck centre at rail level",
+  "material_slots": [
+   "Structure",
+   "Roof",
+   "Detail"
+  ],
+  "vertex_colour_Col": {
+   "R": "per-window random id: lit when R < instance LitFraction",
+   "G": "soot / char amount (damage states)",
+   "B": "culture accent mask (painted doors)",
+   "A": "unused (1)"
+  },
+  "night_windows": "T_Age4_Trim_M channel R (emissive mask), G per-pane random",
+  "fbx": "binary, LOD group (LOD0..LOD3), smoothing groups from 35 deg sharp edges, tangents, linear vertex colours, SOCKET_ empties under LOD0",
+  "lod_screen_sizes": [
+   1.0,
+   0.35,
+   0.12,
+   0.04
+  ]
+ },
+ "masters": {
+  "M_Age4_Brick": {
+   "textures": [
+    "T_Age4_Brick_D",
+    "T_Age4_Brick_N",
+    "T_Age4_Brick_ORM"
+   ],
+   "tile_metres": 1.8,
+   "uv": "world-scale planar (1 UV = 1.8 m)"
+  },
+  "M_Age4_Slate": {
+   "textures": [
+    "T_Age4_Slate_D",
+    "T_Age4_Slate_N",
+    "T_Age4_Slate_ORM"
+   ],
+   "tile_metres": 2.0,
+   "uv": "world-scale planar (1 UV = 2.0 m)"
+  },
+  "M_Age4_Stone": {
+   "textures": [
+    "T_Age4_Stone_D",
+    "T_Age4_Stone_N",
+    "T_Age4_Stone_ORM"
+   ],
+   "tile_metres": 2.4,
+   "uv": "world-scale planar (1 UV = 2.4 m)"
+  },
+  "M_Age4_Gravel": {
+   "textures": [
+    "T_Age4_Gravel_D",
+    "T_Age4_Gravel_N",
+    "T_Age4_Gravel_ORM"
+   ],
+   "tile_metres": 4.0,
+   "uv": "world-scale planar (1 UV = 4.0 m)"
+  },
+  "M_Age4_Trim": {
+   "textures": [
+    "T_Age4_Trim_D",
+    "T_Age4_Trim_N",
+    "T_Age4_Trim_ORM",
+    "T_Age4_Trim_M"
+   ],
+   "tile_metres": null,
+   "uv": "trim-sheet atlas (bands tile in U)"
+  }
+ },
+ "material_instances": {
+  "MI_Age4_Brick_Base": {
+   "parent": "M_Age4_Brick",
+   "culture": "Base",
+   "params": {
+    "Tint": [
+     0.84,
+     0.78,
+     0.76
+    ],
+    "Desaturate": 0.12,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Brick_A": {
+   "parent": "M_Age4_Brick",
+   "culture": "A",
+   "params": {
+    "Tint": [
+     1.22,
+     0.98,
+     0.84
+    ],
+    "Desaturate": 0.15,
+    "RoughnessAdd": 0.03
+   }
+  },
+  "MI_Age4_Brick_B": {
+   "parent": "M_Age4_Brick",
+   "culture": "B",
+   "params": {
+    "Tint": [
+     0.92,
+     0.95,
+     0.98
+    ],
+    "Desaturate": 0.7,
+    "RoughnessAdd": 0.04
+   }
+  },
+  "MI_Age4_Brick_C": {
+   "parent": "M_Age4_Brick",
+   "culture": "C",
+   "params": {
+    "Tint": [
+     1.02,
+     1.0,
+     0.98
+    ],
+    "Desaturate": 0.1,
+    "RoughnessAdd": 0.0,
+    "BaseColorTexture": "T_Age4_BrickBuff_D"
+   }
+  },
+  "MI_Age4_Slate_Base": {
+   "parent": "M_Age4_Slate",
+   "culture": "Base",
+   "params": {
+    "Tint": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "Desaturate": 0.0,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Slate_A": {
+   "parent": "M_Age4_Slate",
+   "culture": "A",
+   "params": {
+    "Tint": [
+     2.2,
+     1.3,
+     0.95
+    ],
+    "Desaturate": 0.6,
+    "RoughnessAdd": 0.05
+   }
+  },
+  "MI_Age4_Slate_B": {
+   "parent": "M_Age4_Slate",
+   "culture": "B",
+   "params": {
+    "Tint": [
+     1.55,
+     1.68,
+     1.5
+    ],
+    "Desaturate": 0.5,
+    "RoughnessAdd": 0.08
+   }
+  },
+  "MI_Age4_Slate_C": {
+   "parent": "M_Age4_Slate",
+   "culture": "C",
+   "params": {
+    "Tint": [
+     0.95,
+     1.12,
+     1.42
+    ],
+    "Desaturate": 0.3,
+    "RoughnessAdd": -0.04
+   }
+  },
+  "MI_Age4_Stone_Base": {
+   "parent": "M_Age4_Stone",
+   "culture": "Base",
+   "params": {
+    "Tint": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "Desaturate": 0.0,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Stone_A": {
+   "parent": "M_Age4_Stone",
+   "culture": "A",
+   "params": {
+    "Tint": [
+     1.15,
+     0.98,
+     0.86
+    ],
+    "Desaturate": 0.1,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Stone_B": {
+   "parent": "M_Age4_Stone",
+   "culture": "B",
+   "params": {
+    "Tint": [
+     0.95,
+     0.97,
+     1.0
+    ],
+    "Desaturate": 0.5,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Stone_C": {
+   "parent": "M_Age4_Stone",
+   "culture": "C",
+   "params": {
+    "Tint": [
+     1.08,
+     1.08,
+     1.06
+    ],
+    "Desaturate": 0.4,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Gravel_Base": {
+   "parent": "M_Age4_Gravel",
+   "culture": "Base",
+   "params": {
+    "Tint": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "Desaturate": 0.0,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Gravel_A": {
+   "parent": "M_Age4_Gravel",
+   "culture": "A",
+   "params": {
+    "Tint": [
+     1.2,
+     0.95,
+     0.8
+    ],
+    "Desaturate": 0.2,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Gravel_B": {
+   "parent": "M_Age4_Gravel",
+   "culture": "B",
+   "params": {
+    "Tint": [
+     0.95,
+     0.97,
+     1.0
+    ],
+    "Desaturate": 0.3,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Gravel_C": {
+   "parent": "M_Age4_Gravel",
+   "culture": "C",
+   "params": {
+    "Tint": [
+     1.0,
+     1.0,
+     1.02
+    ],
+    "Desaturate": 0.2,
+    "RoughnessAdd": 0.0
+   }
+  },
+  "MI_Age4_Trim_Base": {
+   "parent": "M_Age4_Trim",
+   "culture": "Base",
+   "params": {
+    "Tint": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "Desaturate": 0.0,
+    "RoughnessAdd": 0.0,
+    "AccentTint": [
+     0.2,
+     0.32,
+     0.24
+    ]
+   }
+  },
+  "MI_Age4_Trim_A": {
+   "parent": "M_Age4_Trim",
+   "culture": "A",
+   "params": {
+    "Tint": [
+     1.08,
+     1.0,
+     0.92
+    ],
+    "Desaturate": 0.0,
+    "RoughnessAdd": 0.0,
+    "AccentTint": [
+     0.1,
+     0.22,
+     0.62
+    ]
+   }
+  },
+  "MI_Age4_Trim_B": {
+   "parent": "M_Age4_Trim",
+   "culture": "B",
+   "params": {
+    "Tint": [
+     0.95,
+     0.98,
+     1.0
+    ],
+    "Desaturate": 0.2,
+    "RoughnessAdd": 0.02,
+    "AccentTint": [
+     0.85,
+     0.52,
+     0.12
+    ]
+   }
+  },
+  "MI_Age4_Trim_C": {
+   "parent": "M_Age4_Trim",
+   "culture": "C",
+   "params": {
+    "Tint": [
+     0.97,
+     0.99,
+     1.02
+    ],
+    "Desaturate": 0.1,
+    "RoughnessAdd": 0.0,
+    "AccentTint": [
+     0.2,
+     0.26,
+     0.36
+    ]
+   }
+  },
+  "MI_Age4_Gravel_Coal": {
+   "parent": "M_Age4_Gravel",
+   "variant": "Coal",
+   "params": {
+    "Tint": [
+     0.26,
+     0.26,
+     0.27
+    ],
+    "Desaturate": 0.9,
+    "RoughnessAdd": -0.3
+   }
+  },
+  "MI_Age4_Gravel_Ore": {
+   "parent": "M_Age4_Gravel",
+   "variant": "Ore",
+   "params": {
+    "Tint": [
+     2.0,
+     0.85,
+     0.52
+    ],
+    "Desaturate": 0.65,
+    "RoughnessAdd": 0.0
+   }
+  }
+ },
+ "ornaments": {
+  "description": "Culture ornament meshes snap to SOCKET_Ornament_* sockets (chimney tops, gable apexes, the station spire).",
+  "by_culture": {
+   "A": "SM_Age4_Ornament_A (domed clay chimney cap)",
+   "B": "SM_Age4_Ornament_B (upswept timber gable horns)",
+   "C": "SM_Age4_Ornament_C (conical stone finial)",
+   "Base": null
+  },
+  "material": "M_Age4_Trim (single Detail slot) or its culture instance"
+ }
+}

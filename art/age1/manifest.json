@@ -1,0 +1,3296 @@
+{
+ "family": "Age1",
+ "generated": "2026-11-19",
+ "script": "art/age1/build_age1.py",
+ "licence": "original",
+ "units": "metres (Unreal imports at 100x), Z up, front faces -Y, pivot at the footprint centre at ground level",
+ "lod_screen_sizes": [
+  1.0,
+  0.35,
+  0.12,
+  0.04
+ ],
+ "material_slots": "in order Structure, Roof, Detail; a slot a mesh does not use is omitted (see each mesh slots)",
+ "vertex_color": "'Col' (corner, sRGB bytes): ground-contact grime / variation, multiply into base colour",
+ "textures": {
+  "T_Age1_Crop_D": {
+   "file": "art/age1/textures/T_Age1_Crop_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Crop_N": {
+   "file": "art/age1/textures/T_Age1_Crop_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Crop_ORM": {
+   "file": "art/age1/textures/T_Age1_Crop_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Earth_D": {
+   "file": "art/age1/textures/T_Age1_Earth_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Earth_N": {
+   "file": "art/age1/textures/T_Age1_Earth_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Earth_ORM": {
+   "file": "art/age1/textures/T_Age1_Earth_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Mudbrick_D": {
+   "file": "art/age1/textures/T_Age1_Mudbrick_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Mudbrick_N": {
+   "file": "art/age1/textures/T_Age1_Mudbrick_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Mudbrick_ORM": {
+   "file": "art/age1/textures/T_Age1_Mudbrick_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Render_D": {
+   "file": "art/age1/textures/T_Age1_Render_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Render_N": {
+   "file": "art/age1/textures/T_Age1_Render_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Render_ORM": {
+   "file": "art/age1/textures/T_Age1_Render_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Soil_D": {
+   "file": "art/age1/textures/T_Age1_Soil_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Soil_N": {
+   "file": "art/age1/textures/T_Age1_Soil_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Soil_ORM": {
+   "file": "art/age1/textures/T_Age1_Soil_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Thatch_D": {
+   "file": "art/age1/textures/T_Age1_Thatch_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Thatch_N": {
+   "file": "art/age1/textures/T_Age1_Thatch_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Thatch_ORM": {
+   "file": "art/age1/textures/T_Age1_Thatch_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Trim_D": {
+   "file": "art/age1/textures/T_Age1_Trim_D.png",
+   "size": 1024,
+   "colour_space": "sRGB"
+  },
+  "T_Age1_Trim_M": {
+   "file": "art/age1/textures/T_Age1_Trim_M.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Trim_N": {
+   "file": "art/age1/textures/T_Age1_Trim_N.png",
+   "size": 1024,
+   "colour_space": "linear"
+  },
+  "T_Age1_Trim_ORM": {
+   "file": "art/age1/textures/T_Age1_Trim_ORM.png",
+   "size": 1024,
+   "colour_space": "linear"
+  }
+ },
+ "materials": {
+  "M_Age1_Mudbrick": {
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM"
+   ],
+   "uv_tile_m": 2.0,
+   "trim_strips": null,
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  },
+  "M_Age1_Render": {
+   "textures": [
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM"
+   ],
+   "uv_tile_m": 3.0,
+   "trim_strips": null,
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  },
+  "M_Age1_Thatch": {
+   "textures": [
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM"
+   ],
+   "uv_tile_m": 2.0,
+   "trim_strips": null,
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  },
+  "M_Age1_Earth": {
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM"
+   ],
+   "uv_tile_m": 4.0,
+   "trim_strips": null,
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  },
+  "M_Age1_Soil": {
+   "textures": [
+    "T_Age1_Soil_D",
+    "T_Age1_Soil_N",
+    "T_Age1_Soil_ORM"
+   ],
+   "uv_tile_m": 3.0,
+   "trim_strips": null,
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  },
+  "M_Age1_Crop": {
+   "textures": [
+    "T_Age1_Crop_D",
+    "T_Age1_Crop_N",
+    "T_Age1_Crop_ORM"
+   ],
+   "uv_tile_m": 2.0,
+   "trim_strips": null,
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  },
+  "M_Age1_Trim": {
+   "textures": [
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM",
+    "T_Age1_Trim_M"
+   ],
+   "uv_tile_m": null,
+   "trim_strips": {
+    "planks": [
+     0.0,
+     0.156
+    ],
+    "logs": [
+     0.156,
+     0.281
+    ],
+    "stone": [
+     0.281,
+     0.406
+    ],
+    "reed": [
+     0.406,
+     0.484
+    ],
+    "wicker": [
+     0.484,
+     0.547
+    ],
+    "frieze": [
+     0.547,
+     0.625
+    ],
+    "opening": [
+     0.625,
+     0.688
+    ],
+    "grain": [
+     0.688,
+     0.813
+    ],
+    "water": [
+     0.813,
+     0.891
+    ],
+    "hide": [
+     0.891,
+     1.0
+    ]
+   },
+   "params": {
+    "Tint": "linear RGB multiplier on D",
+    "RoughAdd": "added to ORM.G",
+    "Night": "emissive = M.R x Night (Trim only)"
+   }
+  }
+ },
+ "material_instances": {
+  "MI_Age1_Mudbrick_CliffTerrace": {
+   "parent": "M_Age1_Mudbrick",
+   "Tint": [
+    1.28,
+    0.86,
+    0.74
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Render_CliffTerrace": {
+   "parent": "M_Age1_Render",
+   "Tint": [
+    1.25,
+    0.88,
+    0.78
+   ],
+   "RoughAdd": -0.03
+  },
+  "MI_Age1_Thatch_CliffTerrace": {
+   "parent": "M_Age1_Thatch",
+   "Tint": [
+    1.05,
+    0.95,
+    0.82
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Mudbrick_LagoonWeaver": {
+   "parent": "M_Age1_Mudbrick",
+   "Tint": [
+    0.86,
+    0.9,
+    0.92
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Render_LagoonWeaver": {
+   "parent": "M_Age1_Render",
+   "Tint": [
+    0.9,
+    0.93,
+    0.95
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Thatch_LagoonWeaver": {
+   "parent": "M_Age1_Thatch",
+   "Tint": [
+    0.66,
+    0.78,
+    0.68
+   ],
+   "RoughAdd": 0.02
+  },
+  "MI_Age1_Trim_LagoonWeaver": {
+   "parent": "M_Age1_Trim",
+   "Tint": [
+    0.88,
+    0.94,
+    1.0
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Mudbrick_RingBuilder": {
+   "parent": "M_Age1_Mudbrick",
+   "Tint": [
+    1.4,
+    1.36,
+    1.32
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Render_RingBuilder": {
+   "parent": "M_Age1_Render",
+   "Tint": [
+    1.4,
+    1.38,
+    1.36
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Thatch_RingBuilder": {
+   "parent": "M_Age1_Thatch",
+   "Tint": [
+    0.42,
+    0.48,
+    0.6
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Mudbrick_Burnt": {
+   "parent": "M_Age1_Mudbrick",
+   "Tint": [
+    0.42,
+    0.36,
+    0.32
+   ],
+   "RoughAdd": 0.05,
+   "note": "apply to _Damaged / _Ruin meshes for a burnt town (cheap _Burnt state)"
+  },
+  "MI_Age1_Render_Burnt": {
+   "parent": "M_Age1_Render",
+   "Tint": [
+    0.42,
+    0.36,
+    0.32
+   ],
+   "RoughAdd": 0.05,
+   "note": "apply to _Damaged / _Ruin meshes for a burnt town (cheap _Burnt state)"
+  },
+  "MI_Age1_Thatch_Burnt": {
+   "parent": "M_Age1_Thatch",
+   "Tint": [
+    0.16,
+    0.14,
+    0.13
+   ],
+   "RoughAdd": 0.05,
+   "note": "apply to _Damaged / _Ruin meshes for a burnt town (cheap _Burnt state)"
+  },
+  "MI_Age1_Trim_Burnt": {
+   "parent": "M_Age1_Trim",
+   "Tint": [
+    0.25,
+    0.22,
+    0.2
+   ],
+   "RoughAdd": 0.05,
+   "note": "apply to _Damaged / _Ruin meshes for a burnt town (cheap _Burnt state)"
+  },
+  "MI_Age1_Earth_Burnt": {
+   "parent": "M_Age1_Earth",
+   "Tint": [
+    0.5,
+    0.45,
+    0.4
+   ],
+   "RoughAdd": 0.0,
+   "note": "apply to _Damaged / _Ruin meshes for a burnt town (cheap _Burnt state)"
+  },
+  "MI_Age1_Soil_Burnt": {
+   "parent": "M_Age1_Soil",
+   "Tint": [
+    0.45,
+    0.4,
+    0.36
+   ],
+   "RoughAdd": 0.0,
+   "note": "apply to _Damaged / _Ruin meshes for a burnt town (cheap _Burnt state)"
+  },
+  "MI_Age1_Crop_Ripe": {
+   "parent": "M_Age1_Crop",
+   "Tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "RoughAdd": 0.0
+  },
+  "MI_Age1_Crop_Green": {
+   "parent": "M_Age1_Crop",
+   "Tint": [
+    0.55,
+    1.05,
+    0.5
+   ],
+   "RoughAdd": -0.05
+  },
+  "MI_Age1_Crop_Stubble": {
+   "parent": "M_Age1_Crop",
+   "Tint": [
+    1.12,
+    1.0,
+    0.78
+   ],
+   "RoughAdd": 0.03
+  }
+ },
+ "cultures": {
+  "Valley": {
+   "note": "default river-valley people (concept age-1-bronze): ochre mudbrick, golden-grey thatch",
+   "ornament": null,
+   "instances": {}
+  },
+  "CliffTerrace": {
+   "note": "culture A: rose-ochre plaster, warm straw; prefers the flat-roofed house C",
+   "ornament": null,
+   "instances": {
+    "M_Age1_Mudbrick": "MI_Age1_Mudbrick_CliffTerrace",
+    "M_Age1_Render": "MI_Age1_Render_CliffTerrace",
+    "M_Age1_Thatch": "MI_Age1_Thatch_CliffTerrace"
+   }
+  },
+  "LagoonWeaver": {
+   "note": "culture B: grey clay, silvered timber, mossy grey thatch; crossed gable horns",
+   "ornament": "SM_Age1_Orn_GableHorns",
+   "instances": {
+    "M_Age1_Mudbrick": "MI_Age1_Mudbrick_LagoonWeaver",
+    "M_Age1_Render": "MI_Age1_Render_LagoonWeaver",
+    "M_Age1_Thatch": "MI_Age1_Thatch_LagoonWeaver",
+    "M_Age1_Trim": "MI_Age1_Trim_LagoonWeaver"
+   }
+  },
+  "RingBuilder": {
+   "note": "culture C: pale limestone-coloured render, dark blue-grey aged thatch; clay pot finials",
+   "ornament": "SM_Age1_Orn_Finial",
+   "instances": {
+    "M_Age1_Mudbrick": "MI_Age1_Mudbrick_RingBuilder",
+    "M_Age1_Render": "MI_Age1_Render_RingBuilder",
+    "M_Age1_Thatch": "MI_Age1_Thatch_RingBuilder"
+   }
+  }
+ },
+ "meshes": {
+  "SM_Age1_House_A_Intact": {
+   "asset": "House",
+   "variant": "A",
+   "state": "Intact",
+   "title": "small mudbrick house, gabled straw thatch",
+   "footprint_m": [
+    6.16,
+    4.96
+   ],
+   "height_m": 5.61,
+   "triangles": {
+    "LOD0": 2096,
+    "LOD1": 710,
+    "LOD2": 270
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -3.46,
+     0.0,
+     5.412
+    ],
+    "ridge_end_right": [
+     3.46,
+     0.0,
+     5.412
+    ]
+   }
+  },
+  "SM_Age1_House_A_Construction": {
+   "asset": "House",
+   "variant": "A",
+   "state": "Construction",
+   "title": "small mudbrick house, gabled straw thatch",
+   "footprint_m": [
+    6.16,
+    4.96
+   ],
+   "height_m": 4.88,
+   "triangles": {
+    "LOD0": 1130,
+    "LOD1": 452,
+    "LOD2": 130
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -3.46,
+     0.0,
+     5.412
+    ],
+    "ridge_end_right": [
+     3.46,
+     0.0,
+     5.412
+    ]
+   }
+  },
+  "SM_Age1_House_A_Damaged": {
+   "asset": "House",
+   "variant": "A",
+   "state": "Damaged",
+   "title": "small mudbrick house, gabled straw thatch",
+   "footprint_m": [
+    6.16,
+    4.96
+   ],
+   "height_m": 5.61,
+   "triangles": {
+    "LOD0": 1995,
+    "LOD1": 873,
+    "LOD2": 234
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -3.46,
+     0.0,
+     5.412
+    ],
+    "ridge_end_right": [
+     3.46,
+     0.0,
+     5.412
+    ]
+   }
+  },
+  "SM_Age1_House_A_Ruin": {
+   "asset": "House",
+   "variant": "A",
+   "state": "Ruin",
+   "title": "small mudbrick house, gabled straw thatch",
+   "footprint_m": [
+    6.16,
+    4.96
+   ],
+   "height_m": 2.3,
+   "triangles": {
+    "LOD0": 802,
+    "LOD1": 320,
+    "LOD2": 96
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -3.46,
+     0.0,
+     5.412
+    ],
+    "ridge_end_right": [
+     3.46,
+     0.0,
+     5.412
+    ]
+   }
+  },
+  "SM_Age1_House_B_Intact": {
+   "asset": "House",
+   "variant": "B",
+   "state": "Intact",
+   "title": "long timber-framed mudbrick house, hipped thatch, front porch",
+   "footprint_m": [
+    8.96,
+    5.76
+   ],
+   "height_m": 5.91,
+   "triangles": {
+    "LOD0": 2984,
+    "LOD1": 1336,
+    "LOD2": 322
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_B_Construction": {
+   "asset": "House",
+   "variant": "B",
+   "state": "Construction",
+   "title": "long timber-framed mudbrick house, hipped thatch, front porch",
+   "footprint_m": [
+    8.96,
+    5.76
+   ],
+   "height_m": 5.21,
+   "triangles": {
+    "LOD0": 1592,
+    "LOD1": 635,
+    "LOD2": 185
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_B_Damaged": {
+   "asset": "House",
+   "variant": "B",
+   "state": "Damaged",
+   "title": "long timber-framed mudbrick house, hipped thatch, front porch",
+   "footprint_m": [
+    8.96,
+    5.76
+   ],
+   "height_m": 5.91,
+   "triangles": {
+    "LOD0": 2829,
+    "LOD1": 1347,
+    "LOD2": 338
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_B_Ruin": {
+   "asset": "House",
+   "variant": "B",
+   "state": "Ruin",
+   "title": "long timber-framed mudbrick house, hipped thatch, front porch",
+   "footprint_m": [
+    8.96,
+    5.76
+   ],
+   "height_m": 2.5,
+   "triangles": {
+    "LOD0": 1002,
+    "LOD1": 400,
+    "LOD2": 120
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_C_Intact": {
+   "asset": "House",
+   "variant": "C",
+   "state": "Intact",
+   "title": "flat-roofed mudbrick house with a roof room, clay roofs, ladders",
+   "footprint_m": [
+    6.96,
+    6.16
+   ],
+   "height_m": 5.9,
+   "triangles": {
+    "LOD0": 2764,
+    "LOD1": 1105,
+    "LOD2": 324
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_C_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_C_Construction": {
+   "asset": "House",
+   "variant": "C",
+   "state": "Construction",
+   "title": "flat-roofed mudbrick house with a roof room, clay roofs, ladders",
+   "footprint_m": [
+    6.96,
+    6.16
+   ],
+   "height_m": 2.7,
+   "triangles": {
+    "LOD0": 1008,
+    "LOD1": 402,
+    "LOD2": 114
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_C_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_C_Damaged": {
+   "asset": "House",
+   "variant": "C",
+   "state": "Damaged",
+   "title": "flat-roofed mudbrick house with a roof room, clay roofs, ladders",
+   "footprint_m": [
+    6.96,
+    6.16
+   ],
+   "height_m": 3.5,
+   "triangles": {
+    "LOD0": 2340,
+    "LOD1": 936,
+    "LOD2": 275
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_C_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_C_Ruin": {
+   "asset": "House",
+   "variant": "C",
+   "state": "Ruin",
+   "title": "flat-roofed mudbrick house with a roof room, clay roofs, ladders",
+   "footprint_m": [
+    6.96,
+    6.16
+   ],
+   "height_m": 1.6,
+   "triangles": {
+    "LOD0": 930,
+    "LOD1": 370,
+    "LOD2": 110
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_C_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house"
+  },
+  "SM_Age1_House_D_Intact": {
+   "asset": "House",
+   "variant": "D",
+   "state": "Intact",
+   "title": "mudbrick house with a walled front yard and bread oven, gabled thatch",
+   "footprint_m": [
+    7.36,
+    9.46
+   ],
+   "height_m": 5.72,
+   "triangles": {
+    "LOD0": 2904,
+    "LOD1": 1198,
+    "LOD2": 382
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_D_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -4.06,
+     2.2,
+     5.519
+    ],
+    "ridge_end_right": [
+     4.06,
+     2.2,
+     5.519
+    ]
+   }
+  },
+  "SM_Age1_House_D_Construction": {
+   "asset": "House",
+   "variant": "D",
+   "state": "Construction",
+   "title": "mudbrick house with a walled front yard and bread oven, gabled thatch",
+   "footprint_m": [
+    7.36,
+    9.46
+   ],
+   "height_m": 5.01,
+   "triangles": {
+    "LOD0": 1790,
+    "LOD1": 716,
+    "LOD2": 210
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_D_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -4.06,
+     2.2,
+     5.519
+    ],
+    "ridge_end_right": [
+     4.06,
+     2.2,
+     5.519
+    ]
+   }
+  },
+  "SM_Age1_House_D_Damaged": {
+   "asset": "House",
+   "variant": "D",
+   "state": "Damaged",
+   "title": "mudbrick house with a walled front yard and bread oven, gabled thatch",
+   "footprint_m": [
+    7.36,
+    9.46
+   ],
+   "height_m": 5.72,
+   "triangles": {
+    "LOD0": 2851,
+    "LOD1": 1301,
+    "LOD2": 338
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_D_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -4.06,
+     2.2,
+     5.519
+    ],
+    "ridge_end_right": [
+     4.06,
+     2.2,
+     5.519
+    ]
+   }
+  },
+  "SM_Age1_House_D_Ruin": {
+   "asset": "House",
+   "variant": "D",
+   "state": "Ruin",
+   "title": "mudbrick house with a walled front yard and bread oven, gabled thatch",
+   "footprint_m": [
+    7.36,
+    9.46
+   ],
+   "height_m": 2.4,
+   "triangles": {
+    "LOD0": 1161,
+    "LOD1": 463,
+    "LOD2": 138
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_House_D_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "house",
+   "sockets": {
+    "ridge_end_left": [
+     -4.06,
+     2.2,
+     5.519
+    ],
+    "ridge_end_right": [
+     4.06,
+     2.2,
+     5.519
+    ]
+   }
+  },
+  "SM_Age1_Granary_A_Intact": {
+   "asset": "Granary",
+   "variant": "A",
+   "state": "Intact",
+   "title": "granary: eight clay grain drums with thatch caps on a dry-stone platform, threshing floor",
+   "footprint_m": [
+    26.7,
+    28.8
+   ],
+   "height_m": 8.75,
+   "triangles": {
+    "LOD0": 7126,
+    "LOD1": 2850,
+    "LOD2": 926,
+    "LOD3": 80
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Granary_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_Temple_A_Intact": {
+   "asset": "Temple",
+   "variant": "A",
+   "state": "Intact",
+   "title": "temple: three-tier stepped mudbrick platform, front stair, columned sanctuary with painted frieze",
+   "footprint_m": [
+    30.0,
+    40.0
+   ],
+   "height_m": 14.1,
+   "triangles": {
+    "LOD0": 3416,
+    "LOD1": 1552,
+    "LOD2": 376,
+    "LOD3": 28
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Temple_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_TempleCourt_A_Intact": {
+   "asset": "TempleCourt",
+   "variant": "A",
+   "state": "Intact",
+   "title": "temple court: mudbrick enclosure with gate pylons and a stone-kerbed pool",
+   "footprint_m": [
+    58.8,
+    52.8
+   ],
+   "height_m": 3.6,
+   "triangles": {
+    "LOD0": 988,
+    "LOD1": 420,
+    "LOD2": 118,
+    "LOD3": 37
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_TempleCourt_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic",
+   "sockets": {
+    "tree_1": [
+     -17.0,
+     -16.0,
+     0.0
+    ],
+    "tree_2": [
+     -19.0,
+     16.0,
+     0.0
+    ],
+    "tree_3": [
+     19.0,
+     17.0,
+     0.0
+    ],
+    "temple_pivot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Palisade_Straight_Intact": {
+   "asset": "Palisade",
+   "variant": "Straight",
+   "state": "Intact",
+   "title": "timber palisade, 8 m straight segment on a low earth footing (tile along X)",
+   "footprint_m": [
+    8.0,
+    1.8
+   ],
+   "height_m": 4.6,
+   "triangles": {
+    "LOD0": 626,
+    "LOD1": 250,
+    "LOD2": 74
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Palisade_Straight_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_Straight_Intact": {
+   "asset": "Rampart",
+   "variant": "Straight",
+   "state": "Intact",
+   "title": "earth rampart with a palisade on its crest, 10 m straight segment (tile along X)",
+   "footprint_m": [
+    10.0,
+    7.0
+   ],
+   "height_m": 6.5,
+   "triangles": {
+    "LOD0": 772,
+    "LOD1": 308,
+    "LOD2": 92
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_Straight_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_End_Intact": {
+   "asset": "Rampart",
+   "variant": "End",
+   "state": "Intact",
+   "title": "earth rampart terminus: the bank rounds down toward +X, the palisade ends at a heavy post",
+   "footprint_m": [
+    10.0,
+    7.0
+   ],
+   "height_m": 6.5,
+   "triangles": {
+    "LOD0": 506,
+    "LOD1": 201,
+    "LOD2": 60
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_End_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Gate_A_Intact": {
+   "asset": "Gate",
+   "variant": "A",
+   "state": "Intact",
+   "title": "gate: two timber towers with thatched roofs, walkway and plank leaves, flanked by rampart ends",
+   "footprint_m": [
+    20.4,
+    7.0
+   ],
+   "height_m": 9.19,
+   "triangles": {
+    "LOD0": 2836,
+    "LOD1": 1133,
+    "LOD2": 340,
+    "LOD3": 32
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Gate_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Landing_A_Intact": {
+   "asset": "Landing",
+   "variant": "A",
+   "state": "Intact",
+   "title": "reed boat landing: timber jetty on posts, earth ramp, reed shelter and net rack (Z=0 = waterline)",
+   "footprint_m": [
+    9.0,
+    20.2
+   ],
+   "height_m": 2.7,
+   "triangles": {
+    "LOD0": 1486,
+    "LOD1": 534,
+    "LOD2": 178,
+    "LOD3": 56
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Landing_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic-small",
+   "sockets": {
+    "mooring_1": [
+     -2.4,
+     -6.0,
+     0.0
+    ],
+    "mooring_2": [
+     2.4,
+     -9.0,
+     0.0
+    ],
+    "shore_end": [
+     0.0,
+     9.2,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Granary_A_Construction": {
+   "asset": "Granary",
+   "variant": "A",
+   "state": "Construction",
+   "title": "granary: eight clay grain drums with thatch caps on a dry-stone platform, threshing floor",
+   "footprint_m": [
+    26.7,
+    28.8
+   ],
+   "height_m": 6.1,
+   "triangles": {
+    "LOD0": 2852,
+    "LOD1": 1140,
+    "LOD2": 408,
+    "LOD3": 84
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Granary_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_Temple_A_Construction": {
+   "asset": "Temple",
+   "variant": "A",
+   "state": "Construction",
+   "title": "temple: three-tier stepped mudbrick platform, front stair, columned sanctuary with painted frieze",
+   "footprint_m": [
+    30.0,
+    32.58
+   ],
+   "height_m": 5.0,
+   "triangles": {
+    "LOD0": 1399,
+    "LOD1": 619,
+    "LOD2": 72,
+    "LOD3": 28
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Temple_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_TempleCourt_A_Construction": {
+   "asset": "TempleCourt",
+   "variant": "A",
+   "state": "Construction",
+   "title": "temple court: mudbrick enclosure with gate pylons and a stone-kerbed pool",
+   "footprint_m": [
+    58.8,
+    52.8
+   ],
+   "height_m": 3.6,
+   "triangles": {
+    "LOD0": 1860,
+    "LOD1": 700,
+    "LOD2": 132,
+    "LOD3": 74
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_TempleCourt_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic",
+   "sockets": {
+    "tree_1": [
+     -17.0,
+     -16.0,
+     0.0
+    ],
+    "tree_2": [
+     -19.0,
+     16.0,
+     0.0
+    ],
+    "tree_3": [
+     19.0,
+     17.0,
+     0.0
+    ],
+    "temple_pivot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Palisade_Straight_Construction": {
+   "asset": "Palisade",
+   "variant": "Straight",
+   "state": "Construction",
+   "title": "timber palisade, 8 m straight segment on a low earth footing (tile along X)",
+   "footprint_m": [
+    8.0,
+    1.8
+   ],
+   "height_m": 4.6,
+   "triangles": {
+    "LOD0": 558,
+    "LOD1": 222,
+    "LOD2": 66
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Palisade_Straight_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_Straight_Construction": {
+   "asset": "Rampart",
+   "variant": "Straight",
+   "state": "Construction",
+   "title": "earth rampart with a palisade on its crest, 10 m straight segment (tile along X)",
+   "footprint_m": [
+    10.0,
+    7.0
+   ],
+   "height_m": 5.9,
+   "triangles": {
+    "LOD0": 578,
+    "LOD1": 231,
+    "LOD2": 68
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_Straight_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_End_Construction": {
+   "asset": "Rampart",
+   "variant": "End",
+   "state": "Construction",
+   "title": "earth rampart terminus: the bank rounds down toward +X, the palisade ends at a heavy post",
+   "footprint_m": [
+    10.0,
+    7.0
+   ],
+   "height_m": 5.9,
+   "triangles": {
+    "LOD0": 417,
+    "LOD1": 166,
+    "LOD2": 49
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_End_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Gate_A_Construction": {
+   "asset": "Gate",
+   "variant": "A",
+   "state": "Construction",
+   "title": "gate: two timber towers with thatched roofs, walkway and plank leaves, flanked by rampart ends",
+   "footprint_m": [
+    20.4,
+    7.0
+   ],
+   "height_m": 7.6,
+   "triangles": {
+    "LOD0": 911,
+    "LOD1": 363,
+    "LOD2": 100,
+    "LOD3": 40
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Gate_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Landing_A_Construction": {
+   "asset": "Landing",
+   "variant": "A",
+   "state": "Construction",
+   "title": "reed boat landing: timber jetty on posts, earth ramp, reed shelter and net rack (Z=0 = waterline)",
+   "footprint_m": [
+    9.0,
+    20.2
+   ],
+   "height_m": 2.7,
+   "triangles": {
+    "LOD0": 918,
+    "LOD1": 362,
+    "LOD2": 110,
+    "LOD3": 48
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Landing_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic-small",
+   "sockets": {
+    "mooring_1": [
+     -2.4,
+     -6.0,
+     0.0
+    ],
+    "mooring_2": [
+     2.4,
+     -9.0,
+     0.0
+    ],
+    "shore_end": [
+     0.0,
+     9.2,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Granary_A_Damaged": {
+   "asset": "Granary",
+   "variant": "A",
+   "state": "Damaged",
+   "title": "granary: eight clay grain drums with thatch caps on a dry-stone platform, threshing floor",
+   "footprint_m": [
+    26.7,
+    28.8
+   ],
+   "height_m": 8.75,
+   "triangles": {
+    "LOD0": 6400,
+    "LOD1": 2560,
+    "LOD2": 768,
+    "LOD3": 98
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Granary_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_Temple_A_Damaged": {
+   "asset": "Temple",
+   "variant": "A",
+   "state": "Damaged",
+   "title": "temple: three-tier stepped mudbrick platform, front stair, columned sanctuary with painted frieze",
+   "footprint_m": [
+    30.0,
+    40.0
+   ],
+   "height_m": 13.2,
+   "triangles": {
+    "LOD0": 2750,
+    "LOD1": 1122,
+    "LOD2": 330,
+    "LOD3": 62
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Temple_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_TempleCourt_A_Damaged": {
+   "asset": "TempleCourt",
+   "variant": "A",
+   "state": "Damaged",
+   "title": "temple court: mudbrick enclosure with gate pylons and a stone-kerbed pool",
+   "footprint_m": [
+    58.8,
+    52.8
+   ],
+   "height_m": 3.6,
+   "triangles": {
+    "LOD0": 1884,
+    "LOD1": 724,
+    "LOD2": 156,
+    "LOD3": 73
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM",
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_TempleCourt_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic",
+   "sockets": {
+    "tree_1": [
+     -17.0,
+     -16.0,
+     0.0
+    ],
+    "tree_2": [
+     -19.0,
+     16.0,
+     0.0
+    ],
+    "tree_3": [
+     19.0,
+     17.0,
+     0.0
+    ],
+    "temple_pivot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Palisade_Straight_Damaged": {
+   "asset": "Palisade",
+   "variant": "Straight",
+   "state": "Damaged",
+   "title": "timber palisade, 8 m straight segment on a low earth footing (tile along X)",
+   "footprint_m": [
+    8.0,
+    1.8
+   ],
+   "height_m": 4.6,
+   "triangles": {
+    "LOD0": 614,
+    "LOD1": 245,
+    "LOD2": 72
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Palisade_Straight_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_Straight_Damaged": {
+   "asset": "Rampart",
+   "variant": "Straight",
+   "state": "Damaged",
+   "title": "earth rampart with a palisade on its crest, 10 m straight segment (tile along X)",
+   "footprint_m": [
+    10.0,
+    7.0
+   ],
+   "height_m": 6.5,
+   "triangles": {
+    "LOD0": 703,
+    "LOD1": 281,
+    "LOD2": 84
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_Straight_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_End_Damaged": {
+   "asset": "Rampart",
+   "variant": "End",
+   "state": "Damaged",
+   "title": "earth rampart terminus: the bank rounds down toward +X, the palisade ends at a heavy post",
+   "footprint_m": [
+    10.0,
+    7.0
+   ],
+   "height_m": 6.5,
+   "triangles": {
+    "LOD0": 458,
+    "LOD1": 183,
+    "LOD2": 53
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_End_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Gate_A_Damaged": {
+   "asset": "Gate",
+   "variant": "A",
+   "state": "Damaged",
+   "title": "gate: two timber towers with thatched roofs, walkway and plank leaves, flanked by rampart ends",
+   "footprint_m": [
+    20.4,
+    7.0
+   ],
+   "height_m": 9.19,
+   "triangles": {
+    "LOD0": 2087,
+    "LOD1": 833,
+    "LOD2": 250,
+    "LOD3": 34
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Thatch"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Thatch_D",
+    "T_Age1_Thatch_N",
+    "T_Age1_Thatch_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Gate_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Landing_A_Damaged": {
+   "asset": "Landing",
+   "variant": "A",
+   "state": "Damaged",
+   "title": "reed boat landing: timber jetty on posts, earth ramp, reed shelter and net rack (Z=0 = waterline)",
+   "footprint_m": [
+    9.0,
+    20.2
+   ],
+   "height_m": 2.7,
+   "triangles": {
+    "LOD0": 1122,
+    "LOD1": 502,
+    "LOD2": 134,
+    "LOD3": 56
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Landing_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic-small",
+   "sockets": {
+    "mooring_1": [
+     -2.4,
+     -6.0,
+     0.0
+    ],
+    "mooring_2": [
+     2.4,
+     -9.0,
+     0.0
+    ],
+    "shore_end": [
+     0.0,
+     9.2,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Granary_A_Ruin": {
+   "asset": "Granary",
+   "variant": "A",
+   "state": "Ruin",
+   "title": "granary: eight clay grain drums with thatch caps on a dry-stone platform, threshing floor",
+   "footprint_m": [
+    26.7,
+    28.8
+   ],
+   "height_m": 3.0,
+   "triangles": {
+    "LOD0": 1530,
+    "LOD1": 612,
+    "LOD2": 183,
+    "LOD3": 84
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Render"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Granary_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_Temple_A_Ruin": {
+   "asset": "Temple",
+   "variant": "A",
+   "state": "Ruin",
+   "title": "temple: three-tier stepped mudbrick platform, front stair, columned sanctuary with painted frieze",
+   "footprint_m": [
+    30.0,
+    29.39
+   ],
+   "height_m": 7.68,
+   "triangles": {
+    "LOD0": 913,
+    "LOD1": 365,
+    "LOD2": 108,
+    "LOD3": 78
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Temple_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic"
+  },
+  "SM_Age1_TempleCourt_A_Ruin": {
+   "asset": "TempleCourt",
+   "variant": "A",
+   "state": "Ruin",
+   "title": "temple court: mudbrick enclosure with gate pylons and a stone-kerbed pool",
+   "footprint_m": [
+    58.8,
+    52.8
+   ],
+   "height_m": 3.6,
+   "triangles": {
+    "LOD0": 1851,
+    "LOD1": 691,
+    "LOD2": 123,
+    "LOD3": 73
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Mudbrick"
+    }
+   ],
+   "textures": [
+    "T_Age1_Mudbrick_D",
+    "T_Age1_Mudbrick_N",
+    "T_Age1_Mudbrick_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_TempleCourt_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic",
+   "sockets": {
+    "tree_1": [
+     -17.0,
+     -16.0,
+     0.0
+    ],
+    "tree_2": [
+     -19.0,
+     16.0,
+     0.0
+    ],
+    "tree_3": [
+     19.0,
+     17.0,
+     0.0
+    ],
+    "temple_pivot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Palisade_Straight_Ruin": {
+   "asset": "Palisade",
+   "variant": "Straight",
+   "state": "Ruin",
+   "title": "timber palisade, 8 m straight segment on a low earth footing (tile along X)",
+   "footprint_m": [
+    8.0,
+    1.8
+   ],
+   "height_m": 4.6,
+   "triangles": {
+    "LOD0": 409,
+    "LOD1": 163,
+    "LOD2": 48
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Palisade_Straight_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_Straight_Ruin": {
+   "asset": "Rampart",
+   "variant": "Straight",
+   "state": "Ruin",
+   "title": "earth rampart with a palisade on its crest, 10 m straight segment (tile along X)",
+   "footprint_m": [
+    10.0,
+    8.0
+   ],
+   "height_m": 5.6,
+   "triangles": {
+    "LOD0": 524,
+    "LOD1": 209,
+    "LOD2": 62
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_Straight_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Rampart_End_Ruin": {
+   "asset": "Rampart",
+   "variant": "End",
+   "state": "Ruin",
+   "title": "earth rampart terminus: the bank rounds down toward +X, the palisade ends at a heavy post",
+   "footprint_m": [
+    10.0,
+    8.0
+   ],
+   "height_m": 5.6,
+   "triangles": {
+    "LOD0": 410,
+    "LOD1": 164,
+    "LOD2": 48
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Rampart_End_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Gate_A_Ruin": {
+   "asset": "Gate",
+   "variant": "A",
+   "state": "Ruin",
+   "title": "gate: two timber towers with thatched roofs, walkway and plank leaves, flanked by rampart ends",
+   "footprint_m": [
+    20.4,
+    7.0
+   ],
+   "height_m": 7.6,
+   "triangles": {
+    "LOD0": 880,
+    "LOD1": 352,
+    "LOD2": 96,
+    "LOD3": 32
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Gate_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "wall"
+  },
+  "SM_Age1_Landing_A_Ruin": {
+   "asset": "Landing",
+   "variant": "A",
+   "state": "Ruin",
+   "title": "reed boat landing: timber jetty on posts, earth ramp, reed shelter and net rack (Z=0 = waterline)",
+   "footprint_m": [
+    9.0,
+    20.2
+   ],
+   "height_m": 2.7,
+   "triangles": {
+    "LOD0": 482,
+    "LOD1": 192,
+    "LOD2": 39,
+    "LOD3": 48
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Earth"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Earth_D",
+    "T_Age1_Earth_N",
+    "T_Age1_Earth_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Landing_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "civic-small",
+   "sockets": {
+    "mooring_1": [
+     -2.4,
+     -6.0,
+     0.0
+    ],
+    "mooring_2": [
+     2.4,
+     -9.0,
+     0.0
+    ],
+    "shore_end": [
+     0.0,
+     9.2,
+     0.0
+    ]
+   }
+  },
+  "SM_Age1_Field_Ripe": {
+   "asset": "Field",
+   "variant": "Ripe",
+   "state": null,
+   "title": "field plot, ripe grain (gold), 24 x 16 m (scale freely in XY)",
+   "footprint_m": [
+    24.0,
+    16.0
+   ],
+   "height_m": 1.2,
+   "triangles": {
+    "LOD0": 1276,
+    "LOD1": 272,
+    "LOD2": 44,
+    "LOD3": 20
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Soil"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Crop"
+    }
+   ],
+   "textures": [
+    "T_Age1_Crop_D",
+    "T_Age1_Crop_N",
+    "T_Age1_Crop_ORM",
+    "T_Age1_Soil_D",
+    "T_Age1_Soil_N",
+    "T_Age1_Soil_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Field_Ripe.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "field"
+  },
+  "SM_Age1_Field_Growing": {
+   "asset": "Field",
+   "variant": "Growing",
+   "state": null,
+   "title": "field plot, young green crop, 24 x 16 m (scale freely in XY)",
+   "footprint_m": [
+    24.0,
+    16.0
+   ],
+   "height_m": 0.7,
+   "triangles": {
+    "LOD0": 1276,
+    "LOD1": 272,
+    "LOD2": 44,
+    "LOD3": 20
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Soil"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Crop"
+    }
+   ],
+   "textures": [
+    "T_Age1_Crop_D",
+    "T_Age1_Crop_N",
+    "T_Age1_Crop_ORM",
+    "T_Age1_Soil_D",
+    "T_Age1_Soil_N",
+    "T_Age1_Soil_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Field_Growing.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "field"
+  },
+  "SM_Age1_Field_Ploughed": {
+   "asset": "Field",
+   "variant": "Ploughed",
+   "state": null,
+   "title": "field plot, ploughed furrows, 24 x 16 m (scale freely in XY)",
+   "footprint_m": [
+    24.0,
+    16.0
+   ],
+   "height_m": 0.35,
+   "triangles": {
+    "LOD0": 2128,
+    "LOD1": 416,
+    "LOD2": 32,
+    "LOD3": 12
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Soil"
+    }
+   ],
+   "textures": [
+    "T_Age1_Soil_D",
+    "T_Age1_Soil_N",
+    "T_Age1_Soil_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Field_Ploughed.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "field"
+  },
+  "SM_Age1_Field_Stubble": {
+   "asset": "Field",
+   "variant": "Stubble",
+   "state": null,
+   "title": "field plot, harvested stubble with sheaf stooks, 24 x 16 m (scale freely in XY)",
+   "footprint_m": [
+    24.0,
+    16.0
+   ],
+   "height_m": 1.79,
+   "triangles": {
+    "LOD0": 1876,
+    "LOD1": 647,
+    "LOD2": 44,
+    "LOD3": 20
+   },
+   "slots": [
+    {
+     "slot": "Structure",
+     "material": "M_Age1_Soil"
+    },
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Crop"
+    },
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Crop_D",
+    "T_Age1_Crop_N",
+    "T_Age1_Crop_ORM",
+    "T_Age1_Soil_D",
+    "T_Age1_Soil_N",
+    "T_Age1_Soil_ORM",
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Field_Stubble.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "field"
+  },
+  "SM_Age1_ReedBoat_A": {
+   "asset": "ReedBoat",
+   "variant": "A",
+   "state": null,
+   "title": "reed boat large: lashed reed bundles, upswept ends, bow toward -Y (Z=0 = waterline)",
+   "footprint_m": [
+    1.55,
+    6.85
+   ],
+   "height_m": 1.85,
+   "triangles": {
+    "LOD0": 994,
+    "LOD1": 434,
+    "LOD2": 70
+   },
+   "slots": [
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_ReedBoat_A.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "vehicle"
+  },
+  "SM_Age1_ReedBoat_B": {
+   "asset": "ReedBoat",
+   "variant": "B",
+   "state": null,
+   "title": "reed boat small: lashed reed bundles, upswept ends, bow toward -Y (Z=0 = waterline)",
+   "footprint_m": [
+    1.15,
+    4.65
+   ],
+   "height_m": 1.4,
+   "triangles": {
+    "LOD0": 876,
+    "LOD1": 340,
+    "LOD2": 70
+   },
+   "slots": [
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_ReedBoat_B.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "vehicle"
+  },
+  "SM_Age1_Orn_GableHorns": {
+   "asset": "Ornament",
+   "variant": "GableHorns",
+   "state": null,
+   "title": "ornament: crossed gable horns (socket ridge_end_*)",
+   "footprint_m": [
+    0.3,
+    2.2
+   ],
+   "height_m": 1.0,
+   "triangles": {
+    "LOD0": 64,
+    "LOD1": 24,
+    "LOD2": 4
+   },
+   "slots": [
+    {
+     "slot": "Detail",
+     "material": "M_Age1_Trim"
+    }
+   ],
+   "textures": [
+    "T_Age1_Trim_D",
+    "T_Age1_Trim_M",
+    "T_Age1_Trim_N",
+    "T_Age1_Trim_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Orn_GableHorns.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "prop"
+  },
+  "SM_Age1_Orn_Finial": {
+   "asset": "Ornament",
+   "variant": "Finial",
+   "state": null,
+   "title": "ornament: clay pot ridge finial (socket ridge_end_*)",
+   "footprint_m": [
+    0.5,
+    0.5
+   ],
+   "height_m": 0.62,
+   "triangles": {
+    "LOD0": 100,
+    "LOD1": 40,
+    "LOD2": 12
+   },
+   "slots": [
+    {
+     "slot": "Roof",
+     "material": "M_Age1_Render"
+    }
+   ],
+   "textures": [
+    "T_Age1_Render_D",
+    "T_Age1_Render_N",
+    "T_Age1_Render_ORM"
+   ],
+   "fbx": "art/age1/export/SM_Age1_Orn_Finial.fbx",
+   "licence": "original",
+   "script": "art/age1/build_age1.py",
+   "budget_class": "prop"
+  }
+ },
+ "assets": {
+  "House": {
+   "meshes": [
+    "SM_Age1_House_A_Intact",
+    "SM_Age1_House_A_Construction",
+    "SM_Age1_House_A_Damaged",
+    "SM_Age1_House_A_Ruin",
+    "SM_Age1_House_B_Intact",
+    "SM_Age1_House_B_Construction",
+    "SM_Age1_House_B_Damaged",
+    "SM_Age1_House_B_Ruin",
+    "SM_Age1_House_C_Intact",
+    "SM_Age1_House_C_Construction",
+    "SM_Age1_House_C_Damaged",
+    "SM_Age1_House_C_Ruin",
+    "SM_Age1_House_D_Intact",
+    "SM_Age1_House_D_Construction",
+    "SM_Age1_House_D_Damaged",
+    "SM_Age1_House_D_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Granary": {
+   "meshes": [
+    "SM_Age1_Granary_A_Intact",
+    "SM_Age1_Granary_A_Construction",
+    "SM_Age1_Granary_A_Damaged",
+    "SM_Age1_Granary_A_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Temple": {
+   "meshes": [
+    "SM_Age1_Temple_A_Intact",
+    "SM_Age1_Temple_A_Construction",
+    "SM_Age1_Temple_A_Damaged",
+    "SM_Age1_Temple_A_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "TempleCourt": {
+   "meshes": [
+    "SM_Age1_TempleCourt_A_Intact",
+    "SM_Age1_TempleCourt_A_Construction",
+    "SM_Age1_TempleCourt_A_Damaged",
+    "SM_Age1_TempleCourt_A_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Palisade": {
+   "meshes": [
+    "SM_Age1_Palisade_Straight_Intact",
+    "SM_Age1_Palisade_Straight_Construction",
+    "SM_Age1_Palisade_Straight_Damaged",
+    "SM_Age1_Palisade_Straight_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Rampart": {
+   "meshes": [
+    "SM_Age1_Rampart_Straight_Intact",
+    "SM_Age1_Rampart_End_Intact",
+    "SM_Age1_Rampart_Straight_Construction",
+    "SM_Age1_Rampart_End_Construction",
+    "SM_Age1_Rampart_Straight_Damaged",
+    "SM_Age1_Rampart_End_Damaged",
+    "SM_Age1_Rampart_Straight_Ruin",
+    "SM_Age1_Rampart_End_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Gate": {
+   "meshes": [
+    "SM_Age1_Gate_A_Intact",
+    "SM_Age1_Gate_A_Construction",
+    "SM_Age1_Gate_A_Damaged",
+    "SM_Age1_Gate_A_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Landing": {
+   "meshes": [
+    "SM_Age1_Landing_A_Intact",
+    "SM_Age1_Landing_A_Construction",
+    "SM_Age1_Landing_A_Damaged",
+    "SM_Age1_Landing_A_Ruin"
+   ],
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Field": {
+   "meshes": [
+    "SM_Age1_Field_Ripe",
+    "SM_Age1_Field_Growing",
+    "SM_Age1_Field_Ploughed",
+    "SM_Age1_Field_Stubble"
+   ],
+   "states": [],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "ReedBoat": {
+   "meshes": [
+    "SM_Age1_ReedBoat_A",
+    "SM_Age1_ReedBoat_B"
+   ],
+   "states": [],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  },
+  "Ornament": {
+   "meshes": [
+    "SM_Age1_Orn_GableHorns",
+    "SM_Age1_Orn_Finial"
+   ],
+   "states": [],
+   "culture_variants": [
+    "Valley",
+    "CliffTerrace",
+    "LagoonWeaver",
+    "RingBuilder"
+   ]
+  }
+ },
+ "sim_mapping": {
+  "b.house (Bronze, tiers 1-3)": "SM_Age1_House_{A,B,C,D}_<State>; CliffTerrace prefers C; RingBuilder/LagoonWeaver A, B, D",
+  "b.granary": "SM_Age1_Granary_A_<State>",
+  "b.temple": "SM_Age1_Temple_A_<State> + SM_Age1_TempleCourt_A_<State> (same pivot)",
+  "b.walls (Bronze)": "SM_Age1_Rampart_Straight / Rampart_End / Gate_A along the ring; SM_Age1_Palisade_Straight for small villages",
+  "fields": "SM_Age1_Field_{Ripe,Growing,Ploughed,Stubble} with MI_Age1_Crop_{Ripe,Green,Stubble}",
+  "port / landing": "SM_Age1_Landing_A_<State> + SM_Age1_ReedBoat_{A,B} at its mooring sockets",
+  "Burnt": "Damaged / Ruin mesh with the MI_Age1_*_Burnt instances",
+  "TownKit stand-ins replaced": {
+   "MudHouse": "House_A..D",
+   "Granary(V0)": "Granary_A",
+   "TempleEarly": "Temple_A",
+   "WallSeg(V0)": "Rampart_Straight",
+   "Gatehouse(V0)": "Gate_A",
+   "Pier(V0)": "Landing_A",
+   "Boat": "ReedBoat_A/B"
+  }
+ },
+ "total_triangles_lod0": 89034
+}

@@ -1,0 +1,4154 @@
+{
+ "family": "Age0",
+ "generated": "2026-11-19",
+ "script": "art/age0/build_age0.py (with a0_geo.py, a0_assets.py, a0_tex.py)",
+ "licence": "original",
+ "units": "metres in Blender, FBX unit scale to centimetres; Z up, front -Y, pivot = footprint centre at ground",
+ "lod_screen_sizes": [
+  1.0,
+  0.35,
+  0.12,
+  0.04
+ ],
+ "material_slots": [
+  "Structure",
+  "Roof",
+  "Detail"
+ ],
+ "materials": {
+  "M_Age0_Structure": {
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M"
+   ],
+   "trim_bands_v": {
+    "bark": [
+     0.0,
+     0.25
+    ],
+    "weathered_wood": [
+     0.25,
+     0.5
+    ],
+    "wattle_daub": [
+     0.5,
+     0.75
+    ],
+    "earth": [
+     0.75,
+     1.0
+    ]
+   }
+  },
+  "M_Age0_Roof": {
+   "textures": [
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "trim_bands_v": {
+    "thatch_course": [
+     0.0,
+     0.5
+    ],
+    "hide_panels": [
+     0.5,
+     1.0
+    ]
+   }
+  },
+  "M_Age0_Detail": {
+   "textures": [
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "trim_bands_v": {
+    "stone": [
+     0.0,
+     0.5
+    ],
+    "leather": [
+     0.5,
+     0.625
+    ],
+    "painted_hide": [
+     0.625,
+     0.75
+    ],
+    "patches(u: embers 0-.25, char .25-.5, interior .5-1)": [
+     0.75,
+     0.875
+    ],
+    "rope": [
+     0.875,
+     1.0
+    ]
+   }
+  }
+ },
+ "texture_channels": {
+  "D": "sRGB albedo",
+  "N": "tangent normal, OpenGL (+Y): flip green on UE import",
+  "ORM": "R ambient occlusion, G roughness, B metallic (0)",
+  "M": "R night emissive (doorways, smoke holes, vents), G culture-colour paint mask, B moss/grime mask, A always-on fire (embers)"
+ },
+ "material_parameters": {
+  "Tint": "RGB multiplier on albedo",
+  "MossAmount": "scales M.B",
+  "MossColor": "linear RGB",
+  "CultureColor": "per instance (custom data), multiplies albedo where M.G",
+  "NightGlow": "scales M.R emission at night",
+  "FireGlow": "scales M.A emission, always on"
+ },
+ "material_instances": {
+  "MI_Age0_Structure_Temperate": {
+   "parent": "M_Age0_Structure",
+   "Tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "MossAmount": 0.35,
+   "MossColor": [
+    0.1,
+    0.12,
+    0.05
+   ],
+   "use": "climate style Temperate (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Roof_Temperate": {
+   "parent": "M_Age0_Roof",
+   "Tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "MossAmount": 0.3,
+   "MossColor": [
+    0.1,
+    0.12,
+    0.05
+   ],
+   "use": "climate style Temperate (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Detail_Temperate": {
+   "parent": "M_Age0_Detail",
+   "Tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "MossAmount": 0.4,
+   "MossColor": [
+    0.1,
+    0.12,
+    0.05
+   ],
+   "use": "climate style Temperate (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Structure_Arid": {
+   "parent": "M_Age0_Structure",
+   "Tint": [
+    1.25,
+    1.02,
+    0.8
+   ],
+   "MossAmount": 0.0,
+   "MossColor": [
+    0.5,
+    0.42,
+    0.3
+   ],
+   "use": "climate style Arid (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Roof_Arid": {
+   "parent": "M_Age0_Roof",
+   "Tint": [
+    1.32,
+    1.16,
+    0.86
+   ],
+   "MossAmount": 0.0,
+   "MossColor": [
+    0.5,
+    0.42,
+    0.3
+   ],
+   "use": "climate style Arid (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Detail_Arid": {
+   "parent": "M_Age0_Detail",
+   "Tint": [
+    1.15,
+    1.02,
+    0.88
+   ],
+   "MossAmount": 0.05,
+   "MossColor": [
+    0.5,
+    0.42,
+    0.3
+   ],
+   "use": "climate style Arid (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Structure_Tropical": {
+   "parent": "M_Age0_Structure",
+   "Tint": [
+    0.88,
+    0.84,
+    0.76
+   ],
+   "MossAmount": 0.45,
+   "MossColor": [
+    0.08,
+    0.13,
+    0.04
+   ],
+   "use": "climate style Tropical (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Roof_Tropical": {
+   "parent": "M_Age0_Roof",
+   "Tint": [
+    1.08,
+    1.06,
+    0.66
+   ],
+   "MossAmount": 0.4,
+   "MossColor": [
+    0.08,
+    0.13,
+    0.04
+   ],
+   "use": "climate style Tropical (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Detail_Tropical": {
+   "parent": "M_Age0_Detail",
+   "Tint": [
+    0.95,
+    0.95,
+    0.88
+   ],
+   "MossAmount": 0.6,
+   "MossColor": [
+    0.08,
+    0.13,
+    0.04
+   ],
+   "use": "climate style Tropical (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Structure_Cold": {
+   "parent": "M_Age0_Structure",
+   "Tint": [
+    0.84,
+    0.84,
+    0.88
+   ],
+   "MossAmount": 0.3,
+   "MossColor": [
+    0.2,
+    0.21,
+    0.19
+   ],
+   "use": "climate style Cold (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Roof_Cold": {
+   "parent": "M_Age0_Roof",
+   "Tint": [
+    0.62,
+    0.6,
+    0.58
+   ],
+   "MossAmount": 0.3,
+   "MossColor": [
+    0.2,
+    0.21,
+    0.19
+   ],
+   "use": "climate style Cold (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Detail_Cold": {
+   "parent": "M_Age0_Detail",
+   "Tint": [
+    0.9,
+    0.92,
+    0.95
+   ],
+   "MossAmount": 0.45,
+   "MossColor": [
+    0.2,
+    0.21,
+    0.19
+   ],
+   "use": "climate style Cold (DmTownsPlan EStyle)"
+  },
+  "MI_Age0_Structure_Burnt": {
+   "parent": "M_Age0_Structure",
+   "Tint": [
+    0.13,
+    0.115,
+    0.1
+   ],
+   "MossAmount": 0.0,
+   "MossColor": [
+    0.05,
+    0.05,
+    0.05
+   ],
+   "use": "Burnt state override"
+  },
+  "MI_Age0_Roof_Burnt": {
+   "parent": "M_Age0_Roof",
+   "Tint": [
+    0.12,
+    0.1,
+    0.09
+   ],
+   "MossAmount": 0.0,
+   "MossColor": [
+    0.05,
+    0.05,
+    0.05
+   ],
+   "use": "Burnt state override"
+  },
+  "MI_Age0_Detail_Burnt": {
+   "parent": "M_Age0_Detail",
+   "Tint": [
+    0.35,
+    0.33,
+    0.31
+   ],
+   "MossAmount": 0.0,
+   "MossColor": [
+    0.05,
+    0.05,
+    0.05
+   ],
+   "use": "Burnt state override"
+  }
+ },
+ "culture_colors": [
+  "#e69f00",
+  "#56b4e9",
+  "#009e73",
+  "#f0e442",
+  "#d55e00",
+  "#cc79a7"
+ ],
+ "meshes": {
+  "SM_Age0_Hut_A_Intact": {
+   "asset": "Hut",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    5.0,
+    5.52
+   ],
+   "height_m": 3.92,
+   "below_ground_m": 0.3,
+   "triangles": [
+    2447,
+    1280,
+    377,
+    44
+   ],
+   "lod_ratio": [
+    1.0,
+    0.523,
+    0.154,
+    0.018
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "thatch beehive dome, 4.6 m: the concept camp hut"
+  },
+  "SM_Age0_Hut_A_Construction": {
+   "asset": "Hut",
+   "variant": "A",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    7.78,
+    6.47
+   ],
+   "height_m": 3.0,
+   "below_ground_m": 0.45,
+   "triangles": [
+    2690,
+    1305,
+    304,
+    10
+   ],
+   "lod_ratio": [
+    1.0,
+    0.485,
+    0.113,
+    0.004
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "thatch beehive dome, 4.6 m: the concept camp hut"
+  },
+  "SM_Age0_Hut_A_Damaged": {
+   "asset": "Hut",
+   "variant": "A",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    5.88,
+    5.92
+   ],
+   "height_m": 3.85,
+   "below_ground_m": 0.45,
+   "triangles": [
+    3913,
+    1886,
+    626,
+    27
+   ],
+   "lod_ratio": [
+    1.0,
+    0.482,
+    0.16,
+    0.007
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "thatch beehive dome, 4.6 m: the concept camp hut"
+  },
+  "SM_Age0_Hut_A_Ruin": {
+   "asset": "Hut",
+   "variant": "A",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    6.85,
+    5.9
+   ],
+   "height_m": 1.16,
+   "below_ground_m": 0.46,
+   "triangles": [
+    2162,
+    976,
+    332,
+    14
+   ],
+   "lod_ratio": [
+    1.0,
+    0.451,
+    0.154,
+    0.006
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "thatch beehive dome, 4.6 m: the concept camp hut"
+  },
+  "SM_Age0_Hut_A_Burnt": {
+   "asset": "Hut",
+   "variant": "A",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    5.2,
+    6.13
+   ],
+   "height_m": 2.97,
+   "below_ground_m": 0.45,
+   "triangles": [
+    1292,
+    582,
+    240,
+    6
+   ],
+   "lod_ratio": [
+    1.0,
+    0.45,
+    0.186,
+    0.005
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_A_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "thatch beehive dome, 4.6 m: the concept camp hut"
+  },
+  "SM_Age0_Hut_B_Intact": {
+   "asset": "Hut",
+   "variant": "B",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    6.02,
+    6.15
+   ],
+   "height_m": 5.42,
+   "below_ground_m": 0.3,
+   "triangles": [
+    2791,
+    1348,
+    430,
+    104
+   ],
+   "lod_ratio": [
+    1.0,
+    0.483,
+    0.154,
+    0.037
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "conical thatch on a wattle-and-daub drum, 6 m"
+  },
+  "SM_Age0_Hut_B_Construction": {
+   "asset": "Hut",
+   "variant": "B",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    7.11,
+    7.17
+   ],
+   "height_m": 4.3,
+   "below_ground_m": 0.3,
+   "triangles": [
+    3018,
+    1563,
+    426,
+    117
+   ],
+   "lod_ratio": [
+    1.0,
+    0.518,
+    0.141,
+    0.039
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "conical thatch on a wattle-and-daub drum, 6 m"
+  },
+  "SM_Age0_Hut_B_Damaged": {
+   "asset": "Hut",
+   "variant": "B",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    6.99,
+    6.79
+   ],
+   "height_m": 5.31,
+   "below_ground_m": 0.3,
+   "triangles": [
+    4268,
+    2002,
+    699,
+    125
+   ],
+   "lod_ratio": [
+    1.0,
+    0.469,
+    0.164,
+    0.029
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "conical thatch on a wattle-and-daub drum, 6 m"
+  },
+  "SM_Age0_Hut_B_Ruin": {
+   "asset": "Hut",
+   "variant": "B",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    6.29,
+    6.14
+   ],
+   "height_m": 1.82,
+   "below_ground_m": 0.3,
+   "triangles": [
+    2150,
+    1105,
+    368,
+    116
+   ],
+   "lod_ratio": [
+    1.0,
+    0.514,
+    0.171,
+    0.054
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "conical thatch on a wattle-and-daub drum, 6 m"
+  },
+  "SM_Age0_Hut_B_Burnt": {
+   "asset": "Hut",
+   "variant": "B",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    5.88,
+    5.5
+   ],
+   "height_m": 4.26,
+   "below_ground_m": 0.3,
+   "triangles": [
+    1616,
+    834,
+    320,
+    118
+   ],
+   "lod_ratio": [
+    1.0,
+    0.516,
+    0.198,
+    0.073
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_B_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "conical thatch on a wattle-and-daub drum, 6 m"
+  },
+  "SM_Age0_Hut_C_Intact": {
+   "asset": "Hut",
+   "variant": "C",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    5.99,
+    6.33
+   ],
+   "height_m": 2.81,
+   "below_ground_m": 0.3,
+   "triangles": [
+    2792,
+    1692,
+    344,
+    104
+   ],
+   "lod_ratio": [
+    1.0,
+    0.606,
+    0.123,
+    0.037
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_C_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "hide-covered bender dome, thatch cap, smoke hole, 5.4 m"
+  },
+  "SM_Age0_Hut_C_Construction": {
+   "asset": "Hut",
+   "variant": "C",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    7.62,
+    6.36
+   ],
+   "height_m": 2.47,
+   "below_ground_m": 0.45,
+   "triangles": [
+    2702,
+    1509,
+    416,
+    58
+   ],
+   "lod_ratio": [
+    1.0,
+    0.558,
+    0.154,
+    0.021
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_C_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "hide-covered bender dome, thatch cap, smoke hole, 5.4 m"
+  },
+  "SM_Age0_Hut_C_Damaged": {
+   "asset": "Hut",
+   "variant": "C",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    6.51,
+    7.26
+   ],
+   "height_m": 2.74,
+   "below_ground_m": 0.45,
+   "triangles": [
+    4224,
+    2271,
+    590,
+    62
+   ],
+   "lod_ratio": [
+    1.0,
+    0.538,
+    0.14,
+    0.015
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_C_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "hide-covered bender dome, thatch cap, smoke hole, 5.4 m"
+  },
+  "SM_Age0_Hut_C_Ruin": {
+   "asset": "Hut",
+   "variant": "C",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    7.23,
+    7.31
+   ],
+   "height_m": 0.94,
+   "below_ground_m": 0.47,
+   "triangles": [
+    1930,
+    930,
+    328,
+    42
+   ],
+   "lod_ratio": [
+    1.0,
+    0.482,
+    0.17,
+    0.022
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_C_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "hide-covered bender dome, thatch cap, smoke hole, 5.4 m"
+  },
+  "SM_Age0_Hut_C_Burnt": {
+   "asset": "Hut",
+   "variant": "C",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    6.47,
+    7.05
+   ],
+   "height_m": 2.44,
+   "below_ground_m": 0.45,
+   "triangles": [
+    1292,
+    582,
+    240,
+    6
+   ],
+   "lod_ratio": [
+    1.0,
+    0.45,
+    0.186,
+    0.005
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Hut",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Hut_C_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "hide-covered bender dome, thatch cap, smoke hole, 5.4 m"
+  },
+  "SM_Age0_LeanTo_A_Intact": {
+   "asset": "LeanTo",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    4.89,
+    4.38
+   ],
+   "height_m": 2.51,
+   "below_ground_m": 0.39,
+   "triangles": [
+    987,
+    512,
+    226,
+    22
+   ],
+   "lod_ratio": [
+    1.0,
+    0.519,
+    0.229,
+    0.022
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_LeanTo_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "pole lean-to, thatch and hides, hearth in front"
+  },
+  "SM_Age0_LeanTo_A_Construction": {
+   "asset": "LeanTo",
+   "variant": "A",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    5.0,
+    5.86
+   ],
+   "height_m": 2.51,
+   "below_ground_m": 0.39,
+   "triangles": [
+    709,
+    450,
+    242,
+    22
+   ],
+   "lod_ratio": [
+    1.0,
+    0.635,
+    0.341,
+    0.031
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_LeanTo_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "pole lean-to, thatch and hides, hearth in front"
+  },
+  "SM_Age0_LeanTo_A_Damaged": {
+   "asset": "LeanTo",
+   "variant": "A",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    4.89,
+    4.38
+   ],
+   "height_m": 2.51,
+   "below_ground_m": 0.39,
+   "triangles": [
+    849,
+    472,
+    226,
+    22
+   ],
+   "lod_ratio": [
+    1.0,
+    0.556,
+    0.266,
+    0.026
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_LeanTo_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "pole lean-to, thatch and hides, hearth in front"
+  },
+  "SM_Age0_LeanTo_A_Ruin": {
+   "asset": "LeanTo",
+   "variant": "A",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    4.77,
+    5.12
+   ],
+   "height_m": 1.3,
+   "below_ground_m": 0.3,
+   "triangles": [
+    661,
+    299,
+    128,
+    4
+   ],
+   "lod_ratio": [
+    1.0,
+    0.452,
+    0.194,
+    0.006
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_LeanTo_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "pole lean-to, thatch and hides, hearth in front"
+  },
+  "SM_Age0_LeanTo_A_Burnt": {
+   "asset": "LeanTo",
+   "variant": "A",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    4.45,
+    5.08
+   ],
+   "height_m": 1.86,
+   "below_ground_m": 0.3,
+   "triangles": [
+    420,
+    194,
+    99,
+    4
+   ],
+   "lod_ratio": [
+    1.0,
+    0.462,
+    0.236,
+    0.01
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 2
+    },
+    {
+     "EDmTownMesh": "Tent",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_LeanTo_A_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "pole lean-to, thatch and hides, hearth in front"
+  },
+  "SM_Age0_Longhouse_A_Intact": {
+   "asset": "Longhouse",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    17.76,
+    8.66
+   ],
+   "height_m": 6.07,
+   "below_ground_m": 0.3,
+   "triangles": [
+    5757,
+    2359,
+    451,
+    60
+   ],
+   "lod_ratio": [
+    1.0,
+    0.41,
+    0.078,
+    0.01
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "16 m bow-walled longhouse, hipped thatch"
+  },
+  "SM_Age0_Longhouse_A_Construction": {
+   "asset": "Longhouse",
+   "variant": "A",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    17.76,
+    9.74
+   ],
+   "height_m": 5.7,
+   "below_ground_m": 0.3,
+   "triangles": [
+    2919,
+    1267,
+    352,
+    74
+   ],
+   "lod_ratio": [
+    1.0,
+    0.434,
+    0.121,
+    0.025
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_A_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "16 m bow-walled longhouse, hipped thatch"
+  },
+  "SM_Age0_Longhouse_A_Damaged": {
+   "asset": "Longhouse",
+   "variant": "A",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    17.76,
+    8.66
+   ],
+   "height_m": 6.07,
+   "below_ground_m": 0.3,
+   "triangles": [
+    5928,
+    2892,
+    671,
+    120
+   ],
+   "lod_ratio": [
+    1.0,
+    0.488,
+    0.113,
+    0.02
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_A_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "16 m bow-walled longhouse, hipped thatch"
+  },
+  "SM_Age0_Longhouse_A_Ruin": {
+   "asset": "Longhouse",
+   "variant": "A",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    17.61,
+    8.75
+   ],
+   "height_m": 2.2,
+   "below_ground_m": 0.3,
+   "triangles": [
+    4194,
+    1742,
+    424,
+    88
+   ],
+   "lod_ratio": [
+    1.0,
+    0.415,
+    0.101,
+    0.021
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "16 m bow-walled longhouse, hipped thatch"
+  },
+  "SM_Age0_Longhouse_A_Burnt": {
+   "asset": "Longhouse",
+   "variant": "A",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "house",
+   "footprint_m": [
+    16.6,
+    7.57
+   ],
+   "height_m": 4.5,
+   "below_ground_m": 0.3,
+   "triangles": [
+    1583,
+    937,
+    298,
+    112
+   ],
+   "lod_ratio": [
+    1.0,
+    0.592,
+    0.188,
+    0.071
+   ],
+   "budget_lod0": [
+    2000,
+    6000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_A_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "16 m bow-walled longhouse, hipped thatch"
+  },
+  "SM_Age0_Longhouse_B_Intact": {
+   "asset": "Longhouse",
+   "variant": "B",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    23.68,
+    8.69
+   ],
+   "height_m": 6.07,
+   "below_ground_m": 0.3,
+   "triangles": [
+    6579,
+    2779,
+    493,
+    60
+   ],
+   "lod_ratio": [
+    1.0,
+    0.422,
+    0.075,
+    0.009
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_B_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "22 m bow-walled longhouse (clan hall)"
+  },
+  "SM_Age0_Longhouse_B_Construction": {
+   "asset": "Longhouse",
+   "variant": "B",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    23.68,
+    9.7
+   ],
+   "height_m": 5.7,
+   "below_ground_m": 0.3,
+   "triangles": [
+    3316,
+    1452,
+    402,
+    74
+   ],
+   "lod_ratio": [
+    1.0,
+    0.438,
+    0.121,
+    0.022
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_B_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "22 m bow-walled longhouse (clan hall)"
+  },
+  "SM_Age0_Longhouse_B_Damaged": {
+   "asset": "Longhouse",
+   "variant": "B",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    23.67,
+    8.69
+   ],
+   "height_m": 6.07,
+   "below_ground_m": 0.3,
+   "triangles": [
+    6901,
+    3405,
+    761,
+    120
+   ],
+   "lod_ratio": [
+    1.0,
+    0.493,
+    0.11,
+    0.017
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_B_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "22 m bow-walled longhouse (clan hall)"
+  },
+  "SM_Age0_Longhouse_B_Ruin": {
+   "asset": "Longhouse",
+   "variant": "B",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    23.54,
+    8.61
+   ],
+   "height_m": 2.2,
+   "below_ground_m": 0.3,
+   "triangles": [
+    4573,
+    1965,
+    466,
+    90
+   ],
+   "lod_ratio": [
+    1.0,
+    0.43,
+    0.102,
+    0.02
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_B_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "22 m bow-walled longhouse (clan hall)"
+  },
+  "SM_Age0_Longhouse_B_Burnt": {
+   "asset": "Longhouse",
+   "variant": "B",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    22.6,
+    7.13
+   ],
+   "height_m": 4.5,
+   "below_ground_m": 0.3,
+   "triangles": [
+    1805,
+    1084,
+    331,
+    112
+   ],
+   "lod_ratio": [
+    1.0,
+    0.601,
+    0.183,
+    0.062
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Longhouse",
+     "variant": 1
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Longhouse_B_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "22 m bow-walled longhouse (clan hall)"
+  },
+  "SM_Age0_FirePit_A": {
+   "asset": "FirePit",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    4.78,
+    5.09
+   ],
+   "height_m": 1.92,
+   "below_ground_m": 0.12,
+   "triangles": [
+    900,
+    408,
+    141,
+    14
+   ],
+   "lod_ratio": [
+    1.0,
+    0.453,
+    0.157,
+    0.016
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Campfire",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_FirePit_A.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "stone-ringed hearth, log tipi, embers (M.A), seat logs"
+  },
+  "SM_Age0_DryingRack_A": {
+   "asset": "DryingRack",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    3.7,
+    1.18
+   ],
+   "height_m": 2.26,
+   "below_ground_m": 0.26,
+   "triangles": [
+    298,
+    152,
+    80,
+    52
+   ],
+   "lod_ratio": [
+    1.0,
+    0.51,
+    0.268,
+    0.174
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_DryingRack_A.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "A-frame rack with two stretched hides (one painted)"
+  },
+  "SM_Age0_DryingRack_B": {
+   "asset": "DryingRack",
+   "variant": "B",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    6.14,
+    1.04
+   ],
+   "height_m": 2.0,
+   "below_ground_m": 0.26,
+   "triangles": [
+    361,
+    116,
+    74,
+    70
+   ],
+   "lod_ratio": [
+    1.0,
+    0.321,
+    0.205,
+    0.194
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_DryingRack_B.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "long tripod rack with draped hides and drying strips"
+  },
+  "SM_Age0_Palisade_Seg_Intact": {
+   "asset": "Palisade",
+   "variant": "Seg",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "wall",
+   "footprint_m": [
+    8.0,
+    1.6
+   ],
+   "height_m": 3.83,
+   "below_ground_m": 0.4,
+   "triangles": [
+    1706,
+    494,
+    366,
+    30
+   ],
+   "lod_ratio": [
+    1.0,
+    0.29,
+    0.215,
+    0.018
+   ],
+   "budget_lod0": [
+    300,
+    2500
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "WallSeg",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Seg_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module of sharpened logs on an earth bank; tiles along X",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Seg_Construction": {
+   "asset": "Palisade",
+   "variant": "Seg",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "wall",
+   "footprint_m": [
+    8.09,
+    3.21
+   ],
+   "height_m": 3.8,
+   "below_ground_m": 0.4,
+   "triangles": [
+    993,
+    359,
+    242,
+    30
+   ],
+   "lod_ratio": [
+    1.0,
+    0.362,
+    0.244,
+    0.03
+   ],
+   "budget_lod0": [
+    300,
+    2500
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "WallSeg",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Seg_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module of sharpened logs on an earth bank; tiles along X",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Seg_Damaged": {
+   "asset": "Palisade",
+   "variant": "Seg",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "wall",
+   "footprint_m": [
+    8.47,
+    3.71
+   ],
+   "height_m": 3.81,
+   "below_ground_m": 0.43,
+   "triangles": [
+    1355,
+    489,
+    346,
+    30
+   ],
+   "lod_ratio": [
+    1.0,
+    0.361,
+    0.255,
+    0.022
+   ],
+   "budget_lod0": [
+    300,
+    2500
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "WallSeg",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Seg_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module of sharpened logs on an earth bank; tiles along X",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Seg_Ruin": {
+   "asset": "Palisade",
+   "variant": "Seg",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "wall",
+   "footprint_m": [
+    8.47,
+    3.76
+   ],
+   "height_m": 1.26,
+   "below_ground_m": 0.41,
+   "triangles": [
+    792,
+    360,
+    262,
+    30
+   ],
+   "lod_ratio": [
+    1.0,
+    0.455,
+    0.331,
+    0.038
+   ],
+   "budget_lod0": [
+    300,
+    2500
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "WallSeg",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Seg_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module of sharpened logs on an earth bank; tiles along X",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Seg_Burnt": {
+   "asset": "Palisade",
+   "variant": "Seg",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "wall",
+   "footprint_m": [
+    8.47,
+    4.16
+   ],
+   "height_m": 2.13,
+   "below_ground_m": 0.41,
+   "triangles": [
+    969,
+    437,
+    324,
+    30
+   ],
+   "lod_ratio": [
+    1.0,
+    0.451,
+    0.334,
+    0.031
+   ],
+   "budget_lod0": [
+    300,
+    2500
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "WallSeg",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Seg_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module of sharpened logs on an earth bank; tiles along X",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Gate_Intact": {
+   "asset": "Palisade",
+   "variant": "Gate",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    8.0,
+    4.5
+   ],
+   "height_m": 6.5,
+   "below_ground_m": 0.6,
+   "triangles": [
+    1278,
+    642,
+    318,
+    94
+   ],
+   "lod_ratio": [
+    1.0,
+    0.502,
+    0.249,
+    0.074
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Gatehouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Gate_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module: post-and-lintel gate, two log leaves, culture banner",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Gate_Construction": {
+   "asset": "Palisade",
+   "variant": "Gate",
+   "state": "Construction",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    8.0,
+    4.5
+   ],
+   "height_m": 5.75,
+   "below_ground_m": 0.6,
+   "triangles": [
+    504,
+    252,
+    174,
+    94
+   ],
+   "lod_ratio": [
+    1.0,
+    0.5,
+    0.345,
+    0.187
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Gatehouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Gate_Construction.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module: post-and-lintel gate, two log leaves, culture banner",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Gate_Damaged": {
+   "asset": "Palisade",
+   "variant": "Gate",
+   "state": "Damaged",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    8.0,
+    5.81
+   ],
+   "height_m": 6.5,
+   "below_ground_m": 0.6,
+   "triangles": [
+    1202,
+    594,
+    330,
+    94
+   ],
+   "lod_ratio": [
+    1.0,
+    0.494,
+    0.275,
+    0.078
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Gatehouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Gate_Damaged.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module: post-and-lintel gate, two log leaves, culture banner",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Gate_Ruin": {
+   "asset": "Palisade",
+   "variant": "Gate",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    8.01,
+    4.5
+   ],
+   "height_m": 1.6,
+   "below_ground_m": 0.6,
+   "triangles": [
+    542,
+    258,
+    182,
+    84
+   ],
+   "lod_ratio": [
+    1.0,
+    0.476,
+    0.336,
+    0.155
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Gatehouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Gate_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module: post-and-lintel gate, two log leaves, culture banner",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_Palisade_Gate_Burnt": {
+   "asset": "Palisade",
+   "variant": "Gate",
+   "state": "Burnt",
+   "states": [
+    "Intact",
+    "Construction",
+    "Damaged",
+    "Ruin",
+    "Burnt"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    8.0,
+    4.5
+   ],
+   "height_m": 3.1,
+   "below_ground_m": 0.6,
+   "triangles": [
+    614,
+    290,
+    208,
+    84
+   ],
+   "lod_ratio": [
+    1.0,
+    0.472,
+    0.339,
+    0.137
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": "MI_Age0_*_Burnt",
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Gatehouse",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_Palisade_Gate_Burnt.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "8 m module: post-and-lintel gate, two log leaves, culture banner",
+   "tiling": "module length 8 m along X, outer face -Y; place end to end, scale X for other lengths (the kit WallSeg is a 16 m stretch: two modules, or X scale = length / 8 m)"
+  },
+  "SM_Age0_StoragePit_A": {
+   "asset": "StoragePit",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    3.01,
+    2.96
+   ],
+   "height_m": 1.13,
+   "below_ground_m": 0.3,
+   "triangles": [
+    753,
+    434,
+    56,
+    30
+   ],
+   "lod_ratio": [
+    1.0,
+    0.576,
+    0.074,
+    0.04
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Roof_D",
+    "T_Age0_Roof_N",
+    "T_Age0_Roof_ORM",
+    "T_Age0_Roof_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Granary",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_StoragePit_A.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "clay-rimmed pit under a thatch cap"
+  },
+  "SM_Age0_StoragePit_B": {
+   "asset": "StoragePit",
+   "variant": "B",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    3.65,
+    3.04
+   ],
+   "height_m": 0.41,
+   "below_ground_m": 0.6,
+   "triangles": [
+    364,
+    232,
+    88,
+    42
+   ],
+   "lod_ratio": [
+    1.0,
+    0.637,
+    0.242,
+    0.115
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_StoragePit_B.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "open pit with split-log lid and a grinding stone"
+  },
+  "SM_Age0_StandingStones_A_Intact": {
+   "asset": "StandingStones",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Ruin"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    14.51,
+    14.48
+   ],
+   "height_m": 3.7,
+   "below_ground_m": 0.4,
+   "triangles": [
+    2075,
+    1161,
+    455,
+    260
+   ],
+   "lod_ratio": [
+    1.0,
+    0.56,
+    0.219,
+    0.125
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Stones",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_StandingStones_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "ring of twelve menhirs, 16 m, with an altar stone"
+  },
+  "SM_Age0_StandingStones_A_Ruin": {
+   "asset": "StandingStones",
+   "variant": "A",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Ruin"
+   ],
+   "category": "civic",
+   "footprint_m": [
+    17.82,
+    16.04
+   ],
+   "height_m": 3.46,
+   "below_ground_m": 0.4,
+   "triangles": [
+    1755,
+    1001,
+    455,
+    260
+   ],
+   "lod_ratio": [
+    1.0,
+    0.57,
+    0.259,
+    0.148
+   ],
+   "budget_lod0": [
+    8000,
+    20000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [
+    {
+     "EDmTownMesh": "Stones",
+     "variant": 0
+    }
+   ],
+   "export": "art/age0/export/SM_Age0_StandingStones_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "ring of twelve menhirs, 16 m, with an altar stone"
+  },
+  "SM_Age0_StandingStone_A_Intact": {
+   "asset": "StandingStone",
+   "variant": "A",
+   "state": "Intact",
+   "states": [
+    "Intact",
+    "Ruin"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    2.2,
+    1.75
+   ],
+   "height_m": 3.54,
+   "below_ground_m": 0.4,
+   "triangles": [
+    235,
+    177,
+    35,
+    20
+   ],
+   "lod_ratio": [
+    1.0,
+    0.753,
+    0.149,
+    0.085
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_StandingStone_A_Intact.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "single menhir with kerb stones"
+  },
+  "SM_Age0_StandingStone_A_Ruin": {
+   "asset": "StandingStone",
+   "variant": "A",
+   "state": "Ruin",
+   "states": [
+    "Intact",
+    "Ruin"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    3.93,
+    1.75
+   ],
+   "height_m": 1.04,
+   "below_ground_m": 0.4,
+   "triangles": [
+    370,
+    254,
+    70,
+    40
+   ],
+   "lod_ratio": [
+    1.0,
+    0.686,
+    0.189,
+    0.108
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_StandingStone_A_Ruin.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "single menhir with kerb stones"
+  },
+  "SM_Age0_Ornament_Pennant": {
+   "asset": "Ornament",
+   "variant": "Pennant",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    2.91,
+    0.72
+   ],
+   "height_m": 5.75,
+   "below_ground_m": 0.5,
+   "triangles": [
+    114,
+    87,
+    20,
+    13
+   ],
+   "lod_ratio": [
+    1.0,
+    0.763,
+    0.175,
+    0.114
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_Ornament_Pennant.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "culture pennant pole (painted hide, M.G)"
+  },
+  "SM_Age0_Ornament_Totem": {
+   "asset": "Ornament",
+   "variant": "Totem",
+   "state": "Intact",
+   "states": [
+    "Intact"
+   ],
+   "category": "prop",
+   "footprint_m": [
+    1.24,
+    0.55
+   ],
+   "height_m": 4.35,
+   "below_ground_m": 0.5,
+   "triangles": [
+    360,
+    211,
+    95,
+    12
+   ],
+   "lod_ratio": [
+    1.0,
+    0.586,
+    0.264,
+    0.033
+   ],
+   "budget_lod0": [
+    50,
+    1000
+   ],
+   "within_budget": true,
+   "materials": [
+    "M_Age0_Structure",
+    "M_Age0_Roof",
+    "M_Age0_Detail"
+   ],
+   "slots_used": [
+    "Structure",
+    "Detail"
+   ],
+   "textures": [
+    "T_Age0_Structure_D",
+    "T_Age0_Structure_N",
+    "T_Age0_Structure_ORM",
+    "T_Age0_Structure_M",
+    "T_Age0_Detail_D",
+    "T_Age0_Detail_N",
+    "T_Age0_Detail_ORM",
+    "T_Age0_Detail_M"
+   ],
+   "pivot": "footprint centre at ground (Z = 0), front (door) toward -Y",
+   "culture_variants": [
+    "MI_Age0_*_Temperate",
+    "MI_Age0_*_Arid",
+    "MI_Age0_*_Tropical",
+    "MI_Age0_*_Cold",
+    "CultureColor per instance (M.G)"
+   ],
+   "state_material_override": null,
+   "kit_mapping": [],
+   "export": "art/age0/export/SM_Age0_Ornament_Totem.fbx",
+   "licence": "original",
+   "script": "art/age0/build_age0.py",
+   "note": "carved totem post with painted bands (M.G)"
+  }
+ }
+}

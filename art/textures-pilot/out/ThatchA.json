@@ -1,0 +1,35 @@
+{
+ "source": "flow/thatch-a.jpg",
+ "name": "ThatchA",
+ "kind": "thatch",
+ "tile_m": 1.0,
+ "seam_before": {
+  "x_wrap": 1.6,
+  "x_worst": 1.6,
+  "y_wrap": 5.1,
+  "y_worst": 5.1
+ },
+ "light_repeat_before": 0.0593,
+ "overlap_px": [
+  409,
+  245
+ ],
+ "cut_cost": [
+  0.581,
+  1.429
+ ],
+ "albedo_mean": "#967b57",
+ "albedo_target": "#9a7a4a",
+ "seam_after": {
+  "x_wrap": 0.87,
+  "x_worst": 1.57,
+  "y_wrap": 1.04,
+  "y_worst": 1.53
+ },
+ "light_repeat_after": 0.0281,
+ "normal_strength": 0.1636,
+ "normal_tilt_deg": 30.0,
+ "rough_mean": 0.897,
+ "ao_mean": 0.89,
+ "seconds": 23.4
+}

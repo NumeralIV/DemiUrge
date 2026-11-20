@@ -1,0 +1,2581 @@
+{
+ "family": "Ship",
+ "generated": "2026-11-19",
+ "script": "art/ships/build_ships.py",
+ "blender": "5.2",
+ "units": "metres (1 BU = 1 m); FBX exported with FBX_SCALE_UNITS so Unreal sees centimetres",
+ "axes": "Z up, bow toward -Y in Blender; FBX axis_forward -Z, axis_up Y (Blender defaults)",
+ "waterline": "Z = 0 is the sea surface; hulls continue below it (draft_m)",
+ "lods": "LOD0..LOD3 as children of a LodGroup node in each FBX; screen sizes 1.0 / 0.35 / 0.12 / 0.04",
+ "material_contract": {
+  "slots": [
+   "Structure",
+   "Roof",
+   "Detail"
+  ],
+  "textures": "T_Ship_<Sheet>_D (sRGB), _N (OpenGL normal, flip green in UE), _ORM (AO, roughness, metallic), _M (linear)",
+  "mask_channels": "M.R night-window emissive, M.G culture-tint mask, M.B always-on emissive (engine glow, uses D as colour)",
+  "base_colour": "BaseColor = lerp(D, D * CultureTint, M.G)",
+  "emissive": "Emissive = (M.B * D + M.R * NightFactor * (1.0, 0.62, 0.28)) * 3",
+  "culture_instances": "MI_Ship_<Slot>_C<k> set CultureTint to DM.CULTURE_COLORS[k] (linear)",
+  "uv": "trim sheets: V stays inside one band per face; U tiles (texture Wrap on U)"
+ },
+ "cultures": {
+  "C0": "#e69f00",
+  "C1": "#56b4e9",
+  "C2": "#009e73",
+  "C3": "#f0e442",
+  "C4": "#d55e00",
+  "C5": "#cc79a7"
+ },
+ "bands": {
+  "plank_tar": {
+   "slot": "Structure",
+   "y0_px": 0,
+   "h_px": 112
+  },
+  "plank_oiled": {
+   "slot": "Structure",
+   "y0_px": 112,
+   "h_px": 112
+  },
+  "deck": {
+   "slot": "Structure",
+   "y0_px": 224,
+   "h_px": 96
+  },
+  "reed": {
+   "slot": "Structure",
+   "y0_px": 320,
+   "h_px": 112
+  },
+  "steel_black": {
+   "slot": "Structure",
+   "y0_px": 432,
+   "h_px": 112
+  },
+  "steel_red": {
+   "slot": "Structure",
+   "y0_px": 544,
+   "h_px": 80
+  },
+  "steel_deck": {
+   "slot": "Structure",
+   "y0_px": 624,
+   "h_px": 96
+  },
+  "composite": {
+   "slot": "Structure",
+   "y0_px": 720,
+   "h_px": 112
+  },
+  "stripe": {
+   "slot": "Structure",
+   "y0_px": 832,
+   "h_px": 64
+  },
+  "char": {
+   "slot": "Structure",
+   "y0_px": 896,
+   "h_px": 128
+  },
+  "sail": {
+   "slot": "Roof",
+   "y0_px": 0,
+   "h_px": 224
+  },
+  "sail_stripe": {
+   "slot": "Roof",
+   "y0_px": 224,
+   "h_px": 160
+  },
+  "sail_torn": {
+   "slot": "Roof",
+   "y0_px": 384,
+   "h_px": 128
+  },
+  "super_win": {
+   "slot": "Roof",
+   "y0_px": 512,
+   "h_px": 192
+  },
+  "paint_white": {
+   "slot": "Roof",
+   "y0_px": 704,
+   "h_px": 96
+  },
+  "char_roof": {
+   "slot": "Roof",
+   "y0_px": 800,
+   "h_px": 96
+  },
+  "glass": {
+   "slot": "Roof",
+   "y0_px": 896,
+   "h_px": 128
+  },
+  "containers": {
+   "slot": "Detail",
+   "y0_px": 0,
+   "h_px": 192
+  },
+  "spar": {
+   "slot": "Detail",
+   "y0_px": 192,
+   "h_px": 112
+  },
+  "rope": {
+   "slot": "Detail",
+   "y0_px": 304,
+   "h_px": 64
+  },
+  "metal": {
+   "slot": "Detail",
+   "y0_px": 368,
+   "h_px": 96
+  },
+  "crew": {
+   "slot": "Detail",
+   "y0_px": 464,
+   "h_px": 64
+  },
+  "flag": {
+   "slot": "Detail",
+   "y0_px": 528,
+   "h_px": 112
+  },
+  "gold": {
+   "slot": "Detail",
+   "y0_px": 640,
+   "h_px": 96
+  },
+  "glow": {
+   "slot": "Detail",
+   "y0_px": 736,
+   "h_px": 64
+  },
+  "oar": {
+   "slot": "Detail",
+   "y0_px": 800,
+   "h_px": 96
+  },
+  "cargo": {
+   "slot": "Detail",
+   "y0_px": 896,
+   "h_px": 128
+  }
+ },
+ "previews": {
+  "ReedBoat": [
+   "shots/asset-ships-reed-boat-close.png",
+   "shots/asset-ships-reed-boat-mid.png",
+   "shots/asset-ships-reed-boat-far.png",
+   "shots/asset-ships-states-reed-boat.png"
+  ],
+  "Canoe": [
+   "shots/asset-ships-canoe-close.png",
+   "shots/asset-ships-canoe-mid.png",
+   "shots/asset-ships-canoe-far.png",
+   "shots/asset-ships-states-canoe.png"
+  ],
+  "Galley": [
+   "shots/asset-ships-galley-close.png",
+   "shots/asset-ships-galley-mid.png",
+   "shots/asset-ships-galley-far.png",
+   "shots/asset-ships-states-galley.png"
+  ],
+  "Cog": [
+   "shots/asset-ships-cog-close.png",
+   "shots/asset-ships-cog-mid.png",
+   "shots/asset-ships-cog-far.png",
+   "shots/asset-ships-states-cog.png"
+  ],
+  "SailShip": [
+   "shots/asset-ships-sail-ship-close.png",
+   "shots/asset-ships-sail-ship-mid.png",
+   "shots/asset-ships-sail-ship-far.png",
+   "shots/asset-ships-states-sail-ship.png"
+  ],
+  "Steamship": [
+   "shots/asset-ships-steamship-close.png",
+   "shots/asset-ships-steamship-mid.png",
+   "shots/asset-ships-steamship-far.png",
+   "shots/asset-ships-states-steamship.png"
+  ],
+  "ContainerShip": [
+   "shots/asset-ships-container-ship-close.png",
+   "shots/asset-ships-container-ship-mid.png",
+   "shots/asset-ships-container-ship-far.png",
+   "shots/asset-ships-states-container-ship.png"
+  ],
+  "FastFreighter": [
+   "shots/asset-ships-fast-freighter-close.png",
+   "shots/asset-ships-fast-freighter-mid.png",
+   "shots/asset-ships-fast-freighter-far.png",
+   "shots/asset-ships-states-fast-freighter.png"
+  ]
+ },
+ "preview_sheets": [
+  "shots/asset-ships-lineup-ages.png",
+  "shots/asset-ships-night.png",
+  "shots/asset-ships-cultures-sail-ship.png",
+  "shots/asset-ships-cultures-galley.png",
+  "shots/asset-ships-cultures-container-ship.png"
+ ],
+ "meshes": {
+  "SM_Ship_Canoe_A_Damaged": {
+   "asset": "Canoe",
+   "display": "Plank canoe with sail",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age1 Bronze",
+    "Age2 Iron (fishing)"
+   ],
+   "towns_kit_slot": "Boat V1",
+   "footprint_m": [
+    3.81,
+    13.22
+   ],
+   "height_m": 5.49,
+   "draft_m": 1.03,
+   "bounds_min": [
+    -1.66,
+    -6.39,
+    -1.03
+   ],
+   "bounds_max": [
+    2.16,
+    6.83,
+    5.49
+   ],
+   "deck_z_m": 0.1,
+   "triangles": {
+    "LOD0": 1533,
+    "LOD1": 633,
+    "LOD2": 223,
+    "LOD3": 163
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C0 #e69f00",
+   "fbx": "art/ships/export/SM_Ship_Canoe_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Canoe_A_Intact": {
+   "asset": "Canoe",
+   "display": "Plank canoe with sail",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age1 Bronze",
+    "Age2 Iron (fishing)"
+   ],
+   "towns_kit_slot": "Boat V1",
+   "footprint_m": [
+    3.4,
+    13.17
+   ],
+   "height_m": 5.65,
+   "draft_m": 0.74,
+   "bounds_min": [
+    -1.7,
+    -6.35,
+    -0.74
+   ],
+   "bounds_max": [
+    1.7,
+    6.82,
+    5.65
+   ],
+   "deck_z_m": 0.1,
+   "triangles": {
+    "LOD0": 1635,
+    "LOD1": 680,
+    "LOD2": 223,
+    "LOD3": 163
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C0 #e69f00",
+   "fbx": "art/ships/export/SM_Ship_Canoe_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Canoe_A_Ruin": {
+   "asset": "Canoe",
+   "display": "Plank canoe with sail",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age1 Bronze",
+    "Age2 Iron (fishing)"
+   ],
+   "towns_kit_slot": "Boat V1",
+   "footprint_m": [
+    1.52,
+    13.31
+   ],
+   "height_m": 2.68,
+   "draft_m": 0.9,
+   "bounds_min": [
+    -0.55,
+    -6.46,
+    -0.9
+   ],
+   "bounds_max": [
+    0.96,
+    6.85,
+    2.68
+   ],
+   "deck_z_m": 0.1,
+   "triangles": {
+    "LOD0": 1224,
+    "LOD1": 447,
+    "LOD2": 205,
+    "LOD3": 149
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C0 #e69f00",
+   "fbx": "art/ships/export/SM_Ship_Canoe_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Cog_A_Damaged": {
+   "asset": "Cog",
+   "display": "Cog",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age2 Iron (late)",
+    "Age3 Sail (early)"
+   ],
+   "towns_kit_slot": "SailShip V0",
+   "footprint_m": [
+    13.29,
+    29.56
+   ],
+   "height_m": 16.58,
+   "draft_m": 2.81,
+   "bounds_min": [
+    -6.0,
+    -16.71,
+    -2.81
+   ],
+   "bounds_max": [
+    7.29,
+    12.85,
+    16.58
+   ],
+   "deck_z_m": 2.5,
+   "triangles": {
+    "LOD0": 2568,
+    "LOD1": 990,
+    "LOD2": 440,
+    "LOD3": 314
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_Cog_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Cog_A_Intact": {
+   "asset": "Cog",
+   "display": "Cog",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age2 Iron (late)",
+    "Age3 Sail (early)"
+   ],
+   "towns_kit_slot": "SailShip V0",
+   "footprint_m": [
+    13.0,
+    29.34
+   ],
+   "height_m": 23.55,
+   "draft_m": 2.2,
+   "bounds_min": [
+    -6.5,
+    -16.54,
+    -2.2
+   ],
+   "bounds_max": [
+    6.5,
+    12.8,
+    23.55
+   ],
+   "deck_z_m": 2.5,
+   "triangles": {
+    "LOD0": 2712,
+    "LOD1": 1048,
+    "LOD2": 454,
+    "LOD3": 320
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_Cog_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Cog_A_Ruin": {
+   "asset": "Cog",
+   "display": "Cog",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age2 Iron (late)",
+    "Age3 Sail (early)"
+   ],
+   "towns_kit_slot": "SailShip V0",
+   "footprint_m": [
+    8.44,
+    29.85
+   ],
+   "height_m": 7.78,
+   "draft_m": 5.78,
+   "bounds_min": [
+    -3.3,
+    -16.94,
+    -5.78
+   ],
+   "bounds_max": [
+    5.13,
+    12.91,
+    7.78
+   ],
+   "deck_z_m": 2.5,
+   "triangles": {
+    "LOD0": 2136,
+    "LOD1": 812,
+    "LOD2": 368,
+    "LOD3": 290
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_Cog_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_ContainerShip_A_Damaged": {
+   "asset": "ContainerShip",
+   "display": "Container ship",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age5 Atomic"
+   ],
+   "towns_kit_slot": "CargoShip V0",
+   "footprint_m": [
+    28.36,
+    152.54
+   ],
+   "height_m": 37.53,
+   "draft_m": 11.23,
+   "bounds_min": [
+    -11.61,
+    -77.43,
+    -11.23
+   ],
+   "bounds_max": [
+    16.75,
+    75.11,
+    37.53
+   ],
+   "deck_z_m": 9.4,
+   "triangles": {
+    "LOD0": 3766,
+    "LOD1": 1572,
+    "LOD2": 496,
+    "LOD3": 326
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C2 #009e73",
+   "fbx": "art/ships/export/SM_Ship_ContainerShip_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_ContainerShip_A_Intact": {
+   "asset": "ContainerShip",
+   "display": "Container ship",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age5 Atomic"
+   ],
+   "towns_kit_slot": "CargoShip V0",
+   "footprint_m": [
+    27.0,
+    152.53
+   ],
+   "height_m": 38.0,
+   "draft_m": 8.5,
+   "bounds_min": [
+    -13.5,
+    -77.53,
+    -8.5
+   ],
+   "bounds_max": [
+    13.5,
+    75.0,
+    38.0
+   ],
+   "deck_z_m": 9.4,
+   "triangles": {
+    "LOD0": 3814,
+    "LOD1": 1532,
+    "LOD2": 496,
+    "LOD3": 326
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C2 #009e73",
+   "fbx": "art/ships/export/SM_Ship_ContainerShip_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_ContainerShip_A_Ruin": {
+   "asset": "ContainerShip",
+   "display": "Container ship",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age5 Atomic"
+   ],
+   "towns_kit_slot": "CargoShip V0",
+   "footprint_m": [
+    35.12,
+    153.39
+   ],
+   "height_m": 25.4,
+   "draft_m": 21.34,
+   "bounds_min": [
+    -12.45,
+    -77.68,
+    -21.34
+   ],
+   "bounds_max": [
+    22.67,
+    75.7,
+    25.4
+   ],
+   "deck_z_m": 9.4,
+   "triangles": {
+    "LOD0": 3290,
+    "LOD1": 1370,
+    "LOD2": 478,
+    "LOD3": 308
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C2 #009e73",
+   "fbx": "art/ships/export/SM_Ship_ContainerShip_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_FastFreighter_A_Damaged": {
+   "asset": "FastFreighter",
+   "display": "Fast sea freighter",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age6 Space"
+   ],
+   "towns_kit_slot": "CargoShip V1",
+   "footprint_m": [
+    15.94,
+    117.7
+   ],
+   "height_m": 19.2,
+   "draft_m": 4.99,
+   "bounds_min": [
+    -7.39,
+    -60.79,
+    -4.99
+   ],
+   "bounds_max": [
+    8.54,
+    56.91,
+    19.2
+   ],
+   "deck_z_m": 6.35,
+   "triangles": {
+    "LOD0": 3071,
+    "LOD1": 1399,
+    "LOD2": 521,
+    "LOD3": 232
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C5 #cc79a7",
+   "fbx": "art/ships/export/SM_Ship_FastFreighter_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_FastFreighter_A_Intact": {
+   "asset": "FastFreighter",
+   "display": "Fast sea freighter",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age6 Space"
+   ],
+   "towns_kit_slot": "CargoShip V1",
+   "footprint_m": [
+    16.0,
+    117.74
+   ],
+   "height_m": 20.35,
+   "draft_m": 3.8,
+   "bounds_min": [
+    -8.0,
+    -60.84,
+    -3.8
+   ],
+   "bounds_max": [
+    8.0,
+    56.9,
+    20.35
+   ],
+   "deck_z_m": 6.35,
+   "triangles": {
+    "LOD0": 3207,
+    "LOD1": 1475,
+    "LOD2": 537,
+    "LOD3": 232
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C5 #cc79a7",
+   "fbx": "art/ships/export/SM_Ship_FastFreighter_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_FastFreighter_A_Ruin": {
+   "asset": "FastFreighter",
+   "display": "Fast sea freighter",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age6 Space"
+   ],
+   "towns_kit_slot": "CargoShip V1",
+   "footprint_m": [
+    15.83,
+    117.84
+   ],
+   "height_m": 15.4,
+   "draft_m": 11.95,
+   "bounds_min": [
+    -6.32,
+    -60.87,
+    -11.95
+   ],
+   "bounds_max": [
+    9.51,
+    56.97,
+    15.4
+   ],
+   "deck_z_m": 6.35,
+   "triangles": {
+    "LOD0": 2866,
+    "LOD1": 1242,
+    "LOD2": 483,
+    "LOD3": 210
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C5 #cc79a7",
+   "fbx": "art/ships/export/SM_Ship_FastFreighter_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Galley_A_Damaged": {
+   "asset": "Galley",
+   "display": "War galley with oars",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age1 Bronze (late)",
+    "Age2 Iron"
+   ],
+   "towns_kit_slot": "Galley",
+   "footprint_m": [
+    14.96,
+    34.67
+   ],
+   "height_m": 8.88,
+   "draft_m": 1.86,
+   "bounds_min": [
+    -7.51,
+    -18.2,
+    -1.86
+   ],
+   "bounds_max": [
+    7.45,
+    16.47,
+    8.88
+   ],
+   "deck_z_m": 0.95,
+   "triangles": {
+    "LOD0": 3315,
+    "LOD1": 1529,
+    "LOD2": 362,
+    "LOD3": 212
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_Galley_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Galley_A_Intact": {
+   "asset": "Galley",
+   "display": "War galley with oars",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age1 Bronze (late)",
+    "Age2 Iron"
+   ],
+   "towns_kit_slot": "Galley",
+   "footprint_m": [
+    15.02,
+    34.79
+   ],
+   "height_m": 13.5,
+   "draft_m": 1.72,
+   "bounds_min": [
+    -7.51,
+    -18.2,
+    -1.72
+   ],
+   "bounds_max": [
+    7.51,
+    16.59,
+    13.5
+   ],
+   "deck_z_m": 0.95,
+   "triangles": {
+    "LOD0": 3731,
+    "LOD1": 1683,
+    "LOD2": 376,
+    "LOD3": 210
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_Galley_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Galley_A_Ruin": {
+   "asset": "Galley",
+   "display": "War galley with oars",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age1 Bronze (late)",
+    "Age2 Iron"
+   ],
+   "towns_kit_slot": "Galley",
+   "footprint_m": [
+    9.6,
+    34.48
+   ],
+   "height_m": 5.1,
+   "draft_m": 3.15,
+   "bounds_min": [
+    -2.49,
+    -18.18,
+    -3.15
+   ],
+   "bounds_max": [
+    7.11,
+    16.3,
+    5.1
+   ],
+   "deck_z_m": 0.95,
+   "triangles": {
+    "LOD0": 2106,
+    "LOD1": 880,
+    "LOD2": 316,
+    "LOD3": 186
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_Galley_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_ReedBoat_A_Damaged": {
+   "asset": "ReedBoat",
+   "display": "Reed boat",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age0 Stone",
+    "Age1 Bronze (river)"
+   ],
+   "towns_kit_slot": "Boat V0",
+   "footprint_m": [
+    2.12,
+    6.83
+   ],
+   "height_m": 3.44,
+   "draft_m": 0.78,
+   "bounds_min": [
+    -0.77,
+    -3.2,
+    -0.78
+   ],
+   "bounds_max": [
+    1.35,
+    3.63,
+    3.44
+   ],
+   "deck_z_m": 0.26,
+   "triangles": {
+    "LOD0": 2021,
+    "LOD1": 861,
+    "LOD2": 227,
+    "LOD3": 141
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C0 #e69f00",
+   "fbx": "art/ships/export/SM_Ship_ReedBoat_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_ReedBoat_A_Intact": {
+   "asset": "ReedBoat",
+   "display": "Reed boat",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age0 Stone",
+    "Age1 Bronze (river)"
+   ],
+   "towns_kit_slot": "Boat V0",
+   "footprint_m": [
+    2.79,
+    6.76
+   ],
+   "height_m": 3.49,
+   "draft_m": 0.61,
+   "bounds_min": [
+    -1.39,
+    -3.15,
+    -0.61
+   ],
+   "bounds_max": [
+    1.39,
+    3.61,
+    3.49
+   ],
+   "deck_z_m": 0.26,
+   "triangles": {
+    "LOD0": 2082,
+    "LOD1": 908,
+    "LOD2": 231,
+    "LOD3": 145
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C0 #e69f00",
+   "fbx": "art/ships/export/SM_Ship_ReedBoat_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_ReedBoat_A_Ruin": {
+   "asset": "ReedBoat",
+   "display": "Reed boat",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age0 Stone",
+    "Age1 Bronze (river)"
+   ],
+   "towns_kit_slot": "Boat V0",
+   "footprint_m": [
+    1.58,
+    6.51
+   ],
+   "height_m": 2.01,
+   "draft_m": 0.71,
+   "bounds_min": [
+    -0.72,
+    -3.28,
+    -0.71
+   ],
+   "bounds_max": [
+    0.86,
+    3.23,
+    2.01
+   ],
+   "deck_z_m": 0.26,
+   "triangles": {
+    "LOD0": 1826,
+    "LOD1": 706,
+    "LOD2": 192,
+    "LOD3": 130
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C0 #e69f00",
+   "fbx": "art/ships/export/SM_Ship_ReedBoat_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_SailShip_A_Damaged": {
+   "asset": "SailShip",
+   "display": "Full-rigged sailing ship",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age3 Sail",
+    "Age4 Industry (early)"
+   ],
+   "towns_kit_slot": "SailShip V1",
+   "footprint_m": [
+    21.58,
+    56.36
+   ],
+   "height_m": 37.73,
+   "draft_m": 5.54,
+   "bounds_min": [
+    -8.65,
+    -33.3,
+    -5.54
+   ],
+   "bounds_max": [
+    12.93,
+    23.06,
+    37.73
+   ],
+   "deck_z_m": 3.5,
+   "triangles": {
+    "LOD0": 4104,
+    "LOD1": 1505,
+    "LOD2": 578,
+    "LOD3": 342
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_SailShip_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_SailShip_A_Intact": {
+   "asset": "SailShip",
+   "display": "Full-rigged sailing ship",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age3 Sail",
+    "Age4 Industry (early)"
+   ],
+   "towns_kit_slot": "SailShip V1",
+   "footprint_m": [
+    21.85,
+    57.04
+   ],
+   "height_m": 38.55,
+   "draft_m": 4.6,
+   "bounds_min": [
+    -10.92,
+    -33.04,
+    -4.6
+   ],
+   "bounds_max": [
+    10.92,
+    24.0,
+    38.55
+   ],
+   "deck_z_m": 3.5,
+   "triangles": {
+    "LOD0": 4834,
+    "LOD1": 1729,
+    "LOD2": 662,
+    "LOD3": 382
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_SailShip_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_SailShip_A_Ruin": {
+   "asset": "SailShip",
+   "display": "Full-rigged sailing ship",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age3 Sail",
+    "Age4 Industry (early)"
+   ],
+   "towns_kit_slot": "SailShip V1",
+   "footprint_m": [
+    12.12,
+    55.99
+   ],
+   "height_m": 13.39,
+   "draft_m": 10.45,
+   "bounds_min": [
+    -5.49,
+    -33.71,
+    -10.45
+   ],
+   "bounds_max": [
+    6.64,
+    22.28,
+    13.39
+   ],
+   "deck_z_m": 3.5,
+   "triangles": {
+    "LOD0": 2812,
+    "LOD1": 1052,
+    "LOD2": 432,
+    "LOD3": 212
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C1 #56b4e9",
+   "fbx": "art/ships/export/SM_Ship_SailShip_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Steamship_A_Damaged": {
+   "asset": "Steamship",
+   "display": "Single-funnel steamship",
+   "variant": "A",
+   "state": "Damaged",
+   "family": "Ship",
+   "sim_ages": [
+    "Age4 Industry"
+   ],
+   "towns_kit_slot": "Steamer",
+   "footprint_m": [
+    11.65,
+    76.53
+   ],
+   "height_m": 21.18,
+   "draft_m": 6.48,
+   "bounds_min": [
+    -5.39,
+    -38.16,
+    -6.48
+   ],
+   "bounds_max": [
+    6.26,
+    38.37,
+    21.18
+   ],
+   "deck_z_m": 4.2,
+   "triangles": {
+    "LOD0": 3118,
+    "LOD1": 1280,
+    "LOD2": 446,
+    "LOD3": 302
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C2 #009e73",
+   "fbx": "art/ships/export/SM_Ship_Steamship_A_Damaged.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Steamship_A_Intact": {
+   "asset": "Steamship",
+   "display": "Single-funnel steamship",
+   "variant": "A",
+   "state": "Intact",
+   "family": "Ship",
+   "sim_ages": [
+    "Age4 Industry"
+   ],
+   "towns_kit_slot": "Steamer",
+   "footprint_m": [
+    11.0,
+    76.65
+   ],
+   "height_m": 23.25,
+   "draft_m": 4.6,
+   "bounds_min": [
+    -5.5,
+    -38.0,
+    -4.6
+   ],
+   "bounds_max": [
+    5.5,
+    38.65,
+    23.25
+   ],
+   "deck_z_m": 4.2,
+   "triangles": {
+    "LOD0": 3110,
+    "LOD1": 1270,
+    "LOD2": 432,
+    "LOD3": 288
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C2 #009e73",
+   "fbx": "art/ships/export/SM_Ship_Steamship_A_Intact.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  },
+  "SM_Ship_Steamship_A_Ruin": {
+   "asset": "Steamship",
+   "display": "Single-funnel steamship",
+   "variant": "A",
+   "state": "Ruin",
+   "family": "Ship",
+   "sim_ages": [
+    "Age4 Industry"
+   ],
+   "towns_kit_slot": "Steamer",
+   "footprint_m": [
+    13.58,
+    76.69
+   ],
+   "height_m": 8.63,
+   "draft_m": 13.07,
+   "bounds_min": [
+    -5.63,
+    -38.26,
+    -13.07
+   ],
+   "bounds_max": [
+    7.95,
+    38.43,
+    8.63
+   ],
+   "deck_z_m": 4.2,
+   "triangles": {
+    "LOD0": 2474,
+    "LOD1": 955,
+    "LOD2": 406,
+    "LOD3": 262
+   },
+   "lod_screen_sizes": [
+    1.0,
+    0.35,
+    0.12,
+    0.04
+   ],
+   "materials": {
+    "Structure": "M_Ship_Structure",
+    "Roof": "M_Ship_Roof",
+    "Detail": "M_Ship_Detail"
+   },
+   "material_slots_order": [
+    "Structure",
+    "Roof",
+    "Detail"
+   ],
+   "textures": {
+    "M_Ship_Structure": [
+     "T_Ship_Hull_D",
+     "T_Ship_Hull_N",
+     "T_Ship_Hull_ORM",
+     "T_Ship_Hull_M"
+    ],
+    "M_Ship_Roof": [
+     "T_Ship_Canvas_D",
+     "T_Ship_Canvas_N",
+     "T_Ship_Canvas_ORM",
+     "T_Ship_Canvas_M"
+    ],
+    "M_Ship_Detail": [
+     "T_Ship_Detail_D",
+     "T_Ship_Detail_N",
+     "T_Ship_Detail_ORM",
+     "T_Ship_Detail_M"
+    ]
+   },
+   "states": [
+    "Intact",
+    "Damaged",
+    "Ruin"
+   ],
+   "culture_variants": [
+    "MI_Ship_Structure_C0",
+    "MI_Ship_Structure_C1",
+    "MI_Ship_Structure_C2",
+    "MI_Ship_Structure_C3",
+    "MI_Ship_Structure_C4",
+    "MI_Ship_Structure_C5",
+    "MI_Ship_Roof_C0",
+    "MI_Ship_Roof_C1",
+    "MI_Ship_Roof_C2",
+    "MI_Ship_Roof_C3",
+    "MI_Ship_Roof_C4",
+    "MI_Ship_Roof_C5",
+    "MI_Ship_Detail_C0",
+    "MI_Ship_Detail_C1",
+    "MI_Ship_Detail_C2",
+    "MI_Ship_Detail_C3",
+    "MI_Ship_Detail_C4",
+    "MI_Ship_Detail_C5"
+   ],
+   "default_culture_for_previews": "C2 #009e73",
+   "fbx": "art/ships/export/SM_Ship_Steamship_A_Ruin.fbx",
+   "pivot": "centre of the waterplane at the waterline (Z = 0); bow toward -Y in Blender",
+   "licence": "original",
+   "script": "art/ships/build_ships.py"
+  }
+ },
+ "totals": {
+  "meshes": 24,
+  "triangles_lod0": 67355
+ }
+}
