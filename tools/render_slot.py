@@ -33,7 +33,7 @@ def pid_alive(pid):
     except OSError:
         return False
 
-GPU_MAX, CPU_MAX = 80, 65  # night cap from the owner: CPU 50-65 %
+GPU_MAX, CPU_MAX = 60, 65  # night caps from the owner: GPU and CPU 50-65 %
 
 def machine_busy(check_cpu=False):
     """True while GPU utilisation (and, for CPU-heavy jobs, CPU load) is above the owner's limits."""
