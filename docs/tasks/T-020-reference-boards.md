@@ -1,7 +1,6 @@
 # T-020 — Reference boards: the strategy-game look at 40 m, 300 m and 2 km
 
-**Assignee:** Grok · **Status:** on hold (the lead opens it; do not start while `docs/tasks/README.md` shows the
-hold notice or this line says "on hold") · **Branch:** `helper/grok/T-020`
+**Assignee:** Grok · **Status:** open · **Branch:** `helper/grok/T-020`
 **Deliver to:** `docs/concept/reference-boards/` only.
 
 ## Why
