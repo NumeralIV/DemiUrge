@@ -33,7 +33,7 @@ def pid_alive(pid):
     except OSError:
         return False
 
-GPU_MAX, CPU_MAX = 80, 70
+GPU_MAX, CPU_MAX = 80, 65  # night cap from the owner: CPU 50-65 %
 
 def machine_busy(check_cpu=False):
     """True while GPU utilisation (and, for CPU-heavy jobs, CPU load) is above the owner's limits."""
@@ -58,7 +58,7 @@ def machine_busy(check_cpu=False):
 
 def main():
     args = sys.argv[1:]
-    slots, timeout, cpu = 5, 3600.0, False
+    slots, timeout, cpu = 2, 3600.0, True  # night: 2 heavy jobs, always wait for CPU < 65 %
     while args and args[0] != "--":
         if args[0] == "--slots":
             slots = int(args[1]); args = args[2:]
