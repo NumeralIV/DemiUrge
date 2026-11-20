@@ -27,6 +27,10 @@
 // -nightamb=<gain> (moonlit cloud ambient) -cloudviewscale=<s> -cloudshadowscale=<s> -cloudorbitscale=<s> (sample budgets)
 // -atmodrop=<km> (atmosphere ground below the sea; hides a sagging far sea mesh, see the verify report) -skytrace (clock,
 // map swaps and any sky tick over 4 ms in the log).
+// Wave 3 look switches: -skyfill=<gain> (sky fill light; 0 = off) -skyold (today's look before wave 3: no sky fill, the old
+// aerial-perspective curve) -pptrans=0 (sun without per-pixel atmosphere transmittance, for comparisons) -apveil=<k> (haze
+// luminance from orbit, see UpdateHaze). Verifier: -goldenev=<EV> (exposure lift for a low sun near the ground, default 1)
+// -moonnear=<gain> (moonlight near the ground, default 4).
 #pragma once
 
 #include "CoreMinimal.h"
@@ -37,6 +41,7 @@
 #include "DmSkyActor.generated.h"
 
 class UDirectionalLightComponent;
+class USkyLightComponent;
 class USkyAtmosphereComponent;
 class UVolumetricCloudComponent;
 class UPostProcessComponent;
@@ -100,12 +105,25 @@ public:
 	int64 GetMapsBuilt() const { return MapsBuilt; }
 	/** Write a PNG of the current base weather map (cover over land / sea, mirrored to read like the globe). */
 	bool SaveWeatherPreview(const FString& Path) const;
+	/** One line for logs: sky fill intensity / capture altitude, aerial perspective scale and haze luminance. */
+	FString DescribeLook() const;
+	/** The look state this frame (checks): sky fill, haze, stars. */
+	struct FLookState { bool bFill = false; float Fill = 0.f; double FillAltKm = 0.0; double FillSunSin = 0.0; float Ap = 0.f; float Veil = 1.f; bool bStars = false; double FillGain = 0.0; double ApNear = 0.0, ApOrbit = 0.0, VeilNear = 1.0, VeilOrbit = 1.0; double Lift = 0.0, GoldenEv = 0.0; int32 FillSets = 0, FillToggles = 0, AtmoDirty = 0; double FrameMinSunSin = 0.0; };
+	FLookState GetLookState() const;
+	/** Switch between the wave-3 look and the look before it at run time (frame-time A/B under the same load). */
+	void SetOldLook(bool bOld);
+	bool IsOldLook() const { return bOldLook; }
+	/** Look tuning at run time (look development): aerial perspective near the ground, haze luminance near the ground and
+	 *  from orbit, sky fill gain. Negative = keep. */
+	void SetLookParams(double InApNear, double InVeilNear, double InVeilOrbit, double InFill, double InGoldenEv = -1.0);
 	const FDmSkyStorms& GetStorms() const { return Storms; }
 	FDmSkyStorms& GetStormsMutable() { return Storms; }
 	FDmSkyTune Tune;
 
 	UPROPERTY(VisibleAnywhere) TObjectPtr<UDirectionalLightComponent> Sun;
 	UPROPERTY(VisibleAnywhere) TObjectPtr<UDirectionalLightComponent> MoonLight;
+	/** Sky fill: a real-time captured sky light whose capture point sits on the ground the camera looks at (see UpdateFill). */
+	UPROPERTY(VisibleAnywhere) TObjectPtr<USkyLightComponent> Fill;
 	UPROPERTY(VisibleAnywhere) TObjectPtr<USkyAtmosphereComponent> Atmosphere;
 	UPROPERTY(VisibleAnywhere) TObjectPtr<UVolumetricCloudComponent> Clouds;
 	UPROPERTY(VisibleAnywhere) TObjectPtr<UPostProcessComponent> Post;
@@ -135,6 +153,8 @@ private:
 	void UpdateTime(UDmSimSubsystem* Sim, double RealDt);
 	void UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos);
 	void UpdateAtmosphere(const dm::World* W);
+	void UpdateFill(UDmSimSubsystem* Sim, const FVector& CamPos, const FRotator& CamRot);
+	void UpdateHaze(double AltKm);
 	void UpdateClouds(const dm::World* W, const FVector& CamPos, double RealDt);
 	void UpdateMoon(const FVector& CamPos, const FRotator& CamRot);
 	void UpdateGrade(const dm::World* W, const FVector& CamPos, double RealDt);
@@ -209,7 +229,7 @@ private:
 	double FlashGain = 2.5;
 	double MoonAmbient = 0.0;         // moonlight relative to sunlight (cloud ambient on the night side)
 	double CoverArg = 1.0;
-	double StarBright = 3.0, LastStarLift = -1.0;   // star gain (-stars=), exposure lift it was last compensated for
+	double StarBright = 3.0, LastStarLift = -1.0, LastStarFade = -1.0;   // star gain (-stars=), exposure lift it was last compensated for
 	double OrbitShadow[2] = { 1.0, 0.5 };   // cloud shadow map resolution / ray scale above 200 km (-cloudshadoworbit=r,s)
 	double NightView = 0.0;           // 0..1: how much the camera looks at the night side (set by UpdateGrade)
 	double NightAmbGain = 14.0;       // night cloud ambient per unit of moonlight / sunlight (-nightamb=)
@@ -218,6 +238,26 @@ private:
 	double ApScale = 0.38;             // aerial perspective from orbit (-apscale=; 1 near the ground)
 	float LastAp = -1.f;
 	double AtmoDropKm = 0.0;          // the atmosphere's ground sits this far below the sea
+	// wave 3 look: sky fill and haze
+	bool bOldLook = false;            // -skyold: the look before wave 3 (comparisons)
+	double FillGain = 3.0;            // -skyfill= (0 with the old look). 1 = the captured sky as is: too faint to read in
+	double FillGainArg = 3.0;         // the shadows at the fixed exposure (sky-look floor-day / 300m-golden, gain 1 / 3 / 5)
+	bool bFillDuskGate = true;         // -nodusk: (verifier) no frame-dusk gate on the sky fill (comparisons)
+	double FrameMinSunSin = 0.0;      // lowest sun (sine) at the frame's corners, for the fill's dusk gate and logs
+	double MoonNear = 4.0;           // -moonnear= (verifier) moonlight gain near the ground (1 = as from orbit)
+	double GoldenEv = 1.0;           // -goldenev= (verifier) exposure lift for a low sun near the ground (sky-look sv3d: 0 / 0.8 / 1.4)
+	float LastFill = -1.f;
+	double FillAltKm = 0.0;           // capture point altitude above the sea (km), for logs
+	double FillSunEl = 0.0;           // sine of the sun elevation at the capture point, for logs
+	int32 FillCell = -1;              // warm start for the surface lookup
+	double ApNear = 0.35;             // -apnear= aerial perspective scale near the ground (0.6 before wave 3)
+	double VeilNear = 0.75;           // -apveilnear= haze luminance near the ground (sky-look s3c / s3i / s3j variants)
+	double VeilOrbit = 0.7;           // -apveil= haze luminance from orbit (0.5 tested; the ocean's blue from orbit is that haze)
+	float LastVeil = -1.f;
+	int32 NumFillSets = 0, NumFillToggles = 0, NumAtmoDirty = 0;   // (verifier) render-state churn counters (sky-descent)
+	int32 AtmoRefresh = 0;            // frames until the atmosphere's render state is refreshed after a sky fill change
+	double LastCamAltKm = 0.0;        // for logs
+	float LastCover = 0.f;            // for logs
 	double TickMsMax = 0.0;           // slowest game-thread tick of the sky so far
 	bool bTrace = false;              // -skytrace: log the sky clock and map swaps every 15 frames
 	float LastShadowExtent = -1.f, LastViewScale = -1.f, LastSampleDist = -1.f;

@@ -11,10 +11,12 @@
 #include "Camera/PlayerCameraManager.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Components/PostProcessComponent.h"
+#include "Components/SkyLightComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/VolumetricCloudComponent.h"
 #include "Engine/Engine.h"
+#include "Engine/GameViewportClient.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/Texture2D.h"
 #include "Engine/VolumeTexture.h"
@@ -184,6 +186,23 @@ ADmSky::ADmSky()
 	MoonLight->SetIntensity(0.f);
 	MoonLight->SetVisibility(false);
 
+	// Sky fill (wave 3): without a sky light nothing fills the shadows (Lumen gathers no sky), so low-sun shadows went
+	// black. A real-time capture renders only the sky (atmosphere and clouds) from its own position, so its capture point
+	// is kept on the ground the camera looks at (UpdateFill): it sees that place's sky, which is dark on the night side.
+	// A capture from orbit sees the sunlit atmosphere and would light the night side (docs/lab/clouds.md pitfall 4), so
+	// the fill fades out with altitude.
+	Fill = CreateDefaultSubobject<USkyLightComponent>(TEXT("Fill"));
+	Fill->SetupAttachment(RootComponent);
+	Fill->SetMobility(EComponentMobility::Movable);
+	Fill->bRealTimeCapture = true;
+	Fill->SourceType = ESkyLightSourceType::SLS_CapturedScene;
+	Fill->bLowerHemisphereIsBlack = true;     // the ground below is real geometry (Lumen bounces it); do not count it twice
+	Fill->bCloudAmbientOcclusion = false;
+	Fill->CubemapResolution = 64;             // diffuse fill and rough sea reflections: 64^2 faces are plenty
+	Fill->SetLightColor(FLinearColor(1.0f, 0.95f, 0.9f));   // the scaled air's sky is a strong blue: keep fill-lit shade green, not teal
+	Fill->SetIntensity(0.f);
+	Fill->SetVisibility(false);
+
 	Atmosphere = CreateDefaultSubobject<USkyAtmosphereComponent>(TEXT("Atmosphere"));
 	Atmosphere->SetupAttachment(RootComponent);
 	Atmosphere->TransformMode = ESkyAtmosphereTransformMode::PlanetCenterAtComponentTransform;
@@ -259,6 +278,15 @@ void ADmSky::ReadArgs()
 	FDmShotArgs::Value(TEXT("-nightamb="), NightAmbGain);
 	ArgList(TEXT("-cloudshadoworbit="), OrbitShadow, 2);
 	bTrace = FDmShotArgs::Param(TEXT("skytrace"));
+	bOldLook = FDmShotArgs::Param(TEXT("skyold"));
+	FDmShotArgs::Value(TEXT("-skyfill="), FillGainArg);
+	FDmShotArgs::Value(TEXT("-goldenev="), GoldenEv);
+	FDmShotArgs::Value(TEXT("-moonnear="), MoonNear);
+	if (FDmShotArgs::Param(TEXT("nodusk"))) bFillDuskGate = false;
+	FillGain = bOldLook ? 0.0 : FillGainArg;
+	FDmShotArgs::Value(TEXT("-apveil="), VeilOrbit);
+	FDmShotArgs::Value(TEXT("-apveilnear="), VeilNear);
+	FDmShotArgs::Value(TEXT("-apnear="), ApNear);
 	bNoClouds = FDmShotArgs::Param(TEXT("noclouds"));
 	bNoCyclones = FDmShotArgs::Param(TEXT("nocyclones"));
 	// the planet's yaw at sky time 0 is 0, so -skytime= turns it too (scenarios that want a time of day)
@@ -287,6 +315,11 @@ void ADmSky::BeginPlay()
 	}
 
 	Sun->SetIntensity(float(Tune.SunLux));
+	{
+		// -pptrans=0: the sun without per-pixel transmittance (before / after comparisons only; see the constructor)
+		double Pp = 1.0;
+		if (FDmShotArgs::Value(TEXT("-pptrans="), Pp) && Pp <= 0.0) { Sun->bPerPixelAtmosphereTransmittance = false; Sun->MarkRenderStateDirty(); }
+	}
 	{
 		double Cs = 1.0;
 		if (FDmShotArgs::Value(TEXT("-cloudshadow="), Cs)) { Sun->CloudShadowOnSurfaceStrength = float(Cs); Sun->bCastCloudShadows = Cs > 0.0; Sun->MarkRenderStateDirty(); }
@@ -789,13 +822,8 @@ void ADmSky::UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos)
 
 	// cloud shadow map: centred under the camera, sized by altitude (blurred and displaced if too wide near the ground)
 	const double Alt = FMath::Max(0.0, CameraAltKm(CamPos));
-	// (integration) aerial perspective: 0.6 near the ground (depth, horizon haze), ApScale from orbit, where the
-	// full strength washed forests teal-grey; the ocean keeps the blue of the air above it
-	{
-		// near the ground 0.6: the 6x-thick scaled air hazed a town 3 km below into flat blue-grey (village / city views)
-		const float Ap = float(FMath::Lerp(0.6, ApScale, FMath::Clamp((Alt - 40.0) / 200.0, 0.0, 1.0)));
-		if (FMath::Abs(Ap - LastAp) > 0.01f) { LastAp = Ap; Atmosphere->SetAerialPespectiveViewDistanceScale(Ap); }
-	}
+	LastCamAltKm = Alt;
+	UpdateHaze(Alt);
 	const float Ext = float(FMath::Clamp(Alt * 1.2 + 8.0, 12.0, 130.0));
 	// from orbit the shadows are a few pixels wide: half the shadow-map resolution and ray samples there
 	// (above 200 km a 512^2 map with half the rays: 2.2 -> 0.4 ms at the terminator, mean image change 0.5 grey levels)
@@ -809,7 +837,9 @@ void ADmSky::UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos)
 		FDmShotArgs::Value(TEXT("-cloudshadow="), CsArg);
 		const bool bWantCloudShadow = (Alt > 4.0 || FDmShotArgs::Param(TEXT("keepclouds"))) && CsArg > 0.0;
 		if (Sun->bCastCloudShadows != bWantCloudShadow) { Sun->bCastCloudShadows = bWantCloudShadow; Sun->MarkRenderStateDirty(); }
-		const bool bWantClouds = Alt > 2.5 || FDmShotArgs::Param(TEXT("keepclouds"));
+		// (wave 3) never with -noclouds: SetupClouds did not run, so the component would trace the engine's default
+		// material (a thick white haze over everything below 2.5 km of camera altitude)
+		const bool bWantClouds = !bNoClouds && (Alt > 2.5 || FDmShotArgs::Param(TEXT("keepclouds")));
 		if (Clouds->IsVisible() != bWantClouds) Clouds->SetVisibility(bWantClouds);
 	}
 	if (LastShadowExtent < 0.f || FMath::Abs(Ext - LastShadowExtent) > 0.05f * LastShadowExtent || ResScale != Sun->CloudShadowMapResolutionScale || RayScale != Sun->CloudShadowRaySampleCountScale)
@@ -828,7 +858,11 @@ void ADmSky::UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos)
 	// The night side must stay readable at every moon phase (old SPEC-RENDER 0): the fill never drops below 40 % and
 	// comes from the night side's sky even at new moon (the real moon is then on the day side and lights nothing there)
 	const double Phase = 0.4 + 0.6 * Illum;
-	const double Lux = Tune.MoonLux * Phase * Night;
+	// (wave 3 verifier) near the ground the moonlit night was black (sky-look 5km-night / 300m-night: mean luma 1 of 255,
+	// forest and hills invisible) while the night side from orbit reads: MoonNear x the moonlight below ~8 km, back to 1x
+	// by 60 km (sky-look sv3e: 4 lux showed the forest and the hills under a dark sky)
+	const double NearMoon = bOldLook ? 1.0 : FMath::Lerp(MoonNear, 1.0, Smooth(8.0, 60.0, Alt));
+	const double Lux = Tune.MoonLux * Phase * Night * NearMoon;
 	MoonAmbient = Tune.MoonLux * Phase / FMath::Max(0.1, Tune.SunLux);
 	const FVector FillDir = (MoonDirWorld * Illum - SunWorld * (1.5 - Illum)).GetSafeNormal();
 	if (Lux > 0.003)
@@ -838,6 +872,156 @@ void ADmSky::UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos)
 		MoonLight->SetWorldRotation((-FillDir).Rotation());
 	}
 	else if (MoonLight->IsVisible()) MoonLight->SetVisibility(false);
+}
+
+void ADmSky::UpdateHaze(double Alt)
+{
+	if (bOldLook)
+	{
+		// (integration) aerial perspective: 0.6 near the ground (depth, horizon haze), ApScale from orbit, where the
+		// full strength washed forests teal-grey; the ocean keeps the blue of the air above it
+		const float Ap = float(FMath::Lerp(0.6, ApScale, FMath::Clamp((Alt - 40.0) / 200.0, 0.0, 1.0)));
+		if (FMath::Abs(Ap - LastAp) > 0.01f) { LastAp = Ap; Atmosphere->SetAerialPespectiveViewDistanceScale(Ap); }
+		if (LastVeil != 1.f)
+		{
+			LastVeil = 1.f;
+			Atmosphere->SetSkyAndAerialPerspectiveLuminanceFactor(FLinearColor::White);
+			Atmosphere->SetSkyLuminanceFactor(FLinearColor::White);
+		}
+		return;
+	}
+	const float Ap = float(FMath::Lerp(ApNear, ApScale, FMath::Clamp((Alt - 40.0) / 200.0, 0.0, 1.0)));
+	if (FMath::Abs(Ap - LastAp) > 0.01f) { LastAp = Ap; Atmosphere->SetAerialPespectiveViewDistanceScale(Ap); }
+	// The haze veil: the scaled air is 6x denser per km than Earth's, so from 10 km up the in-scattered light laid over
+	// the ground (aerial perspective luminance) turned forests teal-grey and the land pale (docs/concept/nature descent
+	// 1-2 keep deep greens under a thin blue veil). Dim only that luminance: SkyAndAerialPerspectiveLuminanceFactor
+	// scales sky and haze, SkyLuminanceFactor (1 / veil) gives the sky, the limb, the sky fill and the clouds' distant
+	// sky light (its LUT takes both factors, SkyAtmosphere.usf RenderDistantSkyLightLutCS) their light back.
+	const float Veil = float(FMath::Lerp(VeilNear, VeilOrbit, Smooth(40.0, 200.0, Alt)));
+	if (FMath::Abs(Veil - LastVeil) > 0.005f)
+	{
+		LastVeil = Veil;
+		Atmosphere->SetSkyAndAerialPerspectiveLuminanceFactor(FLinearColor(Veil, Veil, Veil, 1.f));
+		Atmosphere->SetSkyLuminanceFactor(FLinearColor(1.f / Veil, 1.f / Veil, 1.f / Veil, 1.f));
+	}
+}
+
+void ADmSky::UpdateFill(UDmSimSubsystem* Sim, const FVector& CamPos, const FRotator& CamRot)
+{
+	if (!Fill) return;
+	const double Alt = FMath::Max(0.0, CameraAltKm(CamPos));
+	// the capture point: the ground the camera looks at (forward ray against the sea sphere), else the ground below it
+	const double Rs = SeaRadiusKm * DmCoords::UUPerKm;
+	FVector Dir = CamPos.GetSafeNormal();
+	const FVector F = CamRot.Vector();
+	const double B = FVector::DotProduct(CamPos, F), C = CamPos.SizeSquared() - Rs * Rs, Disc = B * B - C;
+	if (Disc > 0.0)
+	{
+		const double T = -B - FMath::Sqrt(Disc);
+		if (T > 0.0) Dir = (CamPos + F * T).GetSafeNormal();
+	}
+	FillSunEl = FVector::DotProduct(Dir, SunWorld);
+	// From orbit one capture point would light the whole disc (and the night side) with its sky: fade out with altitude.
+	// At night the captured sky is black anyway, but a present sky light also replaces the sky Lumen reflections fall
+	// back to: the moonlit sea and the night ground went darker (sky-look 50km-night / 5km-night, luma 30 -> 18), so
+	// the fill bows out through nautical twilight (sun 3 to 12 deg below the horizon at the capture point).
+	// (wave 3 verifier) The frame's own dusk: one capture lights (and is reflected by) everything on screen, so from a few
+	// km up a frame that runs on across the terminator showed the day-side capture's sky on the dusk and night sea (sky-look
+	// 50km-golden: the sea beyond the terminator turned pale grey with a hard, cell-stepped edge, luma 21 -> 38; sky-descent
+	// d03 / d04). Gate the fill by the lowest sun at the frame's corners (the ground there, or the horizon when a corner
+	// ray misses the planet): full while the sun stands above about -1 deg everywhere in the frame, off by about -7 deg.
+	// Near the ground (below 2 km) the dusk is a thin band at the horizon and the gate eases off.
+	FrameMinSunSin = FillSunEl;
+	{
+		double Fov = 60.0, Aspect = 16.0 / 9.0;
+		if (APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr)
+			if (PC->PlayerCameraManager) Fov = FMath::Clamp(double(PC->PlayerCameraManager->GetFOVAngle()), 5.0, 170.0);
+		if (GEngine && GEngine->GameViewport) { FVector2D Vs; GEngine->GameViewport->GetViewportSize(Vs); if (Vs.Y > 1.0) Aspect = Vs.X / Vs.Y; }
+		const double Tx = FMath::Tan(FMath::DegreesToRadians(Fov * 0.5)), Ty = Tx / Aspect;
+		const FVector Rt = FRotationMatrix(CamRot).GetUnitAxis(EAxis::Y), Upv = FRotationMatrix(CamRot).GetUnitAxis(EAxis::Z);
+		const FVector Ch = CamPos.GetSafeNormal();
+		const double Cr = CamPos.Size(), Horizon = FMath::Acos(FMath::Clamp(Rs / FMath::Max(Cr, Rs + 1.0), -1.0, 1.0));
+		for (int32 K = 0; K < 4; ++K)
+		{
+			const FVector D = (F + Rt * (Tx * ((K & 1) ? 1.0 : -1.0)) + Upv * (Ty * ((K & 2) ? 1.0 : -1.0))).GetSafeNormal();
+			FVector P;
+			const double Bk = FVector::DotProduct(CamPos, D), Dk = Bk * Bk - C;
+			if (Dk > 0.0 && -Bk - FMath::Sqrt(Dk) > 0.0) P = (CamPos + D * (-Bk - FMath::Sqrt(Dk))).GetSafeNormal();
+			else
+			{
+				FVector Dh = D - Ch * FVector::DotProduct(D, Ch);
+				if (!Dh.Normalize()) continue;
+				P = Ch * FMath::Cos(Horizon) + Dh * FMath::Sin(Horizon);   // the horizon in that direction
+			}
+			FrameMinSunSin = FMath::Min(FrameMinSunSin, double(FVector::DotProduct(P, SunWorld)));
+		}
+	}
+	const double DuskGate = bFillDuskGate ? FMath::Lerp(1.0, Smooth(-0.12, -0.02, FrameMinSunSin), Smooth(2.0, 8.0, Alt)) : 1.0;
+	const float I = float(FillGain * (1.0 - Smooth(30.0, 180.0, Alt)) * Smooth(-0.2, -0.05, FillSunEl) * DuskGate);
+	if (I < 0.01f)
+	{
+		if (Fill->IsVisible()) { Fill->SetVisibility(false); AtmoRefresh = 2; ++NumFillToggles; }   // invisible: no capture cost either
+		LastFill = 0.f;
+		return;
+	}
+	double R = Rs;
+	if (Sim && Sim->Sim())
+	{
+		const FVector PlanetDir = Sim->GetPlanetToWorld().InverseTransformVectorNoScale(Dir);
+		R = FMath::Max(R, Sim->SurfaceRadiusUU(PlanetDir, FillCell));
+	}
+	R += 0.05 * DmCoords::UUPerKm;   // 50 m above the ground (inside the atmosphere, under the clouds)
+	FillAltKm = R / DmCoords::UUPerKm - SeaRadiusKm;
+	const FVector Pos = Dir * R;
+	if (FVector::DistSquared(Pos, Fill->GetComponentLocation()) > FMath::Square(1000.0)) Fill->SetWorldLocation(Pos);
+	if (!Fill->IsVisible()) { Fill->SetVisibility(true); AtmoRefresh = 2; ++NumFillToggles; }
+	if (FMath::Abs(I - LastFill) > 0.01f) { LastFill = I; Fill->SetIntensity(I); AtmoRefresh = 2; ++NumFillSets; }
+}
+
+ADmSky::FLookState ADmSky::GetLookState() const
+{
+	FLookState L;
+	L.bFill = Fill && Fill->IsVisible();
+	L.Fill = Fill ? Fill->Intensity : 0.f;
+	L.FillAltKm = FillAltKm;
+	L.FillSunSin = FillSunEl;
+	L.Ap = Atmosphere ? Atmosphere->AerialPespectiveViewDistanceScale : 0.f;
+	L.Veil = LastVeil < 0.f ? 1.f : LastVeil;
+	L.bStars = Stars && Stars->IsVisible();
+	L.FillGain = FillGain;
+	L.ApNear = bOldLook ? 0.6 : ApNear; L.ApOrbit = ApScale;
+	L.VeilNear = bOldLook ? 1.0 : VeilNear; L.VeilOrbit = bOldLook ? 1.0 : VeilOrbit;
+	L.Lift = Post ? double(Post->Settings.AutoExposureBias) - Ev : 0.0;
+	L.GoldenEv = bOldLook ? 0.0 : GoldenEv;
+	L.FrameMinSunSin = FrameMinSunSin;
+	L.FillSets = NumFillSets; L.FillToggles = NumFillToggles; L.AtmoDirty = NumAtmoDirty;
+	return L;
+}
+
+void ADmSky::SetOldLook(bool bOld)
+{
+	bOldLook = bOld;
+	FillGain = bOld ? 0.0 : FillGainArg;
+	LastAp = -1.f;
+	LastVeil = -1.f;
+}
+
+void ADmSky::SetLookParams(double InApNear, double InVeilNear, double InVeilOrbit, double InFill, double InGoldenEv)
+{
+	// (the setters only push values that changed: UpdateHaze compares against LastAp / LastVeil)
+	if (InApNear >= 0.0) ApNear = InApNear;
+	if (InVeilNear > 0.0) VeilNear = InVeilNear;
+	if (InVeilOrbit > 0.0) VeilOrbit = InVeilOrbit;
+	if (InFill >= 0.0) { FillGainArg = InFill; if (!bOldLook) FillGain = InFill; }
+	if (InGoldenEv >= 0.0) GoldenEv = InGoldenEv;
+}
+
+FString ADmSky::DescribeLook() const
+{
+	return FString::Printf(TEXT("fill %.2f%s (capture %.2f km up, sun sin %.2f, frame min %.2f), ap %.2f, veil %.2f, lift %.2f EV, pptrans %d, clouds %s cover %.2f, stars %d, camera %.2f km%s"), LastFill < 0.f ? 0.f : LastFill,
+		Fill && Fill->IsVisible() ? TEXT("") : TEXT(" off"), FillAltKm, FillSunEl, FrameMinSunSin, LastAp, LastVeil < 0.f ? 1.f : LastVeil, Post ? double(Post->Settings.AutoExposureBias) - Ev : 0.0,
+		Sun && Sun->bPerPixelAtmosphereTransmittance ? 1 : 0, Clouds && Clouds->IsVisible() ? TEXT("on") : TEXT("off"), LastCover,
+		Stars && Stars->IsVisible() ? 1 : 0, LastCamAltKm, bOldLook ? TEXT(", old look") : TEXT(""));
 }
 
 void ADmSky::UpdateClouds(const dm::World* W, const FVector& CamPos, double RealDt)
@@ -876,6 +1060,7 @@ void ADmSky::UpdateClouds(const dm::World* W, const FVector& CamPos, double Real
 	CloudScalar(TEXT("SkyTime"), float(FMath::Fmod(SkyTime, 86400.0)));
 	CloudScalar(TEXT("Blend"), float(Blend));
 	CloudScalar(TEXT("CoverScale"), float(Cover));
+	LastCover = float(Cover);
 	CloudScalar(TEXT("Heat"), float(Heat));
 	// moonlit night clouds: the material's ambient on the night side, a little blue (NightAmb scales SkyAmb)
 	// (scaled by how much the view is a night view: the same ambient beside the lit day side, at no exposure lift,
@@ -958,18 +1143,38 @@ void ADmSky::UpdateGrade(const dm::World* W, const FVector& CamPos, double RealD
 
 	FPostProcessSettings& P = Post->Settings;
 	NightView = Night;
-	const double Lift = Tune.NightEv * Night + 0.6 * Heat;
+	// (wave 3 verifier) a low sun near the ground: the fixed exposure left golden-hour views underexposed by 2-3 EV
+	// (sky-look 300m-golden / floor-golden: canopy and forest floor near black even with the sky fill, against the warm,
+	// readable docs/concept/nature descent-5). Lift up to GoldenEv as the sun sinks below ~20 deg; the night lift takes
+	// over below the horizon (max, so the two join without a step). Low: none from orbit or at the terminator pass.
+	const double LowSun = bOldLook ? 0.0 : Low * Smooth(0.35, 0.06, E);
+	const double Lift = FMath::Max(Tune.NightEv * Night, GoldenEv * LowSun) + 0.6 * Heat;
 	P.AutoExposureBias = float(Ev + Lift);
 	// the sky behind the planet is not part of the night side: keep the star field and the milky way from rising with
 	// the night exposure (at +2 EV the galactic band turned into grey smoke across the black)
-	if (StarMID && FMath::Abs(Lift - LastStarLift) > 0.02)
+	// The star sphere is a mesh 5,000 km out: inside the lit atmosphere the sky over it is drawn as aerial perspective on
+	// a distant object, not as sky, which turned the day sky near the ground a deep, banded navy with stars showing
+	// (and, as its occlusion culling came and went, flipped it between that and the real pale sky: sky-look s3e / s3h).
+	// By day below 80-120 km the stars are not seen anyway: fade them out there and hide the sphere.
+	const double StarFade = bOldLook ? 1.0 : FMath::Max(Smooth(80.0, 120.0, Alt), Smooth(-0.02, -0.12, E));
+	if (Stars->GetStaticMesh() && StarMID)
+	{
+		const bool bWantStars = StarFade > 0.002;
+		if (Stars->IsVisible() != bWantStars) Stars->SetVisibility(bWantStars);
+	}
+	if (StarMID && (FMath::Abs(Lift - LastStarLift) > 0.02 || FMath::Abs(StarFade - LastStarFade) > 0.01))
 	{
 		LastStarLift = Lift;
-		StarMID->SetScalarParameterValue(TEXT("StarBrightness"), float(StarBright * FMath::Pow(2.0, -0.75 * Lift)));
-		StarMID->SetScalarParameterValue(TEXT("Galaxy"), float(FMath::Pow(2.0, -Lift)));
+		LastStarFade = StarFade;
+		StarMID->SetScalarParameterValue(TEXT("StarBrightness"), float(StarFade * StarBright * FMath::Pow(2.0, -0.75 * Lift)));
+		StarMID->SetScalarParameterValue(TEXT("Galaxy"), float(StarFade * FMath::Pow(2.0, -Lift)));
 	}
 	P.WhiteTemp = float(6500.0 + MoodWarm + 900.0 * Golden - 700.0 * Night + 900.0 * Heat);
-	const float Sat = float(MoodSat * (1.0 + 0.08 * Golden - 0.25 * Night));
+	// (wave 3) from high up the land read pale olive against docs/concept/world-states/state-healthy.png (mean saturation
+	// 0.33 vs 0.49 in sky-look orbit-day): the thin remaining haze still greys it, so the grade adds a little colour back
+	// with altitude (none below 10 km, +12 % from 120 km)
+	const double HighSat = bOldLook ? 0.0 : 0.12 * Smooth(10.0, 120.0, Alt);
+	const float Sat = float(MoodSat * (1.0 + 0.08 * Golden - 0.25 * Night + HighSat));
 	P.ColorSaturation = FVector4(Sat, Sat, Sat, 1.0);
 	const float Con = float(MoodContrast * (1.0 + 0.04 * Heat));
 	P.ColorContrast = FVector4(Con, Con, Con, 1.0);
@@ -1013,6 +1218,12 @@ void ADmSky::Tick(float DeltaSeconds)
 	UpdateAtmosphere(W);
 	UpdateMoon(CamPos, CamRot);
 	UpdateLights(Sim, CamPos);
+	UpdateFill(Sim, CamPos, CamRot);
+	// Adding, removing or re-scaling the sky light could leave the sky over the star sphere in one of two states
+	// (pale, hazy sky or a deep blue one with stars showing, depending on the order of the render-state updates;
+	// sky-look -variants runs s3e / s3f): refreshing the atmosphere's render state right after a fill change gives
+	// the same sky as a scene that never changed.
+	if (AtmoRefresh > 0 && --AtmoRefresh == 0) { Atmosphere->MarkRenderStateDirty(); ++NumAtmoDirty; }
 	if (!bNoClouds)
 	{
 		PumpWeather(RealDt);
