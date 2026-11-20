@@ -350,7 +350,9 @@ def build_broadleaf(v, seed):
         return n.normalized()
 
     m.ao_leaf, m.nrm_leaf = ao_leaf, nrm_leaf
-    m.sides = {0: (12, 8, 5), 1: (7, 5, 3), 2: (4, 3, 0)}
+    # verification fix: no level-2 branches in LOD1 (was 3 sides). With 42% of the cards left they stuck out of the crown
+    # as bare grey sticks, and LOD1 read greyer than LOD0 and LOD2 (HSV saturation 145-165 vs 185-192 at the same view)
+    m.sides = {0: (12, 8, 5), 1: (7, 5, 3), 2: (4, 0, 0)}
     return m
 
 

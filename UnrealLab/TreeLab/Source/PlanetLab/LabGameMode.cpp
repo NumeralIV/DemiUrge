@@ -14,12 +14,14 @@
 #include "Materials/MaterialInterface.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 #include "UnrealClient.h"
 #include "Engine/World.h"
 #include "HAL/PlatformMisc.h"
 #include "Engine/Engine.h"
 #include "RenderTimer.h"
 #include "DynamicRHI.h"
+#include "ShaderCompiler.h"
 
 namespace
 {
@@ -178,6 +180,7 @@ void ALabGameMode::StartPlay()
 	{
 		if (AVolumetricCloud* CloudA = W->SpawnActor<AVolumetricCloud>(FVector::ZeroVector, FRotator::ZeroRotator))
 		{
+			Cloud = CloudA;
 			if (UVolumetricCloudComponent* C = CloudA->FindComponentByClass<UVolumetricCloudComponent>())
 			{
 				C->SetLayerBottomAltitude(float(CloudBaseKm));
@@ -192,8 +195,9 @@ void ALabGameMode::StartPlay()
 		}
 	}
 
-	if (APostProcessVolume* PP = W->SpawnActor<APostProcessVolume>(FVector::ZeroVector, FRotator::ZeroRotator))
+	if (APostProcessVolume* PPV = W->SpawnActor<APostProcessVolume>(FVector::ZeroVector, FRotator::ZeroRotator))
 	{
+		PP = PPV;
 		PP->bUnbound = true;
 		FPostProcessSettings& P = PP->Settings;
 		P.bOverride_AutoExposureMethod = true; P.AutoExposureMethod = EAutoExposureMethod::AEM_Manual;
@@ -216,6 +220,52 @@ void ALabGameMode::StartPlay()
 	Camera->GetCameraComponent()->SetFieldOfView(float(CamFov));
 	Camera->GetCameraComponent()->SetConstraintAspectRatio(false);
 	PlaceCamera();
+
+	FString ListPath;
+	if (FParse::Value(Cmd, TEXT("-shotlist="), ListPath))
+	{
+		ShotDir = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() / TEXT("../../shots"));
+		FParse::Value(Cmd, TEXT("-shotdir="), ShotDir);
+		FParse::Value(Cmd, TEXT("-shotwarm="), ShotWarm);
+		TArray<FString> Lines;
+		FFileHelper::LoadFileToStringArray(Lines, *ListPath);
+		for (const FString& L : Lines)
+		{
+			TArray<FString> P; L.TrimStartAndEnd().ParseIntoArrayWS(P);
+			if (P.Num() < 5 || P[0].StartsWith(TEXT("#"))) continue;
+			FShotSpec Sp; Sp.Name = P[0];
+			TArray<FString> C; P[1].ParseIntoArray(C, TEXT(","));
+			for (const FString& X : C) Sp.Cam.Add(FCString::Atod(*X));
+			TArray<FString> Su; P[2].ParseIntoArray(Su, TEXT(","));
+			if (Su.Num() >= 2) { Sp.SunYaw = FCString::Atod(*Su[0]); Sp.SunPitch = FCString::Atod(*Su[1]); }
+			Sp.Ev = FCString::Atod(*P[3]);
+			Sp.bClouds = FCString::Atoi(*P[4]) != 0;
+			if (Sp.Cam.Num() == 5) ShotList.Add(Sp);
+		}
+		UE_LOG(LogTemp, Display, TEXT("LifeShot: %d shots in %s"), ShotList.Num(), *ListPath);
+		if (ShotList.Num()) ApplyShot(0);
+	}
+}
+
+void ALabGameMode::ApplyShot(int32 I)
+{
+	ShotIndex = I;
+	const FShotSpec& Sp = ShotList[I];
+	bDirectCam = true;
+	DirectCam = Sp.Cam;
+	PlaceCamera();
+	if (Sun)
+	{
+		const FRotator ToSun(Sp.SunPitch, Sp.SunYaw, 0.0);
+		Sun->SetActorRotation((-ToSun.Vector()).Rotation());
+	}
+	if (PP) PP->Settings.AutoExposureBias = float(Sp.Ev);
+	if (Cloud) Cloud->SetActorHiddenInGame(!Sp.bClouds);
+	ShotPath = ShotDir / FString::Printf(TEXT("ue-treelab-%s.png"), *Sp.Name);
+	AccFrame = AccGame = AccRender = AccGpu = AccRhi = 0; AccN = 0; GpuSamples.Reset();
+	if (I > 0) WarmFrames = Frame + ShotWarm;
+	ShotFrame = -1;
+	UE_LOG(LogTemp, Display, TEXT("LifeShot: [%s] cam %.0f,%.0f,%.0f sun %.0f/%.0f ev %.1f clouds %d"), *Sp.Name, Sp.Cam[0], Sp.Cam[1], Sp.Cam[2], Sp.SunYaw, Sp.SunPitch, Sp.Ev, Sp.bClouds ? 1 : 0);
 }
 
 void ALabGameMode::PlaceCamera()
@@ -256,6 +306,12 @@ void ALabGameMode::Tick(float DeltaSeconds)
 	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 		if (PC->GetViewTarget() != Camera) PC->SetViewTarget(Camera);
 
+	// TreeLab: never shoot (or time) while shaders are still compiling: new materials would render as the default material.
+	if (Frame == WarmFrames - 60 && GShaderCompilingManager && GShaderCompilingManager->GetNumRemainingJobs() > 0)
+	{
+		WarmFrames += 60;
+		UE_LOG(LogTemp, Display, TEXT("LifeShot: %d shader jobs pending, waiting"), GShaderCompilingManager->GetNumRemainingJobs());
+	}
 	// Timing over the 60 frames before the shot (scene has settled by then).
 	if (Frame > WarmFrames - 60 && Frame <= WarmFrames)
 	{
@@ -274,7 +330,8 @@ void ALabGameMode::Tick(float DeltaSeconds)
 		{
 			GpuSamples.Sort();
 			const float Med = GpuSamples.Num() ? GpuSamples[GpuSamples.Num() / 2] : 0.f;
-			UE_LOG(LogTemp, Display, TEXT("LIFESTATS timing over %d frames: frame %.2f ms, game %.2f, render %.2f, rhi %.2f, gpu %.2f (median %.2f)"),
+			UE_LOG(LogTemp, Display, TEXT("LIFESTATS timing%s over %d frames: frame %.2f ms, game %.2f, render %.2f, rhi %.2f, gpu %.2f (median %.2f)"),
+				ShotIndex >= 0 ? *FString::Printf(TEXT(" [%s]"), *ShotList[ShotIndex].Name) : TEXT(""),
 				AccN, AccFrame / AccN, AccGame / AccN, AccRender / AccN, AccRhi / AccN, AccGpu / AccN, Med);
 			UE_LOG(LogTemp, Display, TEXT("LIFESTATS %s"), *World->StatsLine());
 			FScreenshotRequest::RequestScreenshot(ShotPath, false, false);
@@ -282,7 +339,8 @@ void ALabGameMode::Tick(float DeltaSeconds)
 		}
 		else if (ShotFrame > 0 && Frame > ShotFrame + 20)
 		{
-			FPlatformMisc::RequestExit(false, TEXT("LabShot"));
+			if (ShotIndex >= 0 && ShotIndex + 1 < ShotList.Num()) ApplyShot(ShotIndex + 1);
+			else FPlatformMisc::RequestExit(false, TEXT("LabShot"));
 		}
 	}
 }

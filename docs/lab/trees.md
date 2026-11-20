@@ -20,7 +20,8 @@ Everything was measured on the RTX 3060 12 GB at 1920x1080, UE 5.7, Lumen + VSM 
 4. **Halve the closed-canopy density** when the real-scale assets go in (`P = Can * 0.62 * 0.5 ...`): crowns are
    12-18 m wide, not 7-10 m like the stand-ins; at the stand-ins' 5.7 m spacing the forest turns into columns (§7).
    Instance scale jitter 0.85-1.12 (not 0.72-1.22): the four variants already cover the size range.
-5. The impostor is a **yaw-only camera-facing card** (`M_TreeImpostor`, WPO) with per-pixel volumetric normals;
+5. The impostor is a **yaw-only camera-facing card** (`M_TreeImpostor`, WPO) with **baked** volumetric normals
+   (`T_TreeImpostorsN`, added by the verification, §12: without them LOD3 drew a hard band against LOD2 at golden hour);
    keep WPO enabled at all distances for trees (C4 already does: `WpoDistM = 0`). Crossed static cards made far
    forests look like columns of stripes at 300 m (§6).
 6. Cost: the asset forests are **cheaper than the generated stand-ins** at the same cameras: GPU 6.6-18 ms against
@@ -42,7 +43,7 @@ Everything was measured on the RTX 3060 12 GB at 1920x1080, UE 5.7, Lumen + VSM 
 | `art/trees/source/<species>.blend` | editable sources: every variant and LOD laid out, bake materials bound to the textures |
 | `art/trees/export/<Species>/SM_Tree_<Species>_<v>.fbx`, `..._LOD1..3.fbx` | the exports (one FBX per LOD) |
 | `art/trees/export/manifest.json` | heights, crown radii, bounds, triangles per LOD and section, impostor cells, atlas rects, screen sizes |
-| `art/trees/textures/` | `T_TreeLeafAtlas.png` (2048², sRGB + alpha), `T_TreeImpostors.png` (2048², sRGB + alpha), `T_Bark_<Species>.png` / `_N.png` (1024²) |
+| `art/trees/textures/` | `T_TreeLeafAtlas.png` (2048², sRGB + alpha), `T_TreeImpostors.png` (2048², sRGB + alpha), `T_TreeImpostorsN.png` (2048², linear: baked impostor normals, §4), `T_Bark_<Species>.png` / `_N.png` (1024²) |
 | `art/trees/build/` | regenerated intermediates (raw renders, per-view impostor bakes, review sheets); ignored |
 | `UnrealLab/TreeLab/import.ps1`, `Scripts/import_trees.py` | Unreal import + materials (`/Game/Trees/...`) |
 | `UnrealLab/TreeLab/matrix.sh`, `Scripts/contact_sheet.py`, `uvcheck.ps1` (`Scripts/inspect_uvs.py`) | biome shot matrix, review sheets, UV-contract check of imported meshes |
@@ -81,6 +82,7 @@ bash UnrealLab/TreeLab/matrix.sh '<regex on biome-alt-light>' [extra args]      
   | `-lodsizes=1,0.45,0.2,0.08` | override the LOD screen sizes at runtime (tuning) |
   | `-treewpo=<m>` | WPO disable distance for tree HISMs (default 0 = never for assets, 1500 for stand-ins) |
   | `-wind= -treebright= -leaftrans=` | wind strength (x100 cm), leaf/impostor/bark brightness, transmission (dynamic instances) |
+  | `-impbright= -imptrans=` | impostor-only brightness / transmission override (verification, for matching LOD3 to LOD2) |
   | `-shotlist=<file>` `-shotwarm=150` | several shots from one world build: lines `name camx,camy,alt,yaw,pitch sunyaw,sunpitch ev clouds` |
   | `-findsites` | logs candidate planet cells per biome (boreal, temperate, rainforest, savanna) and exits |
 
@@ -95,14 +97,16 @@ bash UnrealLab/TreeLab/matrix.sh '<regex on biome-alt-light>' [extra args]      
 ## 3. The five species
 
 All numbers from `manifest.json` (height = top of the crown above the trunk base; crown radius = half the larger
-horizontal extent; LOD triangles include both faces of every card).
+horizontal extent; LOD triangles include both faces of every card). Broadleaf rows updated by the verification
+(§12: LOD1 without level-2 branches). Unreal reports ~180 fewer triangles on palm LOD0-2 (2,224 vs 2,408 on
+`SM_Tree_Palm_0`): the zero-width frond tips are degenerate and the build drops them even with remove-degenerates off.
 
 | mesh | what | height m | crown r m | LOD0 / LOD1 / LOD2 / LOD3 tris | cards |
 |---|---|---|---|---|---|
-| SM_Tree_Broadleaf_0 | mature oak, broad domed crown | 18.1 | 7.8 | 11,482 / 4,756 / 1,211 / 12 | 861 |
-| SM_Tree_Broadleaf_1 | tall beech, leader to the top | 24.6 | 8.0 | 20,598 / 8,438 / 2,145 / 12 | 1,521 |
-| SM_Tree_Broadleaf_2 | young tree | 12.1 | 4.6 | 5,097 / 1,993 / 536 / 12 | 315 |
-| SM_Tree_Broadleaf_3 | old spreading oak | 16.6 | 8.6 | 14,489 / 6,013 / 1,462 / 12 | 1,086 |
+| SM_Tree_Broadleaf_0 | mature oak, broad domed crown | 18.1 | 7.8 | 11,485 / 3,511 / 1,214 / 12 | 861 |
+| SM_Tree_Broadleaf_1 | tall beech, leader to the top | 24.6 | 8.0 | 20,601 / 6,497 / 2,148 / 12 | 1,521 |
+| SM_Tree_Broadleaf_2 | young tree | 12.1 | 4.6 | 5,100 / 1,648 / 539 / 12 | 315 |
+| SM_Tree_Broadleaf_3 | old spreading oak | 16.6 | 8.6 | 14,492 / 4,330 / 1,465 / 12 | 1,086 |
 | SM_Tree_Conifer_0 | mature spruce | 22.1 | 4.3 | 21,088 / 9,420 / 2,116 / 12 | 1,554 |
 | SM_Tree_Conifer_1 | old tall spruce, dead lower whorls | 28.1 | 4.8 | 19,632 / 8,868 / 1,976 / 12 | 1,353 |
 | SM_Tree_Conifer_2 | young spruce, full to the ground | 11.1 | 2.9 | 13,236 / 6,008 / 1,514 / 12 | 1,061 |
@@ -172,6 +176,12 @@ Impostor atlas `T_TreeImpostors` (2048², 8x8 cells of 256): cell = `species*12 
 looking +Y, 1 = side looking -X, 2 = top. Albedo includes the crown AO; each card is cropped to the alpha bounding
 box of its view to save overdraw.
 
+Impostor normal atlas `T_TreeImpostorsN` (verification addition, same cells): the LOD0 mesh's own shading normals
+(the cards' volumetric normals, bark normals) rendered per view in that view's frame, stored linear as `0.5 + 0.5 n`
+with x = image right, y = image up, z = towards the bake camera (side view 0: +X / +Z / -Y, side view 1: +Y / +Z / +X,
+top: +X / +Y / +Z, Blender axes). `M_TreeImpostor` turns it into a world normal with the card's own frame, so LOD3 is
+lit like LOD0-2 (§12.2).
+
 ## 5. Import rules (Unreal)
 
 `Scripts/import_trees.py`, run headless by `import.ps1`:
@@ -202,6 +212,7 @@ UnrealEditor-Cmd.exe <uproject> -run=pythonscript -script=import_trees.py -unatt
   sample the leaf atlas at low mips, which smears leaves into brush strokes.
 - The FBX importer mirrors **Blender +Y to Unreal -Y** (verified with the leaning palm's bounds). Anything that
   encodes a direction in vertex data must account for it (the impostor's side-card axis is `-LocalY`).
+- `T_TreeImpostorsN`: linear (`srgb = False`), default compression, sampled as linear colour.
 - Textures: atlases sRGB, default (BC3) compression, `do_scale_mips_for_alpha_coverage = True`,
   `alpha_coverage_thresholds = (0, 0, 0, 0.4)` (Unreal's own coverage-preserving mips, the job LifeLab did by hand);
   bark sRGB; bark normals `TC_NORMALMAP` (DirectX green, generated that way).
@@ -224,12 +235,16 @@ UnrealEditor-Cmd.exe <uproject> -run=pythonscript -script=import_trees.py -unatt
   one of the two side views is kept per instance (PerInstanceRandom) and mirrored half the time, so neighbours do not
   repeat. The top card stays horizontal at the crown's mass height. Normals are computed per pixel from the position
   inside the atlas cell (left edge faces left, top faces up, centre faces the camera): crowns get a lit and a shadowed
-  side like a volume. In shadow passes the cards face the light, so they cast full-size shadows. The top card only
+  side like a volume. **Since the verification (§12.2) the normal is baked** (`T_TreeImpostorsN`, parameter
+`NormalAtlas`): `n = r * flip * t.x + up * t.y + f * t.z` for the side cards (r = card right, f = towards the camera,
+flip = the instance's mirror) and `lx * t.x - ly * t.y + up * t.z` for the top card; the guessed normal it replaced
+(`frac(uv0 * 8)` inside the cell, 0.65 towards the camera) left LOD3 flat and dark against LOD2 at golden hour. In
+shadow passes the cards face the light, so they cast full-size shadows. The top card only
   exists for steep views (`smoothstep(0.5, 0.7, dot(toCamera, up))`, else it collapses onto the trunk axis via
   `ObjectPositionWS`): at oblique angles it showed as pale plates inside conifer spires.
 - **LOD switching**: 1.0 / 0.45 / 0.20 / 0.08 with dithered transitions. LOD1 keeps ~42% of the cards at 1.45x size,
   LOD2 ~13% at 2.5x pulled 12% towards the crown centre; branch tubes drop sides (12/8/5 trunk, 7/5/3 limbs, twigs
-  only in LOD0); palm fronds 9/6/4 segments.
+  only in LOD0; broadleaf level-2 branches also only in LOD0 since the verification); palm fronds 9/6/4 segments.
 - **Wind** (`WindStrength`, `BranchStrength`, `FlutterStrength`, `WindSpeed`, `WindDir`, `PlanetCenter`):
   `sway = windDir * S(t) * UV1.x * WindStrength` (LifeLab gust function), `branch = (windDir * 0.5 + up * 0.85) *
   (0.55 sin(2.3t + phase) + 0.3 sin(3.7t + 1.9 phase)) * gust * UV2.x * BranchStrength`, `flutter = normal *
@@ -334,7 +349,7 @@ UnrealEditor-Cmd.exe Unreal/Demiurge.uproject -run=pythonscript -script=Unreal/S
     -dpcvars=Interchange.FeatureFlags.Import.FBX=0,Interchange.FeatureFlags.Import.PNG=0,Interchange.FeatureFlags.Import.SyncToBrowser=0
 ```
 
-It writes `/Game/Trees/...` (meshes with LODs, screen sizes and build settings, the 7 textures, `M_TreeLeaf`,
+It writes `/Game/Trees/...` (meshes with LODs, screen sizes and build settings, the 13 textures, `M_TreeLeaf`,
 `M_TreeBark`, `M_TreeImpostor` and their instances). Re-runnable; ~4.5 min.
 
 **9.2 `DmNatureFactory.h`**: give the mesh info optional per-slot materials.
@@ -428,7 +443,8 @@ upgrades for `Unreal/Scripts/nature.py`:
   `float bp = uv2.y * 6.283 + ph; float b = (0.55 * sin(2.3 * tt + bp) + 0.3 * sin(3.7 * tt + 1.9 * bp)) * (0.55 + 0.45 * WindS(tt, ph));`
   `sway += (wd * 0.5 + up * 0.85) * b * uv2.x * BranchStrength;` (BranchStrength 100, like WindStrength).
 - **M_NatureImpostor**: port `M_TreeImpostor` (the `IMPOSTOR` HLSL in `import_trees.py`: `Bill` for WPO, `Nrm` for a
-  world-space normal with `tangent_space_normal = False`) and add the burn / snow / dry lines of `Leaf()`, so burnt
+  world-space normal from the baked `T_TreeImpostorsN` with `tangent_space_normal = False`; keep `Brightness` equal
+  to the leaf material's) and add the burn / snow / dry lines of `Leaf()`, so burnt
   and snowy forests also change colour at distance. Until then `MI_TreeImpostor` works but ignores custom data.
 
 ## 10. Pitfalls (collected)
@@ -466,10 +482,84 @@ upgrades for `Unreal/Scripts/nature.py`:
   flat wide crown) as a sixth species in `species.py` and give C4 its own id or variants 4-7.
 - **Autumn accent** is one material scalar (`Autumn`, 3.5% of broadleaf crowns, also in the rainforest); set it per
   biome and season (0 in the tropics) through the dynamic instance or a custom-data float in production.
-- **Near/far band at golden hour**: from 300 m the near field (LOD1-2, real cards) is a little brighter than the impostor
-  field behind it, because the impostor bake is unlit and its per-pixel normal is a guess. A lit/shadow two-tone bake
-  or a per-biome impostor `Brightness` would close it.
+- **Near/far band at golden hour**: fixed by the verification (§12.2, baked impostor normals). It was not "a little
+  brighter": at 300 m it was a hard horizontal line across the whole frame where LOD2 meets LOD3.
+- **Golden-hour saturation** (§12.4): lit leaves go lime at golden hour (saturation 0.52-0.81 against the concept's
+  0.46-0.51); the transmission colour `(0.75, 0.9, 0.3)` and `TintB` blue 0.78 crush blue. A C4 material decision, not an
+  asset one: try `Transmission (0.6, 0.72, 0.38)` and `TintB (1, 0.98, 0.88)` in `M_NatureLeaf` and judge against
+  `biome-temperate-broadleaf` (lit tops `#484425`).
+- **Crown shape from oblique views**: broadleaf crowns still read as narrow, pointed and all the same size from 50-300 m
+  (the concept's temperate canopy is rounded "cauliflower" domes of mixed sizes). Real-scale open-grown crowns at ~8 m
+  spacing interpenetrate, so only the tops show; forest-grown variants (narrower, flatter-topped crowns with the mass
+  high) would read better than density alone.
 - **Close-ups below ~5 m** still show cards (painted leaves); fine for the god-game camera.
 - **Dead trees** stay generated (C4's `Dead` kind); a Blender family can follow the same pipeline.
 - **Distance fields**: imported meshes can build mesh SDFs (`distance_field_resolution_scale` > 0) if Lumen mesh-SDF
   tracing is ever enabled; the lab keeps them off (`r.Lumen.TraceMeshSDFs=0`).
+
+## 12. Independent verification (2026-11-20)
+
+Rebuilt from the scripts (one command, 54 s; a second full rebuild gave byte-identical PNGs and manifest), re-imported
+(20 meshes, 13 textures, 0 errors), UV contract re-checked in Unreal (`uvcheck.ps1`), the 40-shot matrix re-rendered
+twice (as delivered, then after the fixes below), plus forced-LOD and storm-wind experiments. Helper:
+`UnrealLab/TreeLab/vshots.sh <biome> '<shot regex>' <tag> [args]` renders named matrix shots with a tag and extra args
+(forced LODs: `-lodsizes=1,10,10,10` = all LOD3, `1,10,10,0.00001` = all LOD2, `1,10,0.00001,0.00001` = all LOD1;
+**`r.ForceLOD` does nothing for these HISMs**). Review sheet: `shots/ue-treelab-sheet-verify.jpg` (rows: 300 m golden
+hour before/after; forced LOD2 vs LOD3 with the old impostor; the same with the new one; forced LOD1 before/after).
+
+### 12.1 What held
+
+- Real-world scale, pivots, slots, the UV contract (UV1.y flutter 0-0.04, UV2 0-0.4, UV3 = 0), never-stream textures,
+  LOD screen sizes 1 / 0.45 / 0.2 / 0.08 and the import rules all check out.
+- GPU medians reproduce within noise (temperate 17.4 / 12.9 / 10.9 / 12.8 ms at 50 m / 300 m / 1.2 km / 5 km against
+  17.2 / 13.1 / 10.5 / 12.7 claimed), and are unchanged by the fixes.
+- Assets beat the stand-ins on *frame* time too, not only GPU, in a quiet moment: temperate 50 m 17.6 ms vs 28.2 ms,
+  300 m 12.9 vs 19.6 ms (frame = GPU-bound, RHI 9-11 ms). Under contention from other labs the RHI thread swings
+  wildly (the same savanna 300 m shot: 26.8 ms then 8.7 ms frame; GPU 7 ms both times; no trees: 6.7 ms), so treat the
+  `frame` column of `timings.txt` as noise and re-measure on a quiet machine before C4 commits to a budget.
+- Savanna and boreal read like the concepts; the 1.2 km / 5 km canopy matches `descent-3-10km`. Impostors cast shadows.
+- Storm wind (`-wind=3`, `shots/ue-treelab-wind-*-a/b.png`): trunks, limbs and cards move together, no tearing.
+
+### 12.2 Fixed
+
+1. **LOD2 -> LOD3 band (the worst flaw)**: at 300 m golden hour a hard line crossed the frame where the impostors
+   start: near field lime and lit, far field flat and dark (forced LOD2 vs LOD3 on the same view: lit-leaf 80th
+   percentile `#3b491f` vs `#2a3918`). Cause: the impostor normal was guessed (`frac(uv0 * 8)` over the *cell*, while
+   cards are cropped to the alpha box, plus 0.65 towards the camera), so LOD3 barely responded to the sun. Now the
+   bake also renders the LOD0 mesh's own shading normals per view (`export._bake_views`, `render.mat_bake_normal`,
+   atlas `T_TreeImpostorsN`) and `M_TreeImpostor` rotates them into the card frame. After: `#3d4c20` vs `#3d4a1e`,
+   median luminance 50 vs 47 (gold) and 57 vs 55 (day); the line is gone in `temperate-300-gold`. `MI_TreeImpostor`
+   `Brightness` 0.7 -> 0.78 (= the leaf material; both apply the same AO, the 0.7 left LOD3 ~8% darker).
+2. **LOD1 greyer than LOD0 and LOD2, with bare twigs**: broadleaf LOD1 kept the level-2 branches but only 42% of the
+   cards, so grey sticks poked out of every crown ("dead tree" tops) and LOD1 read desaturated (HSV saturation 143-165
+   vs 185-192 for LOD0 and LOD2 on the same rows of `temperate-50-day`). LOD1 now drops level-2 branches (broadleaf
+   `sides[2] = (4, 0, 0)`): saturation 189-197, matching; LOD1 triangles -25% (e.g. 4,756 -> 3,511).
+3. **Trunk-top spike in wind**: the tip cap of a tube took `path0 + length` as branch-bend path for every level, so
+   trunk caps got up to 1.1 m of branch bend (palm: UV2.x 0.95 on one vertex, 0.025 on everything else) and pulled a
+   spike out of the crown top in wind. The cap now follows the rings' rule (no bend on level 0).
+4. **Impostor bark bake ignored the AO** (`render.mat_bake_tree`): LOD3 trunks and limbs were up to 1.8x brighter than
+   on LOD0-2 (`lerp(0.55, 1, AO)` in `M_TreeBark`). The bake now applies the same factor.
+5. **Pale twigs and pink spruce "fishbones"** through the cards at 50-300 m: branch bark inside the crown was
+   unoccluded. `species.bark_ao` multiplies branch AO by the crown's leaf-AO field (and the trunk's above the crown
+   base); broadleaf level-2/3 and live conifer branches get a darker grey tint (`TWIG_TINT`, `CONIFER_BRANCH_TINT`).
+   Note the bark material's AO floor (0.55) limits what AO alone can do; the tint does the rest.
+6. **Conifer stems off plumb**: the trunk's random walk (`gnarl` 0.012) bent spruce stems up to 4.8° (2.2 m at the top of
+   the 28 m tree, plainly leaning in the species shot). `gnarl` 0.004 (same random draws, nothing else moves).
+
+### 12.3 Not fixed here (owners)
+
+- Rainforest crown relief (needs the tropical family, §11), Autumn accents in the tropics (per-biome `Autumn`),
+  golden-hour saturation (C4 material values, §11), crown shape from oblique views (§11), palm coast is mostly
+  broadleaf with a thin palm fringe (scatter weights, C4).
+
+### 12.4 Concept colour check (sRGB, 20th / 50th / 80th luminance percentile of the canopy)
+
+| image | p20 | median | p80 | saturation |
+|---|---|---|---|---|
+| concept `biome-temperate-broadleaf` | `#141d14` | `#292e1d` | `#484425` | 0.46 |
+| temperate 50 m day (after fixes, lower 60% of frame) | `#14240c` | `#253a13` | `#354d17` | 0.69 |
+| temperate 50 m golden hour | `#162505` | `#243509` | `#3f4e12` | 0.81 |
+| temperate 300 m golden hour | `#1f2e18` | `#2a3b1c` | `#415022` | 0.52 |
+
+Brightness is on target; the near views are too saturated (golden hour 0.81) and the lit tops too green (concept: R = G).
+

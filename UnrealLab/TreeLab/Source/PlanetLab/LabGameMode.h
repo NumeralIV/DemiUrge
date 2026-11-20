@@ -25,6 +25,16 @@ private:
 	UPROPERTY() TObjectPtr<ACameraActor> Camera;
 	UPROPERTY() TObjectPtr<ADirectionalLight> Sun;
 	UPROPERTY() TObjectPtr<ADirectionalLight> Moon;
+	UPROPERTY() TObjectPtr<class APostProcessVolume> PP;
+	UPROPERTY() TObjectPtr<class AVolumetricCloud> Cloud;
+
+	// TreeLab multi-shot mode (-shotlist=<file>): one world build, several cameras / suns / exposures.
+	// Line format: <name> <camx,camy,alt,yaw,pitch> <sunyaw,sunpitch> <ev> <clouds 0|1>
+	struct FShotSpec { FString Name; TArray<double> Cam; double SunYaw = 135.0, SunPitch = 21.0, Ev = 0.0; bool bClouds = true; };
+	TArray<FShotSpec> ShotList;
+	int32 ShotIndex = -1, ShotWarm = 150;
+	FString ShotDir;
+	void ApplyShot(int32 I);
 
 	FString ShotPath;
 	int32 Frame = 0, WarmFrames = 240, ShotFrame = -1;

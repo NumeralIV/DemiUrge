@@ -142,7 +142,7 @@ bool ALifeWorld::Build(const FString& DataPath, int32 SiteCell)
 	Tex.Build();
 	MakeMaterials();
 	if (bTowns) PlanSettlements();
-	if (FParse::Param(Cmd, TEXT("lineup"))) StampDisc(LuNoTree, FVector2D(0, 0), 140.0, 1);
+	if (FParse::Param(Cmd, TEXT("lineup"))) StampDisc(LuNoTree, FVector2D(0, 0), 170.0, 1);
 	const double T2 = FPlatformTime::Seconds();
 	BuildTerrain();
 	BuildWater();
@@ -508,6 +508,14 @@ void ALifeWorld::BuildTrees()
 		if (Bright > 0.f) D->SetScalarParameterValue(TEXT("Brightness"), Bright);
 		float Trans = -1.f; FParse::Value(FCommandLine::Get(), TEXT("-leaftrans="), Trans);
 		if (Trans >= 0.f) D->SetScalarParameterValue(TEXT("TransmissionScale"), Trans);
+		// verification: impostor-only overrides, to match LOD3 to LOD2 (-impbright= brightness, -imptrans= transmission)
+		if (M->GetName().Contains(TEXT("Impostor")))
+		{
+			float Ib = -1.f; FParse::Value(FCommandLine::Get(), TEXT("-impbright="), Ib);
+			if (Ib > 0.f) D->SetScalarParameterValue(TEXT("Brightness"), Ib);
+			float It = -1.f; FParse::Value(FCommandLine::Get(), TEXT("-imptrans="), It);
+			if (It >= 0.f) D->SetScalarParameterValue(TEXT("TransmissionScale"), It);
+		}
 		Keep.Add(D);
 		Mids.Add(M, D);
 		return D;
@@ -560,7 +568,7 @@ void ALifeWorld::BuildTrees()
 			C->bAffectDistanceFieldLighting = false;
 			const float Cull = (ETreeKind(K) == ETreeKind::Shrub) ? FMath::Min(CullTrees, 2500.f) : CullTrees;
 			C->SetCullDistances(0, int32(Cull * 100.f));
-			C->SetWorldPositionOffsetDisableDistance(int32(1500 * 100));
+			{ float WpoM = bAssetTrees ? 0.f : 1500.f; FParse::Value(FCommandLine::Get(), TEXT("-treewpo="), WpoM); C->SetWorldPositionOffsetDisableDistance(int32(WpoM * 100)); }   // asset impostors turn to the camera: keep WPO at every distance (0 = never disabled)
 			if (bRigidShadows) C->ShadowCacheInvalidationBehavior = EShadowCacheInvalidationBehavior::Rigid;
 			C->RegisterComponent();
 			Comp[K * NVar + V] = C;
@@ -575,7 +583,8 @@ void ALifeWorld::BuildTrees()
 		for (int32 K = 0; K < NK; ++K)
 			for (int32 V = 0; V < NVar; ++V)
 			{
-				const double X = (V - 1.5) * (bAssetTrees ? 30.0 : 24.0), Y = (K - 2) * (bAssetTrees ? 30.0 : 26.0);
+				double Gap = bAssetTrees ? 30.0 : 26.0; FParse::Value(FCommandLine::Get(), TEXT("-lineupgap="), Gap);   // row spacing (TreeLab: 60 for per-species close shots)
+				const double X = (V - 1.5) * (bAssetTrees ? 30.0 : 24.0), Y = (K - 2) * Gap;
 				const float H = HeightAt(X, Y);
 				const FQuat4d Q = UpQuat(X, Y) * FQuat4d(FVector3d(0, 0, 1), V * 1.3);
 				Comp[K * NVar + V]->AddInstance(FTransform(FQuat(Q), FVector(SurfaceM(X, Y, H - 0.2) * 100.0), FVector(1.0)));

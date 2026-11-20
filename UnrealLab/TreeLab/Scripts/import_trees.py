@@ -13,8 +13,10 @@ import os
 import unreal
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.normpath(os.path.join(HERE, '..', '..', '..'))
-ART = os.path.join(ROOT, 'art', 'trees')
+ROOT = HERE                     # the repository root is the first parent that holds art/trees (works from any project)
+while not os.path.isdir(os.path.join(ROOT, 'art', 'trees')) and os.path.dirname(ROOT) != ROOT:
+    ROOT = os.path.dirname(ROOT)
+ART = os.environ.get('TREES_ART', os.path.join(ROOT, 'art', 'trees'))
 MAN = json.load(open(os.path.join(ART, 'export', 'manifest.json')))
 SPECIES = ['broadleaf', 'conifer', 'palm', 'acacia', 'shrub']
 ONLY = os.environ.get('TREES_ONLY', '')   # e.g. "broadleaf,palm" to re-import a subset of meshes
@@ -71,12 +73,19 @@ def tex(name, kind):
         t.set_editor_property('compression_settings', unreal.TextureCompressionSettings.TC_DEFAULT)
         t.set_editor_property('do_scale_mips_for_alpha_coverage', True)
         t.set_editor_property('alpha_coverage_thresholds', unreal.Vector4(0.0, 0.0, 0.0, 0.4))
+    elif kind == 'data':
+        # linear data (the impostor normal atlas: view-frame normal as 0.5 + 0.5 n)
+        t.set_editor_property('srgb', False)
+        t.set_editor_property('compression_settings', unreal.TextureCompressionSettings.TC_DEFAULT)
     elif kind == 'normal':
         t.set_editor_property('srgb', False)
         t.set_editor_property('compression_settings', unreal.TextureCompressionSettings.TC_NORMALMAP)
     else:
         t.set_editor_property('srgb', True)
         t.set_editor_property('compression_settings', unreal.TextureCompressionSettings.TC_DEFAULT)
+    # never stream: in -game runs (and the first seconds of play) streamed atlases sit at low mips, which turns
+    # leaves into smeared strokes and thins palm fronds into spikes
+    t.set_editor_property('never_stream', True)
     EAL.save_loaded_asset(t)
     log('texture %s %dx%d' % (name, t.blueprint_get_size_x(), t.blueprint_get_size_y()))
     return t
@@ -84,6 +93,7 @@ def tex(name, kind):
 
 T_LEAF = tex('T_TreeLeafAtlas', 'foliage')
 T_IMP = tex('T_TreeImpostors', 'foliage')
+T_IMPN = tex('T_TreeImpostorsN', 'data')   # verification addition: baked volumetric normals of the impostor views
 T_BARK = {sp: (tex('T_Bark_%s' % sp.capitalize(), 'color'), tex('T_Bark_%s_N' % sp.capitalize(), 'normal')) for sp in SPECIES}
 
 
@@ -205,12 +215,17 @@ def master_leaf():
 float3 base = Tex.rgb * pow(max(VC.rgb, 0.0), 2.2) * lerp(TintA, TintB, PIR);
 base *= lerp(0.28, 1.0, AO) * Bright;
 base = lerp(base, base * float3(1.45, 1.08, 0.42), saturate(Dry) * 0.65);
+// autumn accents (biome sheet: 1 crown in 30 turns copper/yellow): broadleaf atlas cells only (row 0 cols 0-1, row 1 col 3)
+bool broad = (UV.y < 0.25 && UV.x < 0.5) || (UV.y >= 0.25 && UV.y < 0.5 && UV.x >= 0.75);
+float au = (broad && frac(PIR * 13.71) < Autumn) ? 0.55 + 0.45 * frac(PIR * 7.31) : 0.0;
+base = lerp(base, base * lerp(float3(2.3, 1.15, 0.30), float3(2.0, 1.6, 0.35), frac(PIR * 3.3)), au);
 SSS = base * Transm * TransScale;
 AOut = lerp(1.0, AO, AOStrength);
 return base;''',
-        [('Tex', tx, 'RGBA'), ('VC', vc, ''), ('AO', vca, ''), ('PIR', g.n(unreal.MaterialExpressionPerInstanceRandom), ''),
-         ('TintA', g.vparam('TintA', 0.80, 0.90, 0.86), ''), ('TintB', g.vparam('TintB', 1.10, 1.04, 0.80), ''),
-         ('Bright', g.scalar('Brightness', 0.9), ''), ('Dry', g.scalar('Dry', 0.0), ''),
+        [('Tex', tx, 'RGBA'), ('UV', uv0, ''), ('Autumn', g.scalar('Autumn', 0.035), ''),
+         ('VC', vc, ''), ('AO', vca, ''), ('PIR', g.n(unreal.MaterialExpressionPerInstanceRandom), ''),
+         ('TintA', g.vparam('TintA', 0.74, 0.86, 0.82), ''), ('TintB', g.vparam('TintB', 1.00, 0.99, 0.78), ''),
+         ('Bright', g.scalar('Brightness', 0.78), ''), ('Dry', g.scalar('Dry', 0.0), ''),
          ('Transm', g.vparam('Transmission', 0.75, 0.9, 0.3), ''), ('TransScale', g.scalar('TransmissionScale', 1.0), ''),
          ('AOStrength', g.scalar('AOStrength', 1.0), '')],
         F3, [('SSS', F3), ('AOut', F1)])
@@ -268,9 +283,17 @@ struct FI {
 // Yaw-only camera-facing impostor (art/trees LOD3): side cards turn about the trunk axis to face the camera; one
 // of the two side views is kept per instance (PerInstanceRandom), optionally mirrored. UV2 = (offset along the card
 // in metres, code 1/2 side card, 0 top card).
-float3 Bill(float3 wp, float3 cam, float3 lx, float3 ly, float3 lz, float2 uv2, float pir)
+float3 Bill(float3 wp, float3 cam, float3 lx, float3 ly, float3 lz, float2 uv2, float pir, float3 opos)
 {
-    if (uv2.y < 0.5) return float3(0, 0, 0);
+    if (uv2.y < 0.5)
+    {
+        // top card: only for steep views (it fills the crown seen from above, where the side cards are edge-on);
+        // for oblique views it collapses onto the trunk axis, otherwise it shows as a pale plate inside the crown
+        float3 upv = normalize(lz);
+        float k = smoothstep(0.5, 0.7, dot(normalize(cam - wp), upv));
+        float3 axisPt = opos + upv * dot(wp - opos, upv);
+        return (axisPt - wp) * (1.0 - k);
+    }
     float3 axis = uv2.y < 1.5 ? lx : -ly;      // FBX import mirrors Blender +Y to Unreal -Y
     float3 c = wp - axis * uv2.x;
     float3 up = normalize(lz);
@@ -284,17 +307,18 @@ float3 Bill(float3 wp, float3 cam, float3 lx, float3 ly, float3 lz, float2 uv2, 
     float h = mine ? uv2.x * flip : 0.0;
     return c + r * h * length(axis) - wp;
 }
-float3 Nrm(float2 uv0, float2 uv2, float3 cam, float3 wp, float3 lx, float3 ly, float3 lz, float pir)
+float3 Nrm(float3 nt, float2 uv2, float3 cam, float3 wp, float3 lx, float3 ly, float3 lz, float pir)
 {
-    float2 q = frac(uv0 * 8.0) * 2.0 - 1.0;
-    q.y = -q.y;
+    // baked normal (art/trees T_TreeImpostorsN): the LOD0 cards' volumetric normals in the view's frame
+    // (x image right, y image up, z towards the bake camera), so LOD3 is lit like LOD0-2
+    float3 n = nt * 2.0 - 1.0;
     float3 up = normalize(lz);
-    if (uv2.y < 0.5)
-        return normalize(normalize(lx) * q.x * 0.75 - normalize(ly) * q.y * 0.75 + up * 1.0);
+    if (uv2.y < 0.5)    // top card: image right = +X, image up = Blender +Y = Unreal -Y, towards camera = up
+        return normalize(normalize(lx) * n.x - normalize(ly) * n.y + up * n.z);
     float3 f = cam - wp; f -= up * dot(f, up); f = length(f) > 1.0 ? normalize(f) : normalize(lx);
     float3 r = cross(f, up);
-    float flip = frac(pir * 3.71) < 0.5 ? 1.0 : -1.0;
-    return normalize(r * q.x * flip * 0.8 + up * (0.25 + 0.45 * q.y) + f * 0.65);
+    float flip = frac(pir * 3.71) < 0.5 ? 1.0 : -1.0;   // mirrored instances (as in Bill)
+    return normalize(r * n.x * flip + up * n.y + f * n.z);
 }
 };
 FI I;
@@ -325,9 +349,14 @@ def master_impostor():
         g.link(c, '', t, '')
         return t
     lx, ly, lz = lvec(100, 0, 0), lvec(0, 100, 0), lvec(0, 0, 100)
-    base = g.custom('float3 b = Tex.rgb * lerp(TintA, TintB, PIR) * Bright; SSS = b * Transm * TransScale; return b;',
-                    [('Tex', tx, 'RGBA'), ('PIR', pir, ''), ('TintA', g.vparam('TintA', 0.80, 0.90, 0.86), ''),
-                     ('TintB', g.vparam('TintB', 1.10, 1.04, 0.80), ''), ('Bright', g.scalar('Brightness', 0.9), ''),
+    base = g.custom('float3 b = Tex.rgb * lerp(TintA, TintB, PIR) * Bright;'
+                    ' bool broad = UV.y < 0.125 || (UV.y < 0.25 && UV.x < 0.5);'          # broadleaf impostor cells 0-11
+                    ' float au = (broad && frac(PIR * 13.71) < Autumn) ? 0.55 + 0.45 * frac(PIR * 7.31) : 0.0;'
+                    ' b = lerp(b, b * lerp(float3(2.3, 1.15, 0.30), float3(2.0, 1.6, 0.35), frac(PIR * 3.3)), au);'
+                    ' SSS = b * Transm * TransScale; return b;',
+                    [('Tex', tx, 'RGBA'), ('UV', uv0, ''), ('Autumn', g.scalar('Autumn', 0.035), ''),
+                     ('PIR', pir, ''), ('TintA', g.vparam('TintA', 0.74, 0.86, 0.82), ''),
+                     ('TintB', g.vparam('TintB', 1.00, 0.99, 0.78), ''), ('Bright', g.scalar('Brightness', 0.78), ''),
                      ('Transm', g.vparam('Transmission', 0.75, 0.9, 0.3), ''), ('TransScale', g.scalar('TransmissionScale', 1.0), '')],
                     F3, [('SSS', F3)])
     g.out(base, '', MP.MP_BASE_COLOR)
@@ -335,8 +364,9 @@ def master_impostor():
     g.out(tx, 'A', MP.MP_OPACITY_MASK)
     g.out(g.scalar('LeafRough', 0.85), '', MP.MP_ROUGHNESS)
     g.out(g.scalar('LeafSpec', 0.04), '', MP.MP_SPECULAR)
-    nrm = g.custom(IMPOSTOR + 'return I.Nrm(UV0, UV2, Cam, WP, LX, LY, LZ, PIR);',
-                   [('UV0', uv0, ''), ('UV2', uv2, ''), ('Cam', cam, ''), ('WP', g.n(unreal.MaterialExpressionWorldPosition), ''),
+    txn = g.tex('NormalAtlas', T_IMPN, uv0, unreal.MaterialSamplerType.SAMPLERTYPE_LINEAR_COLOR)
+    nrm = g.custom(IMPOSTOR + 'return I.Nrm(NT, UV2, Cam, WP, LX, LY, LZ, PIR);',
+                   [('NT', txn, 'RGB'), ('UV2', uv2, ''), ('Cam', cam, ''), ('WP', g.n(unreal.MaterialExpressionWorldPosition), ''),
                     ('LX', lx, ''), ('LY', ly, ''), ('LZ', lz, ''), ('PIR', pir, '')], F3)
     g.out(nrm, '', MP.MP_NORMAL)
     sway = g.custom(WIND + 'return W.Wpo(WP, Ctr, WD, T, PIR, float2(0, 0), UV1, float2(0, 0), float3(0, 0, 1), Strength, 0, 0, Speed);',
@@ -344,9 +374,10 @@ def master_impostor():
                      ('WD', g.vparam('WindDir', 1.0, 0.4, 0.0), ''), ('T', g.n(unreal.MaterialExpressionTime), ''),
                      ('PIR', pir, ''), ('UV1', g.n(unreal.MaterialExpressionTextureCoordinate, coordinate_index=1), ''),
                      ('Strength', g.scalar('WindStrength', 100.0), ''), ('Speed', g.scalar('WindSpeed', 1.0), '')], F3)
-    bill = g.custom(IMPOSTOR + 'return I.Bill(WP, Cam, LX, LY, LZ, UV2, PIR) + Sway;',
+    bill = g.custom(IMPOSTOR + 'return I.Bill(WP, Cam, LX, LY, LZ, UV2, PIR, OPos) + Sway;',
                     [('WP', g.n(unreal.MaterialExpressionWorldPosition), ''), ('Cam', cam, ''), ('LX', lx, ''), ('LY', ly, ''),
-                     ('LZ', lz, ''), ('UV2', uv2, ''), ('PIR', pir, ''), ('Sway', sway, '')], F3)
+                     ('LZ', lz, ''), ('UV2', uv2, ''), ('PIR', pir, ''), ('OPos', g.n(unreal.MaterialExpressionObjectPositionWS), ''),
+                     ('Sway', sway, '')], F3)
     g.out(bill, '', MP.MP_WORLD_POSITION_OFFSET)
     MEL.layout_material_expressions(m)
     MEL.recompile_material(m)
@@ -358,7 +389,7 @@ M_LEAF = master_leaf()
 M_IMPOSTOR = master_impostor()
 M_BARK = master_bark()
 MI_LEAF = mi('MI_TreeLeaf', M_LEAF, {'Atlas': T_LEAF})
-MI_IMP = mi('MI_TreeImpostor', M_IMPOSTOR, {'Atlas': T_IMP})
+MI_IMP = mi('MI_TreeImpostor', M_IMPOSTOR, {'Atlas': T_IMP, 'NormalAtlas': T_IMPN}, {'Brightness': 0.78})   # = M_TreeLeaf: both apply the same crown AO (verification: 0.7 with baked normals left LOD3 ~8% darker than LOD2)
 MI_BARK = {sp: mi('MI_TreeBark_%s' % sp.capitalize(), M_BARK, {'BarkTex': T_BARK[sp][0], 'BarkN': T_BARK[sp][1]}) for sp in SPECIES}
 log('materials done')
 
