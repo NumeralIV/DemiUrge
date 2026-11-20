@@ -186,8 +186,15 @@ O = o or e, U = u or i, back or front).
 
 ### 4.0 Velessan: the harbour tongues
 
-*Identity.* Peoples of warm coasts, river deltas and terraced vineyards; seafarers and singers. Their
-names sound sunlit and lilting.
+*Identity.* Peoples of warm coasts, river deltas and rain-cut terraces; seafarers, orchard keepers and
+choral historians who prize welcome, graceful public works and promises kept in full view. They read a
+kind god as the harbour-light that brings people safely together, but a cruel god as a faithless current
+and an absent one as a horizon that has ceased to answer. Their names sound sunlit and lilting.
+
+* **Architecture and colour**: limewashed stone stepped into slopes, shallow terracotta roofs, arcaded
+  cistern courts, painted shutters and cloth awnings. The readable palette is warm chalk `#E7D7B8`, kiln
+  red `#A84F32`, leaf green `#53704A`, deep-water blue `#244D63` and festival gold `#D7A83C`; daughters
+  should change one accent, never the chalk-and-water base.
 
 * **Onsets**, word-initial: l 4, m 3, n 2, r 2, s 4, v 4, t 3, d 3, b 2, f 2, p 2, g 1, tr 1, pr 1, br 1,
   fl 1; empty 12 %. Inner: l 5, m 3, n 4, r 4, s 3, v 3, t 3, d 3, f 1, b 1, p 1, g 1.
@@ -222,8 +229,15 @@ names sound sunlit and lilting.
 
 ### 4.1 Korvagh: the hard tongues of steppe and pass
 
-*Identity.* Horse-lords, smiths and clan-holds of the high steppe and the mountain passes. Short, hard,
-proud names.
+*Identity.* Mobile herders, smiths and oath-holds of high grasslands and mountain passes, valuing
+endurance, frank speech, guest-right and the freedom to move. A god earns honour by meeting hardship
+openly—rain in a lean season or fire against an invader—while unexplained punishment is remembered as a
+broken oath. Their names are short, hard and proud.
+
+* **Architecture and colour**: low wind-backed halls inside angular stone corrals, felted travel houses,
+  blackened timber gates and hammered metal ridge marks. Use soot `#242323`, iron brown `#594238`, dry
+  grass `#A88B54`, blood red `#8A3030` and cold turquoise `#3D7472`; daughter cultures shift the metal
+  inlay colour while keeping dark massing and sharp silhouettes.
 
 * **Onsets**, initial: k 3, g 3, d 3, t 2, b 3, r 2, v 2, z 1, kh 3, gh 2, zh 1, m 1, n 1, s 1, h 1, dr 2,
   gr 2, kr 2, br 1, tr 1, vr 1, khr 1; empty 15 %. Inner: k 2, g 3, d 3, t 2, b 2, r 3, v 2, z 1, kh 2,
@@ -242,7 +256,7 @@ proud names.
 * **Persons**: endings -ak, -uk, -ar, -osh, -ag, -ur, -od, -ug, -az, -um: *Bograt, Uzhak, Drukmar*.
 * **Peoples**: name with no ending; adjective -i; plural -ar: *Durvagh / Durvaghi / the Durvaghar*.
 * **God**: roots ukh gor ard bur khor vog zhar + -tar -um -agh -od -ukh: *Ukhtar, Khorum, Ardagh*.
-* **Rulers**: *Ughtar* (war-chief), *Dravokh* (iron-lord), *Zhogan* (khan of khans), *Borukh*
+* **Rulers**: *Ughtar* (war-chief), *Dravokh* (iron-lord), *Zhogan* (high oath-speaker), *Borukh*
   (shield-father).
 * **Epithets**: the Iron-Handed, the Unbowed, the Horse-Lord, the Stone-Breaker, the Grim, the Red-Axe,
   the Far-Rider, the Hammer, the Wolf-Eyed, the Thunder-Voiced.
@@ -254,8 +268,15 @@ proud names.
 
 ### 4.2 Aavik: the harmonic tongues of the northern lakes
 
-*Identity.* Lake-dwellers, reindeer herders and rune-singers of birch forests and long winters. Long,
-flowing, patient names.
+*Identity.* Lake-dwellers, trail herders and knot-song keepers of pale forests and long winters, valuing
+patience, exact memory and stores shared before the thaw. They regard a helpful god as the unseen warmth
+beneath ice; spectacular wrath is less frightening than fickleness, and long silence becomes a solemn
+fact rather than an insult. Their names are long, flowing and patient.
+
+* **Architecture and colour**: steep timber roofs on stone heat-banks, enclosed smoke courts, carved
+  lintels and raised winter boardwalks. Use snow linen `#D9DED8`, lake blue `#436C78`, bark grey
+  `#64645D`, ember orange `#C56C36` and berry violet `#71465F`; daughters alter carving rhythm and the
+  ember accent while preserving pale roofs against dark vertical walls.
 
 * **Onsets**, initial: k 3, t 3, h 3, m 2, n 2, p 2, r 1, s 3, v 3, j 1, l 2; empty 18 %. Inner: k 3, t 3,
   h 1, m 2, n 2, p 2, r 3, s 3, v 2, j 1, l 4. No onset clusters.
@@ -285,8 +306,16 @@ flowing, patient names.
 
 ### 4.3 Qa'tiri: the desert tongues of the oasis cities
 
-*Identity.* Caravan traders, well-finders and star-readers of oasis cities. Dry, bright, precise names
-with a catch in the throat.
+*Identity.* Route traders, well-finders and night-sky recorders of dry basin cities, valuing measured
+speech, water held in common and debts that survive generations. They treat a benevolent god as the
+keeper of the hidden reservoir, a destructive god as a squall without law, and silence as a test to be
+answered with observation rather than panic. Their names are dry, bright and precise, with a catch in
+the throat.
+
+* **Architecture and colour**: thick earth walls around shaded slot-courts, wind towers, vaulted water
+  chambers and luminous tile bands used only at civic thresholds. Use sun clay `#C88957`, shade plum
+  `#493747`, salt white `#E7D8BB`, night indigo `#263C61` and copper green `#4F7C6A`; daughters change
+  tile geometry and the night accent while retaining high blank walls and deep apertures.
 
 * **Onsets**, initial: q 3, k 1, kh 2, sh 3, s 3, z 2, h 3, t 2, d 3, r 1, n 2, m 3, b 1, j 1, f 1, y 1;
   empty 14 %. Inner: q 2, kh 2, sh 2, s 2, z 1, h 2, t 2, d 2, r 4, n 3, m 2, b 2, f 1, l 3; an empty
@@ -307,17 +336,27 @@ with a catch in the throat.
 * **Persons**: endings -ad, -un, -ir, -ia, -ima, -uz, -an, -it, -ash: *Nadakha, Hilamiq, Zahirun*.
 * **Peoples**: name with no ending; adjective -i; plural -un: *Qushan / Qushani / the Qushanun*.
 * **God**: roots il shu nur aq zar hab + -ash -ima -unar -ihun -ub: *Ilash, Aqub, Zarihun*.
-* **Rulers**: *Qadun* (judge-king), *Ishar* (prince), *Zahar* (lord of the wells), *Hamzir* (vizier).
+* **Rulers**: *Qadun* (judge-king), *Ishar* (heir-speaker), *Zahar* (keeper of wells), *Hamzir*
+  (water-counsellor).
 * **Epithets**: the Star-Reader, the Patient, the Well-Finder, the Veiled, the Thrice-Wise, the
   Sand-Walker, the Generous, the Silent, the Lantern of the Dunes, the Caravan-Master.
-* **Ships** (caravans and dhows): *Shubara, Iyaru, Nubira, Qamira* + a short word: *Shubara Turaz*.
+* **Ships** (sand convoys and lateen sailers): *Shubara, Iyaru, Nubira, Qamira* + a short word:
+  *Shubara Turaz*.
 * **Drift laws**: q > k, kh > h, sh > s, long vowels shortened, b > v between vowels, t > d between
   vowels. **Sister**: Mbendi.
 * **Samples**: places Mahz Nidni, Jimisunab, Khiduqash, Hazkhizi, Idaraqar, Tiru Yarurad, Qasu Sizurad, Akhahiyun, Jirusu, Yahsa'udar, Nadirub, Ishad Sabamil, Jikha'abir, Jashimi, Zira'udar, Imrilaqar; persons Nadakha, Ta'amfuzia, Zusilib, Amuliza'an, Baquhaar.
 
 ### 4.4 Hanuwe: the island tongues of the reefs
 
-*Identity.* Navigators and reef-fishers who read stars and swells. Soft, rolling, generous names.
+*Identity.* Navigators and reef-fishers who read stars and swells, valuing reciprocal gifts, skilled
+improvisation and the obligation to return for those left behind. A god is understood as another great
+presence in the weather: loved when it guides and replenishes, opposed when it demands submission, and
+laughed about gently when its signs prove ambiguous. Their names are soft, rolling and generous.
+
+* **Architecture and colour**: lashed timber frames on stone storm feet, layered leaf-fibre roofs,
+  open meeting decks and bright wayfinding panels visible from the water. Use shell cream `#E9D9B7`,
+  lagoon teal `#27858A`, leaf green `#4E7B55`, volcanic charcoal `#37383A` and coral `#D66B5D`;
+  daughters vary the panel pattern and coral accent while keeping light roofs over porous walls.
 
 * **Onsets**, initial: h 3, k 3, l 3, m 3, n 3, p 2, t 3, w 3, ng 1; empty 12 %. Inner: h 2, k 3, l 4,
   m 3, n 3, p 2, t 3, w 2, ng 1; an empty inner onset makes a vowel pair (*p* 16 %), only ai au ae ao ei eo
@@ -345,7 +384,15 @@ with a catch in the throat.
 
 ### 4.5 Mbendi: the forest and savanna tongues
 
-*Identity.* Drum-towns of the great forests and herding peoples of the grass. Round, resonant names.
+*Identity.* Drum-towns of the rain forest and seasonal herders of open grass, valuing public counsel,
+kinship made by service and wealth that circulates. They greet a responsive god as a powerful elder who
+must still listen to the circle; mercy grows into affection, indiscriminate wrath into resistance, and
+silence transfers sacred responsibility back to the living. Their names are round and resonant.
+
+* **Architecture and colour**: clustered earth-and-timber compounds around circular council courts,
+  deep woven eaves, raised granaries and patterned rain screens. Use wet earth `#604333`, canopy green
+  `#2F6048`, clay ochre `#C47B3B`, woven cream `#D7C59B` and sky blue `#4B86A1`; daughters change rain-
+  screen pattern and court accent while preserving clustered circles and generous shade.
 
 * **Onsets**, initial: mb 3, nd 3, ng 2, nj 1, nz 1, b 1, d 1, k 3, t 2, l 2, m 2, n 1, s 2, w 2, y 1,
   ny 1, kw 1, gw 1, z 1; empty 10 %. Inner: mb 2, nd 2, ng 2, nj 1, nz 1, k 3, t 2, l 4, m 2, n 2, s 2,
@@ -373,8 +420,15 @@ with a catch in the throat.
 
 ### 4.6 Thrask: the fjord tongues of the cold coasts
 
-*Identity.* Ship-builders, skalds and oath-keepers of fjords and storm-coasts. Short, weathered, heavy
-names.
+*Identity.* Ship-builders, tale-keepers and oath witnesses of narrow storm-coasts, valuing practical
+courage, exact testimony and shelter offered before questions. A god is worthy when it stands inside the
+storm with them; fear can produce obedience, never trust, while a silent god becomes one more old story
+whose truth must be tested at sea. Their names are short, weathered and heavy.
+
+* **Architecture and colour**: stone-backed timber halls with turf mantles, steep boat sheds, beacon
+  frames and narrow glazed wind slits. Use storm slate `#394A55`, tar black `#24272A`, weathered wood
+  `#765D45`, lichen green `#6E7654` and beacon amber `#D18B35`; daughters vary prow marks and beacon
+  colour while retaining long low profiles anchored into rock.
 
 * **Onsets**, initial: hr 2, hl 1, hv 1, thr 2, th 2, sk 3, st 2, sv 2, kn 1, gr 1, br 1, fr 1, fl 1, b 2,
   d 2, g 2, h 2, k 2, r 1, s 2, t 1, v 2, f 2, m 1, n 1; empty 15 %. Inner: d 2, g 2, k 2, l 3, m 1, n 2,
@@ -404,8 +458,15 @@ names.
 
 ### 4.7 Pheraxi: the old imperial tongue
 
-*Identity.* The speech of an empire of law, aqueducts and libraries. Stately, carved, many-syllabled
-names.
+*Identity.* The speech of an old civic league of law courts, waterworks and archive houses, whose people
+value legible institutions, argument in public and monuments repaired rather than merely inherited.
+They welcome a god who accepts witness and restraint, distrust miracles that bypass consent, and treat
+silence as a jurisdiction the mortal city must fill. Their names are stately, carved and many-syllabled.
+
+* **Architecture and colour**: fitted pale stone, long water arcades, stepped forum courts, bronze doors
+  and coloured aggregate floors whose diagrams double as civic records. Use marble cream `#D8CEB8`,
+  porphyry `#744451`, oxidised bronze `#4F7368`, ink blue `#344D68` and ceremonial saffron `#C89431`;
+  daughters alter column spacing and floor diagrams while retaining axial courts and visible water.
 
 * **Onsets**, initial: ph 3, th 3, k 3, t 2, d 2, p 2, l 2, m 2, n 2, s 2, r 1, kl 1, kr 1, pr 2, tr 1,
   str 1, pl 1, h 1; empty 18 %. Inner: ph 2, th 3, k 2, t 2, d 2, p 1, l 3, m 2, n 3, s 2, x 1, r 3, kr 1,
@@ -429,10 +490,149 @@ names.
 * **Rulers**: *Ostrarch* (lord of harbours), *Thalarch* (lord of the sea), *Exarion* (first citizen).
 * **Epithets**: the Lawgiver, the Builder, the Philosopher, the Victorious, the Golden-Tongued, the Just,
   the Restorer, the Saviour of Cities, the Learned, the Purple-Born.
-* **Ships** (triremes): *Phaelon, Erathe, Ostrine, Dorantha* + a short word: *Ostrine Kapis*.
+* **Ships** (oared state galleys): *Phaelon, Erathe, Ostrine, Dorantha* + a short word: *Ostrine Kapis*.
 * **Drift laws**: ph > f, th > t, x > s, final s lost, ei > e, t > d between vowels (a Pheraxi daughter
   drifts toward its sister Velessan: *-axis > -asi*, *-alos > -alo*). **Sister**: Velessan.
 * **Samples**: places Thosimophor, Hollalion, Tronosko, Klonnonimeum, Lomotraxion, Himourophor, Uxiostra, Kolopon, Ailalos, Phixanupenth, Hixola, Halonainaxis, Troloxomene, Kontrosna, Lomotreumene, Koskonsin; persons Rolani, Hopoxas, Iskilomia, Toponamix, Olatu.
+
+### 4.8 Curated authoring banks (15 of every requested kind)
+
+These are reference banks for writers, concept artists and table implementers. They instantiate the
+patterns above; they are not a promise that a particular seed emits them in this order. **God epithets**
+below are the culture's translated titles for the player-god and are separate from the mortal ruler
+bynames returned by `names::epithet`. In code, keep the translated meaning attached to the culture while
+allowing the culture's own proper name for the god to drift with its language.
+
+#### Velessan banks
+
+* **Places (15):** Lanamavanne; Tenamimorra; Damigerivia; Lulosogile; Merigeganne; Lefemafanto;
+  Trenefa; Limanuganto; Tapefu; Damasagorra; Dovra Besivia; Fofalaganto; Sillibamu; Masavovanne;
+  Lusa Rifivia.
+* **People (15):** Marnofuseo; Trerogo; Bosavonia; Garoreneo; Bavanoma; Teodo; Lorina; Silvano;
+  Vessina; Tavereo; Moradia; Lusenetto; Dorello; Amenira; Vireano.
+* **Rulers (15):** Ossaro Marnofuseo; Tavenne Lorina; Vessaro Teodo; Doravo Silvano; Ossaro Vessina;
+  Tavenne Moradia; Vessaro Tavereo; Doravo Lusenetto; Ossaro Dorello; Tavenne Amenira; Vessaro Vireano;
+  Doravo Trerogo; Ossaro Bosavonia; Tavenne Garoreneo; Vessaro Bavanoma.
+* **God epithets (15):** the Tide-Born; the Fair-Sailing; the Vine-Crowned; the Golden-Voiced; the
+  Gentle; the Far-Faring; the Lamp-Bearer; the Harbour-Builder; the Laughing; the Sea-Wed; the Wise; the
+  Pious; the Twice-Crowned; the Peaceful; the Elder.
+* **Ships (15):** Ondessa Larivetta; Lusa Tenamira; Silvara Mavarra; Morenna Besivia; Vellara Damasino;
+  Lusa Rifivia; Ondessa Tavorella; Silvara Lusanora; Morenna Viretta; Vellara Tenamino; Lusa Dovraessa;
+  Ondessa Meriganne; Silvara Masavaro; Morenna Sillibora; Vellara Lanamile.
+
+#### Korvagh banks
+
+* **Places (15):** Kruk-Ukokh; Huri-Zakumdrun; Moriboz; Zhalurak; Dragazoz; Gigonmor; Higidzun;
+  Vrogturun; Nodevulum; Bozd-Obad; Krarunan; Sigtodrun; Zubazog; Zhodmugul; Vumakrak.
+* **People (15):** Zotorerur; Omorogo; Ugalug; Grudmuter; Agotebar; Bograt; Uzhak; Drukmar; Borag;
+  Kharuk; Zhavor; Grudaz; Torum; Vezod; Mordag.
+* **Rulers (15):** Ughtar Zotorerur; Dravokh Omorogo; Zhogan Ugalug; Borukh Grudmuter; Ughtar Agotebar;
+  Dravokh Bograt; Zhogan Uzhak; Borukh Drukmar; Ughtar Borag; Dravokh Kharuk; Zhogan Zhavor; Borukh
+  Grudaz; Ughtar Torum; Dravokh Vezod; Zhogan Mordag.
+* **God epithets (15):** the Iron-Handed; the Unbowed; the Horse-Lord; the Stone-Breaker; the Grim; the
+  Red-Axe; the Far-Rider; the Hammer; the Wolf-Eyed; the Thunder-Voiced; the Great; the Bold; the
+  Twice-Crowned; the Pious; the Unlucky.
+* **Ships (15):** Ughrak Mibezosk; Morkh Zhalurak; Zagra Durvakh; Durvakh Vumakrak; Ughrak Zubazog;
+  Morkh Dragazoz; Zagra Krarunan; Durvakh Higidzun; Ughrak Gigonmor; Morkh Moriboz; Zagra Zhodmugul;
+  Durvakh Sigtodrun; Ughrak Nodevulum; Morkh Vrogturun; Zagra Ghurubu.
+
+#### Aavik banks
+
+* **Places (15):** Lorilirosti; Alasalkuusi; Vultamorosti; Santollinus; Ippajamakki; Lemitekin;
+  Sotovavuoto; Avasolis; Antapasulmi; Miikelerke; Mukkolurosti; Sinelkeni; Molahotvanto; Hamivalkaisu;
+  Massoranummi.
+* **People (15):** Haimopuna; Vorosi; Inneltes; Mivissive; Seilmivi; Lunumavo; Huppasoni; Vekiminiri;
+  Kaarikki; Tuovari; Sieritti; Halvimo; Ervije; Kuuvotti; Aarniri.
+* **Rulers (15):** Vaalto Haimopuna; Kuura Vorosi; Hallava Inneltes; Vaalto Mivissive; Kuura Seilmivi;
+  Hallava Lunumavo; Vaalto Huppasoni; Kuura Vekiminiri; Hallava Kaarikki; Vaalto Tuovari; Kuura Sieritti;
+  Hallava Halvimo; Vaalto Ervije; Kuura Kuuvotti; Hallava Aarniri.
+* **God epithets (15):** the Frost-Born; the Patient; the Lake-Singer; the Birch-Crowned; the
+  Long-Wintered; the Knot-Wise; the Quiet; the Far-Hearing; the Trail-Herd; the Snow-Eyed; the Elder; the
+  Silent; the Pious; the Peaceful; the Old.
+* **Ships (15):** Ahvo Neikinimmi; Kuulas Lorilirosti; Raavi Antapasulmi; Sarka Molahotvanto; Ahvo
+  Ippajamakki; Kuulas Sotovavuoto; Raavi Massoranummi; Sarka Hamivalkaisu; Ahvo Mukkolurosti; Kuulas
+  Alasalkuusi; Raavi Avasolis; Sarka Lemitekin; Ahvo Sinelkeni; Kuulas Vultamorosti; Raavi Miikelerke.
+
+#### Qa'tiri banks
+
+* **Places (15):** Mahz Nidni; Jimisunab; Khiduqash; Hazkhizi; Idaraqar; Tiru Yarurad; Qasu Sizurad;
+  Akhahiyun; Jirusu; Yahsa'udar; Nadirub; Ishad Sabamil; Jikha'abir; Jashimi; Zira'udar.
+* **People (15):** Nadakha; Ta'amfuzia; Zusilib; Amuliza'an; Baquhaar; Hilamiq; Zahirun; Qashir;
+  Shudima; Nurad; Haziit; Miruz; Saliash; Dumarun; Jariqia.
+* **Rulers (15):** Qadun Nadakha; Ishar Ta'amfuzia; Zahar Zusilib; Hamzir Amuliza'an; Qadun Baquhaar;
+  Ishar Hilamiq; Zahar Zahirun; Hamzir Qashir; Qadun Shudima; Ishar Nurad; Zahar Haziit; Hamzir Miruz;
+  Qadun Saliash; Ishar Dumarun; Zahar Jariqia.
+* **God epithets (15):** the Star-Reader; the Patient; the Well-Finder; the Veiled; the Thrice-Wise; the
+  Sand-Walker; the Generous; the Silent; the Lantern of the Dunes; the Route-Keeper; the Wise; the Pious;
+  the Elder; the Peaceful; the Unlucky.
+* **Ships (15):** Shubara Turaz; Iyaru Nadirub; Nubira Khiduqash; Qamira Zira'udar; Shubara Jashimi;
+  Iyaru Yahsa'udar; Nubira Hazkhizi; Qamira Jirusu; Shubara Akhahiyun; Iyaru Sabamil; Nubira Idaraqar;
+  Qamira Jimisunab; Shubara Sizurad; Iyaru Yarurad; Nubira Jikha'abir.
+
+#### Hanuwe banks
+
+* **Places (15):** Kawamena; Tokapoki; Hukalana; Poponua; Kopihume; Numohoka; Tangohiwa; Pokohiwa;
+  Nanoweko; Mingilehu; Monimone; Pumomena; Wamolehu; Kenumone; Wenohiwa.
+* **People (15):** Telole; Talilo; Moamiahi; Monemi; Nipui; Talekane; Opelu; Hinganao; Kawono; Lehua;
+  Tamewa; Nohiele; Wapono; Koluahi; Pakeo.
+* **Rulers (15):** Hekau Telole; Pokane Talilo; Lewahi Moamiahi; Hekau Monemi; Pokane Nipui; Lewahi
+  Talekane; Hekau Opelu; Pokane Hinganao; Lewahi Kawono; Hekau Lehua; Pokane Tamewa; Lewahi Nohiele;
+  Hekau Wapono; Pokane Koluahi; Lewahi Pakeo.
+* **God epithets (15):** the Wave-Walker; the Star-Steerer; the Reef-Born; the Many-Islanded; the Child
+  of Fire; the Long-Voyager; the Shell-Crowned; the Laughing; the Wind-Reader; the Net-Mender; the Wise;
+  the Younger; the Peaceful; the Twice-Crowned; the Pious.
+* **Ships (15):** Kalowa Lotoa; Hinemo Kawamena; Tewaha Tokapoki; Maheke Tangohiwa; Kalowa Monimone;
+  Hinemo Mingilehu; Tewaha Kenumone; Maheke Wamolehu; Kalowa Hukalana; Hinemo Pokohiwa; Tewaha
+  Kopihume; Maheke Wenohiwa; Kalowa Nanoweko; Hinemo Pumomena; Tewaha Numohoka.
+
+#### Mbendi banks
+
+* **Places (15):** Iwingoli; Mabembuka; Yayandeni; Esingo; Binalundu; Losunjiri; Kwengule; Babanjiye;
+  Amindari; Abozimba; Wingowazi; Lulumulo; Wamondeni; Manilanda; Linula.
+* **People (15):** Wilike; Njosimiwo; Lunzumiyo; Sikinibulu; Aleduko; Kikula; Lakala; Nyengondu;
+  Mbalisa; Ndewombe; Kwanika; Zumbulu; Tobende; Ngayisa; Mandelo.
+* **Rulers (15):** Mbaku Wilike; Ndalo Njosimiwo; Ngozu Lunzumiyo; Mbaku Sikinibulu; Ndalo Aleduko;
+  Ngozu Kikula; Mbaku Lakala; Ndalo Nyengondu; Ngozu Mbalisa; Mbaku Ndewombe; Ndalo Kwanika; Ngozu
+  Zumbulu; Mbaku Tobende; Ndalo Ngayisa; Ngozu Mandelo.
+* **God epithets (15):** the Rain-Caller; the Drum-Voiced; the Lion-Hearted; the Elder; the Many-Herded;
+  the Forest-Born; the Peacemaker; the Ironsmith; the Honey-Tongued; the River-Wise; the Builder; the
+  Pious; the Great; the Silent; the Twice-Crowned.
+* **Ships (15):** Mbeli Sinimbola; Ngayo Iwingoli; Sumbe Mabembuka; Ndowa Binalundu; Mbeli Losunjiri;
+  Ngayo Abozimba; Sumbe Wingowazi; Ndowa Manilanda; Mbeli Amindari; Ngayo Yayandeni; Sumbe Wamondeni;
+  Ndowa Kwengule; Mbeli Linula; Ngayo Esingo; Sumbe Lulumulo.
+
+#### Thrask banks
+
+* **Places (15):** Rogligelm; Gufurnast; Gafoveid; Utevey; Efiskar; Urelung; Dauteskel; Varethurn;
+  Flauladirn; Nenuvang; Skethuter; Svigobrun; Sketikin; Vorroru; Galmuvang.
+* **People (15):** Galeladir; Dongamo; Murerin; Tenkifarn; Ovaved; Skeldvi; Hrothar; Ulfdis; Thrundar;
+  Hveseld; Brimrun; Jorvi; Geirmar; Valdund; Frekeld.
+* **Rulers (15):** Hersk Galeladir; Thrund Dongamo; Jorvald Murerin; Hersk Tenkifarn; Thrund Ovaved;
+  Jorvald Skeldvi; Hersk Hrothar; Thrund Ulfdis; Jorvald Thrundar; Hersk Hveseld; Thrund Brimrun;
+  Jorvald Jorvi; Hersk Geirmar; Thrund Valdund; Jorvald Frekeld.
+* **God epithets (15):** the Oath-Keeper; the Fair-Haired; the Wave-Breaker; the Grey-Cloaked; the Bold;
+  the Ring-Giver; the Frost-Bearded; the Wolf-Friend; the Tale-Beloved; the Storm-Rider; the Great; the
+  Elder; the Unlucky; the Twice-Crowned; the Old.
+* **Ships (15):** Brimra Rabrekk; Hvessa Gafoveid; Skeldra Dauteskel; Ulfvar Svigobrun; Brimra
+  Varethurn; Hvessa Nenuvang; Skeldra Flauladirn; Ulfvar Galmuvang; Brimra Efiskar; Hvessa Urelung;
+  Skeldra Gufurnast; Ulfvar Utevey; Brimra Skethuter; Hvessa Vorroru; Skeldra Rogligelm.
+
+#### Pheraxi banks
+
+* **Places (15):** Thosimophor; Hollalion; Tronosko; Klonnonimeum; Lomotraxion; Himourophor; Uxiostra;
+  Kolopon; Ailalos; Phixanupenth; Hixola; Halonainaxis; Troloxomene; Kontrosna; Lomotreumene.
+* **People (15):** Rolani; Hopoxas; Iskilomia; Toponamix; Olatu; Kesilexos; Elaphekos; Metrerakis;
+  Thalonia; Thesira; Pherides; Kralon; Doreus; Stramine; Pelaxia.
+* **Rulers (15):** Ostrarch Rolani; Thalarch Hopoxas; Exarion Iskilomia; Ostrarch Toponamix; Thalarch
+  Olatu; Exarion Kesilexos; Ostrarch Elaphekos; Thalarch Metrerakis; Exarion Thalonia; Ostrarch Thesira;
+  Thalarch Pherides; Exarion Kralon; Ostrarch Doreus; Thalarch Stramine; Exarion Pelaxia.
+* **God epithets (15):** the Lawgiver; the Builder; the Philosopher; the Victorious; the Golden-Tongued;
+  the Just; the Restorer; the Saviour of Cities; the Learned; the Purple-Born; the Wise; the Great; the
+  Pious; the Peaceful; the Twice-Crowned.
+* **Ships (15):** Phaelon Kapis; Erathe Thosimophor; Ostrine Uxiostra; Dorantha Ailalos; Phaelon
+  Hollalion; Erathe Lomotraxion; Ostrine Phixanupenth; Dorantha Himourophor; Phaelon Kolopon; Erathe
+  Halonainaxis; Ostrine Troloxomene; Dorantha Kontrosna; Phaelon Tronosko; Erathe Lomotreumene; Ostrine
+  Klonnonimeum.
 
 ## 5. Sound laws
 
@@ -528,3 +728,21 @@ chronicle engineer, not for this module.)
 * People names are at most 10 letters, places at most 14 characters, plurals at most 14 with "the ".
 * The god's word is fixed per language. A culture's `godName` is set once at its birth, so a daughter's
   drifted god name shows up only in new cultures.
+
+## 9. Final authoring guardrails: pronounceable, original and distinct
+
+These families are setting inventions, not stand-ins for real peoples: biome, values, architecture and
+belief may recombine independently, and the lexicons contain no borrowed real-language word lists. The
+English glosses explain function; they are not etymologies. Before accepting any added name:
+
+1. Say it once from its spelling. Reject it if stress or a digraph needs an explanation beyond the
+   family's rules, or if it breaks the 3–14-character and forbidden-cluster limits.
+2. Preserve the family's **place-name signature**: Velessan vowel endings; Korvagh hard codas and
+   occasional hyphens; Aavik harmony and length; Qa'tiri `a/i/u` plus rare apostrophes; Hanuwe open
+   syllables; Mbendi prenasal openings; Thrask heavy clusters; Pheraxi stately multisyllables.
+3. Compare a candidate against the other seven families before comparing it within its own. A place
+   that could belong equally to two unrelated families needs a stronger signature ending or onset.
+4. Apply daughter laws regularly to stored roots, titles, generics and the god's proper name. Do not
+   manufacture difference with random respelling; kinship should remain audible after four generations.
+5. Run the profanity, real-place, deity, famous-fiction and near-twin filters last. A clean result is a
+   requirement, not permission to weaken the family's phonology.
