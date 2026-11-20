@@ -1,0 +1,43 @@
+{
+ "file": "art/style-pilot/flow/S2/grass-a.jpg",
+ "tool": "Google Flow (labs.google/flow)",
+ "model": "Nano Banana 2.1",
+ "date_generated_utc": "2026-11-20T07:53:57Z",
+ "date_generated_local": "2026-11-20T02:53:57-05:00",
+ "date_downloaded_utc": "2026-11-20T07:54:33Z",
+ "aspect": "1:1",
+ "download": "2K upscaled",
+ "download_size": "2048 x 2048 JPEG, 2748855 bytes",
+ "sha256": "1fcb2f8ccfa63b58cbfbbb954d0d8ca4e7be5c3016d697ad00a585e4814cb1f3",
+ "credits": "0 (owner's subscription, docs/ASSETS.md; not shown per image)",
+ "account": "owner's Google account (signed in to Flow in the project browser; address not written out)",
+ "c2pa": {
+  "manifests": [
+   {
+    "urn": "urn:c2pa:54338ef1-320f-5087-1b2e-479f545618e1",
+    "timestamp_utc": "2026-11-20T07:53:57Z",
+    "actions": [
+     "created",
+     "edited"
+    ],
+    "has_ingredient": false,
+    "description": "Created by Google Generative AI"
+   },
+   {
+    "urn": "urn:c2pa:4ccdb92b-536b-db27-c6cf-427676ef64f3",
+    "timestamp_utc": "2026-11-20T07:54:33Z",
+    "actions": [
+     "opened",
+     "resized"
+    ],
+    "has_ingredient": true,
+    "description": null
+   }
+  ],
+  "reads": "Google-signed C2PA: \"Created by Google Generative AI\" (digitalSourceType trainedAlgorithmicMedia), SynthID watermark applied; then opened and resized (the 2K upscale on download)."
+ },
+ "prompt": "Seamless tileable stylized game texture of lush green grass seen from above, stylized realism, crisp clean surfaces, larger simpler shapes, subtle colour variation, slightly saturated, painterly finish, flat even lighting, no shadows, no perspective, fills the whole square edge to edge, no text",
+ "prompt_status": "exact",
+ "model_status": "as set in Flow",
+ "recorded": "2026-11-20, at download, by tools/flow_provenance.py"
+}

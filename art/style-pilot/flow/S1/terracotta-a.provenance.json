@@ -1,0 +1,43 @@
+{
+ "file": "art/style-pilot/flow/S1/terracotta-a.jpg",
+ "tool": "Google Flow (labs.google/flow)",
+ "model": "Nano Banana 2.1",
+ "date_generated_utc": "2026-11-20T08:01:20Z",
+ "date_generated_local": "2026-11-20T03:01:20-05:00",
+ "date_downloaded_utc": "2026-11-20T08:01:52Z",
+ "aspect": "1:1",
+ "download": "2K upscaled",
+ "download_size": "2048 x 2048 JPEG, 2497459 bytes",
+ "sha256": "e8501d8eb03a6e8ad8ebba3cefcb82641f2b5bfd1f61880009b24e2204814a16",
+ "credits": "0 (owner's subscription, docs/ASSETS.md; not shown per image)",
+ "account": "owner's Google account (signed in to Flow in the project browser; address not written out)",
+ "c2pa": {
+  "manifests": [
+   {
+    "urn": "urn:c2pa:7a009733-31ba-c246-ed41-4b741cad76e4",
+    "timestamp_utc": "2026-11-20T08:01:20Z",
+    "actions": [
+     "created",
+     "edited"
+    ],
+    "has_ingredient": false,
+    "description": "Created by Google Generative AI"
+   },
+   {
+    "urn": "urn:c2pa:cdff9a3d-88ce-8e71-1060-4f9660fe2b50",
+    "timestamp_utc": "2026-11-20T08:01:52Z",
+    "actions": [
+     "opened",
+     "resized"
+    ],
+    "has_ingredient": true,
+    "description": null
+   }
+  ],
+  "reads": "Google-signed C2PA: \"Created by Google Generative AI\" (digitalSourceType trainedAlgorithmicMedia), SynthID watermark applied; then opened and resized (the 2K upscale on download)."
+ },
+ "prompt": "Seamless tileable stylized game texture of terracotta roof tiles in rows, hand-painted look, clean readable shapes, simplified detail, soft painted highlights on the top edges, gentle dark accents in the gaps, warm natural colours slightly richer than real life, flat even lighting, no shadows, no perspective, fills the whole square edge to edge, no text",
+ "prompt_status": "exact",
+ "model_status": "as set in Flow",
+ "recorded": "2026-11-20, at download, by tools/flow_provenance.py"
+}

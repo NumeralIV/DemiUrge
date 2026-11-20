@@ -1,0 +1,43 @@
+{
+ "file": "art/style-pilot/flow/S1/mudbrick-a.jpg",
+ "tool": "Google Flow (labs.google/flow)",
+ "model": "Nano Banana 2.1",
+ "date_generated_utc": "2026-11-20T07:46:33Z",
+ "date_generated_local": "2026-11-20T02:46:33-05:00",
+ "date_downloaded_utc": "2026-11-20T07:59:43Z",
+ "aspect": "1:1",
+ "download": "2K upscaled",
+ "download_size": "2048 x 2048 JPEG, 2441316 bytes",
+ "sha256": "ba8906c80838c222870d3a4c95cba1830ac57bfb017e99fe7f99ff8e2fe004df",
+ "credits": "0 (owner's subscription, docs/ASSETS.md; not shown per image)",
+ "account": "owner's Google account (signed in to Flow in the project browser; address not written out)",
+ "c2pa": {
+  "manifests": [
+   {
+    "urn": "urn:c2pa:d288844c-5be9-3a88-aabf-4724c9e2ef06",
+    "timestamp_utc": "2026-11-20T07:46:33Z",
+    "actions": [
+     "created",
+     "edited"
+    ],
+    "has_ingredient": false,
+    "description": "Created by Google Generative AI"
+   },
+   {
+    "urn": "urn:c2pa:2405b16e-5461-5a49-a4e8-421cb974b867",
+    "timestamp_utc": "2026-11-20T07:59:43Z",
+    "actions": [
+     "opened",
+     "resized"
+    ],
+    "has_ingredient": true,
+    "description": null
+   }
+  ],
+  "reads": "Google-signed C2PA: \"Created by Google Generative AI\" (digitalSourceType trainedAlgorithmicMedia), SynthID watermark applied; then opened and resized (the 2K upscale on download)."
+ },
+ "prompt": "Seamless tileable stylized game texture of a mudbrick wall, hand-painted look, clean readable shapes, simplified detail, soft painted highlights on the top edges, gentle dark accents in the gaps, warm natural colours slightly richer than real life, flat even lighting, no shadows, no perspective, fills the whole square edge to edge, no text",
+ "prompt_status": "exact",
+ "model_status": "as set in Flow",
+ "recorded": "2026-11-20, at download, by tools/flow_provenance.py"
+}

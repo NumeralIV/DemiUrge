@@ -1,0 +1,43 @@
+{
+ "file": "art/style-pilot/flow/S1/planks-a.jpg",
+ "tool": "Google Flow (labs.google/flow)",
+ "model": "Nano Banana 2.1",
+ "date_generated_utc": "2026-11-20T07:50:20Z",
+ "date_generated_local": "2026-11-20T02:50:20-05:00",
+ "date_downloaded_utc": "2026-11-20T07:58:36Z",
+ "aspect": "1:1",
+ "download": "2K upscaled",
+ "download_size": "2048 x 2048 JPEG, 2391264 bytes",
+ "sha256": "bcf4881ea91e7ae580dae239332b4caad292689577364bde1752677a4a94b2b4",
+ "credits": "0 (owner's subscription, docs/ASSETS.md; not shown per image)",
+ "account": "owner's Google account (signed in to Flow in the project browser; address not written out)",
+ "c2pa": {
+  "manifests": [
+   {
+    "urn": "urn:c2pa:89de953c-770a-156d-c7ef-48b7f2bccfd6",
+    "timestamp_utc": "2026-11-20T07:50:20Z",
+    "actions": [
+     "created",
+     "edited"
+    ],
+    "has_ingredient": false,
+    "description": "Created by Google Generative AI"
+   },
+   {
+    "urn": "urn:c2pa:63e4b24b-7f28-5964-9d9a-491d5e852346",
+    "timestamp_utc": "2026-11-20T07:58:36Z",
+    "actions": [
+     "opened",
+     "resized"
+    ],
+    "has_ingredient": true,
+    "description": null
+   }
+  ],
+  "reads": "Google-signed C2PA: \"Created by Google Generative AI\" (digitalSourceType trainedAlgorithmicMedia), SynthID watermark applied; then opened and resized (the 2K upscale on download)."
+ },
+ "prompt": "Seamless tileable stylized game texture of weathered timber planks, hand-painted look, clean readable shapes, simplified detail, soft painted highlights on the plank edges, gentle dark accents in the gaps, warm natural colours slightly richer than real life, flat even lighting, no shadows, no perspective, fills the whole square edge to edge, no text",
+ "prompt_status": "exact",
+ "model_status": "as set in Flow",
+ "recorded": "2026-11-20, at download, by tools/flow_provenance.py"
+}
