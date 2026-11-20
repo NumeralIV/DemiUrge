@@ -239,14 +239,29 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 	if (Mask & 0xF)
 	{
 		// smoothed climate fields for the colour (two passes, as the lab)
-		TArray<float> SVeg = In.Veg, SMoist = In.Moist, STemp = In.Temp, SMarsh, SBarren, SIce = In.Ice, SUrban, Tmp;
+		TArray<float> SVeg = In.Veg, SMoist = In.Moist, STemp = In.Temp, SMarsh, SBarren, SIce = In.Ice, SUrban, SScorch, SLava, Tmp;
 		SMarsh.SetNumUninitialized(N); SBarren.SetNumUninitialized(N);
 		for (int32 C = 0; C < N; ++C)
 		{
 			SMarsh[C] = In.Biome[C] == BWetland ? 1.f : 0.f;
 			SBarren[C] = In.Biome[C] == BBarren ? 1.f : 0.f;
 		}
-		SmoothField(G, SVeg, Tmp, 2); SmoothField(G, SMoist, Tmp, 2); SmoothField(G, STemp, Tmp, 2); SmoothField(G, SMarsh, Tmp, 2); SmoothField(G, SBarren, Tmp, 1);
+		SmoothField(G, SVeg, Tmp, 2); SmoothField(G, SMoist, Tmp, 2); SmoothField(G, STemp, Tmp, 2); SmoothField(G, SMarsh, Tmp, 2); SmoothField(G, SBarren, Tmp, 2);
+		// (wave 3) scorch and lava: one smoothing pass that keeps each cell's own value (a rounded bump with a fringe
+		// on the next ring instead of the hexagonal pyramid of a linearly interpolated cell), read at the warped
+		// direction; land.hlsl thresholds it with multi-scale noise, so a burn scar has an organic edge
+		auto SmoothKeep = [&G](const TArray<float>& F, TArray<float>& Out)
+		{
+			Out.SetNumUninitialized(F.Num());
+			for (int32 C = 0; C < F.Num(); ++C)
+			{
+				const int32 Deg = G.NbrN[C];
+				double Sm = 0; for (int32 K = 0; K < Deg; ++K) Sm += F[G.Nbr[6 * C + K]];
+				Out[C] = Deg ? FMath::Max(F[C], 0.5f * F[C] + 0.5f * float(Sm / Deg)) : F[C];
+			}
+		};
+		SmoothKeep(In.Scorch, SScorch);
+		SmoothKeep(In.Lava, SLava);
 		// ice sheets read at the warped direction (organic edges); built-up ground smoothed once so a town is a
 		// rounded patch around its centre instead of the triangle fan of its cells (the material breaks it up)
 		SmoothField(G, SIce, Tmp, 1);
@@ -269,7 +284,7 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 				const FCache::FTexelLoc& Wl = Ca.Warped[I];
 				auto La = [&](const TArray<float>& F) { return double(D.W[0]) * F[D.C[0]] + double(D.W[1]) * F[D.C[1]] + double(D.W[2]) * F[D.C[2]]; };
 				auto Lw = [&](const TArray<float>& F) { return double(Wl.W[0]) * F[Wl.C[0]] + double(Wl.W[1]) * F[Wl.C[1]] + double(Wl.W[2]) * F[Wl.C[2]]; };
-				const double Tm = Lw(STemp), Mo = Lw(SMoist), Vg = Lw(SVeg), Marsh = Lw(SMarsh), Barren = La(SBarren);
+				const double Tm = Lw(STemp), Mo = Lw(SMoist), Vg = Lw(SVeg), Marsh = Lw(SMarsh), Barren = Lw(SBarren);
 				const double Wob_ = Ca.Wob[I];
 				double Wa = 0.0;
 				for (int32 K = 0; K < 3; ++K)
@@ -315,7 +330,8 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 				Mip0[2][I] = FColor(Q8(0.5 * (Lw(In.Farm) + La(In.Farm))), Q8(La(SUrban)), Q8(Road), Q8(La(In.Lights)));
 
 				// ---- damage
-				Mip0[3][I] = FColor(Q8(La(In.Scorch)), Q8(Sat(La(In.Lava) / 0.6)), Q8(La(In.Fire)), Q8(La(In.Rad)));
+				// (wave 3) scorch and lava mostly from the warped direction (organic edges), a little of the direct one
+				Mip0[3][I] = FColor(Q8(0.7 * Lw(SScorch) + 0.3 * La(SScorch)), Q8(Sat((0.6 * Lw(SLava) + 0.4 * La(SLava)) / 0.6)), Q8(La(In.Fire)), Q8(La(In.Rad)));
 			}
 		}, EParallelForFlags::BackgroundPriority);
 		Out.Mask |= 0xF;

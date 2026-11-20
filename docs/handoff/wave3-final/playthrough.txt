@@ -1,0 +1,45 @@
+y: start (seed 21, "Ithe", fast-forward 45 ms per frame)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-01-title.png (year 320, phase history, age 0, 8 settlements, pop 2207, frame 280, 86 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-02-setup.png (year 320, phase history, age 0, 8 settlements, pop 2207, frame 320, 88 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-03-genesis-molten.png (year 0, phase molten, age 0, 0 settlements, pop 0, frame 396, 92 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-04-genesis-cooling.png (year 0, phase molten, age 0, 0 settlements, pop 0, frame 446, 93 s)
+y: comet view: sunlit coast, 38 deg from the sun
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-05-genesis-comets.png (year 0, phase water, age 0, 0 settlements, pop 0, frame 653, 96 s)
+y: save/load in genesis (phase water, sea -0.36, 0 comets in flight): saved 1 loaded 1 PASS
+y: water done: 12 comets, sea -0.02, next 1
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-06-genesis-seas.png (year 0, phase life, age 0, 0 settlements, pop 0, frame 854, 109 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-07-genesis-life-wave.png (year 0, phase life, age 0, 0 settlements, pop 0, frame 1073, 111 s)
+y: life done: 6 seeds, veg 0.82, next 1
+y: awaken at cell 8347: 1 (phase history)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-08-genesis-awakening.png (year 2, phase history, age 0, 2 settlements, pop 51, frame 1224, 117 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-09-early-village.png (year 104, phase history, age 0, 2 settlements, pop 812, frame 1464, 123 s)
+y: world age 1 in year 275
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-10-disaster.png (year 316, phase history, age 1, 10 settlements, pop 10346, frame 1636, 149 s)
+y: war view: battle cell 6302, town 13, zoom 0.84, heading 35
+y: war: army 21 marching on town 13
+y: war: the army is 3.5 km from the town: held (zoom 0.81)
+y: war shot (the army before the town)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-11-war.png (year 634, phase history, age 1, 17 settlements, pop 35329, frame 1721, 416 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-12-pause.png (year 700, phase history, age 1, 17 settlements, pop 36203, frame 1732, 418 s)
+y: save/load through the screens at year 700.2: saved 1 loaded 1, 952980 bytes -> 952980 bytes, PASS (year, people, towns and the loaded bytes identical to the saved world made ready)
+y: world age 2 in year 768
+y: world age 3 in year 1384
+y: year 1432, age 3, 46 settlements, pop 249161, awe 43/800, frame 71.7 ms
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-13-golden-age-city.png (year 1542, phase history, age 3, 70 settlements, pop 411362, frame 2109, 557 s)
+y: world age 4 in year 2038
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-14-orbit-day.png (year 2042, phase history, age 4, 107 settlements, pop 739653, frame 2454, 701 s)
+y: world age 5 in year 2580
+y: world age 6 in year 3049
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-15-space-age.png (year 3083, phase history, age 6, 93 settlements, pop 6774381, frame 2917, 886 s)
+y: ark launch camera on
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-16-ark-launch.png (year 3274, phase ended, age 6, 93 settlements, pop 8159444, frame 2999, 896 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-17-ending.png (year 3295, phase ended, age 6, 93 settlements, pop 8348109, frame 3157, 914 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-18-timelapse.png (year 3296, phase ended, age 6, 93 settlements, pop 8348109, frame 3487, 922 s)
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-19-planet-card.png (year 3296, phase ended, age 6, 93 settlements, pop 8348109, frame 3563, 923 s)
+y: planet card exported to C:/Users/Relly/Documents/Fable5.2 Test/demiurge/Unreal/Saved/PlanetCards/Ithe-20261120-044234.png
+y: shot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-play-20-title-again.png (year 3296, phase ended, age 6, 93 settlements, pop 8348109, frame 3823, 929 s)
+y: god 79 clicks, 2062 strokes, 0 refused, 21 edicts: rain 288 bloom 1774 inspire 12 peace 23 prophet 21 heal 23
+y: genesis 12 comets, 6 seeds; battles 175; ending ark / beloved in year 3268; save/load in history PASS, in genesis PASS
+y: normal frames 0, worst 0.0 ms, over 50 ms 0
+y: hud toasts 632 pushed -> 37 rows (merging); hints: none (seen in an earlier run); guide steps done 0x5a
+y: RESULT PASS (20 shots, 0 missing, 930 s)

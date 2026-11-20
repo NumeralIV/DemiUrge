@@ -17,7 +17,11 @@
 //   Lanes/planet/shot.ps1 planet-overlay -noshot      culture borders, temperature, habitability overlays
 //   Lanes/planet/shot.ps1 planet-molten -noshot       the molten genesis crust
 //   Lanes/planet/shot.ps1 planet-fly -noshot          a streamed 20 s descent (no settle): hitch statistics
-// Options: -views=a,b (only these views), -hold=<frames> per view (default 150), -apscale=<aerial perspective>.
+//   Lanes/planet3/shot.ps1 planet-fixes -noshot       (wave 3) farmland 40/10/2 km, a sim volcano's scorch 60/15/4.5 km,
+//                                                     a late sea rise 400/60/12/2.5 km (-rise=, logs a depth profile)
+// Options: -views=a,b (only these views), -hold=<frames> per view (default 150), -apscale=<aerial perspective>,
+// -profilegpu (one ProfileGPU capture 20 frames before each shot: the BasePass line is the land material's cost).
+// Every shot also logs the view's GPU time (median / min / p90 of the last 60 frames, stat unit).
 // The reference series is shot with -ev=-1 (exposure bias of the placeholder sky, as the surface lab did): at
 // 0 EV the 10 lux sun overexposes the land from orbit and the tonemapper washes it out.
 //
@@ -39,6 +43,7 @@
 #include "Components/SkyLightComponent.h"
 #include "Engine/SkyLight.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
 #include "EngineUtils.h"
 #include "UObject/UObjectIterator.h"
 #include "HAL/PlatformTime.h"
@@ -68,11 +73,24 @@ namespace
 		int32 ShotAt = -1;
 		int32 Hold = 150;
 		TArray<float> Frames;
+		TArray<float> Gpu;           // (wave 3) GPU ms per frame (stat unit), for per-view cost comparisons
 		bool bDone = false;
 		TWeakObjectPtr<ASkyLight> Sky;
 		double MaxFrameAfterChange = 0; int32 ChangeFrames = 0;
+		// (verify) a world change (eruption, sea rise) must reach the colour maps before the next shot: IsSettled() does
+		// not see a dirty map that has not started its job yet, and under load the map worker took up to 28 s, so the
+		// scorch-60 / -15 shots showed no scar at all. Shots wait for a map update after MapsBase that has stood 30 frames.
+		int32 MapsBase = -1, MapsSeen = -1, MapsStable = 0;
 	};
 	FRun GRun;
+	/** (verify) true once the colour maps have been updated after the last world change and stood for 30 frames. */
+	bool MapsCaughtUp(const ADmPlanet* P)
+	{
+		if (!P || GRun.MapsBase < 0) return true;
+		if (P->MapUpdates != GRun.MapsSeen) { GRun.MapsSeen = P->MapUpdates; GRun.MapsStable = 0; }
+		else ++GRun.MapsStable;
+		return P->MapUpdates > GRun.MapsBase && GRun.MapsStable >= 30;
+	}
 
 	FVector Dir(double Lat, double Lon) { return DmCoords::LatLonToDir(Lat, Lon); }
 
@@ -212,6 +230,19 @@ namespace
 		KeepSkyLightUnderCamera(Ctx);
 		if (GRun.Frames.Num() >= 60) GRun.Frames.RemoveAt(0);
 		GRun.Frames.Add(FApp::GetDeltaTime() * 1000.0);
+		if (const ADmGameMode* GM = Ctx.World ? Ctx.World->GetAuthGameMode<ADmGameMode>() : nullptr)
+		{
+			double Gm, Rm, Hm, Gp; GM->GetLastUnitMs(Gm, Rm, Hm, Gp);
+			if (GRun.Gpu.Num() >= 60) GRun.Gpu.RemoveAt(0);
+			if (Gp > 0.0) GRun.Gpu.Add(float(Gp));
+		}
+		// -profilegpu: one ProfileGPU capture 20 frames before each shot (pass timings in the log: the base pass of
+		// the land material is what a material change costs, nearly independent of other GPU users' load)
+		if (GRun.Cur >= 0 && GRun.ShotAt < 0 && FDmShotArgs::Param(TEXT("profilegpu")) && GEngine && Ctx.World)
+		{
+			const int32 Hold = GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold;
+			if (GRun.ViewFrame == Hold - 20) { UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: profilegpu %s"), *GRun.Views[GRun.Cur].Name); GEngine->Exec(Ctx.World, TEXT("ProfileGPU")); }
+		}
 		if (GRun.ChangeFrames > 0) { GRun.MaxFrameAfterChange = FMath::Max(GRun.MaxFrameAfterChange, FApp::GetDeltaTime() * 1000.0); --GRun.ChangeFrames; }
 		ADmPlanet* P = Planet(Ctx);
 		if (GRun.ShotAt >= 0)
@@ -220,18 +251,28 @@ namespace
 			if (GRun.ViewFrame < GRun.ShotAt + 4) { ++GRun.ViewFrame; return; }
 			GRun.ShotAt = -1;
 		}
-		else if (GRun.Cur >= 0 && GRun.ViewFrame >= (GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold) && (!P || P->IsSettled() || GRun.ViewFrame > 900))
+		else if (GRun.Cur >= 0 && GRun.ViewFrame >= (GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold) && ((MapsCaughtUp(P) && (!P || P->IsSettled())) || GRun.ViewFrame > 2400))
 		{
 			double Avg = 0, Mx = 0;
 			for (float F : GRun.Frames) { Avg += F; Mx = FMath::Max(Mx, double(F)); }
 			Avg /= FMath::Max(GRun.Frames.Num(), 1);
 			UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: shot %s: frame %.2f ms avg (max %.2f) over %d frames | %s"), *GRun.Views[GRun.Cur].Name, Avg, Mx, GRun.Frames.Num(), P ? *P->StatsLine() : TEXT(""));
+			// (verify) under heavy machine load the old 900-frame cap fired before the terrain and maps had caught up with
+			// a sea rise (a level-0 planet in the shot): the cap is 2400 frames now, and a forced shot says so
+			if (!MapsCaughtUp(P) || (P && !P->IsSettled()))
+				UE_LOG(LogDmPlanetScn, Warning, TEXT("DmPlanetScn: shot %s forced at the frame cap: planet NOT settled (the picture may be stale)"), *GRun.Views[GRun.Cur].Name);
+			if (GRun.Gpu.Num())
+			{
+				TArray<float> G = GRun.Gpu; G.Sort();
+				UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: gpu %s: median %.2f ms, min %.2f, p90 %.2f over %d frames"), *GRun.Views[GRun.Cur].Name,
+					G[G.Num() / 2], G[0], G[FMath::Min(G.Num() - 1, G.Num() * 9 / 10)], G.Num());
+			}
 			Ctx.Shot(GRun.Views[GRun.Cur].Name);
 			GRun.ShotAt = GRun.ViewFrame;
 			++GRun.ViewFrame;
 			return;
 		}
-		if (GRun.Cur < 0 || (GRun.ViewFrame > 0 && GRun.ShotAt < 0 && GRun.ViewFrame >= (GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold) && (!P || P->IsSettled() || GRun.ViewFrame > 900)))
+		if (GRun.Cur < 0 || (GRun.ViewFrame > 0 && GRun.ShotAt < 0 && GRun.ViewFrame >= (GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold) && (!P || P->IsSettled() || GRun.ViewFrame > 2400)))
 		{
 			++GRun.Cur;
 			GRun.ViewFrame = 0;
@@ -239,6 +280,7 @@ namespace
 			if (GRun.Views[GRun.Cur].Before) GRun.Views[GRun.Cur].Before(Ctx);
 			ApplyView(Ctx, GRun.Views[GRun.Cur]);
 			GRun.Frames.Reset();
+			GRun.Gpu.Reset();
 		}
 		++GRun.ViewFrame;
 	}
@@ -682,3 +724,222 @@ static FDmScenarioRegistrar GDmPlanetFly(TEXT("planet-fly"), TEXT("planet"), TEX
 			Ctx.Finish();
 		}
 	});
+
+// ------------------------------------------------------------------ wave-3 planet fixes: farmland, volcano scorch, sea rise
+// One run, three groups (each view runs its group's world change once, so -views= may pick any subset):
+//   farm-40 / farm-10 / farm-2        the most farmed temperate settlement (docs/concept/nature descent-3 / descent-4)
+//   scorch-60 / scorch-15 / scorch-4  a real sim volcano (powers::use, then 14 years of ticks) on forested ground
+//   sea-400 / sea-60 / sea-12 / sea-2 a late-game sea rise (-rise=, default +0.32 elevation units = 64 m over
+//                                     vars.seaBase) over the largest low coastal plain, with the sim's own
+//                                     consequences (flooded cells lose vegetation, farms, towns; biome SHALLOWS)
+// Run: Lanes/planet3/shot.ps1 planet-fixes -noshot -ev=-1   (shots ue-planet-fixes-<view>.png)
+
+namespace
+{
+	struct FFixes { int32 Farm = -1, Vent = -1, Plain = -1, NewCoast = -1; bool bVolcano = false, bSea = false; double Rise = 0.32; };
+	FFixes GFix;
+
+	int32 FarmTarget(const dm::World& W)
+	{
+		int32 Best = -1; double BestS = -1;
+		std::vector<int32_t> Ring;
+		for (const dm::Settlement& S : W.settlements)
+		{
+			if (S.dead || !W.valid(S.cell)) continue;
+			const double T = W.temp[size_t(S.cell)];
+			if (T < 4.0 || T > 22.0) continue;
+			W.geo->ring(S.cell, 3, Ring);
+			double F = 0; for (int32_t M : Ring) F += W.farm[size_t(M)];
+			if (F > BestS) { BestS = F; Best = S.cell; }
+		}
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: fixes: farm target cell %d (farm sum %.1f within 3 rings)"), Best, BestS);
+		return Best >= 0 ? Best : SettledCoast(W);
+	}
+
+	/** A forested inland hill (the vent): high vegetation, land all around, temperate, nobody living there. */
+	int32 VentTarget(const dm::World& W)
+	{
+		int32 Best = -1; double BestS = -1e9;
+		std::vector<int32_t> Ring;
+		for (int32 C = 0; C < W.n; C += 3)
+		{
+			if (dm::state::isSea(W, C) || W.coast[size_t(C)] < 4) continue;
+			const double T = W.temp[size_t(C)];
+			if (T < 4.0 || T > 24.0 || W.urban[size_t(C)] > 0.05f || W.farm[size_t(C)] > 0.2f) continue;
+			W.geo->ring(C, 3, Ring);
+			double V = 0; int32 Bad = 0;
+			for (int32_t M : Ring)
+			{
+				V += W.veg[size_t(M)];
+				if (dm::state::isSea(W, M) || W.water[size_t(M)] > 0.03f || W.urban[size_t(M)] > 0.05f) ++Bad;
+			}
+			const double S = V - 5.0 * Bad + 0.3 * W.elev[size_t(C)];
+			if (S > BestS) { BestS = S; Best = C; }
+		}
+		return Best >= 0 ? Best : 0;
+	}
+
+	/** The largest low coastal plain: land within Rise of the base sea, near the coast. */
+	int32 PlainTarget(const dm::World& W, double Base, double Rise)
+	{
+		int32 Best = -1; int32 BestN = -1;
+		std::vector<int32_t> Ring;
+		for (int32 C = 0; C < W.n; C += 2)
+		{
+			const double E = W.elev[size_t(C)];
+			if (E < Base || E >= Base + Rise || W.coast[size_t(C)] > 3) continue;
+			W.geo->ring(C, 5, Ring);
+			int32 N = 0;
+			for (int32_t M : Ring) { const double Em = W.elev[size_t(M)]; if (Em >= Base && Em < Base + Rise) ++N; }
+			if (N > BestN) { BestN = N; Best = C; }
+		}
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: fixes: low plain cell %d (%d low cells within 5 rings)"), Best, BestN);
+		return Best >= 0 ? Best : SettledCoast(W);
+	}
+
+	void EnsureVolcano(FDmScenarioContext& Cx)
+	{
+		if (GFix.bVolcano || !Cx.Sim) return;
+		GFix.bVolcano = true;
+		Cx.Sim->MakeLive();
+		dm::World* W = Cx.Sim->SimMutable();
+		if (!W) return;
+		const double T0 = FPlatformTime::Seconds();
+		W->god.aweMax = FMath::Max(W->god.aweMax, 1.0e6);
+		W->god.awe = W->god.aweMax;
+		// (verify) powers past Bronze unlock by age (sim v3) and the fixture is in the Sail age, so the volcano (Industry)
+		// was refused on main and the scorch views showed no scar at all: unlock it for this one call, and fail the run
+		// when it is still refused (a scorch view without a scar proves nothing)
+		const int32 OldAge = W->age;
+		W->age = FMath::Max(W->age, int32(dm::Age::INDUSTRY));
+		const bool bOk = Cx.Sim->UsePower(TEXT("volcano"), GFix.Vent, 0.25f);
+		W->age = OldAge;
+		if (!bOk) Cx.SetExitCode(1);
+		if (const ADmPlanet* P = Planet(Cx)) GRun.MapsBase = P->MapUpdates;
+		// 14 years: the eruption (12 years) and the fires it lit; (verify) -volcanoticks=N stops earlier (lava still out)
+		int32 Want = 56;
+		FDmShotArgs::Value(TEXT("-volcanoticks="), Want);
+		const int32 Ticks = Cx.Sim->StepTicks(FMath::Clamp(Want, 0, 400));
+		Cx.Sim->SetPaused(true);
+		int32 NS = 0, NL = 0; double MaxS = 0, SumS = 0;
+		for (int32 C = 0; C < W->n; ++C)
+		{
+			const float S = W->scorch[size_t(C)];
+			if (S > 0.05f) { ++NS; SumS += S; MaxS = FMath::Max(MaxS, double(S)); }
+			if (W->lava[size_t(C)] > 0.01f) ++NL;
+		}
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: fixes: volcano at cell %d %s, %d ticks in %.0f ms: %d scorched cells (max %.2f, mean %.2f), %d with lava"),
+			GFix.Vent, bOk ? TEXT("started") : TEXT("REFUSED"), Ticks, (FPlatformTime::Seconds() - T0) * 1000.0, NS, MaxS, NS ? SumS / NS : 0.0, NL);
+	}
+
+	void EnsureSeaRise(FDmScenarioContext& Cx)
+	{
+		if (GFix.bSea || !Cx.Sim) return;
+		GFix.bSea = true;
+		if (Cx.Sim->IsLive()) Cx.Sim->SetPaused(true);
+		dm::World* W = Cx.Sim->SimMutable();
+		if (!W) return;
+		const double Base = W->vars.seaBase.has_value() ? *W->vars.seaBase : W->seaLevel;
+		W->vars.seaBase = Base;
+		// (verify) -riseapply=0: the same views over the unrisen world (A/B); -riseraw: only the sea level moves (the
+		// flooded cells keep their fields, forest, roads and towns, as in the first years of a real climate rise)
+		double Apply = 1.0;
+		FDmShotArgs::Value(TEXT("-riseapply="), Apply);
+		W->seaLevel = Base + GFix.Rise * Apply;
+		const bool bRaw = FDmShotArgs::Param(TEXT("riseraw"));
+		if (const ADmPlanet* P = Planet(Cx)) GRun.MapsBase = P->MapUpdates;
+		int32 Flooded = 0, Towns = 0;
+		for (int32 C = 0; C < W->n; ++C)
+		{
+			const size_t I = size_t(C);
+			if (!bRaw && W->elev[I] >= Base && W->elev[I] < W->seaLevel)
+			{
+				++Flooded;
+				W->veg[I] = 0.f; W->farm[I] = 0.f; W->urban[I] = 0.f; W->fire[I] = 0.f; W->road[I] = 0;
+				W->biome[I] = uint8(dm::Biome::SHALLOWS);
+			}
+		}
+		for (dm::Settlement& S : W->settlements)
+			if (!S.dead && W->valid(S.cell) && W->elev[size_t(S.cell)] < W->seaLevel) { S.dead = true; ++Towns; }
+		W->dirty.elev = W->dirty.color = W->dirty.water = W->dirty.objects = W->dirty.roads = W->dirty.rivers = true;
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: fixes: sea rise %.3f -> %.3f (+%.0f m): %d cells flooded, %d settlements drowned"),
+			Base, W->seaLevel, GFix.Rise * 200.0, Flooded, Towns);
+	}
+}
+
+/** Ground and water along the line from the new coast out over the drowned plain (log; checks the depth gradient). */
+static void SeaProfile(FDmScenarioContext& Cx)
+{
+	ADmPlanet* P = Planet(Cx);
+	const dm::World* W = Cx.Sim ? Cx.Sim->Sim() : nullptr;
+	if (!P || !W || !P->Terrain() || GFix.NewCoast < 0 || GFix.Plain < 0) return;
+	const FVector A = DmCoords::CellDir(*W, GFix.NewCoast), B = DmCoords::CellDir(*W, GFix.Plain);
+	FString Line;
+	for (int32 I = 0; I <= 24; ++I)
+	{
+		const FVector D = FMath::Lerp(A, B, I / 12.0).GetSafeNormal();   // to twice the distance to the plain cell
+		Line += FString::Printf(TEXT(" %.0f"), P->GroundHeightM(D) - P->SeaHeightM());
+	}
+	UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: fixes: sea %.1f m, ground datum %.1f m (rise %.1f m); ground - sea from the new coast over the plain (%.1f km, 25 steps):%s"),
+		P->SeaHeightM(), P->Terrain()->RefM, P->SeaHeightM() - P->Terrain()->RefM, FMath::Acos(FMath::Clamp(A | B, -1.0, 1.0)) * 200.0, *Line);
+}
+
+static TArray<FView> FixesViews(FDmScenarioContext& Ctx, const dm::World& W)
+{
+	GFix = FFixes();
+	FDmShotArgs::Value(TEXT("-rise="), GFix.Rise);
+	GFix.Farm = FarmTarget(W);
+	GFix.Vent = VentTarget(W);
+	const double Base = W.vars.seaBase.has_value() ? *W.vars.seaBase : W.seaLevel;
+	GFix.Plain = PlainTarget(W, Base, GFix.Rise);
+	// the new coast nearest the plain: land just above the risen sea, next to a cell that floods
+	{
+		double BestA = 1e9;
+		for (int32 C = 0; C < W.n; ++C)
+		{
+			const double E = W.elev[size_t(C)];
+			if (E < Base + GFix.Rise || E > Base + GFix.Rise + 0.15) continue;
+			bool bNext = false;
+			for (int32 K = 0; K < W.geo->nbrN[size_t(C)]; ++K)
+			{
+				const int32 M = W.geo->nbr[size_t(6 * C + K)];
+				if (M >= 0 && W.elev[size_t(M)] >= Base && W.elev[size_t(M)] < Base + GFix.Rise) bNext = true;
+			}
+			if (!bNext) continue;
+			const double A = W.geo->angle(C, GFix.Plain);
+			if (A < BestA) { BestA = A; GFix.NewCoast = C; }
+		}
+		if (GFix.NewCoast < 0) GFix.NewCoast = GFix.Plain;
+	}
+	TArray<FView> V;
+	double Lat, Lon;
+	auto Add = [&V](FView A, TFunction<void(FDmScenarioContext&)> Ensure) { A.Before = MoveTemp(Ensure); V.Add(MoveTemp(A)); };
+	CellLatLon(W, GFix.Farm, Lat, Lon);
+	{
+		FView A; A.Lat = Lat; A.Lon = Lon; A.SunElev = 28; A.SunAz = 255; A.Heading = 0;
+		A.Name = TEXT("farm-40"); A.DistKm = 40; A.Pitch = 60; A.Fov = 45; Add(A, nullptr);
+		A.Name = TEXT("farm-10"); A.DistKm = 10; A.Pitch = 62; A.Fov = 45; Add(A, nullptr);
+		A.Name = TEXT("farm-2"); A.DistKm = 2.2; A.Pitch = 58; A.Fov = 45; Add(A, nullptr);
+	}
+	CellLatLon(W, GFix.Vent, Lat, Lon);
+	{
+		FView A; A.Lat = Lat; A.Lon = Lon; A.SunElev = 32; A.SunAz = 240; A.Heading = 10;
+		A.Name = TEXT("scorch-60"); A.DistKm = 60; A.Pitch = 70; A.Fov = 45; Add(A, [](FDmScenarioContext& Cx) { EnsureVolcano(Cx); });
+		A.Name = TEXT("scorch-15"); A.DistKm = 15; A.Pitch = 55; A.Fov = 50; Add(A, [](FDmScenarioContext& Cx) { EnsureVolcano(Cx); });
+		A.Name = TEXT("scorch-4"); A.DistKm = 4.5; A.Pitch = 40; A.Fov = 55; Add(A, [](FDmScenarioContext& Cx) { EnsureVolcano(Cx); });
+	}
+	{
+		CellLatLon(W, GFix.Plain, Lat, Lon);
+		FView A; A.Lat = Lat; A.Lon = Lon; A.SunElev = 35; A.SunAz = 235; A.Heading = 0;
+		A.Name = TEXT("sea-400"); A.DistKm = 400; A.Pitch = 90; A.Fov = 40; Add(A, [](FDmScenarioContext& Cx) { EnsureSeaRise(Cx); });
+		A.Name = TEXT("sea-60"); A.DistKm = 60; A.Pitch = 55; A.Fov = 45; Add(A, [](FDmScenarioContext& Cx) { EnsureSeaRise(Cx); });
+		CellLatLon(W, GFix.NewCoast, Lat, Lon);
+		A.Lat = Lat; A.Lon = Lon;
+		A.Heading = HeadingTo(W, GFix.NewCoast, GFix.Plain);
+		A.Name = TEXT("sea-12"); A.DistKm = 12; A.Pitch = 45; A.Fov = 50; Add(A, [](FDmScenarioContext& Cx) { EnsureSeaRise(Cx); });
+		A.Name = TEXT("sea-2"); A.DistKm = 2.5; A.Pitch = 35; A.Fov = 55; Add(A, [](FDmScenarioContext& Cx) { EnsureSeaRise(Cx); SeaProfile(Cx); });
+	}
+	UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: fixes: farm %d, vent %d, plain %d, new coast %d, rise %.2f"), GFix.Farm, GFix.Vent, GFix.Plain, GFix.NewCoast, GFix.Rise);
+	return V;
+}
+DM_PLANET_SCENARIO("planet-fixes", "wave-3 planet fixes: farmland (40/10/2 km), a volcano's scorch (60/15/4.5 km), a late sea rise (400/60/12/2.5 km)", FixesViews)

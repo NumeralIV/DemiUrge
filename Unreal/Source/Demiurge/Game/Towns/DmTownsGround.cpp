@@ -98,6 +98,26 @@ uint64 FDmTownsGround::Signature(UWorld* World)
 
 TSharedPtr<const FDmTownsGround, ESPMode::ThreadSafe> FDmTownsGround::Snapshot(UWorld* World, const dm::World& W, bool& bOutPending)
 {
+	return SnapshotDeferred(World, W, bOutPending, nullptr);
+}
+
+void FDmTownsGround::AdoptPlanetTerrain(const TSharedPtr<const FDmPlanetTerrain, ESPMode::ThreadSafe>& NewT)
+{
+	Planet = NewT;
+	Source = ESource::PlanetTerrain;
+	if (NewT.IsValid()) SeaRadiusUU = 1.0e7 + NewT->SeaM * 100.0;
+}
+
+void FDmTownsGround::AdoptPlanetCopy(const FDmPlanetTerrain& Src)
+{
+	const double T0 = FPlatformTime::Seconds();
+	Planet = MakeShared<FDmPlanetTerrain, ESPMode::ThreadSafe>(Src);
+	BuildMs += (FPlatformTime::Seconds() - T0) * 1000.0;
+}
+
+TSharedPtr<FDmTownsGround, ESPMode::ThreadSafe> FDmTownsGround::SnapshotDeferred(UWorld* World, const dm::World& W, bool& bOutPending, const FDmPlanetTerrain** OutDeferred)
+{
+	if (OutDeferred) *OutDeferred = nullptr;
 	bOutPending = false;
 	const double T0 = FPlatformTime::Seconds();
 	TSharedPtr<FDmTownsGround, ESPMode::ThreadSafe> G = MakeShared<FDmTownsGround, ESPMode::ThreadSafe>();
@@ -114,7 +134,10 @@ TSharedPtr<const FDmTownsGround, ESPMode::ThreadSafe> FDmTownsGround::Snapshot(U
 		{
 			if (const FDmPlanetTerrain* PT = Pl->Terrain())
 			{
-				G->Planet = MakeShared<FDmPlanetTerrain, ESPMode::ThreadSafe>(*PT);   // a private copy: plain data, pure Height()
+				// a private copy: plain data, pure Height(). (towns-perf) The copy costs ~10 ms; with OutDeferred the caller makes it
+				// on a worker (AdoptPlanetCopy) and guarantees the planet keeps this snapshot alive meanwhile
+				if (OutDeferred) *OutDeferred = PT;
+				else G->Planet = MakeShared<FDmPlanetTerrain, ESPMode::ThreadSafe>(*PT);
 				G->Source = ESource::PlanetTerrain;
 				G->SeaRadiusUU = 1.0e7 + PT->SeaM * 100.0;
 			}

@@ -196,6 +196,16 @@ struct DiplomacyTune {
 	// favour, is at least blameMin; its victor thanks the god when its grace rate is at least thankMin (devotion
 	// + thankDevotion in its towns; the loser's love - blameLove)
 	double blameMin = 0.004, thankMin = 0.004, thankDevotion = 0, blameLove = 0;
+	// --- chronicle-diplomacy (sim-findings-2 "open for the lead": the Omen of Peace was weak) ---
+	// omenWide: an Omen that ends a people's wars also calms every other neighbour of that people on the brink
+	// (society::tense), not only the warring pairs (with no war it already calms them all)
+	bool omenWide = false;
+	// omenNoEnvy: the Omen leaves no envy: its witnesses add nothing to the god's fading favour (society_fgrace:
+	// a peace seen by both armies made every third people envy them), and a pair under a sworn peace does not
+	// envy each other's favour while the oath lasts
+	bool omenNoEnvy = false;
+	// omenAge >= 0: the Omen of Peace wakes in this age instead of its power table's (Iron); -1 = the table
+	int omenAge = -1;
 };
 
 namespace society {
@@ -215,6 +225,9 @@ struct WitnessOpts {
 	std::vector<int> harmed;             // settlement ids the act hurt (they use goodHarmed)
 	double goodHarmed = 0;
 	bool natural = false;                // (v3) a natural event: no deed of the god (no memory, not 'heard')
+	bool favour = true;                  // (chronicle-diplomacy) false: the deed adds nothing to the fading favour
+	                                     // sums (society_fgrace / fwrath: envy, blame, thanks); the Omen of Peace
+	                                     // under DiplomacyTune::omenNoEnvy
 };
 // [society] regard() result
 struct Regard {
@@ -321,6 +334,9 @@ bool swearPeace(World& w, int a, int b);
 // [diplomacy] (v3.1) the cultures in contact with cultureId, at peace with it, whose relations are at most
 // omenTension (empty unless omenCalm): the neighbours an Omen of Peace may calm before a war. Read-only.
 std::vector<int> tense(const World& w, int cultureId);
+// [diplomacy] (chronicle-diplomacy) the year the Omen's sworn peace between a and b ends, or -1 when they are
+// not sworn (none, ended, or bad ids). Read-only (the chronicle names the peoples an Omen calmed).
+double swornUntil(const World& w, int a, int b);
 // [diplomacy] Society.onArrive: a trader, army or prophet reached its destination (see the arrival
 // contract in Units.h): battles (battle event, capture / raze, losses), trade (trade, relations,
 // road[] along the land part of the path, plague hop via civ::infect, trade:route once per pair),

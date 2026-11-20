@@ -7,3 +7,14 @@
 2026-11-19 12:25 EST | owner upgraded the plan: no 5-hour window, weekly reset to 0% | pacing cron deleted; relaunched sim integration verify (wf_50363f21-9ac) and all nine client modules at once (wf_e3e367b0-3eb, limit 9)
 2026-11-19 17:20 EST | weekly 14% | owner lifted limits to ~75% weekly; helpers on hold; wave 2 launched (5 tracks) alongside C10
 2026-11-19 17:41 EST | weekly 18% | ~25 agents running (C10, wave 2, trees, 14 asset families); no new launches: machine at its limits (CPU 80-82 %, GPU 97 % at 17:35-17:40, mostly lab and integration Unreal runs that predate the slot rule)
+2026-11-19 18:42 EST | weekly 30% | ~20+ agents still running (wave 3, assets, wave 2); machine at load (CPU 79-100 %, GPU 27-96 %); no new launches
+2026-11-19 19:42 EST | weekly 41% | auto-resume check + usage guard: nothing stopped; ~20 agents running (wave 3, assets: 7 families verified, trees, texture pilot); CPU ~100 %; no new launches; next resume check 00:43
+2026-11-19 20:42 EST | weekly 50% | still ~15+ agents running (wave 3, remaining asset families, trees, texture pilot); no new launches
+2026-11-19 21:42 EST | weekly 55% | ~6-8 agents running (wave 3 remaining verifies + final, Flow texture generation, trees verify); asset wave done; remaining work (asset integration, terrain textures) waits for wave 3; no new launches
+2026-11-20 02:20 EST | the Claude session restarted around 22:20 (process exit); all workflows and schedules stopped and the machine sat idle until 02:18 (an unplanned ~4 h CPU cooldown; the governor kept running). Resumed wave 3 and the style pilot from cache; recreated the hourly check; the planned 01:57-03:43 cooldown is skipped since the machine already rested 4 h
+2026-11-20 02:41 EST | weekly 57% | governor -Cores 19 running (owner raised to 75-80 %), CPU 3-9 %, GPU 84 % (style pilot + wave 3 verifies); launched CPU-only sim track (design review findings 11 and 13); GPU jobs held
+2026-11-20 02:41 EST | weekly 57% | duplicate guard firing (older cron); same state as the 02:41 check; nothing new
+2026-11-20 03:35 EST | weekly 60% | governor Cores 19 ok; CPU 43-100 %, GPU 0 %; wave 3 towns-perf and planet-fixes verified (final check next); night-prep code-health done; style render, sim 11/13, night-prep running; no new launches (enough running; 75 % cap approaching)
+2026-11-20 04:35 EST | weekly 62% | all workflows active (transcripts updated 04:29-04:31; simrun and UnrealEditor running); night-prep 5/6 done (asset-integration still running); wave 3 final in progress; no new launches
+2026-11-20 05:35 EST | weekly 65% | style pilot sheets complete and sent to the owner; sim findings 11/13 built (verify running); wave 3 final and night-prep asset-integration running; no new launches
+2026-11-20 06:36 EST | weekly 67% | only wave 3 final running; launched one small sim track (chronicle lines for alliances/blame/thanks + stronger Omen of Peace); next: nothing new at 70 %+

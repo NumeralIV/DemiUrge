@@ -53,6 +53,7 @@ void ADmHud::BeginPlay()
 	Ctx = MakeShared<FDmHudContext>();
 	Ctx->Control.Bind(GetWorld());
 	Ctx->LoadHints();
+	Ctx->LoadGuide();
 	if (UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))
 	{
 		EventHandle = Sim->OnSimEvent.AddUObject(this, &ADmHud::OnSimEvent);
@@ -63,9 +64,11 @@ void ADmHud::BeginPlay()
 	if (GEngine && GEngine->GameViewport) GEngine->GameViewport->AddViewportWidgetContent(Added.ToSharedRef(), 20);
 	else UE_LOG(LogDmHud, Warning, TEXT("DmHud: no game viewport; the HUD is not shown"));
 	RefreshNow();
+	// (wave3-final, code-health U-3) name the shipped OFL families DmHudStyle really loads (DmFonts): the old line
+	// always said "Palatino Linotype / Segoe UI", which playtest 1 read as "the HUD ignored the shipped fonts"
 	UE_LOG(LogDmHud, Display, TEXT("DmHud: up (fonts: serif %s, sans %s)"),
-		FDmHudStyle::Get().HasFace(EDmFont::Serif) ? TEXT("Palatino Linotype") : TEXT("fallback"),
-		FDmHudStyle::Get().HasFace(EDmFont::Sans) ? TEXT("Segoe UI") : TEXT("fallback"));
+		FDmHudStyle::Get().HasFace(EDmFont::Serif) ? TEXT("EB Garamond / Cormorant Garamond (shipped)") : TEXT("engine fallback"),
+		FDmHudStyle::Get().HasFace(EDmFont::Sans) ? TEXT("Inter (shipped)") : TEXT("engine fallback"));
 }
 
 void ADmHud::EndPlay(const EEndPlayReason::Type Reason)

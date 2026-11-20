@@ -1,0 +1,7 @@
+]LogDmFlow: Display: DmFlow: title world = save "auto" (Nalheine, year 268) in 58 ms
+]LogDmHud: Display: DmHud: up (fonts: serif EB Garamond / Cormorant Garamond (shipped), sans Inter (shipped))
+]LogDmFlow: Display: DmFlow: boot -> title
+]LogDmMode: Display: DmStats: unit timers game=1 render=1 rhi=1 gpu=1
+]LogDmMode: Display: DmStats frame 10.63 ms (max 25.75, 94 fps) game 1.06 render 10.62 rhi 3.99 gpu 9.80 ms (max 11.78) over 60 frames | sim 0.000 ms/tick, 0 ticks, 0 dropped, 1 events
+]LogDmMode: Display: DmShot C:/Users/Relly/Documents/Fable5.2 Test/demiurge/shots/ue-final-package-title.png (frame 360)
+]LogWindows: FPlatformMisc::RequestExitWithStatus(0, 0, DmShot)

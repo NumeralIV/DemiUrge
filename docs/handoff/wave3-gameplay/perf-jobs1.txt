@@ -1,0 +1,16 @@
+a-kind-1: thread CPU mean 2.289 ms, max 23.36 ms
+a-kind-2: thread CPU mean 2.354 ms, max 23.96 ms
+a-kind-3: thread CPU mean 2.507 ms, max 26.87 ms
+a-kind-4: thread CPU mean 2.517 ms, max 24.41 ms
+a-passive-1: thread CPU mean 2.091 ms, max 22.66 ms
+a-passive-2: thread CPU mean 1.931 ms, max 25.51 ms
+a-passive-3: thread CPU mean 2.032 ms, max 24.95 ms
+a-passive-4: thread CPU mean 2.063 ms, max 27.17 ms
+b-kind-1: thread CPU mean 2.496 ms, max 25.23 ms
+b-kind-2: thread CPU mean 2.486 ms, max 27.72 ms
+b-kind-3: thread CPU mean 2.590 ms, max 22.88 ms
+b-kind-4: thread CPU mean 2.461 ms, max 24.25 ms
+b-passive-1: thread CPU mean 1.926 ms, max 20.89 ms
+b-passive-2: thread CPU mean 1.777 ms, max 21.27 ms
+b-passive-3: thread CPU mean 2.019 ms, max 30.81 ms
+b-passive-4: thread CPU mean 1.873 ms, max 25.78 ms

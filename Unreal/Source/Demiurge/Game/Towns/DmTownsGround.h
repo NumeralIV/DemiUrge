@@ -35,6 +35,15 @@ public:
 	/** Build the best snapshot available now (game thread). bOutPending: a placeholder planet exists but
 	 *  has no mesh yet (try again next frame). */
 	static TSharedPtr<const FDmTownsGround, ESPMode::ThreadSafe> Snapshot(UWorld* World, const dm::World& W, bool& bOutPending);
+	/** (towns-perf) The same, but when the source is the planet terrain its (expensive, ~10 ms) copy is left to the caller:
+	 *  OutDeferred is set to the planet's current snapshot (valid on the game thread now only: read its Loc and Version);
+	 *  the caller completes the snapshot with AdoptPlanetTerrain or AdoptPlanetCopy before sharing it. */
+	static TSharedPtr<FDmTownsGround, ESPMode::ThreadSafe> SnapshotDeferred(UWorld* World, const dm::World& W, bool& bOutPending, const class FDmPlanetTerrain** OutDeferred);
+	/** Completes a deferred snapshot (before it is shared): copies the planet terrain. Thread-safe on an unshared snapshot. */
+	void AdoptPlanetCopy(const class FDmPlanetTerrain& Src);
+	/** Completes a deferred snapshot with a planet terrain of our own (captured from the world like the planet's, then
+	 *  prepared on a worker: identical heights, no copy, no dependency on the planet's snapshot). Unshared snapshot only. */
+	void AdoptPlanetTerrain(const TSharedPtr<const class FDmPlanetTerrain, ESPMode::ThreadSafe>& T);
 	/** A cheap signature of what Snapshot would read (changes when the planet mesh is rebuilt). */
 	static uint64 Signature(UWorld* World);
 
@@ -57,6 +66,8 @@ public:
 	FVector Normal(const FVector& Dir, double StepM = 6.0) const;
 
 	ESource GetSource() const { return Source; }
+	/** The planet terrain this snapshot evaluates (PlanetTerrain source), else nullptr. */
+	const class FDmPlanetTerrain* PlanetTerrain() const { return Planet.Get(); }
 	const TCHAR* SourceName() const;
 	double SeaRadiusUU = 1.0e7;
 	double SeaHeightM() const { return (SeaRadiusUU - 1.0e7) * 0.01; }

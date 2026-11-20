@@ -51,6 +51,26 @@ namespace
 		return C->name.empty() ? FString(TEXT("a people")) : U(C->name);
 	}
 
+	FString PluralOf(const dm::World& W, int32 Id)
+	{
+		const dm::Culture* C = dm::state::culture(W, Id);
+		if (!C) return TEXT("people");
+		FString P = C->plural.empty() ? U(C->name) : U(C->plural);
+		if (P.StartsWith(TEXT("the "), ESearchCase::IgnoreCase)) P.RightChopInline(4);
+		return P.IsEmpty() ? FString(TEXT("people")) : P;
+	}
+
+	/** "A", "A and B", "A, B and 3 more". */
+	FString NameList(const TArray<FString>& Names, int32 Count)
+	{
+		const int32 Shown = FMath::Min(Names.Num(), 2);
+		if (Shown == 0) return FString();
+		const int32 More = Count - Shown;
+		if (Shown == 1) return More > 0 ? FString::Printf(TEXT("%s and %d more"), *Names[0], More) : Names[0];
+		if (More <= 0) return FString::Printf(TEXT("%s and %s"), *Names[0], *Names[1]);
+		return FString::Printf(TEXT("%s, %s and %d more"), *Names[0], *Names[1], More);
+	}
+
 	FString PrayerWord(dm::PrayerKind K)
 	{
 		switch (K)
@@ -108,7 +128,7 @@ FString FDmHudContext::RegardWordOf(dm::Mood M)
 	case dm::Mood::Beloved: return TEXT("Beloved");
 	case dm::Mood::Feared: return TEXT("Feared");
 	case dm::Mood::Forgotten: return TEXT("Forgotten");
-	default: return TEXT("Regarded");
+	default: return TEXT("In parting");
 	}
 }
 
@@ -230,19 +250,79 @@ void FDmHudContext::TriggerHint(int32 Index)
 	if (!bHintsEnabled || Index < 0 || Index > 6 || HintsSeen.Contains(Index) || HintShown == Index || HintQueue.Contains(Index)) return;
 	HintsSeen.Add(Index);
 	SaveHints();
-	if (HintShown < 0) { HintShown = Index; HintBorn = Now; }
-	else HintQueue.Add(Index);
+	// hints wait in teaching order (the index is the order they teach in); one that arrives while none is up
+	// waits a moment (HintGather) so that hints arriving together still show in that order (review finding 12:
+	// the shrine hint came before "your people are awake")
+	if (HintShown < 0 && HintQueue.Num() == 0) HintQueueSince = Now;
+	HintQueue.Add(Index);
+	HintQueue.Sort();
 }
 
 void FDmHudContext::DismissHint()
 {
+	if (HintShown >= 0 && HintHistory.Num() > 0 && HintHistory.Last().Index == HintShown) HintHistory.Last().Shown = Now - HintHistory.Last().Born;
 	HintShown = -1;
 	if (HintQueue.Num() > 0)
 	{
 		HintShown = HintQueue[0];
 		HintQueue.RemoveAt(0);
 		HintBorn = Now;
+		FDmHudHintRecord R; R.Index = HintShown; R.Born = Now; R.Year = WorldYear;
+		HintHistory.Add(R);
 	}
+}
+
+// ------------------------------------------------------------------ the guidance thread
+
+const FDmGuideStep& FDmHudContext::GuideStep(int32 Index)
+{
+	static const FDmGuideStep Steps[GuideStepCount] = {
+		{ TEXT("Find your people"), TEXT("Click a town to see what its people need. Close its panel with the cross to look around again."), TEXT("people") },
+		{ TEXT("Make it rain"), TEXT("Arm Rain (N) and hold it over dry ground near a town. Every miracle they see makes them believe a little more."), TEXT("rain") },
+		{ TEXT("How they will remember you"), TEXT("Click the small map beside your name, under the Awe orb: it shows how they would remember you if the story ended now."), TEXT("heart") },
+		{ TEXT("Answer a prayer"), TEXT("When a town prays (it shows under Now), give it what it asks for. An answered prayer is remembered twice over."), TEXT("praying") },
+		{ TEXT("A shrine"), TEXT("Let them raise a shrine: your Awe will hold more and fill faster. Their faith pays for every miracle."), TEXT("shrine") },
+		{ TEXT("Read the chronicle"), TEXT("Open the chronicle, top right, to read what they write about you."), TEXT("scroll") },
+		{ TEXT("Speak through a prophet"), TEXT("From the Iron Age, raise a Prophet (P) in a town, then choose an edict for that people in the town's panel."), TEXT("prophet") },
+	};
+	return Steps[FMath::Clamp(Index, 0, GuideStepCount - 1)];
+}
+
+FString FDmHudContext::GuidePath() const
+{
+	return FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Demiurge"), TEXT("guide.v1.txt"));
+}
+
+void FDmHudContext::LoadGuide()
+{
+	FString Text;
+	bGuideDismissed = FFileHelper::LoadFileToString(Text, *GuidePath()) && Text.Contains(TEXT("dismissed"));
+}
+
+void FDmHudContext::DismissGuide()
+{
+	bGuideDismissed = true;
+	bGuideVisible = false;
+	IFileManager::Get().MakeDirectory(*FPaths::GetPath(GuidePath()), true);
+	FFileHelper::SaveStringToFile(FString(TEXT("dismissed")), *GuidePath());
+}
+
+void FDmHudContext::ResetGuide()
+{
+	bGuideDismissed = false;
+	bGuideCollapsed = false;
+	GuideDone = 0;
+	GuideCurrent = 0;
+	GuidePrevSelected = -2;
+	GuideJustDone.Reset();
+	GuideJustDoneAt = -100;
+	IFileManager::Get().Delete(*GuidePath(), false, true, true);
+}
+
+void FDmHudContext::ToggleRemember()
+{
+	bRememberOpen = !bRememberOpen;
+	if (bRememberOpen) bRememberEverOpened = true;
 }
 
 // ------------------------------------------------------------------ toasts, banner
@@ -250,14 +330,66 @@ void FDmHudContext::DismissHint()
 void FDmHudContext::PushToast(const FString& Text, const FString& Kind, double Life)
 {
 	if (Text.IsEmpty()) return;
+	++ToastsPushed;
+	// the same words again while that toast is up: it counts ("x 3") and stays up without replaying its fade-in
 	for (FDmHudToast& T : Toasts)
-		if (T.Text == Text && Now - T.Born < T.Life) { T.Born = Now; ++T.Count; return; }
+		if (!T.bGrouped && T.Text == Text && Now - T.Born < T.Life + 0.6) { T.Born = Now - 0.25; ++T.Count; return; }
 	FDmHudToast T;
 	T.Text = Text;
 	T.Kind = Kind.IsEmpty() ? FString(TEXT("info")) : Kind;
 	T.Born = Now;
 	T.Life = Life;
 	Toasts.Add(T);
+	++ToastsCreated;
+	while (Toasts.Num() > 4) Toasts.RemoveAt(0);
+}
+
+FString FDmHudContext::GroupedText(const FString& Key, const FDmHudToastGroup& G)
+{
+	const FString First = G.Names.Num() > 0 ? G.Names[0] : FString(TEXT("a town"));
+	const FString List = NameList(G.Names, G.Count);
+	if (Key == TEXT("prayer"))
+		return G.Count <= 1 ? FString::Printf(TEXT("%s's prayer is answered"), *First) : FString::Printf(TEXT("%d prayers answered: %s"), G.Count, *List);
+	if (Key == TEXT("lost"))
+		return G.Count <= 1 ? FString::Printf(TEXT("%s is lost"), *First) : FString::Printf(TEXT("%d towns are lost: %s"), G.Count, *List);
+	if (Key == TEXT("wake"))
+		return FString::Printf(TEXT("%s %s in your hands."), *List, G.Count <= 1 ? TEXT("wakes") : TEXT("wake"));
+	if (Key == TEXT("war"))
+		return G.Count <= 1 ? FString::Printf(TEXT("War: %s"), *First) : FString::Printf(TEXT("%d wars begin: %s"), G.Count, *List);
+	return G.Count <= 1 ? First : FString::Printf(TEXT("%s (%d)"), *First, G.Count);
+}
+
+void FDmHudContext::PushGrouped(const FString& Key, const FString& Name, const FString& Kind, double Life)
+{
+	if (Key.IsEmpty()) { PushToast(Name, Kind, Life); return; }
+	++ToastsPushed;
+	FDmHudToastGroup& G = ToastGroups.FindOrAdd(Key);
+	const bool bOpen = Now - G.First < ToastMergeSeconds;
+	if (!bOpen) { G.First = Now; G.Count = 0; G.Names.Reset(); }
+	++G.Count;
+	if (G.Names.Num() < 3 && !Name.IsEmpty() && !G.Names.Contains(Name)) G.Names.Add(Name);
+	const FString Text = GroupedText(Key, G);
+	// the group's row while it is still up: it grows ("3 prayers answered") and stays up without replaying its
+	// fade-in. Verifier fix: also when a new window opens while the old row is still up (a steady stream for
+	// longer than 10 s): before, a second row of the same group appeared and later merges went to the stale one.
+	for (FDmHudToast& T : Toasts)
+		if (T.Key == Key)
+		{
+			T.Text = Text;
+			T.Born = Now - 0.25;
+			T.Life = FMath::Max(T.Life, Life);
+			return;
+		}
+	// a new row: the group has no row up (the window just opened, or its row faded: it comes back with the count)
+	FDmHudToast T;
+	T.Text = Text;
+	T.Kind = Kind.IsEmpty() ? FString(TEXT("info")) : Kind;
+	T.Born = Now;
+	T.Life = Life;
+	T.Key = Key;
+	T.bGrouped = true;
+	Toasts.Add(T);
+	++ToastsCreated;
 	while (Toasts.Num() > 4) Toasts.RemoveAt(0);
 }
 
@@ -344,11 +476,58 @@ void FDmHudContext::Refresh(const dm::World* W)
 	Md.IncomeText = FString::Printf(TEXT("+%.1f / yr"), Md.AweIncome);
 	const std::vector<int> Live = dm::civ::live(*W);
 	Md.bBelievers = !Live.empty();
-	const dm::society::Regard R = dm::society::regard(*W);
-	Md.Mood = R.mood;
-	Md.RegardWord = RegardWordOf(R.mood);
-	Md.RegardIcon = RegardIconOf(R.mood);
+	// how they will remember you: the culture the ending would ask (the Ark's people once they build it, else
+	// the leading culture), with the ending's own rule (Sim checkEnding: society::memory(culture).mood), so the
+	// word and the ending agree (review finding 12). Verifier fix: the sim's v3 verdict is the long memory
+	// (grace / wrath, silence, two hands, answered prayers), not today's love on the old SimTune thresholds.
+	{
+		const dm::SocietyTune& T = W->tune<dm::SocietyTune>();
+		Md.TBelovedDev = float(T.belovedDevotion);
+		Md.TBelovedLove = float(T.belovedLove);
+		Md.TFearedLove = float(T.fearedLove);
+		Md.TForgottenDev = float(T.forgottenDevotion);
+		int32 Asked = Lead;
+		if (W->vars.ark.has_value())
+			if (const dm::Culture* AC = dm::state::culture(*W, W->vars.ark->culture)) if (!AC->dead) Asked = AC->id;
+		const dm::society::Memory Mem = dm::society::memory(*W, Asked);
+		Md.RegardCulture = Asked;
+		// across: the verdict (what they remember of the god's deeds, with today's love); up: devotion
+		Md.RegardLove = float(FMath::Clamp(Mem.verdict, -1.0, 1.0));
+		Md.RegardDevotion = float(FMath::Clamp(Mem.devotion, 0.0, 1.0));
+		Md.Mood = Mem.mood;
+		// "Watched" until these people have witnessed a deed of the god (grace or wrath in their memory; rain
+		// over an empty sea, or a natural disaster, does not count)
+		Md.bWatched = Asked < 0 || !(Mem.grace + Mem.wrath > 1e-6);
+		const dm::Culture* AC = dm::state::culture(*W, Asked);
+		Md.RegardColor = AC ? DmCultureColor(AC->color) : FDmHudStyle::Get().Dim;
+		Md.RegardCultureName = Asked >= 0 ? FString::Printf(TEXT("the %s"), *PluralOf(*W, Asked)) : FString(TEXT("your people"));
+		Md.RegardWord = Md.bWatched ? FString(TEXT("Watched")) : RegardWordOf(Md.Mood);
+		Md.RegardIcon = Md.bWatched ? FName(TEXT("eye")) : RegardIconOf(Md.Mood);
+		if (Md.bGenesis || Asked < 0) Md.RegardLine = TEXT("No one is awake to remember you yet.");
+		else if (Md.bWatched) Md.RegardLine = FString::Printf(TEXT("The %s are watching the sky. They have not seen you do anything yet."), *PluralOf(*W, Asked));
+		else Md.RegardLine = FString::Printf(TEXT("If the story ended now, %s would leave you %s."), *Md.RegardCultureName, *MoodPhrase(Md.Mood));
+		// why, when the rule is not where the dot stands (the map shows verdict and devotion only)
+		Md.RegardWhy.Reset();
+		if (!Md.bGenesis && Asked >= 0 && !Md.bWatched)
+		{
+			if (Mem.silent >= T.silentYears)
+				Md.RegardWhy = FString::Printf(TEXT("You have been silent for %d years: an absent god is %s."), FMath::RoundToInt(Mem.silent), Mem.remembered ? TEXT("parted from, not loved") : TEXT("forgotten"));
+			else if (Mem.mixed)
+				Md.RegardWhy = TEXT("They remember both your hands, the kind and the cruel: they will part from you uneasy.");
+			else if (Md.Mood == dm::Mood::Beloved && !(Mem.verdict >= T.belovedLove && Mem.devotion >= T.belovedDevotion))
+				Md.RegardWhy = FString::Printf(TEXT("You answered %d of their %d prayers: that alone makes them love you."), Mem.answered, Mem.prayers);
+			else if (W->vars.ark.has_value() && T.arkNoMemory)
+				Md.RegardWhy = TEXT("They are building the Ark: what you do now moves their love, but it is too late to change their memory.");
+		}
+		if (!Md.bGenesis && Asked >= 0 && Now - LastTrailSample >= 1.0)
+		{
+			LastTrailSample = Now;
+			RegardTrail.Add(FVector2f(Md.RegardLove, Md.RegardDevotion));
+			while (RegardTrail.Num() > 90) RegardTrail.RemoveAt(0);
+		}
+	}
 	Md.Epithet = W->god.epithet.empty() ? FString(TEXT("the Unnamed")) : U(W->god.epithet);
+	WorldYear = W->year;
 
 	// people, cultures, climate
 	Md.LiveCultures.Reset();
@@ -366,6 +545,20 @@ void FDmHudContext::Refresh(const dm::World* W)
 	Md.bShowSea = Md.bGenesis ? false : FMath::Abs(SeaM) >= 1.0;
 	Md.bSeaBad = SeaM > 5.0;
 	Md.SeaText = Signed(SeaM, 0) + TEXT(" m");
+	// why the sea rose (review findings 7 and 12): said once at +3, +10 and +25 m
+	if (!Md.bGenesis)
+	{
+		static const double SeaMarks[3] = { 3.0, 10.0, 25.0 };
+		if (SeaToldIndex < 0) { SeaToldIndex = 0; while (SeaToldIndex < 3 && SeaM >= SeaMarks[SeaToldIndex]) ++SeaToldIndex; }
+		else if (SeaToldIndex < 3 && SeaM >= SeaMarks[SeaToldIndex])
+		{
+			const int32 Metres = FMath::RoundToInt(SeaM);
+			PushToast(Anom > 0.2   // (verifier) the inspector's own threshold for "the world has warmed" (was 0.05)
+				? FString::Printf(TEXT("The sea has risen %d m: the world is warmer and its ice is melting."), Metres)
+				: FString::Printf(TEXT("The sea has risen %d m."), Metres), TEXT("info"), 7.0);
+			while (SeaToldIndex < 3 && SeaM >= SeaMarks[SeaToldIndex]) ++SeaToldIndex;
+		}
+	}
 
 	// the Ark
 	Md.bArk = W->vars.ark.has_value() && !W->ending;
@@ -470,7 +663,7 @@ void FDmHudContext::Refresh(const dm::World* W)
 		{
 			P.PulseStart = Now;
 			bAnyNew = true;
-			PushToast(FString::Printf(TEXT("%s wakes in your hands."), *P.Name), TEXT("good"));
+			PushGrouped(TEXT("wake"), P.Name, TEXT("good"));
 		}
 		if (bUnlocked) UnlockedBefore.Add(P.Id); else UnlockedBefore.Remove(P.Id);
 		Sig = Sig * 31u + (P.bVisible ? 1u : 0u);
@@ -506,6 +699,47 @@ void FDmHudContext::Refresh(const dm::World* W)
 	// hint 2 (Awe >= 20) and hint 1 (history began) are state triggers
 	if (!Md.bGenesis && Md.bBelievers) TriggerHint(0);
 	if (!Md.bGenesis && W->god.awe >= 20.0) TriggerHint(1);
+
+	RefreshGuide(W);
+}
+
+// ------------------------------------------------------------------ the guidance thread (4 Hz)
+
+void FDmHudContext::RefreshGuide(const dm::World* W)
+{
+	if (!W) return;
+	const bool bHistory = !M.bGenesis;
+	if (bChronicleOpen) bChronicleEverOpened = true;
+	const int32 Sel = Control.Selected();
+	if (bHistory)
+	{
+		// a town the player clicked: a selection that follows a moment with none (the flow's own first selection
+		// of the camp after the awakening does not count)
+		if (GuidePrevSelected == -1 && Sel >= 0) GuideDone |= 1u << 0;
+		GuidePrevSelected = Sel;
+		const auto Deed = W->god.deeds.find("rain");
+		if (Deed != W->god.deeds.end() && Deed->second > 0) GuideDone |= 1u << 1;
+		if (bRememberEverOpened) GuideDone |= 1u << 2;
+		if (bPrayerAnswered) GuideDone |= 1u << 3;
+		for (const dm::Settlement& S : W->settlements)
+			if (!S.dead && S.b[size_t(dm::Building::SHRINE)]) { GuideDone |= 1u << 4; break; }
+		if (bChronicleEverOpened) GuideDone |= 1u << 5;
+		for (const dm::Culture& C : W->cultures)
+			if (!C.dead && C.edict != dm::Edict::None) { GuideDone |= 1u << 6; break; }
+	}
+	int32 Cur = 0;
+	while (Cur < GuideStepCount && (GuideDone & (1u << Cur))) ++Cur;
+	if (Cur != GuideCurrent)
+	{
+		if (GuideCurrent < GuideStepCount && (GuideDone & (1u << GuideCurrent)))
+		{
+			GuideJustDone = GuideStep(GuideCurrent).Title;
+			GuideJustDoneAt = Now;
+		}
+		GuideCurrent = Cur;
+		GuideStepBorn = Now;
+	}
+	bGuideVisible = bHistory && M.bBelievers && !bGuideDismissed && GuideCurrent < GuideStepCount && bPlayState && !bEnded;
 }
 
 // ------------------------------------------------------------------ now strip (2 Hz)
@@ -611,7 +845,7 @@ void FDmHudContext::OnEvent(const dm::Event& E, const dm::World* W)
 	if (const dm::EvWarDeclared* Wd = E.as<dm::EvWarDeclared>())
 	{
 		TriggerHint(4);
-		if (W) PushToast(FString::Printf(TEXT("War: %s against %s"), *CultureName(*W, Wd->a), *CultureName(*W, Wd->b)), TEXT("bad"));
+		if (W) PushGrouped(TEXT("war"), FString::Printf(TEXT("%s against %s"), *CultureName(*W, Wd->a), *CultureName(*W, Wd->b)), TEXT("bad"));
 		return;
 	}
 	if (const dm::EvWorldAge* A = E.as<dm::EvWorldAge>())
@@ -623,14 +857,15 @@ void FDmHudContext::OnEvent(const dm::Event& E, const dm::World* W)
 	if (E.as<dm::EvArkStarted>()) { TriggerHint(6); return; }
 	if (const dm::EvPrayerAnswered* Pa = E.as<dm::EvPrayerAnswered>())
 	{
+		bPrayerAnswered = true;
 		if (W && Pa->id >= 0 && Pa->id < int(W->settlements.size()))
-			PushToast(FString::Printf(TEXT("%s's prayer is answered"), *U(W->settlements[size_t(Pa->id)].name)), TEXT("good"));
+			PushGrouped(TEXT("prayer"), U(W->settlements[size_t(Pa->id)].name), TEXT("good"));
 		return;
 	}
 	if (const dm::EvSettlementDestroyed* D = E.as<dm::EvSettlementDestroyed>())
 	{
 		if (W && D->id >= 0 && D->id < int(W->settlements.size()) && W->settlements[size_t(D->id)].tier >= 1)
-			PushToast(FString::Printf(TEXT("%s is lost"), *U(W->settlements[size_t(D->id)].name)), TEXT("bad"));
+			PushGrouped(TEXT("lost"), U(W->settlements[size_t(D->id)].name), TEXT("bad"));
 		return;
 	}
 }
@@ -640,7 +875,9 @@ void FDmHudContext::Tick(double InNow)
 	Now = InNow;
 	for (int32 I = Toasts.Num() - 1; I >= 0; --I)
 		if (Now - Toasts[I].Born > Toasts[I].Life + 0.6) Toasts.RemoveAt(I);
-	if (HintShown >= 0 && Now - HintBorn > 45.0) DismissHint();
+	// a hint leaves by itself (review finding 12: the shrine hint stayed for 2,300 years and held the queue back)
+	if (HintShown >= 0 && Now - HintBorn > HintSeconds) DismissHint();
+	if (HintShown < 0 && HintQueue.Num() > 0 && Now - HintQueueSince >= HintGather) DismissHint();   // shows the first waiting
 }
 
 // ------------------------------------------------------------------ worlds
@@ -664,4 +901,15 @@ void FDmHudContext::ResetWorld()
 	M.Now.Reset();
 	NowCycle = 0;
 	bEnded = false;
+	ToastGroups.Reset();
+	RegardTrail.Reset();
+	LastTrailSample = -100;
+	SeaToldIndex = -1;
+	bPrayerAnswered = false;
+	GuideDone = 0;
+	GuideCurrent = 0;
+	GuidePrevSelected = -2;
+	GuideJustDone.Reset();
+	GuideJustDoneAt = -100;
+	bRememberOpen = false;
 }

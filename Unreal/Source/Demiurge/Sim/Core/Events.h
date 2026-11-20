@@ -178,9 +178,11 @@ struct EvWorldAge { static constexpr Ev kType = Ev::WorldAge; int age = 0;
 	template <class F> void fields(F&& f) const { DM_F(age); } };
 // a = aggressor (culture ids). (v3.1, design review 11/13) ally = the culture whose call to arms a
 // joined (a is its ally and b attacked it; -1: a war of a's own); blamed = a's people blamed the god for
-// this war (the god struck them, or favoured b over them, in the last decades: they turned on b)
-struct EvWarDeclared { static constexpr Ev kType = Ev::WarDeclared; int a = -1; int b = -1; int ally = -1; bool blamed = false;
-	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); DM_F(ally); DM_F(blamed); } };
+// this war (the god struck them, or favoured b over them, in the last decades: they turned on b).
+// (chronicle-diplomacy) envied = the blame was envy: the god's favour of b over a weighed more than its
+// wrath on a ("the god favoured them"); blamed && !envied: "the god struck us". Never true without blamed.
+struct EvWarDeclared { static constexpr Ev kType = Ev::WarDeclared; int a = -1; int b = -1; int ally = -1; bool blamed = false; bool envied = false;
+	template <class F> void fields(F&& f) const { DM_F(a); DM_F(b); DM_F(ally); DM_F(blamed); DM_F(envied); } };
 // victor = culture id, -1 = draw. (v3.1) thanked = the victor's people thanked the god for the victory
 // (the god's grace was with them while they fought: their devotion rose, the loser's love fell)
 struct EvWarEnded { static constexpr Ev kType = Ev::WarEnded; int a = -1; int b = -1; int victor = -1; bool thanked = false;

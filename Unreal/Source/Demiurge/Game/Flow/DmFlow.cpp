@@ -11,6 +11,8 @@
 #include "Game/Planet/DmPlanet.h"
 #include "Game/UI/Screens/DmScreenSubsystem.h"
 
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
@@ -148,6 +150,7 @@ void ADmFlow::SetState(EDmFlowState S)
 {
 	if (State == S) return;
 	UE_LOG(LogDmFlow, Display, TEXT("DmFlow: %s -> %s"), StateName(State), StateName(S));
+	if (State == EDmFlowState::Ending) StopCine();
 	State = S;
 	EmitUiState();
 	UpdateInputGate();
@@ -228,11 +231,14 @@ void ADmFlow::EnterPlay()
 		// the genesis power of the phase we are in (a new world starts molten: comets come with the water)
 		if (W)
 		{
+			// (wave3-final) ArmPower toggles: loading a genesis save while its power was armed (a Water save loaded
+			// in the Water phase) disarmed the comet, so the player's clicks did nothing. Arm only when not armed.
+			auto ArmGenesis = [C](const TCHAR* Id) { if (C->GetArmedPower() != Id) C->ArmPower(Id); };
 			switch (W->phase)
 			{
-			case dm::Phase::Water: C->ArmPower(TEXT("comet")); break;
-			case dm::Phase::Life: C->ArmPower(TEXT("seed")); break;
-			case dm::Phase::People: C->ArmPower(TEXT("awaken")); break;
+			case dm::Phase::Water: ArmGenesis(TEXT("comet")); break;
+			case dm::Phase::Life: ArmGenesis(TEXT("seed")); break;
+			case dm::Phase::People: ArmGenesis(TEXT("awaken")); break;
 			default: C->Disarm(); break;
 			}
 		}
@@ -250,6 +256,18 @@ void ADmFlow::OnScreenFlow(EDmFlow F)
 	case EDmFlow::Continue:
 	case EDmFlow::Loaded:
 		EnterPlay();
+		// (wave3-final) a save made in the ending's tick or its camera hold holds an ended world whose Ending event
+		// is spent: EnterPlay left it in play with no ending screen, ever. An ended world opens on its ending screen
+		// (Keep playing returns to it, as after a live ending).
+		if (F != EDmFlow::NewWorld)
+			if (UDmSimSubsystem* S = Sim())
+				if (const dm::World* W = S->Sim(); W && W->phase == dm::Phase::Ended)
+				{
+					bEndingPending = true;
+					EndingTimer = FMath::Max(0.0, EndingHoldSeconds - 0.5);
+					SetState(EDmFlowState::Ending);
+					UE_LOG(LogDmFlow, Display, TEXT("DmFlow: the loaded world has ended: its ending screen opens"));
+				}
 		break;
 	case EDmFlow::ExitToTitle:
 		bBackdrop = true;
@@ -312,6 +330,7 @@ void ADmFlow::OnWorldChanged(const dm::World* W)
 {
 	// a new world resets the HUD's model: tell it the state again once every listener has seen the new world
 	bStatePending = true;
+	StopCine();
 	bFirstAwakenDone = W && W->phase >= dm::Phase::History;
 }
 
@@ -380,6 +399,7 @@ void ADmFlow::OnSimEvent(const dm::Event& E)
 			if (En->type == dm::EndingType::Ark && EndingCell >= 0)
 			{
 				if (UDmControlSubsystem* Ct = Control()) Ct->FlyToCell(EndingCell, 0.42f, 3.0f);
+				StartCine(EndingCell);   // then the cut to the launch camera
 			}
 			else if (ADmPawn* P = Pawn())
 			{
@@ -439,16 +459,105 @@ void ADmFlow::Tick(float DeltaSeconds)
 		}
 		break;
 	case EDmFlowState::Ending:
+		TickCine(Dt);
 		if (bEndingPending)
 		{
 			EndingTimer += Dt;
 			if (EndingTimer >= EndingHoldSeconds)
 			{
 				bEndingPending = false;
+				StopCine();   // the ending screen opens over the planet as the player left it
 				if (Sc) Sc->ShowEnding();
 			}
 		}
 		break;
 	default: break;
 	}
+}
+
+// ------------------------------------------------------------------ the Ark's launch camera
+
+void ADmFlow::StartCine(int32 Cell)
+{
+	const UDmSimSubsystem* S = Sim();
+	const dm::World* W = S ? S->Sim() : nullptr;
+	if (!W || !W->valid(Cell)) return;
+	bCine = true;
+	bCineCut = false;
+	CineTime = 0.0;
+	CineCell = Cell;
+}
+
+void ADmFlow::PlaceCine()
+{
+	UDmSimSubsystem* S = Sim();
+	const dm::World* W = S ? S->Sim() : nullptr;
+	if (!W || !W->valid(CineCell) || !W->geo) return;
+	CineUp = DmCoords::CellDir(*W, CineCell);
+	CinePad = DmCoords::CellSurfacePos(*W, CineCell);
+	FVector E, N;
+	DmCoords::Basis(CineUp, E, N);
+	// look across the pad with the sun to the side (read at the cut: a scenario may have placed the sun meanwhile)
+	const FVector SunP = S->GetPlanetToWorld().InverseTransformVectorNoScale(S->GetSunDirection()).GetSafeNormal();
+	const FVector SunH = SunP - CineUp * FVector::DotProduct(SunP, CineUp);
+	FVector Look = SunH.SizeSquared() < 1e-6 ? N : SunH.GetSafeNormal();
+	Look = Look.RotateAngleAxis(CineSunOffsetDeg, CineUp).GetSafeNormal();
+	const double Pt = FMath::DegreesToRadians(CinePitchDeg);
+	const FVector Fwd = (Look * FMath::Cos(Pt) - CineUp * FMath::Sin(Pt)).GetSafeNormal();
+	CineEye = CinePad - Fwd * (CineDistKm * DmCoords::UUPerKm);
+	// clear of the ground (and the sea) under the eye by at least 1.2 km
+	const FVector EyeDir = CineEye.GetSafeNormal();
+	const dm::Vec3 Sv = DmCoords::UEToSim(EyeDir);
+	const int32 EyeCell = W->geo->cellAt(Sv.x, Sv.y, Sv.z);
+	const double GroundUU = DmCoords::HeightToRadiusUU(DmCoords::SurfaceHeight(*W, EyeCell));
+	if (CineEye.Size() < GroundUU + 1.2 * DmCoords::UUPerKm) CineEye = EyeDir * (GroundUU + 1.2 * DmCoords::UUPerKm);
+	if (!CineCam)
+	{
+		FActorSpawnParameters P;
+		P.ObjectFlags |= RF_Transient;
+		CineCam = GetWorld()->SpawnActor<ACameraActor>(P);
+		if (CineCam && CineCam->GetCameraComponent())
+		{
+			CineCam->GetCameraComponent()->bConstrainAspectRatio = false;
+			CineCam->GetCameraComponent()->SetFieldOfView(float(CineFovDeg));
+		}
+	}
+}
+
+void ADmFlow::TickCine(float Dt)
+{
+	if (!bCine) return;
+	UDmSimSubsystem* S = Sim();
+	if (!S || !S->Sim()) { StopCine(); return; }
+	CineTime += Dt;
+	if (!bCineCut)
+	{
+		if (CineTime < CineCutAt) return;
+		PlaceCine();
+		APlayerController* PC = GetWorld()->GetFirstPlayerController();
+		if (!CineCam || !PC) { bCine = false; return; }
+		PC->SetViewTarget(CineCam);
+		bCineCut = true;
+		UE_LOG(LogDmFlow, Display, TEXT("DmFlow: the launch camera (%.0f km off, %.0f deg)"), CineDistKm, CinePitchDeg);
+	}
+	// the aim follows the Ark up (the launch effect climbs at about 0.28 km/s^2: Game/FX FArk), a little below it
+	// so the plume and the pad stay in the frame
+	const double Hkm = FMath::Min(0.5 * 0.28 * CineTime * CineTime, 40.0);
+	const FVector Aim = CinePad + CineUp * ((0.8 + 0.7 * Hkm) * DmCoords::UUPerKm);
+	const FTransform P2W = S->GetPlanetToWorld();
+	const FVector Loc = P2W.TransformPosition(CineEye);
+	const FVector Fwd = P2W.TransformVectorNoScale((Aim - CineEye).GetSafeNormal());
+	const FVector Up = P2W.TransformVectorNoScale(CineEye.GetSafeNormal());
+	CineCam->SetActorLocationAndRotation(Loc, FRotationMatrix::MakeFromXZ(Fwd, Up).Rotator());
+}
+
+void ADmFlow::StopCine()
+{
+	if (!bCine) return;
+	const bool bWasCut = bCineCut;
+	bCine = false;
+	bCineCut = false;
+	if (bWasCut)
+		if (APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr)
+			if (ADmPawn* P = Pawn()) PC->SetViewTarget(P);
 }

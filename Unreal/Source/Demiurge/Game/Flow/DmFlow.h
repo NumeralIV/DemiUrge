@@ -8,7 +8,9 @@
 //   play     New World (screens) -> genesis (molten, cooling, comets, life wave, awakening) -> history at
 //            every speed; the HUD shows; autosave every 2 minutes and when the pause menu opens
 //   ending   on the sim's "ending" event: HUD hidden, 1x, the camera flies to the Ark's town (ark) or eases
-//            out to a far orbit (silence), holds while the launch plays, then the ending screen opens
+//            out to a far orbit (silence), holds while the launch plays, then the ending screen opens. The
+//            Ark's launch cuts to a low launch camera (wave 3): some 30 km off, just above the ground, the sun
+//            to its side, tilting up as the Ark climbs (the orbit rig cannot look at a horizon from that high)
 //   timelapse the screens' timelapse frames are shown on the planet (ADmPlanet::ShowSnapshot) while the
 //            camera slowly orbits; closing it restores the live colours
 //
@@ -25,6 +27,7 @@
 #include "Game/UI/Screens/DmScreenTypes.h"
 #include "DmFlow.generated.h"
 
+class ACameraActor;
 class UDmSimSubsystem;
 class UDmScreenSubsystem;
 class UDmControlSubsystem;
@@ -77,6 +80,14 @@ public:
 	bool bAutosave = true;               // the playthrough turns it off (it saves on purpose)
 	bool bAutoSlowAllowed = true;        // "slow down for great events" (the playthrough runs at full speed)
 
+	// the Ark's launch camera (ending): distance from the pad, height of the view line, side light, field of view
+	double CineDistKm = 30.0;
+	double CinePitchDeg = 4.0;           // the view line's tilt below the horizontal at the pad
+	double CineSunOffsetDeg = 105.0;     // the camera looks this far round from the sun's bearing (side light)
+	double CineFovDeg = 40.0;            // horizontal
+	double CineCutAt = 1.2;              // seconds after the ending event: cut from the fly-in to the launch camera
+	bool IsCinematic() const { return bCine && bCineCut; }
+
 	// counters for checks and logs
 	int32 Autosaves = 0;
 	int32 EndingsSeen = 0;
@@ -115,6 +126,18 @@ private:
 	bool bEndingPending = false;
 	double EndingTimer = 0.0;
 	int32 EndingCell = -1;
+
+	// the launch camera: planet-frame pad, its up, the eye (uu); placed at the cut, then only its aim moves
+	UPROPERTY(Transient)
+	TObjectPtr<ACameraActor> CineCam;
+	bool bCine = false, bCineCut = false;
+	double CineTime = 0.0;
+	int32 CineCell = -1;
+	FVector CinePad = FVector::ZeroVector, CineUp = FVector::UpVector, CineEye = FVector::ZeroVector;
+	void StartCine(int32 Cell);
+	void PlaceCine();
+	void TickCine(float Dt);
+	void StopCine();
 
 	// slow down for great events (autoSlow)
 	double SlowTimer = 0.0;

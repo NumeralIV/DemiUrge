@@ -1002,6 +1002,8 @@ void ADmFx::HandleEvent(const dm::Event& E)
 			else if (Id == "heal") AddEffect(DmFxFx::MakeBlessing(*this, P->cell, 0));
 			else if (Id == "inspire") AddEffect(DmFxFx::MakeBlessing(*this, P->cell, 1));
 			else if (Id == "peace") AddEffect(DmFxFx::MakePeace(*this, P->cell, 0.22));
+			// (wave3-final) Consecrate (v3 power) had no effect at all: the answered-prayer blessing over the town
+			else if (Id == "consecrate") AddEffect(DmFxFx::MakeBlessing(*this, P->cell, 2));
 		}
 		break;
 	case dm::Ev::SettlementFounded:

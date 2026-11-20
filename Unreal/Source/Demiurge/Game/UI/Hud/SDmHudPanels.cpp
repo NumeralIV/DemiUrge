@@ -27,6 +27,8 @@
 
 #include "Sim/Chronicle.h"
 #include "Sim/Civ.h"
+#include "Sim/Climate.h"
+#include "Sim/Powers.h"
 #include "Sim/Society.h"
 
 namespace
@@ -145,6 +147,27 @@ namespace
 			}
 		}
 		return false;
+	}
+
+	/** A plain-language line in the inspector's own style: a small icon, then a sentence (review finding 12). */
+	TSharedRef<SWidget> Explain(FName Icon, const FString& Line, const FLinearColor& IconCol, float Wrap)
+	{
+		const FDmHudStyle& S = FDmHudStyle::Get();
+		return SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Top).Padding(0, 2, 8, 0)[SNew(SDmIcon).Icon(Icon).Size(15.f).Color(IconCol)]
+			+ SHorizontalBox::Slot().FillWidth(1.f)[Text(Line, EDmFont::Serif, 14.f, S.Text, Wrap)];
+	}
+
+	/** The power that answers a prayer, as the player knows it. */
+	const TCHAR* PrayerPower(dm::PrayerKind K)
+	{
+		switch (K)
+		{
+		case dm::PrayerKind::Rain: return TEXT("Rain (N): hold it over the town");
+		case dm::PrayerKind::Heal: return TEXT("Heal (T) on the town");
+		case dm::PrayerKind::Peace: return TEXT("an Omen of Peace (O) on the town");
+		default: return TEXT("Bloom (B): hold it over their scorched land");
+		}
 	}
 
 	TSharedRef<SWidget> Chip(FName Icon, const FString& Word, const FLinearColor& Col)
@@ -282,6 +305,35 @@ void SDmInspector::Build()
 	if (W->valid(St.cell) && W->elev[size_t(St.cell)] - W->seaLevel < 0.15) AddStatus(FName(TEXT("rising-sea")), TEXT("The sea is at the door"), S.Water);
 	if (NStatus > 0) V->AddSlot().AutoHeight().Padding(0, 10, 0, 0)[Status];
 
+	// what the statuses mean and what the god can do about them (review finding 12: why an answered prayer did
+	// not end a famine, why the sea is at the door, what answers a prayer)
+	TSharedRef<SVerticalBox> Why = SNew(SVerticalBox);
+	int32 NWhy = 0;
+	auto AddWhy = [&](FName I, const FString& Line, const FLinearColor& Col) { Why->AddSlot().AutoHeight().Padding(0, NWhy ? 6 : 0, 0, 0)[Explain(I, Line, Col, Inner - 26.f)]; ++NWhy; };
+	// (verifier) the v3 sim: an answered rain or bloom prayer blesses the town (Society prayerBlessed years), and a
+	// blessed town does not starve (Economy); the old line said an answered prayer did not end the hunger
+	if (St.famine > 0 && St.blessed > 0)
+		AddWhy(FName(TEXT("famine")), FString::Printf(TEXT("Your answer blessed them: for %d more years their fields give more and the hunger is held off. "
+			"When the blessing fades they need a bigger harvest (Rain, Bloom, a granary) or fewer mouths."), FMath::Max(1, FMath::RoundToInt(St.blessed))), S.Bad);
+	else if (St.famine > 0)
+		AddWhy(FName(TEXT("famine")), FString::Printf(TEXT("There are more of them than the land can feed (%s). Answer their prayer with Rain or Bloom and the town is blessed "
+			"for %d years: the fields give more and the hunger stops. After that only a bigger harvest or fewer mouths ends it."),
+			*FDmHudContext::Big(FMath::RoundToDouble(FMath::Max(0.0, St.K))), FMath::RoundToInt(W->tune<dm::SocietyTune>().prayerBlessed)), S.Bad);
+	if (St.prayer)
+		AddWhy(FName(TEXT("praying")), FString::Printf(TEXT("They pray for %s. Answer with %s%s; a prayer answered earns twice the faith, and they remember it."),
+			*PrayerWord(St.prayer->kind), PrayerPower(St.prayer->kind),
+			St.prayer->kind == dm::PrayerKind::Rain && St.famine > 0 ? TEXT(" (a hungry town's prayer is for bread: Bloom (B) answers it too)") : TEXT("")), S.Awe);
+	if (St.plague > 0.0 && !St.prayer)
+		AddWhy(FName(TEXT("plague")), TEXT("A sickness spreads along their roads. Heal (T) lifts it."), S.Bad);
+	if (W->valid(St.cell) && W->elev[size_t(St.cell)] - W->seaLevel < 0.15)
+	{
+		const double Anom = dm::climate::anomaly(*W);
+		AddWhy(FName(TEXT("rising-sea")), Anom > 0.2
+			? FString(TEXT("The town sits barely above the water. The world has warmed and its ice is melting, so the sea is still climbing."))
+			: FString(TEXT("The town sits barely above the water; a storm surge or a higher sea would reach it.")), S.Water);
+	}
+	if (NWhy > 0) V->AddSlot().AutoHeight().Padding(0, 10, 0, 0)[Why];
+
 	// buildings
 	TSharedRef<SWrapBox> Bld = SNew(SWrapBox).PreferredSize(Inner).InnerSlotPadding(FVector2D(10, 6));
 	int32 NB = 0;
@@ -316,6 +368,11 @@ void SDmInspector::Build()
 	V->AddSlot().AutoHeight()[SNew(SDmBar).Width(Inner).Height(5.f).Value(Dev).Color(S.Awe)];
 	V->AddSlot().AutoHeight().Padding(0, 14, 0, 2)[Caption(TEXT("How they feel about you"), S.Dim)];
 	V->AddSlot().AutoHeight()[SNew(SDmLoveScale).Width(Inner).Love(float(St.love))];
+	V->AddSlot().AutoHeight().Padding(0, 4, 0, 0)
+	[
+		Text(FString(TEXT("Devotion is how much they believe; every miracle they see adds to it. Love is how your deeds felt to them. With what they remember of your deeds, they decide how you are remembered.")),
+			EDmFont::SerifItalic, 13.5f, S.Dim, Inner)
+	];
 
 	// culture summary
 	if (Cu)
@@ -371,7 +428,7 @@ void SDmInspector::Build()
 				Text(Cu->prophet
 					? FString::Printf(TEXT("The prophet %s lives in %s."), *U(Cu->prophet->name),
 						(Cu->prophet->settlement >= 0 && Cu->prophet->settlement < int(W->settlements.size())) ? *U(W->settlements[size_t(Cu->prophet->settlement)].name) : TEXT("the wilds"))
-					: FString(TEXT("No living prophet. Raise one to give them edicts.")),
+					: FString(TEXT("No living prophet. The edicts below need one to speak through.")),
 					EDmFont::Serif, 14.f, Cu->prophet ? S.Text : S.Dim, Inner - 50.f)
 			]
 		];
@@ -405,7 +462,17 @@ void SDmInspector::Build()
 				]
 			];
 		}
-		CV->AddSlot().AutoHeight().Padding(0, 10, 0, 3)[Caption(TEXT("Edicts"), S.Dim)];
+		CV->AddSlot().AutoHeight().Padding(0, 10, 0, 3)[Caption(bProphet ? TEXT("Edicts") : TEXT("Edicts (need a prophet)"), S.Dim)];
+		if (!bProphet)
+		{
+			// the edicts are shown dimmed; say how to wake them (review finding 12: they looked available from year 1)
+			const dm::powers::PowerDef* PD = dm::powers::byId("prophet");
+			const bool bCan = dm::powers::unlocked(*W, "prophet");
+			const FString How = bCan
+				? FString(TEXT("Raise a Prophet (P) in one of their towns to speak through them; then choose an edict here."))
+				: FString::Printf(TEXT("Raise a Prophet to speak through them. %s"), PD ? *FDmHudContext::PowerUnlockText(*W, *PD).Replace(TEXT("Wakes"), TEXT("The Prophet wakes")) : TEXT(""));
+			CV->AddSlot().AutoHeight().Padding(0, 0, 0, 6)[Explain(FName(TEXT("lock")), How, S.Dim, Inner - 50.f)];
+		}
 		CV->AddSlot().AutoHeight()[Ed];
 		V->AddSlot().AutoHeight().Padding(0, 16, 0, 0)[SNew(SBorder).BorderImage(&S.Card).Padding(FMargin(12, 10))[CV]];
 	}

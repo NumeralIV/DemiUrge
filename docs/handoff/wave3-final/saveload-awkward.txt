@@ -1,0 +1,38 @@
+ start (seed 21)
+ PASS setup-calamity-applied: Wild -> settings.calamity 2.50 (want 2.50)
+ PASS molten: year 0.00 phase molten, 0 in flight, 0 units, 0 towns, paused 0; saved 1 (43 ms) loaded 1 (105 ms); state same, bytes 778751 -> 778751 identical; flow play, screen 0, paused now 0
+ PASS comets-in-flight: year 0.00 phase water, 3 in flight, 0 units, 0 towns, paused 0; saved 1 (23 ms) loaded 1 (103 ms); state same, bytes 806043 -> 806043 identical; flow play, screen 0, paused now 0
+ PASS comet-armed-after-load: armed "comet" after loading a Water save in the Water phase
+ PASS molten (then): year 0.00 -> 0.00, phase water, 0 in flight (was 0) 
+ PASS comets-in-flight (then): year 0.00 -> 0.00, phase water, 0 in flight (was 3) 
+ PASS life-wave: year 0.00 phase life, 0 in flight, 0 units, 0 towns, paused 0; saved 1 (92 ms) loaded 1 (313 ms); state same, bytes 857111 -> 857111 identical; flow play, screen 0, paused now 0
+ PASS people-before-awaken: year 0.00 phase people, 0 in flight, 0 units, 0 towns, paused 0; saved 1 (52 ms) loaded 1 (175 ms); state same, bytes 857328 -> 857328 identical; flow play, screen 0, paused now 0
+ PASS just-awakened: year 0.00 phase history, 0 in flight, 0 units, 2 towns, paused 0; saved 1 (55 ms) loaded 1 (110 ms); state same, bytes 859268 -> 859268 identical; flow play, screen 0, paused now 0
+ PASS life-wave (then): year 0.00 -> 1.00, phase history, 0 in flight (was 0) 
+ PASS people-before-awaken (then): year 0.00 -> 58.75, phase history, 1 in flight (was 0) 
+ PASS mid-press: year 67.50 phase history, 1 in flight, 0 units, 2 towns, paused 0; saved 1 (59 ms) loaded 1 (176 ms); state same, bytes 872526 -> 872526 identical; flow play, screen 0, paused now 0
+ after the mid-press load the armed power is "" (history loads disarm); re-arming Rain
+ PASS press-after-load: Rain over cell 33292: 8 of 8 strokes taken before the save, 16 of 16 after the load; Awe 130.4 at the start, 132.2 at the save, 149.9 now
+ PASS pause-menu-open: year 77.25 phase history, 2 in flight, 0 units, 2 towns, paused 1; saved 1 (66 ms) loaded 1 (182 ms); state same, bytes 880150 -> 880150 identical; flow play, screen 0, paused now 0
+ PASS just-awakened (then): year 0.00 -> 107.00, phase history, 1 in flight (was 0) 
+ PASS fast-forward-16x: year 285.50 phase history, 2 in flight, 0 units, 7 towns, paused 0; saved 1 (87 ms) loaded 1 (182 ms); state same, bytes 924098 -> 924098 identical; flow play, screen 0, paused now 0
+ PASS load-genesis-in-history: loaded 1, phase water, flow play
+ PASS back-to-history: loaded 1, phase history, year 285.5, flow play
+ PASS double-load-and-missing: load 1, load 1 (year 67.5), missing 0, world kept 1
+ PASS after-world-age: year 731.50 phase history, 1 in flight, 3 units, 14 towns, paused 0; saved 1 (69 ms) loaded 1 (229 ms); state same, bytes 1031833 -> 1031833 identical; flow play, screen 0, paused now 0
+ PASS army-on-the-march: year 942.50 phase history, 2 in flight, 17 units, 21 towns, paused 0; saved 1 (69 ms) loaded 1 (213 ms); state same, bytes 1095329 -> 1095329 identical; flow play, screen 0, paused now 0
+ PASS after-battle: year 949.25 phase history, 2 in flight, 12 units, 21 towns, paused 0; saved 1 (79 ms) loaded 1 (271 ms); state same, bytes 1095904 -> 1095904 identical; flow play, screen 0, paused now 0
+ PASS after-world-age (then): year 731.50 -> 1118.00, phase history, 1 in flight (was 1) 
+ PASS army-on-the-march (then): year 942.50 -> 1236.00, phase history, 2 in flight (was 2) 
+ PASS after-battle (then): year 949.25 -> 1242.50, phase history, 0 in flight (was 2) 
+ PASS ark-being-built: year 2960.50 phase history, 0 in flight, 38 units, 104 towns, paused 0; saved 1 (124 ms) loaded 1 (227 ms); state same, bytes 1671077 -> 1671077 identical; flow play, screen 0, paused now 0
+ PASS ark-being-built (then): year 2960.50 -> 3158.50, phase ended, 1 in flight (was 0) 
+ PASS ark-launch-moment: year 3158.50 phase ended, 1 in flight, 41 units, 105 towns, paused 0; saved 1 (148 ms) loaded 1 (278 ms); state same, bytes 1713043 -> 1713043 identical; flow ending, screen 0, paused now 0
+ after the launch-moment load: phase ended, flow ending, screen 0
+ PASS ending-after-launch-load: the ending screen opened 5 frames after the load
+ PASS reload-ark-being-built: loaded 1, phase history, flow play, endings so far 1
+ PASS ending-again: 2 endings seen; the ending screen opened after the reload
+ PASS ending-screen: year 3174.25 phase ended, 1 in flight, 47 units, 106 towns, paused 0; saved 1 (87 ms) loaded 1 (105 ms); state same, bytes 1715987 -> 1715987 identical; flow ending, screen 0, paused now 0
+ after loading the ending screen's save: phase ended, flow ending, screen 8, paused 0, speed 1
+ PASS load-from-title: loaded 1, year 285.5, flow play, backdrop 0, paused 0
+ RESULT PASS (33 passed, 0 failed: none; 2 endings; 1326 s)

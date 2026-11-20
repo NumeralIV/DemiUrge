@@ -78,6 +78,15 @@ struct FDmTownInst
 	float W = 8.f, D = 6.f, H = 6.f;         // world footprint (m) after scale
 };
 
+/** (towns-perf) The instances of one (mesh, variant), ready for an instanced component: built by the planning task. */
+struct FDmTownBatch
+{
+	uint32 Key = 0;                          // EDmTownMesh << 8 | variant
+	TArray<FTransform> Xf;                   // relative to the plan's centre
+	TArray<float> Cd;                        // NumCustomData floats per instance
+	TArray<int32> Idx;                       // index into FDmTownPlan::Inst per instance
+};
+
 struct FDmTownPlan
 {
 	int32 Id = -1;
@@ -90,6 +99,13 @@ struct FDmTownPlan
 	double Ms = 0.0;
 	uint32 Sig = 0;
 	FString Note;
+	// (towns-perf) prepared off the game thread by the planning task (ADmTowns): the game thread only copies these into
+	// components; GroundData is consumed by the first apply (a later rebuild of the same plan falls back to Ground)
+	bool bPrepared = false;
+	TArray<FDmTownBatch> Batches;
+	TSharedPtr<struct FDmTownsMeshData, ESPMode::ThreadSafe> GroundData;
+	TArray<uint32> NewKeys;                  // instance keys of buildings that are new (scaffolds), against the plan it replaces
+	double PrepMs = 0.0;
 };
 
 namespace DmTownsPlan

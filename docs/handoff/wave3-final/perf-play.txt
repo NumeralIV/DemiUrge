@@ -1,0 +1,21 @@
+== packaged, High (Auto), idle machine
+mScenario: DmPerf: world at year 2400 (age 4, 101 settlements, pop 1561234) in 12.7 s; city cell 24939
+f orbit: 1612 frames, frame avg 12.41 ms (81 fps) p95 16.94 max 400.01 | game avg 6.06 p95 13.87 | render avg 10.82 p95 11.90 | gpu avg 10.18 p95 10.41 | frames over 50 ms: 13 | sim 1.805 ms/tick
+f mid: 1058 frames, frame avg 18.95 ms (53 fps) p95 31.91 max 440.58 | game avg 10.45 p95 22.86 | render avg 15.16 p95 17.02 | gpu avg 14.33 p95 15.14 | frames over 50 ms: 37 | sim 2.237 ms/tick
+f low: 812 frames, frame avg 24.89 ms (40 fps) p95 44.37 max 583.27 | game avg 15.54 p95 33.35 | render avg 18.14 p95 24.82 | gpu avg 16.29 p95 22.60 | frames over 50 ms: 39 | sim 1.862 ms/tick
+f close: 1432 frames, frame avg 14.02 ms (71 fps) p95 15.39 max 376.86 | game avg 5.46 p95 8.13 | render avg 13.26 p95 14.56 | gpu avg 10.71 p95 12.97 | frames over 50 ms: 17 | sim 1.368 ms/tick
+f: RESULT FAIL (4 stops with frames over 50 ms)
+== packaged, Medium
+mScenario: DmPerf: world at year 2400 (age 4, 101 settlements, pop 1561234) in 14.3 s; city cell 24939
+f orbit: 1751 frames, frame avg 11.46 ms (87 fps) p95 15.73 max 433.41 | game avg 5.71 p95 13.51 | render avg 9.75 p95 10.62 | gpu avg 8.92 p95 9.44 | frames over 50 ms: 19 | sim 1.947 ms/tick
+f mid: 1196 frames, frame avg 16.80 ms (60 fps) p95 28.49 max 417.19 | game avg 9.96 p95 22.19 | render avg 12.83 p95 14.35 | gpu avg 11.87 p95 12.32 | frames over 50 ms: 37 | sim 2.067 ms/tick
+f low: 872 frames, frame avg 23.24 ms (43 fps) p95 55.63 max 658.75 | game avg 15.02 p95 42.44 | render avg 18.25 p95 33.21 | gpu avg 13.54 p95 17.26 | frames over 50 ms: 53 | sim 2.177 ms/tick
+f close: 1292 frames, frame avg 15.73 ms (64 fps) p95 29.53 max 505.66 | game avg 6.13 p95 10.69 | render avg 13.95 p95 20.41 | gpu avg 7.86 p95 8.94 | frames over 50 ms: 33 | sim 1.698 ms/tick
+f: RESULT FAIL (4 stops with frames over 50 ms)
+== editor -game, High, idle machine
+mScenario: DmPerf: world at year 2400 (age 4, 101 settlements, pop 1561234) in 11.9 s; city cell 24939
+f orbit: 1784 frames, frame avg 11.22 ms (89 fps) p95 13.82 max 173.77 | game avg 5.89 p95 12.97 | render avg 10.66 p95 11.73 | gpu avg 10.24 p95 10.87 | frames over 50 ms: 5 | sim 1.980 ms/tick
+f mid: 1063 frames, frame avg 18.82 ms (53 fps) p95 29.97 max 363.02 | game avg 9.56 p95 20.21 | render avg 15.49 p95 17.02 | gpu avg 14.48 p95 15.17 | frames over 50 ms: 28 | sim 2.054 ms/tick
+f low: 902 frames, frame avg 22.62 ms (44 fps) p95 47.01 max 596.61 | game avg 13.48 p95 29.21 | render avg 18.28 p95 33.79 | gpu avg 14.44 p95 22.40 | frames over 50 ms: 43 | sim 1.856 ms/tick
+f close: 1469 frames, frame avg 13.85 ms (72 fps) p95 17.05 max 473.65 | game avg 4.88 p95 7.76 | render avg 13.40 p95 16.02 | gpu avg 10.06 p95 13.58 | frames over 50 ms: 27 | sim 1.316 ms/tick
+f: RESULT FAIL (4 stops with frames over 50 ms)

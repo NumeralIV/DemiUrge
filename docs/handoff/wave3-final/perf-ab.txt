@@ -1,0 +1,14 @@
+mScenario: DmAB: world at year 2400 (age 4, 101 settlements) in 18.2 s; city cell 24939; 6 views x 2 configs x 3 rounds; sg levels: res 0 (r.ScreenPercentage 0.0) view 3 aa 3 shadow 3 gi 3 refl 3 pp 3 tex 3 fx 3 foliage 3 shading 3
+bit base: gpu p10 9.59 p25 9.67 median 10.45 p90 10.60 ms (n 270) | delta p10 +0.00 p25 +0.00 median +0.00 ms vs base | frame median 11.13 ms
+bit tier1: gpu p10 8.67 p25 8.70 median 8.75 p90 8.86 ms (n 270) | delta p10 -0.92 p25 -0.96 median -1.70 ms vs base | frame median 9.55 ms
+rm base: gpu p10 10.78 p25 10.82 median 10.87 p90 11.00 ms (n 270) | delta p10 +0.00 p25 +0.00 median +0.00 ms vs base | frame median 11.54 ms
+rm tier1: gpu p10 8.99 p25 9.03 median 9.08 p90 9.17 ms (n 270) | delta p10 -1.79 p25 -1.79 median -1.79 ms vs base | frame median 9.70 ms
+d base: gpu p10 11.56 p25 11.60 median 11.68 p90 11.81 ms (n 270) | delta p10 +0.00 p25 +0.00 median +0.00 ms vs base | frame median 12.33 ms
+d tier1: gpu p10 9.41 p25 9.44 median 9.48 p90 9.57 ms (n 270) | delta p10 -2.15 p25 -2.16 median -2.20 ms vs base | frame median 10.11 ms
+w base: gpu p10 13.04 p25 13.24 median 14.35 p90 14.46 ms (n 270) | delta p10 +0.00 p25 +0.00 median +0.00 ms vs base | frame median 14.96 ms
+w tier1: gpu p10 11.55 p25 11.74 median 11.81 p90 12.39 ms (n 270) | delta p10 -1.50 p25 -1.50 median -2.54 ms vs base | frame median 13.15 ms
+ose base: gpu p10 13.06 p25 13.09 median 13.12 p90 14.21 ms (n 270) | delta p10 +0.00 p25 +0.00 median +0.00 ms vs base | frame median 15.20 ms
+ose tier1: gpu p10 10.65 p25 10.67 median 10.69 p90 10.77 ms (n 270) | delta p10 -2.41 p25 -2.42 median -2.42 ms vs base | frame median 12.27 ms
+ght base: gpu p10 13.70 p25 13.74 median 13.77 p90 15.03 ms (n 270) | delta p10 +0.00 p25 +0.00 median +0.00 ms vs base | frame median 16.52 ms
+ght tier1: gpu p10 11.18 p25 11.21 median 11.24 p90 11.94 ms (n 270) | delta p10 -2.52 p25 -2.53 median -2.53 ms vs base | frame median 13.09 ms
+ESULT done (6 views, 2 configs)

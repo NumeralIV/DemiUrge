@@ -4,6 +4,7 @@
 #include "Game/Planet/DmPlanetNoise.h"
 #include "Game/Planet/DmPlanetMaps.h"
 #include "Sim/State.h"
+#include "Game/Core/DmScenario.h"
 #include "Sim/Hydro.h"
 #include "HAL/PlatformTime.h"
 #include "Algo/Reverse.h"
@@ -144,6 +145,15 @@ void FDmPlanetTerrain::Capture(const dm::World& W, const TSharedPtr<const FDmGeo
 	// every patch of the planet (ChangedCells: global)
 	SeaLevel = FMath::RoundToDouble(W.seaLevel / 0.0025) * 0.0025;
 	SeaM = SeaLevel * MPerElev;
+	// (wave 3) the ground's datum: the sea the world was calibrated with (vars.seaBase) while the sea stands above
+	// it. A rising sea then floods the ground where it lies (old coast, drowned hills, the depth growing toward the
+	// old shore) instead of re-mapping everything below the new sea onto a flat, shallow shelf. Below the base (ice
+	// ages, genesis before calibration) the datum is the sea itself, as before.
+	RefLevel = SeaLevel;
+	static const bool bNoDatum = FDmShotArgs::Param(TEXT("planetnodatum"));   // A/B: the old mapping (ground re-shaped against the sea)
+	if (!bNoDatum && W.vars.seaBase.has_value() && FMath::IsFinite(*W.vars.seaBase))
+		RefLevel = FMath::Min(SeaLevel, FMath::RoundToDouble(*W.vars.seaBase / 0.0025) * 0.0025);
+	RefM = RefLevel * MPerElev;
 	Elev.SetNumUninitialized(N); Water.SetNumUninitialized(N); Slope.SetNumUninitialized(N); Flow.SetNumUninitialized(N);
 	for (int32 C = 0; C < N; ++C)
 	{
@@ -229,7 +239,7 @@ void FDmPlanetTerrain::Prepare()
 	{
 		TArray<uint8> Hop; Hop.Init(255, N);
 		TArray<int32> Front, Next;
-		for (int32 C = 0; C < N; ++C) if (Elev[C] >= SeaLevel) { Hop[C] = 0; Front.Add(C); }
+		for (int32 C = 0; C < N; ++C) if (Elev[C] >= RefLevel) { Hop[C] = 0; Front.Add(C); }
 		for (uint8 D = 1; D <= 3 && Front.Num(); ++D)
 		{
 			Next.Reset();
@@ -243,8 +253,8 @@ void FDmPlanetTerrain::Prepare()
 		}
 		static const float ShelfMax[4] = { 0.f, 0.22f, 0.45f, 0.75f };
 		for (int32 C = 0; C < N; ++C)
-			if (Elev[C] < SeaLevel && Hop[C] >= 1 && Hop[C] <= 3)
-				ElevS[C] = FMath::Max(ElevS[C], float(SeaLevel) - ShelfMax[Hop[C]]);
+			if (Elev[C] < RefLevel && Hop[C] >= 1 && Hop[C] <= 3)
+				ElevS[C] = FMath::Max(ElevS[C], float(RefLevel) - ShelfMax[Hop[C]]);
 		// two smoothing passes over the shelf and its edge, so the shelf break is a slope, not a step that
 		// outlines the cells (sea cells only, so the coastline itself does not move)
 		for (int32 Pass = 0; Pass < 3; ++Pass)
@@ -252,11 +262,11 @@ void FDmPlanetTerrain::Prepare()
 			TArray<float> Sm = ElevS;
 			for (int32 C = 0; C < N; ++C)
 			{
-				if (Elev[C] >= SeaLevel || Hop[C] < 1) continue;   // every sea cell near land (255 = beyond 3 hops: the shelf break)
+				if (Elev[C] >= RefLevel || Hop[C] < 1) continue;   // every sea cell near land (255 = beyond 3 hops: the shelf break)
 				const int32 Deg = G.NbrN[C];
 				double Sum = 0; int32 Cnt = 0;
-				for (int32 K = 0; K < Deg; ++K) { const int32 M = G.Nbr[6 * C + K]; if (Elev[M] < SeaLevel) { Sum += ElevS[M]; ++Cnt; } }
-				if (Cnt) Sm[C] = FMath::Min(0.5f * ElevS[C] + 0.5f * float(Sum / Cnt), float(SeaLevel) - 0.05f);
+				for (int32 K = 0; K < Deg; ++K) { const int32 M = G.Nbr[6 * C + K]; if (Elev[M] < RefLevel) { Sum += ElevS[M]; ++Cnt; } }
+				if (Cnt) Sm[C] = FMath::Min(0.5f * ElevS[C] + 0.5f * float(Sum / Cnt), float(RefLevel) - 0.05f);
 			}
 			ElevS = MoveTemp(Sm);
 		}
@@ -268,7 +278,7 @@ void FDmPlanetTerrain::Prepare()
 	for (int32 C = 0; C < N; ++C)
 		if (IsLake(C))
 		{
-			LakeLevelM[C] = float(SeaM + MapElev(double(Elev[C]) + double(Water[C]) - SeaLevel));
+			LakeLevelM[C] = float(RefM + MapElev(double(Elev[C]) + double(Water[C]) - RefLevel));
 			LakeMask[C] = 1.f;
 			// a lake bed is below its surface: keep the smoothed bed below the lake level
 			ElevS[C] = FMath::Min(ElevS[C], Elev[C] + 0.6f * Water[C]);
@@ -394,8 +404,8 @@ void FDmPlanetTerrain::Prepare()
 
 	float Lo = 1e9f, Hi = -1e9f;
 	for (int32 C = 0; C < N; ++C) { Lo = FMath::Min(Lo, Elev[C]); Hi = FMath::Max(Hi, Elev[C]); }
-	MinH = SeaM + MapElev(double(Lo) - SeaLevel) - 200.0;
-	MaxH = SeaM + MapElev(double(Hi) - SeaLevel) + 1200.0;
+	MinH = RefM + MapElev(double(Lo) - RefLevel) - 200.0;
+	MaxH = RefM + MapElev(double(Hi) - RefLevel) + 1200.0;
 
 	BuildRivers();
 	RoadGrid.Reset();
@@ -411,7 +421,7 @@ bool FDmPlanetTerrain::ChangedCells(const FDmPlanetTerrain& O, TArray<int32>& Ou
 {
 	Out.Reset();
 	if (OutRoadOnly) OutRoadOnly->Reset();
-	if (O.Elev.Num() != Elev.Num() || O.SeaLevel != SeaLevel || O.RiverTqM != RiverTqM || O.Loc != Loc) return false;
+	if (O.Elev.Num() != Elev.Num() || O.SeaLevel != SeaLevel || O.RefLevel != RefLevel || O.RiverTqM != RiverTqM || O.Loc != Loc) return false;
 	if (O.RiverHash != RiverHash)
 	{
 		// the cells of every river that is not in both sets (rivers are compared whole: a changed cell shifts the
@@ -470,7 +480,7 @@ double FDmPlanetTerrain::Height(const FVector3d& Dir, double S, FDmSurfAttr* At,
 			const FVector3f& Gk = Grad2[C2[K]];
 			Ph += W2[K] * (Ek + double(Gk.X) * (Dir.X - P2[K].X) + double(Gk.Y) * (Dir.Y - P2[K].Y) + double(Gk.Z) * (Dir.Z - P2[K].Z));
 		}
-		E = FMath::Lerp(Lin, Ph, 0.75) - SeaLevel;
+		E = FMath::Lerp(Lin, Ph, 0.75) - RefLevel;   // above the datum (the base sea; see Capture)
 	}
 	auto Lc = [&](const TArray<float>& F) { return W[0] * F[C[0]] + W[1] * F[C[1]] + W[2] * F[C[2]]; };
 	const double Sl = Lc(Slope);
@@ -500,6 +510,15 @@ double FDmPlanetTerrain::Height(const FVector3d& Dir, double S, FDmSurfAttr* At,
 	else { RAe = FMath::Lerp(24.5, 45.0 * (1.0 - Sat(-E / 1.2)) + 8.0, Sat(-E / 0.25)); RAr = 0.0; }
 	// Coasts keep the simulation's outline: relief fades in over the first metres above sea level.
 	if (E >= 0.0 && E < 0.25) RAe *= 0.35 + 0.65 * Sat(E / 0.25);
+	// (wave 3) a risen sea: the new coast keeps the simulation's outline the same way (relief faded over 0.25 units
+	// either side of it); between the two coasts the drowned land keeps its hills, which stand out as islands and
+	// headlands with flooded valleys between them
+	const double Rise = SeaLevel - RefLevel;
+	if (Rise > 0.01 && E >= 0.0)
+	{
+		const double Ec = FMath::Abs(E - Rise);
+		if (Ec < 0.25) RAe *= 0.35 + 0.65 * Sat(Ec / 0.25);
+	}
 	// Lakes keep a calm, flat basin.
 	const double LakeQ = Smooth(0.15, 0.55, Lm);
 	RAe *= 1.0 - 0.9 * LakeQ; RAr *= 1.0 - LakeQ;
@@ -516,7 +535,7 @@ double FDmPlanetTerrain::Height(const FVector3d& Dir, double S, FDmSurfAttr* At,
 	double Re, Rr;
 	Relief(Up, S, Re, Rr);
 	const double FA = FineAmp(RAe, RAr);
-	const double Hb = SeaM + MapElev(E);
+	const double Hb = RefM + MapElev(E);
 	double H = Hb + RAe * Re + RAr * Rr + FA * Fine(Up, S) - Carve;
 	if (LakeS > -1e8)
 	{

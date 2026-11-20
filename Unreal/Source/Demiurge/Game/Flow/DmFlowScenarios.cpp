@@ -8,6 +8,13 @@
 //                 Writes shots/ue-play-NN-<name>.png (with the interface) and logs "DmPlay" lines; exit code
 //                 0 when every step happened. Switches: -playseed=<n> (default 21), -playname=<name>,
 //                 -ffms=<ms> (fast-forward budget per frame, default 45), -maxyears=<y> (give up, default 5000).
+//                 Framing (wave 3): the comets fall on a sunlit coast (the seas fill where the land is), the war is
+//                 seen from a low oblique view between the battle and the town it is fought for, the Ark from the
+//                 flow's launch camera at golden hour. Logs the HUD's toast merging and the hints it showed.
+//   first-minutes a new world (genesis skipped) left alone at -fmspeed= (default 4x) for 600 years with the real HUD:
+//                 the first-steps hints in order, each up 15 s at most, at least 4 different ones; the regard
+//                 word stays "Watched" (the god did nothing); the guidance thread is up; shots of each hint and
+//                 of a town in the Stone age (the edicts and how to wake them). Exit code = failures.
 //   flow-check    the flow's state machine through the screens without rendering checks: title, new world
 //                 (quick start), pause -> save -> exit to title -> continue -> load, ending -> timelapse ->
 //                 keep playing; logs "DmFlowCheck" PASS / FAIL lines, exit code = failures.
@@ -73,6 +80,43 @@ namespace
 		S->PinSunAt(Lat, Lon);
 	}
 
+	/** A sunlit coast to watch the seas fill: the direction whose surroundings are closest to half land, half sea
+	 *  at the sea line the comets will raise the water to, with the sun 25..70 degrees above it. */
+	FVector CoastView(const dm::World& W, const FVector& SunP, double SeaLine)
+	{
+		FVector Best = SunP;
+		double BestScore = -1.0;
+		const int32 N = W.n;
+		for (int32 C = 0; C < N; C += 97)
+		{
+			const FVector D = DmCoords::CellDir(W, C);
+			const double Lit = FVector::DotProduct(D, SunP);
+			if (Lit < 0.42 || Lit > 0.94 || FMath::Abs(D.Z) > 0.8) continue;
+			int32 Land = 0, All = 0;
+			for (int32 K = (C * 7) % 13; K < N; K += 13)
+			{
+				const FVector Q = DmCoords::CellDir(W, K);
+				if (FVector::DotProduct(Q, D) < 0.86) continue;
+				++All;
+				if (W.elev[size_t(K)] > SeaLine) ++Land;
+			}
+			if (All < 20) continue;
+			const double Mix = 1.0 - FMath::Abs(double(Land) / All - 0.5) * 2.0;
+			const double Score = Mix + 0.25 * (1.0 - FMath::Abs(Lit - 0.7));
+			if (Score > BestScore) { BestScore = Score; Best = D; }
+		}
+		return Best;
+	}
+
+	/** Compass bearing (radians, clockwise from north) from direction A toward direction B. */
+	double BearingTo(const FVector& A, const FVector& B)
+	{
+		FVector E, N;
+		DmCoords::Basis(A, E, N);
+		const FVector T = B - A * FVector::DotProduct(A, B);
+		return FMath::Atan2(FVector::DotProduct(T, E), FVector::DotProduct(T, N));
+	}
+
 	int32 LargestSettlement(const dm::World& W, int32 MinTier = 0)
 	{
 		int32 Best = -1;
@@ -116,10 +160,12 @@ namespace
 		int32 Comets = 0, Seeds = 0;
 		double NextAct = 0.0;
 		bool bCometShot = false, bLifeShot = false;
+		int32 CometShotFrame = -1;        // (verifier) step frame of the comet shot (the genesis save/load waits for it)
 
 		// history events caught by the listener
 		int32 DisasterCell = -1;  FString DisasterKind;
-		int32 BattleCell = -1;    double BattleAt = -1.0;  int32 Battles = 0;
+		int32 BattleCell = -1;    double BattleAt = -1.0;  int32 Battles = 0;  int32 BattleTown = -1;
+		int32 WarArmy = -1;       int32 WarTown = -1;      FVector WarFocus = FVector::ZeroVector;
 		int32 ArkCell = -1;       bool bArkLaunched = false; double ArkAt = 0.0;
 		bool bEnded = false;
 		FString EndingText;
@@ -178,6 +224,54 @@ namespace
 		if (W && W->valid(Cell)) Look(Ctx, DmCoords::CellDir(*W, Cell), Zoom, HeadingDeg);
 	}
 
+	/** The war: a low oblique view across the battle toward the town it is fought for (so the armies, the smoke
+	 *  and the town are in one frame), the town at the top of the screen, the sun from the side. */
+	void LookWar(FDmScenarioContext& Ctx, int32 Cell, int32 Town)
+	{
+		const dm::World* W = Ctx.Sim->Sim();
+		if (!W || !W->valid(Cell)) return;
+		const FVector B = DmCoords::CellDir(*W, Cell);
+		const dm::Settlement* S = dm::state::settlement(*W, Town);
+		FVector Focus = B;
+		double Heading = 0.0, Zoom = 0.62;
+		if (S && !S->dead && W->valid(S->cell))
+		{
+			const FVector T = DmCoords::CellDir(*W, S->cell);
+			const double SepKm = FMath::Acos(FMath::Clamp(FVector::DotProduct(B, T), -1.0, 1.0)) * 100.0;
+			// the town fought for, close and tilted (about 4.6 km up, 47 degrees), looking the way the army came: the
+			// town, the smoke of the battle at its walls and the land the army crossed (a top-down view far out
+			// showed only farmland and a smoke puff)
+			Focus = T;
+			Zoom = 0.84;   // (verifier) was 0.76: the town fought for was a label at the top of a field of farmland
+			if (SepKm > 0.2 && SepKm < 60.0) Heading = BearingTo(B, T);
+		}
+		if (ADmPawn* Pw = PawnOf(Ctx)) { Pw->Rig().StopMotion(); Pw->Jump(Focus, Zoom, Heading); }
+		if (ADmPlanet* Pl = ADmPlanet::Find(Ctx.World)) Pl->Settle(40);
+		PinSunFor(Ctx.Sim, Focus, 18.0, FMath::RadiansToDegrees(Heading) + 120.0);
+		UE_LOG(LogDmPlay, Display, TEXT("DmPlay: war view: battle cell %d, town %d, zoom %.2f, heading %.0f"), Cell, Town, Zoom, FMath::RadiansToDegrees(Heading));
+	}
+
+	/** An army on the march against a town of a people it is at war with, the one closest to its target: the
+	 *  unit id and the town (settlement id); -1 when no army marches. */
+	int32 MarchingArmy(const dm::World& W, int32& OutTown)
+	{
+		int32 Best = -1;
+		double BestD = 1e9;
+		OutTown = -1;
+		for (const dm::Unit& U : W.units)
+		{
+			if (U.type != dm::UnitType::Army || U.path.empty()) continue;
+			const dm::Settlement* T = dm::state::settlement(W, U.to);
+			if (!T || T->dead || T->culture == U.culture || !W.valid(T->cell)) continue;
+			const int32 Here = U.path[size_t(FMath::Clamp(U.i, 0, int32(U.path.size()) - 1))];
+			if (!W.valid(Here)) continue;
+			const double D = FMath::Acos(FMath::Clamp(FVector::DotProduct(DmCoords::CellDir(W, Here), DmCoords::CellDir(W, T->cell)), -1.0, 1.0)) * 100.0;
+			if (D < 3.0 || D > 45.0) continue;   // in the frame together, and not already there
+			if (D < BestD) { BestD = D; Best = U.id; OutTown = T->id; }
+		}
+		return Best;
+	}
+
 	/** Run the sim fast: ticks (each preceded by the god) until the budget is spent or Stop says so. */
 	int32 FastForward(FDmScenarioContext& Ctx, double BudgetMs, TFunctionRef<bool()> Stop)
 	{
@@ -212,7 +306,7 @@ namespace
 			if (const dm::EvBattle* B = E.as<dm::EvBattle>())
 			{
 				++P.Battles;
-				if (W->year > 500) { P.BattleCell = B->cell; P.BattleAt = FPlatformTime::Seconds(); }
+				if (W->year > 500) { P.BattleCell = B->cell; P.BattleAt = FPlatformTime::Seconds(); P.BattleTown = B->settlement; }
 			}
 			break;
 		case dm::Ev::ArkLaunched:
@@ -222,6 +316,8 @@ namespace
 				P.ArkAt = FPlatformTime::Seconds();
 				const dm::Settlement* S = dm::state::settlement(*W, A->settlement);
 				P.ArkCell = S ? S->cell : -1;
+				// golden hour at the pad for the flow's launch camera (it looks across the pad with the sun to its side)
+				if (S) PinSunFor(Sim, DmCoords::CellDir(*W, S->cell), 13.0, 230.0);
 			}
 			break;
 		case dm::Ev::Ending:
@@ -323,6 +419,14 @@ namespace
 			P.EndingText.IsEmpty() ? TEXT("none") : *P.EndingText, P.bSaveLoad ? TEXT("PASS") : TEXT("FAIL"), P.bGenesisSaveLoad ? TEXT("PASS") : TEXT("FAIL"));
 		if (!P.bSaveLoad || !P.bGenesisSaveLoad || P.EndingText.IsEmpty()) ++Miss;
 		UE_LOG(LogDmPlay, Display, TEXT("DmPlay: normal frames %d, worst %.1f ms, over 50 ms %d"), P.NormalFrames, P.NormalWorstMs, P.NormalHitches);
+		if (ADmHud* H = ADmHud::Find(Ctx.World))
+		{
+			const FDmHudContext& X = H->Context();
+			FString Hints;
+			for (const FDmHudHintRecord& R : X.HintHistory) Hints += FString::Printf(TEXT(" %d (year %.0f, %.1f s)"), R.Index, R.Year, R.Shown);
+			UE_LOG(LogDmPlay, Display, TEXT("DmPlay: hud toasts %d pushed -> %d rows (merging); hints:%s; guide steps done 0x%x"),
+				X.ToastsPushed, X.ToastsCreated, Hints.IsEmpty() ? TEXT(" none (seen in an earlier run)") : *Hints, X.GuideDone);
+		}
 		UE_LOG(LogDmPlay, Display, TEXT("DmPlay: RESULT %s (%d shots, %d missing, %.0f s)"), Miss == 0 ? TEXT("PASS") : TEXT("FAIL"), P.Done.Num(), Miss, FPlatformTime::Seconds() - P.T0);
 		Ctx.Sim->OnSimEvent.Remove(P.EventHandle);
 		Ctx.SetExitCode(Miss);
@@ -381,12 +485,22 @@ namespace
 		case 3:   // water: comets (the flow armed "comet"; the god clicks like a player would)
 		{
 			if (!W) break;
-			if (P.StepFrame == 2) Look(Ctx, SunPlanet(Sim).RotateAngleAxis(-30.0, FVector::UpVector), 0.0, 0.0);
+			if (P.StepFrame == 2)
+			{
+				// a sunlit coast (half land, half sea at the sea line the comets will fill to), a little closer than the
+				// whole disc so the comets streak in over the limb; the sun held while the seas fill
+				const FVector Sun = SunPlanet(Sim);
+				const FVector Dir = CoastView(*W, Sun, -0.3);
+				Look(Ctx, Dir, 0.08, 0.0);
+				PinSunFor(Sim, Dir, 38.0, 250.0);
+				UE_LOG(LogDmPlay, Display, TEXT("DmPlay: comet view: sunlit coast, %.0f deg from the sun"), FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(FVector::DotProduct(Dir, Sun), -1.0, 1.0))));
+			}
 			const dm::sim::genesis::Progress G = dm::sim::genesis::progress(*W);
-			if (W->seaLevel >= -0.3 && G.canAdvance && W->disasters.empty())
+			if (W->seaLevel >= -0.3 && G.canAdvance && W->disasters.empty() && P.bGenesisSaveTried)
 			{
 				const bool bOk = dm::sim::genesis::next(*W);   // the HUD's "Next" button (FDmHudControl::NextPhase)
 				UE_LOG(LogDmPlay, Display, TEXT("DmPlay: water done: %d comets, sea %.2f, next %d"), P.Comets, W->seaLevel, bOk ? 1 : 0);
+				Sim->UnpinSun();
 				NextStep(P);
 				break;
 			}
@@ -395,18 +509,21 @@ namespace
 			{
 				P.NextAct = 0.35;
 				if (Ctl->GetArmedPower() != TEXT("comet")) Ctl->ArmPower(TEXT("comet"));
-				// comets fall on the visible half (in front of the camera) so the shot sees them
+				// comets fall near the middle of the view (on the coast being watched) so the shot sees them land
 				const FVector Fwd = PawnOf(Ctx) ? PawnOf(Ctx)->Rig().GetFocus() : FVector(1, 0, 0);
-				for (int32 Try = 0; Try < 30; ++Try)
+				for (int32 Try = 0; Try < 60; ++Try)
 				{
 					const int32 C = P.Rand.RandRange(0, W->n - 1);
-					if (FVector::DotProduct(DmCoords::CellDir(*W, C), Fwd) < 0.55) continue;
+					if (FVector::DotProduct(DmCoords::CellDir(*W, C), Fwd) < (Try < 40 ? 0.93 : 0.55)) continue;
 					if (dm::powers::can(*W, "comet", C).ok && Ctl->UsePower(C, 0.f, true)) { ++P.Comets; break; }
 				}
 			}
-			if (!P.bCometShot && P.Comets >= 7 && P.StepTime > 3.0) { P.bCometShot = true; PlayShot(Ctx, TEXT("genesis-comets")); }
+			if (!P.bCometShot && P.Comets >= 7 && P.StepTime > 3.0) { P.bCometShot = true; P.CometShotFrame = P.StepFrame; PlayShot(Ctx, TEXT("genesis-comets")); }
 			// save and load in the middle of genesis (comets still in flight) through the screens' slot path
-			if (P.bCometShot && !P.bGenesisSaveTried && P.Comets >= 9)
+			// (verifier) a few frames after the shot: the screenshot is read back a frame or more later, and when 9 comets
+			// had already fallen the load ran in the same frame, so 2 runs in 3 photographed the reloaded world's bare
+			// ocean sphere (no land, no comets) instead of the coast
+			if (P.bCometShot && !P.bGenesisSaveTried && (P.Comets >= 9 || W->seaLevel >= -0.3) && P.StepFrame - P.CometShotFrame > 30)
 			{
 				P.bGenesisSaveTried = true;
 				dm::save::EncodeOpts EO;
@@ -431,6 +548,7 @@ namespace
 			break;
 		}
 		case 4:   // seas: the filled oceans from orbit
+			if (P.StepFrame == 1) Sim->UnpinSun();
 			if (P.StepFrame == 2) Look(Ctx, SunPlanet(Sim).RotateAngleAxis(-35.0, FVector::UpVector), 0.0, 0.0);
 			if (P.StepFrame == 150) { PlayShot(Ctx, TEXT("genesis-seas")); NextStep(P); }
 			break;
@@ -581,22 +699,64 @@ namespace
 					P.SubTarget = 3;
 					if (P.Sub == 0)
 					{
+						// an army marching on an enemy town (the war as a player meets it: soldiers on the road, the town
+						// ahead); without one, the last battle and the town it was fought for. Slow time so the march is seen.
 						P.Sub = 1; P.SubFrame = 0; P.SubTime = FPlatformTime::Seconds();
 						P.SubTarget = 3;
-						const int32 Cell = P.BattleCell;
-						Sim->SetSpeed(1.f);
-						LookCell(Ctx, Cell, 0.8, 0.0);
-						if (Wd.valid(Cell)) PinSunFor(Sim, DmCoords::CellDir(Wd, Cell), 28.0, 220.0);
+						int32 Town = -1;
+						P.WarArmy = MarchingArmy(Wd, Town);
+						int32 From = P.BattleCell;
+						if (P.WarArmy >= 0)
+							for (const dm::Unit& U : Wd.units)
+								if (U.id == P.WarArmy) { From = U.path[size_t(FMath::Clamp(U.i, 0, int32(U.path.size()) - 1))]; break; }
+						P.WarTown = P.WarArmy >= 0 ? Town : P.BattleTown;
+						Sim->SetSpeed(P.WarArmy >= 0 ? 0.25f : 1.f);
+						// (verifier) no town panel in the war frame (one run showed a panel half-open over the view);
+						// closed here, a second or more before the shot, so its close animation is over
+						if (UDmControlSubsystem* Cs = UDmControlSubsystem::Get(Ctx.World)) Cs->Select(-1);
+						LookWar(Ctx, From, P.WarTown);
+						if (ADmPawn* Pw = PawnOf(Ctx)) P.WarFocus = Pw->Rig().GetFocus();
+						UE_LOG(LogDmPlay, Display, TEXT("DmPlay: war: army %d marching on town %d"), P.WarArmy, P.WarTown);
 						P.BattleAt = -1.0;
 						break;
 					}
 					++P.SubFrame;
 					const double Since = FPlatformTime::Seconds() - P.SubTime;
-					const bool bFresh = P.BattleAt > 0.0 && FPlatformTime::Seconds() - P.BattleAt > 0.25;
-					if (P.Sub == 1 && P.SubFrame > 60 && (bFresh || Since > 12.0))
+					// a battle in the frame (within 30 km of its centre), a moment after it, or the army close to the town
+					const dm::Settlement* WT = dm::state::settlement(Wd, P.WarTown);
+					const bool bNear = P.BattleCell >= 0 && Wd.valid(P.BattleCell) && FVector::DotProduct(DmCoords::CellDir(Wd, P.BattleCell), P.WarFocus) > FMath::Cos(0.08);
+					const bool bFresh = P.BattleAt > 0.0 && FPlatformTime::Seconds() - P.BattleAt > 0.3 && bNear;
+					// the army a few km short of the town: hold time there and frame the two together (an army crosses a
+					// frame in about a second even at 1/4 speed, so the march is caught paused)
+					if (P.Sub == 1 && P.WarArmy >= 0 && WT && Wd.valid(WT->cell))
+						for (const dm::Unit& U : Wd.units)
+							if (U.id == P.WarArmy && !U.path.empty())
+							{
+								const int32 Here = U.path[size_t(FMath::Clamp(U.i, 0, int32(U.path.size()) - 1))];
+								const double Km = Wd.valid(Here) ? FMath::Acos(FMath::Clamp(FVector::DotProduct(DmCoords::CellDir(Wd, Here), DmCoords::CellDir(Wd, WT->cell)), -1.0, 1.0)) * 100.0 : 99.0;
+								// (verifier) held closer (4 km at most, was 7), lower (zoom 0.78..0.88 by the gap, was 0.72) and from
+								// the side (the march crosses the frame toward the town on the right): looking along the march put
+								// the army at 6 km a speck and the town at the top of the screen, under the toasts
+								if (Km <= 4.0 && Km >= 1.5)
+								{
+									Sim->SetPaused(true);
+									if (UDmControlSubsystem* Cs = UDmControlSubsystem::Get(Ctx.World)) Cs->Select(-1);
+									const FVector A = DmCoords::CellDir(Wd, Here), T = DmCoords::CellDir(Wd, WT->cell);
+									const FVector Mid = (A * 0.5 + T * 0.5).GetSafeNormal();
+									const double Zm = FMath::Clamp(0.93 - 0.035 * Km, 0.78, 0.88);
+									const double Hd = BearingTo(A, T) - HALF_PI;
+									if (ADmPawn* Pw = PawnOf(Ctx)) { Pw->Rig().StopMotion(); Pw->Jump(Mid, Zm, Hd); }
+									if (ADmPlanet* Pl = ADmPlanet::Find(Ctx.World)) Pl->Settle(40);
+									PinSunFor(Sim, Mid, 18.0, FMath::RadiansToDegrees(Hd) + 120.0);
+									UE_LOG(LogDmPlay, Display, TEXT("DmPlay: war: the army is %.1f km from the town: held (zoom %.2f)"), Km, Zm);
+									P.Sub = 3; P.SubFrame = 0;
+								}
+							}
+					if (P.Sub == 3 && P.SubFrame == 48) ClearForShot(Ctx);
+					if ((P.Sub == 3 && P.SubFrame >= 50) || (P.Sub == 1 && P.SubFrame > 60 && (bFresh || Since > 14.0)))
 					{
-						if (bFresh && P.BattleCell >= 0) LookCell(Ctx, P.BattleCell, 0.8, 0.0);
-						ClearForShot(Ctx);
+						UE_LOG(LogDmPlay, Display, TEXT("DmPlay: war shot (%s)"), P.Sub == 3 ? TEXT("the army before the town") : (bFresh ? TEXT("a battle in view") : TEXT("time")));
+						if (P.Sub == 1) ClearForShot(Ctx);
 						PlayShot(Ctx, TEXT("war"));
 						P.Sub = 2; P.SubFrame = 0;
 					}
@@ -604,6 +764,7 @@ namespace
 					{
 						P.Sub = 0; P.bWar = true; P.SubTarget = -1;
 						Sim->UnpinSun();
+						Sim->SetPaused(false);
 						Sim->SetSpeed(8.f);
 					}
 					break;
@@ -647,7 +808,13 @@ namespace
 			// the ark: the flow flies to the launch; shoot while the plume climbs
 			if (P.bArkLaunched && !P.Done.Contains(TEXT("ark-launch")))
 			{
-				if (FPlatformTime::Seconds() - P.ArkAt > 3.6) PlayShot(Ctx, TEXT("ark-launch"));
+				// the flow cuts to its launch camera 1.2 s after the launch; the Ark is some 3 km up after 5 s
+				if (FPlatformTime::Seconds() - P.ArkAt > 5.0)
+				{
+					const ADmFlow* Fl = ADmFlow::Find(Ctx.World);
+					UE_LOG(LogDmPlay, Display, TEXT("DmPlay: ark launch camera %s"), Fl && Fl->IsCinematic() ? TEXT("on") : TEXT("OFF"));
+					PlayShot(Ctx, TEXT("ark-launch"));
+				}
 				break;
 			}
 			if (P.bEnded || Wd.phase == dm::Phase::Ended)
@@ -673,6 +840,7 @@ namespace
 
 		// ---------------------------------------------------------------- ending, timelapse, card, title
 		case 8:   // the flow holds on the launch, then opens the ending screen
+			if (P.StepFrame == 1) Sim->UnpinSun();
 			if (Sc->Current() == EDmScreen::Ending)
 			{
 				if (P.StepTime > 0.0 && !P.Done.Contains(TEXT("ending")) && P.Sub == 0) { P.Sub = 1; P.SubFrame = 0; }
@@ -918,7 +1086,16 @@ namespace
 		const int32 Base = (D.group == dm::powers::Group::Wrath && Small >= 0) ? Small : Big;
 		if (Base < 0) return 0;
 		const int32 Home = W.settlements[size_t(Base)].cell;
-		if (D.target == dm::powers::Target::Settlement) return Home;
+		if (D.target == dm::powers::Target::Settlement)
+		{
+			// (wave3-final) a settlement power the largest town cannot take (v3 Consecrate: a shrine without a temple,
+			// or a capital's temple with no Wonder this age) goes to the most populous town that can take it
+			if (dm::powers::can(W, D.id, Home).ok) return Home;
+			int32 Best = -1; double BestPop = -1.0;
+			for (const dm::Settlement& S : W.settlements)
+				if (!S.dead && W.valid(S.cell) && S.pop > BestPop && dm::powers::can(W, D.id, S.cell).ok) { BestPop = S.pop; Best = S.cell; }
+			return Best >= 0 ? Best : Home;
+		}
 		std::vector<int32_t> Ring;
 		W.geo->ring(Home, 3, Ring);
 		for (int32 Try = 0; Try < 200 && !Ring.empty(); ++Try)
@@ -1002,6 +1179,9 @@ static FDmScenarioRegistrar GDmScenarioPowersCheck(TEXT("powers-check"), TEXT("i
 			const dm::powers::PowerDef& D = dm::powers::kPowers[P.Order[P.Idx]];
 			P.T = 0.0; P.bShot = false; P.Events.Reset();
 			W->god.awe = FMath::Max(W->god.awe, W->god.aweMax);   // scenario-only: every power affordable
+			// (wave3-final) scenario-only: the scripted god may already have raised this age's Wonder, which leaves
+			// Consecrate nothing to do at year 2900 (every shrine has its temple); forget it so a capital can take it
+			if (FCStringAnsi::Strcmp(D.id, "consecrate") == 0) W->vars.num.erase("powers_wonderAge");
 			P.Cell = TargetFor(*W, D, R);
 			if (FCStringAnsi::Strcmp(D.id, "peace") == 0)
 			{
@@ -1036,4 +1216,156 @@ static FDmScenarioRegistrar GDmScenarioPowersCheck(TEXT("powers-check"), TEXT("i
 			P.bShot = true;
 			Ctx.ShotPath(FPaths::Combine(Ctx.Mode->ShotsDir(), FString::Printf(TEXT("ue-power-%s.png"), UTF8_TO_TCHAR(D.id))), true);
 		}
+	});
+
+// ------------------------------------------------------------------ first-minutes: a new player who does nothing
+// (design review finding 12) A new world, genesis skipped, nobody touching anything, at -fmspeed= (default 4x)
+// until year -fmyears= (default 600), with the real flow and HUD (hints and the guide reset first). Checks:
+// at least 4 different first-steps hints, each up at most 15 s, shown in teaching order when they arrive
+// together; the regard word stays "Watched" (the god did nothing they saw); the guidance thread shows its first
+// step. Shots (with the interface): ue-fm-hint-<n>.png as each hint appears, ue-fm-camp.png (a town's panel in
+// the first age: the edicts dimmed with how to wake them), ue-fm-thread.png. Exit code = failures.
+namespace
+{
+	struct FFirstMinutes
+	{
+		double Speed = 4.0, Years = 600.0;
+		int32 Seen = 0;                     // hint records looked at
+		TSet<int32> Shot;                   // hints already photographed
+		int32 PendingShot = -1;  double PendingAt = 0.0;
+		bool bCampShot = false, bThreadShot = false, bDone = false;
+		int32 CampFrame = -1;
+		int32 BelovedYears = 0, WatchedYears = 0, LastYear = -1;
+		int32 MaxShownBreach = 0;
+		double T0 = 0.0;
+	};
+	TUniquePtr<FFirstMinutes> GFm;
+
+	void FmShot(FDmScenarioContext& Ctx, const FString& Name)
+	{
+		const FString Path = FPaths::Combine(Ctx.Mode->ShotsDir(), FString::Printf(TEXT("ue-fm-%s.png"), *Name));
+		Ctx.ShotPath(Path, true);
+		const dm::World* W = Ctx.Sim->Sim();
+		UE_LOG(LogDmPlay, Display, TEXT("DmFirst: shot %s (year %.0f)"), *Path, W ? W->year : 0.0);
+	}
+}
+
+static FDmScenarioRegistrar GDmScenarioFirstMinutes(TEXT("first-minutes"), TEXT("integration"),
+	TEXT("a new world left alone for 600 years: the first-steps hints (>= 4, each <= 15 s, in order), the regard word, the guide"),
+	[](FDmScenarioContext& Ctx)
+	{
+		GFm = MakeUnique<FFirstMinutes>();
+		FFirstMinutes& F = *GFm;
+		F.T0 = FPlatformTime::Seconds();
+		FDmShotArgs::Value(TEXT("-fmspeed="), F.Speed);
+		FDmShotArgs::Value(TEXT("-fmyears="), F.Years);
+		int32 Seed = 21;
+		FDmShotArgs::Value(TEXT("-fmseed="), Seed);
+		Ctx.HoldExit();
+		Ctx.Sim->CreateWorld(uint32(Seed), TEXT("Ithe"), true, 0.0);
+		Ctx.BuildScene(DmPartsAll);
+		ADmFlow* Fl = Ctx.World->SpawnActor<ADmFlow>();
+		Fl->bAutosave = false;
+		Fl->bAutoSlowAllowed = false;
+		Fl->EnterPlayForTests();
+		Ctx.UseHarnessCamera(false);
+		if (ADmPawn* Pw = ADmPawn::Find(Ctx.World))
+		{
+			Pw->bAdoptHarnessView = false;
+			if (APlayerController* PC = Ctx.World->GetFirstPlayerController()) PC->SetViewTarget(Pw);
+			if (Pw->Router) Pw->Router->SetVirtualPointer(FVector2D(-4000.0, -4000.0));
+		}
+		if (ADmHud* H = ADmHud::Find(Ctx.World))
+		{
+			FDmHudContext& X = H->Context();
+			X.ResetHints();
+			X.ResetGuide();
+			X.HintHistory.Reset();
+			X.bHintsEnabled = true;
+		}
+		Ctx.Sim->SetPaused(false);
+		Ctx.Sim->SetSpeed(float(F.Speed));
+		UE_LOG(LogDmPlay, Display, TEXT("DmFirst: start (seed %d, %.0fx, until year %.0f)"), Seed, F.Speed, F.Years);
+	},
+	[](FDmScenarioContext& Ctx, float Dt)
+	{
+		if (!GFm.IsValid() || GFm->bDone) return;
+		FFirstMinutes& F = *GFm;
+		const dm::World* W = Ctx.Sim->Sim();
+		ADmHud* H = ADmHud::Find(Ctx.World);
+		if (!W || !H) return;
+		FDmHudContext& X = H->Context();
+		const double Now = FPlatformTime::Seconds();
+		// the regard word once a year
+		const int32 Y = int32(W->year);
+		if (Y != F.LastYear && !X.M.bGenesis)
+		{
+			F.LastYear = Y;
+			if (X.M.RegardWord == TEXT("Beloved")) ++F.BelovedYears;
+			if (X.M.RegardWord == TEXT("Watched")) ++F.WatchedYears;
+		}
+		// a hint appeared: photograph it a moment later (its fade-in done)
+		while (F.Seen < X.HintHistory.Num())
+		{
+			const FDmHudHintRecord& R = X.HintHistory[F.Seen++];
+			UE_LOG(LogDmPlay, Display, TEXT("DmFirst: hint %d appears in year %.0f: \"%s\""), R.Index, R.Year, FDmHudContext::HintText(R.Index));
+			if (!F.Shot.Contains(R.Index) && F.PendingShot < 0) { F.PendingShot = R.Index; F.PendingAt = Now + 1.2; }
+		}
+		if (F.PendingShot >= 0 && Now >= F.PendingAt)
+		{
+			if (X.HintShown == F.PendingShot) FmShot(Ctx, FString::Printf(TEXT("hint-%d"), F.PendingShot));
+			F.Shot.Add(F.PendingShot);
+			F.PendingShot = -1;
+		}
+		// the guidance thread, then a town's panel in the first age (the player would click the camp)
+		if (!F.bThreadShot && X.bGuideVisible && W->year > 30 && F.PendingShot < 0 && X.HintShown < 0)
+		{
+			F.bThreadShot = true;
+			FmShot(Ctx, TEXT("thread"));
+		}
+		if (!F.bCampShot && F.bThreadShot && W->year > 60 && F.PendingShot < 0)
+		{
+			if (F.CampFrame < 0)
+			{
+				int32 Best = -1;
+				for (const dm::Settlement& S : W->settlements) if (!S.dead && (Best < 0 || S.pop > W->settlements[size_t(Best)].pop)) Best = S.id;
+				if (Best >= 0) { X.Control.Select(Best); F.CampFrame = Ctx.Frame; }
+			}
+			else if (Ctx.Frame - F.CampFrame == 30)
+			{
+				FmShot(Ctx, TEXT("camp"));
+				F.bCampShot = true;
+			}
+		}
+		if (F.bCampShot && Ctx.Frame - F.CampFrame == 36) X.Control.Select(-1);
+		if (W->year < F.Years && Now - F.T0 < 900.0) return;
+
+		// results
+		F.bDone = true;
+		Ctx.Sim->SetPaused(true);
+		if (X.HintShown >= 0 && X.HintHistory.Num()) X.HintHistory.Last().Shown = X.Now - X.HintHistory.Last().Born;
+		TSet<int32> Distinct;
+		double MaxShown = 0.0;
+		bool bOrdered = true;
+		FString List;
+		for (int32 I = 0; I < X.HintHistory.Num(); ++I)
+		{
+			const FDmHudHintRecord& R = X.HintHistory[I];
+			Distinct.Add(R.Index);
+			MaxShown = FMath::Max(MaxShown, R.Shown);
+			// hints that waited together come out lowest first: a hint that started within 1 s of the previous one
+			// leaving (it was queued) must not have a lower index than one still waiting then; check pairwise order
+			if (I > 0 && R.Born - (X.HintHistory[I - 1].Born + X.HintHistory[I - 1].Shown) < 0.05 && R.Index < X.HintHistory[I - 1].Index && R.Year - X.HintHistory[I - 1].Year < 1.0) bOrdered = false;
+			List += FString::Printf(TEXT(" %d (year %.0f, %.1f s)"), R.Index, R.Year, R.Shown);
+		}
+		int32 Fails = 0;
+		auto Check = [&](bool bOk, const FString& What) { UE_LOG(LogDmPlay, Display, TEXT("DmFirst: %s %s"), *What, bOk ? TEXT("PASS") : TEXT("FAIL")); if (!bOk) ++Fails; };
+		Check(Distinct.Num() >= 4, FString::Printf(TEXT("%d different hints in %.0f years (want >= 4):%s"), Distinct.Num(), W->year, *List));
+		Check(MaxShown <= 15.0, FString::Printf(TEXT("longest hint %.1f s (want <= 15)"), MaxShown));
+		Check(bOrdered, TEXT("hints that arrived together showed in teaching order"));
+		Check(F.BelovedYears == 0 && F.WatchedYears > 0, FString::Printf(TEXT("regard word with no deeds: Watched %d years, Beloved %d years (want Watched, never Beloved)"), F.WatchedYears, F.BelovedYears));
+		Check(F.bThreadShot, TEXT("the guidance thread was up"));
+		UE_LOG(LogDmPlay, Display, TEXT("DmFirst: toasts %d pushed -> %d rows; RESULT %s (%d failed, %.0f s)"), X.ToastsPushed, X.ToastsCreated, Fails == 0 ? TEXT("PASS") : TEXT("FAIL"), Fails, Now - F.T0);
+		Ctx.SetExitCode(Fails);
+		Ctx.Finish();
 	});

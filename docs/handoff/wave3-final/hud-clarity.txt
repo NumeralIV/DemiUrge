@@ -1,0 +1,3 @@
+mScenario: DmHudCheck clarity hint order: showing 0, then 1,2,3 PASS
+mScenario: DmHudCheck clarity hint left after 0.3 s; now showing 1 PASS
+mScenario: DmHudCheck clarity RESULT PASS (0 failed)

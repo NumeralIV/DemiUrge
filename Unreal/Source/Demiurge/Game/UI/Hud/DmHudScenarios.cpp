@@ -359,7 +359,9 @@ static FDmScenarioRegistrar GDmHudPlay(TEXT("hud-play"), TEXT("hud"), TEXT("ever
 			X.Banner.Born = -100;
 			X.bHintsEnabled = true;
 			X.ResetHints();
+			X.HintsSeen.Add(0); X.HintsSeen.Add(1);   // the state hints (awake, Awe) would come first in teaching order
 			X.TriggerHint(4);
+			X.HintQueueSince = X.Now - X.HintGather;   // no gathering wait: the hint shows on the next tick
 			dm::World* W = C.Sim->SimMutable();
 			if (!W) return;
 			const int32 Sid = FindSettlement(*W, [](const dm::Settlement& S) { return S.capital; });
@@ -628,3 +630,258 @@ static FDmScenarioRegistrar GDmHudWorst(TEXT("hud-worst"), TEXT("hud"), TEXT("3 
 		});
 	},
 	[](FDmScenarioContext& Ctx, float) { GWorst.Tick(Ctx); });
+
+// ================================================================== hud-clarity: wave 3 player-clarity elements (design review 8 and 12)
+// Run with -noshot: shots/ue-hud-clarity-<state>.png, "DmHudCheck clarity ..." lines, exit 0 = every check PASS.
+//   watched           the regard word before the god has done anything ("Watched"), its culture dot and the small
+//                     remember map; the guidance thread's first step
+//   remember-watched  the remember card while they have seen nothing; remember: after acts (the verdict, the map)
+//   guide-progress    two steps ticked off (a click on a town, a rain), the next step; guide-folded: one line
+//   inspector-why     famine, a prayer and the sea at the door explained; inspector-edicts: no prophet, edicts dimmed
+//                     with how to wake them
+//   toasts-merged     8 answered prayers, 2 lost towns, 2 woken powers and the rising sea as four toasts
+//   hint-order        three hints at once show in teaching order; then they leave by themselves after 12 s
+
+static FHudRun GClarity;
+static int32 GClarityFails = 0;
+static int32 GClarityNext = -1;
+
+namespace
+{
+	void ClarityCheck(FDmScenarioContext& C, bool bOk, const FString& What)
+	{
+		C.Log(FString::Printf(TEXT("DmHudCheck clarity %s %s"), *What, bOk ? TEXT("PASS") : TEXT("FAIL")));
+		if (!bOk) { ++GClarityFails; C.SetExitCode(GClarityFails); }
+	}
+
+	/** A culture's long memory of the god (Sim society::memory's vars): grace, wrath and when it last heard him. */
+	void SetMemory(dm::World& W, int32 Culture, double Grace, double Wrath)
+	{
+		const std::string Id = std::to_string(Culture);
+		W.vars.num["society_grace_" + Id] = Grace;
+		W.vars.num["society_wrath_" + Id] = Wrath;
+		W.vars.num["society_heard_" + Id] = W.year;
+	}
+
+	/** The HUD word must be the ending's own verdict for the culture it names (Sim checkEnding: memory().mood). */
+	void CheckVerdict(FDmScenarioContext& C, const FDmHudModel& M, const FString& What)
+	{
+		const dm::World* W = C.Sim->Sim();
+		const dm::society::Memory Mem = dm::society::memory(*W, M.RegardCulture);
+		ClarityCheck(C, !M.bWatched && M.Mood == Mem.mood && M.RegardWord == FDmHudContext::RegardWordOf(Mem.mood),
+			FString::Printf(TEXT("%s: HUD %s, the ending's memory verdict %s (verdict %.2f, devotion %.2f, grace %.2f, wrath %.2f%s%s)%s%s"), *What, *M.RegardWord,
+				*FDmHudContext::RegardWordOf(Mem.mood), Mem.verdict, Mem.devotion, Mem.grace, Mem.wrath, Mem.mixed ? TEXT(", two-handed") : TEXT(""),
+				Mem.silent > 0 ? *FString::Printf(TEXT(", silent %.0f y"), Mem.silent) : TEXT(""), M.RegardWhy.IsEmpty() ? TEXT("") : TEXT(" -- "), *M.RegardWhy));
+	}
+}
+
+static FDmScenarioRegistrar GDmHudClarity(TEXT("hud-clarity"), TEXT("hud"), TEXT("wave 3 clarity: regard, remember map, guidance thread, inspector explanations, toast merging, hint order"),
+	[](FDmScenarioContext& Ctx)
+	{
+		Ctx.BuildScene(uint32(EDmPartKind::World) | uint32(EDmPartKind::Ui));
+		Ctx.HoldExit();
+		double Lat, Lon;
+		SettledCentre(Ctx.Sim->Sim(), Lat, Lon);
+		Ctx.LookAt(Lat, Lon, 700.0, 0.0, 90.0, 30.0);
+		Ctx.SetSubsolar(FMath::Clamp(Lat * 0.5 + 8.0, -23.0, 23.0), Lon + 55.0);
+		GClarity = FHudRun();
+		GClarityFails = 0;
+		GClarity.StartFrame = 240;
+		FHudRun& R = GClarity;
+		static double SeaBefore = 0.0;
+
+		R.Add(10, TEXT(""), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			FDmHudContext& X = HC(H);
+			X.ResetHints();
+			X.bHintsEnabled = false;
+			X.ResetGuide();
+			X.Control.Select(-1);
+			if (dm::World* W = C.Sim->SimMutable())
+			{
+				W->god.awe = 412; W->god.aweMax = 500;
+				W->god.mercy = 0; W->god.wrath = 0;   // nothing the people saw yet
+				W->god.deeds.erase("rain");
+				for (dm::Culture& Cu : W->cultures) { Cu.edict = dm::Edict::None; SetMemory(*W, Cu.id, 0.0, 0.0); }
+			}
+		});
+		R.Add(30, TEXT("watched"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			const FDmHudModel& M = HC(H).M;
+			ClarityCheck(C, M.bWatched && M.RegardWord == TEXT("Watched") && M.RegardCulture >= 0, FString::Printf(TEXT("watched word %s culture %d (%s)"), *M.RegardWord, M.RegardCulture, *M.RegardCultureName));
+			ClarityCheck(C, HC(H).bGuideVisible && HC(H).GuideCurrent == 0, FString::Printf(TEXT("guide visible %d at step %d"), HC(H).bGuideVisible ? 1 : 0, HC(H).GuideCurrent));
+		});
+		R.Add(20, TEXT("remember-watched"), [](FDmScenarioContext& C, ADmHud& H) { HC(H).ToggleRemember(); });
+		// (verifier) cruel, then two-handed: the word still follows the ending's rule; the card says why
+		R.Add(20, TEXT("remember-feared"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			if (dm::World* W = C.Sim->SimMutable()) SetMemory(*W, HC(H).M.RegardCulture, 0.0, 6.0);
+			H.RefreshNow();
+			CheckVerdict(C, HC(H).M, TEXT("cruel memory"));
+			ClarityCheck(C, HC(H).M.Mood == dm::Mood::Feared, FString::Printf(TEXT("cruel memory reads %s"), *HC(H).M.RegardWord));
+		});
+		R.Add(20, TEXT("remember-mixed"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			if (dm::World* W = C.Sim->SimMutable()) SetMemory(*W, HC(H).M.RegardCulture, 4.0, 3.0);
+			H.RefreshNow();
+			CheckVerdict(C, HC(H).M, TEXT("two-handed memory"));
+			ClarityCheck(C, HC(H).M.Mood == dm::Mood::Parting && !HC(H).M.RegardWhy.IsEmpty(), FString::Printf(TEXT("two-handed reads %s with a reason"), *HC(H).M.RegardWord));
+		});
+		R.Add(20, TEXT("remember"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			// (verifier) god.mercy alone (rain over an empty sea) is not a deed the people saw: still Watched
+			if (dm::World* W = C.Sim->SimMutable()) { W->god.mercy = 3.0; SetMemory(*W, HC(H).M.RegardCulture, 0.0, 0.0); }
+			H.RefreshNow();
+			ClarityCheck(C, HC(H).M.bWatched, FString::Printf(TEXT("mercy nobody saw: still %s"), *HC(H).M.RegardWord));
+			// the asked culture remembers kind deeds: the word is the ending's own verdict
+			if (dm::World* W = C.Sim->SimMutable()) SetMemory(*W, HC(H).M.RegardCulture, 3.0, 0.0);
+			H.RefreshNow();
+			const FDmHudModel& M = HC(H).M;
+			ClarityCheck(C, !M.bWatched && M.RegardWord != TEXT("Watched") && M.RegardLine.StartsWith(TEXT("If the story ended now")),
+				FString::Printf(TEXT("verdict %s: %s (verdict %.2f, devotion %.2f)"), *M.RegardWord, *M.RegardLine, M.RegardLove, M.RegardDevotion));
+			CheckVerdict(C, M, TEXT("kind memory"));
+		});
+		// the thread: a click on a town (after a moment with none) and a rain tick two steps off
+		R.Add(6, TEXT(""), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			HC(H).bRememberOpen = false;
+			const dm::World* W = C.Sim->Sim();
+			HC(H).Control.Select(W ? FindSettlement(*W, [](const dm::Settlement& S) { return S.tier >= 1; }) : -1);
+		});
+		R.Add(6, TEXT(""), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			HC(H).Control.Select(-1);
+			if (dm::World* W = C.Sim->SimMutable()) W->god.deeds["rain"] = 1;
+		});
+		R.Add(20, TEXT("guide-progress"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			FDmHudContext& X = HC(H);
+			ClarityCheck(C, (X.GuideDone & 7u) == 7u && X.GuideCurrent >= 3 && X.bGuideVisible,
+				FString::Printf(TEXT("guide done mask 0x%x, step %d (%s), just done (%s)"), X.GuideDone, X.GuideCurrent, FDmHudContext::GuideStep(X.GuideCurrent).Title, *X.GuideJustDone));
+		});
+		R.Add(14, TEXT("guide-folded"), [](FDmScenarioContext& C, ADmHud& H) { HC(H).bGuideCollapsed = true; });
+		// the inspector: a town in famine that prays for rain, by the sea, its people without a prophet
+		R.Add(40, TEXT("inspector-why"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			HC(H).bGuideCollapsed = false;
+			dm::World* W = C.Sim->SimMutable();
+			if (!W) return;
+			const int32 Sid = FindSettlement(*W, [W](const dm::Settlement& S) { return S.tier >= 1 && W->elev[size_t(S.cell)] - W->seaLevel < 0.15; });
+			if (Sid < 0) { ClarityCheck(C, false, TEXT("no coastal town")); return; }
+			dm::Settlement& S = W->settlements[size_t(Sid)];
+			S.famine = 3;
+			S.pop = FMath::Max(S.pop, S.K * 1.18);   // a real famine: more of them than the land can feed
+			S.prayer = dm::Prayer{ dm::PrayerKind::Rain, W->year - 2 };
+			dm::Culture& Cu = W->cultures[size_t(S.culture)];
+			Cu.prophet.reset();
+			HC(H).Control.Select(Sid);
+			C.Log(FString::Printf(TEXT("DmHudCheck clarity inspector-why settlement %d"), Sid));
+		});
+		R.Add(40, TEXT("inspector-edicts"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			dm::World* W = C.Sim->SimMutable();
+			if (!W) return;
+			// the smallest live culture's capital (a short panel: the edicts are in view)
+			int32 Best = -1;
+			for (const dm::Culture& Cu : W->cultures)
+				if (!Cu.dead && Cu.capital >= 0 && (Best < 0 || Cu.pop < W->cultures[size_t(Best)].pop)) Best = Cu.id;
+			if (Best < 0) return;
+			dm::Culture& Cu = W->cultures[size_t(Best)];
+			Cu.prophet.reset();
+			Cu.edict = dm::Edict::None;
+			HC(H).Control.Select(Cu.capital);
+		});
+		// toast merging: what used to be a stack of "x 8", "x 7" rows
+		R.Add(30, TEXT("toasts-merged"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			HC(H).Control.Select(-1);
+			FDmHudContext& X = HC(H);
+			X.Now = H.HudTime();
+			X.Toasts.Reset();
+			X.ToastGroups.Reset();
+			X.ToastsPushed = X.ToastsCreated = 0;
+			const dm::World* W = C.Sim->Sim();
+			TArray<FString> Names;
+			if (W) for (const dm::Settlement& S : W->settlements) if (!S.dead && Names.Num() < 7) Names.Add(U(S.name));
+			for (const FString& N : Names) X.PushGrouped(TEXT("prayer"), N, TEXT("good"), 30.0);
+			X.PushGrouped(TEXT("prayer"), Names.Num() ? Names[0] : FString(TEXT("Velu")), TEXT("good"), 30.0);   // the same town again
+			X.PushGrouped(TEXT("lost"), TEXT("Ostravel"), TEXT("bad"), 30.0);
+			X.PushGrouped(TEXT("lost"), TEXT("Hadmir"), TEXT("bad"), 30.0);
+			X.PushGrouped(TEXT("wake"), TEXT("Bloom"), TEXT("good"), 30.0);
+			X.PushGrouped(TEXT("wake"), TEXT("Inspire"), TEXT("good"), 30.0);
+			// the sea rises 4 m above where history began: the HUD says why (once per mark)
+			if (dm::World* Wm = C.Sim->SimMutable())
+			{
+				SeaBefore = Wm->seaLevel;
+				if (!Wm->vars.seaBase) Wm->vars.seaBase = Wm->seaLevel;   // the fixture has no recorded start
+				Wm->seaLevel = *Wm->vars.seaBase;
+				X.SeaToldIndex = -1;
+				H.RefreshNow();                       // baseline (marks already passed stay quiet)
+				Wm->seaLevel += 0.02;
+				H.RefreshNow();
+			}
+			for (FDmHudToast& T : X.Toasts) T.Life = FMath::Max(T.Life, 30.0);
+			FString All;
+			for (const FDmHudToast& T : X.Toasts) All += T.Text + TEXT(" | ");
+			const FString Want = FString::Printf(TEXT("%d prayers answered"), Names.Num() + 1);
+			const bool bPrayer = X.Toasts.ContainsByPredicate([&](const FDmHudToast& T) { return T.Text.StartsWith(Want); });
+			const bool bSea = X.Toasts.ContainsByPredicate([](const FDmHudToast& T) { return T.Text.StartsWith(TEXT("The sea has risen")); });
+			ClarityCheck(C, X.Toasts.Num() <= 4 && bPrayer && bSea && X.ToastsCreated <= 4,
+				FString::Printf(TEXT("toasts: %d pushed -> %d rows: %s"), X.ToastsPushed, X.ToastsCreated, *All));
+			// (verifier) a steady stream longer than the 10 s window: still one prayer row (it used to split in two,
+			// and later prayers went to the stale row). Pushed on a copy of the HUD clock, then put back.
+			{
+				const double Now0 = X.Now;
+				TArray<FDmHudToast> Keep = X.Toasts;
+				TMap<FString, FDmHudToastGroup> KeepG = X.ToastGroups;
+				X.Toasts.Reset(); X.ToastGroups.Reset();
+				int32 MaxRows = 0;
+				for (int32 I = 0; I < 9; ++I)
+				{
+					X.Now = Now0 + 2.5 * I;
+					X.Tick(X.Now);
+					X.PushGrouped(TEXT("prayer"), FString::Printf(TEXT("Town%d"), I), TEXT("good"));
+					MaxRows = FMath::Max(MaxRows, X.Toasts.FilterByPredicate([](const FDmHudToast& T) { return T.Key == TEXT("prayer"); }).Num());
+				}
+				const FString Last = X.Toasts.Num() ? X.Toasts.Last().Text : FString();
+				ClarityCheck(C, MaxRows == 1, FString::Printf(TEXT("a 20 s stream of prayers: at most %d prayer row(s), last \"%s\""), MaxRows, *Last));
+				X.Now = Now0;
+				X.Toasts = Keep; X.ToastGroups = KeepG;
+			}
+		});
+		// hints: three arrive together (shrine, awake, prayer) and show in teaching order
+		R.Add(60, TEXT("hint-order"), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			if (dm::World* W = C.Sim->SimMutable()) W->seaLevel = SeaBefore;
+			FDmHudContext& X = HC(H);
+			X.Toasts.Reset();
+			X.ResetHints();
+			X.HintHistory.Reset();
+			X.bHintsEnabled = true;
+			X.TriggerHint(2);
+			X.TriggerHint(0);
+			X.TriggerHint(3);
+		});
+		R.Add(6, TEXT(""), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			FDmHudContext& X = HC(H);
+			// the state triggers may add hint 1 (Awe >= 20): every waiting hint must be in teaching order
+			bool bSorted = true;
+			for (int32 I = 1; I < X.HintQueue.Num(); ++I) bSorted &= X.HintQueue[I - 1] < X.HintQueue[I];
+			GClarityNext = X.HintQueue.Num() ? X.HintQueue[0] : -1;
+			ClarityCheck(C, X.HintShown == 0 && bSorted && X.HintQueue.Contains(2) && X.HintQueue.Contains(3), FString::Printf(TEXT("hint order: showing %d, then %s"), X.HintShown,
+				*FString::JoinBy(X.HintQueue, TEXT(","), [](int32 I) { return FString::FromInt(I); })));
+			X.HintBorn = X.Now - (X.HintSeconds + 0.5);   // as if 12.5 s had passed
+		});
+		R.Add(6, TEXT(""), [](FDmScenarioContext& C, ADmHud& H)
+		{
+			FDmHudContext& X = HC(H);
+			ClarityCheck(C, X.HintShown == GClarityNext && X.HintHistory.Num() >= 2 && X.HintHistory[0].Shown <= 15.0,
+				FString::Printf(TEXT("hint left after %.1f s; now showing %d"), X.HintHistory.Num() ? X.HintHistory[0].Shown : -1.0, X.HintShown));
+			X.bHintsEnabled = false;
+			X.HintQueue.Reset();
+			X.HintShown = -1;
+			C.Log(FString::Printf(TEXT("DmHudCheck clarity RESULT %s (%d failed)"), GClarityFails == 0 ? TEXT("PASS") : TEXT("FAIL"), GClarityFails));
+		});
+	},
+	[](FDmScenarioContext& Ctx, float) { GClarity.Tick(Ctx); });

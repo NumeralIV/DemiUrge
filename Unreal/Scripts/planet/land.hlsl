@@ -67,8 +67,11 @@ float3 Crowns(float3 Pm, float cell, out float3 off)
 	return float3(1.0 - Smooth01(c.x / 0.75), c.z, c.x);
 }
 
+// 0..1 from any bits of h (re-mixed first, ground lab: shifted hashes leave few low bits)
+float Rand01(uint h) { h ^= h >> 16; h *= 0x7feb352du; h ^= h >> 15; h *= 0x846ca68bu; h ^= h >> 16; return float(h & 0xFFFFu) / 65535.0; }
+
 float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, float2 U2, float2 U3, float Tm, float3 SunW,
-	float3 RX, float3 RY, float3 RZ, float3 Ctr4, float SeaR, float Heat, float OverOn, float Dbg, float Age,
+	float3 RX, float3 RY, float3 RZ, float3 Ctr4, float SeaR, float Heat, float OverOn, float Dbg, float Age, float SeaRise,
 	Texture2D MapA, SamplerState MapASampler, Texture2D MapB, SamplerState MapBSampler, Texture2D MapC, SamplerState MapCSampler,
 	Texture2D MapD, SamplerState MapDSampler, Texture2D MapE, SamplerState MapESampler, Texture2D RiverTex, SamplerState RiverTexSampler,
 	out float Rough, out float3 Nw, out float3 Emis, out float AO)
@@ -123,8 +126,23 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 	float nE = NoiseAA(Pm, 2600.0, fp, float3(4.4, 1.1, 8.8));
 	float nF = NoiseAA(Pm, 700.0, fp, float3(7.2, 3.9, 0.6));
 
+	// (wave 3) burn scar masks. The scorch map is a smooth field over the sim's cells (DmPlanetMaps: smoothed, read
+	// at a domain-warped direction); the scar is that field thresholded by noise at every scale from 2.6 km down, and
+	// the noise scales the threshold (never adds scorch where there is none), so its edge runs in fingers and leaves
+	// unburnt islands instead of tracing the hexagon of the cells. Core (char and ash), burnt ground, singed fringe.
+	float sN = 0.24 * nE + 0.30 * nF + 0.24 * nA + 0.16 * nB + 0.08 * nC;
+	// (verify) the full multi-scale noise belongs at the edge; inside a strongly scorched area it drew a dense leopard
+	// pattern of 200-500 m char and ash spots over the whole scar at 15-60 km (the fixture eruption's cells average
+	// 0.47): a third of it inside, and the ash core follows the broad field (near the vent) with wavy edges only
+	float sEdge = 1.0 - Smooth01((scorch - 0.28) / 0.30);
+	float scK = scorch * (1.6 + 1.5 * sN * lerp(0.35, 1.0, sEdge));
+	float burnt = Smooth01((scK - 0.34) / 0.20);
+	float scC = scorch * (1.6 + 0.9 * (0.55 * nE + 0.45 * nF)) + 0.12 * nA;
+	float charred = Smooth01((scC - 0.92) / 0.30);
+	float singe = Smooth01((scK - 0.10) / 0.22) * (1.0 - burnt);
+
 	// people and damage push the forest back
-	forest *= (1.0 - saturate(farm * 1.6)) * (1.0 - saturate(urban * 2.0)) * (1.0 - saturate(scorch * 1.5)) * (1.0 - saturate(lava * 3.0));
+	forest *= (1.0 - saturate(farm * 1.6)) * (1.0 - saturate(urban * 2.0)) * (1.0 - burnt) * (1.0 - 0.6 * singe) * (1.0 - saturate(lava * 3.0));
 
 	// ---- vegetation / soil base, with variation at every scale down to the pixel (orbit included).
 	// Every mask here is broad and soft: hard thresholds on noise read as camouflage blotches.
@@ -151,7 +169,7 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 	{
 		float3 dd = normalize(cross(up, float3(0.31, 0.83, 0.46)));
 		float ph = dot(Pm, dd) / 140.0 + 0.35 * Noised(Pm / 900.0 + 3.1).x + 0.12 * Noised(Pm / 260.0).x;
-		float k = AAW(140.0, fp) * Smooth01((arid - 0.7) / 0.2) * (1.0 - Smooth01((steepMid - 0.01) / 0.05)) * (1.0 - saturate(mtn * 3.0)) * (1.0 - forest);
+		float k = AAW(140.0, fp) * Smooth01((arid - 0.7) / 0.2) * Smooth01((h + 0.5) / 1.0) * (1.0 - Smooth01((steepMid - 0.01) / 0.05)) * (1.0 - saturate(mtn * 3.0)) * (1.0 - forest);
 		float s = frac(ph);
 		// asymmetric wave (windward 0..0.75, lee 0.75..1) with rounded joins: slope = d profile / d phase
 		float sl = s < 0.75 ? 1.0 / 0.75 : -1.0 / 0.25;
@@ -163,16 +181,17 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 	}
 
 	// ---- land use frame: "estates" of ~1.6 km (3D cells), each with its own field grid orientation and
-	// field size, so farmland reads as rectangular fields in blocks of different orientation, and towns get
-	// a street grid. The grid is planar in the estate's tangent frame (fixed per estate, so it does not
-	// collapse on the sphere).
-	float farmM = 0.0;
-	float2 lu = 0; float luW = 1, luH = 1; float eR = 0, eR2 = 0, eEdge = 1;
+	// field size, so farmland reads as fields in holdings of different orientation, and towns get a street grid. The grid is planar in the estate's tangent frame (fixed per estate, so it does not
+	// collapse on the sphere). (wave 3) The estate lookup is warped by the broad colour noises, so estate
+	// borders wander like lanes and streams instead of running as ruler-straight Voronoi edges across the land.
+	float farmM = 0.0, woodlot = 0.0;
+	float2 lu = 0; float luW = 1, luH = 1; float eR = 0, eR2 = 0, eEdge = 1; float3 eAx = 0, eAy = 0;
 	if (farm > 0.02 || urban > 0.03)
 	{
 		float3 offE; float r2e;
-		float3 ec = Cells(Pm / 1600.0, int3(51, 7, 83), offE, r2e);
-		float3 ctr = Pm - offE * 1600.0;
+		float3 Pe = Pm + float3(nF + 0.5 * nA, nE + 0.5 * nF, nA + 0.5 * nE) * 170.0;
+		float3 ec = Cells(Pe / 1600.0, int3(51, 7, 83), offE, r2e);
+		float3 ctr = Pe - offE * 1600.0;
 		float3 cu = normalize(ctr);
 		float3 t1 = normalize(cross(cu, abs(cu.z) < 0.9 ? float3(0, 0, 1) : float3(1, 0, 0)));
 		float3 t2 = cross(cu, t1);
@@ -180,45 +199,81 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 		float ang = ec.z * 6.283;
 		float2 q = float2(dot(d, t1), dot(d, t2));
 		lu = float2(cos(ang) * q.x + sin(ang) * q.y, -sin(ang) * q.x + cos(ang) * q.y);
+		eAx = cos(ang) * t1 + sin(ang) * t2;                          // lu.x / lu.y axes in the planet frame
+		eAy = -sin(ang) * t1 + cos(ang) * t2;
 		eR = ec.z; eR2 = r2e;
 		eEdge = (ec.y - ec.x) * 1600.0;                              // m to the estate border (approx.)
 		luW = lerp(110.0, 300.0, r2e);
 		luH = luW * lerp(0.3, 0.75, frac(ec.z * 7.31));
 	}
+	// (wave 3) farmland, after docs/lab/ground.md at a fraction of its cost (a full port of the lab's holdings and
+	// Voronoi fields cost 3-5 ms of base pass at 2-10 km here, measured with ProfileGPU): fields in the estate frame
+	// with bending edges; each field decides on its own whether it is cropped, meadow or a woodlot, so the farmland
+	// frays field by field into the land around it; crops in the lab's mid-summer palette (mostly green, gold grain,
+	// few ploughed fields: the old palette's near-neutral ploughland and stubble turned grey under the aerial haze);
+	// grass balks; hedgerows with gaps and their sun-side shadows; a holding average when fields are below a pixel.
+	float hedge = 0.0, hedgeSh = 0.0;
 	if (farm > 0.02)
 	{
 		float2 g = lu / float2(luW, luH);
+		g += float2(nB, nA) * 0.05;                                 // field edges bend a little (no ruled lines)
 		g.x += 0.37 * floor(g.y);                                   // rows of fields do not line up
 		float2 cellF = floor(g), f = frac(g);
 		uint hh = Hash(int3(int2(cellF), int(eR * 4096.0)));
-		float rnd = float(hh & 0xFFFFu) / 65535.0, rnd2 = float((hh >> 16) & 0xFFFFu) / 65535.0;
-		float edgeM = min(min(f.x, 1.0 - f.x) * luW, min(f.y, 1.0 - f.y) * luH);
+		float rnd = Rand01(hh), rnd2 = Rand01(hh >> 11), rnd3 = Rand01(hh >> 21);
+		float2 dE2 = float2(min(f.x, 1.0 - f.x) * luW, min(f.y, 1.0 - f.y) * luH);
+		float edgeM = min(dE2.x, dE2.y);
 		float kF = AAW(luH, fp), kE = AAW(1600.0, fp);
+		// each field's own decision (the lab's fray): cropped where the farm intensity beats the field's random
+		float fray = 0.22 * (nF + 0.6 * nA) + 0.12 * nE;
+		float cultK = Smooth01((farm * 1.3 - 0.08 + fray - rnd) / 0.04);           // 1 cropped .. 0 meadow
+		float wildK = Smooth01((rnd - farm * 2.2 - 0.25 - fray) / 0.04);           // untouched land beyond the outfields
 		farmM = Smooth01((farm * 1.35 + 0.30 * nA + 0.15 * nF + 0.25 * (eR2 - 0.5) * kE - 0.42) / 0.30)
-			* (1.0 - Smooth01((steepMid - 0.10) / 0.08)) * Smooth01((hW - 1.0) / 2.0);
-		// crop palette (linear albedo), drier climates more golden, wetter more green
-		float tt = saturate(rnd + 0.25 * (arid - 0.4));
-		float3 green = lerp(macro, float3(0.075, 0.115, 0.035), 0.6);
-		// green crops and pasture, ripening grain, fresh ploughing, stubble: close in value, as in real farmland
-		float3 crop = tt < 0.36 ? green * (0.85 + 0.30 * rnd2)
-			: (tt < 0.52 ? float3(0.165, 0.140, 0.072) * (0.85 + 0.25 * rnd2)
-			: (tt < 0.64 ? float3(0.090, 0.074, 0.050) * (0.85 + 0.25 * rnd2)
-			: (tt < 0.86 ? float3(0.080, 0.105, 0.045) * (0.9 + 0.25 * rnd2) : float3(0.165, 0.150, 0.100) * (0.9 + 0.2 * rnd2))));
-		// no field is one flat colour: moisture, soil and growth vary across it
-		crop *= 1.0 + 0.10 * nC + 0.07 * nD + 0.05 * nB;
-		// what the fields average to, varying per estate (keeps a mottled texture from far away)
-		float3 avgCrop = lerp(float3(0.115, 0.115, 0.055), green * 1.05, 0.4 + 0.3 * (eR2 - 0.5) * kE);
-		avgCrop *= 1.0 + 0.18 * (eR - 0.5) * kE;
+			* (1.0 - Smooth01((steepMid - 0.10) / 0.08)) * Smooth01((hW - 1.0) / 2.0) * (1.0 - burnt) * (1.0 - wildK * kF);
+		// neighbouring fields of one holding often grow alike (rotations run farm by farm): the crop choice is part
+		// field, part estate, so the patchwork clumps instead of reading as salt and pepper
+		float tt = saturate(lerp(rnd2, frac(eR * 13.71), 0.4) + 0.30 * (arid - 0.35));
+		float3 green = lerp(float3(0.058, 0.102, 0.030), float3(0.088, 0.125, 0.040), rnd3);
+		green = lerp(green, macro * float3(0.8, 1.0, 0.55), 0.2);           // a touch of the local climate
+		float3 gold = lerp(float3(0.200, 0.168, 0.080), float3(0.240, 0.205, 0.105), rnd3);
+		float3 hay = lerp(float3(0.120, 0.128, 0.055), float3(0.150, 0.155, 0.072), rnd3);
+		float3 dark = float3(0.040, 0.080, 0.026) * (0.9 + 0.2 * rnd3);
+		float3 plough = lerp(float3(0.110, 0.078, 0.050), float3(0.140, 0.100, 0.062), rnd3);
+		float3 crop = tt < 0.44 ? green : (tt < 0.64 ? gold : (tt < 0.74 ? hay : (tt < 0.89 ? dark : plough)));
+		crop *= lerp(0.90, 1.10, frac(rnd3 * 7.31));
+		crop *= 1.0 + 0.12 * nC + 0.08 * nD + 0.07 * nB + 0.06 * nA;      // moisture, soil and growth inside a field
+		crop = lerp(crop, crop.ggg * float3(0.85, 1.0, 0.6), 0.25 * saturate(nA + 0.3 * nC));   // greener damp patches
+		float rows = sin(((rnd3 > 0.5) ? lu.x : lu.y) * 6.283 / 1.6) * AAW(1.6, fp) * step(0.44, tt) * step(tt, 0.89);
+		crop *= 1.0 + 0.10 * rows;                                  // crop rows close up
+		// meadow and rough grazing where the field is not cropped
+		float3 meadow = lerp(float3(0.080, 0.112, 0.040), float3(0.160, 0.150, 0.080), saturate(arid * 1.2 + 0.25 * nA)) * (1.0 + 0.12 * nB + 0.08 * nC);
+		crop = lerp(meadow, crop, cultK);
+		// woodlots: some uncropped fields were never cleared (drawn by the canopy below)
+		woodlot = (1.0 - cultK) * step(rnd3, 0.18 + 0.5 * saturate(forest * 1.5)) * kF * farmM;
+		// grass balk between cropped fields
+		float balk = cultK * (1.0 - Smooth01((edgeM - lerp(1.2, 2.6, rnd2)) / max(0.6 * fp, 0.3))) * AAW(4.0, fp);
+		crop = lerp(crop, meadow * 1.1, balk * 0.8);
+		// what the fields average to below a pixel: green with a gold share per estate, darkened by the hedge net
+		float goldShare = saturate(0.28 + 0.30 * (arid - 0.35) + 0.40 * (frac(eR * 13.71) - 0.5) * kE);
+		float3 avgCrop = lerp(float3(0.072, 0.108, 0.036), float3(0.165, 0.142, 0.070), goldShare);
+		avgCrop *= 1.0 + 0.14 * (eR - 0.5) * kE + 0.08 * nF;
+		avgCrop = lerp(avgCrop, float3(0.030, 0.048, 0.020), 0.12 * (1.0 - 0.6 * arid));
 		float3 fcol = lerp(avgCrop, crop, kF);
-		// hedges and tracks along field and estate edges, darker furrows close to the edge
-		float hedge = (1.0 - Smooth01((edgeM - 1.2) / 2.5)) * AAW(8.0, fp) * step(0.45, rnd2);
-		float track = (1.0 - Smooth01((eEdge - 4.0) / 6.0)) * AAW(20.0, fp);
-		fcol = lerp(fcol, float3(0.035, 0.055, 0.025), hedge * 0.85);
-		fcol = lerp(fcol, float3(0.16, 0.13, 0.09), track * 0.7);
-		// crop rows close up
-		float rowsA = (rnd2 > 0.5) ? lu.x : lu.y;
-		float rows = sin(rowsA * 6.283 / 1.6) * AAW(1.6, fp) * (1.0 - hedge) * step(tt, 0.64);
-		fcol *= 1.0 + 0.12 * rows;
+		// hedgerows: on most field edges in wet country, few in dry open fields, with gaps; a lumpy band of crowns
+		// 3-6 m wide drawn as a line (its share of a coarse pixel); on the sun's far side it throws a long thin shadow
+		float hedgeOn = step(0.40 + 0.40 * arid, rnd2) * Smooth01((nB + 0.5 * nA + 0.30) / 0.2) * (1.0 - wildK);
+		float hwd = lerp(1.8, 3.2, rnd3) + 1.2 * saturate(0.5 + nD);
+		float hW2 = max(hwd, 0.5 * fp);
+		hedge = saturate((hW2 - edgeM) / max(0.6 * fp, 0.4) + 0.5) * min(1.0, hwd / hW2) * hedgeOn * kF;
+		{
+			// the edge's outward normal (estate frame -> planet frame); shadow length 5 m x cot(sun elevation)
+			float2 eN = dE2.x < dE2.y ? float2(f.x < 0.5 ? -1.0 : 1.0, 0.0) : float2(0.0, f.y < 0.5 ? -1.0 : 1.0);
+			float3 sunT = SunD - up * dot(SunD, up);
+			float sinE = max(dot(SunD, up), 0.05);
+			float facing = dot(eN.x * eAx + eN.y * eAy, sunT);
+			float shL = 5.0 * sqrt(max(1.0 - sinE * sinE, 0.0)) / sinE;
+			hedgeSh = facing > 0.0 ? (1.0 - Smooth01((edgeM - hwd - shL * facing) / max(0.6 * fp, 0.6))) * AAW(shL * facing + 2.0, fp) * hedgeOn * kF * (1.0 - hedge) : 0.0;
+		}
 		col = lerp(col, fcol, farmM);
 		rough = lerp(rough, 0.9, farmM);
 	}
@@ -235,6 +290,7 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 	// ending in a patch outline (hard noise thresholds read as leopard spots on dry hills).
 	float fmBase = saturate((forest * 1.35 + 0.45 * fclump - 0.18) / 0.9);
 	fmBase *= fmBase * (3.0 - 2.0 * fmBase);
+	fmBase = max(fmBase, woodlot * 0.9);                                // (wave 3) farm woodlots
 	float dens = fmBase * (1.0 - beachPre) * (1.0 - pondPre);
 	float closed = Smooth01((dens - 0.45) / 0.4);                      // 0 open woodland .. 1 closed canopy
 	float3 canopyAvg = macro * lerp(0.80, 0.62, closed);
@@ -270,6 +326,13 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 	else if (dens > 0.01)
 	{
 		col = lerp(col, canopyAvg, saturate(dens * 1.1));
+	}
+
+	// (wave 3) hedgerows (tree lines) and their shadows across the fields
+	{
+		float3 hedgeC = float3(0.030, 0.050, 0.020) * (1.0 + 0.12 * nC);
+		col = lerp(col, hedgeC, hedge * farmM);
+		col *= 1.0 - 0.5 * hedgeSh * farmM;
 	}
 
 	// ---- rock with strata on steep slopes
@@ -348,6 +411,21 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 	// weed deeper down
 	float3 bed = lerp(float3(0.40, 0.37, 0.28), float3(0.15, 0.15, 0.12), Smooth01((-h - 2.0 - 6.0 * saturate(nF + 0.5)) / 22.0));
 	bed = lerp(bed, float3(0.17, 0.16, 0.12), (1.0 - saturate((tempC - 8.0) / 12.0)) * 0.6);
+	// (wave 3) drowned land (above the base sea, under the risen one: SeaRise m): not a pale sandy sea floor but the
+	// old ground under a young sea, dark silt and drowned meadow in patches at the old land's scales, with pale
+	// wave-worked flats in the first metres off the new shore. Seen through the turbid shallows (water.hlsl) this
+	// reads as flooded land, and the depth (deepening toward the old coast) as a gradient.
+	float drown = SeaRise > 0.5 ? Smooth01((h + SeaRise + 1.5) / 3.0) : 0.0;
+	if (drown * under > 0.001)
+	{
+		float pn = saturate(0.5 + 0.7 * nF + 0.5 * nA + 0.35 * nB + 0.3 * nE);
+		float3 silt = float3(0.052, 0.047, 0.033) * (1.0 + 0.2 * nC + 0.12 * nD);
+		float3 weed = float3(0.020, 0.030, 0.014) * (1.0 + 0.25 * nC);
+		float3 bedD = lerp(silt, weed, Smooth01((pn - 0.35) / 0.4) * 0.85);
+		float flats = (1.0 - Smooth01((-h - 0.6 - 2.0 * saturate(nA + 0.5)) / 2.5)) * saturate(0.45 + 0.8 * nF);
+		bedD = lerp(bedD, float3(0.115, 0.105, 0.078) * (1.0 + 0.15 * nC), flats * 0.55);
+		bed = lerp(bed, bedD, drown);
+	}
 	col = lerp(col, bed * (1.0 + 0.2 * nB + 0.1 * nC), under * (1.0 - rockM * 0.5));
 	float underLake = Smooth01((-hLake - 0.5) / 3.0);
 	col = lerp(col, float3(0.16, 0.15, 0.11) * (1.0 + 0.2 * nB), underLake);
@@ -468,12 +546,21 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 		N = normalize(lerp(N, nMid, road));
 	}
 
-	// ---- scorch, fallout
+	// ---- scorch (wave 3: the masks above), fallout
 	{
-		float sm = saturate(scorch * 1.6 + 0.4 * nB - 0.2) * (1.0 - riv);
-		float3 ash = lerp(float3(0.025, 0.022, 0.020), float3(0.11, 0.105, 0.10), saturate(0.35 + nC + 0.6 * nD + 0.4 * nB));
-		col = lerp(col, ash, sm);
-		rough = lerp(rough, 0.95, sm);
+		float keep = 1.0 - riv;
+		// singed fringe: leaves browned and dried, not yet black
+		col = lerp(col, col * float3(0.82, 0.64, 0.42) + float3(0.010, 0.005, 0.0), singe * keep);
+		// burnt ground: black-brown char with darker and browner patches; the core grey-white with ash drifts
+		// (verify) gentler 45 m / 11 m flecking: at full strength it read as a uniform pepper grain over the scar at 15 km
+		float3 charC = lerp(float3(0.030, 0.022, 0.015), float3(0.068, 0.050, 0.034), saturate(0.5 + 0.55 * nB + 0.4 * nC + 0.3 * nF));
+		float3 ash = lerp(charC, float3(0.100, 0.092, 0.082), saturate(0.25 + 0.8 * nC + 0.6 * nD + 0.5 * nA));
+		// not every patch burnt to black: scorched grass and half-burnt scrub show through in places
+		// (verify) half-burnt ground in broad drifts and fine flecks, not 200 m spots
+		float burntK = burnt * lerp(0.72, 1.0, saturate(0.60 + 0.8 * nF + 0.4 * nE + 0.5 * nC));
+		col = lerp(col, charC, burntK * keep);
+		col = lerp(col, ash, charred * keep * 0.7);
+		rough = lerp(rough, 0.95, burnt);
 		float rm = saturate(rad * 1.5);
 		col = lerp(col, dot(col, float3(0.33, 0.45, 0.22)) * float3(1.15, 1.10, 0.70), rm * 0.7);
 	}
@@ -518,7 +605,7 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 		float farCrack = (0.004 + 0.016 * prov * prov) + 0.5 * max(seamP, 0.55 * seamQ) * (0.25 + 0.75 * prov);
 		crack = lerp(farCrack, max(vein * AAW(38.0, fp), big), AAW(420.0, fp));
 		float flick = 0.75 + 0.25 * sin(Tm * 2.3 + 40.0 * r2);
-		float lv = saturate(lava * 1.4) * Smooth01((h + 0.5) / 1.0);   // lava under the sea is quenched
+		float lv = saturate(lava * (1.4 + 1.2 * sN)) * Smooth01((h + 0.5) / 1.0);   // lava under the sea is quenched; (wave 3) ragged edge
 		col = lerp(col, float3(0.035, 0.03, 0.03), lv);
 		Emis += lv * (0.25 + crack) * flick * float3(1.0, 0.32, 0.06) * 7.0;
 		// the molten crust: dark slag with glowing cracks; under water it is quenched (black, steaming)
@@ -537,7 +624,8 @@ float3 Land(float3 Pw, float3 NvW, float3 VC, float VCA, float2 U0, float2 U1, f
 
 	// mask views (-planetdebug=10/11/12): which rule paints what
 	// 13: road from the map (R), road from the mesh (G), river (B); 14: mesh river distance < 60 m (R), slope (G), mesh road distance < 30 m (B)
-	if (Dbg > 12.5) { col = dbgLines; Emis = 0; }
+	if (Dbg > 14.5) { col = float3(saturate(SeaRise / 64.0), drown, under); Emis = 0; }   // 15: sea rise / drowned land / under water
+	else if (Dbg > 12.5) { col = dbgLines; Emis = 0; }
 	else if (Dbg > 9.5) { col = Dbg < 10.5 ? float3(rockM, dens, beach) : (Dbg < 11.5 ? float3(snow, pond, soilM) : float3(wetBand, under, farmM)); Emis = 0; }
 	else if (Dbg > 2.5) { col = VC; Emis = 0; }
 	else if (Dbg > 0.5 && VCA > 0.5) { col = VC; }

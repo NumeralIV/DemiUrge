@@ -280,21 +280,17 @@ float DmTowns::Fbm2(float X, float Y, int32 Octaves, uint32 Seed)
 
 // ------------------------------------------------------------------ static mesh
 
-UStaticMesh* DmTowns::MakeStaticMesh(UObject* Outer, const FString& Name, const TArray<const FDmTownMesh*>& LODs,
-	const TArray<UMaterialInterface*>& Mats, const TArray<float>& ScreenSizes, bool bShadows, bool bColors)
+// (towns-perf) the CPU half of a transient static mesh (tangents, vertex / index buffers): pure data, safe on a worker
+// thread, so a settlement's ground overlay is prepared by its planning task and the game thread only wraps it
+FDmTownsMeshData::FDmTownsMeshData() = default;
+FDmTownsMeshData::~FDmTownsMeshData() = default;
+
+TSharedPtr<FDmTownsMeshData, ESPMode::ThreadSafe> DmTowns::BuildMeshData(const TArray<const FDmTownMesh*>& LODs, int32 NumMats,
+	const TArray<float>& ScreenSizes, bool bShadows, bool bColors)
 {
 	constexpr float CmPerM = 100.f;
 	const int32 NumLODs = FMath::Clamp(LODs.Num(), 1, int32(MAX_STATIC_MESH_LODS));
-	UStaticMesh* SM = NewObject<UStaticMesh>(Outer, MakeUniqueObjectName(Outer, UStaticMesh::StaticClass(), FName(*Name)), RF_Transient);
-	for (int32 S = 0; S < Mats.Num(); ++S)
-	{
-		const FName Slot(*FString::Printf(TEXT("S%d"), S));
-#if WITH_EDITORONLY_DATA
-		SM->GetStaticMaterials().Add(FStaticMaterial(Mats[S], Slot, Slot));
-#else
-		SM->GetStaticMaterials().Add(FStaticMaterial(Mats[S], Slot));   // (integration) the game target has no imported slot name
-#endif
-	}
+	TSharedPtr<FDmTownsMeshData, ESPMode::ThreadSafe> Out = MakeShared<FDmTownsMeshData, ESPMode::ThreadSafe>();
 	TUniquePtr<FStaticMeshRenderData> RD = MakeUnique<FStaticMeshRenderData>();
 	RD->AllocateLODResources(NumLODs);
 	FBox Box(ForceInit);
@@ -340,22 +336,21 @@ UStaticMesh* DmTowns::MakeStaticMesh(UObject* Outer, const FString& Name, const 
 		LR.VertexBuffers.StaticMeshVertexBuffer.Init(BV, 2, FStaticMeshVertexBufferFlags());
 		if (bColors) { LR.VertexBuffers.ColorVertexBuffer.Init(BV); LR.bHasColorVertexData = true; }
 		TArray<uint32> Idx;
+		TArray<int32>& SecMat = Out->SectionMats.AddDefaulted_GetRef();
 		for (int32 S = 0; S < M.Sec.Num(); ++S)
 		{
 			// every section exists in every LOD (an empty one keeps one degenerate triangle) so that the
 			// section -> material mapping never shifts between LODs
 			const TArray<uint32>& I = M.Sec[S];
 			FStaticMeshSection& Sec = LR.Sections.AddDefaulted_GetRef();
-			Sec.MaterialIndex = FMath::Min(S, FMath::Max(0, Mats.Num() - 1));
+			Sec.MaterialIndex = FMath::Min(S, FMath::Max(0, NumMats - 1));
 			Sec.FirstIndex = Idx.Num();
 			const bool bEmpty = I.Num() < 3;
 			Sec.NumTriangles = bEmpty ? 1 : I.Num() / 3;
 			uint32 Lo = bEmpty ? 0 : MAX_uint32, Hi = 0;
 			for (uint32 X : I) { Lo = FMath::Min(Lo, X); Hi = FMath::Max(Hi, X); }
 			Sec.MinVertexIndex = Lo; Sec.MaxVertexIndex = Hi;
-#if WITH_EDITORONLY_DATA
-			SM->GetSectionInfoMap().Set(L, LR.Sections.Num() - 1, FMeshSectionInfo(Sec.MaterialIndex));
-#endif
+			SecMat.Add(Sec.MaterialIndex);
 			Sec.bEnableCollision = false;
 			Sec.bCastShadow = bShadows && S != DmTownSec::Glow;
 			Sec.bVisibleInRayTracing = false;
@@ -375,8 +370,36 @@ UStaticMesh* DmTowns::MakeStaticMesh(UObject* Outer, const FString& Name, const 
 	if (!Box.IsValid) Box = FBox(FVector(-100), FVector(100));
 	RD->Bounds = FBoxSphereBounds(Box);
 	RD->NumInlinedLODs = uint8(NumLODs);
-	SM->SetRenderData(MoveTemp(RD));
+	Out->RD = MoveTemp(RD);
+	return Out;
+}
+
+UStaticMesh* DmTowns::MakeStaticMesh(UObject* Outer, const FString& Name, FDmTownsMeshData& Data, const TArray<UMaterialInterface*>& Mats)
+{
+	if (!Data.RD.IsValid()) return nullptr;
+	UStaticMesh* SM = NewObject<UStaticMesh>(Outer, MakeUniqueObjectName(Outer, UStaticMesh::StaticClass(), FName(*Name)), RF_Transient);
+	for (int32 S = 0; S < Mats.Num(); ++S)
+	{
+		const FName Slot(*FString::Printf(TEXT("S%d"), S));
+#if WITH_EDITORONLY_DATA
+		SM->GetStaticMaterials().Add(FStaticMaterial(Mats[S], Slot, Slot));
+#else
+		SM->GetStaticMaterials().Add(FStaticMaterial(Mats[S], Slot));   // (integration) the game target has no imported slot name
+#endif
+	}
+#if WITH_EDITORONLY_DATA
+	for (int32 L = 0; L < Data.SectionMats.Num(); ++L)
+		for (int32 S = 0; S < Data.SectionMats[L].Num(); ++S) SM->GetSectionInfoMap().Set(L, S, FMeshSectionInfo(Data.SectionMats[L][S]));
+#endif
+	SM->SetRenderData(MoveTemp(Data.RD));
 	SM->CalculateExtendedBounds();
 	SM->InitResources();
 	return SM;
+}
+
+UStaticMesh* DmTowns::MakeStaticMesh(UObject* Outer, const FString& Name, const TArray<const FDmTownMesh*>& LODs,
+	const TArray<UMaterialInterface*>& Mats, const TArray<float>& ScreenSizes, bool bShadows, bool bColors)
+{
+	TSharedPtr<FDmTownsMeshData, ESPMode::ThreadSafe> D = BuildMeshData(LODs, Mats.Num(), ScreenSizes, bShadows, bColors);
+	return MakeStaticMesh(Outer, Name, *D, Mats);
 }

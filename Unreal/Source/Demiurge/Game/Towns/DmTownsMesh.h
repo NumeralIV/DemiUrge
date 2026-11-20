@@ -16,6 +16,17 @@
 
 class UStaticMesh;
 class UMaterialInterface;
+class FStaticMeshRenderData;
+
+/** (towns-perf) The CPU-side render data of a transient mesh, built off the game thread (DmTowns::BuildMeshData) and
+ *  consumed once by DmTowns::MakeStaticMesh(Outer, Name, Data, Mats) on the game thread. */
+struct DEMIURGE_API FDmTownsMeshData
+{
+	FDmTownsMeshData();
+	~FDmTownsMeshData();
+	TUniquePtr<FStaticMeshRenderData> RD;
+	TArray<TArray<int32>> SectionMats;   // per LOD, per section: material index
+};
 
 /** Surface patterns (UV1.x of body vertices; M_TownBody selects colour noise, courses and roughness by it). */
 enum class EDmTownPat : uint8
@@ -122,4 +133,9 @@ namespace DmTowns
 	/** Builds a transient UStaticMesh from LODs (sections as above). ScreenSizes per LOD. */
 	DEMIURGE_API UStaticMesh* MakeStaticMesh(UObject* Outer, const FString& Name, const TArray<const FDmTownMesh*>& LODs,
 		const TArray<UMaterialInterface*>& Mats, const TArray<float>& ScreenSizes, bool bShadows = true, bool bColors = true);
+	/** The CPU half of MakeStaticMesh: thread-safe (worker threads), no UObjects touched. */
+	DEMIURGE_API TSharedPtr<FDmTownsMeshData, ESPMode::ThreadSafe> BuildMeshData(const TArray<const FDmTownMesh*>& LODs, int32 NumMats,
+		const TArray<float>& ScreenSizes, bool bShadows = true, bool bColors = true);
+	/** The game-thread half: wraps prepared data (consumed: Data.RD is moved into the mesh) into a transient UStaticMesh. */
+	DEMIURGE_API UStaticMesh* MakeStaticMesh(UObject* Outer, const FString& Name, FDmTownsMeshData& Data, const TArray<UMaterialInterface*>& Mats);
 }

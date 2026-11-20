@@ -351,9 +351,25 @@ void ADmSky::EndPlay(const EEndPlayReason::Type Reason)
 {
 	if (bPending)
 	{
-		// a build still in flight: wait for it and free its upload copies (they are only freed on upload otherwise)
-		TSharedPtr<FBuildResult, ESPMode::ThreadSafe> R = Pending.Get();
-		if (R.IsValid()) { FMemory::Free(R->CoverUpload); FMemory::Free(R->WarpUpload); R->CoverUpload = R->WarpUpload = nullptr; }
+		// a build still in flight: free its upload copies (they are only freed on upload otherwise).
+		// (wave3-final) Never wait for it here: the job sits in the shared thread pool behind the planet's patch jobs,
+		// and on a busy machine Get() held the game's exit for over 60 s ("did not exit 60 s after it asked to quit"
+		// in playthrough, powers-check and screen-flow). The job captures no actor state, so a build that has not
+		// finished frees its own copies when it does.
+		if (Pending.IsReady())
+		{
+			TSharedPtr<FBuildResult, ESPMode::ThreadSafe> R = Pending.Get();
+			if (R.IsValid()) { FMemory::Free(R->CoverUpload); FMemory::Free(R->WarpUpload); R->CoverUpload = R->WarpUpload = nullptr; }
+		}
+		else
+		{
+			Pending.Then([](TFuture<TSharedPtr<FBuildResult, ESPMode::ThreadSafe>> F)
+			{
+				TSharedPtr<FBuildResult, ESPMode::ThreadSafe> R = F.Get();
+				if (R.IsValid()) { FMemory::Free(R->CoverUpload); FMemory::Free(R->WarpUpload); R->CoverUpload = R->WarpUpload = nullptr; }
+			});
+			UE_LOG(LogDmSky, Display, TEXT("DmSky: EndPlay left a weather build running (not waited for)"));
+		}
 	}
 	bPending = false;
 	if (UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))

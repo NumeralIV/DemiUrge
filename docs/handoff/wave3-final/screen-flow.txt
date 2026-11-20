@@ -1,0 +1,24 @@
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: a save to slot1: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: pause menu open: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the pause menu pauses the sim: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: loading closes the screens: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: a world loaded from the pause menu runs: ok
+]LogDmTowns: Display: DmTowns: joined 12 planning tasks in 67838 ms
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: paused again: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: exit to title shows the title: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the title runs the live planet: ok
+]LogDmTowns: Display: DmTowns: joined 12 planning tasks in 38601 ms
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: continue closes the title: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: continue runs the world: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: settings begin
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the drag is live in memory: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the drag is not written before release: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the release writes the file: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the low tier changes the levels: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: Auto restores the engine's levels: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: the setup page starts without feedback: ok
+]LogDmScenario: Display: DmScenario: DmScreensTest flow: close all: ok
+]LogDmMode: Display: DmMode: exit (scenario finished) at frame 50, code 0
+]LogDmSky: Display: DmSky: EndPlay left a weather build running (not waited for)
+]LogDmTowns: Display: DmTowns: joined 12 planning tasks in 4433 ms
+]LogExit: Game engine shut down

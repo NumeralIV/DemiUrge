@@ -1,0 +1,1042 @@
+﻿== seed 301  policy passive  world "Vafathla"  L 6  calamity 1.00  create 235 ms  start 28 ms
+   ENDING year 3616: ark / forgotten (culture 3, settlement 10)
+   result: 3616 years, ending ark / forgotten in 3616; ages: Bronze 311 Iron 894 Sail 1642 Industry 2412 Atomic 2966 Space 3395; ark 3616
+   peaks: pop 8.15M, settlements 110, cultures 6; anomaly +4.02 (min -1.72), co2 154.4, dust 0.191, sea +0.288 / -0.007 vs seaBase; largest fire 13 cells (year 254)
+   awe: at cap 88% of years, below 90% 6%; income stone 2.14/yr (a 40-Awe miracle every 9.3 s at 1x), later 2.67/yr (7.5 s), 150 Awe every 27 s once meteors unlock
+   events: founded 138, destroyed 38 ( sea 38 ), cultures born 6 / died 1, wars 44, battles 243, nukes 0, prophets 0, wonders 0, trade routes 527, famines 183, plagues 56, fires 480, storms 204, droughts 146, quakes 38, volcanoes 15, impacts 0, people:lost 0, chronicle 1026
+   timing: 14464 ticks, wall mean 1.971 ms, max 25.80 ms (year 2214); thread CPU mean 1.941 ms, max 25.74 ms, p99.9 18.78 ms; score 3791; non-finite: none
+   regard now: everyone devotion 0.270 love -0.007 (forgotten); Ekokroslu 0.266/-0.010 age Space pop 2.21M; Kosdeono 0.300/-0.004 age Space pop 1.18M; Doluslo* 0.238/-0.001 age Space pop 2.31M; Koltosto 0.285/-0.011 age Space pop 1.98M; Harosneme 0.300/-0.010 age Atomic pop 227.7k; Selexirnu 0.300/-0.002 age Atomic pop 237.8k
+   memory (Ark culture): grace 0.00 wrath 0.00 neglect 1315.4 (presence 0.04) lore +0.000 verdict -0.000 silent 3616 y prayers 114 answered 0 -> forgotten
+   unlocks: raise 1 lower 1 rain 1 bloom 15 lightning 1 quake 171 plague 894 meteor 1642 volcano 2412 heal 1 inspire 171 prophet 894 peace 894 consecrate 311
+   review: settlements @200 4 @400 9; first prayer 46; second culture 349; first war 641, war in 24.4% of years; longest quiet (no weight-2 entry, years 0-1000) 251 y; aweMax@1000 600; Awe >= 95% of the cap in 91% of years; prayers 696, answered 0; rain/bloom answered 0, famine over within 5 y 0; famine entries 55; HUD mood = lead mood in 100% of years; epithet 'the Silent One'; drowned after Lower 0 (told 'sea rose' 0); end regard 0.238/-0.001; memory grace 0.00 wrath 0.00 lore +0.00 verdict -0.00 silent 3616 y prayers 0/114 -> forgotten
+   pacing by age (years / wars / war% / moments per min / chronicle w2, w3 per min): Stone 310/0/0%/6.2/1.5,1.55; Bronze 583/4/9%/16.5/5.1,0.82; Iron 748/9/30%/30.3/5.1,0.32; Sail 770/16/41%/49.7/6.5,0.62; Industry 554/7/24%/61.5/6.3,1.08; Atomic 429/5/23%/43.9/5.9,0.84; Space 221/3/27%/37.5/7.1,2.17;
+   diplomacy: alliances formed 14 (peak 2 at once, 14% of years), alliance events 10, wars joined by an ally 0, blamed on the god 0, victor thanked the god 0, nuclear exchanges 0; pace: 30.1 min at 1x (2 without a notable entry), auto-pace 29.5 min (0 without)
+   chronicle (last entries):
+     [    0 w3] Green covered the lands of Vafathla, and beasts walked in it, but no one yet knew their names.
+     [    0 w3] Istreus touched the sleeping clay in the woods, and the first of the Ekokrosloi opened their eyes. They named their camp Daleron.
+     [    0 w3] Again the god woke a people: the Ekokrosloi, at Kamokeraxis.
+     [    0 w3] Here the counting of years begins.
+     [    1 w2] At Daleron they set stones in a ring and laid the first fruits on them for Istreus. It was a small shrine. The god did not complain.
+     [    1 w2] The Ekokrosloi called the one who had woken them the Dawn-Caller.
+     [   15 w1] At Kamokeraxis a shrine of wood was made for Istreus.
+     [   26 w1] Daleron grew from a camp into a village.
+     [   42 w1] The tents of Kamokeraxis gave way to houses of timber, and it was called a village.
+     [   45 w1] No rain fell on the lands of Daleron. The river showed its stones, and the people counted them.
+     [   46 w1] The people of Daleron climbed to the shrine and prayed to Istreus for rain. They prayed loudly, in case the Dawn-Caller was far away.
+     [   53 w1] Rain returned to Daleron at last.
+     [  151 w1] In the 151st year, a band went out from Daleron with seed corn and quarrels enough for a new town, and founded Dixothalos in the woods.
+     [  152 w1] Dixothalos built a small shrine on the hill above the fields, and kept a fire burning in it.
+     [  153 w1] Dixothalos was a village now, with a fence against the wolves.
+     [  171 w1] A band from Kamokeraxis crossed the country and founded Eropostra in the woods.
+     [  171 w1] The people of Eropostra raised a shrine to Istreus.
+     [  174 w1] Lightning struck south of Daleron in a summer storm.
+     [  174 w1] Fire ran through the pine woods south of Daleron.
+     [  176 w1] There were now enough hearths at Eropostra to call it a village.
+     [  213 w1] Settlers of the Ekokrosloi went out from Daleron and made a new home at Olatakion.
+     [  214 w1] Children were born at Olatakion who had never lived anywhere else, and it became a village.
+     [  214 w1] The Ekokrosloi set up a shrine at Olatakion, and left small carved birds there for the god.
+     [  232 w1] A new village of the Ekokrosloi, Naskokri, was raised in the pine woods, where the hunters of Kamokeraxis had always camped.
+     [  232 w1] The camp at Naskokri put down roots and became a village.
+     [  232 w1] The elders of Naskokri chose a holy place, and a shrine to Istreus was raised there.
+     [  252 w2] The mountain in the woods south-east of Dixothalos woke and wept fire.
+     [  252 w1] Lightning found the woods south-east of Dixothalos, and the forest burned for a season. In the spring, from the ash, it began again.
+     [  253 w2] In the 253rd year the Ekokrosloi stopped calling their god the Dawn-Caller. From now on, in the market and at the hearth, it was the Mountain-Maker.
+     [  264 w1] The fire-mountain south-east of Dixothalos fell asleep again.
+     [  274 w1] Okesneusalos was founded in the 273rd year. Its founders swore it would one day be greater than Daleron. The chronicle notes that all founders swear this.
+     [  274 w1] A circle of white stones was laid out at Okesneusalos, and the Ekokrosloi came there to speak to Istreus.
+     [  275 w1] The tents of Okesneusalos gave way to houses of mud and reed, and it was called a village.
+     [  285 w1] The earth shook in the shallows north-east of Kamokeraxis.
+     [  285 w1] The sea drew back from the shore at Kamokeraxis, as if to look at something, and then came running. Those who went down to gather the stranded fish did not come back up.
+     [  289 w1] Some of the people of Kamokeraxis grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Olokux.
+     [  290 w1] In the 290th year Olokux could no longer call itself a camp. It was a village now, and its people began to walk a little differently.
+     [  290 w1] At Olokux they set stones in a ring and laid the first fruits on them for Istreus. It was a small shrine. The Mountain-Maker did not complain.
+     [  309 w1] Tritimi began as a ring of tents in the sands, raised by wanderers from Eropostra.
+     [  310 w1] Tritimi built a small shrine on the hill above the fields, and kept a fire burning in it.
+     [  311 w3] In the 311th year the world turned a page: the Ekokrosloi, first of all peoples, came into the Age of Bronze, and the others began to hurry.
+     [  312 w1] The houses of Daleron reached the old boundary stones and did not stop. From this year the Ekokrosloi call it a town.
+     [  312 w2] Daleron built a granary against lean years. It was the first granary of the Ekokrosloi.
+     [  312 w1] Thunder rolled over Olokux, and lightning fell in the pine woods east of the village.
+     [  312 w1] The country in the pine woods east of Olokux burned for many days, and the smoke hung over the village.
+     [  338 w1] Naskokri became a town, with a market-day.
+     [  338 w1] The Ekokrosloi of Naskokri built a temple to Istreus so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [  349 w3] From the Ekokrosloi came the Prikunoi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [  349 w2] The Prikunoi called the god who had woken their fathers the Maker.
+     [  356 w1] A hard sun stood over Tritimi all that summer, and the barley died standing.
+     [  357 w1] In Tritimi they burned incense and asked Istreu for rain.
+     [  359 w1] So many children were born in Okesneusalos that the elders gave up learning their names. Thus it became a town.
+     [  359 w1] In the 359th year the Ekokrosloi raised a temple at Okesneusalos, and were proud of it for one generation, which is the usual length of pride.
+     [  360 w1] The granaries of Tritimi rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [  364 w1] The drought about Tritimi broke, and the children ran out into the rain.
+     [  370 w1] The fields around Olokux filled with new houses, and it became a town of the Ekokrosloi.
+     [  400 w1] Far away, in the wild sands of the south, a mountain was born in fire, and its ash darkened the sky.
+     [  406 w1] At Naskokri, the Ekokrosloi prayed to Istreus for rain, morning and evening.
+     [  436 w1] Tritimi grew until a man could get lost in it, and they called it a town.
+     [  479 w1] Dopioxono was founded on the dry grasslands by the Prikunoi, who had grown too many for Olatakion.
+     [  480 w1] Dopioxono was a village now, with a well and a headman.
+     [  480 w2] The Prikunoi made their first shrine at Dopioxono, and called the god by a name of their own: Istreu.
+     [  480 w2] The people of Dopioxono began to store grain in a house of clay, as the wise had advised. No one among the Prikunoi had built a granary before.
+     [  506 w1] Dopioxono was a town now, the busiest of the Prikunoi.
+     [  532 w1] Wanderers from Daleron came to Healophor and did not go back.
+     [  532 w1] Healophor grew from a camp into a village.
+     [  532 w1] The Ekokrosloi set up a shrine at Healophor, and left small carved birds there for the god.
+     [  536 w1] The earth opened in the lonely woods of the north, where no one lived, and fire poured out for many years.
+     [  539 w1] The women of Dixothalos sang at the shrine every evening and asked for rain.
+     [  540 w1] Families of the Ekokrosloi who left Okesneusalos built their first fires at Otrophopeira, and were not sorry.
+     [  541 w1] Ash hid the sun from Vafathla, the summers did not come, and Olokux went hungry, and many places besides.
+     [  545 w1] The Ekokrosloi of Naskokri wrote their prayer for rain on clay and buried it at the shrine.
+     [  548 w1] Healophor became a town, and built a gate, though it had no wall yet.
+     [  548 w1] At Healophor they built a temple. It took longer than promised and cost more than was said, as is the way of all building.
+     [  566 w1] Settlers of the Ekokrosloi went out from Eropostra and made a new home at Dukitro.
+     [  566 w1] The houses of Dukitro reached the old boundary stones and did not stop. From this year the Ekokrosloi call it a village.
+     [  566 w1] The people of Dukitro raised a shrine to Istreus.
+     [  566 w1] The priests of Dukitro went up to the high places and cried out for rain.
+     [  575 w1] In the 575th year, a band went out from Tritimi with seed corn and quarrels enough for a new town, and founded Dokrotostra in the woods.
+     [  576 w1] There were now enough hearths at Dokrotostra to call it a village.
+     [  576 w1] At Dokrotostra a shrine of bones and flowers was made for Istreu.
+     [  578 w1] A tree south of Dokrotostra was split by lightning. The wood was kept as a holy thing in the village.
+     [  586 w2] Generations passed and the Ekokrosloi saw nothing of the Mountain-Maker; they began to call the god the Empty Chair.
+     [  615 w3] Far from their old capital, the people about Dopioxono began to call themselves the Kosdeonoi, and spoke a tongue the Prikunoi could barely follow.
+     [  615 w2] Among the Kosdeonoi the god was named the Maker.
+     [  618 w1] The village of Dokrotostra grew into a town; it had a name even among strangers.
+     [  641 w2] In the 641st year the Kosdeonoi remembered an old insult from the Prikunoi, and went to war over it.
+     [  642 w2] Olatakion built walls. No one said against whom. Everyone knew. It was the first wall of the Prikunoi.
+     [  642 w2] The people of Dopioxono built a wall and a gate, and slept behind them. No one among the Kosdeonoi had built walls before.
+     [  644 w2] In the 644th year Tritimi opened its gates to the Kosdeonoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [  645 w2] After four years the Prikunoi asked for peace, and the Kosdeonoi granted it, and made them pay for the asking.
+     [  649 w2] The god did nothing that the Prikunoi could see for longer than anyone remembered, and the Maker became the Rumour.
+     [  685 w2] The Kosdeonoi and the Prikunoi could no longer share the river. They tried to share it with spears instead.
+     [  690 w1] Before Tritimi, the Prikunoi met the Kosdeonoi. By evening the field belonged to the Kosdeonoi, and to the birds.
+     [  690 w1] The Kosdeonoi attacked Olatakion on a holy day and were beaten by its farmers.
+     [  698 w1] An army of the Prikunoi besieged Tritimi and went home with nothing but stories.
+     [  702 w1] The people of Dopioxono prayed for peace.
+     [  706 w1] The Kosdeonoi held Tritimi against the Prikunoi, and sang about it for a hundred years.
+     [  710 w2] Olatakion fell to the Kosdeonoi, and its Prikunian lords were driven out.
+     [  710 w3] The Prikunoi are no more. Their words live on in the mouths of their neighbours, who use them for cursing and for the names of rivers.
+     [  710 w2] The war ended when there were none of the Prikunoi left to fight it.
+     [  718 w1] Lightning walked on the hills north-east of Eropostra, and the priests of the town read it as a sign.
+     [  718 w1] A red night: the woods north-east of Eropostra burned, and ash fell on the town.
+     [  740 w1] A band from Olatakion crossed the country and founded Odreafane in the pine woods.
+     [  740 w1] Children were born at Odreafane who had never lived anywhere else, and it became a village.
+     [  740 w1] At Odreafane, the Kosdeonoi raised their first shrine to Istreu, a heap of white stones where they could speak to the sky.
+     [  745 w1] Dokasfomeras was founded in the 745th year. Its founders swore it would one day be greater than Dopioxono. The chronicle notes that all founders swear this.
+     [  758 w1] Dokasfomeras grew until a man could get lost in it, and they called it a town.
+     [  758 w1] Dokasfomeras raised walls of stone, for there was war.
+     [  791 w1] A new village of the Ekokrosloi, Lupephane, was raised on the dry grasslands, where the hunters of Daleron had always camped.
+     [  792 w1] The camp at Lupephane put down roots and became a village.
+     [  792 w1] The elders of Lupephane chose a holy place, and a shrine to Istreus was raised there.
+     [  792 w1] In Lupephane a jar of honey was given to Istreus, with a prayer for rain.
+     [  794 w1] The harvest failed at Lupephane; the children grew thin.
+     [  801 w1] Some of the people of Okesneusalos grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Nimosenion.
+     [  807 w1] The tents of Hokolemerax gave way to houses of mud and reed, and it was called a village.
+     [  807 w1] A circle of white stones was laid out at Hokolemerax, and the Ekokrosloi came there to speak to Istreus.
+     [  831 w2] In the lands about Healophor a new people arose, the Dolusloi, descended from the Ekokrosloi but no longer their subjects.
+     [  831 w2] The Kosdeonoi sharpened their spears and went against the Ekokrosloi, saying the god was with them.
+     [  831 w2] In the first songs of the Dolusloi, the god was the Maker.
+     [  832 w2] Walls rose around Daleron, and the Ekokroslian watchmen stood upon them at night. It was the first wall of the Ekokrosloi.
+     [  835 w1] Nimosenion became a town, with a wall of thorns.
+     [  835 w2] A fire-mountain was born in the sands north-west of Okesneusalos, and the sky above the town turned the colour of iron.
+     [  837 w1] The plains north-west of Okesneusalos burned, and the Ekokrosloi watched the glow at night.
+     [  838 w2] The banners of the Ekokrosloi were raised over Odreafane.
+     [  838 w1] In Naskokri they burned incense and asked Istreus for rain.
+     [  839 w1] The Kosdeonoi marched into Otrophopeira, and the town paid tribute from that day.
+     [  840 w1] The sun was a pale coin behind the dust, and the granaries of Olokux stood empty. The Ekokrosloi remembered those years as the hungry ones.
+     [  843 w1] Okesneusalos dwindled to a village. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [  844 w1] The women of Dokrotostra tied red threads to the shrine and asked for peace.
+     [  846 w2] Olatakion was lost by the Kosdeonoi and won by the Ekokrosloi, and its market changed hands with it.
+     [  847 w1] The fires north-west of Okesneusalos cooled into black stone, and in time the ash made the fields rich.
+     [  851 w1] The fields around Hokolemerax filled with new houses, and it became a town of the Ekokrosloi.
+     [  851 w1] Hokolemerax raised a temple to Istreus, and the priests grew fat.
+     [  853 w2] The armies of the Ekokrosloi came home in triumph to Daleron, and the Kosdeonoi swore to remember.
+     [  892 w2] The Ekokrosloi marched against the Dolusloi, and the smiths worked day and night.
+     [  893 w2] Fearing the war, Healophor ringed itself with a ditch and a palisade. No one among the Dolusloi had built walls before.
+     [  894 w3] In the 894th year the world turned a page: the Ekokrosloi, first of all peoples, came into the Age of Iron, and the others began to hurry.
+     [  895 w3] Daleron became the first city in the world, and its people did not let anyone forget it.
+     [  895 w1] Daleron built a harbour, and ships came and went. It was the first harbour of the Ekokrosloi.
+     [  895 w1] The Dolusloi took Odreafane from the Ekokrosloi.
+     [  899 w1] The Ekokrosloi came against Healophor and were thrown back.
+     [  899 w1] The priests of Dopioxono built a house for the god with a hundred steps. No one among the Kosdeonoi had built a temple before.
+     [  899 w1] Merchants of Tritimi reached Dopioxono and found that the people there were also people. This was thought remarkable, and then useful.
+     [  900 w1] At Dixothalos, the Ekokrosloi prayed to Istreus for peace, morning and evening.
+     [  907 w1] The banners of the Dolusloi were raised over Keoxophor.
+     [  907 w2] In the 907th year the Dolusloi entered the Age of Iron. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [  908 w1] Healophor became a city, and its people forgot they had ever lived in tents.
+     [  908 w1] Masts filled the bay at Healophor, where a harbour had been built. It was the first harbour of the Dolusloi.
+     [  909 w1] The war ended in victory for the Ekokrosloi. The Dolusloi paid tribute for a generation.
+     [  912 w1] The Ekokrosloi of Odreafane saw their first Doluslian merchants, and bought everything they had.
+     [  919 w1] In the 919th year Odreafane could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [  919 w1] In Odreafane the old shrine was pulled down and a temple to Istreus put up in its place.
+     [  923 w1] So many children were born in Naskokri that the elders gave up learning their names. Thus it became a city.
+     [  927 w1] In the 927th year the first caravan came from Eropostra to Dixothalos, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [  932 w2] The Kosdeonoi no longer called the god the Maker; now they said the Elder.
+     [  935 w1] Olokux grew past counting into a city, and its temple could be seen from a day's walk away.
+     [  935 w1] For fifteen years Nimosenion prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [  948 w1] A great storm walked in from the sea and stood over Hokolemerax for three days, and the roofs learned to fly.
+     [  954 w2] The houses of Okesneusalos reached the old boundary stones and did not stop. From this year the Ekokrosloi call it a city.
+     [  954 w1] A temple to Istreus was built in Dukitro.
+     [  960 w1] The feet of traders wore a road between Dukitro and Eropostra. Along it went pots and coins and, later, fevers.
+     [  960 w1] Walls of cut stone went up around Keoxophor, and the Doluslian scribes began to call it a city.
+     [  970 w2] The Kosdeonoi put down the tools of their mothers and took up the tools of the Age of Iron. The Elder watched, and did not say whether this was wise.
+     [  971 w1] Dopioxono had become a city, with more people in it than there were sheep in the hills.
+     [  971 w1] A market was founded in Dopioxono, and strangers came to it. No one among the Kosdeonoi had built a market before.
+     [  974 w1] Caravans of the Kosdeonoi now came to Nimosenion of the Ekokrosloi as well.
+     [  987 w1] Dokrotostra of the Kosdeonoi grew used to the goods of Dukitro, and its merchants learned the Ekokroslian way of haggling.
+     [  993 w1] Envoys of the Ekokrosloi spat on the threshold before the Dolusloi, and the war began.
+     [  994 w2] Merchants of the Kosdeonoi reached Healophor of the Dolusloi, and the two peoples traded cloth for copper.
+     [  996 w1] In the 995th year Odreafane opened its gates to the Dolusloi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1000 w1] Lupephane fell to the Ekokrosloi, and its Doluslian lords were driven out.
+     [ 1005 w1] The Dolusloi marched into Lupephane, and the Ekokroslian families who could fled to their kin.
+     [ 1005 w1] The people of Nimosenion climbed to the shrine and prayed to Istreus for peace. They prayed loudly, in case the Empty Chair was far away.
+     [ 1007 w2] The Ekokrosloi won their war against the Dolusloi.
+     [ 1008 w1] Another road joined Okesneusalos to Dopioxono of the Kosdeonoi, and the inns along it prospered.
+     [ 1020 w1] The rains forgot the country of Dokrotostra. The children grew up not knowing the smell of rain.
+     [ 1021 w1] The Kosdeonoi of Dokrotostra wrote their prayer for rain on clay and buried it at the shrine.
+     [ 1027 w1] The long quarrel between the Kosdeonoi and the Dolusloi came to blood.
+     [ 1029 w1] Clouds came back over Dokrotostra, and the dry river filled in a single night.
+     [ 1032 w1] At Otrophopeira the Kosdeonoi won the day. The Dolusloi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1034 w1] Merchants began to travel between Otrophopeira and Dopioxono, and the road between them grew wide.
+     [ 1036 w1] Before Healophor, the army of the Kosdeonoi was broken.
+     [ 1040 w1] Otrophopeira was lost by the Kosdeonoi and won by the Dolusloi, and its temple was given a new god's name.
+     [ 1041 w1] The priests of Dokrotostra went up to the high places and cried out for peace.
+     [ 1044 w1] The host of the Kosdeonoi came against Healophor and broke on its walls like a wave on rock, and went home fewer.
+     [ 1045 w1] The people of Healophor prayed for peace.
+     [ 1050 w1] Traders from Olatakion found their way to Dokrotostra of the Kosdeonoi, where Ekokroslian coin was already known.
+     [ 1050 w1] The Dolusloi held Otrophopeira against the Kosdeonoi, and sang about it for a hundred years.
+     [ 1052 w1] An army of the Dolusloi besieged Dopioxono and went home with nothing but stories.
+     [ 1056 w1] In Dopioxono they said the god was deaf, and stopped asking.
+     [ 1057 w1] In Dopioxono a jar of honey was given to Istreu, with a prayer for peace.
+     [ 1058 w2] The Kosdeonoi took Otrophopeira from the Dolusloi.
+     [ 1060 w2] The Dolusloi were beaten, and the Kosdeonoi took their best fields.
+     [ 1067 w1] A sickness came to Nimosenion by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1068 w1] The women of Nimosenion sang at the shrine every evening and asked for healing.
+     [ 1083 w1] The people of Nimosenion stopped praying for healing; Istreus had not answered them.
+     [ 1083 w1] The plague left Nimosenion as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1088 w1] The sky over Dokrotostra cracked open with fire, and the rain that followed was warm.
+     [ 1088 w1] Fire walked through the dry grasslands west of Dokrotostra, and the beasts ran before it.
+     [ 1102 w1] Otrophopeira of the Kosdeonoi began to buy the goods of Olatakion, and its merchants learned the Ekokroslian way of haggling.
+     [ 1109 w2] War between the Ekokrosloi and the Dolusloi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 1112 w2] The banners of the Dolusloi were raised over Odreafane.
+     [ 1116 w1] In the 1115th year Lupephane opened its gates to the Ekokrosloi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1121 w1] Lupephane fell to the Dolusloi, and its Ekokroslian lords were driven out.
+     [ 1121 w1] The people of Nimosenion climbed to the shrine and prayed to Istreus for peace. They prayed loudly, in case the Empty Chair was far away.
+     [ 1123 w1] The Ekokrosloi marched into Odreafane, and the Doluslian families who could fled to their kin.
+     [ 1123 w2] After fourteen years the Dolusloi asked for peace, and the Ekokrosloi granted it, and made them pay for the asking.
+     [ 1127 w1] Hunger walked the streets of Tritimi, and the Ekokrosloi sold their tools for grain.
+     [ 1127 w1] In a night of thunder a bolt came down in the deep forest north-east of Otrophopeira, and in the morning the shepherds found the stones blackened.
+     [ 1127 w1] That summer a fire ate the deep forest north-east of Otrophopeira.
+     [ 1136 w1] The Kosdeonoi still kept the shrines, but the priests now spoke of the Sleeper, not the Elder.
+     [ 1136 w1] Generations passed and the Dolusloi saw nothing of the Maker; they began to call the god the Silent One.
+     [ 1149 w1] Far away, on the lonely ice of the far north, a mountain was born in fire, and its ash darkened the sky.
+     [ 1150 w1] At Tritimi, the Ekokrosloi prayed to Istreus for rain, morning and evening.
+     [ 1152 w2] The dust of the sky fell on the fields of Tritimi like a second winter, and there was nothing to harvest but straw.
+     [ 1157 w1] In the 1157th year Hokolemerax could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 1194 w2] The Kosdeonine kings swore an oath against the Dolusloi, and there was war.
+     [ 1200 w1] The Dolusloi attacked Otrophopeira on a holy day and were beaten by its farmers.
+     [ 1201 w2] In Otrophopeira the people sickened, and the roads to it were empty.
+     [ 1202 w1] In Otrophopeira they burned fat and asked Istreu for healing.
+     [ 1204 w1] Before Healophor, the Kosdeonoi met the Dolusloi. By evening the field belonged to the Dolusloi, and to the birds.
+     [ 1208 w1] Otrophopeira was lost by the Kosdeonoi and won by the Dolusloi, and its market changed hands with it.
+     [ 1216 w1] The Kosdeonoi came against Otrophopeira and were thrown back.
+     [ 1217 w1] Otrophopeira gave up asking Istreus for healing. Its people grew bitter.
+     [ 1217 w1] The Dolusloi of Healophor wrote their prayer for peace on bark and buried it at the shrine.
+     [ 1217 w1] In Otrophopeira the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 1218 w1] At Dopioxono the Kosdeonoi won the day. The Dolusloi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1222 w1] The Kosdeonoi took Otrophopeira from the Dolusloi.
+     [ 1223 w1] The prayers of Dopioxono went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 1224 w1] The priests of Dokrotostra went up to the high places and cried out for peace.
+     [ 1230 w2] The war of the Kosdeonoi and the Dolusloi ended because both had run out of sons. Each side wrote down that it had won.
+     [ 1266 w2] The Ekokrosloi made war on the Dolusloi.
+     [ 1268 w2] Odreafane fell to the Dolusloi, and its Ekokroslian lords were driven out.
+     [ 1273 w1] The banners of the Ekokrosloi were raised over Lupephane.
+     [ 1278 w1] In the 1277th year Lupephane opened its gates to the Dolusloi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1278 w1] The people of Dixothalos prayed for peace.
+     [ 1280 w1] Before Healophor, the army of the Ekokrosloi was broken.
+     [ 1286 w1] The Dolusloi marched into Okesneusalos, and the town paid tribute from that day.
+     [ 1286 w2] The war ended in victory for the Dolusloi. The Ekokrosloi paid tribute for a generation.
+     [ 1290 w1] Caravans of the Dolusloi now came to Eropostra of the Ekokrosloi as well.
+     [ 1336 w2] A grey sickness settled on Okesneusalos. The healers burned herbs day and night.
+     [ 1337 w1] In Okesneusalos a jar of honey was given to Istreus, with a prayer for healing.
+     [ 1352 w1] For fifteen years Okesneusalos prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1352 w1] The sickness went out of Okesneusalos at last, and the bells rang for the living as well as the dead.
+     [ 1390 w2] War came between the Kosdeonoi and the Dolusloi, the old enemies.
+     [ 1395 w2] Otrophopeira was lost by the Kosdeonoi and won by the Dolusloi, and its market changed hands with it.
+     [ 1396 w2] The Kosdeonoi took Okesneusalos from the Dolusloi.
+     [ 1401 w1] A storm passed over Eropostra, and lightning set the grass alight south-west of the city.
+     [ 1401 w1] A wildfire came close to Eropostra, and the children watched it from the roofs.
+     [ 1402 w1] In the 1401st year Okesneusalos opened its gates to the Dolusloi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1402 w1] Otrophopeira fell to the Kosdeonoi, and its Doluslian lords were driven out.
+     [ 1402 w1] The women of Healophor sang at the shrine every evening and asked for peace.
+     [ 1402 w2] After much killing the Kosdeonoi and the Dolusloi agreed that the border was where it had always been.
+     [ 1433 w2] The Kosdeonoi marched against the Ekokrosloi, and the smiths worked day and night.
+     [ 1436 w1] The banners of the Kosdeonoi were raised over Tritimi.
+     [ 1440 w1] The host of the Ekokrosloi came against Dopioxono and broke on its walls like a wave on rock, and went home fewer.
+     [ 1440 w1] The people of Nimosenion climbed to the shrine and prayed to Istreus for peace. They prayed loudly, in case the Empty Chair was far away.
+     [ 1441 w1] Dukitro and Daleron began to trade, wine for wool, and both grew fat on it.
+     [ 1444 w2] The Kosdeonoi marched into Olatakion, and the town paid tribute from that day.
+     [ 1454 w1] Dukitro was lost by the Ekokrosloi and won by the Kosdeonoi, and its market changed hands with it.
+     [ 1454 w1] The Ekokrosloi took Olatakion from the Kosdeonoi.
+     [ 1454 w2] The armies of the Kosdeonoi came home in triumph to Dopioxono, and the Ekokrosloi swore to remember.
+     [ 1455 w1] In Daleron they said the god was deaf, and stopped asking.
+     [ 1478 w1] In Keoxophor they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 1479 w1] In Keoxophor they burned sweet grass and asked Istreus for healing.
+     [ 1493 w2] Smoke rose from the earth north of Olatakion, and then fire. Ash fell on the city like grey snow.
+     [ 1494 w1] The people of Keoxophor stopped praying for healing; Istreus had not answered them.
+     [ 1494 w1] At Tritimi, the Kosdeonoi prayed to Istreu for rain, and fasted.
+     [ 1494 w1] In the 1494th year the Ekokrosloi remembered an old insult from the Dolusloi, and went to war over it.
+     [ 1494 w1] In Keoxophor the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 1496 w2] The sky stayed grey over Vafathla for years. The harvest failed at Tritimi, and not only there.
+     [ 1497 w1] The old people of Olatakion said the fire north of the city had been started by a falling star, and kept their buckets full.
+     [ 1498 w1] The Ekokrosloi of Dixothalos wrote their prayer for rain on clay and buried it at the shrine.
+     [ 1499 w1] Before Kamokeraxis, the Dolusloi met the Ekokrosloi. By evening the field belonged to the Ekokrosloi, and to the birds.
+     [ 1500 w1] The Dolusloi held Healophor against the Ekokrosloi, and the field was red.
+     [ 1505 w1] The mountain north of Olatakion stopped smoking, and the Ekokrosloi gave thanks.
+     [ 1506 w1] Another road joined Okesneusalos to Tritimi of the Kosdeonoi, and the tolls on it were argued over.
+     [ 1516 w1] An army of the Ekokrosloi besieged Healophor and went home with nothing but stories.
+     [ 1516 w1] The Dolusloi attacked Nimosenion on a holy day and were beaten by its farmers.
+     [ 1523 w1] Daleron gave up asking Istreus for peace. Its people grew bitter.
+     [ 1523 w1] The priests of Healophor went up to the high places and cried out for peace.
+     [ 1524 w2] The Dolusloi won their war against the Ekokrosloi.
+     [ 1551 w1] Traders from Okesneusalos found their way to Dixothalos of the Ekokrosloi, where Doluslian coin was already known.
+     [ 1556 w2] A coughing sickness came to Dixothalos in the spring, and lingered.
+     [ 1557 w1] The people of Dixothalos prayed for healing.
+     [ 1560 w1] The Kosdeonoi sharpened their spears and went against the Ekokrosloi, saying the god was with them.
+     [ 1563 w1] Otrophopeira fell to the Ekokrosloi, and its people learned new songs.
+     [ 1564 w1] In the 1564th year Olatakion opened its gates to the Kosdeonoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1570 w1] The banners of the Ekokrosloi were raised over Hokolemerax.
+     [ 1570 w1] In Dokrotostra a lamb was given to Istreu, with a prayer for peace.
+     [ 1572 w1] The Kosdeonoi came against Otrophopeira and were thrown back.
+     [ 1572 w1] The prayers of Dixothalos went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 1572 w1] The plague left Dixothalos as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1574 w1] Okesneusalos of the Dolusloi grew used to the goods of Otrophopeira, and its merchants learned the Ekokroslian way of haggling.
+     [ 1577 w1] There was drought in the country of Otrophopeira, and the Ekokrosloi looked at the sky every morning.
+     [ 1580 w1] At Dokasfomeras the Kosdeonoi won the day. The Ekokrosloi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1585 w1] In Olatakion they said the god was deaf, and let the shrine fall into ruin.
+     [ 1586 w2] The Kosdeonoi were beaten, and the Ekokrosloi took their best fields.
+     [ 1588 w1] The rains came back to Otrophopeira, as rains do, in their own time.
+     [ 1590 w1] In those ninety years ten towns of the Ekokrosloi prayed and waited.
+     [ 1617 w2] Fever spread through Nimosenion, and the priests could do nothing.
+     [ 1618 w1] The spotted fever broke out in Dopioxono, and its neighbours turned travellers away.
+     [ 1618 w1] The people of Dopioxono climbed to the shrine and prayed to Istreu for healing. They prayed loudly, in case the Sleeper was far away.
+     [ 1626 w1] Lightning struck in the woods east of Keoxophor in a summer storm.
+     [ 1626 w1] The woods east of Keoxophor burned, and the herds fled toward the city.
+     [ 1631 w1] In Otrophopeira they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 1632 w1] At Otrophopeira, the Ekokrosloi prayed to Istreus for healing, and fasted.
+     [ 1633 w1] The people of Dopioxono stopped praying for healing; Istreu had not answered them.
+     [ 1633 w1] For fifteen years Nimosenion prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 1633 w1] The sickness went out of Dopioxono at last, and the bells rang for the living as well as the dead.
+     [ 1642 w3] In the 1642nd year the world turned a page: the Ekokrosloi, first of all peoples, came into the Age of Sail, and the others began to hurry.
+     [ 1643 w2] An academy was founded at Daleron, where the wise argued about everything, the god included. It was the first academy of the Ekokrosloi.
+     [ 1643 w1] The plague left Otrophopeira as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 1659 w2] Envoys of the Kosdeonoi threw down their staffs before the Dolusloi, and the war began.
+     [ 1664 w1] The earth opened in the empty sands of the north, where no one lived, and fire poured out for many years.
+     [ 1664 w1] The Kosdeonoi marched into Okesneusalos, and the Doluslian families who could fled to their kin.
+     [ 1664 w1] Olatakion was lost by the Kosdeonoi and won by the Dolusloi, and its market changed hands with it.
+     [ 1665 w1] The women of Tritimi tied red threads to the shrine and asked for rain.
+     [ 1667 w1] In Tritimi they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 1671 w1] The Dolusloi took Okesneusalos from the Kosdeonoi.
+     [ 1671 w1] Olatakion fell to the Kosdeonoi, and its people learned new songs.
+     [ 1671 w1] In Healophor they burned fat and asked Istreus for peace.
+     [ 1673 w1] Thunatophor grew from a camp into a village.
+     [ 1679 w2] After twenty years the Dolusloi asked for peace, and the Kosdeonoi granted it, and made them pay for the asking.
+     [ 1680 w1] Soliophor began as a ring of tents in the deep forest, raised by wanderers from Daleron.
+     [ 1680 w1] The chronicle, which cannot write everything, notes only that in those fifty years the Ekokrosloi raised more than a dozen new buildings.
+     [ 1680 w1] The merchants of Kuxestramene found a road to Thunatophor, and the road found more merchants.
+     [ 1683 w3] The Ekokroslian settlers about Otrophopeira had been apart too long. They took a new name, Koltosto, and went their own way.
+     [ 1683 w2] The Koltostoi began to speak of Istreus as the Mountain-Maker.
+     [ 1686 w1] Caravans of the Kosdeonoi now came to Daleron of the Ekokrosloi as well.
+     [ 1694 w2] The scribes of the Ekokrosloi began to write Soliophor with the sign for 'city', and its taxes rose accordingly.
+     [ 1694 w1] Scholars gathered at Soliophor and built a house of learning, and filled it with arguments.
+     [ 1694 w1] Krerimes was founded on the dry grasslands by the Ekokrosloi, who had grown too many for Hokolemerax.
+     [ 1697 w1] Wanderers from Otrophopeira came to Stroustroki and stayed.
+     [ 1704 w1] Ox-carts began to creak along the road from Stroustroki to Nimosenion, and inns grew up beside it.
+     [ 1710 w1] Another road joined Krerimes to Dopioxono of the Kosdeonoi, and the tolls on it were argued over.
+     [ 1710 w1] At Kuxestramene a school was opened where the young learned numbers, stars and the names of things.
+     [ 1718 w2] The Dolusloi raised sails and went out upon the great sea.
+     [ 1719 w1] The wise of the Dolusloi came together at Kamokeraxis, and wrote down everything they knew. No one among the Dolusloi had built an academy before.
+     [ 1723 w1] Traders of the Koltostoi and the Kosdeonoi met at Dokasfomeras, and each thought they had cheated the other.
+     [ 1737 w1] Krerimes outgrew its walls twice and became a city of the Ekokrosloi.
+     [ 1737 w1] An academy was founded at Krerimes, where the wise argued about everything, the god included.
+     [ 1737 w1] Many roads now led to Rasorir, and it was called a city.
+     [ 1737 w1] Scholars gathered at Rasorir and built a house of learning, and filled it with arguments. It was the first academy of the Koltostoi.
+     [ 1740 w1] A grey sickness settled on Olokux. The healers burned herbs day and night.
+     [ 1741 w1] The Ekokrosloi of Olokux wrote their prayer for healing on clay and buried it at the shrine.
+     [ 1748 w2] The town of Odreafane grew into a city of the Dolusloi, full of smoke and music.
+     [ 1748 w1] An academy now stands at Odreafane, where before there was only mud and opinion.
+     [ 1749 w1] In the 1748th year the first caravan came from Stroustroki to Otrophopeira, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 1755 w1] Ten thousand hearths burned in Stroustroki. It was a city now, and it knew it.
+     [ 1761 w2] The shipwrights of the Kosdeonoi learned to sail against the wind, and new shores appeared on their maps.
+     [ 1762 w1] At Olatakion a school was opened where the young learned numbers, stars and the names of things. No one among the Kosdeonoi had built an academy before.
+     [ 1767 w1] Families of the Dolusloi who left Keoxophor built their first fires at Seleira, and called it good.
+     [ 1767 w1] Seleira was a village now, with a fence against the wolves.
+     [ 1767 w2] The Kosdeonoi and the Koltostoi could no longer share the river. They tried to share it with spears instead.
+     [ 1772 w1] The banners of the Koltostoi were raised over Dokasfomeras.
+     [ 1773 w1] Before Otrophopeira, the army of the Kosdeonoi was broken.
+     [ 1778 w1] Lightning walked on the hills south-west of Hokolemerax, and the Ekokrosloi stayed indoors.
+     [ 1780 w1] The host of the Koltostoi came against Dopioxono and broke on its walls like a wave on rock, and went home fewer.
+     [ 1786 w1] Before Dokasfomeras, the Kosdeonoi met the Koltostoi. By evening the field belonged to the Koltostoi, and to the birds.
+     [ 1790 w1] Olatakion gave up asking Istreu for peace. They learned to manage without.
+     [ 1794 w1] An army of the Kosdeonoi besieged Dokasfomeras and went home with nothing but stories.
+     [ 1796 w1] The Koltostoi attacked Dopioxono in the rain and were beaten by its farmers.
+     [ 1797 w1] The armies of the Koltostoi came home in triumph to Nimosenion, and the Kosdeonoi swore to remember.
+     [ 1799 w2] Seleira became a city, the pride of the Dolusloi.
+     [ 1810 w1] A band from Dixothalos crossed the country and founded Katrolukalos in the pine woods.
+     [ 1810 w1] There were now enough hearths at Katrolukalos to call it a village.
+     [ 1810 w1] At Katrolukalos they set stones in a ring and laid the first fruits on them for Istreus. It was a small shrine. The Empty Chair did not complain.
+     [ 1814 w1] In Krerimes the people sickened, and the roads to it were empty.
+     [ 1817 w1] Hunger came to Kesnoda and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 1819 w2] The mountain hard by Hokolemerax woke and wept fire.
+     [ 1820 w2] Among the Ekokrosloi the god was no longer the Empty Chair but the Mountain-Maker, and the old name was forgotten.
+     [ 1821 w1] A red night: the hills near Hokolemerax burned, and ash fell on the city.
+     [ 1825 w1] Hokolemerax grew small and was only a town, and the old people remembered better days.
+     [ 1830 w1] In those seventy years ten towns of the Kosdeonoi turned to prayer, and the Ekokrosloi sent up nine new prayers.
+     [ 1830 w1] The prayers of Krerimes went up for fifteen years and nothing came down. The Ekokrosloi began to wonder whether anyone was listening.
+     [ 1833 w3] From the Ekokrosloi came the Harosnemoi, as a branch comes from a tree: the same wood, pointing elsewhere.
+     [ 1833 w2] The Harosnemoi called the god who had woken their fathers the Mountain-Maker.
+     [ 1837 w1] Hasketos was a town now, the busiest of the Dolusloi.
+     [ 1837 w1] The people of Hasketos built a wall and a gate, and shut it every night at dusk.
+     [ 1844 w1] Merchants began to travel between Strilekor and Dopioxono, bringing salt and news.
+     [ 1845 w2] The first caravan from Hasketos came to Nimosenion, and the Dolusloi and the Koltostoi learned each other's words for 'price'.
+     [ 1849 w2] The long quarrel between the Ekokrosloi and the Koltostoi came to blood.
+     [ 1850 w1] There was an earthquake hard by Hasketos, and the people of the town slept outside for a month.
+     [ 1851 w1] So many children were born in Katrolukalos that the elders gave up learning their names. Thus it became a city.
+     [ 1852 w1] In the 1852nd year Hokolemerax opened its gates to the Koltostoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1857 w1] The priests of Dixothalos went up to the high places and cried out for peace.
+     [ 1861 w1] A new village of the Ekokrosloi, Hitremax, was raised in the woods, where the hunters of Daleron had always camped.
+     [ 1865 w1] Huslitras became a town, and built a gate, though it had no wall yet.
+     [ 1869 w1] The wise of the Ekokrosloi came together at Korinermene, and wrote down everything they knew.
+     [ 1870 w1] The chronicle, which cannot write everything, notes only that in those forty years the builders of the Ekokrosloi finished a score or more new halls, granaries and walls, and nine new buildings went up among the Harosnemoi.
+     [ 1872 w1] The war ended in victory for the Koltostoi. The Ekokrosloi paid tribute for a generation.
+     [ 1874 w1] A sickness came to Soliophor by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 1877 w1] The people of Dokrotostra prayed for rain.
+     [ 1881 w1] Traders from Oteno found their way to Kidaphane of the Harosnemoi, where Ekokroslian coin was already known.
+     [ 1885 w1] Green came back to the fields of Dokasfomeras, and the wells were sweet again.
+     [ 1885 w2] War between the Kosdeonoi and the Dolusloi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 1890 w1] The scribes of the Harosnemoi began to write Hideodera with the sign for 'city', and its taxes rose accordingly.
+     [ 1893 w2] The Kosdeonoi marched into Odreafane, and the Doluslian families who could fled to their kin.
+     [ 1894 w1] The feet of traders wore a road between Kirimi and Lekousostra. Along it went pots and coins and, later, fevers.
+     [ 1896 w1] Okesneusalos was lost by the Kosdeonoi and won by the Dolusloi, and its market changed hands with it.
+     [ 1900 w1] The Koltostoi put up a score or more new buildings, each the finest yet by their own account; and seven prayers of the Ekokrosloi went unanswered. Of such small things in those thirty years the chronicle keeps nothing more.
+     [ 1901 w1] Rikomitisca and Seleira began to trade, wine for wool, and both grew fat on it.
+     [ 1905 w1] The Kosdeonoi took Okesneusalos from the Dolusloi.
+     [ 1906 w1] The war between the Kosdeonoi and the Dolusloi ended, and neither could say it had won.
+     [ 1909 w1] In the 1909th year Sokesfosenth could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [ 1913 w1] Walls of cut stone went up around Hokolemerax, and the Koltostian scribes began to call it a city.
+     [ 1916 w1] Caravans of the Kosdeonoi now came to Hideodera of the Harosnemoi as well.
+     [ 1922 w1] Lekousostra had become a city, with more people in it than there were sheep in the hills.
+     [ 1925 w2] The Ekokroslian kings swore an oath against the Koltostoi, and there was war.
+     [ 1925 w1] A coughing sickness came to Katrolukalos in the spring, and did not leave.
+     [ 1930 w1] The Ekokrosloi held Krerimes against the Koltostoi, and the field was red.
+     [ 1940 w1] The Ekokrosloi came against Otrophopeira and were thrown back.
+     [ 1941 w1] The village of Preukesku grew into a town; it had a name even among strangers.
+     [ 1941 w1] Preukesku raised walls of stone, for there was war.
+     [ 1945 w1] Hideodera of the Harosnemoi grew used to the goods of Elismimalos, and its merchants learned the Doluslian way of haggling.
+     [ 1950 w1] In the 1949th year, a band went out from Keoxophor with seed corn and quarrels enough for a new town, and founded Kotraro on the dry grasslands.
+     [ 1954 w1] At Krerimes the Ekokrosloi won the day. The Koltostoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 1957 w1] Holonos became a town, with a market-day.
+     [ 1960 w1] Those were busy years, if not great ones: the Dolusloi raised twelve new buildings, and nine towns of the Ekokrosloi turned to prayer.
+     [ 1961 w1] Before Krerimes, the army of the Koltostoi was broken.
+     [ 1964 w2] Kotraro grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 1965 w2] The Ekokrosloi and the Koltostoi laid down their arms. Nothing had changed but the number of graves.
+     [ 1966 w1] Another road joined Kotraro to Oteno of the Ekokrosloi, and the inns along it prospered.
+     [ 1979 w1] A tree north-east of Holonos was split by lightning. The children of the town dared each other to touch it.
+     [ 1979 w1] Fire ran through the dry grasslands north-east of Holonos.
+     [ 1979 w1] Trikura was founded in the 1979th year. Its founders swore it would one day be greater than Hokolemerax. The chronicle notes that all founders swear this.
+     [ 1981 w1] Trikura grew until a man could get lost in it, and they called it a town.
+     [ 1981 w1] The Kosdeonoi made war on the Ekokrosloi.
+     [ 1981 w1] War came between the Kosdeonoi and the Harosnemoi, the old enemies.
+     [ 1983 w3] Far from their old capital, the people about Soliophor began to call themselves the Selexirnoi, and paid no more taxes to the Ekokrosloi.
+     [ 1983 w2] Among the Selexirnoi the god was named the Mountain-Maker.
+     [ 1985 w1] The banners of the Ekokrosloi were raised over Okesneusalos.
+     [ 1990 w1] The merchants of Strilekor found a road to Tritimi, and the road found more merchants.
+     [ 1993 w2] In the 1992nd year Okesneusalos opened its gates to the Kosdeonoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 1993 w1] The fields around Krekomikonos filled with new houses, and it became a town of the Ekokrosloi.
+     [ 1994 w1] The Ekokrosloi won their war against the Kosdeonoi.
+     [ 1994 w1] The Kosdeonoi were beaten, and the Harosnemoi took their best fields.
+     [ 1997 w1] Holonos outgrew its walls twice and became a city of the Dolusloi.
+     [ 2001 w1] In Tritimi a jar of honey was given to Istreu, with a prayer for rain.
+     [ 2005 w1] Settlers of the Dolusloi went out from Odreafane and made a new home at Dimaslotonos.
+     [ 2009 w1] The long thirst of Strilekor ended in a storm, and the old people wept.
+     [ 2009 w1] Far away, in the wild woods of the north, a mountain was born in fire, and its ash darkened the sky.
+     [ 2014 w1] Some of the people of Hasketos grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Kisili.
+     [ 2016 w1] It is written that Krilorostra began as a ring of tents in the marshes, raised by wanderers from Olatakion.
+     [ 2020 w1] Meanwhile, in the smaller news of those years, more than a dozen towns of the Ekokrosloi prayed and waited, and the builders of the Dolusloi finished eleven new halls, granaries and walls.
+     [ 2021 w1] The fires on the high peaks west of Kisili cooled into black stone, and the people of the village went back to their fields.
+     [ 2025 w1] Traders from Doreapeum found their way to Islastonenth of the Ekokrosloi, where Kosdeonine coin was already known.
+     [ 2030 w1] Caravans of the Dolusloi now came to Kidaphane of the Harosnemoi as well.
+     [ 2033 w1] Children were born at Tholasadenth who had never lived anywhere else, and it became a village.
+     [ 2036 w1] Thephemer was founded in the woods by the Ekokrosloi, who had grown too many for Naskokri.
+     [ 2041 w1] The camp at Paskata put down roots and became a village.
+     [ 2044 w1] Wanderers from Kidaphane came to Trekrusostra and stayed.
+     [ 2048 w2] Many roads now led to Preukesku, and it was called a city.
+     [ 2049 w1] Niopostra became a market town, loud with haggling.
+     [ 2050 w1] And there were small things, as there always are: a score or more new buildings went up among the Ekokrosloi.
+     [ 2054 w1] The town of Thephemer grew into a city of the Ekokrosloi, full of smoke and music.
+     [ 2057 w1] Families of the Koltostoi who left Dokasfomeras built their first fires at Deleophor, and called it good.
+     [ 2060 w1] Rikomitisca of the Dolusloi began to buy the goods of Dekephane, and its merchants learned the Ekokroslian way of haggling.
+     [ 2064 w1] In the 2064th year, a band went out from Nimosenion with seed corn and quarrels enough for a new town, and founded Pera by the water.
+     [ 2068 w1] Another road joined Stralelipono to Kirimi of the Koltostoi, and the tolls on it were argued over.
+     [ 2074 w1] Traders from Domeninera found their way to Krilorostra of the Ekokrosloi, where Koltostian coin was already known.
+     [ 2077 w1] Ten thousand hearths burned in Kisili. It was a city now, the jewel of the Dolusloi.
+     [ 2080 w1] The scribes, counting rather than writing, set down that in thirty years the Koltostoi put up scores of new buildings, each the finest yet by their own account, and nine settlements of the Dolusloi grew.
+     [ 2081 w1] Caravans of the Dolusloi now came to Niopostra of the Selexirnoi as well.
+     [ 2085 w1] Thunder rolled over Nernukostra, and lightning fell north-east of the village.
+     [ 2088 w1] Paskata of the Ekokrosloi grew used to the goods of Kranaroudera, and its merchants learned the Harosnemian way of haggling.
+     [ 2092 w2] Niopostra had become a city, with more people in it than anyone could name.
+     [ 2095 w1] A band from Sokesfosenth crossed the country and founded Desekisfane in the woods.
+     [ 2097 w1] Another road joined Stralelipono to Lekousostra of the Koltostoi, and the tolls on it were argued over.
+     [ 2103 w1] Walls of cut stone went up around Kinokras, and the Doluslian scribes began to call it a city.
+     [ 2106 w1] Traders from Lokoisthalos found their way to Dekratilenth of the Koltostoi, where Doluslian coin was already known.
+     [ 2109 w1] Aidikun was a town now, the busiest of the Kosdeonoi.
+     [ 2110 w1] Below the great events of those thirty years, the Kosdeonoi raised a score or more new buildings; the builders of the Dolusloi finished ten new halls, granaries and walls.
+     [ 2114 w1] Caravans of the Ekokrosloi now came to Nernukostra of the Kosdeonoi as well.
+     [ 2120 w1] The scribes of the Dolusloi began to write Lokoisthalos with the sign for 'city', and its taxes rose accordingly.
+     [ 2121 w1] Nernukostra built walls. No one said against whom. Everyone knew.
+     [ 2124 w2] In the 2124th year the Koltostoi remembered an old insult from the Dolusloi, and went to war over it.
+     [ 2127 w1] Desekisfane became a city, the pride of the Kosdeonoi.
+     [ 2132 w1] A road was opened between Dekratilenth of the Koltostoi and Trekrusostra of the Harosnemoi, and strange coins began to turn up in both markets.
+     [ 2133 w2] The Harosnemoi marched against the Selexirnoi, and the smiths worked day and night.
+     [ 2133 w2] The god did nothing that the Harosnemoi could see for longer than anyone remembered, and the Mountain-Maker became the Silent One.
+     [ 2134 w1] The houses of Tholasadenth reached the old boundary stones and did not stop. From this year the Kosdeonoi call it a city.
+     [ 2137 w1] Niopostra fell to the Harosnemoi, and its people learned new songs.
+     [ 2140 w1] The scribes, counting rather than writing, set down that in thirty years more than a dozen new buildings went up among the Dolusloi.
+     [ 2142 w1] A new village of the Dolusloi, Kumeanthe, was raised in the deep forest, a few days' walk from Kotraro.
+     [ 2147 w1] Desekisfane of the Kosdeonoi grew used to the goods of Prireku, and its merchants learned the Doluslian way of haggling.
+     [ 2150 w1] In Dokasfomeras they said the god was deaf, and let the shrine fall into ruin.
+     [ 2150 w2] The armies of the Dolusloi came home in triumph to Healophor, and the Koltostoi swore to remember.
+     [ 2153 w2] Fever spread through Estinireira, and the priests could do nothing.
+     [ 2154 w1] Aidikun grew past counting into a city, and its temple could be seen from a day's walk away.
+     [ 2154 w2] The Ekokrosloi had called the god the Mountain-Maker. After what they had seen, they called the god the Grey Breath.
+     [ 2159 w1] In Aidikun they still tell of the great wind, which blew the fires out in every hearth.
+     [ 2160 w1] The Selexirnoi marched into Trekrusostra, and the town paid tribute from that day.
+     [ 2165 w1] Rilostikeras became a town, and built a gate, though it had no wall yet.
+     [ 2169 w1] The people of Estinireira stopped praying for healing; Istreus had not answered them.
+     [ 2169 w2] The war of the Harosnemoi and the Selexirnoi wore itself out, like a fire with nothing left to burn.
+     [ 2174 w1] Prireku outgrew its walls twice and became a city of the Dolusloi.
+     [ 2177 w1] Another road joined Kisili to Tholasadenth of the Kosdeonoi, and the tolls on it were argued over.
+     [ 2180 w1] Over forty years the Ekokrosloi put up eleven new buildings, each the finest yet by their own account. In the same years the builders of the Dolusloi finished nine new halls, granaries and walls.
+     [ 2181 w1] Many roads now led to Rilostikeras, and it was called a city.
+     [ 2185 w1] The town of Thelikor grew into a city of the Dolusloi, full of smoke and music.
+     [ 2188 w1] Settlers of the Kosdeonoi went out from Strilekor and made a new home at Pedilseidono.
+     [ 2194 w1] The Kosdeonoi set up a shrine at Trorepun, and left small carved birds there for the god.
+     [ 2196 w1] In the songs of the Koltostoi, the Mountain-Maker became the Maker.
+     [ 2197 w1] Upothalos was founded in the 2196th year. Its founders swore it would one day be greater than Olatakion. The chronicle notes that all founders swear this.
+     [ 2198 w2] The Selexirnoi of Ilenex saw their first Kosdeonine merchants, and laughed at their hats.
+     [ 2200 w1] The Koltostian priests gave the god a new name: the Remembered One.
+     [ 2200 w1] Some of the people of Tholasadenth grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Dimokris.
+     [ 2205 w1] The village of Dimokris grew into a town, and its people began to look down on villages.
+     [ 2205 w2] A fire-mountain woke on the cold barrens far to the south of Katrolukalos, and the sky above the city turned black.
+     [ 2206 w2] Among the Ekokrosloi, mothers who had once told their children of the Grey Breath now told them of the Mountain-Maker.
+     [ 2209 w1] At Tritimi the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Kosdeonoi went hungry.
+     [ 2210 w1] Over thirty years, and hardly worth a line each time, the Dolusloi raised nine new buildings.
+     [ 2212 w1] Ox-carts began to creak along the road from Lakelis to Kumeanthe, and inns grew up beside it.
+     [ 2217 w1] It is written that Rekoki began as a ring of tents on the shore, raised by wanderers from Olokux.
+     [ 2221 w1] Hostokrolden became a town, with a wall of thorns.
+     [ 2222 w1] The Koltostoi sharpened their spears and went against the Dolusloi, saying the god was with them.
+     [ 2224 w1] Envoys of the Kosdeonoi spat on the threshold before the Ekokrosloi, and the war began.
+     [ 2224 w1] The Kosdeonoi and the Harosnemoi could no longer share the river. They tried to share it with spears instead.
+     [ 2224 w1] The host of the Koltostoi came against Otrophopeira and broke on its walls like a wave on rock, and went home fewer.
+     [ 2228 w1] Before Kranaroudera, the Kosdeonoi met the Harosnemoi. By evening the field belonged to the Harosnemoi, and to the birds.
+     [ 2232 w1] An army of the Koltostoi besieged Otrophopeira and went home with nothing but stories.
+     [ 2236 w1] The Harosnemoi attacked Desekisfane in the rain and were beaten by its farmers.
+     [ 2237 w1] The war ended in victory for the Ekokrosloi. The Kosdeonoi paid tribute for a generation.
+     [ 2237 w1] After thirteen years the Kosdeonoi asked for peace, and the Harosnemoi granted it, and made them pay for the asking.
+     [ 2240 w1] Of the smaller things of those thirty years: a score or more new buildings went up among the Ekokrosloi; and they opened nine new trade roads.
+     [ 2240 w1] The Dolusloi held Otrophopeira against the Koltostoi, and the field was red.
+     [ 2242 w2] In those lean years Krerimes ate its oxen, and then its dogs.
+     [ 2244 w1] Traders from Hostokrolden found their way to Kinokras of the Dolusloi, where Harosnemian coin was already known.
+     [ 2250 w1] The Dolusloi came against Nimosenion and were thrown back.
+     [ 2253 w1] For fifteen years Pera prayed for healing, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 2256 w1] At Otrophopeira the Dolusloi won the day. The Koltostoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 2261 w1] Merchants began to travel between Imathalos and Kumeanthe, and the road between them grew wide.
+     [ 2262 w2] The war between the Koltostoi and the Dolusloi ended, and neither could say it had won.
+     [ 2269 w1] So many children were born in Trorepun that the elders gave up learning their names. Thus it became a town.
+     [ 2269 w1] Walls rose around Trorepun, and the Kosdeonine watchmen stood upon them at night.
+     [ 2273 w1] The sea sent a howling wind against Dukitro, and the fishermen did not go out for a month.
+     [ 2280 w1] In the 2280th year the first caravan came from Rekoki to Thephemer, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2283 w1] The Selexirnoi still kept the shrines, but the priests now spoke of the Silent One, not the Mountain-Maker.
+     [ 2283 w1] The sky over Elismimalos cracked open with fire, and the rain that followed was warm.
+     [ 2287 w1] Kumeanthe of the Dolusloi began to buy the goods of Hostokrolden, and its merchants learned the Harosnemian way of haggling.
+     [ 2290 w1] In Adrolen they burned fat and asked Istreus for rain.
+     [ 2293 w1] Caravans of the Kosdeonoi now came to Pera of the Koltostoi as well.
+     [ 2294 w2] There was famine in Rilostikeras. The people looked up and asked the Remembered One for rain, and counted the days, and the days were long.
+     [ 2297 w1] Fire walked through the deep forest east of Otrophopeira, and the beasts ran before it.
+     [ 2300 w2] The long quarrel between the Kosdeonoi and the Koltostoi came to blood.
+     [ 2301 w1] The drought about Rilostikeras broke, and the children ran out into the rain.
+     [ 2306 w1] Before Dopioxono, the army of the Koltostoi was broken.
+     [ 2310 w1] Another seventy years went into the book, and in them the Ekokrosloi found eight new roads for their traders.
+     [ 2311 w1] The host of the Kosdeonoi came against Dokasfomeras and broke on its walls like a wave on rock, and went home fewer.
+     [ 2314 w1] The Kosdeonoi held Dopioxono against the Koltostoi, and the field was red.
+     [ 2316 w1] War between the Ekokrosloi and the Koltostoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 2317 w1] Another road joined Upothalos to Dopioxono of the Kosdeonoi, and the inns along it prospered.
+     [ 2320 w1] In the 2320th year the Ekokrosloi stopped calling their god the Mountain-Maker. From now on, in the market and at the hearth, it was the Dawn-Caller.
+     [ 2326 w1] The Ekokrosloi attacked Dokasfomeras in the rain and were beaten by its old men and boys.
+     [ 2327 w1] Before Dokasfomeras, the Kosdeonoi met the Koltostoi. By evening the field belonged to the Koltostoi, and to the birds.
+     [ 2328 w1] Okesneusalos was lost by the Ekokrosloi and won by the Koltostoi, and its market changed hands with it.
+     [ 2329 w2] The Ekokrosloi won their war against the Koltostoi.
+     [ 2329 w1] The Koltostoi were beaten, and the Kosdeonoi took their best fields.
+     [ 2335 w1] Smoke rose from the earth in the pine woods far to the west of Kisili, and then fire. Ash fell on the city like grey snow.
+     [ 2336 w1] The old people of Kisili said the fire in the pine woods west of the city had been started by a falling star, and argued about it all winter.
+     [ 2338 w1] In the dark years the barley would not ripen, and hunger came to Tritimi and to many towns of the Kosdeonoi.
+     [ 2341 w1] At Kisili, the Dolusloi prayed to Istreus for rain, morning and evening.
+     [ 2342 w2] The sun was a pale coin behind the dust, and the granaries of Kisili stood empty. The Dolusloi remembered those years as the hungry ones.
+     [ 2342 w1] The Harosnemian kings swore an oath against the Selexirnoi, and there was war.
+     [ 2344 w1] That summer a fire ate the woods north-west of Ilenex.
+     [ 2348 w1] An army of the Harosnemoi besieged Oteno and went home with nothing but its wounded.
+     [ 2352 w1] The Selexirnoi came against Kidaphane and were thrown back.
+     [ 2356 w1] At Oteno the Selexirnoi won the day. The Harosnemoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 2362 w1] The people of Kranaroudera dug into the hills for copper.
+     [ 2364 w1] Before Oteno, the army of the Harosnemoi was broken.
+     [ 2368 w1] The host of the Selexirnoi came against Kidaphane and broke on its walls like a wave on rock, and went home fewer.
+     [ 2372 w1] The Harosnemoi attacked Oteno on a holy day and were beaten by its farmers.
+     [ 2376 w1] Before Kidaphane, the Selexirnoi met the Harosnemoi. By evening the field belonged to the Harosnemoi, and to the birds.
+     [ 2380 w1] Little of those seventy years was written down, except that five towns of the Harosnemoi prayed and heard nothing, and that they sent up nine new prayers.
+     [ 2380 w1] The Selexirnoi held Oteno against the Harosnemoi, and sang about it for a hundred years.
+     [ 2382 w2] The war of the Harosnemoi and the Selexirnoi ended because both had run out of sons. Each side wrote down that it had won.
+     [ 2392 w1] Traders from Asdrisedasis found their way to Rilostikeras of the Koltostoi, where Kosdeonine coin was already known.
+     [ 2399 w1] The people of Preukesku climbed to the shrine and prayed to Istreu for rain. They prayed loudly, in case the Sleeper was far away.
+     [ 2399 w1] The Kosdeonoi made war on the Harosnemoi.
+     [ 2400 w1] Caravans of the Ekokrosloi now came to Thelikor of the Dolusloi as well.
+     [ 2404 w1] An army of the Harosnemoi besieged Desekisfane and went home with nothing but stories.
+     [ 2409 w2] The Kosdeonoi took Streulole from the Harosnemoi.
+     [ 2412 w1] The Harosnemoi came against Desekisfane and were thrown back.
+     [ 2412 w1] The feet of traders wore a road between Rireanthe and Kumeanthe. Along it went pots and coins and, later, fevers.
+     [ 2412 w3] In the 2412th year the world turned a page: the Ekokrosloi, first of all peoples, came into the Age of Industry, and the others began to hurry.
+     [ 2412 w2] After thirteen years the Harosnemoi asked for peace, and the Kosdeonoi granted it, and made them pay for the asking.
+     [ 2413 w1] Chimneys rose over Daleron, and the sky above it turned grey. It was the first manufactory of the Ekokrosloi.
+     [ 2413 w1] Dixothalos became a great city such as the world had not seen, numberless as ants.
+     [ 2424 w1] In a night of thunder a bolt came down north-east of Lupephane, and in the morning the shepherds found the stones blackened.
+     [ 2424 w1] The country in the woods north-east of Lupephane burned for many days, and the smoke hung over the village.
+     [ 2426 w1] Trorepun of the Kosdeonoi grew used to the goods of Nirokermene, and its merchants learned the Ekokroslian way of haggling.
+     [ 2430 w1] The Selexirnoi of Oteno spent twenty years on a temple to Istreus, and then argued about the colour of the doors. No one among the Selexirnoi had built a temple before.
+     [ 2433 w1] Krekomikonos swallowed the villages around it and became a great city of the Ekokrosloi.
+     [ 2438 w1] The Koltostoi of Huslitras built a temple to Istreus so tall that the priests must rest twice on the stair, and they said that this was the point.
+     [ 2438 w1] The Dolusloi built engines that breathed fire, and the age of smoke began among them.
+     [ 2440 w1] Eight places of the Ekokrosloi outgrew their old names. Of such small things in those sixty years the chronicle keeps nothing more.
+     [ 2444 w2] The lamps of Krilorostra drowned out the stars: it had become a great city of the Ekokrosloi.
+     [ 2444 w1] Clouds came back over Dukitro, and the dry river filled in a single night.
+     [ 2445 w1] Otrophopeira grew into a city of towers, its lights seen from the next valley.
+     [ 2449 w1] Emali built a small shrine on the hill above the fields, and the first thing laid on it was a child's toy.
+     [ 2449 w2] A new thing was learned at Nimosenion, and then everywhere. So the Age of Industry began among the Koltostoi.
+     [ 2453 w1] Another road joined Pitopoukeira to Rireanthe of the Dolusloi, and the inns along it prospered.
+     [ 2457 w1] Holonos became a great city, a sea of roofs from one horizon to the other.
+     [ 2461 w1] So many people lived in Prelolas that no one could count them, and so they stopped trying.
+     [ 2466 w1] Lokoisthalos became a great city such as the world had not seen, numberless as ants.
+     [ 2470 w1] Among the small news of those thirty years: eight villages and towns of the Koltostoi grew larger.
+     [ 2470 w1] In the 2470th year Resalophor could no longer call itself a city. It was a great city now, and its people began to walk a little differently.
+     [ 2478 w1] The houses of Rireanthe reached the old boundary stones and did not stop. From this year the Dolusloi call it a great city.
+     [ 2478 w1] No one destroyed Rekoki. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2478 w1] The Ekokrosloi founded Penone on the shore.
+     [ 2482 w1] The lamps of Olokux drowned out the stars: it had become a great city of the Ekokrosloi.
+     [ 2485 w2] The Ekokrosloi gave up Penone, and the wind had it.
+     [ 2485 w1] The women of Dimokris tied red threads to the shrine and asked for rain.
+     [ 2489 w1] The Koltostoi of Hokolemerax wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2490 w3] The last families left Lokoisthalos, and grass grew in its streets.
+     [ 2492 w2] Kisili swallowed the villages around it and became a great city of the Dolusloi.
+     [ 2492 w1] Far from their kin, a band of the Dolusloi made a home at Kekori, in the pine woods.
+     [ 2501 w1] Kekori and Thelikor began to trade, pots for fish, and both grew fat on it.
+     [ 2502 w1] Asephane was founded on the plains by the Dolusloi, who had grown too many for Keoxophor.
+     [ 2505 w1] The priests of Thephemer went up to the high places and cried out for rain.
+     [ 2506 w2] Generations passed and the Ekokrosloi saw nothing of the Dawn-Caller; they began to call the god the Empty Chair.
+     [ 2507 w1] In the 2507th year the Harosnemoi entered the Age of Industry. The grandfathers said it was a mistake. The grandchildren did not hear them over the noise.
+     [ 2509 w1] Emali was left empty. No one could say exactly when.
+     [ 2510 w1] Another forty years went into the book: the Dolusloi put up more than a dozen new buildings, each the finest yet by their own account, and the builders of the Ekokrosloi finished nine new halls, granaries and walls.
+     [ 2510 w1] Asephane was abandoned.
+     [ 2511 w1] Traders from Kalelis found their way to Kekori of the Dolusloi, where Ekokroslian coin was already known.
+     [ 2515 w1] The people of Notuskir prayed for rain.
+     [ 2517 w1] The fields around Deleophor filled with new houses, and it became a town of the Koltostoi.
+     [ 2521 w1] The last families left Notuskir, and grass grew in its streets.
+     [ 2521 w1] No one destroyed Ponouthalos. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2522 w1] Caravans of the Dolusloi now came to Dekratilenth of the Koltostoi as well.
+     [ 2525 w1] There were too many mouths in Dimokris and too little bread, and the old went hungry so the young could eat.
+     [ 2529 w2] The Kosdeonoi harnessed fire and steam. Their nights grew bright and their skies grew grey.
+     [ 2530 w1] The engines of Olatakion began to turn, and their noise did not stop at night. It was the first manufactory of the Kosdeonoi.
+     [ 2532 w1] The Selexirnoi put down the tools of their mothers and took up the tools of the Age of Industry. The Silent One watched, and did not say whether this was wise.
+     [ 2532 w2] In the 2532nd year the old men said the winters had been colder in their youth, as old men always say; but this time the ice agreed with them, and the sea came up to listen.
+     [ 2533 w1] Wanderers from Kanesanthe came to Dolilthalos and stayed.
+     [ 2537 w1] In Delathema a jar of honey was given to Istreus, with a prayer for rain.
+     [ 2540 w1] War came between the Harosnemoi and the Selexirnoi, who had once traded salt and songs.
+     [ 2540 w1] The merchants of Upothalos found a road to Krerimes, and the road found more merchants.
+     [ 2545 w1] At Kidaphane the Harosnemoi won the day. The Selexirnoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 2546 w2] Sokesfosenth grew into a city of towers, its lights seen from the next valley.
+     [ 2549 w1] The people of Kitatren climbed to the shrine and prayed to Istreus for rain. They prayed loudly, in case the Silent One was far away.
+     [ 2553 w1] The women of Hideodera tied red threads to the shrine and asked for peace.
+     [ 2554 w1] The mountain west of Dokasfomeras woke and wept fire.
+     [ 2555 w1] The war ended in victory for the Harosnemoi. The Selexirnoi paid tribute for a generation.
+     [ 2555 w1] The Koltostoi no longer called the god the Remembered One; now they said the Mountain-Maker.
+     [ 2557 w1] At Kesnoda, the Ekokrosloi prayed to Istreus for rain, and fasted.
+     [ 2560 w1] Little of those fifty years was written down, except that hunger came to four towns of the Ekokrosloi.
+     [ 2561 w1] Dukitro built its first manufactory, and the river ran a strange colour.
+     [ 2564 w2] The Harosnemoi gave up Kranaroudera, and the wind had it.
+     [ 2565 w1] So many children were born in Dimokris that the elders gave up learning their names. Thus it became a city.
+     [ 2572 w1] Many left Dimokris, and it was a city again.
+     [ 2574 w1] The houses of Dolilthalos reached the old boundary stones and did not stop. From this year the Ekokrosloi call it a city.
+     [ 2577 w1] Ox-carts began to creak along the road from Aidikun to Trorepun, and inns grew up beside it.
+     [ 2577 w1] Kalelis was left empty. No one could say exactly when.
+     [ 2581 w1] Dimokris gave up asking Istreus for rain. Its people grew bitter.
+     [ 2582 w1] Kitatren was abandoned.
+     [ 2587 w1] Strilekor became a great city, a sea of roofs from one horizon to the other.
+     [ 2589 w1] The fields about Trorepun could not feed it any longer. Some families left in the night.
+     [ 2590 w1] Between the greater deeds of those thirty years, four towns of the Ekokrosloi knew lean years.
+     [ 2593 w1] The last families left Etaxanthe, and grass grew in its streets.
+     [ 2594 w1] Prireku of the Dolusloi grew used to the goods of Etaxanthe, and its merchants learned the Ekokroslian way of haggling.
+     [ 2594 w2] Ten thousand hearths burned in Plakeotalos. It was a city now, the jewel of the Dolusloi.
+     [ 2597 w1] At Delathema there was hunger, three years running.
+     [ 2599 w3] The Ekokrosloi gave up Delathema, and the foxes moved in.
+     [ 2601 w1] The spotted fever broke out in Desekisfane, and its gates were shut.
+     [ 2605 w1] In Preukesku they burned sweet grass and asked Istreu for rain.
+     [ 2609 w1] Another road joined Dimaslotonos to Oteno of the Selexirnoi, and the tolls on it were argued over.
+     [ 2613 w2] No one destroyed Trorepun. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2613 w1] The Ekokrosloi of Islastonenth wrote their prayer for rain on clay and buried it at the shrine.
+     [ 2617 w1] Traders from Kiphikos found their way to Nernukostra of the Kosdeonoi, where Harosnemian coin was already known.
+     [ 2619 w1] Lupephane was left empty. Its people had gone to the bigger towns.
+     [ 2621 w1] A storm passed over Imathalos, and lightning killed a herd of goats north-west of the city.
+     [ 2623 w2] The ice in the north began to weep, and the summers were cruel.
+     [ 2625 w1] Peidekar grew until a man could get lost in it, and they called it a town.
+     [ 2629 w1] Famine came to Kidaphane.
+     [ 2635 w1] Stralelipono had become a city, with more people in it than there were sheep in the hills.
+     [ 2638 w1] The priests of Parephe went up to the high places and cried out for rain.
+     [ 2640 w1] Below the great events of those fifty years, the Kosdeonoi raised nine new buildings.
+     [ 2641 w1] The harvest failed at Hokolemerax, and the people ate their seed corn.
+     [ 2644 w2] Hunger came to Kotraro and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 2645 w1] The people of Prusmeske prayed for rain.
+     [ 2654 w1] In the 2654th year Peidekar could no longer call itself a town. It was a city now, and its people began to walk a little differently.
+     [ 2654 w1] In Peidekar great sheds were built where a thousand hands did the work of ten thousand, and the air tasted of iron.
+     [ 2655 w2] The Kosdeonoi sharpened their spears and went against the Selexirnoi, saying the god was with them.
+     [ 2658 w1] Merchants began to travel between Kretixeleron and Eropostra, bringing salt and news.
+     [ 2662 w1] Dimokris was abandoned.
+     [ 2662 w1] Kiphikos became a city, the pride of the Harosnemoi.
+     [ 2665 w1] In the 2665th year the granaries of Niopostra rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2668 w1] The banners of the Selexirnoi were raised over Stralelipono.
+     [ 2675 w1] The Harosnemoi remembered an old insult from the Selexirnoi, and went to war over it.
+     [ 2678 w1] Trekrusostra fell to the Selexirnoi, and its Harosnemian lords were driven out.
+     [ 2678 w1] The prayers of Tritimi went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 2680 w1] Of the smaller things of those forty years: twelve towns of the Kosdeonoi prayed and waited.
+     [ 2680 w1] The last families left Nakenes, and grass grew in its streets.
+     [ 2681 w1] In the 2681st year Oteno opened its gates to the Harosnemoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2681 w1] The armies of the Selexirnoi came home in triumph to Soliophor, and the Kosdeonoi counted what they had lost.
+     [ 2687 w1] The Selexirnoi marched into Oteno, and the Harosnemian families who could fled to their kin.
+     [ 2690 w2] The Harosnemoi won their war against the Selexirnoi.
+     [ 2692 w1] Families of the Dolusloi who left Lakelis built their first fires at Kokiamion, and called it good.
+     [ 2693 w1] The tents of Kokiamion gave way to houses of stone, and it was called a village.
+     [ 2697 w2] Hunger walked the streets of Naskokri, and the Ekokrosloi sold their tools for grain.
+     [ 2697 w1] In Trikura the ground cracked like old pottery, and the Koltostoi began to pray for rain.
+     [ 2701 w1] In those lean years Preukesku ate its oxen, and then its dogs.
+     [ 2705 w1] In Preukesku a white goat was given to Istreu, with a prayer for rain.
+     [ 2709 w1] Half the houses of Olokux stood empty, and it was no more than a city.
+     [ 2709 w1] No one destroyed Strulales. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2710 w1] The scribes, counting rather than writing, set down that in thirty years nine new buildings went up among the Dolusloi.
+     [ 2714 w1] The Ekokrosloi gave up Parephe, and the wind had it.
+     [ 2716 w1] At Kanesanthe, the Ekokrosloi prayed to Istreus for rain, and fasted.
+     [ 2717 w1] There was famine in Kanesanthe. The people looked up and asked the Empty Chair for rain, and counted the days, and the days were long.
+     [ 2722 w1] The people of Naskokri climbed to the shrine and prayed to Istreus for rain. They prayed loudly, in case the Empty Chair was far away.
+     [ 2727 w1] So many people lived in Peidekar that no one could count them, and so they stopped trying.
+     [ 2734 w2] Pera was left empty. No one could say exactly when.
+     [ 2735 w1] A new village of the Ekokrosloi, Priphekostra, was raised on the shore, a few days' walk from Daleron.
+     [ 2735 w1] Priphekostra was a village now, with a well and a headman.
+     [ 2737 w1] There were too many mouths in Rilostikeras and too little bread, and the weak did not see the spring.
+     [ 2743 w1] Preukesku shrank to a town. Its walls were too big for it now.
+     [ 2753 w1] In the 2753rd year the first caravan came from Peidekar to Aidikun, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 2755 w1] Priphekostra was abandoned.
+     [ 2755 w1] The women of Niopostra sang at the shrine every evening and asked for rain.
+     [ 2757 w2] In Dolilthalos they painted marks on the doors of the sick, and the marks spread from street to street.
+     [ 2759 w1] The Kosdeonoi and the Dolusloi could no longer share the river. They tried to share it with spears instead.
+     [ 2762 w1] The rains failed around Ilenex.
+     [ 2763 w1] Otrophopeira was lost by the Dolusloi and won by the Kosdeonoi, and its market changed hands with it.
+     [ 2763 w1] In Ilenex they burned sweet grass and asked Istreus for rain.
+     [ 2765 w1] The fields about Dekephane could not feed it any longer. Some families left in the night.
+     [ 2769 w3] The Harosnemoi gave up Kiphikos, and the foxes moved in.
+     [ 2770 w1] Straphana was founded on the dry grasslands by the Harosnemoi, who had walked a long way to find it.
+     [ 2772 w1] Rain returned to Ilenex at last.
+     [ 2777 w1] Thunder rolled over Preukesku, and lightning fell in the deep forest south-west of the town.
+     [ 2780 w2] After much killing the Kosdeonoi and the Dolusloi agreed that the border was where it had always been.
+     [ 2790 w1] The Ekokrosloi of Naskokri wrote their prayer for rain on bark and buried it at the shrine.
+     [ 2794 w2] So many children were born in Streulole that the elders gave up learning their names. Thus it became a city.
+     [ 2794 w1] Chimneys rose over Streulole, and the sky above it turned grey.
+     [ 2797 w1] No one destroyed Prelolas. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 2799 w1] The priests of Resalophor went up to the high places and cried out for rain.
+     [ 2800 w1] At Resalophor there was hunger, three years running.
+     [ 2804 w1] In the 2804th year, a band went out from Desekisfane with seed corn and quarrels enough for a new town, and founded Thusefen by the water.
+     [ 2805 w1] Thusefen grew from a camp into a village.
+     [ 2805 w2] The sea was rising, and this time not by any god's hand: the chimneys of the Ekokrosloi had warmed the air, and the ice was giving back its water.
+     [ 2810 w1] The people of Naskokri prayed for rain.
+     [ 2810 w1] The river by Korinermene shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 2813 w1] Famine came to Korinermene.
+     [ 2814 w2] A fire-mountain woke on the shore east of Kinokras, and the sky above the great city turned black.
+     [ 2817 w1] A wildfire came close to Kinokras, and turned only when the wind did.
+     [ 2819 w1] Envoys of the Ekokrosloi threw down their staffs before the Koltostoi, and the war began.
+     [ 2820 w1] Meanwhile, in the smaller news of those years, five towns of the Ekokrosloi went hungry, and the granaries of five towns of the Dolusloi ran low.
+     [ 2821 w1] The dust of the sky fell on the fields of Upothalos like a second winter, and there was nothing to harvest but straw.
+     [ 2824 w1] The Koltostoi took Kesnoda from the Ekokrosloi.
+     [ 2831 w1] Before Krerimes, the army of the Koltostoi was broken.
+     [ 2840 w1] The Koltostoi had called the god the Mountain-Maker. After what they had seen, they called the god the Remembered One.
+     [ 2840 w1] The banners of the Koltostoi were raised over Kesnoda.
+     [ 2841 w1] The Kosdeonoi marched against the Harosnemoi, and the smiths worked day and night.
+     [ 2843 w1] The host of the Harosnemoi came against Aidikun and broke on its walls like a wave on rock, and went home fewer.
+     [ 2844 w1] The Ekokrosloi attacked Dokasfomeras on a holy day and were beaten by its old men and boys.
+     [ 2846 w1] The people of Dokasfomeras stopped praying for peace; Istreus had not answered them.
+     [ 2847 w2] The Koltostoi were beaten, and the Ekokrosloi took their best fields.
+     [ 2848 w2] In the 2848th year Straphana opened its gates to the Kosdeonoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 2849 w1] In Hideodera a lamb was given to Istreus, with a prayer for peace.
+     [ 2853 w1] Lightning walked on the hills east of Keoxophor, and no one was hurt, that time.
+     [ 2859 w1] The ground on the open sea west of Odreafane trembled for the space of a hundred breaths, and walls fell in the city.
+     [ 2861 w1] A wall of water came out of the sea upon Odreafane.
+     [ 2867 w1] The armies of the Kosdeonoi came home in triumph to Dopioxono, and the Harosnemoi counted what they had lost.
+     [ 2870 w1] In those fifty years six prayers of the Harosnemoi were not heard, or not answered.
+     [ 2870 w1] A hard sun stood over Eropostra all that summer, and the barley died standing.
+     [ 2871 w1] The women of Eropostra tied red threads to the shrine and asked for rain.
+     [ 2874 w1] The last families left Estinireira, and grass grew in its streets.
+     [ 2875 w1] Wanderers of the Ekokrosloi settled at Reukares, in the woods.
+     [ 2877 w1] Reukares was a town now, the busiest of the Ekokrosloi.
+     [ 2886 w1] The feet of traders wore a road between Reukares and Opharoileira. Along it went pots and coins and, later, fevers.
+     [ 2892 w1] Wind and rain beat upon Seleira for a week, and the rivers rose.
+     [ 2895 w1] At Adrolen, the Harosnemoi prayed to Istreus for rain, and fasted.
+     [ 2896 w2] In the 2896th year the granaries of Adrolen rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 2901 w1] In Niopostra they burned sweet grass and asked Istreus for rain.
+     [ 2902 w1] Hunger walked the streets of Adrolen, and the Harosnemoi sold their tools for grain.
+     [ 2903 w1] Lightning struck on the dry grasslands south-west of Tholasadenth in a summer storm.
+     [ 2914 w3] Thelikor was left empty. Its people had gone to the bigger towns.
+     [ 2915 w1] In the 2915th year a new camp of the Dolusloi was raised at Henuphelion, in the woods.
+     [ 2915 w1] There were now enough hearths at Henuphelion to call it a village.
+     [ 2915 w1] Henuphelion dug storage pits and lined them with clay, and the mice rejoiced.
+     [ 2920 w2] The long quarrel between the Harosnemoi and the Selexirnoi came to blood.
+     [ 2922 w1] The earth groaned under Amithalos, and the well water turned cloudy.
+     [ 2922 w1] Trekrusostra fell to the Selexirnoi, and its Harosnemian lords were driven out.
+     [ 2924 w2] Thusefen was abandoned.
+     [ 2925 w1] A grey sickness settled on Resalophor. The Koltostoi said it came from the marshes.
+     [ 2932 w1] The Selexirnoi marched into Oteno, and the Harosnemian families who could fled to their kin.
+     [ 2934 w1] Trekrusostra was lost by the Selexirnoi and won by the Harosnemoi, and its market changed hands with it.
+     [ 2935 w1] After fifteen years the Selexirnoi asked for peace, and the Harosnemoi granted it, and made them pay for the asking.
+     [ 2938 w1] Upothalos swallowed the villages around it and became a great city of the Ekokrosloi.
+     [ 2941 w1] In Resalophor they said the god was deaf, and stopped asking.
+     [ 2945 w1] The people of Straphana climbed to the shrine and prayed to Istreu for rain. They prayed loudly, in case the Sleeper was far away.
+     [ 2947 w2] The harvest failed at Niopostra; the children grew thin.
+     [ 2953 w1] A tree north of Peidekar was split by lightning. The children of the great city dared each other to touch it.
+     [ 2954 w1] Henuphelion and Kisili began to trade, cloth for copper, and both grew fat on it.
+     [ 2966 w3] In the 2966th year the world turned a page: the Dolusloi, first of all peoples, came into the Age of the Atom, and the others began to hurry.
+     [ 2967 w1] The Dolusloi built at Kamokeraxis a house where the smallest fire burns. No one among the Dolusloi had built a power plant before.
+     [ 2968 w1] The merchants of Thunatophor found a road to Kidaphane, and the road found more merchants.
+     [ 2968 w1] The houses of Imathalos reached the old boundary stones and did not stop. From this year the Dolusloi call it a great city.
+     [ 2978 w1] The sky over Kinokras cracked open with fire, and the rain that followed was warm.
+     [ 2978 w1] Fire walked through the deep forest east of Kinokras, and left only ash behind it.
+     [ 2982 w2] The Ekokrosloi split the smallest thing in the world, and found a fire inside it.
+     [ 2983 w1] A great power plant hummed at Daleron, and its lights never went out. It was the first power plant of the Ekokrosloi.
+     [ 2987 w1] Ox-carts began to creak along the road from Kekori to Henuphelion, and inns grew up beside it.
+     [ 2989 w1] Hasketos became a great city such as the world had not seen, and the sky over it never grew dark.
+     [ 2990 w1] The lamps of Rikomitisca drowned out the stars: it had become a great city of the Dolusloi.
+     [ 2993 w1] The rains forgot the country of Kisili. The children grew up not knowing the smell of rain.
+     [ 2996 w2] In those lean years Kisili ate its oxen, and then its dogs.
+     [ 3002 w1] Okesneusalos grew into a city of towers, its lights seen from the next valley.
+     [ 3002 w1] Henuphelion became a great city, a sea of roofs from one horizon to the other.
+     [ 3007 w1] A vein of ore was found above Plakeotalos, and the town grew loud with hammers.
+     [ 3010 w1] Kretixeleron grew past counting into a city, and its markets never closed.
+     [ 3013 w2] The Koltostoi gave up Kesnoda, and the wind had it.
+     [ 3013 w1] Hunger came to Straphana and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3020 w1] In the 3020th year Kosekisonde could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [ 3024 w1] No one destroyed Kosekisonde. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3024 w2] Vafathla grew hot as a kiln. The forests of the south withered.
+     [ 3024 w1] Smoke rose from the earth east of Strilekor, and then fire. The Kosdeonoi said the mountain was angry.
+     [ 3024 w1] The country east of Strilekor burned for many days, and the smoke hung over the great city.
+     [ 3025 w1] Among the Kosdeonoi the god was no longer the Sleeper but the Mountain-Maker, and the old name was forgotten.
+     [ 3028 w1] The Koltostoi of Ratophane wrote their prayer for rain on bark and buried it at the shrine.
+     [ 3029 w1] Ash hid the sun from Vafathla, the summers did not come, and Stralelipono went hungry, and many places besides.
+     [ 3033 w1] The sky stayed grey over Vafathla for years. The harvest failed at Olokux, and not only there.
+     [ 3038 w1] The priests of Amithalos went up to the high places and cried out for rain.
+     [ 3043 w1] The rains came back to Kumeanthe, and the Dolusloi said the god had relented.
+     [ 3044 w2] The wise of the Koltostoi learned to wake the fire inside stones, and the god was not consulted.
+     [ 3045 w1] Stritropu was founded in the 3044th year. Its founders swore it would one day be greater than Hasketos. The chronicle notes that all founders swear this.
+     [ 3045 w2] At Dokasfomeras the hidden fire was put to work, and the lamps of a whole country were lit from it. No one among the Koltostoi had built a power plant before.
+     [ 3051 w1] So many people lived in Trikura that no one could count them, though the scribes tried.
+     [ 3053 w1] Plixotoleira swallowed the villages around it and became a great city of the Ekokrosloi.
+     [ 3056 w1] The last families left Stritropu, and grass grew in its streets.
+     [ 3059 w1] The people of Straphana prayed for rain.
+     [ 3062 w1] The lamps of Dekratilenth drowned out the stars: it had become a great city of the Koltostoi.
+     [ 3067 w1] In a night of thunder a bolt came down in the hills west of Krerimes, and the dogs of the great city howled until dawn.
+     [ 3069 w1] Settlers of the Ekokrosloi went out from Thephemer and made a new home at Kreulisku.
+     [ 3075 w1] In Thephemer a jar of honey was given to Istreus, with a prayer for rain.
+     [ 3081 w1] The people of Straphana climbed to the shrine and prayed to Istreu for rain. They prayed loudly, in case the Mountain-Maker was far away.
+     [ 3082 w1] There was famine in Straphana. The people looked up and asked the Mountain-Maker for rain, and counted the days, and the days were long.
+     [ 3085 w1] So many children were born in Neopanthe that the elders gave up learning their names. Thus it became a great city.
+     [ 3093 w1] At Thephemer, the Ekokrosloi prayed to Istreus for rain, and fasted.
+     [ 3094 w2] There were too many mouths in Thephemer and too little bread, and the weak did not see the spring.
+     [ 3094 w1] Niopostra dwindled to a town. Its streets were too wide for the people left in them, and grass came up between the stones.
+     [ 3097 w1] The fields about Adrolen could not feed it any longer. Some families left in the night.
+     [ 3101 w1] A storm passed over Preukesku, and lightning killed a herd of goats south-west of the town.
+     [ 3108 w1] The women of Dokrotostra tied red threads to the shrine and asked for rain.
+     [ 3110 w1] In Ilenex the people sickened, and the roads to it were empty.
+     [ 3115 w1] A tree south-east of Keoxophor was split by lightning. The children of the great city dared each other to touch it.
+     [ 3117 w3] Peidekar was left empty. Its people had gone to the bigger towns.
+     [ 3120 w1] Streulole became a great city such as the world had not seen, and the sky over it never grew dark.
+     [ 3121 w1] In Streulole they burned incense and asked Istreu for rain.
+     [ 3123 w2] The Kosdeonoi entered the age of the hidden fire, with great fears.
+     [ 3127 w1] The Ekokrosloi of Dolilthalos wrote their prayer for rain on clay and buried it at the shrine.
+     [ 3129 w2] Dimaslotonos was abandoned.
+     [ 3129 w1] The Dolusloi founded Hosolon on the shore.
+     [ 3130 w1] Over seventy years, and hardly worth a line each time, the Kosdeonoi put up more than a dozen new buildings, each the finest yet by their own account.
+     [ 3135 w1] War between the Harosnemoi and the Selexirnoi. Both sides prayed to the same sky for victory; the chronicle does not record which prayer was heard.
+     [ 3137 w1] The Selexirnoi took Trekrusostra from the Harosnemoi.
+     [ 3139 w1] The Ekokrosloi gave up Thephemer, and the wind had it.
+     [ 3140 w1] The last families left Krilorostra, and grass grew in its streets.
+     [ 3143 w1] A band from Ratophane crossed the country and founded Krorakes in the woods.
+     [ 3143 w1] The houses of Krorakes reached the old boundary stones and did not stop. From this year the Koltostoi call it a village.
+     [ 3144 w2] Aidikun grew into a city of towers, so loud that the priests said the god could hear it.
+     [ 3145 w1] At Huslitras there was hunger, three years running.
+     [ 3148 w1] The Ekokroslian kings swore an oath against the Koltostoi, and there was war.
+     [ 3149 w1] Famine came to Stretipas.
+     [ 3150 w1] The war ended in victory for the Harosnemoi. The Selexirnoi paid tribute for a generation.
+     [ 3157 w1] The Koltostoi held Dokasfomeras against the Ekokrosloi, and sang about it for a hundred years.
+     [ 3157 w1] The priests of Dixothalos went up to the high places and cried out for peace.
+     [ 3165 w1] Before Dokasfomeras, the Ekokrosloi met the Koltostoi. By evening the field belonged to the Koltostoi, and to the birds.
+     [ 3165 w1] Merchants began to travel between Reukares and Nirokermene, and the road between them grew wide.
+     [ 3166 w2] A new thing was learned at Kuxestramene, and then everywhere. So the Age of the Atom began among the Harosnemoi.
+     [ 3169 w1] In the 3169th year the granaries of Hosolon rang hollow when struck. The people ate the seed corn, and then the stories of better years.
+     [ 3170 w1] The chronicle, which cannot write everything, notes only that in those forty years the Koltostoi raised ten new buildings.
+     [ 3173 w1] An army of the Ekokrosloi besieged Dokasfomeras and went home with nothing but stories.
+     [ 3173 w1] The Koltostoi won their war against the Ekokrosloi.
+     [ 3176 w1] The Kosdeonoi made war on the Dolusloi.
+     [ 3178 w1] Some of the people of Trikura grew tired of their neighbours' faces. They walked until the faces around them were their own again, and there they built Roliostra.
+     [ 3186 w1] The people of Naskokri prayed for rain.
+     [ 3187 w1] Hunger walked the streets of Naskokri, and the fields were not enough for all of them.
+     [ 3190 w1] The feet of traders wore a road between Streulole and Doreapeum. Along it went pots and coins and, later, fevers.
+     [ 3193 w1] A tremor ran through the land about Urokourmene, and pots fell from the shelves.
+     [ 3198 w1] The Dolusloi came against Dopioxono and were thrown back.
+     [ 3200 w1] And there were small things, as there always are: six prayers of the Ekokrosloi went unanswered.
+     [ 3202 w2] The harvest failed at Kretixeleron, and the people ate their seed corn.
+     [ 3202 w1] The Kosdeonoi were beaten, and the Dolusloi carried their temple bells home in carts.
+     [ 3203 w1] For fifteen years Tritimi prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 3205 w1] In the 3205th year Kanatomeron could no longer call itself a village. It was a town now, and its people began to walk a little differently.
+     [ 3210 w1] The first caravan came from Kanatomeron to Seleira, carrying salt, dyed cloth and gossip. Of the three, the gossip sold best.
+     [ 3214 w1] In Hosolon a lamb was given to Istreus, with a prayer for rain.
+     [ 3217 w1] Iponostra became a town, and chose a council of elders, who argued.
+     [ 3224 w1] That winter Elismimalos ate its oxen, and then its dogs.
+     [ 3225 w1] A sickness came to Rotoronivia by the river road. It went from house to house like a guest no one had invited and no one could turn away.
+     [ 3226 w2] The Selexirnoi split the smallest thing in the world, and found a fire inside it.
+     [ 3229 w1] So many children were born in Krorakes that the elders gave up learning their names. Thus it became a great city.
+     [ 3235 w1] The houses of Kanatomeron reached the old boundary stones and did not stop. From this year the Dolusloi call it a city.
+     [ 3239 w1] A coughing sickness came to Kumeanthe with the traders, and did not leave.
+     [ 3241 w1] Rotoronivia gave up asking Istreus for healing. Its people grew bitter.
+     [ 3242 w1] No one destroyed Iponostra. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3243 w1] Naskokri was left empty. No one could say exactly when.
+     [ 3250 w1] Green came back to the fields of Kinokras, and the wells were sweet again.
+     [ 3251 w2] Tholasadenth became a great city, a sea of roofs from one horizon to the other.
+     [ 3251 w1] In Kumeanthe the fever burned itself out. The survivors counted one another, did not like the count, and went back to work.
+     [ 3256 w2] In the songs of the Kosdeonoi, the Mountain-Maker became the Elder.
+     [ 3260 w1] Lightning walked on the hills south of Upothalos, and the Ekokrosloi stayed indoors.
+     [ 3260 w1] A red night: the pine woods south of Upothalos burned, and ash fell on the great city.
+     [ 3265 w1] Niopostra was abandoned.
+     [ 3266 w1] Ronexakeum was founded in the deep forest by the Harosnemoi, though no one remembered why there.
+     [ 3266 w1] Children were born at Ronexakeum who had never lived anywhere else, and it became a village.
+     [ 3272 w1] Elestresnur and Krorakes began to trade, cloth for copper, and both grew fat on it.
+     [ 3281 w1] The merchants of Ronexakeum found a road to Hideodera, and kept the secret of it for a while.
+     [ 3285 w2] War came between the Kosdeonoi and the Ekokrosloi, the old enemies.
+     [ 3291 w1] Lightning struck east of Dekratilenth in a summer storm.
+     [ 3291 w1] That summer a fire ate the plains east of Dekratilenth.
+     [ 3296 w2] The banners of the Ekokrosloi were raised over Okesneusalos.
+     [ 3296 w1] No rain fell on the lands of Kretixeleron. The river showed its stones, and the people counted them.
+     [ 3296 w1] The earth shook in the pine woods north-east of Dukitro.
+     [ 3299 w1] Hunger came to Kretixeleron and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3302 w1] The long thirst of Kretixeleron ended in a storm, and the old people wept.
+     [ 3306 w1] The Kosdeonoi and the Ekokrosloi laid down their arms. The poets of both peoples wrote songs of triumph.
+     [ 3307 w1] There was famine in Straphana. The people looked up and asked the Elder for rain, and counted the days, and the days were long.
+     [ 3311 w1] Many left Straphana, and it was a town again.
+     [ 3317 w1] So many people lived in Kanatomeron that no one could count them, though the scribes tried.
+     [ 3319 w1] Thunder rolled over Nirokermene, and lightning fell north of the city.
+     [ 3333 w1] Fire ran through the plains north-east of Hitremax.
+     [ 3345 w1] There was drought in the country of Plakeotalos, and the Dolusloi looked at the sky every morning.
+     [ 3348 w2] There were too many mouths in Upothalos and too little bread, and the old went hungry so the young could eat.
+     [ 3348 w1] The fields about Plakeotalos could not feed it any longer. Some families left in the night.
+     [ 3348 w2] No one destroyed Roliostra. One by one its people left for somewhere better, until the last of them shut the gate behind out of habit.
+     [ 3348 w1] Far from their kin, a band of the Koltostoi made a home at Rolamanera, in the pine woods.
+     [ 3349 w1] The camp at Rolamanera put down roots and became a village.
+     [ 3349 w1] The headmen of Rolamanera ordered a tithe of every harvest kept in a great barn, against the bad years.
+     [ 3352 w1] The Harosnemoi and the Selexirnoi could no longer share the river. They tried to share it with spears instead.
+     [ 3354 w1] Clouds came back over Plakeotalos, and the dry river filled in a single night.
+     [ 3361 w1] The sky over Hideodera cracked open with fire, and the old oak south-west of the great city burned like a torch.
+     [ 3361 w1] A wildfire came close to Hideodera, and turned only when the wind did.
+     [ 3367 w2] After fifteen years the Selexirnoi asked for peace, and the Harosnemoi granted it, and made them pay for the asking.
+     [ 3374 w1] The Dolusloi gave up Hosolon, and the wind had it.
+     [ 3375 w1] Wanderers of the Dolusloi settled at Rekessu, in the woods.
+     [ 3375 w1] Rekessu grew from a camp into a village.
+     [ 3375 w1] A granary was raised in Rekessu, and its keepers became the most important people in town.
+     [ 3380 w2] The heat of the world became a thing every child knew. The priests said it was the god's fever.
+     [ 3382 w3] The last families left Rotoronivia, and grass grew in its streets.
+     [ 3384 w1] Ox-carts began to creak along the road from Keoxophor to Kanatomeron, and inns grew up beside it.
+     [ 3385 w1] At Pitopoukeira there was hunger, three years running.
+     [ 3391 w1] In a night of thunder a bolt came down north of Holonos, and in the morning the shepherds found the stones blackened.
+     [ 3391 w1] The dry grasslands north of Holonos burned, and the Dolusloi watched the glow at night.
+     [ 3395 w3] The Dolusloi turned their eyes to the stars, and built towers of fire to reach them. No people had done so before them.
+     [ 3397 w1] The Kosdeonoi marched against the Koltostoi, and the smiths worked day and night.
+     [ 3400 w1] At Dokasfomeras the Koltostoi won the day. The Kosdeonoi tell it differently, in their own chronicle, which no one has asked to read.
+     [ 3401 w2] In the 3400th year Aidikun opened its gates to the Koltostoi, having run out of other ideas. It is theirs now, and pays its taxes in their coin.
+     [ 3401 w1] Famine came to Hokolemerax.
+     [ 3405 w1] Kekori became a great city such as the world had not seen, numberless as ants.
+     [ 3408 w1] Before Dokasfomeras, the army of the Kosdeonoi was broken.
+     [ 3413 w1] Fever spread through Tholasadenth, and the priests could do nothing.
+     [ 3415 w1] Outside Healophor, on flat ground swept clean, the Doluslian builders raised a tower of iron and a tower of fire beside it, and pointed them both at the sky.
+     [ 3415 w3] At Healophor the Dolusloi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3416 w1] The host of the Kosdeonoi came against Dokasfomeras and broke on its walls like a wave on rock, and went home fewer.
+     [ 3417 w2] The war ended in victory for the Koltostoi. The Kosdeonoi paid tribute for a generation.
+     [ 3417 w1] In Strilekor the ground cracked like old pottery, and the Kosdeonoi began to pray for rain.
+     [ 3418 w1] There was an earthquake east of Otrophopeira, and the people of the great city slept outside for a month.
+     [ 3420 w1] Another forty years went into the book, and in them nine towns of the Kosdeonoi turned to prayer.
+     [ 3426 w1] A storm passed over Ilenex, and lightning killed a herd of goats north-west of the great city.
+     [ 3426 w1] A red night: the woods north-west of Ilenex burned, and ash fell on the great city.
+     [ 3429 w1] The sickness went out of Tholasadenth at last, and the bells rang for the living as well as the dead.
+     [ 3446 w2] The Ekokrosloi reached the edge of heaven, and looked back at Vafathla.
+     [ 3450 w1] A fire-mountain was born on the plains far to the west of Lakelis, and the sky above the great city turned black.
+     [ 3451 w1] Envoys of the Ekokrosloi spat on the threshold before the Koltostoi, and the war began.
+     [ 3452 w1] In a dry season a fire ate the dry grasslands east of Desekisfane.
+     [ 3453 w2] Walls of cut stone went up around Rekessu, and the Doluslian scribes began to call it a city.
+     [ 3453 w1] The engines of Rekessu began to turn, and their noise did not stop at night.
+     [ 3454 w1] The Ekokrosloi held Opharoileira against the Koltostoi, and the field was red.
+     [ 3455 w1] In Stralelipono they lit fires at noon to see by, and ate the last of the seed, and waited for a sun that did not come.
+     [ 3455 w1] A tree east of Hitremax was split by lightning. The wood was kept as a holy thing in the great city.
+     [ 3459 w1] At Prusmeske the summer was only a rumour that year. The barley stood green in the cold until it rotted, and the Ekokrosloi went hungry.
+     [ 3462 w1] The fire-mountain on the high peaks far to the west of Lakelis fell asleep again.
+     [ 3462 w1] The Koltostoi attacked Opharoileira at dawn and were beaten by its farmers.
+     [ 3466 w1] At Daleron, the Ekokrosloi built a tower to throw ships at the stars.
+     [ 3466 w2] The Ekokrosloi laid the keel of a great ship at Daleron, a ship for the space between the stars.
+     [ 3470 w1] The Koltostoi sent up nine new prayers. Of such small things in those fifty years the chronicle keeps nothing more.
+     [ 3470 w1] An army of the Koltostoi besieged Opharoileira and went home with nothing but its wounded.
+     [ 3474 w1] The prayers of Rilostikeras went up for fifteen years and nothing came down. The shrine there was left without flowers.
+     [ 3476 w1] The armies of the Ekokrosloi came home in triumph to Daleron, and the Koltostoi swore to remember.
+     [ 3477 w1] For fifteen years Dokasfomeras prayed for peace, and the sky said nothing. At last they stopped asking. Some stopped believing. The shrine grew moss.
+     [ 3484 w1] The drought about Nernukostra broke, and the children ran out into the rain.
+     [ 3485 w1] Lightning struck in the deep forest west of Paskata in a summer storm.
+     [ 3495 w1] It is written that Elealos began as a ring of tents on the shore, raised by wanderers from Ratophane.
+     [ 3496 w1] The tents of Elealos gave way to houses of stone, and it was called a village.
+     [ 3497 w1] Fearing the war, Elealos ringed itself with a ditch and a palisade.
+     [ 3513 w1] The rains failed around Streulole.
+     [ 3516 w2] Hunger came to Pedilseidono and sat down at every table. Many were carried out to the fields that could no longer feed them.
+     [ 3516 w1] The harvest failed at Streulole; the children grew thin.
+     [ 3516 w2] The first ship of the Koltostoi went up beyond the sky and came back, and its sailors spoke of the world as a small blue stone.
+     [ 3518 w1] Lightning walked on the hills north-east of Dukitro, and the Ekokrosloi stayed indoors.
+     [ 3518 w1] Fire ran through the pine woods north-east of Dukitro.
+     [ 3521 w1] Streulole grew small and was only a city, and the young went away.
+     [ 3523 w1] Rain returned to Streulole at last.
+     [ 3525 w1] The scribes of the Koltostoi began to write Elealos with the sign for 'city', and its people were insufferable about it.
+     [ 3530 w1] A storm walked inland over the country of Kinokras, and left the fields flattened behind it.
+     [ 3533 w1] The spotted fever broke out in Urokourmene, and its gates were shut.
+     [ 3536 w2] At Nimosenion the Koltostoi began to build a ship that would not sail on water. The children were told it was for them. It was.
+     [ 3538 w1] Thunder rolled over Pitopoukeira, and lightning fell west of the great city.
+     [ 3542 w2] Prusmeske outgrew its walls twice and became a city of the Ekokrosloi.
+     [ 3542 w1] Prusmeske built its first manufactory, and the river ran a strange colour.
+     [ 3549 w1] In Urokourmene they said the god was deaf, and let the shrine fall into ruin.
+     [ 3549 w1] The plague left Urokourmene as it had come, without asking. The living swept their doorsteps and were careful, for a while, to be kind.
+     [ 3563 w1] Streulole swallowed the villages around it and became a great city of the Koltostoi.
+     [ 3565 w1] The sky over Okesneusalos cracked open with fire, and the rain that followed was warm.
+     [ 3567 w2] The Harosnemoi sharpened their spears and went against the Selexirnoi, though no one could remember who had struck first.
+     [ 3570 w1] Many roads now led to Straphana, and it was called a city.
+     [ 3581 w1] The river by Prusmeske shrank to a string of muddy pools, and the cattle stood in it and lowed.
+     [ 3582 w1] The lamps of Kanesanthe drowned out the stars: it had become a great city of the Koltostoi.
+     [ 3582 w2] The Harosnemoi won their war against the Selexirnoi.
+     [ 3583 w1] The ground north-west of Doreapeum rolled like a wave for the space of a hundred breaths, and walls fell in the great city.
+     [ 3588 w1] The rains came back to Prusmeske, and the Ekokrosloi said the god had relented.
+     [ 3589 w1] In a night of thunder a bolt came down west of Aidikun, and the dogs of the great city howled until dawn.
+     [ 3589 w1] The country west of Aidikun burned until the rain came, and the smoke hung over the great city.
+     [ 3595 w1] The Kosdeonoi put down the tools of their mothers and took up the tools of the Age of the Stars. The Elder watched, and did not say whether this was wise.
+     [ 3597 w1] Black clouds came over Nernukostra from the sea, and the hail broke the young barley.
+     [ 3615 w2] The Kosdeonoi built a great tower of fire at Dopioxono. Its makers looked up at night, and dreamed of other skies.
+     [ 3615 w2] The Kosdeonoi laid the keel of a great ship at Dopioxono, a ship for the space between the stars.
+     [ 3616 w3] From Healophor, the Dolusloi went up into the sky on a pillar of fire, carrying seed and songs and the name of Istreus. Those who stayed watched until the light was a star among stars.
+     [ 3616 w3] In the 3616th year the Dolusloi left Vafathla for the stars. They took their machines, their music and their quarrels. They did not take Istreus; no one remembered to. In an old temple at Healophor the wind still turns the pages of a book no one reads, and in it, in a hand no one living could read, is a name that once meant everything.
+
+simrun: 1 run(s) in 28.9 s wall, no non-finite values

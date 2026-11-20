@@ -488,6 +488,7 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 		else if (Id == "bloom" || Id == "seed") PlayCue(EDmCue::Shimmer, X->cell, 0.9f);
 		else if (Id == "heal" || Id == "inspire") PlayCue(EDmCue::Chime, X->cell, Id == "heal" ? 1.f : 0.75f);
 		else if (Id == "prophet" || Id == "awaken") PlayCue(EDmCue::Choir, X->cell, 1.f);
+		else if (Id == "consecrate") { PlayCue(EDmCue::Choir, X->cell, 0.8f); PlayCue(EDmCue::Chime, X->cell, 0.6f); }   // (wave3-final) v3 power had no cue
 		else if (Id == "peace") { PlayCue(EDmCue::Chime, X->cell, 0.7f); PlayCue(EDmCue::Choir, X->cell, 0.6f); }
 		else if (Id == "plague") { PlayCue(EDmCue::Toll, X->cell, 1.f); TensionHold = FMath::Max(TensionHold, 0.4f); }
 		return;

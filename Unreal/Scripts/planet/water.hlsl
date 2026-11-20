@@ -46,7 +46,7 @@ float3 WaveGrad(float3 Pm, float3 up, float fp, float t, float amp, out float lo
 	return G;
 }
 
-float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, float3 RY, float3 RZ, float3 Ctr4,
+float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, float3 RY, float3 RZ, float3 Ctr4, float SeaRise,
 	Texture2D MapB, SamplerState MapBSampler, Texture2D MapD, SamplerState MapDSampler,
 	out float Rough, out float3 Nw, out float Opac, out float3 Opq, out float AO, out float3 Scat, out float3 Absorb)
 {
@@ -59,6 +59,8 @@ float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, 
 	float depth = U0.x;
 	float rivD = U0.y;
 	float lake = U1.y;
+	// (wave 3) 1 where the ground under this water was dry land before the sea rose (depth < SeaRise, see below)
+	float drownW = SeaRise > 0.5 ? (1.0 - Smooth01((depth - SeaRise + 2.0) / 4.0)) * (1.0 - lake) : 0.0;
 
 	float2 ouv = OctUV(up);
 	float lodS = log2(max(fp / 346.0, 1.0));
@@ -100,6 +102,16 @@ float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, 
 	float capsTex = Noised(Pm / 25.0 + float3(0, Tm * 0.15, 0)).x * 0.7 + nA * 0.3;
 	float caps = lerp(0.03, Smooth01((capsTex - 0.42) / 0.12) * 0.35, AAW(25.0, fp)) * (1.0 - lake);
 	foam = max(foam, caps * calm);
+	// (wave 3) breakers over the drowned flats: broken white lines parallel to the new shore, a few tens of metres
+	// apart, where the young sea is still only a metre or two deep (averaged to a pale fringe from far away)
+	{
+		float lph = distM / 24.0 - Tm * 0.07 + 0.7 * nA + 0.5 * nBig;
+		float lw = max(abs(ddx(lph)) + abs(ddy(lph)), 1e-4);
+		float brk = saturate(0.35 + 1.3 * Noised(Pm / 80.0 + float3(2.1, 0.0, Tm * 0.02)).x + 0.4 * nBig);
+		float lines = lerp(0.12 * brk, Smooth01((sin(lph * 6.283) - 0.70) / 0.22) * brk, saturate(1.0 - lw / 0.5));
+		float lineK = drownW * (1.0 - Smooth01((depth - 0.8) / 1.8)) * Smooth01((depth - 0.05) / 0.25);
+		foam = max(foam, lines * lineK * tex);
+	}
 
 	// ---- sea ice and frozen lakes: floes with open leads, smooth and bright
 	float iceCov = lerp(Smooth01((iceC - 0.18) / 0.45), Smooth01((-6.0 - tempC) / 5.0), lake);
@@ -132,6 +144,23 @@ float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, 
 	float3 scatDeep = lerp(float3(0.00002, 0.00009, 0.00019), float3(0.00008, 0.00042, 0.00048), shelf);
 	Scat = lerp(scatDeep, float3(0.0016, 0.0014, 0.0008), plume);
 	Absorb = lerp(float3(0.0040, 0.00065, 0.00025), float3(0.0045, 0.0016, 0.0012), plume);
+	// (wave 3) a risen sea over drowned land (depth < SeaRise: the ground below was dry before the rise): a young,
+	// shallow coastal sea. Waves stir the silt of the drowned soil in the shallows, so it is turbid green-teal
+	// near the new shore, clearing into the open sea's blue toward the old coast: the depth reads as a gradient
+	// instead of one flat colour from the new shore out to the old one.
+	float turb = drownW * (1.0 - Smooth01((depth - 1.5 - 4.0 * saturate(nBig + 0.5)) / (4.0 + 0.55 * SeaRise)));
+	Scat = lerp(Scat, float3(0.00022, 0.00062, 0.00050), turb * (0.75 + 0.25 * nBig));
+	Absorb = lerp(Absorb, float3(0.0042, 0.0011, 0.0011), drownW * 0.7);
+	// the silt itself, as a partial cover over the water (Opacity: lit like a surface, so it reads whatever the
+	// Single Layer Water in-scattering makes of the scene's light): teal-green over the drowned flats, browner in
+	// the first metre, thinning with depth so the young sea grades from turbid shallows to clear blue water
+	float3 siltC = lerp(float3(0.050, 0.082, 0.068), float3(0.090, 0.095, 0.062), 1.0 - Smooth01((depth - 0.3) / 1.5));
+	siltC *= 1.0 + 0.15 * nBig + 0.08 * nA;
+	float tO = turb * 0.6 * saturate(0.75 + 0.35 * nBig);
+	float3 baseW = lerp(float3(0.85, 0.87, 0.88), iceCol, iceM);
+	float oW = Opac + (1.0 - Opac) * tO;
+	baseW = (Opac * baseW + (1.0 - Opac) * tO * siltC) / max(oW, 1e-4);
+	Opac = oW;
 	Scat = lerp(Scat, float3(0.00003, 0.00008, 0.00007), lake);
 	Absorb = lerp(Absorb, float3(0.0055, 0.0016, 0.0012), lake);   // fresh water: tannins and algae, darker
 	// boiling where lava runs into the water
@@ -143,5 +172,5 @@ float3 Water(float3 Pw, float2 U0, float2 U1, float Tm, float3 SunW, float3 RX, 
 	Opq = lerp(Opq, float3(0.8, 0.82, 0.8), Opac);
 
 	Nw = normalize(ToWorld(N, RX, RY, RZ));
-	return lerp(float3(0.85, 0.87, 0.88), iceCol, iceM);
+	return baseW;
 }

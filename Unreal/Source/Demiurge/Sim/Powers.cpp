@@ -101,7 +101,10 @@ Reason phaseLock(const World& w, const PowerDef& d) {
 		if (w.phase == Phase::People) return Reason::Ok;
 		if (nobodyAlive(w)) return Reason::Ok;
 	}
-	const bool ageOk = w.age >= u.age;
+	int needAge = u.age;
+	// (chronicle-diplomacy) DiplomacyTune::omenAge: the Omen of Peace may wake earlier than its table's age
+	if (is(d, "peace") && w.tune<DiplomacyTune>().omenAge >= 0) needAge = w.tune<DiplomacyTune>().omenAge;
+	const bool ageOk = w.age >= needAge;
 	const bool aweOk = u.awe > 0 && w.god.aweMax >= u.awe;
 	return (ageOk || aweOk) ? Reason::Ok : Reason::Locked;
 }
@@ -529,10 +532,11 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 		if (!s) return a;
 		const int cu = s->culture;
 		const std::vector<int> foes = enemiesOf(w, cu);
-		// (v3.1, design review 11) no war yet: the Omen calms the neighbours on the brink of one
-		const std::vector<int> calm = foes.empty() ? society::tense(w, cu) : std::vector<int>{};
-		if (foes.empty() && calm.empty()) return a;
 		const DiplomacyTune& DT = w.tune<DiplomacyTune>();
+		// (v3.1, design review 11) no war yet: the Omen calms the neighbours on the brink of one;
+		// (chronicle-diplomacy, omenWide) an Omen that ends wars calms the people's other tense neighbours too
+		const std::vector<int> calm = (foes.empty() || DT.omenWide) ? society::tense(w, cu) : std::vector<int>{};
+		if (foes.empty() && calm.empty()) return a;
 		for (int other : foes) {
 			society::makePeace(w, cu, other, T.peaceTruce, -1);
 			if (Relation* r = society::rel(w, cu, other)) r->v = clamp(finiteOr(r->v, 0) + T.peaceRel, -1.0, 1.0);
@@ -544,9 +548,12 @@ Act clickEffect(World& w, const PowerDef& d, int cell, double ang, int sid) {
 			society::swearPeace(w, cu, other);
 		}
 		a.wo.good = foes.empty() ? DT.omenCalmGood : 0.8;   // (v3.1) a war averted is felt less than a war ended
-		a.cultureWitness = foes.empty() ? calm : foes;
+		a.wo.favour = !DT.omenNoEnvy;                       // (chronicle-diplomacy) a peace no neighbour envies
+		a.cultureWitness = foes;
+		a.cultureWitness.insert(a.cultureWitness.end(), calm.begin(), calm.end());
 		a.cultureWitness.push_back(cu);
 		std::sort(a.cultureWitness.begin(), a.cultureWitness.end());
+		a.cultureWitness.erase(std::unique(a.cultureWitness.begin(), a.cultureWitness.end()), a.cultureWitness.end());
 		a.ok = true;
 		return a;
 	}

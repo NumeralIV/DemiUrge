@@ -261,6 +261,9 @@ void ADmPlanet::UpdateMaterialParams()
 		M->SetScalarParameterValue(TEXT("Overlay"), Overlay > 0 ? 1.f : 0.f);
 		M->SetScalarParameterValue(TEXT("Debug"), float(DebugMode));
 		M->SetScalarParameterValue(TEXT("Age"), W ? float(FMath::Clamp(W->age, 0, 6)) : 3.f);
+		// (wave 3) metres the sea stands above the ground's datum (the base sea): ground between the two levels is
+		// drowned land (silt, drowned meadows, turbid green shallows), not the pale sea floor of a natural shelf
+		M->SetScalarParameterValue(TEXT("SeaRise"), Terr ? float(FMath::Max(Terr->SeaM - Terr->RefM, 0.0)) : 0.f);
 	}
 }
 

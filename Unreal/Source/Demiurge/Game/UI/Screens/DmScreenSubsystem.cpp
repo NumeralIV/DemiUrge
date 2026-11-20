@@ -19,6 +19,7 @@
 #include "Scalability.h"
 #include "Sim/Chronicle.h"
 #include "Sim/Save.h"
+#include "Sim/State.h"
 #include "Slate/WidgetRenderer.h"
 #include "UnrealClient.h"
 
@@ -366,6 +367,8 @@ bool UDmScreenSubsystem::BeginWorld(const FDmNewWorldRequest& Req)
 		bOk = S->CreateWorld(Seed, Req.Name, Req.bQuickStart, 0.0);
 		if (bOk)
 		{
+			// (wave3-final, code-health U-1) the setup screen's Calm / Normal / Wild choice was stored and never applied
+			if (dm::World* W = S->SimMutable()) W->settings.calamity = Req.CalamityMultiplier();
 			S->SetPaused(false);
 			S->SetSpeed(1.f);
 		}

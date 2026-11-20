@@ -33,7 +33,7 @@ const EventInfo kEventTable[kEventCount] = {
 	{ "culture:died", 1, { "id" } },
 	{ "culture:age", 3, { "id", "age", "prev" } },
 	{ "world:age", 1, { "age" } },
-	{ "war:declared", 4, { "a", "b", "ally", "blamed" } },
+	{ "war:declared", 5, { "a", "b", "ally", "blamed", "envied" } },
 	{ "war:ended", 4, { "a", "b", "victor", "thanked" } },
 	{ "battle", 5, { "cell", "attacker", "defender", "won", "settlement" } },
 	{ "trade:route", 2, { "a", "b" } },

@@ -93,6 +93,8 @@ public:
 	int32 Version = 0;
 	double SeaLevel = 0.0;     // sim units
 	double SeaM = 0.0;         // m above datum
+	double RefLevel = 0.0;     // (wave 3) sim units: the level the ground is shaped against, min(vars.seaBase, sea)
+	double RefM = 0.0;         // m above datum; SeaM - RefM = how far the sea has risen over the land (>= 0)
 	double RiverT = 5.0;
 	double MaxH = 0.0, MinH = 0.0;   // rough bounds (m above datum) for culling
 

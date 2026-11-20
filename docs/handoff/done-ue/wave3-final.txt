@@ -1,0 +1,28 @@
+2026-11-20 wave3-final: whole-game verification after the wave-3 merges (gameplay, chronicle-budget, sky, towns-perf, planet-fixes, perf, flow-hud, aurora). Lane Unreal/Lanes/wave3-final (owned list Unreal/lanes/wave3-final.owned, 10 files), synced to main with -Force (integration / flowhud3-verify claim Game/**), synced files touched, Unreal/build.ps1 on main Succeeded (0 errors / 0 warnings). Score 6/10.
+
+SUMMARY: The game plays end to end and packages: title -> setup -> full genesis -> 3,300 years of history -> Ark -> ending -> timelapse -> planet card -> title, with every power working, exact save/load at every awkward moment tried, a deterministic simulation, and a clean, fast exit. It is not yet the cinematic, 60-fps game the owner asked for: night, sea and clouds look wrong in common views, the ground near towns is a patchwork of flat slabs, and live play near the ground runs at 40-53 fps on an idle machine.
+
+RESULTS ON MAIN (evidence in docs/handoff/wave3-final/)
+- SimTests run.ps1 all: 761 passed, 0 failed (runall-main.txt). An earlier run at 03:30 failed 120 chronicle cases and crashed: the sim-findings-2 track was mid-edit (new war:declared "ally" / war:ended "thanked" payload keys not yet in the schema); fixed by that track by 04:29.
+- simrun 8 seeds x all 17 policies x 4,500 y on the final sim code (simrun-8seeds-all-final.txt): every SPEC-SIM 4 balance target passes; the design-review targets pass except 4 already known (chronicle quiet stretch 224-330 y vs 150; passive at the Awe cap 88-89 % vs 50 %; prayers 22-62 % vs 15 %; kind no more famine entries than passive 4/8 vs 5/6). Tick-time targets fail only under 10 threads on a loaded machine; single-threaded (simrun-timing-jobs1.txt) mean 1.41-1.99 ms, max 15.8-22.4 ms: PASS. (A run on the 03:27 mid-edit code had seed 7 at aweMax 150 and a 8.7 s small-miracle interval; gone in the final code.)
+- Determinism alarm cleared: simrun --hash 3 x (8 seeds x passive, kind, cruel, chaotic): 32/32 worlds give identical hashes and chronicle entry counts on all 3 runs (determinism-summary.txt).
+- playthrough: RESULT PASS, 20 shots, 0 missing (seed 21, ark / beloved in year 3268, save/load in genesis and history PASS); every frame looked at against docs/concept (findings in release-notes.md known issues 1, 3, 4, 5).
+- powers-check: FAIL 1/14 before the fix (Consecrate: no target, no effect, no sound, no icon) -> RESULT PASS 0/14 after (peace N/A: no war at the moment checked).
+- saveload-awkward (new): RESULT PASS, 33 checks; byte-exact save/load at 14 moments (molten, comets in flight, life wave, before / right after the awakening, mid Rain press, pause menu open, 16x frame, army on the march, after a battle, after a world age, Ark being built, launch tick, ending screen) plus genesis-in-history and back, double load, missing slot, the ending replayed, load from the title. It found fixes 4 and 5.
+- screen-flow: all ok, exits in 5.4 s; hud-clarity: RESULT PASS.
+- perf-ab (editor, High = Epic, median GPU ms): orbit 10.45, terminator 10.87, mid 11.68, low 14.35, close 13.12, night 13.77; Medium 8.75-11.81. perf-play live 8x, idle machine, PACKAGED: High orbit 81 fps, mid 53, low 40, close 71; Medium 87 / 60 / 43 / 64. Low view CPU-bound (game 15 ms, render 18 ms avg) plus 75-650 ms hitches every few seconds. perf-play RESULT FAIL.
+- package.ps1: BUILD SUCCESSFUL (333 s, then incremental after the last fixes), 1,067,034,526 bytes. Packaged Demiurge.exe launched to the title: exit 0 in 14 s, 94 fps on the title, the shipped OFL fonts in use (shots/ue-final-package-title.png).
+
+FIXES (all in main, recorded in release-notes.md)
+1 UI/Screens/DmScreenSubsystem.cpp: the setup screen's Calm / Normal / Wild calamity was never applied (code-health U-1).
+2 UI/Hud/DmHudActor.cpp, DmHudStyle.h: the misleading "Palatino Linotype / Segoe UI" font log behind playtest 1 issue 4 (U-3).
+3 UI/Hud/DmHudIcons.cpp, FX/DmFx.cpp, Audio/DmAudioDirector.cpp, Flow/DmFlowScenarios.cpp: Consecrate had no icon, effect or cue; powers-check targets a town that can take it.
+4 Flow/DmFlow.cpp: loading a genesis save in the same phase disarmed its power (ArmPower toggles).
+5 Flow/DmFlow.cpp: a save made in the ending's tick or camera hold loaded into play with no ending screen ever; an ended world now opens on its ending screen.
+6 Sky/DmSkyActor.cpp: exit hung >60 s in every scenario (EndPlay waited for a weather build queued behind the planet's patch jobs); now ~5 s.
+7 Flow/DmSaveLoadAwkward.cpp: new scenario saveload-awkward.
+
+NOT DONE / FOR THE LEAD AND OWNER
+- The wave-3 sky track is NOT in main: `lane.ps1 sync sky3-verify -Force` was refused for this agent too (permission system). The owner must run it; DmSkyActor.cpp will report a CONFLICT with fix 6: keep both changes (the EndPlay hunk is independent), then build.ps1 and re-package.
+- Known issues ranked and the real-asset priorities: docs/handoff/release-notes.md.
+- Concurrent work during this check: sim-findings-2 (Sim/*, CPU-only) edited main until 04:29; an assetimport lane and Blender style-pilot renders shared the GPU.

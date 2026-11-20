@@ -18,6 +18,7 @@
 
 #include "Game/Towns/DmTownsActor.h"
 #include "Game/Towns/DmTownsPlan.h"
+#include "Game/Towns/DmTownsPerf.h"
 #include "Game/Core/DmCoords.h"
 #include "Game/Core/DmScenario.h"
 #include "Game/Core/DmSimSubsystem.h"
@@ -409,12 +410,26 @@ static FDmScenarioRegistrar GTownsStress(TEXT("towns-stress"), TEXT("towns"), TE
 			FDmShotArgs::Value(TEXT("-stresstier="), Tier); FDmShotArgs::Value(TEXT("-stressage="), Age); FDmShotArgs::Value(TEXT("-stresspop="), Pop);
 			for (const dm::Settlement& S : W->settlements) if (!S.dead) T->SetOverride(S.id, Tier, Pop, Age);
 			const double T0 = FPlatformTime::Seconds();
-			T->RebuildAll(true);
-			Ctx.Log(FString::Printf(TEXT("DmTownsScenario: stress tier %d age %d pop %.0f: blocking re-plan of everything %.0f ms; %s"), Tier, Age, Pop, (FPlatformTime::Seconds() - T0) * 1000.0, *T->Describe()));
+			// (towns-perf) -stressasync: re-plan everything on workers and apply under the frame budget (what a live world
+			// does when every culture changes age at once), with the DmTownsPerf monitor on
+			const bool bAsync = FDmShotArgs::Param(TEXT("stressasync"));
+			if (bAsync) { FDmTownsPerf::Get().Enable(); FDmTownsPerf::Get().BeginSegment(TEXT("stress async re-plan")); }
+			T->RebuildAll(!bAsync);
+			Ctx.Log(FString::Printf(TEXT("DmTownsScenario: stress tier %d age %d pop %.0f: %s re-plan of everything %.0f ms; %s"), Tier, Age, Pop, bAsync ? TEXT("asynchronous") : TEXT("blocking"), (FPlatformTime::Seconds() - T0) * 1000.0, *T->Describe()));
 			T->TakeMaxTickMs();
 		}
 		if (Ctx.Frame > 5 && Ctx.Frame % 60 == 0)
 			Ctx.Log(FString::Printf(TEXT("DmTownsScenario: stress frame %d: towns tick max %.2f ms, %d visible, %d units drawn"), Ctx.Frame, T->TakeMaxTickMs(), T->NumVisibleTowns(), T->NumUnitsDrawn()));
+		if (FDmShotArgs::Param(TEXT("stressasync")) && Ctx.Frame > 5 && T->IsSettled())
+		{
+			static bool bLogged = false;
+			if (!bLogged)
+			{
+				bLogged = true;
+				const int32 Bad = FDmTownsPerf::Get().EndSegment();
+				Ctx.Log(FString::Printf(TEXT("DmTownsScenario: stress settled at frame %d (%.1f s): %s; frames attributed to towns: %d"), Ctx.Frame, Ctx.Time, *T->Describe(), Bad));
+			}
+		}
 	});
 
 // ------------------------------------------------------------------ custom data probe (debug)

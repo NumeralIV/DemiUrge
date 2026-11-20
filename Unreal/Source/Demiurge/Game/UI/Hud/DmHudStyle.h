@@ -1,7 +1,7 @@
 // DEMIURGE — Game/UI/Hud/DmHudStyle.h : the HUD's design tokens (old SPEC-UI 0 "css/base.css"), fonts and
 // brushes. Owner: C7 hud.
 //
-// Quiet, celestial, gold on ink: serif (Palatino Linotype) for names and headings, sans (Segoe UI) for
+// Quiet, celestial, gold on ink: serif (EB Garamond) for names and headings, sans (Inter) for
 // numbers and controls. Colours are the old CSS tokens, given in sRGB and converted to linear here.
 // Sizes are CSS pixels at UI scale 1 (FDmHudStyle::Font takes pixels; Slate's point size is px x 0.75).
 //

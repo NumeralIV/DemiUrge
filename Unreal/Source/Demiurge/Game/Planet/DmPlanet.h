@@ -36,7 +36,17 @@
 // 10 / 11 / 12 (material masks: rock-forest-beach / snow-pond-soil / wet shore-seabed-farmland), 13 (road from
 // the map / road from the mesh / river), 14 (mesh river distance / slope / mesh road distance);
 // -planetlodpx=<px> (split threshold, default 8), -planetmaxlevel=<n> (default 13), -overlay=<0..5|name>,
-// -planetnocull (split out-of-view patches too), -planetlog (LOD, terrain-change and prune log lines).
+// -planetnocull (split out-of-view patches too), -planetlog (LOD, terrain-change and prune log lines),
+// -planetnodatum (A/B: shape the ground against the current sea instead of vars.seaBase, the pre-wave-3 mapping).
+// Material debug -planetdebug=15: sea rise (R), drowned land (G), under water (B).
+//
+// Sea rise (wave 3): the ground is shaped against the calibrated base sea (FDmPlanetTerrain::RefLevel), so a rising
+// sea floods the land where it lies (drowned hills as islands, the depth growing toward the old coast) and the
+// materials get SeaRise (m): drowned land is silt and drowned meadow under turbid green shallows with breakers.
+// The sky's atmosphere ground must sit below the sea for any of the water to show (DmSkyActor AtmoDropKm, see
+// docs/handoff/done-ue/wave3-planet-fixes.built.txt). (verify, 2026-11-20) Do not just drop it: with -atmodrop=0.5 / 2 the
+// shelf and open sea render pale grey (the seabed shows through with almost no depth absorption, and a constant red
+// base colour at Opacity 1 renders navy), so the water material must be fixed first: docs/handoff/done-ue/wave3-planet-fixes.txt.
 // Scenario planet-look (DmPlanetScenarios.cpp) renders any view, with -probe=x,y height profiles.
 //
 // Live updates (verification 2026-11-19): colour maps are computed on a worker from inputs copied on the game

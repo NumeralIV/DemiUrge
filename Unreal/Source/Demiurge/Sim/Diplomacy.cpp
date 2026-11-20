@@ -675,11 +675,17 @@ void breakAlliance(World& w, int a, int b) {
 
 // (v3.1, design review 11) did the god move a's people to this war against b? Its wrath on a in the last
 // decades, or its favour of b over a (envy), at least blameMin (impulse a year).
-bool blamedOnGod(const World& w, int a, int b) {
+// (chronicle-diplomacy) and which of the two it was: envied when the god's favour of b weighed more than its
+// wrath on a (the chronicle tells "the god favoured them" apart from "the god struck us")
+struct Blame { bool blamed = false, envied = false; };
+Blame blamedOnGod(const World& w, int a, int b) {
 	const DiplomacyTune& T = w.tune<DiplomacyTune>();
 	const double wrathA = favourRate(w, "fwrath", a);
 	const double envy = favourRate(w, "fgrace", b) - favourRate(w, "fgrace", a);
-	return wrathA >= T.blameMin || envy >= T.blameMin;
+	Blame out;
+	out.blamed = wrathA >= T.blameMin || envy >= T.blameMin;
+	out.envied = out.blamed && envy >= T.blameMin && envy > wrathA;
+	return out;
 }
 
 // declareWar's body; ally >= 0: a joins the war of its ally `ally`, whom b attacked (no further calls)
@@ -702,8 +708,8 @@ void startWar(World& w, int a, int b, int ally) {
 		setNum(w, fk, getNum(w, fk, 0) + 1);
 	}
 	w.stats.wars++;
-	const bool blamed = blamedOnGod(w, a, b);
-	w.bus.emit(EvWarDeclared{ a, b, ally, blamed });
+	const Blame blame = blamedOnGod(w, a, b);
+	w.bus.emit(EvWarDeclared{ a, b, ally, blame.blamed, blame.envied });
 	// friends of the victim sour on the aggressor
 	for (size_t z = 0; z < w.cultures.size(); z++) {
 		const int zi = int(z);
@@ -804,6 +810,13 @@ bool swearPeace(World& w, int a, int b) {
 	if (!T.omenSworn || a == b || !cultureAlive(w, a) || !cultureAlive(w, b) || !(T.omenYears > 0)) return false;
 	setNum(w, pairKey("sworn", a, b), w.year + T.omenYears);
 	return true;
+}
+
+double swornUntil(const World& w, int a, int b) {
+	if (a == b || !cultureOk(w, a) || !cultureOk(w, b)) return -1;
+	const auto it = w.vars.num.find(pairKey("sworn", a, b));
+	if (it == w.vars.num.end() || !isFinite(it->second) || !(it->second > w.year)) return -1;
+	return it->second;
 }
 
 std::vector<int> tense(const World& w, int cultureId) {
@@ -922,11 +935,12 @@ void diplomacy(World& w) {
 			double v = finiteOr(r->v, 0);
 			// (v3.1) an Omen's sworn peace: the pair rests at omenTarget until it ends
 			double target = T.relTarget;
+			bool sworn = false;
 			{
 				const std::string sk = pairKey("sworn", ia, ib);
 				const auto it = w.vars.num.find(sk);
 				if (it != w.vars.num.end()) {
-					if (isFinite(it->second) && w.year < it->second) target = T.omenTarget;
+					if (isFinite(it->second) && w.year < it->second) { target = T.omenTarget; sworn = true; }
 					else w.vars.num.erase(it);
 				}
 			}
@@ -942,7 +956,8 @@ void diplomacy(World& w) {
 				// (v3.1, design review 11) the god in the relations: a favourite is envied and the scourged
 				// blame the spared; peoples struck together stand together; a fever is blamed on the
 				// neighbours it came from; a prophet's zeal against the less devout, and devout peoples' kinship
-				if (T.envyK > 0 && T.favourRef > 0) {
+				// (chronicle-diplomacy) omenNoEnvy: peoples sworn to peace by the Omen do not envy each other
+				if (T.envyK > 0 && T.favourRef > 0 && !(sworn && T.omenNoEnvy)) {
 					const double fa = ag[a].fGrace - ag[a].fWrath, fb = ag[b].fGrace - ag[b].fWrath;
 					dv -= T.envyK * sat(std::fabs(fa - fb) / T.favourRef);
 				}

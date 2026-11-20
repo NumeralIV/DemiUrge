@@ -739,7 +739,8 @@ int witness(World& w, int cell, double ang, const WitnessOpts& opts) {
 		if (!liveCulture(w, m.culture)) continue;
 		w.vars.num[varKey("heard", m.culture)] = w.year;
 		// (v3.1, design review finding 11) the god's recent favour (Diplomacy: envy, blame, thanks), Ark or not
-		if (tn.favourHalfLife > 0) {
+		// (chronicle-diplomacy) except a deed that leaves no envy (opts.favour false: the Omen of Peace)
+		if (tn.favourHalfLife > 0 && opts.favour) {
 			if (m.grace > 0) w.vars.num[varKey("fgrace", m.culture)] += m.grace;
 			if (m.wrath > 0) w.vars.num[varKey("fwrath", m.culture)] += m.wrath;
 		}

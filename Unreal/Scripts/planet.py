@@ -116,11 +116,12 @@ COMMON = hlsl('common.hlsl')
 # ---------------------------------------------------------------- land
 m = new_asset('M_PlanetLand', unreal.Material, unreal.MaterialFactoryNew())
 m.set_editor_property('tangent_space_normal', False)
-scalars = [('SeaR', 'SeaR', 1.0e7), ('Heat', 'Heat', 0.0), ('OverOn', 'Overlay', 0.0), ('Dbg', 'Debug', 0.0), ('Age', 'Age', 3.0)]
+scalars = [('SeaR', 'SeaR', 1.0e7), ('Heat', 'Heat', 0.0), ('OverOn', 'Overlay', 0.0), ('Dbg', 'Debug', 0.0), ('Age', 'Age', 3.0),
+           ('SeaRise', 'SeaRise', 0.0)]
 textures = ['MapA', 'MapB', 'MapC', 'MapD', 'MapE', 'RiverTex']
 d = common_inputs(m, -1600, -400, scalars, textures)
-names = ['Pw', 'NvW', 'VC', 'VCA', 'U0', 'U1', 'U2', 'U3', 'Tm', 'SunW', 'RX4', 'RY4', 'RZ4', 'Ctr4', 'SeaR', 'Heat', 'OverOn', 'Dbg', 'Age'] + textures
-args = ', '.join(names[:19]) + ', ' + ', '.join('%s, %sSampler' % (t, t) for t in textures)
+names = ['Pw', 'NvW', 'VC', 'VCA', 'U0', 'U1', 'U2', 'U3', 'Tm', 'SunW', 'RX4', 'RY4', 'RZ4', 'Ctr4', 'SeaR', 'Heat', 'OverOn', 'Dbg', 'Age', 'SeaRise'] + textures
+args = ', '.join(names[:20]) + ', ' + ', '.join('%s, %sSampler' % (t, t) for t in textures)
 code = ('struct FSurf {\n' + COMMON + hlsl('land.hlsl') + '\n};\nFSurf S;\nreturn S.Land(' + args +
         ', Rough, Nw, Emis, AO);\n')
 c = custom(m, -700, -200, code, names, [('Rough', F1), ('Nw', F3), ('Emis', F3), ('AO', F1)])
@@ -143,9 +144,9 @@ m = new_asset('M_PlanetWater', unreal.Material, unreal.MaterialFactoryNew())
 m.set_editor_property('tangent_space_normal', False)
 m.set_editor_property('shading_model', unreal.MaterialShadingModel.MSM_SINGLE_LAYER_WATER)
 textures = ['MapB', 'MapD']
-d = common_inputs(m, -1600, -400, [], textures)
-names = ['Pw', 'U0', 'U1', 'Tm', 'SunW', 'RX4', 'RY4', 'RZ4', 'Ctr4'] + textures
-args = ', '.join(names[:9]) + ', ' + ', '.join('%s, %sSampler' % (t, t) for t in textures)
+d = common_inputs(m, -1600, -400, [('SeaRise', 'SeaRise', 0.0)], textures)
+names = ['Pw', 'U0', 'U1', 'Tm', 'SunW', 'RX4', 'RY4', 'RZ4', 'Ctr4', 'SeaRise'] + textures
+args = ', '.join(names[:10]) + ', ' + ', '.join('%s, %sSampler' % (t, t) for t in textures)
 code = ('struct FSurf {\n' + COMMON + hlsl('water.hlsl') + '\n};\nFSurf S;\nreturn S.Water(' + args +
         ', Rough, Nw, Opac, Opq, AO, Scat, Absorb);\n')
 c = custom(m, -700, -200, code, names, [('Rough', F1), ('Nw', F3), ('Opac', F1), ('Opq', F3), ('AO', F1), ('Scat', F3), ('Absorb', F3)])

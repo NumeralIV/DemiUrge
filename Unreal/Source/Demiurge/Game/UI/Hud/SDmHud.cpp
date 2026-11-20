@@ -6,10 +6,12 @@
 #include "Game/UI/Hud/DmHudIcons.h"
 #include "Game/UI/Hud/DmHudModel.h"
 #include "Game/UI/Hud/DmHudStyle.h"
+#include "Game/UI/Hud/SDmHudGuide.h"
 #include "Game/UI/Hud/SDmHudPanels.h"
 #include "Game/UI/Hud/SDmHudWidgets.h"
 
 #include "Rendering/DrawElements.h"
+#include "Widgets/Images/SImage.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
 #include "Widgets/Layout/SBox.h"
@@ -300,17 +302,35 @@ TSharedRef<SWidget> SDmHud::AwePanel()
 			[
 				Text(Lam([C]() { return C->M.Epithet; }), EDmFont::SerifItalic, 19.f, FSlateColor(S.Gold))
 			]
-			+ SVerticalBox::Slot().AutoHeight().Padding(0, 3, 0, 0)
+			+ SVerticalBox::Slot().AutoHeight().Padding(-4, 1, 0, 0)
 			[
-				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+				// the regard of the people the ending would ask (their colour dot), and a small map of how they
+				// will remember the god; a click opens the card that explains it (review finding 12)
+				SNew(SButton).ButtonStyle(&S.FlatButton).ContentPadding(FMargin(4, 2))
+				.Tag(FName(TEXT("hud-regard")))
+				.OnClicked_Lambda([C]() { C->ToggleRemember(); return FReply::Handled(); })
 				[
-					SNew(SDmIcon).Size(15.f).Icon_Lambda([C]() { return C->M.RegardIcon; })
-					.Color_Lambda([C, &S]() { return C->M.Mood == dm::Mood::Feared ? S.Bad : (C->M.Mood == dm::Mood::Beloved ? S.Good : S.Dim); })
-				]
-				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(6, 0, 0, 0)
-				[
-					Text(Lam([C]() { return C->M.RegardWord; }), EDmFont::Sans, 13.f, FSlateColor(S.Text))
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0, 0, 6, 0)
+					[
+						SNew(SBox).WidthOverride(10).HeightOverride(10).Visibility_Lambda([C]() { return Vis(C->M.RegardCulture >= 0); })
+						[
+							SNew(SImage).Image(&S.Dot).ColorAndOpacity_Lambda([C]() { return FSlateColor(C->M.RegardColor); })
+						]
+					]
+					+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+					[
+						SNew(SDmIcon).Size(15.f).Icon_Lambda([C]() { return C->M.RegardIcon; })
+						.Color_Lambda([C, &S]() { return C->M.bWatched ? S.Dim : (C->M.Mood == dm::Mood::Feared ? S.Bad : (C->M.Mood == dm::Mood::Beloved ? S.Good : S.Dim)); })
+					]
+					+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(6, 0, 10, 0)
+					[
+						Text(Lam([C]() { return C->M.RegardWord; }), EDmFont::Sans, 13.f, FSlateColor(S.Text))
+					]
+					+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+					[
+						SNew(SDmRegardMap).Context(C).Width(40.f).Height(24.f)
+					]
 				]
 			]
 		];
@@ -668,7 +688,8 @@ TSharedRef<SWidget> SDmHud::PowerButton(int32 Index, bool bNarrow)
 	{
 		Content->AddSlot().HAlign(HAlign_Center).VAlign(VAlign_Top).Padding(0, 37, 0, 0)
 		[
-			Text(FText::FromString(U(D.name)), EDmFont::Sans, 12.f,
+			// (verifier) a long name ("Omen of Peace") was clipped at 12 px in the 80 px button
+			Text(FText::FromString(U(D.name)), EDmFont::Sans, U(D.name).Len() >= 13 ? 10.5f : 12.f,
 				TAttribute<FSlateColor>::CreateLambda([P, &S]() { const FDmHudPower& Pw = P(); return FSlateColor(Pw.bArmed ? S.GoldHi : (Pw.bUnlocked ? S.Text : FDmHudStyle::WithAlpha(S.Dim, 0.6f))); }))
 		];
 		Content->AddSlot().HAlign(HAlign_Right).VAlign(VAlign_Top).Padding(0, 4, 5, 0)
@@ -1274,6 +1295,11 @@ TSharedRef<SWidget> SDmHud::BuildWide()
 		[
 			SNew(SBox).Visibility_Lambda([C]() { return Vis(C->M.Selected < 0); })[SNew(SDmNowStrip).Context(C).Width(300.f)]
 		]
+		+ SVerticalBox::Slot().AutoHeight().Padding(0, 12, 0, 0)
+		[
+			// the first-hour guidance thread, under the now strip (it steps aside while a town's panel is open)
+			SNew(SBox).Visibility_Lambda([C]() { return Vis(C->M.Selected < 0 && C->bGuideVisible); })[SNew(SDmGuideThread).Context(C).Width(300.f)]
+		]
 		+ SVerticalBox::Slot().AutoHeight()
 		[
 			SNew(SBox).Visibility_Lambda([C]() { return Vis(C->M.Selected >= 0); })
@@ -1293,6 +1319,10 @@ TSharedRef<SWidget> SDmHud::BuildWide()
 	[
 		SNew(SVerticalBox).Visibility_Lambda(On)
 		+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[AwePanel()]
+		+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0, 8, 0, 0)
+		[
+			SNew(SBox).Visibility_Lambda([C]() { return Vis(C->bRememberOpen && !C->M.bGenesis); })[SNew(SDmRememberCard).Context(C).Width(440.f)]
+		]
 		+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0, 8, 0, 0)[ArkBar()]
 		+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0, 10, 0, 0)[GuideCard(520.f)]
 		+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0, 4, 0, 0)[Toasts()]
