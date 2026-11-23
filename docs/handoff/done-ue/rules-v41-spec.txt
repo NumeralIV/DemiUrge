@@ -1,0 +1,136 @@
+2026-11-23, rules-v41-spec independent review (adversarial; documentation only).
+
+Files touched: docs/SPEC-RULES-V41.md (edited in place) and this report. No source, test, config or other doc was
+changed. No git, network or browser. The original draft is the rules-v41-spec.built.txt marker's version.
+
+Checked against: docs/reviews/astra-design-review.md, docs/reviews/gameplay-v4.md, docs/SPEC-SIM.md,
+docs/SPEC-MYTHOS.md (0.1-0.3, 2.2, 3.17, 5.1, 9), and the code: Sim.h/.cpp (yearlyGroup, use, fingerprint, score),
+State.h/.cpp (blocks, extensionsDefault, serialize), Cards.h/.cpp (CompetingPrayers pairing), Society.h/.cpp
+(prayers, counts, memory, hoarding, income), Powers.h/.cpp (table, setBack, PowersScratch), Economy.cpp
+(strikeKnowledge, emissions, blessed), Disasters.cpp (meteor impact), Doctrine.cpp (burning), Climate.cpp (uptake),
+Life.h, Core/Events.h, Balance.cpp, Tools/simrun (core hash, --saveload), and the evidence in sim-findings-2.
+
+WHAT I CHANGED (by severity)
+
+Blocking defects fixed
+1. Save and hash model was wrong. The draft said sim::fingerprint "cannot see RULE" and added a second hash (hash2).
+   In fact fingerprint hashes the full v2 save whenever extensionsDefault is false, which is the case as soon as
+   Mythos phase >= 1 writes any state. An always-written RULE block would therefore have broken the recorded phase-B1 hashes, and
+   "SituationsTune::on changes neither hash" was false.
+   Now: RULE is written only when the new state::rulesDefault is false, so a world with every flag off saves byte for
+   byte as before. extensionsDefault also requires rulesDefault. Read-only proofs use simrun's existing `core` hash
+   plus the rng state. hash2 is removed everywhere (2.3, 2.7, T1, T6, B41 step 1).
+2. Flags-off writes would have broken the guardrail. civ_co2y_<id>, climate_uptake and powers_lastSpent went into
+   vars.num (the v1 payload), and the climate ring, stores fill-on-rebuild and vSlow initialisation had no gate.
+   cards_lastAnswer went into mythos.num and had no reader.
+   Now: D5 says a family with its flag off writes nothing anywhere. The new gate ClimateTune::attribution covers the
+   ring, the keys and attribution. The three scalars moved to rules.num. Stores and vSlow fill only with their flags
+   on. cards_lastAnswer is deleted.
+3. The schedule did not match the code. yearlyGroup runs mythos::yearly and cards::yearly inside one
+   `if (mythosOn)`, so "situations::yearly runs at every phase" needed that block split. 2.4 now says so explicitly,
+   and the yearly-order test checks phase 0 and phase 1. simrun must attach the new modules when it turns flags on
+   after create (T6).
+4. The Ark wrath push sat inside civ::strikeKnowledge, which lives in Economy.cpp, not Civ.cpp, and is also called
+   by Doctrine's burning decree. That would have blamed the god for the people's own act.
+   Now: the push sits in Powers' setBack and in one call at a god's meteor impact in Disasters.cpp (T4 owns that one
+   line). strikeKnowledge is unchanged. The test moved from T3 to T4, with a Doctrine-burning counter-test.
+5. Chorus counting was inconsistent. Only per-town answers were moved to the chorus; per-town prayer beginnings
+   still counted (Society.cpp line 526). The Beloved-by-answered-prayers test would then have compared per-town
+   beginnings with per-chorus credit, which harms the kind god. Now both move to the chorus (Victory and Sun keep
+   per-town counting). The int truncation in memory() is documented. The T2 test checks both counts.
+6. The rule could not meet its own target (metric 10). Decay "0.004 x aweMax a year" while income is still added
+   cannot move passive off the cap while aweMax is below about 700: income is about 2.2-2.8 a year, decay 1.2-2.4.
+   Now: while Fading, no income is added and the decay is net. The arithmetic is in the rule, Q3 is reworded, and
+   the test setup includes income. This is the one place I changed a design number's meaning; see risk 1 below.
+
+Double-counted attention fixed (R3, R7)
+7. A War entering Crisis plus its own war:declared would have made two ledger entries. A risk row that a Mythos
+   Warning card already announced would interrupt a second time. Added "one matter, one interruption": fold into the
+   same-year Epochal entry, and record an omen-foreseen Rising as quiet. Each has a test.
+8. CompetingPrayers pairs prayers in cards::yearly, after situations::yearly, so one town could sit in a plea and on
+   a card at once. Added the handoff: the next pass removes the member and subtracts its peak, and the card owns the
+   prayer. Tested.
+9. The ledger kept "the last 64", so a busy Industry window could push loud entries out and miscount room. Quiet
+   entries now drop first, and the window is defined as (year - 20, year].
+10. Card openings had to wait for room with no bound, so the director could starve. Added attnHold 60: after 60 years
+   of waiting the card opens quiet. This is a reviewer number and is marked as such. Noted that Epochal entries and
+   big Crises can exceed "4 loud per 10 s" by design (metric 18).
+11. "The first tsunami:hit of a wave" is not detectable (the event has no wave id). It is now tsunami:start.
+
+Determinism and save gaps fixed
+12. The War Watch ("below its value 5 years ago") and slope10 needed a per-pair vSlow history that is never saved.
+    Both are now derived from state: falling means v < vSlow, and slope = (v - vSlow) / slowTau. The ETA formula
+    and tests are updated.
+13. Plea `affected` needed per-member peaks that were not stored. Added Situation::peak[8].
+14. rescued[] had no "never" default; it is now -1e9. deserialize now also checks the lengths of index-keyed
+    vectors, with a test.
+15. The episode commit compared accumulated float dt. It now uses `held + 1e-9 >= 0.4`.
+16. The episode witness would have gone through Society's brush pacing (miracle:witnessed only every 2nd call), so
+    the "1 miracle:witnessed" test would fail on the first commit. Added WitnessOpts::episode (new), implemented
+    by T2.
+17. Situations now iterates disasters, omens and cards in id order, and uses Economy's BFS plague rings.
+
+Untestable or wrong acceptance criteria fixed
+18. "--saveload replays to the same hash2" is impossible: quantized fields differ after a load, as simrun already
+    reports. It is now "the loaded world re-saves byte for byte, and two runs with the same saveload point end equal".
+19. The rescue test was self-contradictory: a town 0.05 above the 100-year sea is not at Rising. Replaced with a
+    consistent setup (margin(30) -0.02, gain 0.45 to safety).
+20. The Notice test's 100-110 window was ambiguous. It now uses exact years and the window definition.
+21. The 0.15 ms timing assert in SimTests (build type unknown) is now reported in SimTests and measured in simrun
+    Release.
+22. "Urgent pleas" (metric 2) is now defined as severity >= 0.25.
+23. "The recorded 300-year trace (M5's)" now names test_diplomacy_v4_trace.cpp.
+24. The absolute 30 ms tick gate already fails in the evidence: one run of 136 has a thread-CPU maximum of
+    57.9 ms; the other 135 are 6.1-29.0 ms. The v4.1 cost gate is now relative: mean +0.25 ms, and each run's maximum
+    no more than 10 % higher.
+
+Ambiguity, names and sources
+25. "R0-R7" meant both rules and tracks. For example, "Powers.cpp (R4)" means track 4, but R4 is the Awe-reserve
+    rule. Tracks are renamed T0-T7 throughout; rules stay R1-R11, with a note at the top.
+26. T0 now lists what is new: every section 3 symbol is new except a named list of existing ones, all checked in the
+    code. hoardIdle, Memory::mature/choruses, every new TUNE field and WitnessOpts::episode are called out.
+    "LifeTune dry" does not exist; it is now Life's ignition term (dryA, dryB).
+27. Added 5.1, "Where the starting numbers come from": Astra, gameplay-v4, today's code, or this spec's own
+    untested choices.
+28. omenAge = 1: Balance.cpp records that it was tried and left off. Kind's war share rose 7.7 -> 11.1 % and kind
+    < cruel fell 7/8 -> 6/8. B41 step 3, the gate table and owner Q4 now make it conditional on the slow gate
+    restoring that gate, with a fallback.
+29. A War or Ark answer on a capital was not detected as "answered", because War has no member towns. Detection
+    now counts only the row's own answer powers, so an unrelated Rain does not count.
+30. Smaller fixes: Disasters/SPEC-MYTHOS ownership rows; T0 owns its test_save and test_core_events cases and a
+    one-line amendment note in SPEC-MYTHOS 0.3 and 2.2. Stores delay famine rain prayers (noted for metric 4).
+    The Quiet and Ash multipliers also go under the neutral score. A Leave-taking costs the kind god one Wonder
+    score line (noted). Gifts key on world age.
+
+Checked and found sound (no change): the costs and setbacks against Powers.h and Balance (25/56.25/50/12.5,
+lightning 0.004 ... quake 0.20, 0.002 x sqrt(pop/1000)); the EMA arithmetic (-0.3849); the chorus severity and
+credit arithmetic; sea margins; the plague exposure example; tier >= 3 = city; the event names and payloads used;
+the CompetingPrayers card refs; famineSlack 0.05; hoardDrift 0.015 and hoardFloor 0.3; and the claim that the
+Mythos tracks are unmerged (markers exist only for m0-m6). Kind, cruel and absent play all stay valid. Cruel has
+strike answers and wrath Ark levers, and loses the score penalty. Absent matures through 600 silent years, pays only
+today's hoarding cost, and is never forced. No new religious specificity and no mortal avatar.
+
+REMAINING RISKS
+1. Owner-facing design change: withholding income while Fading (point 6) is my reading of Astra's "decays until it
+   reaches 60 %". It makes idleness costlier than the draft. Q3 asks about it, but the owner may prefer Astra's
+   literal wording with a larger decay.
+2. Many catalogue thresholds are this spec's untested choices (5.1, last row). The warning share (metric 6) and
+   false-warning share (metric 7) depend on them, and B41 will likely retune several.
+3. The slow gate plus omenAge may leave Bronze wars as unlisted notices if B41 step 3 fails. War rows would then
+   start in Iron.
+4. attnHold 60 and the quiet-first trimming are reviewer additions with no playtest behind them. The 15-28 cards
+   target must be re-measured.
+5. Gate: Mythos M7-M9, B1 and V1 have no markers, yet M7/M9 code is already present in Sim.cpp, Powers.h and
+   simrun, so other workflows are still active in these files (Chronicle.cpp changed today). Phase-B1 hashes must
+   exist before T0 can prove its guardrail at phase 1.
+6. The 24 KB RULE size is an estimate (stores and rescued grow with every settlement ever founded). V41 measures
+   it.
+7. The hoarder and prayers policies give identical numbers in sim-findings-2 (the author's note), so the "builder
+   vs hoarder" metric (13) rests on weak evidence.
+8. I spot-checked the evidence numbers (strokes, Beloved before year 20, aweMax, CPU maxima, the Omen trial) but
+   did not re-derive every section 5 "now" cell.
+
+READINESS for handing the tracks to build agents: 7 / 10.
+The contracts (T0) and tracks T2-T6 are buildable as written once the Mythos gate clears. T1 (Situations) is the
+riskiest: it has the most spec-chosen thresholds and the most cross-module reads. B41 carries real tuning work
+(reserve, omenAge, stores vs plea counts). Before T0 starts, the owner should answer Q3 and Q4.

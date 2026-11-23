@@ -1,0 +1,48 @@
+2026-11-23, rules-v41-spec (lead design track): docs/SPEC-RULES-V41.md written. Documentation only; no source, test,
+config or other doc was changed.
+
+What it is
+- The buildable spec for the next sim wave, "rules v4.1": Astra's T-006 bundle (11 findings) folded into gameplay-v4's
+  Situations umbrella as one wave (the lead's PR 19 answer). Astra's numbers are tracking metrics until an owner
+  30-minute session; construction invariants are ordinary SimTests.
+
+Scope (section 1)
+- All 11 findings are in, as rules R1-R11: weathering episodes; prayer choruses with once-per-chorus credit; Risks and
+  pleas (Hunger, War, Plague, Sea, Fire "Tinder", the Ark race, plus the plea row) with stores and a slow war gate
+  (vSlow, tau 20); Awe reserve bands (fading above 60 % after 20 idle years, x1.25 income below 15 %); Ark levers
+  (memory at 25 % weight, sealed from 0.8; Inspire +0.02, wrath -setback/250 capped at 0.5, a Leave-taking +0.05);
+  Unproven before maturity (year 250 plus a history); one attention ledger owned by the card director; climate-rescue
+  pricing; Gifts (Monsoon or Ward, Star-fall or Guiding Light, 300 Awe); climate attribution and restoration episodes;
+  a neutral score (Life + Continuity + Wonder).
+- Rejected or deferred: preachers and Victory (Mythos owns them), eruption precursors (Mythos Omens), situation outcome
+  memory effects (double counting), and callings, zones, setups, golden age, strangers and the nuclear ramp (later
+  waves).
+
+Key architecture decisions
+- One attention budget: the director (Sim/Cards.*) keeps the ledger (Epochal > Crisis > Card > Notice; at most 4 loud
+  entries per 10 s and 3 open crises). Situations report into it and never open cards. CardKind::Situation stays
+  reserved, which amends SPEC-MYTHOS 0.3 and 2.2.
+- New state World::rules (Sim/RulesTypes.h) in a new top-level save block "RULE" v1 (sub-blocks STOR VSLO SITU EPIS
+  ARKL CLIM ATTN RNUM). Older builds skip it, BASE stays v1 and kVersion stays 2. simrun gets a second hash (hash2)
+  that covers RULE.
+- New module Sim/Situations.{h,cpp}: no rng, and it writes only its own list. The schedule line goes between
+  mythos::yearly and cards::yearly, and powers::weather goes after cards::yearly.
+- Every family is behind a TUNE flag that defaults off (the v3.1 / Mythos phase-0 guardrail holds 32/32).
+  Balance.cpp turns the families on one at a time with tables; the Omen of Peace moves to Bronze with the slow gate.
+
+Build plan (section 4)
+- Gate: Mythos v1 merged (M7-M9, B1, V1). R0 contracts first, then six disjoint tracks (R1 situations, R2
+  society-diplomacy, R3 economy-climate-life, R4 powers, R5 director-sim, R6 tools), then R7 chronicle, B41 balance and
+  V41 independent verification. About 60 named SimTests with setups and expected values, 11 new scripted policies
+  (responder, diplomat, coast-warden, guide-first, delay-first, monsoon, ward, star-fall, guiding-light, steward,
+  accelerator), a simrun --rules report and a "rules" tracking table. The client is a later separate track mapped to
+  SPEC-UI 4, 4b and 5.
+
+Evidence used (section 5; sim-findings-2 after, 8 seeds x 17 policies)
+- kind 1,266-1,924 strokes (158-241 brush-s), 57-75 clicks; prayers begun passive 467-759, kind 816-1,098;
+  passive >= 95 % of the Awe cap in 91-92 % of years; raw moments per minute in Industry 49.3 (passive), 72.0 (kind),
+  82.2 (prayers); kind Beloved before year 20 on 8/8; passive sea losses 22-46 towns; passive peak anomaly
+  +3.61..+4.14 C; a beloved policy is the top scorer on 8/8 seeds (builder 6, kind 1, atomic-kind 1).
+
+Owner questions (section 7, each with a default): windowed famine (yes); gifts replace the automatic upgrades (yes);
+idle Awe fades (yes, 60 % / 20 years); the Omen of Peace wakes in Bronze (yes); a neutral score (yes).
