@@ -33,7 +33,7 @@ def pid_alive(pid):
     except OSError:
         return False
 
-GPU_MAX, CPU_MAX = 60, 65  # night caps from the owner: GPU and CPU 50-65 %
+GPU_MAX, CPU_MAX = 60, 65  # owner: CPU 50-65 % by day (75-80 % was for the night of 2026-11-20 only); GPU 50-65 %
 
 def machine_busy(check_cpu=False):
     """True while GPU utilisation (and, for CPU-heavy jobs, CPU load) is above the owner's limits."""
@@ -47,8 +47,10 @@ def machine_busy(check_cpu=False):
     if not check_cpu:
         return False
     try:
+        # % Processor Time, not Win32_Processor.LoadPercentage: that tracks % Processor Utility, which scales
+        # with turbo frequency and reads 100 % while the real load is about 65 %.
         out = subprocess.run(["powershell", "-NoProfile", "-Command",
-                              "(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average"],
+                              "[int](Get-Counter '\\Processor(_Total)\\% Processor Time' -SampleInterval 2 -MaxSamples 1).CounterSamples[0].CookedValue"],
                              capture_output=True, text=True, timeout=20).stdout
         if out.strip() and float(out.strip()) > CPU_MAX:
             return True
@@ -58,7 +60,7 @@ def machine_busy(check_cpu=False):
 
 def main():
     args = sys.argv[1:]
-    slots, timeout, cpu = 2, 3600.0, True  # night: 2 heavy jobs, always wait for CPU < 65 %
+    slots, timeout, cpu = 3, 3600.0, True  # 3 heavy jobs, wait for CPU < 65 %
     while args and args[0] != "--":
         if args[0] == "--slots":
             slots = int(args[1]); args = args[2:]
