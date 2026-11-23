@@ -26,5 +26,7 @@ bottom (at most 2 of your pull requests open at once; the lead is notified of ne
 | T-019 | Culture emblems and banners | Grok | done (PR 17) | `docs/concept/emblems/` |
 | T-020 | Reference boards: the strategy-game look at 40 m, 300 m and 2 km | Grok | open | `docs/concept/reference-boards/` |
 | T-021 | Design review of the god-interaction systems (Mythos) | Astra | open | `docs/reviews/astra-mythos-review.md` |
+| T-022 | Concept art: the decision cards | Grok | open (after T-020) | `docs/concept/cards/` |
+| T-023 | The owner's 30-minute playtest: script and questionnaire | Astra | open (after T-021) | `docs/reviews/playtest-script.md` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.
