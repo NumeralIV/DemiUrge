@@ -25,5 +25,6 @@ bottom (at most 2 of your pull requests open at once; the lead is notified of ne
 | T-018 | Key art: title screen and capsule images | Grok | done (merged 2026-11-19, interim) | `docs/concept/key-art/` |
 | T-019 | Culture emblems and banners | Grok | done (PR 17) | `docs/concept/emblems/` |
 | T-020 | Reference boards: the strategy-game look at 40 m, 300 m and 2 km | Grok | open | `docs/concept/reference-boards/` |
+| T-021 | Design review of the god-interaction systems (Mythos) | Astra | open | `docs/reviews/astra-mythos-review.md` |
 
 Status values: `open` → `in review` (pull request open) → `done` (merged) or `changes requested`.
