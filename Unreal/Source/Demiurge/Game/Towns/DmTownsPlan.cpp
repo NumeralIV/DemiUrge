@@ -1,9 +1,12 @@
-// DEMIURGE — Game/Towns/DmTownsPlan.cpp : see the header.
+// DEMIURGE â€” Game/Towns/DmTownsPlan.cpp : see the header.
 
 #include "Game/Towns/DmTownsPlan.h"
+#include "Game/Towns/DmTownsAssets.h"
 #include "Game/Core/DmCoords.h"
 
 #include "HAL/PlatformTime.h"
+#include "Misc/ScopeExit.h"
+#include "Algo/Reverse.h"
 #include "Sim/State.h"
 
 #include <limits>
@@ -94,9 +97,66 @@ namespace
 		EDmTownMesh M; int32 V; FVector2D C; double Yaw; FVector3f Scale; FLinearColor Wall, Roof; float Lit; float State; uint32 Key;
 		bool bWaterLevel = false;   // piers and ships stand on the sea surface
 		float ZOff = 0.f;           // metres above the chosen floor
+		bool bRuinAsset = false;    // (wave 4 towns) a dead town's building drawn as its real asset's ruin
 	};
 
 	struct FFieldQuad { FVector2D C[4]; FLinearColor Col; float RowAng; bool bCircle = false; FVector2D Ctr; float Rad = 0.f; };
+	// (wave 4 towns) organic field parcels: convex polygons in the town's local metres
+	struct FParcel { TArray<FVector2D> Poly; FVector2D C = FVector2D::ZeroVector; float Ang = 0.f; FLinearColor Col = FLinearColor::White; uint32 H = 0; bool bCircle = false; float Rad = 0.f; };
+	struct FHedge { FVector2D A, B; };
+
+	/** Keeps the part of a convex polygon where dot(N, x) <= D (Sutherland-Hodgman, one plane). */
+	void ClipHalf(TArray<FVector2D>& P, const FVector2D& N, double D)
+	{
+		if (P.Num() < 3) { P.Reset(); return; }
+		TArray<FVector2D, TInlineAllocator<24>> O;
+		for (int32 I = 0; I < P.Num(); ++I)
+		{
+			const FVector2D& A = P[I];
+			const FVector2D& B = P[(I + 1) % P.Num()];
+			const double Da = FVector2D::DotProduct(N, A) - D, Db = FVector2D::DotProduct(N, B) - D;
+			if (Da <= 0.0) O.Add(A);
+			if ((Da <= 0.0) != (Db <= 0.0)) O.Add(A + (B - A) * (Da / (Da - Db)));
+		}
+		P.Reset();
+		P.Append(O.GetData(), O.Num());
+		if (P.Num() < 3) P.Reset();
+	}
+	double PolySigned(const TArray<FVector2D>& P)
+	{
+		double A = 0.0;
+		for (int32 I = 0; I < P.Num(); ++I) { const FVector2D& U = P[I]; const FVector2D& V = P[(I + 1) % P.Num()]; A += U.X * V.Y - V.X * U.Y; }
+		return 0.5 * A;
+	}
+	double PolyArea(const TArray<FVector2D>& P) { return FMath::Abs(PolySigned(P)); }
+	FVector2D PolyCentroid(const TArray<FVector2D>& P)
+	{
+		double A = 0.0, Cx = 0.0, Cy = 0.0;
+		for (int32 I = 0; I < P.Num(); ++I)
+		{
+			const FVector2D& U = P[I]; const FVector2D& V = P[(I + 1) % P.Num()];
+			const double K = U.X * V.Y - V.X * U.Y;
+			A += K; Cx += (U.X + V.X) * K; Cy += (U.Y + V.Y) * K;
+		}
+		if (FMath::Abs(A) < 1e-9) { FVector2D S = FVector2D::ZeroVector; for (const FVector2D& Q : P) S += Q; return P.Num() ? S / double(P.Num()) : S; }
+		return FVector2D(Cx / (3.0 * A), Cy / (3.0 * A));
+	}
+	/** Shrinks a convex polygon by B metres (every edge moved inward). */
+	void Inset(TArray<FVector2D>& P, double B)
+	{
+		if (P.Num() < 3) return;
+		if (PolySigned(P) < 0.0) Algo::Reverse(P);
+		const TArray<FVector2D> E = P;
+		for (int32 I = 0; I < E.Num() && P.Num() >= 3; ++I)
+		{
+			const FVector2D& A = E[I];
+			const FVector2D D = (E[(I + 1) % E.Num()] - A);
+			const double Len = D.Size();
+			if (Len < 1e-6) continue;
+			const FVector2D Nout(D.Y / Len, -D.X / Len);   // outward for a counter-clockwise polygon
+			ClipHalf(P, Nout, FVector2D::DotProduct(Nout, A) - B);
+		}
+	}
 
 	float Sat(float X) { return FMath::Clamp(X, 0.f, 1.f); }
 
@@ -107,8 +167,26 @@ namespace
 			: In(InIn), Snap(InSnap), G(InG), Kit(InKit), Out(InOut) {}
 
 		void Run();
+		/** (wave 4 towns) one time slice of the plan; true when complete (or cancelled) */
+		bool Step(double BudgetMs);
+		const std::atomic<bool>* Cancel = nullptr;
+		bool bCancelled = false;
+		bool Cancelled() const { return Cancel && Cancel->load(std::memory_order_relaxed); }
 
 	private:
+		int32 Stage = 0;
+		double WorkMs = 0.0, GridMs = 0.0;
+		double StageMs[9] = {};                  // (wave 4 towns) CPU per plan phase
+		// height grid build state (sliced in bands of rows)
+		static constexpr int32 LSt = 8;
+		int32 LN = 0, GridHint = -1, GridRow = 0;
+		// (verifier) the raster and the field overlay are sliced too (rows / parcels): unsliced they were the longest slices
+		// (raster median 123 ms, p90 3.0 s wall; overlay median 171 ms, p90 1.2 s wall on the loaded machine)
+		int32 RasterRow = -1, OverlayParcel = -1;
+		int32 NumRiverSegs = 0, RiverCells = 0; double RiverBankDbg = 0;   // (verifier) diagnostics: river reaches near the town, grid nodes they block
+		bool bDeadDone = false;
+		TArray<uint8> LkC;
+		bool bAnyLake = false;
 		const FDmTownInput& In;
 		const FDmTownsWorldSnap& Snap;
 		const FDmTownsGround& G;
@@ -140,6 +218,15 @@ namespace
 		bool bIndustry = false; double IndAng = 0.0;
 		TArray<FPlaced> Placed;
 		TArray<FFieldQuad> FieldQ;
+		TArray<FParcel> Parcels;                 // (wave 4 towns) organic field parcels
+		TArray<FHedge> Hedges;
+		float WarpA = 0.f, WarpL = 1.f;          // the shared boundary warp of the fields (amplitude, wavelength, m)
+		FVector2D Warp(const FVector2D& P) const
+		{
+			if (WarpA <= 0.f) return P;
+			const float X = float(P.X / WarpL), Y = float(P.Y / WarpL);
+			return P + FVector2D(Noise(X, Y, 901u), Noise(X + 7.3f, Y - 3.1f, 902u)) * double(WarpA);
+		}
 		struct FQuay { TArray<FVector2D> P; };
 		TArray<FQuay> Quays;
 		float BuiltR = 0.f;
@@ -310,8 +397,11 @@ namespace
 
 		// ---------------------------------------------------------------- steps
 		void Setup();
-		void BuildGrid();
+		void BuildGridBegin();
+		bool BuildGridRows(double T0, double BudgetMs);
+		void BuildGridEnd();
 		void BuildRaster();
+		bool BuildRasterRows(double T0, double BudgetMs);
 		void FindCoast();
 		void PlanStreets();
 		void RasterStreets();
@@ -321,6 +411,8 @@ namespace
 		void PlanHouses();
 		void PlanFields();
 		void BuildOverlay();
+		bool BuildOverlayFields(double T0, double BudgetMs);
+		int32 OverlayVert(const FVector2D& P, float Lift, const FVector2f& Uv0, const FColor& C, const FVector2f& Uv1);
 		void EmitInstances();
 
 		bool Place(EDmTownMesh M, int32 V, const FVector2D& C, double Yaw, float Scale = 1.f, float Margin = 0.6f, bool bTest = true, uint32 Key = 0);
@@ -375,7 +467,7 @@ namespace
 		}
 	}
 
-	void FPlanner::BuildGrid()
+	void FPlanner::BuildGridBegin()
 	{
 		// a port's widened area keeps the grid spacing of its town (at most 360^2 samples)
 		GS = FMath::Max(FMath::Clamp(ExBase / 110.f, 5.f, 22.f), Ex / 180.f);
@@ -383,16 +475,26 @@ namespace
 		Hg.SetNumUninitialized(GN * GN);
 		Lg.SetNumUninitialized(GN * GN);
 		// lakes vary per sim cell (km): a coarse pass every 8th node says where the exact test is needed
-		const int32 LSt = 8, LN = (GN + LSt - 1) / LSt + 1;
-		TArray<uint8> LkC; LkC.SetNumZeroed(LN * LN);
-		bool bAnyLake = false;
+		LN = (GN + LSt - 1) / LSt + 1;
+		LkC.SetNumZeroed(LN * LN);
+		bAnyLake = false;
 		for (int32 Y = 0; Y < LN; ++Y)
 			for (int32 X = 0; X < LN; ++X)
 				if (G.LakeSurfaceM(DirAt(FVector2D(-Ex + FMath::Min(X * LSt, GN - 1) * GS, -Ex + FMath::Min(Y * LSt, GN - 1) * GS))) > -1.0e8) { LkC[Y * LN + X] = 1; bAnyLake = true; }
+		GridHint = In.Cell;
+		GridRow = 0;
+	}
+
+	bool FPlanner::BuildGridRows(double T0, double BudgetMs)
+	{
+		// (wave 4 towns) in bands of rows, so a time slice ends inside the grid (a city's 360^2 samples are its longest phase)
 		auto LakeNear = [&](int32 X, int32 Y) { const int32 Cx = X / LSt, Cy = Y / LSt; return LkC[Cy * LN + Cx] | LkC[Cy * LN + Cx + 1] | LkC[(Cy + 1) * LN + Cx] | LkC[(Cy + 1) * LN + Cx + 1]; };
-		int32 Hint = In.Cell;
+		int32& Hint = GridHint;
 		const bool bPlanetLakes = G.GetSource() == FDmTownsGround::ESource::PlanetTerrain;
-		for (int32 Y = 0; Y < GN; ++Y)
+		for (; GridRow < GN; ++GridRow)
+		{
+			if ((GridRow & 7) == 0 && GridRow > 0 && ((FPlatformTime::Seconds() - T0) * 1000.0 >= BudgetMs || Cancelled())) return false;
+			const int32 Y = GridRow;
 			for (int32 X = 0; X < GN; ++X)
 			{
 				const FVector2D P(-Ex + X * GS, -Ex + Y * GS);
@@ -413,11 +515,19 @@ namespace
 				Hg[Y * GN + X] = H;
 				Lg[Y * GN + X] = bLand ? 1 : 0;
 			}
+		}
+		return true;
+	}
+
+	void FPlanner::BuildGridEnd()
+	{
 		// (verifier fix) the rivers the planet draws (fields and houses were laid across them): every reach near the
 		// settlement is rasterised into the land grid as a capsule of its half-width plus a margin
 		{
 			TArray<FVector> Ra, Rb; TArray<float> Rw;
 			G.RiverSegments(U0, double(Ex) * 1.45 / 1.0e5, Ra, Rb, Rw);
+			NumRiverSegs = Ra.Num();
+			RiverBankDbg = G.RiverBankM(U0);
 			auto Local = [&](const FVector& D) { const double K = 1.0e5 / FMath::Max(FVector::DotProduct(D, U0), 0.5); return FVector2D(FVector::DotProduct(D, E0) * K, FVector::DotProduct(D, N0) * K); };
 			for (int32 I = 0; I < Ra.Num(); ++I)
 			{
@@ -431,7 +541,7 @@ namespace
 					{
 						const FVector2D P(-Ex + X * GS, -Ex + Y * GS);
 						const double T = FMath::Clamp(FVector2D::DotProduct(P - A, Dd) / L2, 0.0, 1.0);
-						if (FVector2D::DistSquared(P, A + Dd * T) < double(Hw) * Hw) Lg[Y * GN + X] = 0;
+						if (FVector2D::DistSquared(P, A + Dd * T) < double(Hw) * Hw) { RiverCells += Lg[Y * GN + X]; Lg[Y * GN + X] = 0; }
 					}
 			}
 		}
@@ -447,12 +557,23 @@ namespace
 		OS = OE > 1600.f ? 3.f : 2.f;
 		ON = int32(2.f * OE / OS) + 1;
 		Occ.SetNumZeroed(ON * ON);
-		for (int32 Y = 0; Y < ON; ++Y)
+		RasterRow = 0;
+	}
+
+	bool FPlanner::BuildRasterRows(double T0, double BudgetMs)
+	{
+		// (verifier) in bands of rows, like the height grid: a city's raster is up to ~1,000^2 land and slope tests
+		for (; RasterRow < ON; ++RasterRow)
+		{
+			if ((RasterRow & 7) == 0 && RasterRow > 0 && ((FPlatformTime::Seconds() - T0) * 1000.0 >= BudgetMs || Cancelled())) return false;
+			const int32 Y = RasterRow;
 			for (int32 X = 0; X < ON; ++X)
 			{
 				const FVector2D C = CellC(X, Y);
 				if (!LandAt(C) || SlopeAt(C) > 0.42f) Occ[Y * ON + X] = OBlocked;
 			}
+		}
+		return true;
 	}
 
 	void FPlanner::FindCoast()
@@ -725,7 +846,7 @@ namespace
 
 	void FPlanner::Tints(EDmTownMesh M, int32 V, uint32 H, FLinearColor& Wall, FLinearColor& Roof) const
 	{
-		const FDmKitInfo& I = Kit.Get(M, V);
+		const FDmKitInfo& I = Kit.GetAt(Age, M, V);
 		const uint32 Cu = Hash(uint32(In.Culture + 7), 991u);   // the culture prefers some palette entries
 		const uint32 Hw = (H % 3u == 0u) ? Cu : H;
 		switch (I.WallPat)
@@ -764,7 +885,7 @@ namespace
 
 	bool FPlanner::Place(EDmTownMesh M, int32 V, const FVector2D& C, double Yaw, float Scale, float Margin, bool bTest, uint32 Key)
 	{
-		const FDmKitInfo& I = Kit.Get(M, V);
+		const FDmKitInfo& I = Kit.GetAt(Age, M, V);
 		const float Hw = I.W * 0.5f * Scale, Hd = I.D * 0.5f * Scale;
 		if (bTest)
 		{
@@ -915,7 +1036,7 @@ namespace
 				bool bHit = false;
 				if (IsHome(Pl.M))
 				{
-					const FDmKitInfo& Ki = Kit.Get(Pl.M, Pl.V);
+					const FDmKitInfo& Ki = Kit.GetAt(Age, Pl.M, Pl.V);
 					const double Rad = 0.5 * FMath::Sqrt(Ki.W * Ki.W + Ki.D * Ki.D) + 4.0;
 					for (int32 I = 0; I < K && !bHit; ++I)
 					{
@@ -1051,7 +1172,7 @@ namespace
 			switch (Age) { case 0: SM = EDmTownMesh::Boat; SV = 0; break; case 1: SM = EDmTownMesh::Galley; SV = 0; break; case 2: SM = (Roots.Num() % 2) ? EDmTownMesh::Galley : EDmTownMesh::SailShip; SV = 0; break;
 				case 3: SM = EDmTownMesh::SailShip; SV = Roots.Num() % 2; break; case 4: SM = (Roots.Num() % 3 == 0) ? EDmTownMesh::SailShip : EDmTownMesh::Steamer; SV = 1; break;
 				case 5: SM = EDmTownMesh::CargoShip; SV = 0; break; default: SM = EDmTownMesh::CargoShip; SV = Roots.Num() % 2; break; }
-			const FDmKitInfo& Si = Kit.Get(SM, SV);
+			const FDmKitInfo& Si = Kit.GetAt(Age, SM, SV);
 			const float PierHw = PV == 0 ? 2.5f : 7.f;
 			const FVector2D Side(-S.Out.Y, S.Out.X);
 			const float Sd = (Roots.Num() % 2) ? 1.f : -1.f;
@@ -1104,7 +1225,7 @@ namespace
 		int32 Slot = 0;
 		for (const TPair<EDmTownMesh, int32>& C : Ring)
 		{
-			const FDmKitInfo& I = Kit.Get(C.Key, C.Value);
+			const FDmKitInfo& I = Kit.GetAt(Age, C.Key, C.Value);
 			bool bDone = false;
 			for (int32 Try = 0; Try < 24 && !bDone; ++Try)
 			{
@@ -1133,7 +1254,7 @@ namespace
 				if ((S.P[I] - Oc).Size() < R * 0.55) continue;
 				const FVector2D D = (I + 1 < S.P.Num() ? S.P[I + 1] - S.P[I] : S.P[I] - S.P[FMath::Max(0, I - 1)]).GetSafeNormal();
 				const FVector2D Nn(-D.Y, D.X);
-				const FDmKitInfo& Gi = Kit.Get(EDmTownMesh::Granary, Age >= 4 ? 1 : 0);
+				const FDmKitInfo& Gi = Kit.GetAt(Age, EDmTownMesh::Granary, Age >= 4 ? 1 : 0);
 				if (Place(EDmTownMesh::Granary, Age >= 4 ? 1 : 0, S.P[I] + Nn * (S.W * 0.5 + Gi.D * 0.5 + 3.0), FMath::Atan2(D.Y, D.X), 1.f, 1.f)) { ++Out.Civic; break; }
 			}
 		}
@@ -1157,8 +1278,8 @@ namespace
 		{
 			if (P.X > 1e8) return false;
 			FPlaced F; F.M = M; F.V = V; F.C = P; F.Yaw = Yaw; F.Scale = FVector3f(Scale);
-			Tints(M, V, Hash(Seed, uint32(M)), F.Wall, F.Roof); F.Lit = Kit.Get(M, V).bLit ? 0.5f : 0.f; F.State = 0.f; F.Key = Hash(Seed, 10000u + uint32(M) * 7u + uint32(V));
-			Placed.Add(F); MarkDisc(P, Kit.Get(M, V).W * 0.5f * Scale, OBuilt); ++Out.Civic;
+			Tints(M, V, Hash(Seed, uint32(M)), F.Wall, F.Roof); F.Lit = Kit.GetAt(Age, M, V).bLit ? 0.5f : 0.f; F.State = 0.f; F.Key = Hash(Seed, 10000u + uint32(M) * 7u + uint32(V));
+			Placed.Add(F); MarkDisc(P, Kit.GetAt(Age, M, V).W * 0.5f * Scale, OBuilt); ++Out.Civic;
 			return true;
 		};
 		if (B[dm::Building::MINE])
@@ -1212,7 +1333,7 @@ namespace
 				const FVector2D P = Oc + FVector2D(FMath::Cos(A), FMath::Sin(A)) * Rad;
 				EDmTownMesh M; int32 V; const uint32 H = Hash(Seed, uint32(K), 3u);
 				PickHome(float(Rad / FMath::Max(R, 1.f)), H, false, M, V);
-				const FDmKitInfo& I = Kit.Get(M, V);
+				const FDmKitInfo& I = Kit.GetAt(Age, M, V);
 				Slots.Add({ P, A + UE_DOUBLE_HALF_PI, M, V, float(Rad), H, I.W * 0.5f, I.D * 0.5f });
 			}
 		}
@@ -1249,7 +1370,7 @@ namespace
 								M = U < 0.55f ? EDmTownMesh::Factory : (U < 0.85f ? EDmTownMesh::Warehouse : EDmTownMesh::Stack); V = int32(H % 3u);
 							}
 						}
-						const FDmKitInfo& Ki = Kit.Get(M, V);
+						const FDmKitInfo& Ki = Kit.GetAt(Age, M, V);
 						const bool bTerrace = (M == EDmTownMesh::Townhouse || M == EDmTownMesh::Rowhouse) && R01 < 0.8f;
 						const double Gap = bTerrace ? 0.4 : (Tier == 1 ? 6.0 + 16.0 * Hash01(H, 5u) : (R01 < 0.4f ? 2.0 + 3.0 * Hash01(H, 5u) : 4.0 + 10.0 * Hash01(H, 5u) * FMath::Min(R01, 1.5f)));
 						const double Setback = bTerrace ? 0.8 : 2.0 + (R01 < 0.5f ? 1.0 : 4.0) * Hash01(H, 7u);
@@ -1330,110 +1451,230 @@ namespace
 		if (Area < 5000.0) return;
 		const double R0 = FMath::Max(double(BuiltR), double(R) * 0.7) + 12.0;
 		const double R1 = FMath::Min(FMath::Sqrt(R0 * R0 + Area / PI), FMath::Min(R0 + 1500.0, double(Ex) - 3.0 * GS));
-		const float FL = kFieldL[Age], FW = kFieldW[Age];
-		// crop palette by climate
-		TArray<FLinearColor> Crops;
-		switch (Style)
-		{
-		case EStyle::Arid: Crops = { Lc(0.36f, 0.42f, 0.18f), Lc(0.62f, 0.54f, 0.34f), Lc(0.48f, 0.5f, 0.24f), Lc(0.7f, 0.6f, 0.4f), Lc(0.42f, 0.34f, 0.24f) }; break;
-		case EStyle::Tropical: Crops = { Lc(0.24f, 0.4f, 0.16f), Lc(0.34f, 0.48f, 0.2f), Lc(0.42f, 0.5f, 0.22f), Lc(0.2f, 0.32f, 0.14f), Lc(0.44f, 0.36f, 0.24f) }; break;
-		case EStyle::Cold: Crops = { Lc(0.5f, 0.5f, 0.3f), Lc(0.32f, 0.4f, 0.2f), Lc(0.36f, 0.3f, 0.22f), Lc(0.44f, 0.46f, 0.28f) }; break;
-		default: Crops = { Lc(0.7f, 0.58f, 0.3f), Lc(0.64f, 0.56f, 0.32f), Lc(0.3f, 0.4f, 0.16f), Lc(0.36f, 0.45f, 0.2f), Lc(0.34f, 0.26f, 0.18f), Lc(0.5f, 0.44f, 0.28f), Lc(0.42f, 0.5f, 0.22f), Lc(0.8f, 0.72f, 0.18f) }; break;
-		}
-		// a patchwork: blocks of ~420 m, each its own rotated, brick-bonded grid of strips (one orientation per
-		// sector reads as a sunburst from altitude); the outer edge wanders with low-frequency noise
+		// (wave 4 towns) organic parcels that follow the terrain (docs/lab/ground.md 5.1-5.2): holdings are warped Voronoi
+		// cells; each takes its field direction from the contours on slopes (strips run along them) or a smooth regional
+		// direction shared with its neighbours, and is cut into furlongs of parallel strips whose ends line up, or into
+		// irregular polygons. Each field decides on its own whether it is tilled (the sim's farm field, frayed by noise),
+		// so farmland thins out field by field into meadow and wild land. Balks between fields and tracks / hedges between
+		// holdings show the ground; every vertex is displaced by one smooth warp, so boundaries wander but stay shared.
+		static const float kHold[7] = { 170.f, 230.f, 290.f, 350.f, 460.f, 600.f, 700.f };
+		static const float kS0[7] = { 45.f, 60.f, 80.f, 100.f, 150.f, 220.f, 270.f };
+		const float A01 = float(Age) / 6.f;
+		const double Hs = kHold[Age];
+		WarpL = 6.f * kS0[Age] + 100.f;
+		WarpA = 0.12f * kS0[Age] + 4.f;
 		const bool bPivot = Age >= 5 && Style == EStyle::Arid;
-		const double Bs = 420.0;
-		// coverage of accepted fields (6 m cells): fields of neighbouring blocks never overlap
-		const double Fc = 6.0;
-		const int32 FN = int32(2.0 * (R1 + Bs) / Fc) + 2;
-		TBitArray<> Cover(false, FN * FN);
-		auto CoverIdx = [&](const FVector2D& P) -> int32
+		auto SiteAt = [&](int32 I, int32 J) -> FVector2D
 		{
-			const int32 X = int32((P.X - Oc.X + R1 + Bs) / Fc), Y = int32((P.Y - Oc.Y + R1 + Bs) / Fc);
-			return (X >= 0 && Y >= 0 && X < FN && Y < FN) ? Y * FN + X : -1;
+			const uint32 H = Hash(uint32(I + 5000), uint32(J + 5000), Seed * 13u + 7u);
+			return Oc + FVector2D((I + 0.15 + 0.7 * Hash01(H, 1u)) * Hs, (J + 0.15 + 0.7 * Hash01(H, 2u)) * Hs);
 		};
-		auto RectCells = [&](const FFieldQuad& F, bool bMark) -> bool
+		auto Ragged = [&](const FVector2D& P) { return R1 * (0.78 + 0.4 * (0.5 + 0.5 * Noise(float(P.X / 1100.0), float(P.Y / 1100.0), 411u))); };
+		auto ToLocal = [](const FVector2D& P, const FVector2D& O, const FVector2D& Ux, const FVector2D& Uy) { const FVector2D D = P - O; return FVector2D(FVector2D::DotProduct(D, Ux), FVector2D::DotProduct(D, Uy)); };
+		auto ToWorld = [](const FVector2D& L, const FVector2D& O, const FVector2D& Ux, const FVector2D& Uy) { return O + Ux * L.X + Uy * L.Y; };
+		// crop classes (linear albedo, ground.md 5.3, high summer) by climate
+		auto CropColour = [&](uint32 H, const FVector2D& P) -> FLinearColor
 		{
-			// walk the quad on a Fc grid in its own frame
-			const FVector2D Eu = F.C[1] - F.C[0], Ev = F.C[3] - F.C[0];
-			const int32 Nu2 = FMath::Max(1, int32(Eu.Size() / (Fc * 0.7))), Nv2 = FMath::Max(1, int32(Ev.Size() / (Fc * 0.7)));
-			for (int32 J = 0; J <= Nv2; ++J)
-				for (int32 I = 0; I <= Nu2; ++I)
-				{
-					const int32 Ci = CoverIdx(F.C[0] + Eu * (double(I) / Nu2) + Ev * (double(J) / Nv2));
-					if (Ci < 0) continue;
-					if (bMark) Cover[Ci] = true;
-					else if (Cover[Ci]) return false;
-				}
-			return true;
-		};
-		const int32 Nb = int32(R1 / Bs) + 1;
-		for (int32 By = -Nb; By <= Nb; ++By)
-			for (int32 Bx = -Nb; Bx <= Nb; ++Bx)
+			const float Rg = 0.5f + 0.5f * Noise(float(P.X / 2600.0), float(P.Y / 2600.0), 512u);   // regional mix
+			const float Rc = FMath::Frac(Hash01(H, 40u) + 0.35f * Rg);
+			const float Dry = Style == EStyle::Arid ? 1.f : 0.f, Cold = Style == EStyle::Cold ? 1.f : 0.f, Trop = Style == EStyle::Tropical ? 1.f : 0.f;
+			// soils: brown loam, red earth, grey clay (paler where dry)
+			const float Ns = 0.5f + 0.5f * Noise(float(P.X / 1800.0), float(P.Y / 1800.0), 513u);
+			FLinearColor Soil = Ns < 0.4f ? FLinearColor(0.135f, 0.100f, 0.070f) : (Ns < 0.7f ? FLinearColor(0.150f, 0.088f, 0.058f) : FLinearColor(0.115f, 0.105f, 0.088f));
+			if (Dry > 0.f) Soil *= 1.4f;
+			const float PCereal = 0.36f + 0.1f * Dry - 0.15f * Trop - 0.12f * Cold, PPast = PCereal + 0.22f + 0.15f * Cold - 0.05f * Dry;
+			const float PHay = PPast + 0.10f + 0.06f * Cold, PRow = PHay + 0.12f + 0.2f * Trop - 0.05f * Cold, PFallow = PRow + 0.12f;
+			FLinearColor C;
+			if (Rc < PCereal)
 			{
-				const FVector2D B0 = Oc + FVector2D((Bx - 0.5) * Bs, (By - 0.5) * Bs);
-				const FVector2D Bc = B0 + FVector2D(Bs * 0.5, Bs * 0.5);
-				if ((Bc - Oc).Size() > R1 + Bs || (Bc - Oc).Size() < R0 - Bs) continue;
-				const uint32 Hb = Hash(uint32(Bx + 500), uint32(By + 500), Seed * 7u + 13u);
-				// orientation: toward the town (radial or tangential) or random, per block
-				const double Rad = FMath::Atan2((Bc - Oc).Y, (Bc - Oc).X);
-				const float Pick = Hash01(Hb, 1u);
-				const double Al = Pick < 0.2f ? Rad : (Pick < 0.38f ? Rad + UE_DOUBLE_HALF_PI : Hash01(Hb, 2u) * UE_DOUBLE_PI);
-				const FVector2D Ux(FMath::Cos(Al), FMath::Sin(Al)), Uy(-FMath::Sin(Al), FMath::Cos(Al));
-				const float Lf = FL * (0.8f + 0.4f * Hash01(Hb, 9u)), Wf = FW * (0.75f + 0.5f * Hash01(Hb, 11u));
-				const int32 Nu = int32(Bs * 0.75 / Lf) + 2, Nv = int32(Bs * 0.75 / Wf) + 2;
-				for (int32 V = -Nv; V <= Nv; ++V)
-					for (int32 U = -Nu; U <= Nu; ++U)
-					{
-						const uint32 H = Hash(uint32(U + 1000), uint32(V + 1000), Hb);
-						const double Off = (V & 1) ? 0.5 : 0.0;
-						const float L2 = (Hash01(H, 1u) < 0.22f) ? Lf * 2.f : Lf;
-						const FVector2D C = Bc + Ux * ((U + Off) * Lf + (L2 - Lf) * 0.5) + Uy * (V * Wf);
-						if (C.X < B0.X || C.Y < B0.Y || C.X >= B0.X + Bs || C.Y >= B0.Y + Bs) continue;   // the block owns its centres
-						const FVector2D Dc = C - Oc;
-						const double Rc = Dc.Size();
-						const double Ragged = R1 * (0.72 + 0.45 * (0.5 + 0.5 * Noise(float(C.X / 900.0), float(C.Y / 900.0), 411u)));
-						if (Rc < R0 || Rc > Ragged) continue;
-						if (Hash01(H, 3u) < 0.07f) continue;   // gaps: woods, meadows
-						// the sim's farm field decides how much of the ring is tilled
-						const int32 Cl = Snap.CellAt(DirAt(C), In.Cell);
-						if (Cl >= 0 && Cl < Snap.N && Snap.Farm[Cl] < 0.04f && Hash01(H, 4u) > 0.5f) continue;
-						FFieldQuad F;
-						const float Shr = Age >= 4 ? 3.f : 2.f;
-						const FVector2D Hx = Ux * (L2 * 0.5 - Shr), Hy = Uy * (Wf * 0.5 - Shr);
-						F.C[0] = C - Hx - Hy; F.C[1] = C + Hx - Hy; F.C[2] = C + Hx + Hy; F.C[3] = C - Hx + Hy;
-						for (int32 K = 0; K < 4; ++K) F.C[K] += FVector2D(Hash01(H, 20u + K) - 0.5, Hash01(H, 30u + K) - 0.5) * (Age >= 4 ? 2.0 : 5.0);
-						bool bOk = true;
-						for (int32 K = 0; K < 4 && bOk; ++K)
-						{
-							const FVector2D P = F.C[K];
-							if (!LandAt(P) || SlopeAt(P) > 0.2f) bOk = false;
-							else if (FMath::Abs(P.X) < OE && FMath::Abs(P.Y) < OE && OccAt(P) != OFree && OccAt(P) != OBlocked) bOk = false;
-							else if (NearPt(P, 8.f, -1) >= 0) bOk = false;
-						}
-						if (bOk && (!LandAt(C) || NearPt(C, FMath::Min(L2, Wf) * 0.5f, -1) >= 0)) bOk = false;
-						if (!bOk || !RectCells(F, false)) continue;
-						RectCells(F, true);
-						F.Col = Crops[H % uint32(Crops.Num())] * (0.9f + 0.2f * Hash01(H, 5u));
-						if (Style == EStyle::Temperate && Crops.Num() == 8 && (H % 8u) == 7u && Hash01(H, 6u) > 0.3f) F.Col = Crops[0];   // rapeseed is rare
-						{
-							// (verifier fix) the palette read as bright confetti beside the planet's farmland, from 40 km
-							// most of all: pull the crops toward their luminance and darken them (real crops are dull)
-							const float Lu = F.Col.R * 0.3f + F.Col.G * 0.59f + F.Col.B * 0.11f;
-							F.Col = FMath::Lerp(F.Col, FLinearColor(Lu, Lu, Lu), 0.3f) * 0.88f;
-						}
-						F.RowAng = float(Al + ((H & 16u) ? UE_DOUBLE_HALF_PI : 0.0));
-						if (bPivot && Hash01(H, 8u) < 0.4f) { F.bCircle = true; F.Ctr = C; F.Rad = FMath::Min(L2, Wf) * 0.5f - 2.f; F.Col = Lc(0.3f, 0.42f, 0.16f); }
-						FieldQ.Add(F);
-					}
+				const float Ripe = Hash01(H, 41u);
+				C = Ripe < 0.62f ? FMath::Lerp(FLinearColor(0.235f, 0.200f, 0.098f), FLinearColor(0.270f, 0.230f, 0.125f), Hash01(H, 42u))
+					: (Ripe < 0.82f ? FLinearColor(0.235f, 0.210f, 0.145f) : FLinearColor(0.075f, 0.112f, 0.036f));
+				if (Cold > 0.f) C = FMath::Lerp(C, FLinearColor(0.08f, 0.11f, 0.04f), 0.35f);
 			}
-		// the nearest fields only (a field is ~50 overlay triangles)
-		const int32 MaxFields = Age == 0 ? 30 : (Tier == 1 ? 300 : (Tier == 2 ? 450 : 650));
-		if (FieldQ.Num() > MaxFields)
+			else if (Rc < PPast) C = Dry > 0.f ? FLinearColor(0.19f, 0.17f, 0.085f) : FLinearColor(0.085f, 0.125f, 0.048f);
+			else if (Rc < PHay) C = FLinearColor(0.15f, 0.16f, 0.07f);
+			else if (Rc < PRow) C = FLinearColor(0.040f, 0.080f, 0.026f);
+			else if (Rc < PFallow) C = FMath::Lerp(Soil, FLinearColor(0.11f, 0.105f, 0.06f), Hash01(H, 43u) * 0.5f);
+			else C = (Cold > 0.f || Hash01(H, 44u) < 0.5f) ? FLinearColor(0.085f, 0.125f, 0.048f) : FLinearColor(0.48f, 0.40f, 0.045f);   // oilseed is rare
+			if (Trop > 0.f) C = C * FLinearColor(1.06f, 1.f, 0.9f);
+			C *= 0.88f + 0.24f * Hash01(H, 45u);
+			// the overlay's vertex colour is sRGB (the material squares it back)
+			return FLinearColor(FMath::Pow(FMath::Max(C.R, 0.f), 1.f / 2.2f), FMath::Pow(FMath::Max(C.G, 0.f), 1.f / 2.2f), FMath::Pow(FMath::Max(C.B, 0.f), 1.f / 2.2f), 1.f);
+		};
+		const double Balk = Age >= 4 ? 2.4 : 1.6;     // grass between fields
+		const double Track = 3.2;                       // track / hedge line between holdings
+		const bool bHedges = Style == EStyle::Temperate && Age >= 1 && Age <= 4;
+		TSet<FIntPoint> HedgeSeen;
+		const int32 Nh = int32((R1 + Hs) / Hs) + 2;
+		for (int32 J = -Nh; J <= Nh; ++J)
+			for (int32 I = -Nh; I <= Nh; ++I)
+			{
+				if (Cancelled()) return;
+				const FVector2D S = SiteAt(I, J);
+				const double Ds = (S - Oc).Size();
+				if (Ds < R0 - Hs * 0.6 || Ds > Ragged(S) + Hs * 0.5) continue;
+				// the holding: Voronoi cell of its site among the jittered lattice (CCW square clipped by bisectors)
+				TArray<FVector2D> Cell = { S + FVector2D(-1.6 * Hs, -1.6 * Hs), S + FVector2D(1.6 * Hs, -1.6 * Hs), S + FVector2D(1.6 * Hs, 1.6 * Hs), S + FVector2D(-1.6 * Hs, 1.6 * Hs) };
+				for (int32 Dj = -2; Dj <= 2; ++Dj)
+					for (int32 Di = -2; Di <= 2; ++Di)
+					{
+						if (Di == 0 && Dj == 0) continue;
+						const FVector2D Sj = SiteAt(I + Di, J + Dj);
+						const FVector2D Nn = Sj - S;
+						ClipHalf(Cell, Nn, FVector2D::DotProduct(Nn, (S + Sj) * 0.5));
+					}
+				if (Cell.Num() < 3) continue;
+				const uint32 Hh = Hash(uint32(I + 5000), uint32(J + 5000), Seed * 29u + 3u);
+				// orientation: along the contours on slopes, else the regional grain (+-17 degrees per holding)
+				FVector2D Gr = FVector2D::ZeroVector;
+				int32 Ng = 0;
+				for (int32 K = 0; K < 5; ++K)
+				{
+					const FVector2D Q = S + (K == 0 ? FVector2D::ZeroVector : FVector2D(FMath::Cos(K * UE_HALF_PI), FMath::Sin(K * UE_HALF_PI)) * Hs * 0.3);
+					if (InGrid(Q)) { Gr += GradAt(Q); ++Ng; }
+				}
+				Gr /= double(FMath::Max(Ng, 1));
+				const double Gm = Gr.Size();
+				const bool bContour = Gm > 0.03;
+				const double Al = bContour ? FMath::Atan2(Gr.Y, Gr.X) + UE_DOUBLE_HALF_PI
+					: 2.2 * UE_DOUBLE_PI * Noise(float(S.X / 3500.0), float(S.Y / 3500.0), 77u) + (Hash01(Hh, 3u) - 0.5) * 0.6;
+				const FVector2D Ux(FMath::Cos(Al), FMath::Sin(Al)), Uy(-FMath::Sin(Al), FMath::Cos(Al));
+				const bool bStrips = Hash01(Hh, 4u) < (bContour ? 0.75f : FMath::Lerp(0.45f, 0.75f, A01));
+				const float Sz = kS0[Age] * FMath::Lerp(0.8f, 1.3f, Hash01(Hh, 5u)) * FMath::Lerp(0.8f, 1.25f, 0.5f + 0.5f * Noise(float(S.X / 5000.0), float(S.Y / 5000.0), 78u));
+				const double W = bStrips ? Sz * FMath::Lerp(1.5f, 2.8f, Hash01(Hh, 6u)) : Sz * FMath::Lerp(1.f, 1.6f, Hash01(Hh, 6u));
+				const double H = bStrips ? Sz * FMath::Lerp(0.5f, 0.75f, Hash01(Hh, 7u)) : Sz * FMath::Lerp(0.75f, 1.f, Hash01(Hh, 7u));
+				// tracks and hedges between holdings: the holding shrinks by half a track
+				TArray<FVector2D> Hold = Cell;
+				Inset(Hold, Track * 0.5);
+				if (Hold.Num() < 3) continue;
+				if (bHedges)
+					for (int32 K = 0; K < Cell.Num(); ++K)
+					{
+						const FVector2D A = Cell[K], B = Cell[(K + 1) % Cell.Num()];
+						const FVector2D Mid = (A + B) * 0.5;
+						const FIntPoint Mk(FMath::RoundToInt(Mid.X / 4.0), FMath::RoundToInt(Mid.Y / 4.0));
+						if (HedgeSeen.Contains(Mk)) continue;
+						HedgeSeen.Add(Mk);
+						const float Bocage = FMath::Clamp(0.35f + 0.5f * Noise(float(Mid.X / 2000.0), float(Mid.Y / 2000.0), 514u) - 0.3f * A01, 0.f, 1.f);
+						const double Dm = (Mid - Oc).Size();
+						if (Hash01(uint32(Mk.X + 70000), uint32(Mk.Y + 70000), Seed) < Bocage && Dm < R1 && Dm > R0) Hedges.Add({ A, B });
+					}
+				// the holding in its own frame
+				TArray<FVector2D> L;
+				for (const FVector2D& P : Hold) L.Add(ToLocal(P, S, Ux, Uy));
+				double Ua0 = 1e30, Ua1 = -1e30, Va0 = 1e30, Va1 = -1e30;
+				for (const FVector2D& P : L) { Ua0 = FMath::Min(Ua0, P.X); Ua1 = FMath::Max(Ua1, P.X); Va0 = FMath::Min(Va0, P.Y); Va1 = FMath::Max(Va1, P.Y); }
+				TArray<TArray<FVector2D>> Pieces;
+				if (bStrips)
+				{
+					// furlongs: block ends shared by every row, 30% of strips split once more
+					const int32 K0 = FMath::FloorToInt(Ua0 / W) - 1, K1 = FMath::CeilToInt(Ua1 / W) + 1;
+					auto EndAt = [&](int32 K) { return W * (K + 0.2 + 0.6 * Hash01(Hh, uint32(K + 1000), 90u)); };
+					const int32 R0i = FMath::FloorToInt(Va0 / H), R1i = FMath::CeilToInt(Va1 / H);
+					for (int32 K = K0; K < K1; ++K)
+					{
+						const double Ua = EndAt(K), Ub = EndAt(K + 1);
+						if (Ub < Ua0 || Ua > Ua1) continue;
+						for (int32 Rw = R0i; Rw < R1i; ++Rw)
+						{
+							const double Va = Rw * H, Vb = (Rw + 1) * H;
+							const uint32 Hs2 = Hash(Hh, uint32(K + 2000), uint32(Rw + 3000));
+							const bool bSplit = Hash01(Hs2, 1u) < 0.3f;
+							const double Um = FMath::Lerp(Ua, Ub, 0.35 + 0.3 * Hash01(Hs2, 2u));
+							for (int32 Pc = 0; Pc < (bSplit ? 2 : 1); ++Pc)
+							{
+								const double Pa = bSplit ? (Pc == 0 ? Ua : Um) : Ua, Pb = bSplit ? (Pc == 0 ? Um : Ub) : Ub;
+								TArray<FVector2D> Pp = L;
+								ClipHalf(Pp, FVector2D(-1, 0), -Pa); ClipHalf(Pp, FVector2D(1, 0), Pb);
+								ClipHalf(Pp, FVector2D(0, -1), -Va); ClipHalf(Pp, FVector2D(0, 1), Vb);
+								if (Pp.Num() >= 3) Pieces.Add(MoveTemp(Pp));
+							}
+						}
+					}
+				}
+				else
+				{
+					// irregular polygons: an anisotropic Voronoi in (u / W, v / H), jitter 0.02..0.98
+					const int32 A0i = FMath::FloorToInt(Ua0 / W) - 1, A1i = FMath::CeilToInt(Ua1 / W) + 1, B0i = FMath::FloorToInt(Va0 / H) - 1, B1i = FMath::CeilToInt(Va1 / H) + 1;
+					auto Q = [&](int32 A, int32 B) { const uint32 Hq = Hash(Hh, uint32(A + 4000), uint32(B + 5000)); return FVector2D((A + 0.02 + 0.96 * Hash01(Hq, 1u)) * W, (B + 0.02 + 0.96 * Hash01(Hq, 2u)) * H); };
+					auto Sc = [&](const FVector2D& P) { return FVector2D(P.X / W, P.Y / H); };
+					for (int32 Bq = B0i; Bq <= B1i; ++Bq)
+						for (int32 Aq = A0i; Aq <= A1i; ++Aq)
+						{
+							const FVector2D Qs = Sc(Q(Aq, Bq));
+							TArray<FVector2D> Pp;
+							for (const FVector2D& P : L) Pp.Add(Sc(P));
+							for (int32 Db = -1; Db <= 1 && Pp.Num() >= 3; ++Db)
+								for (int32 Da = -1; Da <= 1 && Pp.Num() >= 3; ++Da)
+								{
+									if (Da == 0 && Db == 0) continue;
+									const FVector2D Qn = Sc(Q(Aq + Da, Bq + Db));
+									const FVector2D Nn = Qn - Qs;
+									ClipHalf(Pp, Nn, FVector2D::DotProduct(Nn, (Qs + Qn) * 0.5));
+								}
+							if (Pp.Num() < 3) continue;
+							for (FVector2D& P : Pp) P = FVector2D(P.X * W, P.Y * H);
+							Pieces.Add(MoveTemp(Pp));
+						}
+				}
+				// every field decides on its own (at its centre)
+				for (int32 Pi = 0; Pi < Pieces.Num(); ++Pi)
+				{
+					TArray<FVector2D>& Pp = Pieces[Pi];
+					if (PolyArea(Pp) < W * H * 0.12) continue;
+					Inset(Pp, Balk * 0.5);
+					if (Pp.Num() < 3 || PolyArea(Pp) < 300.0) continue;
+					FParcel F;
+					for (const FVector2D& P : Pp) F.Poly.Add(ToWorld(P, S, Ux, Uy));
+					F.C = ToWorld(PolyCentroid(Pp), S, Ux, Uy);
+					F.H = Hash(Hh, uint32(Pi + 1), 0x5EEDu);
+					const double Dc = (F.C - Oc).Size();
+					if (Dc < R0 || Dc > Ragged(F.C)) continue;
+					if (!LandAt(F.C) || SlopeAt(F.C) > 0.18f) continue;
+					// the sim's farm field, frayed field by field
+					const int32 Cl = Snap.CellAt(DirAt(F.C), In.Cell);
+					const float FarmC = (Cl >= 0 && Cl < Snap.N) ? Snap.Farm[Cl] : 0.f;
+					const float Fray = 0.22f * Noise(float(F.C.X / 700.0), float(F.C.Y / 700.0), 79u) + 0.12f * Noise(float(F.C.X / 260.0), float(F.C.Y / 260.0), 80u);
+					const float Edge = 1.f - Smooth(float(Ragged(F.C) * 0.8), float(Ragged(F.C)), float(Dc));
+					const float Pc = FMath::Clamp(0.35f + 1.6f * FarmC + Fray, 0.05f, 0.95f) * FMath::Lerp(0.45f, 1.f, Edge);
+					if (Hash01(F.H, 9u) > Pc) continue;
+					bool bOk = true;
+					for (const FVector2D& P : F.Poly)
+					{
+						if (!LandAt(P)) { bOk = false; break; }
+						if (FMath::Abs(P.X) < OE && FMath::Abs(P.Y) < OE) { const uint8 O = OccAt(P); if (O != OFree && O != OBlocked) { bOk = false; break; } }
+						if (NearPt(P, 7.f, -1) >= 0) { bOk = false; break; }
+					}
+					if (!bOk || NearPt(F.C, 12.f, -1) >= 0) continue;
+					F.Ang = float(Al + (((F.H & 16u) && !bStrips) ? UE_DOUBLE_HALF_PI : 0.0));
+					F.Col = CropColour(F.H, F.C);
+					if (bPivot && Hash01(F.H, 8u) < 0.4f)
+					{
+						// centre-pivot circles in dry lands from the Atomic age
+						double Rm = 1e30;
+						for (int32 K = 0; K < F.Poly.Num(); ++K) Rm = FMath::Min(Rm, FMath::PointDistToSegment(FVector(F.C, 0.0), FVector(F.Poly[K], 0.0), FVector(F.Poly[(K + 1) % F.Poly.Num()], 0.0)));
+						if (Rm > 25.0) { F.bCircle = true; F.Rad = float(Rm - 2.0); F.Col = FLinearColor(0.42f, 0.5f, 0.26f); }
+					}
+					Parcels.Add(MoveTemp(F));
+				}
+			}
+		// the nearest fields only (overlay triangles grow with the field count)
+		const int32 MaxFields = Age == 0 ? 40 : (Tier == 1 ? 320 : (Tier == 2 ? 480 : 700));
+		if (Parcels.Num() > MaxFields)
 		{
-			FieldQ.Sort([this](const FFieldQuad& A, const FFieldQuad& B) { return FVector2D::DistSquared(A.C[0], Oc) < FVector2D::DistSquared(B.C[0], Oc); });
-			FieldQ.SetNum(MaxFields);
+			Parcels.Sort([this](const FParcel& A, const FParcel& B) { return FVector2D::DistSquared(A.C, Oc) < FVector2D::DistSquared(B.C, Oc); });
+			Parcels.SetNum(MaxFields);
+		}
+		for (const FParcel& F : Parcels)
+		{
+			// quads for the farmsteads and windmills below (a corner and the row direction)
+			FFieldQuad Q;
+			const int32 N = F.Poly.Num();
+			for (int32 K = 0; K < 4; ++K) Q.C[K] = F.Poly[(K * N) / 4];
+			Q.RowAng = F.Ang;
+			Q.Col = F.Col;
+			FieldQ.Add(Q);
 		}
 		Out.Fields = FieldQ.Num();
 		// farmsteads among the fields, windmills in the Sail age
@@ -1467,73 +1708,104 @@ namespace
 
 	// ================================================================ overlay mesh and instances
 
-	void FPlanner::BuildOverlay()
+	int32 FPlanner::OverlayVert(const FVector2D& P, float Lift, const FVector2f& Uv0, const FColor& C, const FVector2f& Uv1)
+	{
+		const FVector D = DirAt(P);
+		const double Rg = G.Radius(D);
+		const FVector Pos = D * (Rg + Lift * 100.0) - Out.Centre;
+		const FVector2D Gr = GradAt(P);
+		const FVector Nrm = (D - E0 * Gr.X - N0 * Gr.Y).GetSafeNormal();
+		return Out.Ground.Add(FVector3f(Pos * 0.01), FVector3f(Nrm), Uv0, C, Uv1);   // metres (MakeStaticMesh scales to cm)
+	}
+
+	bool FPlanner::BuildOverlayFields(double T0, double BudgetMs)
 	{
 		FDmTownMesh& M = Out.Ground;
 		M.Sec.SetNum(1);
-		const FVector Ctr = Out.Centre;
-		auto Vert = [&](const FVector2D& P, float Lift, const FVector2f& Uv0, const FColor& C, const FVector2f& Uv1) -> int32
-		{
-			const FVector D = DirAt(P);
-			const double Rg = G.Radius(D);
-			const FVector Pos = D * (Rg + Lift * 100.0) - Ctr;
-			const FVector2D Gr = GradAt(P);
-			const FVector Nrm = (D - E0 * Gr.X - N0 * Gr.Y).GetSafeNormal();
-			return M.Add(FVector3f(Pos * 0.01), FVector3f(Nrm), Uv0, C, Uv1);   // metres (MakeStaticMesh scales to cm)
-		};
+		auto Vert = [this](const FVector2D& P, float Lift, const FVector2f& Uv0, const FColor& C, const FVector2f& Uv1) -> int32 { return OverlayVert(P, Lift, Uv0, C, Uv1); };
 		auto ToC = [](const FLinearColor& L, float A = 0.f) { return Col(L.R, L.G, L.B, A); };
-		// fields: subdivided quads (or discs) draped on the ground, crop rows from UV1.y = row angle
-		for (const FFieldQuad& F : FieldQ)
+		// (wave 4 towns) fields: each parcel polygon is cut by a grid in its own row frame (cells of ~18 m, so the overlay
+		// follows the terrain closely), every vertex warped by the shared field warp and draped on the ground; crop rows
+		// from UV1.y = row angle. Centre-pivot circles are fans. (verifier) sliced by parcels: this was the longest phase.
+		const float Cell = Age >= 4 ? 24.f : 18.f;
+		if (OverlayParcel < 0) OverlayParcel = 0;
+		for (; OverlayParcel < Parcels.Num(); ++OverlayParcel)
 		{
-			if (!In.bFieldOverlay) break;
+			if (!In.bFieldOverlay) { OverlayParcel = Parcels.Num(); break; }
+			if ((OverlayParcel & 3) == 0 && OverlayParcel > 0 && ((FPlatformTime::Seconds() - T0) * 1000.0 >= BudgetMs || Cancelled())) return false;
+			const FParcel& F = Parcels[OverlayParcel];
 			const FColor C = ToC(F.Col);
 			if (F.bCircle)
 			{
-				const int32 Seg = 20;
-				const int32 C0 = Vert(F.Ctr, 0.3f, FVector2f(F.Ctr), C, FVector2f(0.f, F.RowAng));
+				const int32 Seg = 24;
+				const int32 C0 = Vert(F.C, 0.35f, FVector2f(F.C), C, FVector2f(0.f, F.Ang));
 				TArray<int32> Ring;
 				for (int32 K = 0; K <= Seg; ++K)
 				{
 					const double A = K * UE_DOUBLE_TWO_PI / Seg;
-					const FVector2D P = F.Ctr + FVector2D(FMath::Cos(A), FMath::Sin(A)) * F.Rad;
-					Ring.Add(Vert(P, 0.3f, FVector2f(P), C, FVector2f(0.f, F.RowAng)));
+					const FVector2D P = F.C + FVector2D(FMath::Cos(A), FMath::Sin(A)) * F.Rad;
+					Ring.Add(Vert(P, 0.35f, FVector2f(P), C, FVector2f(0.f, F.Ang)));
 				}
 				for (int32 K = 0; K < Seg; ++K) M.Tri(0, C0, Ring[K], Ring[K + 1], M.V[C0].N);
 				continue;
 			}
-			const float Lu = float(FVector2D::Distance(F.C[0], F.C[1])), Lv = float(FVector2D::Distance(F.C[0], F.C[3]));
-			const int32 Nu = FMath::Clamp(int32(Lu / 26.f) + 1, 1, 14), Nv = FMath::Clamp(int32(Lv / 26.f) + 1, 1, 8);
-			const int32 Base = M.V.Num();
-			for (int32 J = 0; J <= Nv; ++J)
-				for (int32 I = 0; I <= Nu; ++I)
-				{
-					const double U = double(I) / Nu, V = double(J) / Nv;
-					const FVector2D P = FMath::Lerp(FMath::Lerp(F.C[0], F.C[1], U), FMath::Lerp(F.C[3], F.C[2], U), V);
-					Vert(P, 0.3f, FVector2f(P), C, FVector2f(0.f, F.RowAng));
-				}
+			const FVector2D Ux(FMath::Cos(F.Ang), FMath::Sin(F.Ang)), Uy(-FMath::Sin(F.Ang), FMath::Cos(F.Ang));
+			TArray<FVector2D> L;
+			double Ua0 = 1e30, Ua1 = -1e30, Va0 = 1e30, Va1 = -1e30;
+			for (const FVector2D& P : F.Poly)
+			{
+				const FVector2D D = P - F.C;
+				const FVector2D Q(FVector2D::DotProduct(D, Ux), FVector2D::DotProduct(D, Uy));
+				L.Add(Q);
+				Ua0 = FMath::Min(Ua0, Q.X); Ua1 = FMath::Max(Ua1, Q.X); Va0 = FMath::Min(Va0, Q.Y); Va1 = FMath::Max(Va1, Q.Y);
+			}
+			const int32 Nu = FMath::Clamp(FMath::CeilToInt((Ua1 - Ua0) / Cell), 1, 40), Nv = FMath::Clamp(FMath::CeilToInt((Va1 - Va0) / Cell), 1, 40);
+			const double Su = (Ua1 - Ua0) / Nu, Sv = (Va1 - Va0) / Nv;
+			TArray<FVector2D> Pc;
+			TArray<int32, TInlineAllocator<16>> Ix;
 			for (int32 J = 0; J < Nv; ++J)
 				for (int32 I = 0; I < Nu; ++I)
 				{
-					const uint32 a = Base + J * (Nu + 1) + I, b = a + 1, d = a + Nu + 1, c = d + 1;
-					M.Quad(0, a, b, c, d, M.V[a].N);
+					Pc = L;
+					const double Ua = Ua0 + I * Su, Ub = Ua + Su, Va = Va0 + J * Sv, Vb = Va + Sv;
+					if (I > 0) ClipHalf(Pc, FVector2D(-1, 0), -Ua);
+					if (I < Nu - 1) ClipHalf(Pc, FVector2D(1, 0), Ub);
+					if (J > 0) ClipHalf(Pc, FVector2D(0, -1), -Va);
+					if (J < Nv - 1) ClipHalf(Pc, FVector2D(0, 1), Vb);
+					if (Pc.Num() < 3) continue;
+					Ix.Reset();
+					for (const FVector2D& Q : Pc)
+					{
+						const FVector2D P = Warp(F.C + Ux * Q.X + Uy * Q.Y);
+						Ix.Add(Vert(P, 0.35f, FVector2f(P), C, FVector2f(0.f, F.Ang)));
+					}
+					for (int32 K = 1; K + 1 < Ix.Num(); ++K) M.Tri(0, Ix[0], Ix[K], Ix[K + 1], M.V[Ix[0]].N);
 				}
 		}
-		// hedgerows along the long edges of some fields (temperate, before mechanised farming)
-		if (Style == EStyle::Temperate && Age >= 1 && Age <= 4 && In.bFieldOverlay)
-			for (int32 Fi = 0; Fi < FieldQ.Num(); ++Fi)
+		return true;
+	}
+
+	void FPlanner::BuildOverlay()
+	{
+		FDmTownMesh& M = Out.Ground;
+		M.Sec.SetNum(1);
+		auto Vert = [this](const FVector2D& P, float Lift, const FVector2f& Uv0, const FColor& C, const FVector2f& Uv1) -> int32 { return OverlayVert(P, Lift, Uv0, C, Uv1); };
+		auto ToC = [](const FLinearColor& L, float A = 0.f) { return Col(L.R, L.G, L.B, A); };
+		// hedgerows along the boundaries of some holdings (temperate, before mechanised farming): warped like the fields
+		if (In.bFieldOverlay)
+			for (const FHedge& Hd : Hedges)
 			{
-				const FFieldQuad& F = FieldQ[Fi];
-				if (F.bCircle || Hash01(Seed, uint32(Fi), 61u) > 0.45f) continue;
-				const FVector2D A = F.C[0], B = F.C[1];
-				const FVector2D D = (B - A).GetSafeNormal(), Nn(-D.Y, D.X);
 				const FColor Hc = Col(0.12f, 0.2f, 0.08f);
-				const float Hw = 1.6f;
-				const int32 Ns = FMath::Max(1, int32(FVector2D::Distance(A, B) / 12.0));
+				const float Hw = 1.3f;
+				const int32 Ns = FMath::Max(1, int32(FVector2D::Distance(Hd.A, Hd.B) / 10.0));
+				const FVector2D D0 = (Hd.B - Hd.A).GetSafeNormal();
 				int32 Prev0 = -1, Prev1 = -1;
 				for (int32 K = 0; K <= Ns; ++K)
 				{
-					const FVector2D P = FMath::Lerp(A, B, double(K) / Ns) - Nn * 2.5;
-					const int32 V0 = Vert(P - Nn * Hw, 0.9f, FVector2f(P), Hc, FVector2f(3.f, 0.f)), V1 = Vert(P + Nn * Hw, 0.9f, FVector2f(P), Hc, FVector2f(3.f, 0.f));
+					const FVector2D P0 = FMath::Lerp(Hd.A, Hd.B, double(K) / Ns);
+					const FVector2D Pa = Warp(P0), Pb = Warp(P0 + D0 * 2.0);
+					const FVector2D D = (Pb - Pa).GetSafeNormal(), Nn(-D.Y, D.X);
+					const int32 V0 = Vert(Pa - Nn * Hw, 0.6f, FVector2f(Pa), Hc, FVector2f(3.f, 0.f)), V1 = Vert(Pa + Nn * Hw, 0.6f, FVector2f(Pa), Hc, FVector2f(3.f, 0.f));
 					if (Prev0 >= 0) M.Quad(0, Prev0, V0, V1, Prev1, M.V[V0].N);
 					Prev0 = V0; Prev1 = V1;
 				}
@@ -1598,22 +1870,47 @@ namespace
 			}
 		}
 		// plaza and quays
+		// (wave 4 towns) the plaza in rings of ~7 m that drape over the ground (one fan of 10-40 triangles was a flat slab
+		// across the slope), a ragged worn edge, and a few percent of tone variation per vertex (it read as one pale decagon)
+		// (verifier fix) uv0.y is the ring fraction (0 centre .. 1 rim): M_TownGround puts the plaza lamps on the rim by it;
+		// every ring at 1 lit the whole disc at night with a dark spot over the centre fan
 		auto Disc = [&](const FVector2D& C, float Rr, const FLinearColor& Cl, float La)
 		{
-			const int32 Seg = FMath::Clamp(int32(Rr / 3.f), 10, 40);
-			const FColor Cc = ToC(Cl, La);
-			const int32 C0 = Vert(C, 0.5f, FVector2f(0.f, 0.f), Cc, FVector2f(4.f, 0.f));
-			TArray<int32> Ring;
-			for (int32 K = 0; K <= Seg; ++K)
+			const int32 Seg = FMath::Clamp(int32(Rr / 2.5f), 14, 48);
+			const int32 NR = FMath::Clamp(int32(Rr / 7.f), 2, 8);
+			auto Tone = [&](const FVector2D& P, double Edge) -> FColor
 			{
-				const double A = K * UE_DOUBLE_TWO_PI / Seg;
-				const double Rk = Rr * (1.0 + 0.06 * FMath::Sin(A * 3.0 + Seed));
-				Ring.Add(Vert(C + FVector2D(FMath::Cos(A), FMath::Sin(A)) * Rk, 0.5f, FVector2f(float(Rk), 1.f), Cc, FVector2f(4.f, 0.f)));
+				const float J = 0.94f + 0.12f * Hash01(uint32(FMath::RoundToInt(P.X * 3.0) + 900000), uint32(FMath::RoundToInt(P.Y * 3.0) + 900000), uint32(Seed) + 77u);
+				const float E = float(FMath::Lerp(1.0, 0.86, FMath::Clamp(Edge, 0.0, 1.0)));   // worn, darker toward the edge
+				return ToC(FLinearColor(Cl.R * J * E, Cl.G * J * E, Cl.B * J * E), La * (1.f - 0.5f * float(Edge)));
+			};
+			const int32 C0 = Vert(C, 0.5f, FVector2f(0.f, 0.f), Tone(C, 0.0), FVector2f(4.f, 0.f));
+			TArray<int32> Prev, Ring;
+			for (int32 Rg = 1; Rg <= NR; ++Rg)
+			{
+				const double F = double(Rg) / NR;
+				Ring.Reset();
+				for (int32 K = 0; K <= Seg; ++K)
+				{
+					const int32 Kw = K % Seg;
+					const double A = Kw * UE_DOUBLE_TWO_PI / Seg;
+					const double Rag = Rg == NR ? 0.07 * FMath::Sin(A * 3.0 + Seed) + 0.05 * (Hash01(uint32(Kw), uint32(Seed), 79u) - 0.5) : 0.04 * FMath::Sin(A * 3.0 + Seed);
+					const double Rk = Rr * F * (1.0 + Rag);
+					const FVector2D P = C + FVector2D(FMath::Cos(A), FMath::Sin(A)) * Rk;
+					const int32 Vi = K == Seg ? int32(Ring[0]) : Vert(P, 0.5f, FVector2f(float(Rk), float(F)), Tone(P, (F - 0.55) / 0.45), FVector2f(4.f, 0.f));
+					Ring.Add(Vi);
+				}
+				for (int32 K = 0; K < Seg; ++K)
+				{
+					if (Rg == 1) M.Tri(0, C0, Ring[K], Ring[K + 1], M.V[C0].N);
+					else M.Quad(0, Prev[K], Ring[K], Ring[K + 1], Prev[K + 1], M.V[Ring[K]].N);
+				}
+				Prev = Ring;
 			}
-			for (int32 K = 0; K < Seg; ++K) M.Tri(0, C0, Ring[K], Ring[K + 1], M.V[C0].N);
 		};
-		const FLinearColor Pave = Age <= 1 ? Lc(0.44f, 0.37f, 0.27f) : (Age <= 3 ? Lc(0.52f, 0.49f, 0.44f) : Lc(0.5f, 0.5f, 0.49f));
-		if (PlazaR > 0.f || Tier == 0) Disc(Oc, Tier == 0 ? 22.f : PlazaR + 2.f, Pave, In.bDead ? 0.f : kLamp[Age] * 1.2f);
+		const FLinearColor Pave = Age <= 1 ? Lc(0.40f, 0.34f, 0.25f) : (Age <= 3 ? Lc(0.44f, 0.41f, 0.37f) : Lc(0.43f, 0.43f, 0.42f));
+		// (wave 4 towns) half the old lamp light: at night the plaza glowed as one white disc
+		if (PlazaR > 0.f || Tier == 0) Disc(Oc, Tier == 0 ? 22.f : PlazaR + 2.f, Pave, In.bDead ? 0.f : kLamp[Age] * 0.6f);
 		for (const FQuay& Q : Quays)
 			for (int32 I = 0; I + 1 < Q.P.Num(); ++I)
 			{
@@ -1634,7 +1931,7 @@ namespace
 		Out.Inst.Reserve(Placed.Num());
 		for (const FPlaced& P : Placed)
 		{
-			const FDmKitInfo& I = Kit.Get(P.M, P.V);
+			const FDmKitInfo& I = Kit.GetAt(Age, P.M, P.V);
 			const FVector D = DirAt(P.C);
 			double Floor;
 			if (P.bWaterLevel) Floor = SeaR;
@@ -1663,6 +1960,9 @@ namespace
 			if (In.bDead) { State = 0.55f; Lit = 0.f; }
 			T.Cd[0] = Wl.R; T.Cd[1] = Wl.G; T.Cd[2] = Wl.B; T.Cd[3] = Rf.R; T.Cd[4] = Rf.G; T.Cd[5] = Rf.B; T.Cd[6] = Lit; T.Cd[7] = State;
 			T.W = I.W * P.Scale.X; T.D = I.D * P.Scale.Y; T.H = I.H * P.Scale.Z;
+			// (wave 4 towns) which real asset stands here (stable per slot), and its own ruin in a dead town
+			T.Sub = I.NumAlt > 1 ? uint8(Hash(P.Key, 0x51u) % uint32(I.NumAlt)) : 0;
+			T.State = P.bRuinAsset ? uint8(EDmTownState::Ruin) : 0;
 			Out.Inst.Add(T);
 			if (P.M == EDmTownMesh::Stack || P.M == EDmTownMesh::Factory || P.M == EDmTownMesh::Campfire || P.M == EDmTownMesh::CoolingTower)
 				Out.Smoke.Add(Out.Centre + Pos + Q.RotateVector(FVector(0, 0, I.H * 100.0 * P.Scale.Z)));
@@ -1671,52 +1971,137 @@ namespace
 
 	void FPlanner::Run()
 	{
-		const double T0 = FPlatformTime::Seconds();
-		Setup();
-		Out.Id = In.Id;
-		BuildGrid();
-		const double TGrid = FPlatformTime::Seconds();
-		FindCoast();
-		BuildRaster();
-		Out.Centre = DirAt(Oc) * G.Radius(DirAt(Oc));
-		PlanStreets();
-		RasterStreets();
-		PlanDocks();
-		PlanCivic();
-		PlanHouses();
-		PlanWalls();
-		PlanFields();
-		// a dead settlement: every building is a ruin of its footprint, a share of them gone
-		if (In.bDead)
-		{
-			TArray<FPlaced> Keep;
-			for (const FPlaced& P : Placed)
-			{
-				if (Hash01(P.Key, 3u) > FMath::Clamp(In.Ruin * 1.4f, 0.f, 0.9f)) continue;
-				if (P.bWaterLevel && P.M != EDmTownMesh::Pier) continue;
-				FPlaced Q = P;
-				const FDmKitInfo& I = Kit.Get(P.M, P.V);
-				const bool bKeepShape = P.M == EDmTownMesh::WallSeg || P.M == EDmTownMesh::WallTower || P.M == EDmTownMesh::Gatehouse || P.M == EDmTownMesh::Pier
-					|| P.M == EDmTownMesh::Wonder || P.M == EDmTownMesh::TempleEarly || P.M == EDmTownMesh::Stones || P.M == EDmTownMesh::Spoil;
-				if (!bKeepShape)
-				{
-					Q.M = EDmTownMesh::Ruin; Q.V = int32(P.Key % 3u);
-					Q.Scale = FVector3f(FMath::Max(0.4f, I.W / 10.f), FMath::Max(0.4f, I.D / 8.f), FMath::Clamp(I.H / 8.f, 0.5f, 2.f));
-				}
-				Q.Wall = FLinearColor(0.55f, 0.52f, 0.48f); Q.Roof = Q.Wall;
-				Keep.Add(Q);
-			}
-			Placed = MoveTemp(Keep);
-			FieldQ.Reset();
-		}
-		BuildOverlay();
-		EmitInstances();
-		Out.RadiusM = FMath::Max(BuiltR, R);
-		Out.ExtentM = Ex;
-		Out.Ms = (FPlatformTime::Seconds() - T0) * 1000.0;
-		Out.Note = FString::Printf(TEXT("tier %d age %d style %d pop %.0f target %d R %.0f m ext %.0f m grid %d^2 (%.0f ms) coast %d%s ground %.0f m sea %.0f m"),
-			Tier, Age, int32(Style), In.Pop, Target, R, Ex, GN, (TGrid - T0) * 1000.0, bCoastal ? 1 : 0, bFarPort ? TEXT(" far") : TEXT(""), GridH(Oc), SeaM);
+		while (!Step(1e9)) {}
 	}
+
+	bool FPlanner::Step(double BudgetMs)
+	{
+		// (wave 4 towns) the plan in phases; a slice runs phases (and bands of the height grid) until its budget is used
+		const double T0 = FPlatformTime::Seconds();
+		ON_SCOPE_EXIT
+		{
+			const double Ms = (FPlatformTime::Seconds() - T0) * 1000.0;
+			WorkMs += Ms;
+			++Out.Slices;
+			Out.MaxSliceMs = FMath::Max(Out.MaxSliceMs, Ms);
+		};
+		do
+		{
+			// (wave 4 towns) CPU per phase (the longest phase is the longest slice a worker can be held for)
+			const int32 PhaseNow = Stage;
+			const double PhaseT0 = FPlatformTime::Seconds();
+			ON_SCOPE_EXIT { if (PhaseNow >= 0 && PhaseNow < 9) StageMs[PhaseNow] += (FPlatformTime::Seconds() - PhaseT0) * 1000.0; };
+			if (Cancelled()) { bCancelled = true; const int32 Sl = Out.Slices; Out = FDmTownPlan(); Out.Slices = Sl; Stage = 99; return true; }
+			switch (Stage)
+			{
+			case 0:
+				if (In.Dir.IsNearlyZero()) { Stage = 99; return true; }
+				Setup();
+				Out.Id = In.Id;
+				BuildGridBegin();
+				Stage = 1;
+				break;
+			case 1:
+				if (!BuildGridRows(T0, BudgetMs)) return false;
+				BuildGridEnd();
+				GridMs = WorkMs + (FPlatformTime::Seconds() - T0) * 1000.0;
+				Stage = 2;
+				break;
+			case 2:
+				if (RasterRow < 0)
+				{
+					FindCoast();
+					BuildRaster();
+					Out.Centre = DirAt(Oc) * G.Radius(DirAt(Oc));
+					break;   // (verifier) the rows in the next passes (they check the budget)
+				}
+				if (!BuildRasterRows(T0, BudgetMs)) return false;
+				Stage = 3;
+				break;
+			case 3: PlanStreets(); RasterStreets(); Stage = 4; break;
+			case 4: PlanDocks(); PlanCivic(); Stage = 5; break;
+			case 5: PlanHouses(); Stage = 6; break;
+			case 6: PlanWalls(); PlanFields(); Stage = 7; break;
+			case 7:
+				// a dead settlement: every building is a ruin of its footprint, a share of them gone
+				if (In.bDead && !bDeadDone)
+				{
+					TArray<FPlaced> Keep;
+					for (const FPlaced& P : Placed)
+					{
+						if (Hash01(P.Key, 3u) > FMath::Clamp(In.Ruin * 1.4f, 0.f, 0.9f)) continue;
+						if (P.bWaterLevel && P.M != EDmTownMesh::Pier) continue;
+						FPlaced Q = P;
+						const FDmKitInfo& I = Kit.GetAt(Age, P.M, P.V);
+						const bool bKeepShape = P.M == EDmTownMesh::WallSeg || P.M == EDmTownMesh::WallTower || P.M == EDmTownMesh::Gatehouse || P.M == EDmTownMesh::Pier
+							|| P.M == EDmTownMesh::Wonder || P.M == EDmTownMesh::TempleEarly || P.M == EDmTownMesh::Stones || P.M == EDmTownMesh::Spoil;
+						// (wave 4 towns) a real asset falls into its own ruin on the same footprint (ASSET-INTEGRATION 4.4)
+						if (I.NumAlt > 0 && I.bAssetRuin) Q.bRuinAsset = true;
+						else if (!bKeepShape)
+						{
+							Q.M = EDmTownMesh::Ruin; Q.V = int32(P.Key % 3u);
+							Q.Scale = FVector3f(FMath::Max(0.4f, I.W / 10.f), FMath::Max(0.4f, I.D / 8.f), FMath::Clamp(I.H / 8.f, 0.5f, 2.f));
+						}
+						Q.Wall = FLinearColor(0.55f, 0.52f, 0.48f); Q.Roof = Q.Wall;
+						Keep.Add(Q);
+					}
+					Placed = MoveTemp(Keep);
+					FieldQ.Reset();
+					Parcels.Reset();
+					Hedges.Reset();
+				}
+				bDeadDone = true;
+				// (verifier) the fields in slices of parcels, then the streets, plaza and quays
+				if (!BuildOverlayFields(T0, BudgetMs)) return false;
+				BuildOverlay();
+				Stage = 8;
+				break;
+			case 8:
+				EmitInstances();
+				Out.RadiusM = FMath::Max(BuiltR, R);
+				Out.ExtentM = Ex;
+				Out.Age = int8(Age); Out.Tier = int8(Tier); Out.CultureStyle = int8(In.CultureStyle); Out.Climate = int8(Style);
+				Out.Ms = WorkMs + (FPlatformTime::Seconds() - T0) * 1000.0;
+				Out.Note = FString::Printf(TEXT("tier %d age %d style %d culture style %d pop %.0f target %d R %.0f m ext %.0f m grid %d^2 (%.0f ms) coast %d%s ground %.0f m sea %.0f m parcels %d rivers %d (%d nodes, bank %.0f m); phases ms setup %.1f grid %.1f raster %.1f streets %.1f civic %.1f houses %.1f walls+fields %.1f overlay %.1f"),
+					Tier, Age, int32(Style), int32(In.CultureStyle), In.Pop, Target, R, Ex, GN, GridMs, bCoastal ? 1 : 0, bFarPort ? TEXT(" far") : TEXT(""), GridH(Oc), SeaM, Parcels.Num(), NumRiverSegs, RiverCells, RiverBankDbg,
+					StageMs[0], StageMs[1], StageMs[2], StageMs[3], StageMs[4], StageMs[5], StageMs[6], StageMs[7]);
+				Stage = 9;
+				return true;
+			default:
+				return true;
+			}
+		} while ((FPlatformTime::Seconds() - T0) * 1000.0 < BudgetMs);
+		return false;
+	}
+}
+
+// ------------------------------------------------------------------ stepper (wave 4 towns)
+
+struct FDmTownPlanStepper::FImpl
+{
+	FPlanner P;
+	FImpl(const FDmTownInput& In, const FDmTownsWorldSnap& Snap, const FDmTownsGround& G, const FDmKitTable& Kit, FDmTownPlan& Out) : P(In, Snap, G, Kit, Out) {}
+};
+
+FDmTownPlanStepper::FDmTownPlanStepper(const FDmTownInput& In, const FDmTownsWorldSnap& Snap, const FDmTownsGround& Ground, const FDmKitTable& Kit, FDmTownPlan& Out,
+	const std::atomic<bool>* Cancel)
+{
+	Out = FDmTownPlan();
+	Impl = MakeUnique<FImpl>(In, Snap, Ground, Kit, Out);
+	Impl->P.Cancel = Cancel;
+	if (In.Dir.IsNearlyZero()) Impl->P.Cancel = nullptr;
+}
+
+FDmTownPlanStepper::~FDmTownPlanStepper() = default;
+
+bool FDmTownPlanStepper::Step(double BudgetMs) { return Impl->P.Step(BudgetMs); }
+bool FDmTownPlanStepper::WasCancelled() const { return Impl->P.bCancelled; }
+
+const FDmKitInfo& FDmKitTable::GetAt(int32 Age, EDmTownMesh Id, int32 V) const
+{
+	const int32 A = FMath::Clamp(Age, 0, 6), K = int32(Id);
+	if (K >= 0 && K < int32(EDmTownMesh::Num) && Aged[A][K].Num() > 0) return Aged[A][K][FMath::Clamp(V, 0, Aged[A][K].Num() - 1)];
+	return Get(Id, V);
 }
 
 float DmTownsPlan::BuiltRadius(int32 Tier, double Pop, int32 Age)

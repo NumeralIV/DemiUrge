@@ -1,6 +1,13 @@
 // DEMIURGE — Game/Towns/DmTownsKit.cpp : see the header. The building generators.
 
 #include "Game/Towns/DmTownsKit.h"
+#include "Game/Towns/DmTownsAssets.h"
+#include "Game/Towns/DmTownsPlan.h"
+
+#include "Engine/World.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
+#include "Misc/PackageName.h"
 
 #include "Engine/StaticMesh.h"
 #include "HAL/PlatformTime.h"
@@ -1241,10 +1248,16 @@ UMaterialInstanceDynamic* UDmTownsFactory::LoadMat(const TCHAR* MatName)
 	return UMaterialInstanceDynamic::Create(M, this);
 }
 
-void UDmTownsFactory::Build()
+void UDmTownsFactory::Build(UWorld* InWorld)
 {
 	if (bBuilt) return;
+	World = InWorld;
 	const double T0 = FPlatformTime::Seconds();
+	// (wave 4 towns) the real assets first: loaded once here (world load), never mid-game
+	Assets = MakeShared<FDmTownsAssets>();
+	Assets->Build(AssetKeep);
+	if (Assets->IsEnabled() && FPackageName::DoesPackageExist(TEXT("/Game/Assets/Materials/MPC_DmAssets")))
+		AssetMPC = LoadObject<UMaterialParameterCollection>(nullptr, TEXT("/Game/Assets/Materials/MPC_DmAssets.MPC_DmAssets"));
 	MatBody = LoadMat(TEXT("M_TownBody"));
 	MatGlass = LoadMat(TEXT("M_TownGlass"));
 	MatGlow = LoadMat(TEXT("M_TownGlow"));
@@ -1295,12 +1308,21 @@ void UDmTownsFactory::SetFrame(const FVector& PlanetCentreWorld, const FVector& 
 		M->SetVectorParameterValue(TEXT("PlanetCenter"), FLinearColor(PlanetCentreWorld.X, PlanetCentreWorld.Y, PlanetCentreWorld.Z, 0.f));
 		M->SetVectorParameterValue(TEXT("SunDir"), FLinearColor(SunDirWorld.X, SunDirWorld.Y, SunDirWorld.Z, 0.f));
 	}
+	// (wave 4 towns) the real assets' master (M_DmKit) reads the planet frame from the collection (ASSET-INTEGRATION 3.3)
+	if (AssetMPC && World.IsValid())
+		if (UMaterialParameterCollectionInstance* I = World->GetParameterCollectionInstance(AssetMPC))
+		{
+			I->SetVectorParameterValue(TEXT("PlanetCenter"), FLinearColor(PlanetCentreWorld.X, PlanetCentreWorld.Y, PlanetCentreWorld.Z, 0.f));
+			I->SetVectorParameterValue(TEXT("SunDir"), FLinearColor(SunDirWorld.X, SunDirWorld.Y, SunDirWorld.Z, 0.f));
+		}
 }
 
 void UDmTownsFactory::SetNightOverride(float Night)
 {
 	for (UMaterialInstanceDynamic* M : { MatBody.Get(), MatGlass.Get(), MatGlow.Get(), MatGround.Get() })
 		if (M) M->SetScalarParameterValue(TEXT("NightOverride"), Night);
+	if (AssetMPC && World.IsValid())
+		if (UMaterialParameterCollectionInstance* I = World->GetParameterCollectionInstance(AssetMPC)) I->SetScalarParameterValue(TEXT("NightOverride"), Night);
 }
 
 void UDmTownsFactory::SetGlow(float Windows, float Pools, float Streets)
@@ -1308,4 +1330,45 @@ void UDmTownsFactory::SetGlow(float Windows, float Pools, float Streets)
 	if (MatGlass) MatGlass->SetScalarParameterValue(TEXT("Glow"), Windows);
 	if (MatGlow) MatGlow->SetScalarParameterValue(TEXT("Glow"), Pools);
 	if (MatGround) MatGround->SetScalarParameterValue(TEXT("Glow"), Streets);
+	if (AssetMPC && World.IsValid())
+		if (UMaterialParameterCollectionInstance* I = World->GetParameterCollectionInstance(AssetMPC)) I->SetScalarParameterValue(TEXT("Glow"), Windows / 3.f);   // the stand-ins' default 3 = the assets' 1
+}
+
+void UDmTownsFactory::FillKitTable(FDmKitTable& Out) const
+{
+	for (int32 K = 0; K < int32(EDmTownMesh::Num); ++K)
+	{
+		Out.Infos[K] = Kit[K];
+		for (FDmKitInfo& I : Out.Infos[K]) I.Mesh = nullptr;   // plain data for the workers
+	}
+	if (!Assets.IsValid()) return;
+	for (int32 Age = 0; Age < 7; ++Age)
+		for (int32 K = 0; K < int32(EDmTownMesh::Num); ++K)
+		{
+			TArray<FDmKitInfo>& Row = Out.Aged[Age][K];
+			Row = Out.Infos[K];
+			bool bAny = false;
+			for (int32 V = 0; V < Row.Num(); ++V)
+			{
+				// every height class (the planner places before it knows which one a tier picks): the largest footprint
+				FDmKitInfo& I = Row[V];
+				int32 NAlt = 0; bool bRuin = true, bCons = true;
+				float W = 0, D = 0, H = 0; int32 Tris = 0;
+				for (int32 Tier = 0; Tier <= 4; Tier += 2)
+					if (const TArray<FDmTownAsset>* L = Assets->Find(EDmTownMesh(K), V, Age, Tier == 2 ? 3 : Tier))
+					{
+						NAlt = FMath::Max(NAlt, L->Num());
+						for (const FDmTownAsset& A : *L)
+						{
+							W = FMath::Max(W, A.W); D = FMath::Max(D, A.D); H = FMath::Max(H, A.H); Tris = FMath::Max(Tris, A.Tris);
+							bRuin &= A.HasState(EDmTownState::Ruin); bCons &= A.HasState(EDmTownState::Construction);
+						}
+					}
+				if (NAlt == 0) continue;
+				bAny = true;
+				I.W = FMath::Max(W, 1.f); I.D = FMath::Max(D, 1.f); I.H = FMath::Max(H, 0.5f); I.Tris = Tris;
+				I.NumAlt = uint8(FMath::Min(NAlt, 255)); I.bAssetRuin = bRuin; I.bAssetCons = bCons;
+			}
+			if (!bAny) Row.Reset();
+		}
 }

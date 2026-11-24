@@ -14,7 +14,7 @@
 //   Map 0  RGB macro albedo (sRGB), A forest canopy density
 //   Map 1  R temperature ((T + 50) / 90), G wetness, B aridity, A ice (glacier on land, sea ice on sea)
 //   Map 2  R farmland, G urban, B road presence, A night lights
-//   Map 3  R scorch, G lava, B fire, A fallout (rad)
+//   Map 3  R scorch, G lava, B fire, A fallout (rad); (wave 4) in genesis 'life' A is the life wave's front instead
 //   Map 4  overlay RGB + strength (Planet overlay modes 1..5)
 //
 // The river map (RiverSize^2 octahedral, ~87 m texels) holds R = SIGNED distance to the nearest river
@@ -48,6 +48,7 @@ struct FDmMapInputs
 	float SeaLevel = 0.f;
 	int32 Overlay = 0;
 	float Barren = 0.f;             // (integration) before life: bare land is dark basalt, not sand (1 molten / water .. 0 history)
+	float LifeFront = 0.f;          // (wave 4) 1 in genesis 'life': map 3 alpha carries the life wave's front (no fallout then)
 	TArray<float> Veg, Moist, Temp, Ice, Urban, Water, Elev, Wet, Farm, Scorch, Lava, Fire, Rad, Hab, Lights;
 	TArray<uint8> Biome, Road;
 	TArray<int32> Culture;          // overlay 1 / 4: culture of the cell's owner (-1 none)

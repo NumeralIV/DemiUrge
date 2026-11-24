@@ -2,6 +2,8 @@
 
 #include "Game/Towns/DmTownsActor.h"
 #include "Game/Towns/DmTownsKit.h"
+#include "Game/Towns/DmTownsAssets.h"
+#include "Materials/MaterialInterface.h"
 #include "Game/Towns/DmTownsPerf.h"
 #include "Game/Core/DmCoords.h"
 #include "Game/Core/DmScenario.h"
@@ -33,9 +35,8 @@ namespace
 
 	uint32 Mix(uint32 H, uint32 V) { return DmTowns::Hash(H, V, 0x9E37u); }
 
-	float CullM(const FDmKitInfo& I)
+	float CullS(float S)
 	{
-		const float S = FMath::Max3(I.W, I.D, I.H);
 		if (S < 14.f) return 26000.f;
 		if (S < 40.f) return 45000.f;
 		return 90000.f;
@@ -88,7 +89,7 @@ namespace
 		for (int32 I = 0; I < P.Inst.Num(); ++I)
 		{
 			const FDmTownInst& In = P.Inst[I];
-			const uint32 Key = (uint32(In.Mesh) << 8) | uint32(In.Var);
+			const uint32 Key = DmTownsBatchKey::Make(In.Mesh, In.Var, In.Sub, In.State);   // (wave 4 towns) + asset alternative and state
 			int32& B = Bi.FindOrAdd(Key, INDEX_NONE);
 			if (B == INDEX_NONE) { B = P.Batches.Num(); P.Batches.AddDefaulted_GetRef().Key = Key; }
 			FDmTownBatch& Bt = P.Batches[B];
@@ -139,6 +140,50 @@ namespace
 		}
 		P.bPrepared = true;
 		P.PrepMs = (FPlatformTime::Seconds() - T0) * 1000.0;
+	}
+
+	/** (wave 4 towns) One slice of a planning job, then the next slice is launched at the job's current priority (raised when
+	 *  its settlement comes into view): the plan gives its worker back every SliceMs, so higher-priority work (the sky's weather
+	 *  build, the planet's patches) never waits behind a whole plan. A cancelled job stops at its next slice. */
+	void RunPlanSlice(TSharedPtr<ADmTowns::FPlanJob, ESPMode::ThreadSafe> J)
+	{
+		ADmTowns::FPlanJob& Jb = *J;
+		if (Jb.Cancel.load(std::memory_order_relaxed))
+		{
+			Jb.Stepper.Reset();
+			Jb.Plan.Reset();
+			Jb.Finished = FPlatformTime::Seconds();
+			Jb.bDone.store(true, std::memory_order_release);
+			return;
+		}
+		if (!Jb.Stepper.IsValid())
+		{
+			Jb.Started = FPlatformTime::Seconds();
+			Jb.Plan = MakeShared<FDmTownPlan, ESPMode::ThreadSafe>();
+			Jb.Stepper = MakeUnique<FDmTownPlanStepper>(Jb.In, *Jb.Snap, *Jb.Ground, *Jb.Kit, *Jb.Plan, &Jb.Cancel);
+		}
+		const double Cpu0 = FDmTownsPerf::ThreadCpuMs();
+		const bool bLast = Jb.Stepper->Step(Jb.SliceMs);
+		if (Jb.Plan.IsValid()) Jb.Plan->MaxSliceCpuMs = FMath::Max(Jb.Plan->MaxSliceCpuMs, FDmTownsPerf::ThreadCpuMs() - Cpu0);
+		if (bLast)
+		{
+			const bool bCancelled = Jb.Stepper->WasCancelled();
+			Jb.Stepper.Reset();
+			if (bCancelled) Jb.Plan.Reset();
+			else
+			{
+				Jb.Plan->Sig = Jb.Sig;
+				// the prepare (batches, ground render data, construction diff) is one more slice
+				const double T0 = FPlatformTime::Seconds(), C0 = FDmTownsPerf::ThreadCpuMs();
+				PreparePlan(*Jb.Plan, Jb.OldPlan.Get(), true);
+				Jb.Plan->MaxSliceMs = FMath::Max(Jb.Plan->MaxSliceMs, (FPlatformTime::Seconds() - T0) * 1000.0);
+				Jb.Plan->MaxSliceCpuMs = FMath::Max(Jb.Plan->MaxSliceCpuMs, FDmTownsPerf::ThreadCpuMs() - C0);
+			}
+			Jb.Finished = FPlatformTime::Seconds();
+			Jb.bDone.store(true, std::memory_order_release);
+			return;
+		}
+		UE::Tasks::Launch(UE_SOURCE_LOCATION, [J]() { RunPlanSlice(J); }, UE::Tasks::ETaskPriority(Jb.Pri.load(std::memory_order_relaxed)));
 	}
 }
 
@@ -192,16 +237,19 @@ ADmTowns* ADmTowns::Find(const UObject* WorldContext)
 void ADmTowns::BeginPlay()
 {
 	Super::BeginPlay();
+	FDmTownsPerf::ThreadCpuMs();   // (wave 4 towns) calibrate the thread CPU clock here, before the planning workers read it
 	Factory = NewObject<UDmTownsFactory>(this);
-	Factory->Build();
+	Factory->Build(GetWorld());
 	KitTable = MakeShared<FDmKitTable, ESPMode::ThreadSafe>();
-	for (int32 K = 0; K < int32(EDmTownMesh::Num); ++K) KitTable->Infos[K] = Factory->Infos(EDmTownMesh(K));
+	Factory->FillKitTable(*KitTable);   // (wave 4 towns) + the real assets' footprints per age
+	{ double Sl = SliceMs; if (FDmShotArgs::Value(TEXT("-townslice="), Sl)) SliceMs = float(FMath::Clamp(Sl, 0.5, 1000.0)); }
 
 	double D = 0;
 	int32 Iv = -1;
 	if (FDmShotArgs::Value(TEXT("-townage="), Iv)) AgeOverride = FMath::Clamp(Iv, 0, 6);
 	if (FDmShotArgs::Value(TEXT("-townscale="), D)) Scale = float(FMath::Clamp(D, 0.2, 5.0));
 	if (FDmShotArgs::Value(TEXT("-townhidekm="), D)) HideKm = float(FMath::Max(D, 1.0));
+	if (FDmShotArgs::Value(TEXT("-townhidetier="), D)) TierHideScale = float(FMath::Max(D, 0.0));
 	if (FDmShotArgs::Value(TEXT("-townground="), D)) GroundReplanEvery = FMath::Clamp(D, 0.0, 120.0);
 	if (FDmShotArgs::Value(TEXT("-townnight="), D)) NightOverride = float(D);
 	if (FDmShotArgs::Param(TEXT("nounits"))) bUnits = false;
@@ -226,6 +274,8 @@ void ADmTowns::BeginPlay()
 
 void ADmTowns::EndPlay(const EEndPlayReason::Type Reason)
 {
+	UE_LOG(LogDmTowns, Display, TEXT("DmTowns: EndPlay: %d planning jobs done in %d slices (longest slice %.1f ms CPU, %.1f ms wall; mean job %.0f ms wall)"),
+		JobsDone, SlicesDone, MaxSliceCpuMs, MaxSliceMs, JobsDone ? JobWallMs / JobsDone : 0.0);
 	JoinAll();
 	if (UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))
 	{
@@ -238,21 +288,42 @@ void ADmTowns::EndPlay(const EEndPlayReason::Type Reason)
 
 void ADmTowns::JoinAll()
 {
-	// (towns-perf verifier) plans still queued return at once (a shut-down game waited for up to 15 background plans of
-	// 1-7 s each on a busy machine, and was killed 60 s after it asked to quit); plans already running finish
+	// (wave 4 towns) never wait. Exit waited 50-60 s on a loaded machine for plans already running (the old cancel flag only
+	// stopped plans not yet started). Planning jobs own everything they read (shared snapshots), so they are abandoned: the
+	// cancel flag stops each at its next slice (a few ms of work), and the last reference frees it on its worker. The ground
+	// job and late probes are handed to a cleanup task that keeps them alive until they finish (they read their own copies).
 	const double T0 = NowS();
-	const int32 NumWait = Pending.Num() + Orphans.Num();
-	for (TPair<int32, FPending>& P : Pending) if (P.Value.Cancel.IsValid()) P.Value.Cancel->store(true);
-	for (FOrphan& O : Orphans) if (O.Cancel.IsValid()) O.Cancel->store(true);
-	if (GroundJob.IsValid()) { GroundJob->Task.Wait(); GroundJob->Probe.Wait(); }
-	for (const TSharedPtr<FLateProbe, ESPMode::ThreadSafe>& L : LateProbes) L->Task.Wait();
-	LateProbes.Reset();
-	GroundJob.Reset();
-	for (TPair<int32, FPending>& P : Pending) P.Value.Task.Wait();
+	int32 Running = 0;
+	for (TPair<int32, FPending>& P : Pending)
+		if (P.Value.Job.IsValid())
+		{
+			P.Value.Job->Cancel.store(true, std::memory_order_relaxed);
+			Running += P.Value.Job->bDone.load(std::memory_order_acquire) ? 0 : 1;
+		}
+	const int32 NumJobs = Pending.Num();
 	Pending.Reset();
-	for (FOrphan& O : Orphans) O.Task.Wait();
-	Orphans.Reset();
-	if (NumWait > 0) UE_LOG(LogDmTowns, Display, TEXT("DmTowns: joined %d planning tasks in %.0f ms"), NumWait, (NowS() - T0) * 1000.0);
+	int32 NumGround = 0;
+	if (GroundJob.IsValid())
+	{
+		TSharedPtr<FGroundJob, ESPMode::ThreadSafe> J = MoveTemp(GroundJob);
+		NumGround += (J->Task.IsCompleted() && J->Probe.IsCompleted()) ? 0 : 1;
+		UE::Tasks::Launch(UE_SOURCE_LOCATION, [J]() mutable { J.Reset(); }, UE::Tasks::Prerequisites(J->Task, J->Probe), UE::Tasks::ETaskPriority::BackgroundLow);
+	}
+	for (TSharedPtr<FLateProbe, ESPMode::ThreadSafe>& L : LateProbes)
+	{
+		NumGround += L->Task.IsCompleted() ? 0 : 1;
+		TSharedPtr<FLateProbe, ESPMode::ThreadSafe> Lp = MoveTemp(L);
+		UE::Tasks::Launch(UE_SOURCE_LOCATION, [Lp]() mutable { Lp.Reset(); }, UE::Tasks::Prerequisites(Lp->Task), UE::Tasks::ETaskPriority::BackgroundLow);
+	}
+	LateProbes.Reset();
+	// (wave 4 towns) not even at exit: a bounded wait (2 s) for the cancelled jobs was tried against the engine's exit assertion
+	// "Work->GetRefCount() == 0" (QueuedThreadPoolWrapper.cpp:167, GThreadPool torn down with queued work). It did not help: the
+	// assertion also fires in lanes whose towns joined every task (camera4b-verify, perf4, audio4b-verify, planet4-verify), and
+	// the queued slices did not get a worker within the 2 s anyway. It is GThreadPool work (planet patches, the sky's weather
+	// build) left queued at teardown: reported to the Core / bridge owner.
+	if (NumJobs + NumGround > 0)
+		UE_LOG(LogDmTowns, Display, TEXT("DmTowns: abandoned %d planning jobs (%d were running) and %d ground jobs in %.2f ms (not waited for; each stops at its next slice)"),
+			NumJobs, Running, NumGround, (NowS() - T0) * 1000.0);
 }
 
 // ------------------------------------------------------------------ notifications
@@ -289,6 +360,8 @@ void ADmTowns::ResetAll()
 	Movers.Reset();
 	Ground.Reset();
 	Snap.Reset();
+	CultureStyles.Reset();
+	ElevQ = SlopeQ = -1.f;
 	bSnapDirty = true;
 	GroundSig = 0;
 	FirstTick = -1;
@@ -410,14 +483,16 @@ bool ADmTowns::LaunchGroundJob(const dm::World& W, bool bInitial, const TCHAR* W
 			if (T.Value.Plan.IsValid())
 				J->Probes.Add({ T.Key, T.Value.Plan, T.Value.Plan->Centre, T.Value.Plan->RadiusM, T.Value.Plan->ExtentM });
 	FGroundJob* Jp = J.Get();
-	// the initial ground gates the first wave (foreground); later ones only refresh it (background)
+	// the initial ground gates the first wave; later ones only refresh it. (wave 4 towns) Never above background-normal: the
+	// sky's weather builds and the planet's patch jobs run there (GThreadPool's Normal maps to it)
+	const UE::Tasks::ETaskPriority GroundPri = bInitial ? UE::Tasks::ETaskPriority::BackgroundNormal : UE::Tasks::ETaskPriority::BackgroundLow;
 	J->Task = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Jp, NewT]()
 	{
 		const double T1 = FPlatformTime::Seconds();
 		NewT->Prepare();
 		Jp->G->AdoptPlanetTerrain(NewT);
 		Jp->G->BuildMs = (FPlatformTime::Seconds() - T1) * 1000.0;
-	}, UE::Tasks::ETaskPriority::Normal);
+	}, GroundPri);
 	J->Probe = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Jp]()
 	{
 		if (Jp->Old.IsValid() && Jp->Old->GetSource() == Jp->G->GetSource())
@@ -427,7 +502,7 @@ bool ADmTowns::LaunchGroundJob(const dm::World& W, bool bInitial, const TCHAR* W
 				if (GroundMovedAt(*Jp->Old, *Jp->G, P.Centre, P.RadiusM, P.ExtentM)) Jp->Moved.Add(P.Id);
 			Jp->ProbeMs = (FPlatformTime::Seconds() - T1) * 1000.0;
 		}
-	}, UE::Tasks::Prerequisites(J->Task), UE::Tasks::ETaskPriority::Normal);
+	}, UE::Tasks::Prerequisites(J->Task), GroundPri);
 	GroundJob = J;
 	return true;
 }
@@ -451,7 +526,8 @@ void ADmTowns::FinishGroundJob()
 		Ground = J->G;
 		GroundSig = J->Sig;
 		LastGroundCheck = Now;
-		UE_LOG(LogDmTowns, Display, TEXT("DmTowns: ground from the %s (captured in %.1f ms, prepared on a worker in %.0f ms)"), Ground->SourceName(), J->CaptureMs, Ground->BuildMs);
+		UE_LOG(LogDmTowns, Display, TEXT("DmTowns: ground from the %s (captured in %.1f ms, prepared on a worker in %.0f ms; %d river points, %d river grid cells)"), Ground->SourceName(), J->CaptureMs, Ground->BuildMs,
+			Ground->PlanetTerrain() ? Ground->PlanetTerrain()->RPts.Num() : -1, Ground->PlanetTerrain() ? Ground->PlanetTerrain()->RGrid.Num() : -1);
 		return;
 	}
 	const double T0 = NowS();
@@ -491,7 +567,7 @@ void ADmTowns::FinishGroundJob()
 			{
 				for (const FGroundProbe& P : Lp->Probes)
 					if (GroundMovedAt(*Lp->Old, *Lp->G, P.Centre, P.RadiusM, P.ExtentM)) Lp->Moved.Add(P.Id);
-			}, UE::Tasks::ETaskPriority::Normal);
+			}, UE::Tasks::ETaskPriority::BackgroundLow);
 			LateProbes.Add(LP);
 		}
 	}
@@ -587,6 +663,7 @@ bool ADmTowns::MakeInput(const dm::World& W, int32 Sid, FDmTownInput& In) const
 	In.Ruin = S.dead ? FMath::Clamp(W.urban[size_t(S.cell)] * 2.f, 0.f, 1.f) : 0.f;
 	In.Plague = float(S.plague);
 	In.Scale = Scale;
+	In.CultureStyle = CultureStyleOf(W, S.culture);   // (wave 4 towns) the culture's building style (material instances)
 	In.bFieldOverlay = FieldMode > 0 || (FieldMode < 0 && !(Ground.IsValid() && Ground->GetSource() == FDmTownsGround::ESource::PlanetTerrain));
 	if (AgeOverride >= 0) In.Age = AgeOverride;
 	if (const FOverride* O = Overrides.Find(Sid))
@@ -635,6 +712,7 @@ uint32 ADmTowns::SignatureOf(const dm::World& W, int32 Sid, uint32* OutStruct) c
 	H = Mix(H, In.bDead ? 7u : 3u);
 	H = Mix(H, In.bCapital ? 5u : 2u);
 	H = Mix(H, uint32(FMath::RoundToInt(In.Scale * 100.f)));
+	H = Mix(H, uint32(In.CultureStyle) + 17u);
 	if (OutStruct) *OutStruct = H | 1u;
 	H = Mix(H, uint32(FMath::FloorToInt(FMath::Loge(FMath::Max(In.Pop, 1.0)) * 5.0)));
 	H = Mix(H, uint32(FMath::FloorToInt(In.Ruin * 6.f)));
@@ -684,30 +762,20 @@ void ADmTowns::LaunchPlans(const dm::World& W)
 	const bool bCam = CameraPlanet(Cam);
 	const double ViewUU = double(HideKm) * DmCoords::UUPerKm;
 	const double Now = NowS();
-	// (towns-perf verifier) finished orphans are dropped (their plans freed on a worker)
-	for (int32 K = Orphans.Num() - 1; K >= 0; --K)
-		if (Orphans[K].Task.IsCompleted()) { ReleaseOnWorker(Orphans[K].Task.GetResult(), FDmTownsGroundPtr()); Orphans.RemoveAtSwap(K); }
-	// (towns-perf verifier) a settlement that came into view while its plan waits on a background worker is re-planned on a
-	// foreground one (on a busy machine background plans waited for minutes); the old task is orphaned
+	// (wave 4 towns) a settlement that came into view while its job runs in an out-of-view slot is promoted in place: its next
+	// slices run at the in-view priority (the old way orphaned the task and planned it again from scratch)
 	int32 NearNow = 0, FarNow = 0;
 	for (const TPair<int32, FPending>& Pp : Pending) { NearNow += Pp.Value.bNear ? 1 : 0; FarNow += Pp.Value.bNear ? 0 : 1; }
 	if (bCam && NearNow < MaxNearTasks)
-	{
-		TArray<int32, TInlineAllocator<8>> Promote;
-		for (const TPair<int32, FPending>& Pp : Pending)
-			if (!Pp.Value.bNear && !Pp.Value.Task.IsCompleted() && Now - Pp.Value.Launched > 1.0 && Pp.Key < int32(W.settlements.size())
-				&& FVector::Dist(Cam, DmCoords::CellSurfacePos(W, W.settlements[size_t(Pp.Key)].cell)) < ViewUU && NearNow + Promote.Num() < MaxNearTasks)
-				Promote.Add(Pp.Key);
-		for (int32 Id : Promote)
+		for (TPair<int32, FPending>& Pp : Pending)
 		{
-			FPending& Pd = Pending[Id];
-			if (Pd.Cancel.IsValid()) Pd.Cancel->store(true);   // not started yet: returns at once
-			Orphans.Add({ Pd.Task, Pd.Cancel });
-			Pending.Remove(Id);
-			--FarNow;
-			if (FTown* T = Towns.Find(Id)) T->bDirty = true;
+			if (NearNow >= MaxNearTasks) break;
+			if (Pp.Value.bNear || !Pp.Value.Job.IsValid() || Pp.Value.Job->bDone.load(std::memory_order_acquire) || Pp.Key >= int32(W.settlements.size())) continue;
+			if (FVector::Dist(Cam, DmCoords::CellSurfacePos(W, W.settlements[size_t(Pp.Key)].cell)) >= ViewUU) continue;
+			Pp.Value.Job->Pri.store(int32(UE::Tasks::ETaskPriority::BackgroundNormal), std::memory_order_relaxed);
+			Pp.Value.bNear = true;
+			++NearNow; --FarNow;
 		}
-	}
 	TArray<TPair<double, int32>> Order;
 	for (TPair<int32, FTown>& T : Towns)
 	{
@@ -721,7 +789,9 @@ void ADmTowns::LaunchPlans(const dm::World& W)
 	}
 	Order.Sort([](const TPair<double, int32>& A, const TPair<double, int32>& B) { return A.Key < B.Key; });
 	int32 Launched = 0;
-	const int32 FarMax = bFirstWaveFill ? MaxTasks * 2 : MaxTasks;
+	// (wave 4 towns) no extra jobs for the first wave: 12 + 3 plans at once held every background worker for seconds and the
+	// sky's first weather builds waited behind them (sky-check failed with towns on); the slices keep the in-view ones quick
+	const int32 FarMax = MaxTasks;
 	for (const TPair<double, int32>& O : Order)
 	{
 		// (towns-perf) more tasks while the first wave fills the world. Background workers run at a below-normal OS priority:
@@ -752,17 +822,18 @@ void ADmTowns::LaunchPlans(const dm::World& W)
 		P.GroundGen = T.GroundGen;
 		P.Struct = St;
 		P.OldPlan = T.Plan.Get();
-		P.Cancel = MakeShared<std::atomic<bool>, ESPMode::ThreadSafe>(false);
-		TSharedPtr<std::atomic<bool>, ESPMode::ThreadSafe> CancelP = P.Cancel;
-		P.Task = UE::Tasks::Launch(UE_SOURCE_LOCATION, [In, SnapP, GroundP, KitP, Sig, OldP, CancelP]()
-		{
-			if (CancelP->load()) return TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe>();   // (towns-perf verifier) abandoned before it started
-			TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe> Plan = MakeShared<FDmTownPlan, ESPMode::ThreadSafe>();
-			DmTownsPlan::PlanTown(In, *SnapP, *GroundP, *KitP, *Plan);
-			Plan->Sig = Sig;
-			PreparePlan(*Plan, OldP.Get(), true);
-			return Plan;
-		}, bNear ? UE::Tasks::ETaskPriority::Normal : (bFirstWaveFill ? UE::Tasks::ETaskPriority::BackgroundHigh : UE::Tasks::ETaskPriority::BackgroundNormal));
+		// (wave 4 towns) a sliced job at background priority: in view background-normal, level with the sky's weather builds and the
+		// planet's patches (GThreadPool's Normal) and never ahead of them for more than one slice; out of view background-low.
+		// (All at background-low starved even the in-view plans behind the editor's distance-field builds: no town in 360 frames.)
+		TSharedPtr<FPlanJob, ESPMode::ThreadSafe> J = MakeShared<FPlanJob, ESPMode::ThreadSafe>();
+		J->In = MoveTemp(In);
+		J->Snap = SnapP; J->Ground = GroundP; J->Kit = KitP; J->OldPlan = OldP;
+		J->Sig = Sig;
+		J->SliceMs = SliceMs;
+		const UE::Tasks::ETaskPriority Pri = bNear ? UE::Tasks::ETaskPriority::BackgroundNormal : UE::Tasks::ETaskPriority::BackgroundLow;
+		J->Pri.store(int32(Pri));
+		UE::Tasks::Launch(UE_SOURCE_LOCATION, [J]() { RunPlanSlice(J); }, Pri);
+		P.Job = J;
 		P.bNear = bNear;
 		P.Launched = Now;
 		(bNear ? NearNow : FarNow) += 1;
@@ -778,9 +849,9 @@ void ADmTowns::ApplyDone(double TickStart)
 	const bool bCam = CameraPlanet(Cam);
 	TArray<TPair<double, int32>, TInlineAllocator<16>> Ready;
 	for (TPair<int32, FPending>& P : Pending)
-		if (P.Value.Task.IsCompleted())
+		if (P.Value.Job.IsValid() && P.Value.Job->bDone.load(std::memory_order_acquire))
 		{
-			const FDmTownPlan* Pl = P.Value.Task.GetResult().Get();
+			const FDmTownPlan* Pl = P.Value.Job->Plan.Get();
 			Ready.Add({ bCam && Pl ? FVector::DistSquared(Cam, Pl->Centre) : 0.0, P.Key });
 		}
 	if (Ready.Num() == 0) return;
@@ -793,9 +864,12 @@ void ADmTowns::ApplyDone(double TickStart)
 		const double Used = (NowS() - TickStart) * 1000.0;
 		if (Applied >= MaxAppliesPerFrame || Used >= double(ApplyBudgetMs) * (Applied == 0 ? 0.75 : 1.0)) break;
 		FPending& Pd = Pending[R.Value];
-		TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe> Plan = Pd.Task.GetResult();
+		TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe> Plan = Pd.Job->Plan;
 		if (!Plan.IsValid()) { if (FTown* Tc = Towns.Find(R.Value)) Tc->bDirty = true; Pending.Remove(R.Value); continue; }
 		++NumPlans; PlanMs += Plan->Ms;
+		// (wave 4 towns) slice statistics: the longest slice is what another task can wait behind on a worker
+		++JobsDone; SlicesDone += Plan->Slices; MaxSliceMs = FMath::Max(MaxSliceMs, Plan->MaxSliceMs); MaxSliceCpuMs = FMath::Max(MaxSliceCpuMs, Plan->MaxSliceCpuMs);
+		JobWallMs += (Pd.Job->Finished - Pd.Job->Started) * 1000.0;
 		FTown* T = Towns.Find(R.Value);
 		if (!T || Pd.Sig != T->PendingSig) { if (T) { T->bDirty = true; T->bGroundOnly = false; } }
 		else
@@ -825,7 +899,8 @@ void ADmTowns::RebuildAll(bool bBlocking, bool bNearOnly)
 		for (TPair<int32, FTown>& T : Towns) T.Value.bDirty = true;
 		return;
 	}
-	for (TPair<int32, FPending>& P : Pending) P.Value.Task.Wait();
+	// (wave 4 towns) running jobs are abandoned (re-planned below, blocking)
+	for (TPair<int32, FPending>& P : Pending) if (P.Value.Job.IsValid()) P.Value.Job->Cancel.store(true);
 	Pending.Reset();
 	EnsureSnap(*W, false);
 	CheckSignatures(*W, true);
@@ -998,18 +1073,26 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 	else
 	{
 		constexpr int32 Nf = UDmTownsFactory::NumCustomData;
-		TmpX.Reserve(P.Batches.Num() + 1); TmpC.Reserve(P.Batches.Num() + 1);
+		TmpX.Reserve(2 * P.Batches.Num() + 1); TmpC.Reserve(2 * P.Batches.Num() + 1);
 		TArray<FTransform> ScX; TArray<float> ScC;
 		for (const FDmTownBatch& B : P.Batches)
 		{
+			// (wave 4 towns) a real asset under construction is its own _Construction mesh on the same footprint
+			const bool bAssetCons = ResolveLook(P, B.Key).bAssetCons;
 			TArray<FTransform>& X = TmpX.AddDefaulted_GetRef();
 			TArray<float>& C = TmpC.AddDefaulted_GetRef();
+			TArray<FTransform>* AcX = nullptr; TArray<float>* AcC = nullptr;
 			X.Reserve(B.Xf.Num()); C.Reserve(B.Cd.Num());
 			for (int32 J = 0; J < B.Idx.Num(); ++J)
 			{
 				const FDmTownInst& In = P.Inst[B.Idx[J]];
 				const double* St = T.Building.Find(In.Key);
-				if (St && Now - *St < ConstructionSeconds)
+				if (St && Now - *St < ConstructionSeconds && bAssetCons)
+				{
+					if (!AcX) { AcX = &TmpX.AddDefaulted_GetRef(); AcC = &TmpC.AddDefaulted_GetRef(); }
+					AcX->Add(B.Xf[J]); AcC->Append(&B.Cd[J * Nf], Nf);
+				}
+				else if (St && Now - *St < ConstructionSeconds)
 				{
 					const float Prog = float(FMath::Clamp((Now - *St) / FMath::Max(ConstructionSeconds, 0.1f), 0.0, 1.0));
 					const FVector3f S(FMath::Max(In.W, 3.f) / 10.f, FMath::Max(In.D, 3.f) / 8.f, FMath::Max(In.H, 3.f) / 6.f * (0.45f + 0.4f * Prog));
@@ -1019,6 +1102,7 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 				else { X.Add(B.Xf[J]); C.Append(&B.Cd[J * Nf], Nf); }
 			}
 			Want.Add({ B.Key, &X, &C });
+			if (AcX) Want.Add({ DmTownsBatchKey::Make(DmTownsBatchKey::Mesh(B.Key), DmTownsBatchKey::Var(B.Key), DmTownsBatchKey::Sub(B.Key), int32(EDmTownState::Construction)), AcX, AcC });
 		}
 		if (ScX.Num())
 		{
@@ -1038,9 +1122,18 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 	for (const FWant& Wn : Want)
 	{
 		if (Wn.Xf->Num() == 0) continue;
-		const uint32 MeshKey = Wn.Key & ~ScaffoldBit;
-		const FDmKitInfo& Info = Factory->Get(EDmTownMesh(MeshKey >> 8), int32(MeshKey & 0xff));
-		if (!Info.Mesh) continue;
+		// (wave 4 towns) the real asset of this batch at the plan's age, tier and culture (or the stand-in)
+		const FLook Look = ResolveLook(P, Wn.Key);
+		if (!Look.Mesh) continue;
+		auto ApplyMats = [&Look](UDmTownsISM* Cm)
+		{
+			if (Cm->MatsKey == Look.Mats) return;
+			Cm->EmptyOverrideMaterials();
+			if (Look.Mats)
+				for (int32 Mi = 0; Mi < Look.Mats->Num(); ++Mi)
+					if (UMaterialInterface* Mt = (*Look.Mats)[Mi]) Cm->SetMaterial(Mi, Mt);
+			Cm->MatsKey = Look.Mats;
+		};
 		UDmTownsISM* C = nullptr;
 		if (const int32* Oi = OldIdx.Find(Wn.Key))
 		{
@@ -1055,6 +1148,9 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 				if (T.bVisible) C->SetRelativeLocation(P.Centre);
 				else C->SetRelativeLocation_Direct(P.Centre);   // frozen: applied by the unfreeze when the town is shown
 			}
+			// (wave 4 towns) the same batch key at a new age can be another asset
+			if (C->GetStaticMesh() != Look.Mesh) C->SetStaticMesh(Look.Mesh);
+			ApplyMats(C);
 			const double Ti = NowS();
 			if (C->SetInstances(*Wn.Xf, *Wn.Cd, true)) { ++Updated; UpdInst += Wn.Xf->Num(); }
 			MsInst += (NowS() - Ti) * 1000.0;
@@ -1064,10 +1160,11 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 			// (towns-perf) from the pool of registered, hidden, frozen components (made in quiet frames): creating and
 			// registering a component cost ~110 us on the game thread, 25-50 of them for a settlement's first apply
 			const double Tr = NowS();
-			C = TakePooled(Info.Mesh);
+			C = TakePooled(Look.Mesh);
 			C->SetRelativeLocation_Direct(P.Centre);
-			if (C->GetStaticMesh() != Info.Mesh) C->SetStaticMesh(Info.Mesh);
-			const int32 Cull = int32(CullM(Info) * 100.0);
+			if (C->GetStaticMesh() != Look.Mesh) C->SetStaticMesh(Look.Mesh);
+			ApplyMats(C);
+			const int32 Cull = int32(CullS(Look.Size) * 100.0);
 			C->SetCullDistances(int32(Cull * 0.8), Cull);
 			MsReg += (NowS() - Tr) * 1000.0;
 			const double Ti = NowS();
@@ -1079,7 +1176,7 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 			MsReg += (NowS() - Tv) * 1000.0;
 			++Registered;
 			if (bLog && NewComps.Num() == 0)
-				UE_LOG(LogDmTowns, Display, TEXT("DmTowns: comp %s: %d instances, %d custom floats, data %d"), *Info.Mesh->GetName(), C->GetInstanceCount(), C->NumCustomDataFloats, C->PerInstanceSMCustomData.Num());
+				UE_LOG(LogDmTowns, Display, TEXT("DmTowns: comp %s: %d instances, %d custom floats, data %d"), *Look.Mesh->GetName(), C->GetInstanceCount(), C->NumCustomDataFloats, C->PerInstanceSMCustomData.Num());
 		}
 		NewComps.Add(C);
 		NewKeys.Add(Wn.Key);
@@ -1115,7 +1212,7 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 	Keep.Add(NewMesh);
 	if (T.GroundComp)
 	{
-		if (T.bVisible) T.GroundComp->SetRelativeLocation(P.Centre);
+		if (T.bGroundVis) T.GroundComp->SetRelativeLocation(P.Centre);
 		else T.GroundComp->SetRelativeLocation_Direct(P.Centre);
 		T.GroundComp->SetStaticMesh(NewMesh);
 	}
@@ -1132,9 +1229,9 @@ void ADmTowns::BuildComponents(FTown& T, bool bInstancesOnly)
 		G->SetCastShadow(false);
 		G->bAffectDistanceFieldLighting = false;
 		G->bReceivesDecals = false;
-		G->SetVisibility(T.bVisible);
+		G->SetVisibility(T.bGroundVis);
 		G->RegisterComponent();
-		if (!T.bVisible) FreezeComp(G, true);
+		if (!T.bGroundVis) FreezeComp(G, true);
 		T.GroundComp = G;
 		Keep.Add(G);
 	}
@@ -1146,7 +1243,12 @@ void ADmTowns::UpdateVisibility()
 	FVector Cam;
 	if (!CameraPlanet(Cam)) return;
 	const double Hide = double(HideKm) * DmCoords::UUPerKm;
+	// (wave 4 towns) the buildings of small settlements are hidden nearer than HideKm: a village's 6-10 m houses are under a
+	// pixel beyond ~18 km, but every drawn component follows the turning planet every frame (game-thread transform updates
+	// and render-thread primitive updates for each). The ground overlay (fields: 100-300 m) stays out to HideKm. 5 % hysteresis.
+	static const double kTierKm[5] = { 10.0, 18.0, 28.0, 45.0, 70.0 };
 	int32 Vis = 0;
+	VisibleComps = 0;
 	for (TPair<int32, FTown>& T : Towns)
 	{
 		if (!T.Value.Plan.IsValid()) continue;
@@ -1155,13 +1257,21 @@ void ADmTowns::UpdateVisibility()
 		const double Dist = D.Size();
 		const double Ext = double(T.Value.Plan->ExtentM) * 100.0;
 		const bool bAbove = FVector::DotProduct(D, C.GetSafeNormal()) > -0.05 * Dist - Ext * 0.05;
-		const bool bVis = bAbove && Dist - Ext < Hide;
-		if (bVis) ++Vis;
-		if (bVis == T.Value.bVisible) continue;
-		T.Value.bVisible = bVis;
+		const double HideB = FMath::Min(Hide, kTierKm[FMath::Clamp(int32(T.Value.Plan->Tier), 0, 4)] * (TierHideScale > 0.f ? TierHideScale : 1000.0) * DmCoords::UUPerKm) * (T.Value.bVisible ? 1.05 : 1.0);
+		const bool bVis = bAbove && Dist - Ext < HideB;
+		const bool bGVis = bAbove && Dist - Ext < Hide;
+		if (bVis) { ++Vis; VisibleComps += T.Value.Comps.Num(); }
 		// unfreeze before showing (the proxy is created where the planet is now); freeze after hiding
-		for (UInstancedStaticMeshComponent* Cp : T.Value.Comps) if (Cp) { if (bVis) FreezeComp(Cp, false); Cp->SetVisibility(bVis); if (!bVis) FreezeComp(Cp, true); }
-		if (T.Value.GroundComp) { if (bVis) FreezeComp(T.Value.GroundComp, false); T.Value.GroundComp->SetVisibility(bVis); if (!bVis) FreezeComp(T.Value.GroundComp, true); }
+		if (bVis != T.Value.bVisible)
+		{
+			T.Value.bVisible = bVis;
+			for (UInstancedStaticMeshComponent* Cp : T.Value.Comps) if (Cp) { if (bVis) FreezeComp(Cp, false); Cp->SetVisibility(bVis); if (!bVis) FreezeComp(Cp, true); }
+		}
+		if (bGVis != T.Value.bGroundVis)
+		{
+			T.Value.bGroundVis = bGVis;
+			if (T.Value.GroundComp) { if (bGVis) FreezeComp(T.Value.GroundComp, false); T.Value.GroundComp->SetVisibility(bGVis); if (!bGVis) FreezeComp(T.Value.GroundComp, true); }
+		}
 	}
 	VisibleTowns = Vis;
 }
@@ -1280,8 +1390,8 @@ void ADmTowns::Tick(float DeltaSeconds)
 		if (Planned == Towns.Num() || Now - FirstWaveStart > 30.0)
 		{
 			bFirstWaveFill = false;
-			UE_LOG(LogDmTowns, Display, TEXT("DmTowns: first wave complete: %d of %d settlements in %.2f s (%.0f ms of plan time on workers); %s"),
-				Planned, Towns.Num(), Now - FirstWaveStart, PlanMs - FirstWavePlanMs, *Describe());
+			UE_LOG(LogDmTowns, Display, TEXT("DmTowns: first wave complete: %d of %d settlements in %.2f s (%.0f ms of plan time on workers; %d jobs in %d slices, longest slice %.1f ms CPU / %.1f ms wall, mean job %.0f ms wall); %s"),
+				Planned, Towns.Num(), Now - FirstWaveStart, PlanMs - FirstWavePlanMs, JobsDone, SlicesDone, MaxSliceCpuMs, MaxSliceMs, JobsDone ? JobWallMs / JobsDone : 0.0, *Describe());
 		}
 	}
 	{
@@ -1300,17 +1410,89 @@ void ADmTowns::Tick(float DeltaSeconds)
 
 // ------------------------------------------------------------------ units
 
-int32 ADmTowns::UnitComp(EDmTownMesh M, int32 V)
+ADmTowns::FLook ADmTowns::ResolveLook(const FDmTownPlan& P, uint32 Key) const
 {
-	const int32 Key = int32(M) * 8 + V;
-	const int32 Idx = UnitCompMesh.IndexOfByKey(Key);
+	FLook L;
+	if (!Factory) return L;
+	if (Key & ScaffoldBit)
+	{
+		const FDmKitInfo& S = Factory->Get(EDmTownMesh::Scaffold, 0);
+		L.Mesh = S.Mesh; L.Size = FMath::Max3(S.W, S.D, S.H);
+		return L;
+	}
+	const EDmTownMesh Id = DmTownsBatchKey::Mesh(Key);
+	const int32 V = DmTownsBatchKey::Var(Key), Sub = DmTownsBatchKey::Sub(Key), St = DmTownsBatchKey::State(Key);
+	if (const FDmTownAsset* A = Factory->GetAssets().Pick(Id, V, P.Age, P.Tier, Sub))
+	{
+		const int32 Su = (St >= 0 && St < int32(EDmTownState::Num) && A->Mesh[St]) ? St : 0;   // (verifier fix) the state drawn
+		L.Mesh = A->Mesh[Su];
+		const TArray<UMaterialInterface*>& M = A->Mats[Su][FMath::Clamp(int32(P.CultureStyle), 0, 3)][FMath::Clamp(int32(P.Climate), 0, 3)];
+		for (UMaterialInterface* Mi : M) if (Mi) { L.Mats = &M; break; }
+		L.Size = FMath::Max3(A->W, A->D, A->H);
+		L.bAssetCons = A->HasState(EDmTownState::Construction);
+		return L;
+	}
+	const FDmKitInfo& I = Factory->Get(Id, V);
+	L.Mesh = I.Mesh; L.Size = FMath::Max3(I.W, I.D, I.H);
+	return L;
+}
+
+UStaticMesh* ADmTowns::UnitMesh(EDmTownMesh M, int32 V, int32 Age) const
+{
+	if (!Factory) return nullptr;
+	if (const FDmTownAsset* A = Factory->GetAssets().Pick(M, V, Age, 0, 0)) if (A->Mesh[0]) return A->Mesh[0];
+	return Factory->Get(M, V).Mesh;
+}
+
+uint8 ADmTowns::CultureStyleOf(const dm::World& W, int32 CultureId) const
+{
+	// (wave 4 towns) ASSET-INTEGRATION 4.2, client-side and deterministic, from the culture's capital: Lagoon-Weaver for seafaring
+	// peoples with a harbour capital, Ring-Builder in the cold or the high quarter of the land, Cliff-Terrace in dry or steep
+	// country, else Valley. A daughter culture keeps its parent's style.
+	if (const uint8* C = CultureStyles.Find(CultureId)) return *C;
+	const dm::Culture* Cu = dm::state::culture(W, CultureId);
+	uint8 Out = uint8(EDmCultureStyle::Valley);
+	if (Cu && Cu->parent >= 0 && Cu->parent != CultureId && CultureStyles.Num() < 4096)
+	{
+		CultureStyles.Add(CultureId, Out);   // guards a cycle
+		Out = CultureStyleOf(W, Cu->parent);
+		CultureStyles.Add(CultureId, Out);
+		return Out;
+	}
+	if (ElevQ < -0.5f)
+	{
+		TArray<float> E, S;
+		for (int32 C = 0; C < W.n; ++C) if (!dm::state::isSea(W, C)) { E.Add(W.elev[size_t(C)]); S.Add(W.slope[size_t(C)]); }
+		E.Sort(); S.Sort();
+		ElevQ = E.Num() ? E[(E.Num() * 3) / 4] : 1e9f;
+		SlopeQ = S.Num() ? S[(S.Num() * 4) / 5] : 1e9f;
+	}
+	if (Cu && Cu->capital >= 0 && Cu->capital < int32(W.settlements.size()))
+	{
+		const dm::Settlement& S = W.settlements[size_t(Cu->capital)];
+		if (W.valid(S.cell))
+		{
+			const size_t C = size_t(S.cell);
+			const float T = W.temp[C], Mo = W.moist[C];
+			const bool bCold = T < 1.f, bArid = Mo < 0.3f && T > 14.f;
+			if (Cu->traits.seafaring >= 0.62 && S.b[size_t(dm::Building::PORT)]) Out = uint8(EDmCultureStyle::LagoonWeaver);
+			else if (bCold || W.elev[C] > ElevQ) Out = uint8(EDmCultureStyle::RingBuilder);
+			else if (bArid || W.slope[C] > SlopeQ) Out = uint8(EDmCultureStyle::CliffTerrace);
+		}
+	}
+	CultureStyles.Add(CultureId, Out);
+	return Out;
+}
+
+int32 ADmTowns::UnitComp(UStaticMesh* Mesh)
+{
+	if (!Mesh) return -1;
+	const int32 Idx = UnitCompMesh.IndexOfByKey(Mesh);
 	if (Idx != INDEX_NONE) return Idx;
-	const FDmKitInfo& Info = Factory->Get(M, V);
-	if (!Info.Mesh) return -1;
 	UInstancedStaticMeshComponent* C = NewObject<UInstancedStaticMeshComponent>(this);
 	C->SetMobility(EComponentMobility::Movable);
 	C->SetupAttachment(Root);
-	C->SetStaticMesh(Info.Mesh);
+	C->SetStaticMesh(Mesh);
 	C->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	C->SetCanEverAffectNavigation(false);
 	C->SetCastShadow(true);
@@ -1319,7 +1501,7 @@ int32 ADmTowns::UnitComp(EDmTownMesh M, int32 V)
 	C->SetNumCustomDataFloats(UDmTownsFactory::NumCustomData);
 	C->RegisterComponent();
 	UnitComps.Add(C);
-	UnitCompMesh.Add(Key);
+	UnitCompMesh.Add(Mesh);
 	UnitXf.AddDefaulted(); UnitCd.AddDefaulted();
 	return UnitComps.Num() - 1;
 }
@@ -1333,12 +1515,18 @@ void ADmTowns::WarmComponents()
 	static const TPair<EDmTownMesh, int32> UnitLooks[] = {
 		{ EDmTownMesh::Boat, 1 }, { EDmTownMesh::Galley, 0 }, { EDmTownMesh::SailShip, 0 }, { EDmTownMesh::Steamer, 0 }, { EDmTownMesh::CargoShip, 0 },
 		{ EDmTownMesh::Settlers, 0 }, { EDmTownMesh::Caravan, 0 }, { EDmTownMesh::Caravan, 1 }, { EDmTownMesh::Army, 0 }, { EDmTownMesh::Army, 1 }, { EDmTownMesh::Prophet, 0 } };
-	for (const TPair<EDmTownMesh, int32>& U : UnitLooks) UnitComp(U.Key, U.Value);
+	// (wave 4 towns) every age's look (real assets differ by age)
+	for (int32 Age = 0; Age < 7; ++Age)
+		for (const TPair<EDmTownMesh, int32>& U : UnitLooks) UnitComp(UnitMesh(U.Key, U.Value, Age));
 	int32 N = 0;
 	for (int32 K = 0; K < int32(EDmTownMesh::Num); ++K)
 		for (int32 V = 0; V < UDmTownsFactory::NumVariants(EDmTownMesh(K)); ++V)
 			if (UStaticMesh* M = Factory->Get(EDmTownMesh(K), V).Mesh) { Pool.Add(NewPooled(M)); ++N; }
-	UE_LOG(LogDmTowns, Display, TEXT("DmTowns: warmed %d unit components and %d kit components (the pool) in %.0f ms"), UnitComps.Num(), N, (NowS() - T0) * 1000.0);
+	// (wave 4 towns) and one per real asset mesh (first registration of a mesh costs ~15 ms: never mid-game)
+	int32 Na = 0;
+	for (UStaticMesh* M : Factory->GetAssets().AllMeshes()) if (M) { Pool.Add(NewPooled(M)); ++Na; }
+	PoolMax = FMath::Max(PoolMax, Pool.Num() + 64);
+	UE_LOG(LogDmTowns, Display, TEXT("DmTowns: warmed %d unit components, %d kit and %d real-asset components (the pool) in %.0f ms"), UnitComps.Num(), N, Na, (NowS() - T0) * 1000.0);
 }
 
 void ADmTowns::UpdateUnits(const dm::World& W, float Dt)
@@ -1354,7 +1542,7 @@ void ADmTowns::UpdateUnits(const dm::World& W, float Dt)
 	Xf.SetNum(UnitComps.Num()); Cd.SetNum(UnitComps.Num());
 	for (TArray<FTransform>& A : Xf) A.Reset();
 	for (TArray<float>& A : Cd) A.Reset();
-	auto CompFor = [this](EDmTownMesh M, int32 V) -> int32 { return UnitComp(M, V); };
+	auto CompFor = [this](EDmTownMesh M, int32 V, int32 Age) -> int32 { return UnitComp(UnitMesh(M, V, Age)); };
 	int32 Drawn = 0;
 	const double U0 = NowS();
 	for (const dm::Unit& U : W.units)
@@ -1393,7 +1581,7 @@ void ADmTowns::UpdateUnits(const dm::World& W, float Dt)
 		case dm::UnitType::Army: M = EDmTownMesh::Army; V = Age >= 4 ? 1 : 0; break;
 		case dm::UnitType::Prophet: M = EDmTownMesh::Prophet; break;
 		}
-		const int32 Ci = CompFor(M, V);
+		const int32 Ci = CompFor(M, V, Age);
 		if (Ci < 0) continue;
 		// readable at every zoom: scaled up with distance (a 20 m caravan is a few pixels from 10 km)
 		const float S = float(FMath::Clamp(CamD / DmCoords::UUPerKm * 1.5, 1.5, 20.0)) * (bSea ? 0.7f : 1.f);
@@ -1417,16 +1605,45 @@ void ADmTowns::UpdateUnits(const dm::World& W, float Dt)
 		const double C0 = NowS();
 		const int32 OldN = C->GetInstanceCount();
 		ON_SCOPE_EXIT { const double Ms = (NowS() - C0) * 1000.0; if (Ms > WorstMs) { WorstMs = Ms; WorstCi = Ci; WorstOld = OldN; } };
-		if (OldN != Xf[Ci].Num()) ++Recount; else if (Xf[Ci].Num()) ++Updated;
-		if (C->GetInstanceCount() != Xf[Ci].Num())
+		// (wave 4 towns, perf4 T3) a fixed capacity per component: a unit appearing or leaving no longer clears and re-adds every
+		// instance (that recreated the render state: 17 ms frames). Spare slots are hidden (scale 0 at a drawn unit's place, so
+		// the bounds stay tight); the capacity only grows, in powers of two, and an empty component keeps its hidden slots.
+		const int32 Want = Xf[Ci].Num();
+		if (UnitLastN.Num() < UnitComps.Num()) UnitLastN.SetNumZeroed(UnitComps.Num());
+		if (Want == 0 && UnitLastN[Ci] == 0) continue;   // already all hidden
+		UnitLastN[Ci] = Want;
+		if (Want > OldN)
 		{
-			C->ClearInstances();
-			if (Xf[Ci].Num()) { C->AddInstances(Xf[Ci], false, false, false); C->SetCustomData(0, Xf[Ci].Num() - 1, TConstArrayView<float>(Cd[Ci]), true); }
+			++Recount;
+			const int32 NewCap = FMath::Max(8, int32(FMath::RoundUpToPowerOfTwo(uint32(Want))));
+			const FTransform Hidden(FQuat::Identity, Xf[Ci][0].GetLocation(), FVector(0.f));
+			TArray<FTransform> Add;
+			Add.Init(Hidden, NewCap - OldN);
+			C->AddInstances(Add, false, false, false);
 		}
-		else if (Xf[Ci].Num())
+		else ++Updated;
+		const int32 Cap = C->GetInstanceCount();
+		if (Want < Cap)
 		{
-			C->BatchUpdateInstancesTransforms(0, Xf[Ci], false, true, true);
-			C->SetCustomData(0, Xf[Ci].Num() - 1, TConstArrayView<float>(Cd[Ci]), true);
+			FVector At = Want > 0 ? Xf[Ci][0].GetLocation() : FVector::ZeroVector;
+			if (Want == 0) { FTransform T0; if (C->GetInstanceTransform(0, T0, false)) At = T0.GetLocation(); }
+			const FTransform Hidden(FQuat::Identity, At, FVector(0.f));
+			Xf[Ci].Reserve(Cap);
+			while (Xf[Ci].Num() < Cap) Xf[Ci].Add(Hidden);
+			Cd[Ci].AddZeroed((Cap - Want) * UDmTownsFactory::NumCustomData);
+		}
+		// (wave 4 towns) instance deltas only: bMarkRenderStateDirty = true rebuilt every unit component's render proxy every
+		// frame (UE 5.7's instance data manager already sends transform and custom-data changes as GPU-scene deltas)
+		if (Cap > 0)
+		{
+			C->BatchUpdateInstancesTransforms(0, Xf[Ci], false, false, true);
+			// custom data (culture colour, lit fraction) changes rarely: only when it did
+			const TArray<float>& Old = C->PerInstanceSMCustomData;
+			if (Old.Num() != Cd[Ci].Num() || FMemory::Memcmp(Old.GetData(), Cd[Ci].GetData(), Cd[Ci].Num() * sizeof(float)) != 0)
+				C->SetCustomData(0, Xf[Ci].Num() - 1, TConstArrayView<float>(Cd[Ci]), false);
+			// the moved instances' bounds reach the proxy with a transform update (cheap), not a proxy rebuild
+			C->UpdateBounds();
+			C->MarkRenderTransformDirty();
 		}
 	}
 	for (auto It = Movers.CreateIterator(); It; ++It) if (It.Value().Seen != UnitFrame) It.RemoveCurrent();
@@ -1481,8 +1698,8 @@ FString ADmTowns::Describe() const
 		const FDmTownPlan& P = *T.Value.Plan;
 		Houses += P.Houses; Fields += P.Fields; Inst += P.Inst.Num(); Tris += P.Ground.NumTris(); Piers += P.Piers; Walls += P.WallPieces;
 	}
-	return FString::Printf(TEXT("%d settlements, %d instances (%d houses), %d fields, %d piers, %d wall pieces, %d overlay tris, %d components, ground %s"),
-		Towns.Num(), Inst, Houses, Fields, Piers, Walls, Tris, NumComponents(), Ground.IsValid() ? Ground->SourceName() : TEXT("none"));
+	return FString::Printf(TEXT("%d settlements, %d instances (%d houses), %d fields, %d piers, %d wall pieces, %d overlay tris, %d components (%d visible, %d building components drawn), ground %s"),
+		Towns.Num(), Inst, Houses, Fields, Piers, Walls, Tris, NumComponents(), VisibleTowns, VisibleComps, Ground.IsValid() ? Ground->SourceName() : TEXT("none"));
 }
 
 TArray<FVector> ADmTowns::SmokeAnchors() const
@@ -1525,8 +1742,8 @@ int32 ADmTowns::CheckConsistency(FString& Out) const
 			const UInstancedStaticMeshComponent* C = Tw.Comps[K];
 			if (!C) { Fail(T.Key, TEXT("null component")); continue; }
 			N += C->GetInstanceCount();
-			const uint32 Key = Tw.CompKeys.IsValidIndex(K) ? (Tw.CompKeys[K] & ~ScaffoldBit) : 0;
-			if (Factory && C->GetStaticMesh() != Factory->Get(EDmTownMesh(Key >> 8), int32(Key & 0xff)).Mesh) Fail(T.Key, TEXT("component mesh differs from its batch"));
+			const uint32 Key = Tw.CompKeys.IsValidIndex(K) ? Tw.CompKeys[K] : 0;
+			if (Factory && C->GetStaticMesh() != ResolveLook(P, Key).Mesh) Fail(T.Key, TEXT("component mesh differs from its batch"));
 			if (C->GetVisibleFlag() != Tw.bVisible) Fail(T.Key, TEXT("component visibility"));
 			if (C->IsUsingAbsoluteLocation() == Tw.bVisible) Fail(T.Key, TEXT("frozen state"));
 			if (Tw.bVisible && !C->GetComponentLocation().Equals(LastPlanet.TransformPosition(P.Centre), 10.0)) Fail(T.Key, TEXT("component not at the plan centre"));
@@ -1535,8 +1752,8 @@ int32 ADmTowns::CheckConsistency(FString& Out) const
 		if (N != P.Inst.Num()) Fail(T.Key, FString::Printf(TEXT("%d instances drawn, plan has %d"), N, P.Inst.Num()));
 		const bool bWantGround = P.Ground.NumTris() > 0 && Factory && Factory->GroundMat();
 		if (bWantGround != (Tw.GroundComp != nullptr && Tw.GroundComp->GetStaticMesh() != nullptr)) Fail(T.Key, TEXT("ground overlay"));
-		if (Tw.GroundComp && Tw.GroundComp->GetVisibleFlag() != Tw.bVisible) Fail(T.Key, TEXT("ground visibility"));
-		if (Tw.GroundComp && Tw.bVisible && !Tw.GroundComp->GetComponentLocation().Equals(LastPlanet.TransformPosition(P.Centre), 10.0)) Fail(T.Key, TEXT("ground not at the plan centre"));
+		if (Tw.GroundComp && Tw.GroundComp->GetVisibleFlag() != Tw.bGroundVis) Fail(T.Key, TEXT("ground visibility"));
+		if (Tw.GroundComp && Tw.bGroundVis && !Tw.GroundComp->GetComponentLocation().Equals(LastPlanet.TransformPosition(P.Centre), 10.0)) Fail(T.Key, TEXT("ground not at the plan centre"));
 	}
 	// (towns-perf verifier) coverage and freshness. The checks above compare what is drawn with the plan, so a settlement that
 	// never got a plan, or kept an out-of-date one, passed them (after an age change at 8x half the settlements in the city

@@ -1,0 +1,170 @@
+2026-11-23 wave4 track "towns" (lane towns4, owned list Unreal/lanes/towns4.owned: Source/Demiurge/Game/Towns/**, Content/Assets/**,
+Scripts/assets/import_assets.py). Resumed run: the first run (2026-11-20) wrote most of the code and was stopped by the weekly
+limit before it synced; this run refreshed the lane from main (109 files), rebuilt it, finished and measured the five items.
+
+STATUS: BUILT IN THE LANE, NOT SYNCED TO MAIN.
+- `lane.ps1 sync towns4 -Force` was denied for this agent by the permission system (same as wave3-final). Without -Force the
+  sync refuses every file: `integration` claims Game/** and `assetimport` claims Scripts/assets/** and Content/Assets/**.
+- The owner or lead has to run:  powershell -NoProfile -ExecutionPolicy Bypass -File Unreal/lane.ps1 sync towns4 -Force
+  then touch the synced .cpp/.h files (release-notes tooling issue 8) and run Unreal/build.ps1 on main.
+- No merge is needed: `lane.ps1 status towns4` shows every owned source file as "yours" or "lane only". Main has not changed
+  any towns file since the lane took its base.
+- The sync also copies Content/Assets (1,006 files, 473 MB: the imported Blender meshes, materials and textures the towns use).
+  Main has no Content/Assets today. Without it, main draws the generated stand-ins (the factory falls back per kit id).
+- Lane build: Succeeded, 0 errors, 0 warnings (last build 2026-11-23 22:02). Unreal/build.ps1 on main was NOT run: nothing
+  of this track is in main yet.
+
+MACHINE: shared all evening. CPU was at 100 % almost the whole time (another agent's simrun-fam used ~11 cores) and up to 3
+other Unreal games ran at once. render_slot waits were 10-60 min per run. Every absolute frame time below comes from the
+editor -game build on that loaded machine. Compare runs with each other, not with the 60 fps target.
+
+======================================================================== 1. EXIT
+- ADmTowns::JoinAll never waits. Planning is now a chain of short slices (FDmTownPlanStepper). Each slice checks a cancel
+  flag. Jobs own everything they read (shared snapshot, ground and kit table), so EndPlay cancels them and lets them go.
+  The ground job and late probes go to a cleanup task.
+- Measured: "DmTowns: abandoned 3-6 planning jobs ... in 0.00-0.01 ms". Before: "joined 7 planning tasks in 47203 ms"
+  (perf4), and 43-60 s in wave 3.
+- Whole-game exit after the scenario finished (RequestExit -> log closed): towns-look 3.2 s, towns-look stand-ins 3.9 s,
+  perf-play 1.3 s (tw4b). That is under 5 s.
+- Final code, sky-check-w4z: RequestExit 03:34:19.191 -> log closed 03:34:19.949, so 0.76 s, with 3 jobs abandoned while
+  running.
+- The first sky-check tonight took 18 s. Towns EndPlay itself took 0 ms there. The 16.6 s gap was in engine teardown,
+  between "Destroying PakPlatformFile" and "~FD3D12DynamicRHI", on the loaded machine.
+- ENGINE ASSERT AT EXIT (not towns; for Core / bridge): "Assertion failed: Work->GetRefCount() == 0
+  [QueuedThreadPoolWrapper.cpp:167]". GThreadPool is torn down while work is still queued, then the crash handler takes
+  ~40 s. It happened in 4 of my 10 runs (perf-play tw4a, tw4t, tw4f; towns-look w4f). It also happens in lanes whose towns
+  code still joins every task: camera4b-verify shot-cam-limb (after "joined 8 planning tasks in 43099 ms"), perf4,
+  audio4b-verify, planet4-verify and towns3. Every case also has "DmSky: EndPlay left a weather build running" or the
+  planet's patch jobs, both of which use Async(EAsyncExecution::ThreadPool).
+  I tried a bounded 2 s wait in towns EndPlay for the cancelled jobs. It did not stop the assert (towns-look-w4f still
+  crashed) and it cost 2 s, so I removed it. The comment in JoinAll records this.
+  Proposed fix (owner: Core / bridge, with sky and planet): keep a handle to every GThreadPool job and retract or wait for
+  it in the owning actor's EndPlay. Or move those jobs to UE::Tasks, which shut down cleanly with work still queued.
+
+======================================================================== 2. TASK PRIORITY / SKY
+- Plans no longer run at Normal or BackgroundHigh. Settlements in view plan at BackgroundNormal, the others at BackgroundLow,
+  in slices of about 6 ms (-townslice=). A settlement that comes into view while its job is running is promoted in place
+  (its next slice runs at the in-view priority). Before, it was orphaned and planned again from scratch.
+- Job slots: 3 in view and 3 out of view. The first wave adds no extra slots. The ground job is BackgroundNormal for the
+  initial ground and BackgroundLow after that.
+- sky-check with towns on: DmCheck RESULT PASS (0 failed), including "weather maps rebuilt while sky time runs (1 new)".
+  Log: Unreal/Lanes/towns4/Saved/Logs/shot-sky-check.log. Towns planned the first wave in the background at the same time
+  ("first wave of 96 settlements planned in the background").
+- Final code: shot-sky-check-w4z.log, DmCheck RESULT PASS (0 failed), "weather maps rebuilt while sky time runs (3 new)".
+- Remaining: the longest slice is 303-447 ms of CPU (new per-slice thread-CPU measurement; wall time on the loaded machine
+  was 5-16 s). Two plan phases do not slice: raster (FindCoast + BuildRaster) and overlay (BuildOverlay). -townlog plan
+  lines now print the time per phase. Wall times from perf-play-tw4b: raster up to 1.29 s, overlay up to 2.6 s, height grid
+  up to 0.72 s (sliced in bands). The next step is to slice those two by rows, as the height grid already is.
+
+======================================================================== 3. HITCHES / PER-FRAME COST
+Towns' own game-thread work is small and not the hitch source:
+- towns tick CPU avg 0.27-0.33 ms, p99 0.7-2.9 ms, max 2.5-5.5 ms (-townperf).
+- Frames over 33 ms attributed to towns: 0-2 of 2,130.
+- Every "DmHitch" frame (perf4's frame monitor) was tagged outside the frame, render thread, sim, or game thread busy with
+  towns under 3 ms. The 75-650 ms hitches are the machine and the other modules, not towns.
+What towns did cost is the render thread (and some game thread) per drawn component in live play. The planet turns every
+frame, so every visible town component is moved every frame. perf-play, 8x, -stop=low+close, editor, loaded machine:
+| run (lane log)                               | low: fps / render / game ms | close: fps / render / game ms |
+| towns off (shot-perf-play-tw4n)              | 52 / 18.7 / 13.0            | 46 / 20.0 / 15.8              |
+| real assets, no tier hide (tw4a)             | 26 / 38.5 / 17.9            | 28 / 36.1 / 16.9              |
+| real assets + tier hide (tw4b)               | 34 / 28.2 / 15.4            | 36 / 26.2 / 13.5              |
+| final code (tw4f; one 3.2 s frame at low)    | 21 / 28.7 / 30.5            | 45 / 21.0 / 12.5              |
+Fixes in this track:
+- (new) Buildings of small settlements are hidden by tier: 10 / 18 / 28 / 45 / 70 km for camp, village, town, city,
+  metropolis (5 % hysteresis; -townhidetier=<scale>, 0 = off). A village's 6-10 m houses are under one pixel beyond about
+  18 km. Fields and streets stay drawn out to HideKm (70 km), so the ground does not pop. Hidden components are frozen (no
+  transform updates). perf-play low view: from 1,427 components with 323 drawn down to 4-5 visible settlements. Render
+  thread fell 38.5 -> 28.2 ms (low) and 36.1 -> 26.2 ms (close), on a machine whose load differed between runs.
+- (new, perf4 T3) Unit components have a fixed capacity that only grows, in powers of two (minimum 8). Spare slots are
+  hidden (scale 0). Components with no units are skipped. No more ClearInstances + AddInstances render-state rebuilds when
+  a unit appears or leaves. Unit components now update instance deltas only (MarkRenderTransformDirty, no proxy rebuild).
+- (first run) Applies are budgeted (2 ms), launches are capped, and the construction diff runs on the worker.
+- Still over budget: about 8 ms of extra render-thread time with 300-500 drawn components in live play. Next step, in
+  order: merge each settlement's batches per cell into fewer components, and test whether the 263 Nanite ISM components
+  get cheaper if their transform is not touched every frame (one planet-fixed parent). An Unreal Insights trace of the
+  low view would decide this; the machine was too loaded tonight.
+
+======================================================================== 4. REAL BLENDER ASSETS
+- Import: Unreal/Scripts/assets/import_assets.ps1 into the lane (first run, 2026-11-20): DMI RESULT PASS, 0 plan issues.
+  It imported age0-age6, ship, unit, wonder and shrine (534 meshes planned, 286 material instances, 224 textures). The
+  importer's game LOD profile was used. Building-class meshes are Nanite: the towns log says "real assets: 114 of 114
+  mapped assets loaded (295 meshes with their states, 263 Nanite, 3720 slot variants), 742 table entries". The one
+  importer change makes M_DmKit compile for Nanite (HLSL 2021 rejects a vector ternary; it uses select() now).
+- Factory (DmTownsAssets.h/.cpp, DmTownsKit, DmTownsPlan, DmTownsActor):
+  - The ASSET-INTEGRATION 4.1 table maps kit id x variant x age (and tier for the Atomic height classes Low / Mid / High)
+    to assets. Several assets for one entry are alternatives, picked per building by hash (FDmTownInst::Sub).
+  - The planner places each building with the real asset's footprint per age (FDmKitTable::GetAt).
+  - States: a new building shows the asset's own _Construction mesh. A dead town shows each asset's own _Ruin on the same
+    footprint.
+  - Culture style is computed per culture from its capital (ASSET-INTEGRATION 4.2): Valley, Cliff-Terrace,
+    Lagoon-Weaver or Ring-Builder. Daughter cultures inherit their parent's style.
+  - Climate instances (Age0, wonders-a) and culture-style instances are component material overrides. Per-instance tint,
+    window light and state stay in custom data. MPC_DmAssets gets the planet frame, night override and glow.
+  - LODs: Nanite for buildings, so the plain ISMs keep custom data and get per-cluster detail.
+  - Units and ships use the real meshes by type and age.
+  - Pool warming registers one component per asset mesh at world load, so no mesh is registered for the first time
+    mid-game.
+  - The generated stand-ins remain for every gap: piers, Villa, MarketHall, TempleLate, Windmill and the others in 4.9.
+    -townassets=0 turns the assets off for A/B.
+- Load cost: the assets load synchronously once at world load: 4.3 s on a warm DDC, 87 s on a cold one under load.
+  Editor only: the first launch after the import, or after a DDC invalidation (it happened again after tonight's refresh),
+  builds the distance fields and Lumen cards of every asset mesh on the game thread before frame 1. That was 40-50 min on
+  this loaded machine. Cooked builds do not pay it.
+  Suggestion: drop DF generation for the _Construction / _Ruin states in the importer, or warm only the age in play.
+- Not done: the culture overlay meshes (art/culture: A/B/C roofs, stilts, drum houses), socket-driven smoke and crowns,
+  and FDmTownInput::Damage -> _Damaged.
+
+======================================================================== 5. GROUND NEAR TOWNS
+- Fields (first run, DmTownsPlan PlanFields): organic parcels after docs/lab/ground.md 5.1-5.2.
+  - Holdings are warped Voronoi cells. Each takes its direction from the contours on slopes, or from a smooth regional
+    grain otherwise.
+  - Holdings are cut into furlongs (long strips whose ends line up) or irregular polygons.
+  - Each field is tilled or left fallow on its own, so farmland frays into meadow. Hedges and tracks run between holdings.
+  - Crop colours depend on climate. Each parcel polygon is cut by an ~18 m grid in its own frame, so it drapes over the
+    terrain.
+- (new) The plaza is now rings of ~7 m that drape over the slope. Before, it was one flat fan of 10-40 triangles. It also
+  has a ragged worn edge, darker paving with per-vertex tone, and half the old lamp emission, so it no longer glows white
+  at night.
+- Still a patchwork at 2 km: the large straight-edged rectangles beyond the town are the PLANET's farmland paint (they
+  show with -townfields=0 too: shots/ue-towns-town-nofields-fields-day.png). That belongs to the planet owner and the
+  ground.md land-use layer.
+
+======================================================================== SHOTS (all looked at)
+After (final code, real assets): shots/ue-towns-town-w4f-{40,300,2km}-{day,night}.png
+  - towns-look, settlement 59 (a Sail-age town).
+  - Frame avg over the 120 frames before each shot: 9.7 / 12.1 / 22.5 ms by day, 16.4 / 23.6 / 38.3 ms at night (loaded).
+Same views before the plaza change: shots/ue-towns-town-w4-*.png.
+Stand-ins in the same lane (A/B, -townassets=0): shots/ue-towns-town-w4stand-{40,300,2km}-day.png.
+Before (main's code, 2026-11-20: stand-ins and slab fields): shots/ue-towns-town-before-{40,300,2km}-{day,night}.png.
+Look notes:
+- 300 m: Sail-age townhouses with tiled roofs, dormers, chimneys and stone courses. The civic dome and the half-timbered
+  and thatched cottages read as different buildings. The stand-ins are flat-coloured boxes.
+- 40 m: window frames, shutters and masonry are visible.
+- 2 km: the walled town and its organic fields read well.
+- Not towns: night still renders as daylight and the sea at 2 km is white fog (sky / planet, release-notes issue 1). The
+  "40 m" view frames the plaza, so it shows the street-facing houses across it.
+
+======================================================================== FILES (lane: Unreal/Lanes/towns4)
+Source/Demiurge/Game/Towns:
+- DmTownsActor.cpp/.h (jobs, priorities, exit, units, tier hide, assets look)
+- DmTownsAssets.cpp/.h (new: the asset table)
+- DmTownsKit.cpp/.h (asset loading, kit table, MPC)
+- DmTownsPlan.cpp/.h (stepper, phase timing, fields, plaza)
+- DmTownsScenarios.cpp (towns-look)
+Scripts/assets/import_assets.py (Nanite-safe select()). Content/Assets/** (imported).
+New switches:
+- -townslice=<ms>: slice length.
+- -townhidetier=<scale>: tier hide distances (0 = off).
+- -townassets=0: stand-ins only.
+- -townlog: plan lines now include the time per phase.
+- -looktag= and -lookseq=: towns-look views.
+
+FOR THE LEAD
+1. Run the sync with -Force (above), touch the synced files, run build.ps1 on main.
+2. Route the GThreadPool exit assert to Core / bridge, with sky and planet.
+3. Towns next: slice raster and overlay; fewer components per settlement; an Insights trace of perf-play low; culture
+   overlays; _Damaged.
+Self-assessment: 6/10.
+- Exit, priority (sky-check PASS), the asset swap and organic fields work.
+- Live frame cost near towns is better but still above budget.
+- Nothing is in main yet.

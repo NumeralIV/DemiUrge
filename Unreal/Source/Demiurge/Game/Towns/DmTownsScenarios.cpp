@@ -23,8 +23,15 @@
 #include "Game/Core/DmScenario.h"
 #include "Game/Core/DmSimSubsystem.h"
 
+#include "Game/Core/DmGameMode.h"
+
 #include "Engine/World.h"
 #include "HAL/PlatformTime.h"
+#include "Misc/Paths.h"
+#include "ShaderCompiler.h"
+#if WITH_EDITOR
+#include "StaticMeshCompiler.h"
+#endif
 #include "Sim/State.h"
 
 namespace
@@ -190,6 +197,106 @@ static FDmScenarioRegistrar GTownsVillage(TEXT("towns-village"), TEXT("towns"), 
 static FDmScenarioRegistrar GTownsTown(TEXT("towns-town"), TEXT("towns"), TEXT("the largest town, close"), [](FDmScenarioContext& Ctx) { TierScenario(Ctx, 2); }, TickLog);
 static FDmScenarioRegistrar GTownsCity(TEXT("towns-city"), TEXT("towns"), TEXT("the largest city, close"), [](FDmScenarioContext& Ctx) { TierScenario(Ctx, 3); }, TickLog);
 static FDmScenarioRegistrar GTownsMetro(TEXT("towns-metro"), TEXT("towns"), TEXT("the largest metropolis, close"), [](FDmScenarioContext& Ctx) { TierScenario(Ctx, 4); }, TickLog);
+
+// (wave 4 towns) towns-look: the towns-town framing (-looktier=, -townid=, -townkm=, -townpitch=, -sunang=), but the shot waits
+// until the framed settlement is planned and drawn, its in-view neighbours too, and the shader and mesh compilers are idle
+// for 90 frames (a first launch after the asset import compiles M_DmKit and builds distance fields for minutes: the harness
+// shot at -warm frames showed fallback checkers). Writes shots/ue-towns-<-looktag=>.png and logs the frame times of the
+// 120 frames before the shot (DmTownsLook lines). Run with -noshot.
+namespace
+{
+	struct FTownsLook { int32 Sid = -1; int32 Ready = -1; int32 Idle = 0; int32 Step = 0; TArray<float> Ms; double TownsMax = 0; };
+	FTownsLook GLook;
+}
+static FDmScenarioRegistrar GTownsLook(TEXT("towns-look"), TEXT("towns"), TEXT("towns-town framing, shot once the town is drawn and the compilers are idle (-looktag=)"),
+	[](FDmScenarioContext& Ctx)
+	{
+		Ctx.BuildScene();
+		Ctx.HoldExit();
+		GLook = FTownsLook();
+		const dm::World* W = Ctx.Sim->Sim();
+		if (!W) return;
+		int32 Tier = 2;
+		FDmShotArgs::Value(TEXT("-looktier="), Tier);
+		GLook.Sid = Pick(*W, [&](const dm::Settlement& S) { return (S.tier == Tier ? 1e6 : -1e6 * FMath::Abs(S.tier - Tier)) + S.pop; });
+		FString Seq;
+		double Km = CloseKm(*W, GLook.Sid), Pitch = 38.0, Sun = 48.0;
+		if (FDmShotArgs::Value(TEXT("-lookseq="), Seq))
+		{
+			TArray<FString> Views, P;
+			Seq.ParseIntoArray(Views, TEXT(","));
+			if (Views.Num()) Views[0].ParseIntoArray(P, TEXT("/"));
+			if (P.Num() > 0) Km = FCString::Atod(*P[0]);
+			if (P.Num() > 1) Pitch = FCString::Atod(*P[1]);
+			if (P.Num() > 2) Sun = FCString::Atod(*P[2]);
+		}
+		Frame(Ctx, GLook.Sid, Km, 25.0, Pitch, Sun);
+	},
+	[](FDmScenarioContext& Ctx, float Dt)
+	{
+		ApplyFrame(Ctx);
+		ADmTowns* T = ADmTowns::Find(Ctx.World);
+		if (!T || GLook.Sid < 0) { if (Ctx.Frame > 9000) Ctx.Finish(); return; }
+		GLook.Ms.Add(Dt * 1000.f);
+		if (GLook.Ms.Num() > 120) GLook.Ms.RemoveAt(0, 1, EAllowShrinking::No);
+		GLook.TownsMax = FMath::Max(GLook.TownsMax, T->TakeMaxTickMs());
+		const bool bDrawn = T->GetPlan(GLook.Sid) && !GFrame.bPending;
+		const bool bCompiling = (GShaderCompilingManager && GShaderCompilingManager->IsCompiling())
+#if WITH_EDITOR
+			|| FStaticMeshCompilingManager::Get().GetNumRemainingMeshes() > 0
+#endif
+			;
+		if (bDrawn && GLook.Ready < 0) { GLook.Ready = Ctx.Frame; Ctx.Log(FString::Printf(TEXT("DmTownsLook: settlement %d drawn at frame %d (%.1f s)"), GLook.Sid, Ctx.Frame, Ctx.Time)); }
+		GLook.Idle = (bDrawn && !bCompiling) ? GLook.Idle + 1 : 0;
+		const bool bTimeout = Ctx.Frame - FMath::Max(GLook.Ready, 0) > 9000;
+		if ((GLook.Ready >= 0 && GLook.Idle >= 90 && Ctx.Frame - GLook.Ready >= 240) || bTimeout)
+		{
+			// -lookseq=km/pitch/sunang[/tag],... : several views in one run (each re-framed, settled and shot in turn)
+			FString Tag = TEXT("look"), Seq;
+			FDmShotArgs::Value(TEXT("-looktag="), Tag);
+			FDmShotArgs::Value(TEXT("-lookseq="), Seq);
+			TArray<FString> Views;
+			Seq.ParseIntoArray(Views, TEXT(","));
+			FString ViewTag;
+			if (Views.IsValidIndex(GLook.Step))
+			{
+				TArray<FString> P; Views[GLook.Step].ParseIntoArray(P, TEXT("/"));
+				ViewTag = P.Num() >= 4 ? P[3] : FString::FromInt(GLook.Step);
+			}
+			const FString Name = ViewTag.IsEmpty() ? Tag : Tag + TEXT("-") + ViewTag;
+			double Sum = 0, Mx = 0; for (float M : GLook.Ms) { Sum += M; Mx = FMath::Max(Mx, double(M)); }
+			Ctx.Log(FString::Printf(TEXT("DmTownsLook: %s at frame %d (%.1f s)%s: frame avg %.2f ms max %.2f ms over %d frames, towns tick max %.2f ms; %s"),
+				*Name, Ctx.Frame, Ctx.Time, bTimeout ? TEXT(" TIMEOUT (still compiling)") : TEXT(""), GLook.Ms.Num() ? Sum / GLook.Ms.Num() : 0.0, Mx, GLook.Ms.Num(), GLook.TownsMax, *T->Describe()));
+			Ctx.ShotPath(FPaths::Combine(Ctx.Mode->ShotsDir(), FString::Printf(TEXT("ue-towns-%s.png"), *Name)), false);
+			GLook.TownsMax = 0;
+			if (Views.IsValidIndex(++GLook.Step))
+			{
+				TArray<FString> P; Views[GLook.Step].ParseIntoArray(P, TEXT("/"));
+				const double Km = P.Num() > 0 ? FCString::Atod(*P[0]) : 0.3, Pitch = P.Num() > 1 ? FCString::Atod(*P[1]) : 35.0, Sun = P.Num() > 2 ? FCString::Atod(*P[2]) : 48.0;
+				// re-aim at the plaza and move the sun (SunAng from the zenith, toward the camera's right-front)
+				GFrame = { GLook.Sid, Km, 25.0, Pitch, true };
+				if (const dm::World* W = Ctx.Sim->Sim())
+				{
+					const dm::Settlement& S = W->settlements[size_t(GLook.Sid)];
+					const FVector Up = DmCoords::CellDir(*W, S.cell);
+					FVector E, N; DmCoords::Basis(Up, E, N);
+					const double H = FMath::DegreesToRadians(25.0 + 70.0), A = FMath::DegreesToRadians(Sun);
+					const FVector Sub = (Up * FMath::Cos(A) + (N * FMath::Cos(H) + E * FMath::Sin(H)) * FMath::Sin(A)).GetSafeNormal();
+					double SLat, SLon; DmCoords::DirToLatLon(Sub, SLat, SLon);
+					Ctx.Sim->UnpinSun();
+					Ctx.SetSubsolar(SLat, SLon);
+				}
+				GLook.Ready = Ctx.Frame;
+				GLook.Idle = 0;
+				GLook.Ms.Reset();
+			}
+			else
+			{
+				Ctx.Finish();
+				GLook.Sid = -1;
+			}
+		}
+	});
 
 static FDmScenarioRegistrar GTownsPort(TEXT("towns-port"), TEXT("towns"), TEXT("a port seen from the sea"),
 	[](FDmScenarioContext& Ctx)

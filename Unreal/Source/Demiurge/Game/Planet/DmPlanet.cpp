@@ -1,6 +1,8 @@
 // DEMIURGE — Game/Planet/DmPlanet.cpp : see the header. Owner: C1 planet.
 
 #include "Game/Planet/DmPlanet.h"
+
+#include <algorithm>
 #include "Game/Planet/DmPlanetNoise.h"
 #include "Game/Core/DmCoords.h"
 #include "Game/Core/DmScenario.h"
@@ -31,6 +33,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogDmPlanet, Log, All);
 
 namespace
 {
+	bool GDmNoWaterLift = false;   // (wave 4) -planetnowaterlift: the water on the sea sphere (A/B of the lift in BuildPatch)
 	constexpr double DatumM = FDmPlanetTerrain::DatumM;
 	constexpr double RadiusCm = 1.0e7;
 	inline FVector3d Nrm(const FVector3d& V) { return V * (1.0 / FMath::Sqrt(FMath::Max(V | V, 1e-300))); }
@@ -72,6 +75,7 @@ void ADmPlanet::BeginPlay()
 		if (FDmShotArgs::Value(TEXT("-planetmaxlevel="), Ml) && Ml > 0) MaxLevel = FMath::Clamp(Ml, 1, 16);
 		bLogLod = FDmShotArgs::Param(TEXT("planetlog"));
 		bNoCull = FDmShotArgs::Param(TEXT("planetnocull"));   // debug: split out-of-view patches too
+		GDmNoWaterLift = FDmShotArgs::Param(TEXT("planetnowaterlift"));
 		FString Ov;
 		if (FDmShotArgs::Value(TEXT("-overlay="), Ov))
 		{
@@ -144,6 +148,22 @@ void ADmPlanet::EndPlay(const EEndPlayReason::Type Reason)
 		Sim->OnWorldChanged.Remove(WorldHandle);
 	}
 	// wait for worker jobs that reference our data (they only hold shared pointers, so this is just tidy)
+	// (wave 4 verify) ...and so the engine never tears its thread pool down under queued patch builds: a genesis run that
+	// exited with 64 builds in flight died in the pool's destructor ("Assertion failed: Work->GetRefCount() == 0",
+	// QueuedThreadPoolWrapper.cpp, shot-p4v-gen.log). Bounded (2 s), so a long terrain job cannot hold up the exit.
+	{
+		auto Busy = [this]()
+		{
+			if (TerrainJob.IsValid() && !TerrainJob->bDone.load()) return true;
+			if (RiverJob.IsValid() && !RiverJob->bDone.load()) return true;
+			if (MapJob.IsValid() && !MapJob->bDone.load()) return true;
+			for (const FDmQNode& N : Nodes) if (N.bBuilding && N.Pending.IsValid() && !N.Pending->bDone.load()) return true;
+			return false;
+		};
+		const double T0 = FPlatformTime::Seconds();
+		while (Busy() && FPlatformTime::Seconds() - T0 < 2.0) FPlatformProcess::Sleep(0.005f);
+		UE_LOG(LogDmPlanet, Display, TEXT("DmPlanet: end play: worker jobs %s after %.0f ms"), Busy() ? TEXT("STILL RUNNING") : TEXT("done"), (FPlatformTime::Seconds() - T0) * 1000.0);
+	}
 	Super::EndPlay(Reason);
 }
 
@@ -264,6 +284,24 @@ void ADmPlanet::UpdateMaterialParams()
 		// (wave 3) metres the sea stands above the ground's datum (the base sea): ground between the two levels is
 		// drowned land (silt, drowned meadows, turbid green shallows), not the pale sea floor of a natural shelf
 		M->SetScalarParameterValue(TEXT("SeaRise"), Terr ? float(FMath::Max(Terr->SeaM - Terr->RefM, 0.0)) : 0.f);
+	}
+	if (LandMid)
+	{
+		// (wave 4) genesis looks: the molten crust splits into rafts and basins at the 38th-percentile cell's rendered height
+		// (the future continents and seas, docs/concept/genesis 1); the life wave's front rides in map 3 alpha
+		if (Heat > 0.f && Terr && Terr->Elev.Num())
+		{
+			if (MoltenTerrVersion != Terr->Version)
+			{
+				TArray<float> E = Terr->Elev;
+				const int32 Mid = E.Num() * 38 / 100;   // about a third of the crust is molten sea (docs/concept/genesis 1)
+				std::nth_element(E.GetData(), E.GetData() + Mid, E.GetData() + E.Num());
+				MoltenM = Terr->RefM + Terr->MapElev(double(E[Mid]) - Terr->RefLevel);
+				MoltenTerrVersion = Terr->Version;
+			}
+			LandMid->SetScalarParameterValue(TEXT("MoltenR"), float(RadiusCm + MoltenM * 100.0));
+		}
+		LandMid->SetScalarParameterValue(TEXT("LifeFront"), W && W->phase == dm::Phase::Life ? 1.f : 0.f);
 	}
 }
 
@@ -821,7 +859,7 @@ void ADmPlanet::Release(int32 Ni)
 void ADmPlanet::Apply(int32 Ni, FDmPatchData& D)
 {
 	FDmQNode& N = Nodes[Ni];
-	N.MinH = D.MinH; N.MaxH = D.MaxH; N.LandTris = D.LandTris; N.WaterTris = D.WaterTris;
+	N.MinH = D.MinH; N.MaxH = D.MaxH; N.LandTris = D.LandTris; N.WaterTris = D.WaterTris; N.WaterLiftM = D.WaterLiftM;
 	for (int32 E = 0; E < 3; ++E) { N.BuiltNb[E] = D.BuiltNb[E]; N.BuiltGen[E] = D.BuiltGen[E]; }
 	N.Version = D.Version;
 	BuildMsTotal += D.Ms; ++BuildsTotal;
@@ -1061,13 +1099,42 @@ void ADmPlanet::BuildPatch(const FDmPlanetTerrain& T, const FDmQNode& N, int32 K
 		}
 	if (MinH < T.SeaM + 2.0 || bAnyLake)
 	{
+		// (wave 4) The sky's atmosphere ground (SkyAtmosphere bottom radius) is the sea sphere, and the engine shadows
+		// every point inside it from the sun (GetAtmosphereTransmittance's virtual-planet test, used by the sun's
+		// per-pixel transmittance). Flat water triangles with their corners on that sphere sag below it in between,
+		// so the sea got no sun at all: no glint, no lit in-scattering, only the sky light's navy, and patches of
+		// different triangle sizes shaded differently (the pale straight-edged polygons on the planet card). The water
+		// is lifted by the deepest sag of this patch's water triangles plus a few centimetres, so every water pixel
+		// sits just above the sphere. (Water edges then no longer follow a coarser neighbour's chords: the skirts
+		// below cover the step, at most a few metres where the triangles are kilometres wide.)
+		const int32 DwL = bOpenSea ? 4 : 1;
+		double SagCm = 0.0;
+		{
+			auto Sag = [&](int32 A, int32 B, int32 C)
+			{
+				const FVector3d Pa = Dir[A] * SeaCm, Pb = Dir[B] * SeaCm, Pc = Dir[C] * SeaCm;
+				const FVector3d Nn = (Pb - Pa) ^ (Pc - Pa);
+				const double L = Nn.Length();
+				if (L <= 0.0) return;
+				SagCm = FMath::Max(SagCm, SeaCm - FMath::Abs((Nn / L) | Pa));
+			};
+			for (int32 I = 0; I < K; I += DwL)
+				for (int32 J = 0; I + J < K; J += DwL)
+				{
+					Sag(Idx(I, J), Idx(I + DwL, J), Idx(I, J + DwL));
+					if (I + J < K - DwL) Sag(Idx(I + DwL, J), Idx(I + DwL, J + DwL), Idx(I, J + DwL));
+				}
+		}
+		const double LiftCm = GDmNoWaterLift ? 0.0 : SagCm * 1.02 + 6.0;
+		for (int32 V = 0; V < NV; ++V) WPosA[V] = Dir[V] * (SeaCm + LiftCm);
+		O.WaterLiftM = float(LiftCm / 100.0);
 		TMap<uint64, int32> Map;
 		auto WVert = [&](int32 Src, int32 Kind, double LevelM) -> int32
 		{
 			const uint64 Key = (uint64(uint32(Src)) << 32) | uint64(uint32(Kind == 0 ? 0 : 1 + FMath::Clamp(FMath::RoundToInt((LevelM + 20000.0) * 4.0), 0, 0x7FFFFFF0)));
 			if (const int32* F = Map.Find(Key)) return *F;
 			const int32 Id = O.WV.Num();
-			const FVector3d P = Kind == 0 ? WPosA[Src] : Nrm(PosA[Src]) * (RadiusCm + LevelM * 100.0);
+			const FVector3d P = Kind == 0 ? WPosA[Src] : Nrm(PosA[Src]) * (RadiusCm + LevelM * 100.0 + LiftCm);
 			O.WV.Add(ToUE(P - OriginSim));
 			O.WN.Add(ToUE(Dir[Src]));
 			O.WU0.Add(FVector2D(float(FMath::Clamp(LevelM - Hs[Src], -1000.0, 9000.0)), At[Src].RiverD));
@@ -1276,6 +1343,9 @@ FString ADmPlanet::StatsLine() const
 {
 	FString Lv;
 	for (int32 L = 0; L < 20; ++L) if (LevelCount[L]) Lv += FString::Printf(TEXT(" L%d:%d"), L, LevelCount[L]);
+	float LiftMax = 0.f;   // (wave 4) the largest water lift among the drawn patches (BuildPatch)
+	for (int32 Ni : Draw) if (Nodes.IsValidIndex(Ni) && Nodes[Ni].WaterTris > 0) LiftMax = FMath::Max(LiftMax, Nodes[Ni].WaterLiftM);
+	Lv += FString::Printf(TEXT(" | water lift max %.2f m"), LiftMax);
 	return FString::Printf(TEXT("patches %d (max level %d) land tris %d water tris %d total %d | nodes %d (%d free, %d freed) comps %d builds %d (%.1f ms avg/patch/thread) in flight %d | terrain v%d rebuilds %d (%.0f ms, apply %.1f ms) stale %d | maps %d updates (worker %.1f ms, capture %.1f ms, upload %.1f ms) river map %.0f ms | pump max %.1f ms |%s"),
 		DrawPatches, MaxDrawLevel, DrawLandTris, DrawWaterTris, DrawLandTris + DrawWaterTris, Nodes.Num(), FreeBlocks.Num() * 4, NodesFreed, Comps.Num(), BuildsTotal,
 		BuildsTotal ? BuildMsTotal / BuildsTotal : 0.0, InFlight, Terr ? Terr->Version : -1, TerrainRebuilds, LastTerrainMs, LastApplyTerrainMs, StalePatches,

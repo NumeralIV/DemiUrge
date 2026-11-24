@@ -1,0 +1,70 @@
+2026-11-23 wave4 track "planet" (lane planet4) VERIFIED with fixes by an independent verifier (lane planet4-verify, owned list
+Unreal/lanes/planet4-verify.owned; I did not build the track). Score 6/10 (as built 6/10: the sea and the card are real gains, the
+frame-time claim was incomplete, the deserts were still mustard). IN MAIN: lane.ps1 sync planet4-verify -Force (the 'integration'
+lane claims Game/** and Scripts/**; no conflicts, main had not changed any owned file since the lane was cut), synced sources touched,
+then Unreal/build.ps1 on main (result at the end).
+
+HOW IT WAS CHECKED
+Fresh lane from main (full lane build 53 min on a machine at 100 % CPU, 0 errors), materials rebuilt headless (planet.py: 0 errors),
+then planet-sea, planet-genesis, screen-card and planet-orbit rendered from the lane and looked at against docs/concept/genesis/* and
+docs/concept/nature/* (descent-1..5). Shots: shots/ue-p4v-sea-*, ue-p4v3-sea-* (final), ue-p4v-gen-*, ue-p4v2-gen-* (final),
+ue-p4v-card.png + Unreal/Lanes/planet4-verify/Saved/PlanetCards/Ambermarch-20261123-224800.png (the exported card), ue-p4v-orbit-*.
+
+WHAT HOLDS
+- Sea from orbit is blue water with turquoise shelves now, not the atmosphere's navy (ue-p4v3-sea-orbit, -orbit-glint; before:
+  ue-p4-base-sea-orbit). The self-lit far sea fades out correctly at the terminator and gives no glow on the night side
+  (ue-p4v-orbit-terminator, -night). The glint shows at orbit-glint (left of centre, partly under cloud), 50 km, 5 km, 300 m.
+- Planet card: no pale straight-edged polygons on the sea, in the card scenario's world shot or in the exported card PNG.
+- Molten world: meandering rifts and bright basin channels instead of the uniform cell net (ue-p4v2-gen-molten-*); cooling reads.
+- Life wave: a green front with dark growth behind it at 140 km and orbit (ue-p4v2-gen-life-5s, -9s), as concept 5.
+- Builds: lane and main build clean; planet.py 0 errors.
+
+FOUND AND FIXED (Game/Planet, Scripts/planet, Content/Planet)
+F1 Deserts were still lemon-mustard, not the "earth-toned ochre" claimed: measured at orbit hue 46-47, saturation 0.45, value 0.89;
+   on the card's world view hue 55, saturation 0.53. Sand / Steppe / Scrub are a step redder and darker (DmPlanetMaps.cpp) and the
+   strategy saturation boost is +16 % instead of +22 % (land.hlsl; the style pilot's grade is +14 %). Now hue 41-42 at orbit,
+   47-52 at orbit-glint, visibly ochre-tan (ue-p4v3-sea-orbit-glint vs ue-p4v-sea-orbit-glint).
+F2 Crash at exit: the first genesis run (64 patch builds in flight at the last shot) died in the engine's thread-pool teardown
+   ("Assertion failed: Work->GetRefCount() == 0", QueuedThreadPoolWrapper.cpp, Lanes/planet4-verify/Saved/Logs/shot-p4v-gen.log).
+   ADmPlanet::EndPlay now waits (bounded 2 s) for its patch / terrain / map / river jobs and logs it. The next genesis and sea runs
+   exited cleanly ("end play: worker jobs done after 0 ms"; once "STILL RUNNING after 2005 ms" behind a 20 s terrain job, still a
+   clean exit). Probable cause, not proven: the crash did not repeat often enough to prove it either way.
+F3 Life wave: the broad glow read as pale lime-cream blobs once the wave had spread (ue-p4v-gen-life-5s). The glow now gathers at the
+   leading edge and is a deeper green-gold (land.hlsl). Effect is small: the front is still broad, because the map's front band is
+   broad (ue-p4v2-gen-life-5s).
+Tried and reverted: a per-vertex, edge-matched water lift (DmPlanet.cpp) aimed at the 5 km rows below. A/B with the builder's lift and
+   with -planetnowaterlift showed the rows unchanged, so it was not the cause and was taken out (main has the builder's lift).
+
+FRAME TIME (editor -game, High, 60-frame GPU medians, ms) - the builder quoted only the orbit view
+- Material A/B, same binary, back to back (wave-3 materials -> wave-4 materials): orbit 7.97 -> 8.31, orbit-glint 10.84 -> 10.84,
+  50 km 16.21 -> 17.45, 5 km 15.14 -> 16.02, 300 m 20.57 -> 22.69. The wave-4 materials cost +0.3 to +2.1 ms, most at 300 m
+  (all water: the new wind-lane / slick noise runs on every water pixel).
+- Over the 16.7 ms (60 fps) budget at High: 50 km (17.2-18.6) and 300 m (22.7-24.5) in every run, and molten-50km 17.4,
+  molten-5km 21.3. 50 km and 300 m were already over budget with the wave-3 materials; wave 4 makes them worse.
+- Hitches: genesis life views 73-219 ms frames, once 3984 ms (life-5s) on a fully loaded machine; terrain rebuilds after the comets
+  took 10-21 s on a worker (both the builder's and my runs), so the seas can appear many seconds late. In one run the seas-orbit
+  shot showed no water at all (frame cap hit, "planet NOT settled", water tris 0).
+
+NOT FIXED / FOR OTHERS
+1 Perf owner + planet: 50 km and 300 m GPU over budget at High. Next: ProfileGPU the 300 m sea; make the wind / slick noise cheaper
+  or fade it with distance; the terrain Prepare after a sea change (10-21 s under load) needs profiling.
+2 5 km sea: the dark dashed rows across the mid-distance sea are OLD. They are in the pre-wave-4 shot ue-p4-base-sea-5km (2026-11-20),
+  are unchanged with -planetnowaterlift, and are not land skirts (-planetdebug=1 shows no magenta). The cause is still unknown.
+  Sky or shadow suspects: aerial-perspective slices, shadow cascades on the sea floor through the water.
+3 50 km sea: the open sea mid-frame is a pale lavender-grey (aerial perspective over the water), not the deep blue-teal of
+  descent-2-50km. Sky owner.
+4 Molten crust: still mid red-brown and smooth at 5-50 km. The rifts read as smooth ribbons rather than cracks; heat haze is barely
+  visible. Concept 1 has near-black crust.
+5 Genesis lakes: the pale grey-white flat lakes are unchanged (likely frozen by the sim's genesis temperatures, or dry beds; not
+  diagnosed). One also sits in a desert on the history world and the card.
+6 300 m sea: a milky, uniform turquoise with blotchy whitecaps; no depth gradient in view.
+7 Tooling: render_slot waits and a full lane build (53 min) dominate a verification run on a loaded machine. lane.ps1 sync needs
+  -Force for every planet sync (integration's blanket claim).
+
+MAIN BUILD: after the sync, DmPlanet.cpp, DmPlanetMaps.cpp and land.hlsl were touched and Unreal/build.ps1 was run on main.
+DmPlanetMaps.cpp and DmPlanet.cpp compiled, but the first link failed (LNK1104): another agent's game held main's
+UnrealEditor-Demiurge.dll. The second run, once that game had exited, succeeded (exit 0, DLL linked 23:14, 0 errors; logs
+%TEMP%/demiurge-ue-build-20261123-231351.log and -231454.log). Main was not re-rendered: the lane rendered every shot above with the
+same files.
+Lane leftovers: Lanes/planet4-verify can be removed. Scratch shots ue-p4v-seav1-*, ue-p4v-sea-dbg1-*, ue-p4v-sea-nolift-* and
+ue-p4v-matbase-* are A/B evidence. The screen-card scenario also overwrote the shared shots/ue-screen-card.png.

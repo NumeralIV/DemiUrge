@@ -1,9 +1,10 @@
 // DEMIURGE — Game/Towns/DmTownsKit.h : the towns mesh factory (C5 towns, SPEC-UNREAL 0.4).
 //
-// Every visual of the towns module is a (mesh id, variant) pair from here, so the later asset pass
-// (Fab / Blender meshes) is a one-place change: replace the generator of an id in UDmTownsFactory::Build
-// with a LoadObject of the imported mesh, keep the material slot order (0 body, 1 glass, 2 glow) and the
-// FDmKitInfo footprint, and the planner, instancing, LOD, culling, tints and night lights keep working.
+// Every visual of the towns module is a (mesh id, variant) pair from here. (wave 4 towns) The real Blender assets
+// (/Game/Assets, Unreal/Scripts/assets/import_assets.ps1) stand in for them through FDmTownsAssets (DmTownsAssets.h):
+// per (id, variant, age, tier) a list of alternatives with their states and culture-style material instances; the
+// planner places with their footprints (FDmKitTable::GetAt) and the towns actor draws them (ResolveLook). The
+// generated meshes below stay as the fallback for every id without an asset (ASSET-INTEGRATION 4.9).
 //
 // Local mesh space: metres in the generators (centimetres in the UStaticMesh), +Z up, origin at the centre
 // of the footprint at floor level, the front (door / street side) toward -Y, the ridge or long axis along X.
@@ -25,6 +26,9 @@
 class UStaticMesh;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
+class UMaterialParameterCollection;
+class FDmTownsAssets;
+struct FDmKitTable;
 
 // name, variants
 #define DM_TOWN_MESHES(X) \
@@ -53,6 +57,11 @@ struct FDmKitInfo
 	EDmTownPat RoofPat = EDmTownPat::Tile;
 	int32 Tris = 0;                      // LOD0 triangles
 	bool bLit = true;                    // has windows that light up at night
+	// (wave 4 towns) real assets (DmTownsAssets.h): in the per-age kit table the footprint is the largest of the
+	// alternatives, NumAlt how many there are (0: the generated stand-in), and whether they all have these states
+	uint8 NumAlt = 0;
+	bool bAssetRuin = false;
+	bool bAssetCons = false;
 };
 
 UCLASS(Transient)
@@ -65,8 +74,13 @@ public:
 	static int32 NumVariants(EDmTownMesh Id);
 	static const TCHAR* Name(EDmTownMesh Id);
 
-	/** Generates every mesh (with LODs) and loads the materials (/Game/Towns, Scripts/towns.py). Idempotent. */
-	void Build();
+	/** Generates every mesh (with LODs), loads the materials (/Game/Towns, Scripts/towns.py) and the real assets
+	 *  (/Game/Assets, DmTownsAssets.h). Idempotent. */
+	void Build(UWorld* InWorld = nullptr);
+	/** The real assets behind the kit (empty when none are imported or -townassets=0). */
+	const FDmTownsAssets& GetAssets() const { return *Assets; }
+	/** Plain-data footprints for the planner: the generated kit plus, per age, the real assets' (thread-safe copy). */
+	void FillKitTable(FDmKitTable& Out) const;
 	bool IsBuilt() const { return bBuilt; }
 	bool MaterialsMissing() const { return bMissing; }
 	const FDmKitInfo& Get(EDmTownMesh Id, int32 Variant) const;
@@ -90,6 +104,8 @@ public:
 
 private:
 	UMaterialInstanceDynamic* LoadMat(const TCHAR* MatName);
+	TSharedPtr<FDmTownsAssets> Assets;   // made in Build
+	TWeakObjectPtr<UWorld> World;
 	bool bBuilt = false;
 	bool bMissing = false;
 	TArray<FDmKitInfo> Kit[int32(EDmTownMesh::Num)];
@@ -99,4 +115,6 @@ private:
 	UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> MatGlow;
 	UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> MatGround;
 	UPROPERTY() TArray<TObjectPtr<UStaticMesh>> Meshes;
+	UPROPERTY() TArray<TObjectPtr<UObject>> AssetKeep;                 // every loaded asset (GC roots)
+	UPROPERTY() TObjectPtr<UMaterialParameterCollection> AssetMPC;    // /Game/Assets/Materials/MPC_DmAssets: planet frame for M_DmKit
 };

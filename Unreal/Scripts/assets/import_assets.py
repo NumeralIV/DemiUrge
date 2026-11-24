@@ -803,7 +803,7 @@ MASTER_HLSL = r'''
 // M_DmKit surface (asset-integration). Inputs: D (rgba), ORM, M (masks), VC (vertex colour), Cd0..Cd7 (towns
 // instance data), WP (world position), frame (PlanetCenter, SunDir, NightOverride, Glow) and the parameters.
 float4 vc = VC;
-if (VCDecode > 0.5) vc.rgb = (vc.rgb <= 0.04045) ? vc.rgb / 12.92 : pow((vc.rgb + 0.055) / 1.055, 2.4);
+if (VCDecode > 0.5) vc.rgb = select(vc.rgb <= 0.04045, vc.rgb / 12.92, pow((vc.rgb + 0.055) / 1.055, 2.4));   // (towns4) select: Nanite compiles HLSL 2021, which rejects a vector ternary
 float4 m = M * HasM;
 float3 base = lerp(float3(1, 1, 1), D.rgb, HasD) * Tint.rgb;
 if (GlowOnly > 0.5) base = GlowColor.rgb * 0.15;

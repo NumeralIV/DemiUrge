@@ -1,0 +1,63 @@
+2026-11-23 wave4 track "planet" (lane planet4, owned list Unreal/lanes/planet4.owned). Built in the lane, synced to main with
+lane.ps1 sync planet4 -Force (the 'integration' lane claims Game/** and Scripts/**, so -Force is the usual override; main's planet
+files were byte-identical to the lane base, checked by hash, so nothing of anyone else's was overwritten). Synced files touched,
+then Unreal/build.ps1 on main (result at the end of this file).
+
+This run resumed the first planet4 attempt (2026-11-20, never synced): its water lift, life-front map, genesis scenarios, darker
+rock and strategy saturation are kept; this run fixed what was still wrong in its shots and added the rest.
+
+WHAT CHANGED (all in Game/Planet/*, Scripts/planet*, Content/Planet/*)
+1 Sea, far field (Scripts/planet/water.hlsl, Scripts/planet.py: new CameraVectorWS input, Emissive output on M_PlanetWater).
+  Measured cause: from ~30 km up the engine's Single Layer Water gets neither sun in-scattering nor glint. With the atmosphere's
+  ground lowered 2 km (-atmodrop=2) the open sea at orbit was the same grey-black, so it is not only the virtual-planet shadow;
+  the navy came from the aerial perspective alone (known issue 1b). The water now lights itself past a ~25 m pixel footprint
+  (Smooth01((fp-25)/220)): the sun's illuminance through the atmosphere transmittance LUT at the sea surface x a palette body
+  colour (deep sapphire, cyan-teal shelves, turquoise first 12 m, darker lakes) x N.L, plus a GGX sun glint (roughness 0.07-0.22
+  from the unresolved wave slopes; brighter in the wind lanes, sharper in slicks). Near the coast the engine's own SLW lighting
+  (shallows, foam swash, surf bands, swell glint, river plumes) is unchanged.
+  Also: richer deep / shelf scattering coefficients.
+2 Planet card polygons: the water lift (first attempt, DmPlanet.cpp BuildPatch: water raised by its triangles' sag, max 7-29 m
+  logged as "water lift max") plus the self-lit far sea: the card-framing world shot shows no straight-edged pale patches.
+3 Molten world (Scripts/planet/land.hlsl): the uniform cell-edge crack net is gone. Rifts now follow warped ridge lines in
+  3 km and 1 km sizes, only in about half of the crust (rift provinces), with a yellow hot core line and an orange halo;
+  basins are a lava sea of dark skins torn by bright flow channels (ridges of a flow-warped field, 3 sizes, slow convection);
+  the seams at the future shores stay the brightest; the heat haze spills wider over the crust and lifts it toward hot ochre.
+4 Life wave (land.hlsl): a visible green front: lime-green glow with a gold-green core at the leading edge, fresh growth green
+  under it, lighter mist (the first attempt's cream glow read as white blobs at 140 km).
+5 Strategy palette (Game/Planet/DmPlanetMaps.cpp macro albedo, S2 stylised realism + strategy grade in land.hlsl): warm ochre
+  sand and golden steppe (earth-toned, not mustard), cleaner leaf-green grass, deeper forest / jungle, blue-green taiga.
+
+EVIDENCE (shots looked at; concepts docs/concept/genesis/*, docs/concept/nature/*)
+- shots/ue-wave4-planet-sea-orbit.png, -orbit-glint.png (orbit, card framing), -50km.png, -5km.png, -300m.png
+  Before: shots/ue-planet-sea-* of the 18:51 run / ue-p4-e-sea-* (navy, no glint at orbit). Diagnostic without the fix and with
+  -atmodrop=2: grey-black open sea.
+- shots/ue-wave4-planet-card-world.png (screen-card scenario's world shot): blue sea, turquoise shelves, soft glint, no polygons.
+- shots/ue-wave4-planet-gen-molten-orbit.png, -molten-50km.png, -molten-5km.png, -cooling-orbit.png, -seas-orbit.png,
+  -life-2s.png, -life-5s.png (140 km: a lime ring round dark green growth, as concept 5), -life-9s.png (orbit).
+  Before: shots/ue-p4-f-gen-* and ue-play-03 / ue-play-07.
+- Frame times (DmStats, 60 frames before the first shot, editor -game, High): planet-sea orbit 10.8 ms frame / 9.0 ms GPU
+  (before the sea change 9.6 / 8.5 on the same view: within run-to-run noise, other agents shared the GPU);
+  planet-genesis molten orbit 7.9 ms / 6.8 ms GPU. Settle at 300 m 15 s (unchanged, patch builds).
+
+HOW TO RE-RUN
+  Unreal/Scripts/planet/mats.ps1 (materials, headless), then shot.ps1 <name> -scenario=planet-sea -noshot and
+  -scenario=planet-genesis -noshot (shots are written as shots/ue-planet-sea-<view>.png / ue-planet-genesis-<view>.png).
+
+NOT DONE / FOR OTHERS
+- Lane tooling: lane.ps1 refresh keeps main's old timestamps, so the lane linked stale objects against the new Sim/State.h and
+  the genesis scenario crashed in FDmPlanetMaps::CaptureInputs (access violation) until every lane source was touched and
+  rebuilt (release-notes known issue 8; it also hits refresh, not only sync). Bridge owner: touch pulled files in refresh.
+- Sky owner: the SkyAtmosphere ground is the sea sphere (DmSkyActor AtmoDropKm = 0). Water / sea floor under it is shadowed from
+  the sun; the planet works around it (lift + self-lit far sea + sea-floor sun in land.hlsl). A default drop of ~0.05-0.1 km
+  would make the workarounds unnecessary near the coast; not changed here (Sky/ is not this track's).
+- 5 km sea view: faint dark dashed rows across the mid-distance sea at grazing angles (swell / patch-edge aliasing) and one
+  straight thin line on the water; not fixed.
+- Pale grey flat lakes on the genesis continents (frozen / dry lake look at that phase) are unchanged.
+- The orbit-glint view's specular point lies under the cloud band in this fixture; the glint shows at 50 km, 5 km, 300 m and
+  on the card world view.
+- Night-side, clouds, ground near towns: other tracks.
+
+MAIN BUILD: after the sync the synced files were touched and Unreal/build.ps1 run on main: Result Succeeded (exit code 0),
+26 s, DmPlanet.cpp / DmPlanetMaps.cpp / DmPlanetTerrain.cpp / DmPlanetScenarios.cpp recompiled, DLL linked (log
+%TEMP%/demiurge-ue-build-20261123-194451.log; the one 'error' line is UnrealHeaderTool's -WarningsAsErrors switch). Not re-rendered
+from main itself (the lane build rendered every shot above with the same files).

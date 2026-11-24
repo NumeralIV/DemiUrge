@@ -1,0 +1,80 @@
+2026-11-23 (23:00-23:35 EST) wave4 track "towns": independent adversarial verification. Fresh lane Unreal/Lanes/towns4-verify =
+current main + the builder's towns4 owned files (Source/Demiurge/Game/Towns/**, Scripts/assets/import_assets.py, Content/Assets/** 1,006
+files), owned list Unreal/lanes/towns4-verify.owned (same patterns). Score 6/10.
+
+STATUS: VERIFIED AND FIXED IN THE LANE, NOT IN MAIN.
+- `lane.ps1 sync towns4-verify -Force` was denied for this agent by the permission system (same as the builder and wave3-final).
+  Without -Force every file is refused (integration claims Game/**, assetimport claims Scripts/assets/** and Content/Assets/**).
+- The owner or lead has to run:  powershell -NoProfile -ExecutionPolicy Bypass -File Unreal/lane.ps1 sync towns4-verify -Force
+  then touch the synced .cpp/.h files (release-notes tooling issue 8) and run Unreal/build.ps1. Sync towns4-verify, NOT towns4:
+  this lane holds the builder's code plus the four fixes below. No merge needed (`lane.ps1 status towns4-verify`: every source file
+  "yours" or "lane only"; main has not touched a towns file since).
+- Builds: the lane, refreshed from main at 23:28 (103 files pulled), Succeeded 0 errors / 0 warnings (71 s). Unreal/build.ps1 on main
+  Succeeded 0 / 0 (up to date: nothing of this track is in main yet).
+
+FIXES (all in the lane, all in towns-owned files; marked "(verifier)" / "(verifier fix)" in the code)
+1. Rivers were never seen by any town (pre-existing since an earlier verifier fix, made visible by this check): DmTownsGround.cpp
+   RiverSegments read TSet::Add's out flag ("already in the set") as "new", so it skipped every reach. Evidence: new plan-note
+   diagnostics showed "rivers 0 (0 nodes)" on all 58 plans while RiverQuery put settlement 59's centre 51 m from a bank; houses and
+   ruins stood in the river (shots/ue-towns-ruins-v4fix.png, ue-towns-town-v4-300-day.png top). After: 43 of 70 plans see rivers
+   (plan 59: 729 reaches, 2,065 grid nodes blocked, 179 -> 164 houses, the wall stops at the river), channel clear
+   (shots/ue-towns-ruins-v4b.png, ue-towns-town-v4b-300-day.png, -2km-day.png).
+2. Wrong materials on _Construction / _Ruin meshes: the culture/climate overrides were built from the _Intact mesh's slot list and
+   applied by index to every state. 43 of the 132 imported assets have state meshes with fewer or reordered slots (plan.json:
+   e.g. Age3_Townhouse_A_Construction = Structure, Detail vs Intact Structure, Roof, Detail), so roof tiles went onto the Detail slot
+   of every Sail-age construction site and ruin. Now per state from that mesh's own slots (DmTownsAssets.h/.cpp: Mats[state][style]
+   [climate]; DmTownsActor.cpp ResolveLook uses the state actually drawn). Slot variants 3,720 -> 9,528. Not shown as a visual A/B:
+   the builder-lane ruins run drew no town within its 240 frames (planet terrain still pending), see shots/ue-towns-ruins-v4builder.png.
+3. Longest planning slice (brief item 2, the builder's open point): raster and field overlay are now sliced too (DmTownsPlan.cpp:
+   BuildRasterRows in bands of 8 rows, BuildOverlayFields in groups of 4 parcels, both resumable and cancel-checked; the rest of the
+   overlay unchanged and in the same order, plan 59 output identical: 305 instances, 21,311 overlay tris). Longest slice CPU:
+   builder 303-447 ms -> 15-60 ms in my runs (sky-check 15.3, towns-look 23.6 / 26.0, perf-play 41-84 on the loaded machine).
+4. Plaza at night: the builder's drape rings set uv0.y = 1 on every ring, but M_TownGround (Scripts/towns.py) reads uv0.y as
+   0 centre .. 1 rim to put the lamps on the rim, so the whole disc glowed with a dark spot over the centre fan
+   (shots/ue-towns-town-v4-40-night.png). Ring vertices now carry the ring fraction (ue-towns-town-v4b-300-night.png: no spot).
+Plus diagnostics: plan notes print "rivers N (nodes, bank m)", the ground line prints river points / grid cells.
+
+CHECKS AGAINST THE BRIEF (machine loaded the whole time: 2-3 other Unreal games, package.ps1, earlier a simrun; frame times are
+pessimistic and vary run to run by 2x)
+1. Exit: PASS. EndPlay abandons jobs in 0.00 ms in every run; whole exit after RequestExit 0.8 s (sky-check), 1.3 s (towns-look v4),
+   3.1-3.2 s (towns-look v4b, perf-play v4b). The engine assert "Work->GetRefCount() == 0" (QueuedThreadPoolWrapper.cpp:167) fired
+   once in 11 runs (perf-play v4on, after "Object subsystem successfully closed"); towns uses only UE::Tasks, not GThreadPool. Agree
+   with the builder: Core / sky / planet (Async ThreadPool jobs left at teardown).
+2. Priority: PASS. sky-check with towns on: DmCheck RESULT PASS (0 failed), "weather maps rebuilt while sky time runs (1 new)".
+   Cost of background-low on a loaded machine: out-of-view first wave only 16-17 of 95 settlements in 30-38 s (in-view ones fine).
+3. Hitches / per-frame: towns' own game thread is small: tick avg 0.33-0.37 ms, p99 1.7-2.5, max 3.8-8.7 ms; frames over 33 ms
+   attributed to towns 0-2 of 1,636-2,120. perf-play A/B (8x, -stop=low+close, editor, same lane):
+     towns on  (v4on):  low 36 fps, render 26.1 ms (p95 108) | close 20 fps, render 50.2 ms
+     towns off (v4off): low 41 fps, render 22.9 ms (p95 46)  | close 20 fps, render 49.1 ms
+     towns on  (v4b, final code, different load): low 17 fps (one 3.1 s frame) | close 51 fps, render 18.1 ms
+   So towns add about 1-3 ms of render thread on these runs; the remaining misses are render-thread bound and not towns (149 of 194
+   DmHitch frames tagged render thread with towns 0.2-1 ms; nature "fields" slow ticks of 28-48 ms every few seconds are nature's).
+   NOT a pass against 60 fps: needs an Insights capture on an idle machine. Root of the towns render cost stays as the builder said:
+   every visible component follows the turning planet each frame (architecture: Core / planet frame).
+4. Real assets: PASS with fix 2. 114/114 mapped assets, 295 meshes, 263 Nanite; load 1.0-1.2 s warm, 27.7 s on the first launch of
+   the fresh lane. 300 m by day reads as a Sail-age town (tiled roofs, dormers, dome, half-timbered and thatched cottages); at 40 m
+   masonry, sills, shutters hold up (ue-towns-town-v4b-40-day.png, v4c-*). Ruins use each asset's _Ruin (ue-towns-ruins-v4b.png).
+   Open (builder listed): culture overlays, sockets, _Damaged.
+5. Fields / ground: PARTIAL. Plans have 132-480 organic parcels each and drape; but at 2 km the frame is still dominated by the
+   planet's straight-edged farmland paint (confirmed by the builder with -townfields=0) and at 40-300 m the town ground is flat
+   untextured green with a flat grey plaza. The 40 m look needs real ground material work (Content/Towns/M_TownGround via
+   Scripts/towns.py, not in this track's owned list).
+
+SCREENSHOTS LOOKED AT (shots/)
+- Before (main's code, 2026-11-20): ue-towns-town-before-{40,300,2km}-{day,night}.png
+- Builder final: ue-towns-town-w4f-*.png. This check, builder code: ue-towns-town-v4-*.png. After the fixes: ue-towns-town-v4b-*.png
+  and reframed 40 m views ue-towns-town-v4c-40{,b}-{day,night}.png (the v4b "40 m" camera now stands against a townhouse that the
+  river-aware layout put on its line of sight; the v4c labels 40b-day / 40-night look swapped, a towns-look capture timing quirk).
+- Ruins: ue-towns-ruins-v4fix.png (ruins in the river) -> ue-towns-ruins-v4b.png (clear).
+- Not towns: ue-towns-town-v4-2km-day.png has large black triangles / diamonds over land and sea (gone in the next frames and in v4b:
+  a planet patch artefact, for the planet owner); night renders as daylight, the sea at 2 km is white fog (sky / planet, known).
+
+LOGS: Unreal/Lanes/towns4-verify/Saved/Logs/shot-{sky-check-v4, perf-play-v4on, perf-play-v4off, perf-play-v4b, towns-look-v4,
+towns-look-v4diag, towns-look-v4b, towns-look-v4c, towns-ruins-v4fix, towns-ruins-v4diag, towns-ruins-v4b}.log
+
+FOR THE LEAD
+1. Run the sync of towns4-verify with -Force (above), touch, build.ps1. It also copies Content/Assets (473 MB).
+2. Core / sky / planet: the GThreadPool exit assert; planet black patch triangles at 2 km.
+3. Towns next: an Insights trace of perf-play low on an idle machine; fewer components per settlement / planet-fixed parent;
+   the town ground material (plaza and streets at 40 m); bridges where streets meet the now-respected rivers; culture overlays,
+   sockets, _Damaged; out-of-view first wave starves at background-low on a busy machine.

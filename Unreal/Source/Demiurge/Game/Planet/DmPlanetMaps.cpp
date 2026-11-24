@@ -176,7 +176,9 @@ void FDmPlanetMaps::CaptureInputs(const dm::World& W, int32 Overlay, FDmMapInput
 		for (int32 C = 0; C < N; ++C) Dst[C] = Fin(Src[size_t(C)]);
 	};
 	In.N = N; In.SeaLevel = float(W.seaLevel); In.Overlay = Overlay;
-	In.Barren = W.phase == dm::Phase::Molten ? 1.f : W.phase == dm::Phase::Water ? 0.85f : W.phase == dm::Phase::Life ? 0.55f : 0.f;
+	// (wave 4) life 0.55 -> 0.8: the bare land outside the green wave stays grey / umber / rust rock (concept 5), not sand
+	In.Barren = W.phase == dm::Phase::Molten ? 1.f : W.phase == dm::Phase::Water ? 0.85f : W.phase == dm::Phase::Life ? 0.8f : 0.f;
+	In.LifeFront = W.phase == dm::Phase::Life ? 1.f : 0.f;
 	Copy(W.veg, In.Veg); Copy(W.moist, In.Moist); Copy(W.temp, In.Temp); Copy(W.ice, In.Ice); Copy(W.urban, In.Urban);
 	Copy(W.water, In.Water); Copy(W.elev, In.Elev); Copy(W.wet, In.Wet); Copy(W.farm, In.Farm); Copy(W.scorch, In.Scorch);
 	Copy(W.lava, In.Lava); Copy(W.fire, In.Fire); Copy(W.rad, In.Rad); Copy(W.hab, In.Hab);
@@ -262,6 +264,38 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 		};
 		SmoothKeep(In.Scorch, SScorch);
 		SmoothKeep(In.Lava, SLava);
+		// (wave 4) the life wave's front (docs/concept/genesis 5): the sim spreads life cell by cell (a bare cell sprouts
+		// at veg 0.06 next to a green one), so the front is where young growth meets bare ground that life can still
+		// take. Brightest on the first bare ring just ahead (the leading edge), dimmer on the young cells behind it; land
+		// only, so it stops at the coast. Smoothed once and read half at the warped direction: a soft, ragged band.
+		TArray<float> SFront;
+		if (In.LifeFront > 0.f)
+		{
+			SFront.Init(0.f, N);
+			const float SeaL = In.SeaLevel;
+			auto Young = [](float V) { return float(Sat((V - 0.01) / 0.04) * (1.0 - Sat((V - 0.12) / 0.25))); };
+			auto Takes = [&In, SeaL](int32 C)   // bare land life can still reach (not ice, snow, bare rock or desert)
+			{
+				const uint8 B = In.Biome[C];
+				return In.Elev[C] >= SeaL && In.Veg[C] < 0.01f && In.Ice[C] < 0.5f && B != BIce && B != BSnowpeak && B != BRock && B != BDesert && B != BSeaIce;
+			};
+			for (int32 C = 0; C < N; ++C)
+			{
+				if (In.Elev[C] < SeaL) continue;
+				const int32 Deg = G.NbrN[C];
+				int32 Bare = 0; float YoungNb = 0.f;
+				for (int32 K = 0; K < Deg; ++K)
+				{
+					const int32 Nb = G.Nbr[6 * C + K];
+					if (Takes(Nb)) ++Bare;
+					else if (In.Elev[Nb] >= SeaL) YoungNb = FMath::Max(YoungNb, Young(In.Veg[Nb]));
+				}
+				const float Inside = Young(In.Veg[C]) * float(Sat(Bare / 2.0));
+				const float Ahead = Takes(C) ? YoungNb : 0.f;
+				SFront[C] = FMath::Max(0.55f * Inside, Ahead);
+			}
+			SmoothKeep(TArray<float>(SFront), SFront);
+		}
 		// ice sheets read at the warped direction (organic edges); built-up ground smoothed once so a town is a
 		// rounded patch around its centre instead of the triangle fan of its cells (the material breaks it up)
 		SmoothField(G, SIce, Tmp, 1);
@@ -284,7 +318,10 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 				const FCache::FTexelLoc& Wl = Ca.Warped[I];
 				auto La = [&](const TArray<float>& F) { return double(D.W[0]) * F[D.C[0]] + double(D.W[1]) * F[D.C[1]] + double(D.W[2]) * F[D.C[2]]; };
 				auto Lw = [&](const TArray<float>& F) { return double(Wl.W[0]) * F[Wl.C[0]] + double(Wl.W[1]) * F[Wl.C[1]] + double(Wl.W[2]) * F[Wl.C[2]]; };
-				const double Tm = Lw(STemp), Mo = Lw(SMoist), Vg = Lw(SVeg), Marsh = Lw(SMarsh), Barren = Lw(SBarren);
+				const double Tm = Lw(STemp), Mo = Lw(SMoist), Marsh = Lw(SMarsh), Barren = Lw(SBarren);
+				// (wave 4) in genesis the wave's young growth (veg 0.06..0.3) greens at once behind the front (concept 5:
+				// forest dark green, grass tan-green within a second), instead of a faint tint over the basalt
+				const double Vg = In.LifeFront > 0.f ? Sat(Lw(SVeg) * 3.0) : Lw(SVeg);
 				const double Wob_ = Ca.Wob[I];
 				double Wa = 0.0;
 				for (int32 K = 0; K < 3; ++K)
@@ -295,13 +332,17 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 				const double WetSim = La(In.Wet);
 
 				// ---- macro albedo (sRGB), lab palette
-				const FVector3f Sand(0.66f, 0.56f, 0.40f), Steppe(0.50f, 0.45f, 0.32f), Grass(0.36f, 0.42f, 0.22f),
-					Forest(0.13f, 0.21f, 0.10f), Jungle(0.08f, 0.17f, 0.07f), Taiga(0.13f, 0.19f, 0.13f),
-					Tundra(0.42f, 0.40f, 0.34f), MarshC(0.19f, 0.25f, 0.15f), Scrub(0.40f, 0.38f, 0.26f), BarrenC(0.37f, 0.34f, 0.31f);
+				// (wave 4b) the strategy palette (art/style-pilot S2): a step richer than life and earth-toned: warm ochre sand
+				// and golden steppe (not mustard), clean leaf-green grass, deep green forest, blue-green taiga
+				// (wave 4 verify) sand, steppe and scrub a step redder and darker: on screen the deserts still came out a bright
+				// lemon-mustard (hue 46-55, value 0.82-0.89 at orbit and on the card's world view), not the earth-toned ochre asked for
+				const FVector3f Sand(0.60f, 0.46f, 0.31f), Steppe(0.50f, 0.41f, 0.27f), Grass(0.33f, 0.45f, 0.20f),
+					Forest(0.11f, 0.23f, 0.10f), Jungle(0.07f, 0.19f, 0.08f), Taiga(0.11f, 0.20f, 0.14f),
+					Tundra(0.43f, 0.41f, 0.35f), MarshC(0.17f, 0.26f, 0.15f), Scrub(0.40f, 0.36f, 0.24f), BarrenC(0.38f, 0.33f, 0.29f);
 				FVector3f Bare = Lerp3(Sand, Steppe, Mo * 1.8 + Wob_);
 				Bare = Lerp3(Bare, Scrub, Mo * 2.0 - 0.6);
 				// (integration) a lifeless world is dark basalt and ash (docs/concept/genesis 2-4), not desert sand
-				Bare = Lerp3(Bare, FVector3f(0.15f, 0.14f, 0.13f) + FVector3f(0.05f, 0.04f, 0.03f) * float(Wob_ + 0.5), In.Barren);
+				Bare = Lerp3(Bare, FVector3f(0.17f, 0.16f, 0.15f) + FVector3f(0.08f, 0.05f, 0.03f) * float(Sat(0.5 + 8.0 * Wob_)), In.Barren);
 				FVector3f Green = Lerp3(Grass, Forest, Vg * 1.4 - 0.35 + Wob_);
 				Green = Lerp3(Green, Jungle, Sat((Tm - 20.0) / 8.0) * Sat(Mo * 1.5 - 0.5));
 				Green = Lerp3(Green, Taiga, (4.0 - Tm) / 8.0);
@@ -312,7 +353,16 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 				const double Wet = 0.3 * Sat(Wa * 1.5) + 0.7 * Marsh;   // lakes themselves are drawn as water
 				Col = Lerp3(Col, MarshC, FMath::Min(Wet, 0.7));
 				Col = Lerp3(Col, Tundra, (-4.0 - Tm) / 8.0 + Wob_);
-				Col = Lerp3(Col, BarrenC, 0.8 * Barren);
+				// (wave 4) the bare young world (genesis water / life, concept 4): grey basalt, umber and rust rock in broad
+				// provinces instead of one pale grey-tan
+				FVector3f BarrenG = BarrenC;
+				if (In.Barren > 0.f)
+				{
+					const FVector3f Basalt(0.20f, 0.195f, 0.19f), Umber(0.28f, 0.22f, 0.17f), Rust(0.35f, 0.22f, 0.15f);
+					BarrenG = Lerp3(Basalt, Umber, 0.5 + 9.0 * Wob_);
+					BarrenG = Lerp3(BarrenG, Rust, (0.35 - Mo) * 3.0 + 6.0 * Wob_);
+				}
+				Col = Lerp3(Col, BarrenG, 0.8 * Barren);
 				Col *= float(1.0 - 0.22 * Sat(WetSim));   // rain-soaked ground is darker
 				const double ForestD = Sat(Vg * 1.6 - 0.4 + Wob_) * Sat((Tm + 6.0) / 10.0) * (1.0 - Sat(Wet)) * (1.0 - 0.7 * Dry);
 				Mip0[0][I] = FColor(Q8(Col.X), Q8(Col.Y), Q8(Col.Z), Q8(ForestD));
@@ -331,7 +381,8 @@ void FDmPlanetMaps::Compute(const FCache& Ca, const FDmMapInputs& In, uint32 Mas
 
 				// ---- damage
 				// (wave 3) scorch and lava mostly from the warped direction (organic edges), a little of the direct one
-				Mip0[3][I] = FColor(Q8(0.7 * Lw(SScorch) + 0.3 * La(SScorch)), Q8(Sat((0.6 * Lw(SLava) + 0.4 * La(SLava)) / 0.6)), Q8(La(In.Fire)), Q8(La(In.Rad)));
+				Mip0[3][I] = FColor(Q8(0.7 * Lw(SScorch) + 0.3 * La(SScorch)), Q8(Sat((0.6 * Lw(SLava) + 0.4 * La(SLava)) / 0.6)), Q8(La(In.Fire)),
+					Q8(SFront.Num() ? 0.5 * (La(SFront) + Lw(SFront)) : La(In.Rad)));
 			}
 		}, EParallelForFlags::BackgroundPriority);
 		Out.Mask |= 0xF;

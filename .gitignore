@@ -66,3 +66,6 @@ art/**/*.png
 __pycache__/
 *.pyc
 shots/asset-*
+
+# Imported art (rebuilt by Unreal/Scripts/assets/import_assets.py from art/<family>/export; docs/ASSETS.md section 5)
+Unreal/Content/Assets/

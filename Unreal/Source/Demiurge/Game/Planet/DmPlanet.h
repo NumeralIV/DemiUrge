@@ -87,6 +87,7 @@ struct FDmPatchData
 	int32 BuiltGen[3] = { -1, -1, -1 };
 	int32 Version = -1;
 	bool bSeabed = false;   // deep-sea patch: a coarse floor with the cheap seabed material
+	float WaterLiftM = 0.f; // (wave 4) how far the water sits above the sea sphere (its triangles' sag, see BuildPatch)
 };
 
 /** A coarser neighbour along one edge: the patch moves its edge vertices onto that neighbour's edge. */
@@ -114,6 +115,7 @@ struct FDmQNode
 	float MinH = -1500.f, MaxH = 2600.f;
 	int32 Comp = -1;
 	int32 LandTris = 0, WaterTris = 0;
+	float WaterLiftM = 0.f;  // (wave 4) the drawn mesh's water lift above the sea sphere
 	int32 Version = -1;      // terrain version of the current mesh (stale when != the terrain's)
 	TSharedPtr<FDmPendingPatch, ESPMode::ThreadSafe> Pending;
 	bool bBuilding = false;
@@ -288,6 +290,8 @@ private:
 	bool bSnapshot = false;
 	int32 DebugMode = 0;
 	float LastHeat = -1.f;
+	double MoltenM = 0.0;            // (wave 4) rendered height (m) that splits the molten crust into rafts and basins
+	int32 MoltenTerrVersion = -1;
 
 	FVector3d CamSim = FVector3d(0, 0, 5e7);   // cm, sim frame (planet)
 	FVector3d FwdSim = FVector3d(0, 0, -1);

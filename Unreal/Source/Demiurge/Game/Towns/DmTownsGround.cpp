@@ -290,9 +290,11 @@ void FDmTownsGround::RiverSegments(const FVector& Dir, double AngRad, TArray<FVe
 					for (int32 Si : *Cell)
 					{
 						if (Si < 0 || Si + 1 >= Planet->RPts.Num()) continue;
-						bool bNew = false;
-						Seen.Add(Si, &bNew);
-						if (bNew) {} else continue;
+						// (verifier fix) TSet::Add's flag is "already in the set": read as "new", it skipped every reach, so no
+						// town ever saw a river (all 96 fixture plans: 0 reaches) and houses stood in the rivers
+						bool bAlready = false;
+						Seen.Add(Si, &bAlready);
+						if (bAlready) continue;
 						const FDmRiverPt& A = Planet->RPts[Si];
 						const FDmRiverPt& B = Planet->RPts[Si + 1];
 						if ((A.P | S) < CosLim && (B.P | S) < CosLim) continue;

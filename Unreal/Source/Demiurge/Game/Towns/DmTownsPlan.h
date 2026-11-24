@@ -20,6 +20,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <atomic>
 #include <memory>
 #include "Game/Towns/DmTownsKit.h"
 #include "Game/Towns/DmTownsGround.h"
@@ -43,7 +44,11 @@ struct FDmTownsWorldSnap
 struct FDmKitTable
 {
 	TArray<FDmKitInfo> Infos[int32(EDmTownMesh::Num)];
+	/** (wave 4 towns) per age: the real assets' footprints (empty row: the generated kit's); UDmTownsFactory::FillKitTable */
+	TArray<FDmKitInfo> Aged[7][int32(EDmTownMesh::Num)];
 	const FDmKitInfo& Get(EDmTownMesh Id, int32 V) const;
+	/** The footprint the planner places at an age: the real asset's where one exists, else the stand-in's. */
+	const FDmKitInfo& GetAt(int32 Age, EDmTownMesh Id, int32 V) const;
 };
 
 struct FDmTownInput
@@ -64,6 +69,7 @@ struct FDmTownInput
 	uint32 Seed = 1;
 	float Scale = 1.f;                    // -townscale debug multiplier of radii
 	bool bFieldOverlay = true;            // draw the field quads (false: the planet paints the farmland; farmsteads stay)
+	uint8 CultureStyle = 0;               // (wave 4 towns) EDmCultureStyle of the settlement's culture (material instances)
 };
 
 struct FDmTownInst
@@ -76,12 +82,14 @@ struct FDmTownInst
 	float Cd[UDmTownsFactory::NumCustomData] = { 1, 1, 1, 1, 1, 1, 0.4f, 0 };
 	uint32 Key = 0;                          // stable identity of the slot (construction diffs)
 	float W = 8.f, D = 6.f, H = 6.f;         // world footprint (m) after scale
+	uint8 Sub = 0;                           // (wave 4 towns) which real-asset alternative (FDmKitInfo::NumAlt; hashed from Key)
+	uint8 State = 0;                         // (wave 4 towns) EDmTownState: 2 = the asset's own ruin (dead towns)
 };
 
 /** (towns-perf) The instances of one (mesh, variant), ready for an instanced component: built by the planning task. */
 struct FDmTownBatch
 {
-	uint32 Key = 0;                          // EDmTownMesh << 8 | variant
+	uint32 Key = 0;                          // EDmTownMesh << 8 | variant | Sub << 16 | State << 20 (DmTownsBatchKey)
 	TArray<FTransform> Xf;                   // relative to the plan's centre
 	TArray<float> Cd;                        // NumCustomData floats per instance
 	TArray<int32> Idx;                       // index into FDmTownPlan::Inst per instance
@@ -99,6 +107,11 @@ struct FDmTownPlan
 	double Ms = 0.0;
 	uint32 Sig = 0;
 	FString Note;
+	// (wave 4 towns) what picks the real assets and their material instances (UDmTownsFactory / FDmTownsAssets)
+	int8 Age = 0, Tier = 0, CultureStyle = 0, Climate = 0;
+	int32 Slices = 0;                        // time slices the plan took (FDmTownPlanStepper)
+	double MaxSliceMs = 0.0;                 // wall time (a preempted worker on a loaded machine stretches it)
+	double MaxSliceCpuMs = 0.0;              // (wave 4 towns) thread CPU time of the longest slice
 	// (towns-perf) prepared off the game thread by the planning task (ADmTowns): the game thread only copies these into
 	// components; GroundData is consumed by the first apply (a later rebuild of the same plan falls back to Ground)
 	bool bPrepared = false;
@@ -106,6 +119,34 @@ struct FDmTownPlan
 	TSharedPtr<struct FDmTownsMeshData, ESPMode::ThreadSafe> GroundData;
 	TArray<uint32> NewKeys;                  // instance keys of buildings that are new (scaffolds), against the plan it replaces
 	double PrepMs = 0.0;
+};
+
+/** (wave 4 towns) The batch key of a component: kit id, variant, real-asset alternative and state. */
+namespace DmTownsBatchKey
+{
+	inline uint32 Make(EDmTownMesh M, int32 V, int32 Sub, int32 State) { return (uint32(M) << 8) | uint32(V & 0xff) | (uint32(Sub & 0xf) << 16) | (uint32(State & 0x3) << 20); }
+	inline EDmTownMesh Mesh(uint32 K) { return EDmTownMesh((K >> 8) & 0xff); }
+	inline int32 Var(uint32 K) { return int32(K & 0xff); }
+	inline int32 Sub(uint32 K) { return int32((K >> 16) & 0xf); }
+	inline int32 State(uint32 K) { return int32((K >> 20) & 0x3); }
+}
+
+/** (wave 4 towns) A settlement plan made in time slices: each Step does at most about BudgetMs of work (a phase or a band
+ *  of the height grid) and returns, so a planning task can hand its worker back to the scheduler between slices (the
+ *  sky's weather builds and the planet's patches waited behind whole 1-7 s plans). Cancel is polled between slices and
+ *  inside the long loops: an abandoned plan stops within a slice. Inputs must outlive the stepper. */
+class DEMIURGE_API FDmTownPlanStepper
+{
+public:
+	FDmTownPlanStepper(const FDmTownInput& In, const FDmTownsWorldSnap& Snap, const FDmTownsGround& Ground, const FDmKitTable& Kit, FDmTownPlan& Out,
+		const std::atomic<bool>* Cancel = nullptr);
+	~FDmTownPlanStepper();
+	/** One slice; true when the plan is complete (or cancelled: then Out is empty). */
+	bool Step(double BudgetMs);
+	bool WasCancelled() const;
+	struct FImpl;
+private:
+	TUniquePtr<FImpl> Impl;
 };
 
 namespace DmTownsPlan

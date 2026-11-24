@@ -42,6 +42,12 @@
 // ground is our own planet-terrain capture (~1 ms) prepared and probed on workers (no 10-30 ms copy of the planet's);
 // old plans / grounds are freed on workers; the first wave is asynchronous (-townblock restores the blocking one).
 // Measured: towns tick avg 0.3-0.8 ms, max 2.7-3.5 ms per frame over static / 0.25-8x / age change / war / sweep.
+// Wave 4 towns (2026-11-20): plans are sliced jobs (FDmTownPlanStepper, ~SliceMs of work per task) at background priority
+// (in view background-normal, out of view background-low; they took foreground workers at Normal for 1-7 s and starved the
+// sky's weather builds and the renderer's own tasks); exit and world changes abandon jobs instead of waiting (cancel flag
+// polled per slice); unit instances update as GPU-scene deltas (no proxy rebuild per frame); the real Blender assets stand in
+// for the generated kit by (id, variant, age, tier, culture style) with their own construction and ruin states
+// (DmTownsAssets.h; the generated meshes stay as the fallback); fields are organic parcels (DmTownsPlan.cpp, PlanFields).
 #pragma once
 
 #include "CoreMinimal.h"
@@ -65,6 +71,8 @@ public:
 	/** Replace every instance (transforms relative to the component, NumCustomData floats each). bRegistered: update a live
 	 *  component in place (skipped when the content is unchanged). Returns false when nothing changed. */
 	bool SetInstances(const TArray<FTransform>& Xf, const TArray<float>& Cd, bool bLive);
+	/** (wave 4 towns) the material overrides applied (a real asset's culture / climate instances; null: the mesh's own) */
+	const void* MatsKey = nullptr;
 private:
 	FBox LocalBox = FBox(ForceInit);
 	bool bLocalValid = false;
@@ -93,9 +101,15 @@ public:
 
 	// ---- tunables
 	float HideKm = 70.f;                 // settlements farther than this are not drawn (houses < 1 px)
+	/** (wave 4 towns) scale of the per-tier building hide distances (10 / 18 / 28 / 45 / 70 km); 0 = off (-townhidetier=) */
+	float TierHideScale = 1.f;
 	float ConstructionSeconds = 6.f;     // real seconds a new building stands as a scaffold
-	int32 MaxTasks = 6;
-	int32 MaxNearTasks = 3;              // (towns-perf) of those, on foreground workers (settlements within HideKm of the camera)
+	/** (wave 4 towns) planning job slots out of view (background-low priority) and in view (background-normal: level with the
+	 *  sky's weather builds and the planet's patches, GThreadPool's Normal, and never ahead of them by more than one slice) */
+	int32 MaxTasks = 3;
+	int32 MaxNearTasks = 3;
+	/** (wave 4 towns) a planning job works in slices of about this many ms of CPU, then hands its worker back (-townslice=) */
+	float SliceMs = 6.f;
 	int32 MaxAppliesPerFrame = 8;
 	int32 MaxLaunchesPerFrame = 4;       // (towns-perf) planning tasks started per frame
 	/** (towns-perf) game-thread budget for applying finished plans per frame (at least one is applied); -townbudget=<ms> */
@@ -162,7 +176,8 @@ private:
 		TObjectPtr<UStaticMesh> GroundMesh = nullptr;
 		TMap<uint32, double> Building;   // instance key -> construction start (real seconds)
 		double NextFinish = 1e30;        // (towns-perf) earliest scaffold finish (construction passes skip the town before it)
-		bool bVisible = true;
+		bool bVisible = true;            // its buildings are drawn (wave 4 towns: hidden beyond a distance by tier)
+		bool bGroundVis = true;          // (wave 4 towns) its ground overlay (fields, streets) is drawn: out to HideKm
 		bool bDirty = false;             // re-plan wanted
 		uint32 GroundGen = 0;            // bumped when the ground under this settlement changed (stale in-flight plans)
 		bool bGroundOnly = false;        // (towns-perf verifier) dirty only because the ground moved (re-planned at most every GroundReplanEvery)
@@ -170,22 +185,48 @@ private:
 		double StructSeen = 0;           // (towns-perf verifier) real seconds its structure was first seen differing from the drawn plan's
 		uint32 PlanStruct = 0;           // (towns-perf verifier) structural signature the drawn plan was made from
 	};
+public:
+	/** (wave 4 towns) One settlement's planning job: a chain of short tasks (FDmTownPlanStepper slices), each re-launched at the
+	 *  job's current priority; owns everything it reads, so an abandoned job (exit, world change) finishes on its own. */
+	struct FPlanJob
+	{
+		FDmTownInput In;
+		TSharedPtr<const FDmTownsWorldSnap, ESPMode::ThreadSafe> Snap;
+		FDmTownsGroundPtr Ground;
+		TSharedPtr<FDmKitTable, ESPMode::ThreadSafe> Kit;
+		TSharedPtr<const FDmTownPlan, ESPMode::ThreadSafe> OldPlan;
+		uint32 Sig = 0;
+		float SliceMs = 6.f;
+		std::atomic<bool> Cancel{ false };
+		std::atomic<bool> bDone{ false };
+		std::atomic<int32> Pri{ 0 };                     // UE::Tasks::ETaskPriority of the next slice
+		TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe> Plan;  // valid once bDone (null: cancelled)
+		TUniquePtr<FDmTownPlanStepper> Stepper;
+		double Started = 0, Finished = 0;                // real seconds (first slice started, last slice ended)
+	};
+private:
 	struct FPending
 	{
-		UE::Tasks::TTask<TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe>> Task;
+		TSharedPtr<FPlanJob, ESPMode::ThreadSafe> Job;
 		uint32 Sig = 0;
 		uint32 GroundGen = 0;
 		const FDmTownPlan* OldPlan = nullptr;   // the plan it replaces (construction diff made on the worker against it)
-		bool bNear = false;                     // planned on a foreground worker (a settlement the camera can see)
+		bool bNear = false;                     // planned at the in-view priority (a settlement the camera can see)
 		uint32 Struct = 0;                      // (towns-perf verifier) structural signature at launch
 		double Launched = 0;                    // (towns-perf verifier) real seconds
-		TSharedPtr<std::atomic<bool>, ESPMode::ThreadSafe> Cancel;   // (towns-perf verifier) set: the task returns at once if not started
 	};
-	struct FOrphan { UE::Tasks::TTask<TSharedPtr<FDmTownPlan, ESPMode::ThreadSafe>> Task; TSharedPtr<std::atomic<bool>, ESPMode::ThreadSafe> Cancel; };
 	/** (towns-perf verifier) a ground move marks the settlement for a ground-only re-plan (unless something else already did). */
 	static void MarkGround(FTown& T) { if (!T.bDirty) T.bGroundOnly = true; T.bDirty = true; ++T.GroundGen; }
-	/** (towns-perf verifier) background plans abandoned when their settlement came into view (re-planned on a foreground worker). */
-	TArray<FOrphan> Orphans;
+	/** (wave 4 towns) the look of a batch: the real asset (state, culture-style materials) or the generated stand-in. */
+	struct FLook { UStaticMesh* Mesh = nullptr; const TArray<UMaterialInterface*>* Mats = nullptr; float Size = 8.f; bool bAssetCons = false; };
+	FLook ResolveLook(const FDmTownPlan& P, uint32 Key) const;
+	UStaticMesh* UnitMesh(EDmTownMesh M, int32 V, int32 Age) const;
+	uint8 CultureStyleOf(const dm::World& W, int32 Culture) const;
+	mutable TMap<int32, uint8> CultureStyles;   // per culture id (this world)
+	mutable float ElevQ = -1.f, SlopeQ = -1.f;  // land elevation 75th / slope 80th percentile (this world)
+	/** (wave 4 towns) slice and job statistics (towns perf lines) */
+	double MaxSliceMs = 0, MaxSliceCpuMs = 0, JobWallMs = 0;
+	int32 JobsDone = 0, SlicesDone = 0;
 	/** (towns-perf) a new ground snapshot completed off the game thread: our own capture of the planet terrain prepared on a
 	 *  worker, then the probe of which settlements it moved. Adopted by the tick that finds both tasks done. */
 	struct FGroundProbe { int32 Id = -1; TSharedPtr<const FDmTownPlan, ESPMode::ThreadSafe> Plan; FVector Centre = FVector::ZeroVector; float RadiusM = 0, ExtentM = 0; };
@@ -241,7 +282,6 @@ private:
 	/** (towns-perf) pool of registered, hidden, frozen, empty components: taken by applies, returned instead of destroyed. */
 	UDmTownsISM* NewPooled(UStaticMesh* Mesh = nullptr);
 	void WarmComponents();
-	int32 UnitComp(EDmTownMesh M, int32 V);
 	UDmTownsISM* TakePooled(UStaticMesh* Mesh);
 	void ReturnPooled(UInstancedStaticMeshComponent* C);
 	void RefillPool();
@@ -251,6 +291,7 @@ private:
 
 	// units
 	void UpdateUnits(const dm::World& W, float Dt);
+	int32 UnitComp(UStaticMesh* Mesh);
 
 	UPROPERTY() TObjectPtr<USceneComponent> Root;
 	UPROPERTY() TObjectPtr<UDmTownsFactory> Factory;
@@ -294,6 +335,7 @@ private:
 	FDelegateHandle DirtyHandle, WorldHandle, EventHandle;
 	const dm::World* SeenWorld = nullptr;
 	int32 VisibleTowns = 0;
+	int32 VisibleComps = 0;              // (wave 4 towns) building components of the visible settlements
 	int64 NumPlans = 0;
 	double PlanMs = 0;
 	double LastVis = -1e9;
@@ -302,9 +344,10 @@ private:
 	// units: smoothed positions per unit id
 	struct FMover { FVector Pos = FVector::ZeroVector; FVector Fwd = FVector::ForwardVector; bool bInit = false; int32 Comp = -1; int32 Seen = 0; };
 	TMap<int32, FMover> Movers;
-	TArray<int32> UnitCompMesh;     // EDmTownMesh * 8 + variant per unit component
+	TArray<UStaticMesh*> UnitCompMesh;   // (wave 4 towns) the mesh of each unit component (a real asset or a stand-in)
 	TArray<TArray<FTransform>> UnitXf;   // per unit component, reused every frame
 	TArray<TArray<float>> UnitCd;
+	TArray<int32> UnitLastN;             // (wave 4 towns) units drawn by each component last frame (0: all its slots hidden)
 	int32 UnitsDrawn = 0;
 	int32 UnitFrame = 0;
 };

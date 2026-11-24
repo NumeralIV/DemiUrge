@@ -36,6 +36,8 @@
 #include "Game/Core/DmScenario.h"
 #include "Game/Core/DmSimSubsystem.h"
 #include "Sim/State.h"
+#include "Sim/Civ.h"
+#include "Sim/Sim.h"
 
 #include "Components/DirectionalLightComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -63,6 +65,10 @@ namespace
 		bool bSunAbs = false; double SunLat = 0, SunLon = 0;   // or an absolute subsolar point
 		TFunction<void(FDmScenarioContext&)> Before;          // world changes before this view
 		int32 Hold = -1;
+		// (wave 4) called on each of the first DuringFrames frames of the view (a live genesis wave advancing a tick
+		// per frame); the shot waits for the maps to catch up after the last call
+		TFunction<void(FDmScenarioContext&, int32)> During;
+		int32 DuringFrames = 0;
 	};
 
 	struct FRun
@@ -81,6 +87,7 @@ namespace
 		// not see a dirty map that has not started its job yet, and under load the map worker took up to 28 s, so the
 		// scorch-60 / -15 shots showed no scar at all. Shots wait for a map update after MapsBase that has stood 30 frames.
 		int32 MapsBase = -1, MapsSeen = -1, MapsStable = 0;
+		bool bShotTaken = false;
 	};
 	FRun GRun;
 	/** (verify) true once the colour maps have been updated after the last world change and stood for 30 frames. */
@@ -243,6 +250,11 @@ namespace
 			const int32 Hold = GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold;
 			if (GRun.ViewFrame == Hold - 20) { UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: profilegpu %s"), *GRun.Views[GRun.Cur].Name); GEngine->Exec(Ctx.World, TEXT("ProfileGPU")); }
 		}
+		if (GRun.Cur >= 0 && GRun.Cur < GRun.Views.Num() && GRun.Views[GRun.Cur].During && GRun.ViewFrame < GRun.Views[GRun.Cur].DuringFrames)
+		{
+			GRun.Views[GRun.Cur].During(Ctx, GRun.ViewFrame);
+			if (ADmPlanet* Pd = Planet(Ctx)) GRun.MapsBase = Pd->MapUpdates;
+		}
 		if (GRun.ChangeFrames > 0) { GRun.MaxFrameAfterChange = FMath::Max(GRun.MaxFrameAfterChange, FApp::GetDeltaTime() * 1000.0); --GRun.ChangeFrames; }
 		ADmPlanet* P = Planet(Ctx);
 		if (GRun.ShotAt >= 0)
@@ -269,14 +281,19 @@ namespace
 			}
 			Ctx.Shot(GRun.Views[GRun.Cur].Name);
 			GRun.ShotAt = GRun.ViewFrame;
+			GRun.bShotTaken = true;
 			++GRun.ViewFrame;
 			return;
 		}
-		if (GRun.Cur < 0 || (GRun.ViewFrame > 0 && GRun.ShotAt < 0 && GRun.ViewFrame >= (GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold) && (!P || P->IsSettled() || GRun.ViewFrame > 2400)))
+		// (wave 4) a view moves on only after its shot: when the planet had settled but its maps had not caught up yet, the
+		// old test skipped the view without a picture
+		if (GRun.Cur < 0 || (GRun.bShotTaken && GRun.ViewFrame > 0 && GRun.ShotAt < 0 && GRun.ViewFrame >= (GRun.Views[GRun.Cur].Hold > 0 ? GRun.Views[GRun.Cur].Hold : GRun.Hold) && (!P || P->IsSettled() || GRun.ViewFrame > 2400)))
 		{
 			++GRun.Cur;
 			GRun.ViewFrame = 0;
+			GRun.bShotTaken = false;
 			if (GRun.Cur >= GRun.Views.Num()) { GRun.bDone = true; Ctx.Finish(); return; }
+			UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: view %s starts"), *GRun.Views[GRun.Cur].Name);
 			if (GRun.Views[GRun.Cur].Before) GRun.Views[GRun.Cur].Before(Ctx);
 			ApplyView(Ctx, GRun.Views[GRun.Cur]);
 			GRun.Frames.Reset();
@@ -943,3 +960,148 @@ static TArray<FView> FixesViews(FDmScenarioContext& Ctx, const dm::World& W)
 	return V;
 }
 DM_PLANET_SCENARIO("planet-fixes", "wave-3 planet fixes: farmland (40/10/2 km), a volcano's scorch (60/15/4.5 km), a late sea rise (400/60/12/2.5 km)", FixesViews)
+
+// ------------------------------------------------------------------ (wave 4) the sea at four zooms
+// A coast with a river mouth, looking out to sea with the sun ahead (glint), from orbit (the planet card's framing),
+// 50 km, 5 km and 300 m. -seatarget=lat,lon,heading picks another coast; -seasun=elev,azOffset moves the sun.
+
+static TArray<FView> SeaViews(FDmScenarioContext& Ctx, const dm::World& W)
+{
+	int32 Up = -1;
+	int32 M = BigMouth(W, &Up);
+	if (M < 0) M = SettledCoast(W);
+	double Lat, Lon; CellLatLon(W, M, Lat, Lon);
+	double Hd = Up >= 0 ? HeadingTo(W, Up, M) : 30.0;   // downstream, out to sea
+	double T[3];
+	if (FDmShotArgs::List(TEXT("-seatarget="), T, 3) == 3) { Lat = T[0]; Lon = T[1]; Hd = T[2]; }
+	double Sn[2] = { 24.0, 30.0 };
+	FDmShotArgs::List(TEXT("-seasun="), Sn, 2);
+	TArray<FView> V;
+	FView O; O.Name = TEXT("orbit"); O.Lat = Lat; O.Lon = Lon; O.DistKm = 900; O.Pitch = 90; O.Fov = 30; O.SunElev = 50; O.SunAz = Hd + 200; V.Add(O);
+	FView G = O; G.Name = TEXT("orbit-glint"); G.DistKm = 520; G.Fov = 40; G.SunElev = 62; G.SunAz = Hd; V.Add(G);
+	FView A; A.Name = TEXT("50km"); A.Lat = Lat; A.Lon = Lon; A.DistKm = 50; A.Heading = Hd; A.Pitch = 34; A.Fov = 50; A.SunElev = Sn[0]; A.SunAz = Hd + Sn[1]; V.Add(A);
+	FView B = A; B.Name = TEXT("5km"); B.DistKm = 5; B.Pitch = 20; B.Fov = 55; V.Add(B);
+	FView C = A; C.Name = TEXT("300m"); C.DistKm = 0.3; C.Pitch = 13; C.Fov = 60; V.Add(C);
+	UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: sea: coast cell %d lat %.2f lon %.2f heading %.0f"), M, Lat, Lon, Hd);
+	return V;
+}
+DM_PLANET_SCENARIO("planet-sea", "(wave 4) the sea at a river mouth: orbit (card framing), orbit glint, 50 km, 5 km, 300 m", SeaViews)
+
+// ------------------------------------------------------------------ (wave 4) genesis: molten crust and the life wave
+// A new world (-gseed=, default 21) through the real genesis: the molten crust at heat 0.9 (orbit, 50 km, 5 km) and
+// 0.35 (cooling), comets until the seas are full, then three seeds of life at the best site and the green wave after
+// 2, 5 and 9 s of 1x play (orbit and 50 km).
+namespace
+{
+	struct FGen { int32 Site = -1; int32 Seeds = 0; bool bSea = false; };
+	FGen GGen;
+
+	void GenStepTo(FDmScenarioContext& Cx, double Heat)
+	{
+		int32 Guard = 0;
+		while (Cx.Sim->Sim() && Cx.Sim->Sim()->phase == dm::Phase::Molten && Cx.Sim->Sim()->heat > Heat && Guard++ < 400) Cx.Sim->StepTicks(1);
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: genesis: heat %.2f phase %s"), Cx.Sim->Sim()->heat, UTF8_TO_TCHAR(dm::toStr(Cx.Sim->Sim()->phase)));
+	}
+
+	/** Cool, fill the seas with comets (the real power), then enter the life phase. */
+	void GenFillSeas(FDmScenarioContext& Cx)
+	{
+		if (GGen.bSea || !Cx.Sim) return;
+		GGen.bSea = true;
+		dm::World* W = Cx.Sim->SimMutable();
+		int32 Guard = 0;
+		while (W->phase == dm::Phase::Molten && Guard++ < 400) Cx.Sim->StepTicks(1);
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: genesis: cooled after %d ticks: phase %s, sea %.2f"), Guard, UTF8_TO_TCHAR(dm::toStr(W->phase)), W->seaLevel);
+		FRandomStream R(7);
+		int32 Refused = 0;
+		int32 Comets = 0;
+		Guard = 0;
+		while (W->phase == dm::Phase::Water && W->seaLevel < -2.8 && Guard++ < 4000)
+		{
+			if ((Guard % 6) == 0)
+				for (int32 Try = 0; Try < 30; ++Try)
+				{
+					const int32 C = R.RandRange(0, W->n - 1);
+					if (Cx.Sim->UsePower(TEXT("comet"), C, 0.f)) { ++Comets; break; }
+					++Refused;
+				}
+			Cx.Sim->StepTicks(1);
+		}
+		const bool bNext = W->phase == dm::Phase::Water && dm::sim::genesis::next(*W);
+		GGen.Site = dm::civ::bestSite(*W);
+		if (const ADmPlanet* P = Planet(Cx)) GRun.MapsBase = P->MapUpdates;
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: genesis: %d comets (%d refused), sea %.2f, life phase %d, best site %d"), Comets, Refused, W->seaLevel, bNext ? 1 : 0, GGen.Site);
+	}
+
+	/** The life wave: seeds at the best site (and two more near it), then one tick per frame. */
+	void GenLife(FDmScenarioContext& Cx, int32 Frame)
+	{
+		dm::World* W = Cx.Sim ? Cx.Sim->SimMutable() : nullptr;
+		if (!W || W->phase != dm::Phase::Life) return;
+		if (GGen.Seeds == 0 && W->valid(GGen.Site))
+		{
+			std::vector<int32_t> Ring;
+			W->geo->ring(GGen.Site, 9, Ring);
+			int32 Placed = Cx.Sim->UsePower(TEXT("seed"), GGen.Site, 0.f) ? 1 : 0;
+			for (size_t K = 0; K < Ring.size() && Placed < 2; K += 37)
+				if (!dm::state::isSea(*W, Ring[K]) && Cx.Sim->UsePower(TEXT("seed"), Ring[K], 0.f)) ++Placed;
+			GGen.Seeds = FMath::Max(Placed, 1);
+			UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: genesis: %d seeds at site %d"), Placed, GGen.Site);
+		}
+		Cx.Sim->StepTicks(1);
+		if ((Frame % 8) == 0)
+		{
+			const dm::sim::genesis::Progress G = dm::sim::genesis::progress(*W);
+			UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: genesis: tick %lld veg cover %.3f"), (long long)W->tick, G.veg);
+		}
+	}
+}
+
+static FDmScenarioRegistrar GDmPlanetGenesis(TEXT("planet-genesis"), TEXT("planet"),
+	TEXT("(wave 4) a new world's genesis: molten crust (orbit, 50 km, 5 km), cooling, then the life wave after 2 / 5 / 9 s"),
+	[](FDmScenarioContext& Ctx)
+	{
+		GGen = FGen();
+		int32 Sd = 21; FDmShotArgs::Value(TEXT("-gseed="), Sd);
+		Ctx.Sim->CreateWorld(uint32(Sd), TEXT("Ithe"), false, 0.0);
+		// (as genesis-look) the first heat is reached before the scene is built
+		{ int32 Guard = 0; while (Ctx.Sim->Sim() && Ctx.Sim->Sim()->phase == dm::Phase::Molten && Ctx.Sim->Sim()->heat > 0.9 && Guard++ < 200) Ctx.Sim->StepTicks(1); }
+		Ctx.Sim->SetPaused(true);
+		Ctx.BuildScene();
+		UE_LOG(LogDmPlanetScn, Display, TEXT("DmPlanetScn: genesis: scene built, heat %.2f"), Ctx.Sim->Sim() ? Ctx.Sim->Sim()->heat : -1.0);
+		const dm::World* W = Ctx.Sim->Sim();
+		if (!W) { Ctx.SetExitCode(2); Ctx.Finish(); return; }
+		// the site where life will start (decided on the final seas: the molten views look at the same place)
+		const int32 Site0 = dm::civ::bestSite(*W);
+		double Lat = 0, Lon = 0;
+		if (W->valid(Site0)) CellLatLon(*W, Site0, Lat, Lon);
+		double T[2];
+		if (FDmShotArgs::List(TEXT("-gtarget="), T, 2) == 2) { Lat = T[0]; Lon = T[1]; }
+		TArray<FView> V;
+		FView A; A.Lat = Lat; A.Lon = Lon; A.SunElev = 40; A.SunAz = 120; A.Heading = 0;
+		A.Name = TEXT("molten-orbit"); A.DistKm = 700; A.Pitch = 90; A.Fov = 36; V.Add(A);
+		A.Before = nullptr;
+		A.Name = TEXT("molten-50km"); A.DistKm = 50; A.Pitch = 40; A.Fov = 50; V.Add(A);
+		A.Name = TEXT("molten-5km"); A.DistKm = 5; A.Pitch = 22; A.Fov = 55; V.Add(A);
+		A.Name = TEXT("cooling-orbit"); A.DistKm = 700; A.Pitch = 90; A.Fov = 36; A.Before = [](FDmScenarioContext& Cx) { GenStepTo(Cx, 0.35); }; V.Add(A);
+		A.Name = TEXT("seas-orbit"); A.Before = [](FDmScenarioContext& Cx) { GenFillSeas(Cx); }; V.Add(A);
+		A.Before = nullptr;
+		const int32 Steps[3] = { 16, 24, 32 };   // 2, 5, 9 s of 1x play in all
+		const TCHAR* Names[3] = { TEXT("life-2s"), TEXT("life-5s"), TEXT("life-9s") };
+		for (int32 I = 0; I < 3; ++I)
+		{
+			FView L = A; L.Name = Names[I]; L.DistKm = I == 1 ? 140 : 700; L.Pitch = I == 1 ? 60 : 90; L.Fov = I == 1 ? 45 : 36;
+			L.During = [](FDmScenarioContext& Cx, int32 F) { GenLife(Cx, F); };
+			L.DuringFrames = Steps[I]; L.Hold = Steps[I] + 90;
+			// look at the site the seeds go to (known once the seas are full)
+			L.Before = [](FDmScenarioContext& Cx)
+			{
+				GenFillSeas(Cx);
+				const dm::World* Wl = Cx.Sim->Sim();
+				if (Wl && Wl->valid(GGen.Site) && GRun.Cur >= 0) { double La, Lo; CellLatLon(*Wl, GGen.Site, La, Lo); GRun.Views[GRun.Cur].Lat = La; GRun.Views[GRun.Cur].Lon = Lo; }
+			};
+			V.Add(L);
+		}
+		StartRun(Ctx, MoveTemp(V));
+	},
+	[](FDmScenarioContext& Ctx, float Dt) { TickRun(Ctx, Dt); });
