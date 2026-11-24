@@ -1,0 +1,103 @@
+2026-11-23 wave4b-camera VERIFIED with fixes (independent verifier, lane camera4b-verify). Score 8/10 (as built 7/10).
+NOT YET ON MAIN.
+
+SYNC PENDING: `lane.ps1 sync camera4b-verify` refuses all 8 changed files. The finished lane 'camera-input-verify' still
+claims Game/Camera/** and Game/Input/**. The -Force override was blocked by the permission system for the verifier too,
+so the lead must run:
+  powershell -NoProfile -ExecutionPolicy Bypass -File Unreal/lane.ps1 sync camera4b-verify -Force   then   Unreal/build.ps1
+Sync camera4b-verify, NOT camera4b. camera4b-verify holds all 8 of the builder's files plus the fixes below.
+- Dry run: 8 refused (claim only), 6 identical, 0 conflicts, 0 skipped. Main has not changed these files since
+  2026-11-19.
+- The lane was cut fresh from main on 2026-11-23, so the code is built against today's Planet / Core.
+- Lane build: Succeeded, 0 warnings.
+- Main was not rebuilt, because nothing reached main.
+- Remember the release-notes tooling note: touch the synced files before build.ps1.
+
+Re-run of the builder's proof in the fresh lane (cam-zoomrec, -camshots=0): RESULT PASS.
+- Pointer drift: 0.0-1.4 px. Eye pops: 0.
+- Minimum clearance: 0.747 km above the RENDERED ground over the highest peak.
+- Camera CPU: p95 0.09-0.26 ms. Rendered-ground query: 2.8-4.4 us.
+- Wheel spin orbit -> ground in about 1.06 s (18 notches over 0.9 s; the 1.5 zoom/s cap); trackpad in about 2.4 s.
+- Tilt is 0 deg until zoom 0.35, then rises smoothly to 72 deg. Zoom speed stays continuous through the tilt start.
+  On the fastest descent the view pitches at up to about 250 deg/s for about 0.4 s. That is a consequence of the
+  cap, not a jump.
+- Regressions:
+  - cam-math 18/18 PASS
+  - input-test 75/75 PASS (main now has 75 checks; the builder reported 70)
+  - cam-verify 7/7 PASS
+- Settings switches work (-invertzoom=1 -zoomspeed=2 -panspeed=3 -edgepan=0). The log line confirms them, wheel
+  direction flips and the step doubles.
+- Edge pan cannot run with the pointer outside the window: engine SceneViewport sets the cursor to -1,-1 on mouse
+  leave, so GetMousePosition fails. HUD panels sit more than 6 px from every edge.
+
+Adversarial set, new: cam-zoomrec -camset=break (and -camset=limb). It covers:
+- wheel reversal mid-flight (8 in, 5 out, 8 in);
+- spins in and out with a 120 ms hitch every 7th frame;
+- at ground level, the pointer just below the horizon (a point tens of km away), zooming out and back in;
+- the pointer in the sky (no anchor);
+- W pan held while wheeling out;
+- a zoom from full orbit toward a point 1 % of the screen height inside the planet's limb;
+- a 3 s hold there, with planet stats and a camera-manager check.
+Result after the fixes: RESULT PASS.
+- Drift <= 3.5 px everywhere; 0 pops.
+- Clearance >= 1.25 km at ground level.
+- Hitch frames: no pop and no snap. The rig clamps Dt at 0.25 s, and the eye speed relative to altitude stays smooth.
+
+FOUND AND FIXED (Game/Camera, lane camera4b-verify):
+F1 Zoom toward the pointer lost its point near the limb / at grazing angles. This was a real defect.
+   Cause, part 1: every wheel notch re-anchored on whatever ground the pointer covered at that moment. Any residual
+   left by the previous notch was baked in.
+   Cause, part 2: the per-frame correction budget (8 x |zoom step|) is too small where the ground is seen edge-on.
+   Effect: zooming from orbit at a point near the limb, the point under the pointer ended 700-900 px away at 11 km
+   (break-v1 / -v3 runs). The rig's own anchor residual measured 1-6 px per notch at orbit, magnified 30x on the way
+   down.
+   Fix (DmCameraRig.cpp ZoomBy / Update):
+   - A notch that lands while an anchor is still held under the same pixel (< 4 px) keeps that anchor.
+   - The correction budget is divided by the cosine of the pointer ray's incidence (clamped at 0.12).
+   Result: limb drift 895 px -> 3.4 px. The normal cases are unchanged (wheel-in 0.0 px, pad 1.4 px, peak 0.0 px).
+F2 The proof's drift reference was wrong at grazing angles (DmCameraRecord.cpp AimPointer).
+   - The 4-pass sphere iteration does not converge at the limb or the horizon. It put the reference point above or
+     below the ground, which reads as false drift through parallax.
+   - It is now the game's own pick when the player view already equals the rig view. Otherwise (right after a
+     jump, when the camera manager is a frame stale) it is a convergent march (half-height steps plus bisection)
+     against the camera's ground.
+   - A first attempt that always used the pick was itself wrong right after JumpLatLon: the camera manager is one
+     frame stale, which gave a false 516 px at peak-in. That is why the hybrid exists.
+F3 New verifier coverage in DmCameraRecord.cpp:
+   - -camset=break and -camset=limb;
+   - CSV columns anchor and anchor_err (the rig's own anchor residual in px);
+   - a limb-hold phase that logs planet StatsLine and the rig-vs-camera-manager eye gap (0.000 km).
+
+NOT FIXED / FOR OTHERS:
+- 60 fps is NOT demonstrated at low altitude. With the machine quieter, the wheel / pad / limb phases run 8-14 ms
+  average, p95 15-21 ms. Ground-level pan, edge and key-out phases at 2.7 km ran 20-30 ms average, p95 60-110 ms,
+  and peak-cross / peak-out p95 79-129 ms. The camera's own CPU time is 0.1-0.3 ms, so this belongs to
+  planet / nature / perf (it matches release-notes item 2: the low view is CPU-bound). Other agents were rendering
+  at the same time.
+- Settings (bEdgePan, ZoomSpeedSetting, PanSpeedSetting, bInvertZoom) are not exposed on the settings screen and
+  not saved by DmFlow (UI / flow tracks).
+- Planet: hard black triangles in a sunlit desert at 11 km after a fast limb zoom (shots/ue-cam-break-wheel-limb-end.png
+  of the first break run, overwritten since; seen again by the builder on snow peaks). Hard-edged blue water
+  rectangles / triangles inside forest at ground level. Seen in the first break run's hz-in / hz-out / wheel-in-hitch
+  frames; those files have been overwritten since, and the final run's frames over the same forest do not show them,
+  so the effect may depend on what has streamed in.
+- Look: the night-side sea at 11-12 km reads as black with mirrored stars and a flat teal sheet
+  (shots/ue-cam-limb-limb-hold-end.png). By day the same spot is normal sea (shots/ue-cam4bv-seam-a.png), so this is
+  the night water / sky look, not the camera.
+
+Evidence (docs/handoff/wave4b-camera/verify/):
+- campath-zoomrec-verify.csv: the builder's scenario, re-run after the fixes.
+- campath-break-verify.csv and campath-limb-verify.csv: after the fixes.
+- campath-break-before-fix.csv: limb drift 708 px.
+- analysis.txt: per-phase frame ms, d ln(alt)/dt, its per-frame change, eye speed / altitude, pop ratio, clearance,
+  drift and camera CPU, from campath_analyse.py.
+- logs-summary.txt: all DmCamRec / regression RESULT lines.
+Screenshots:
+- shots/ue-cam-zoomrec-4bv-*.png: descent z015..z090, ground, peak, edge pan.
+- shots/ue-cam-break-*.png and shots/ue-cam-limb-*.png.
+- Contact sheet: shots/ue-cam-4b-verify-sheet.png.
+
+Score, judged against the brief. Smooth inertia, sensible speed at every altitude, no clipping, no orbit-surface
+jump, horizon tilt, edge and keyboard panning, and wheel / trackpad / key defaults are all met and proven. Zoom to
+the cursor is now robust at grazing angles. Points off: 60 fps near the ground is not shown (not the camera's cost,
+but the brief's target), and the settings are not reachable in the UI yet.

@@ -101,7 +101,11 @@ public:
 	float TouchBrushDelay = 0.1f;
 	float WheelStep = 0.06f;           // zoom per wheel notch
 	float PinchZoom = 0.35f;           // zoom per doubling of the finger distance
-	float KeyPanRate = 0.6f;           // screen heights per second
+	float KeyPanRate = 0.75f;          // screen heights per second (the rig eases in and out)
+	float KeyPanFast = 2.5f;           // Shift held: pan this much faster
+	float EdgePanMarginPx = 6.f;       // pointer within this many pixels of a screen edge pans
+	float EdgePanRate = 0.7f;          // screen heights per second at the very edge
+	float EdgePanDwell = 0.18f;        // seconds at the edge before panning starts (crossing out of a window does not pan)
 	float KeyTurnRate = 1.4f;          // rad per second
 	float KeyZoomRate = 0.45f;         // zoom per second
 	float RightTurnPerScreen = 3.14159f;   // heading change for a right-drag across the whole width
@@ -136,6 +140,8 @@ private:
 	void ProcessMouse(const FVector2D& Ptr, bool bHave, float Dt);
 	bool ProcessTouch(float Dt);
 	void ProcessKeys(float Dt);
+	void ProcessEdgePan(const FVector2D& Ptr, bool bHave, float Dt);
+	void ApplySettingsArgs();
 	void UpdateRing();
 	void CancelAll();
 
@@ -149,6 +155,12 @@ private:
 	FVector2D VirtualPointer = FVector2D::ZeroVector;
 	FButton Btn[3];                  // 0 primary, 1 secondary, 2 middle
 	float WheelAccum = 0.f;
+	double EdgeTime = 0.0;           // seconds the pointer has rested in the edge band
+	bool bSettingsArgs = false;
+public:
+	/** Edge pan velocity requested this frame (screen heights / s; tests). */
+	FVector2D LastEdgePan = FVector2D::ZeroVector;
+private:
 	bool bStroke = false;
 	double LastClickTime = -1e9;
 	FVector2D LastClickPos = FVector2D::ZeroVector;

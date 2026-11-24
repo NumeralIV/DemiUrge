@@ -3,8 +3,10 @@
 # to BelowNormal priority, so together they can use at most $Cores / total of the CPU.
 # Run:  powershell -NoProfile -ExecutionPolicy Bypass -File tools\cpu_governor.ps1 [-Cores 14] [-Log <file>]
 param([int]$Cores = 14, [string]$Log = "$env:TEMP\demiurge-cpu-governor.log")
-$names = @('UnrealEditor', 'UnrealEditor-Cmd', 'ShaderCompileWorker', 'UnrealBuildTool', 'dotnet', 'cl', 'link',
-           'blender', 'Demiurge', 'simrun', 'python', 'clang', 'lld-link', 'UbaHost', 'ispc')
+# Wildcards on purpose: agents build renamed copies of tools (simrun-fam.exe, simrun-knob.exe, test_*.exe).
+$names = @('UnrealEditor*', 'ShaderCompileWorker', 'UnrealBuildTool', 'dotnet', 'cl', 'link',
+           'blender*', 'Demiurge*', 'simrun*', 'test_*', 'python*', 'clang*', 'lld-link', 'UbaHost', 'ispc')
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $total = [Environment]::ProcessorCount
 $mask = [IntPtr]([int64]([math]::Pow(2, [math]::Min($Cores, $total)) - 1))
 "$(Get-Date -Format s) governor start: $Cores of $total logical CPUs (max ~$([int](100 * $Cores / $total)) %)" | Out-File -Append $Log
@@ -13,6 +15,10 @@ $mask = [IntPtr]([int64]([math]::Pow(2, [math]::Min($Cores, $total)) - 1))
 $launchers = 'SimTests|build\.ps1|lane\.ps1|package\.ps1|shot\.ps1|simrun|render_slot|UnrealBuildTool|RunUAT'
 while ($true) {
     $procs = @(Get-Process -Name $names -ErrorAction SilentlyContinue)
+    # Anything compiled and run from inside the project or the temp folder (test harnesses, simrun variants).
+    $procs += Get-Process -ErrorAction SilentlyContinue | Where-Object {
+        $_.Path -and ($_.Path.StartsWith($projectRoot, 'OrdinalIgnoreCase') -or $_.Path.StartsWith($env:TEMP, 'OrdinalIgnoreCase')) -and
+        $_.Path -notmatch '\\claude\\|powershell|bash' }
     foreach ($w in Get-CimInstance Win32_Process -Filter "Name='powershell.exe' OR Name='pwsh.exe' OR Name='bash.exe' OR Name='cmd.exe'" -ErrorAction SilentlyContinue) {
         if ($w.CommandLine -and $w.CommandLine -match $launchers -and $w.CommandLine -notmatch 'cpu_governor') {
             $procs += Get-Process -Id $w.ProcessId -ErrorAction SilentlyContinue

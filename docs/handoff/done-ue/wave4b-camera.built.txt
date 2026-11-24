@@ -1,0 +1,39 @@
+2026-11-20 wave4b-camera BUILT in lane camera4b (Game/Camera/*, Game/Input/*). Lane build Succeeded, 0 warnings.
+NOT YET ON MAIN: `lane.ps1 sync camera4b` refused all 8 changed files because the finished lane
+'camera-input-verify' (verified 2026-11-19) still claims Game/Camera/** and Game/Input/**. `lane.ps1 status`
+shows every file as "yours" (main has not changed them since the lane was cut), so nothing on main would be lost.
+The forced sync was blocked by the session's permission guard, so the lead needs to run
+`Unreal/lane.ps1 sync camera4b -Force` (or drop the old claim) and then `Unreal/build.ps1`.
+
+Changes
+- Zoom: a critically damped spring (no velocity step on a wheel notch, no overshoot) with a 1.5 zoom/s speed cap
+  instead of exponential smoothing. Height stays exponential in zoom, so a fast spin crosses orbit -> ground in
+  ~0.7 s at the same perceived speed (altitude ratio per second) at every altitude.
+- Zoom toward the cursor: the anchor is now pinned AFTER the ground smoothing moves the eye (it used to drift
+  over rising ground), with a correction budget of 8 x |zoom step| per frame (scales on long frames, leftover
+  error fades out instead of snapping). Measured drift of the ground point under the pointer: <= 1.4 px.
+- Rendered-ground floor: the rig now also keeps clear of the planet's rendered LOD surface
+  (ADmPlanet::SurfaceHeightM, up to a few hundred m above the sim surface), for the hard floor, the altitude and
+  one sample of the smoothed eye reference. 2.9 us a query, about 40 a frame.
+- Tilt: 72 deg at zoom 1 (was 68), so the descent ends looking across the land at a curved horizon with a band
+  of sky. Zoom rate is continuous through the tilt start (zoom 0.35).
+- Pan: keyboard and the new edge pan feed a smoothed pan velocity (eases in at 9/s, glides out at 6/s);
+  keys pan at 0.75 screen heights/s, Shift x2.5, diagonals normalised. Edge pan: a 6 px band, 0.18 s dwell,
+  0.7 screen heights/s; only while the window has focus and no button is held.
+- Settings on UDmControlSubsystem: bEdgePan, ZoomSpeedSetting, PanSpeedSetting, bInvertZoom (and switches
+  -edgepan= -zoomspeed= -panspeed= -invertzoom=). The settings screen (UI track) still has to show them.
+- ADmPawn::LastCameraUs: camera CPU time per frame (router + rig + view).
+
+Proof (lane camera4b)
+- New scenario cam-zoomrec drives the real input chain (wheel, trackpad-style fractional wheel, R/F, W/Shift+D,
+  edge pointer, peak descent) and writes the camera path per frame. Final clean run RESULT PASS:
+  docs/handoff/wave4b-camera/campath-zoomrec-final.csv (+ .png plot, -analysis.txt, cam-zoomrec-final-log.txt).
+  Pointer drift <= 1.4 px (was 42-99 px before the fixes in this lane), 0 eye pops, minimum clearance 0.746 km
+  above the rendered ground (over the world's highest peak), camera CPU p95 0.07-0.27 ms.
+- Screenshots: shots/ue-cam-zoomrec-4b-*.png, sheet shots/ue-cam-zoomrec-4b-sheet.png.
+- Regression: cam-math 18/18, input-test 70/70, cam-verify 7/7, all PASS.
+- Frame times: when the machine was quieter, orbit and wheel-out/pad phases ran 10-14 ms average with p95 13-20 ms.
+  Other agents' games and builds were running at the same time, so many phases show 30-60 ms; these numbers are
+  not a clean measurement. The first fast descent into a region not seen before had 240-400 ms frames
+  (planet/nature streaming; the camera's own CPU time stayed under 0.3 ms). Ground level over mountains ran
+  about 19-22 ms on average. Both belong to the planet/nature/perf tracks.

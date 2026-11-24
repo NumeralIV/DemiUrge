@@ -36,6 +36,8 @@ void FDmCameraRig::Reset()
 	DmCoords::Basis(Focus, E, N);
 	Fwd = N;
 	Zoom = TargetZoom = 0.0;
+	ZoomVel = 0.0;
+	PanIn = PanVel = FVector2D::ZeroVector;
 	PendingTurn = 0.0;
 	bZoomAnchor = false;
 	Omega = DragAccum = FVector::ZeroVector;
@@ -113,6 +115,7 @@ void FDmCameraRig::StopMotion()
 	PendingTurn = 0.0;
 	bFlying = false;
 	bZoomAnchor = false;
+	PanIn = PanVel = FVector2D::ZeroVector;
 }
 
 // ------------------------------------------------------------------ input
@@ -155,9 +158,22 @@ void FDmCameraRig::ZoomBy(double Amount, const FVector* TowardDir)
 	TargetZoom = FMath::Clamp(TargetZoom + Amount, 0.0, 1.0);
 	if (TowardDir && !TowardDir->ContainsNaN() && !TowardDir->IsNearlyZero())
 	{
-		// the pixel it sits under is taken from a fresh view at the next Update (ZoomAnchorR < 0: pending)
-		ZoomAnchor = TowardDir->GetSafeNormal();
-		ZoomAnchorR = -1.0;
+		const FVector NewDir = TowardDir->GetSafeNormal();
+		// (verifier, wave 4b) a notch that lands while an anchor is still held under the same pointer pixel keeps that
+		// anchor: re-anchoring on whatever the pointer covers NOW baked any residual of the previous notch into the zoom
+		// (zooming at the limb from orbit, the point under the pointer ended 700-900 px away at 11 km)
+		bool bKeep = false;
+		if (bZoomAnchor && ZoomAnchorR > 0.0)
+		{
+			FVector2D Px;
+			bKeep = Project(NewDir * ZoomAnchorR, Px) && FVector2D::Distance(Px, ZoomAnchorPx) < 4.0;
+		}
+		if (!bKeep)
+		{
+			// the pixel it sits under is taken from a fresh view at the next Update (ZoomAnchorR < 0: pending)
+			ZoomAnchor = NewDir;
+			ZoomAnchorR = -1.0;
+		}
 		bZoomAnchor = true;
 	}
 	else bZoomAnchor = false;
@@ -176,6 +192,8 @@ void FDmCameraRig::FlyTo(const FVector& Dir, double InZoom, double Seconds)
 	if (D.IsNearlyZero()) return;
 	Omega = DragAccum = FVector::ZeroVector;
 	bZoomAnchor = false;
+	ZoomVel = 0.0;
+	PanIn = PanVel = FVector2D::ZeroVector;
 	bFlying = true;
 	FlyFrom = Focus;
 	FlyTo_ = D;
@@ -199,6 +217,7 @@ void FDmCameraRig::Jump(const FVector& Dir, double InZoom, double HeadingRadians
 	Fwd = N * FMath::Cos(Hd) + E * FMath::Sin(Hd);
 	Reorthonormalise();
 	Zoom = TargetZoom = FMath::IsFinite(InZoom) ? FMath::Clamp(InZoom, 0.0, 1.0) : 0.0;
+	ZoomVel = 0.0;
 	bSnapGround = true;
 }
 
@@ -322,6 +341,21 @@ void FDmCameraRig::Update(double Dt, FDmGroundFn Ground)
 		}
 	}
 
+	// smoothed pan (keyboard / edge): ease toward the requested velocity, glide out when released
+	{
+		const FVector2D Want = PanIn;
+		PanIn = FVector2D::ZeroVector;
+		if (bGrab || bFlying) PanVel = FVector2D::ZeroVector;
+		else if (Dt > 0.0)
+		{
+			const bool bHeld = !Want.IsNearlyZero();
+			const double L = bHeld ? Tune.PanAccel : Tune.PanDecel;
+			PanVel += (Want - PanVel) * (1.0 - FMath::Exp(-L * Dt));
+			if (!bHeld && PanVel.Size() < 2e-3) PanVel = FVector2D::ZeroVector;
+			if (!PanVel.IsNearlyZero()) Pan(PanVel.X * Dt, PanVel.Y * Dt);
+		}
+	}
+
 	// heading: rotate Fwd about the focus normal (compass: north -> east is positive)
 	if (PendingTurn != 0.0)
 	{
@@ -351,25 +385,61 @@ void FDmCameraRig::Update(double Dt, FDmGroundFn Ground)
 			else bZoomAnchor = false;
 		}
 		const double Z0 = Zoom;
-		if (!bFlying)
+		if (!bFlying && Dt > 0.0)
 		{
-			Zoom = TargetZoom + (Zoom - TargetZoom) * FMath::Exp(-Tune.ZoomLambda * Dt);
-			if (FMath::Abs(Zoom - TargetZoom) < 1e-4) Zoom = TargetZoom;
-		}
-		if (bZoomAnchor && Zoom != Z0)
-			for (int32 It = 0; It < 2; ++It)
+			// critically damped spring toward the target (exact step for a constant target), then the speed cap
+			const double W = FMath::Max(Tune.ZoomOmega, 0.1);
+			const double X = Zoom - TargetZoom;
+			const double Ex = FMath::Exp(-W * Dt);
+			const double C = ZoomVel + W * X;
+			double NewX = (X + C * Dt) * Ex;
+			double NewV = (ZoomVel - W * C * Dt) * Ex;
+			const double MaxStep = FMath::Max(Tune.ZoomMaxRate, 0.01) * Dt;
+			if (FMath::Abs(NewX - X) > MaxStep)
 			{
-				ComputeView(Ground, 0.0);
-				CorrectZoomAnchor(Ground);
+				NewX = X + FMath::Sign(NewX - X) * MaxStep;
+				NewV = FMath::Sign(NewX - X) * Tune.ZoomMaxRate;
 			}
-		if (Zoom == TargetZoom) bZoomAnchor = false;
+			Zoom = TargetZoom + NewX;
+			ZoomVel = NewV;
+			if (Zoom <= 0.0 || Zoom >= 1.0) { Zoom = FMath::Clamp(Zoom, 0.0, 1.0); ZoomVel = 0.0; }
+			if (FMath::Abs(Zoom - TargetZoom) < 1e-4 && FMath::Abs(ZoomVel) < 2e-3) { Zoom = TargetZoom; ZoomVel = 0.0; }
+			if (!FMath::IsFinite(Zoom)) { Zoom = TargetZoom; ZoomVel = 0.0; }
+		}
+		bAnchorPass = bZoomAnchor && Zoom != Z0;
+		// the correction this frame may move the focus by about what the zoom step itself displaced the anchor
+		// (angle to the anchor x ln(height ratio) per zoom unit, ~3 rad / zoom at most, with margin): a residual
+		// left by rugged ground then drains over the next frames instead of snapping in one
+		// (verifier, wave 4b) ... divided by the cosine of the pointer ray's incidence on the ground at the anchor: a
+		// grazing anchor (near the limb from orbit, near the horizon at the ground) moves that much more per zoom step
+		double Graze = 1.0;
+		if (bAnchorPass && ZoomAnchorR > 0.0)
+		{
+			FVector O, D;
+			ScreenRay(ZoomAnchorPx, O, D);
+			Graze = 1.0 / FMath::Clamp(-FVector::DotProduct(D, ZoomAnchor), 0.12, 1.0);
+		}
+		AnchorMaxThisFrame = 8.0 * Graze * FMath::Abs(Zoom - Z0) + 0.002;
+		if (Zoom == TargetZoom && !bAnchorPass) bZoomAnchor = false;
 	}
 
 	ShakeTime += Dt;
 	ShakeAmp *= FMath::Exp(-Tune.ShakeDecay * Dt);
 	if (ShakeAmp < 1e-4) ShakeAmp = 0.0;
 
+	// advance the ground smoothing FIRST, then pin the zoom anchor under its pixel against that final eye height
+	// (correcting before the smoothing moved the eye left the anchor drifting over rising ground)
 	ComputeView(Ground, Dt);
+	if (bAnchorPass)
+	{
+		for (int32 It = 0; It < 3; ++It)
+		{
+			CorrectZoomAnchor(Ground);
+			ComputeView(Ground, 0.0);
+		}
+		bAnchorPass = false;
+		if (Zoom == TargetZoom) bZoomAnchor = false;
+	}
 }
 
 void FDmCameraRig::CorrectZoomAnchor(FDmGroundFn Ground)
@@ -382,7 +452,9 @@ void FDmCameraRig::CorrectZoomAnchor(FDmGroundFn Ground)
 	FVector Axis; double A;
 	Q.ToAxisAndAngle(Axis, A);
 	if (!(A > 1e-12) || !FMath::IsFinite(A)) return;
-	if (A > Tune.ZoomAnchorMaxRad) Q = FQuat(Axis, Tune.ZoomAnchorMaxRad);
+	const double MaxA = AnchorMaxThisFrame;   // the budget left this frame (Update)
+	if (A > MaxA) Q = FQuat(Axis, MaxA);
+	AnchorMaxThisFrame = FMath::Max(AnchorMaxThisFrame - FMath::Min(A, MaxA), 0.0);
 	MoveFocus(Q);
 }
 
@@ -397,6 +469,17 @@ void FDmCameraRig::ComputeView(FDmGroundFn Ground, double Dt)
 	{
 		const double R = Ground(D);
 		return (FMath::IsFinite(R) && R > 1.0) ? R : Tune.RadiusKm;
+	};
+	// the higher of the sim ground and the rendered ground (FloorFn): for the hard floor and the altitude
+	auto GF = [&G, this](const FVector& D)
+	{
+		double R = G(D);
+		if (FloorFn)
+		{
+			const double F = FloorFn(D);
+			if (FMath::IsFinite(F) && F > R) R = F;
+		}
+		return R;
 	};
 
 	// the ground averaged over a disc of RhoKm around a direction (centre 0.4, six around it 0.1 each)
@@ -448,7 +531,9 @@ void FDmCameraRig::ComputeView(FDmGroundFn Ground, double Dt)
 		D = SolveD(GAvg(Eye.GetSafeNormal(), RhoE) + H);
 		Eye = T + Back * D;
 	}
-	Follow(EyeGroundS, GAvg(Eye.GetSafeNormal(), RhoE));
+	// the smoothed reference also rises over RENDERED relief under the eye (one sample: the temporal smoothing
+	// glides over it), so the hard floor below rarely has to act
+	Follow(EyeGroundS, FMath::Max(GAvg(Eye.GetSafeNormal(), RhoE), GF(Eye.GetSafeNormal()) - 0.5 * Tune.NearHeightKm));
 	bSnapGround = false;
 	D = SolveD(EyeGroundS + H);
 	Eye = T + Back * D;
@@ -456,7 +541,7 @@ void FDmCameraRig::ComputeView(FDmGroundFn Ground, double Dt)
 	// never closer than MinClear to the ground under the eye, nor half of it to the ground around it
 	{
 		const FVector Ed = Eye.GetSafeNormal();
-		double MinR = G(Ed) + Tune.MinClearKm;
+		double MinR = GF(Ed) + Tune.MinClearKm;
 		FVector E, N;
 		DmCoords::Basis(Ed, E, N);
 		const double Off = Tune.MinClearKm;
@@ -464,7 +549,7 @@ void FDmCameraRig::ComputeView(FDmGroundFn Ground, double Dt)
 		{
 			const double A = K * UE_HALF_PI;
 			const FVector S = (Ed * Eye.Size() + (E * FMath::Cos(A) + N * FMath::Sin(A)) * Off).GetSafeNormal();
-			MinR = FMath::Max(MinR, G(S) + 0.5 * Tune.MinClearKm);
+			MinR = FMath::Max(MinR, GF(S) + 0.5 * Tune.MinClearKm);
 		}
 		if (Eye.Size() < MinR) Eye = Ed * MinR;
 	}
@@ -503,7 +588,7 @@ void FDmCameraRig::ComputeView(FDmGroundFn Ground, double Dt)
 	V.TiltRad = Tilt;
 	V.TargetDistKm = FVector::Dist(Eye, T);
 	const double EyeR = Eye.Size();
-	V.AltitudeKm = EyeR - G(Eye / FMath::Max(EyeR, 1e-9));
+	V.AltitudeKm = EyeR - GF(Eye / FMath::Max(EyeR, 1e-9));
 	V.NearKm = FMath::Clamp(0.05 * V.AltitudeKm, 0.25, 150.0);
 	V.FarKm = FMath::Sqrt(FMath::Max(EyeR * EyeR - 93.0 * 93.0, 0.0)) + 75.0;
 }

@@ -137,6 +137,12 @@ public:
 	bool bGameRules = true;
 	/** The 'shake' setting (0..1), applied by the pawn. */
 	float ShakeSetting = 1.f;
+	/** Camera settings (wave 4b; read by the input router every frame; a settings screen may write them).
+	 *  Command-line overrides at start: -edgepan=0|1 -zoomspeed=<x> -panspeed=<x> -invertzoom=1. */
+	bool bEdgePan = true;            // pan when the pointer rests at a screen edge (needs the window focused)
+	float ZoomSpeedSetting = 1.f;    // scales wheel / pinch / key zoom steps (0.25..4)
+	float PanSpeedSetting = 1.f;     // scales keyboard and edge pan (0.25..4)
+	bool bInvertZoom = false;        // wheel up zooms OUT
 
 	FDmOnArmed OnArmed;
 	FDmOnOverlay OnOverlay;

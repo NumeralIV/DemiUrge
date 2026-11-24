@@ -30,6 +30,11 @@
  *  surface you would stand or float on: sea level on sea, land + lakes elsewhere). */
 using FDmGroundFn = TFunctionRef<double(const FVector& /*PlanetDir*/)>;
 
+/** Optional RENDERED ground (the planet's LOD surface, which adds up to a few hundred metres of relief to the sim
+ *  surface): planet-frame unit direction -> radius in km, <= 0 when unknown. Used for the hard floor, the reported
+ *  altitude and (one sample) the smoothed eye reference, so the eye never dips into rendered mountains. */
+using FDmFloorFn = TFunction<double(const FVector& /*PlanetDir*/)>;
+
 struct FDmCameraTune
 {
 	double VFovDeg = 35.0;          // vertical field of view
@@ -43,8 +48,20 @@ struct FDmCameraTune
 	// which put the horizon (dip 19.4 deg) 4.9 deg below the top of a 35 deg frame. At NearHeightKm the
 	// dip is only 8.9 deg, so 58 deg would show no sky at all; 68 deg keeps the old framing (a band of
 	// sky and the curved horizon at the top of the frame).
-	double TiltMaxDeg = 68.0;
-	double ZoomLambda = 7.0;        // smoothing rates (1/s) toward the zoom / heading targets
+	// wave 4b: 72 deg (was 68): the horizon sits ~8 deg below the frame top at zoom 1, a quarter of the frame is
+	// sky and the curved limb, so a descent ends looking ACROSS the land, not down at it.
+	double TiltMaxDeg = 72.0;
+	double ZoomLambda = 7.0;        // (legacy, unused since wave 4b: the zoom follows a critically damped spring)
+	// Zoom feel (wave 4b): the zoom follows its target as a critically damped spring (no velocity step when a
+	// wheel notch lands, no overshoot), with a speed cap so a fast wheel spin crosses the whole range in about
+	// 1/ZoomMaxRate s instead of teleporting. Height is exponential in zoom, so a given zoom rate is the same
+	// PERCEIVED speed (altitude ratio per second) at every altitude.
+	double ZoomOmega = 10.0;        // spring natural frequency (1/s): ~90 % settled 0.4 s after a notch
+	double ZoomMaxRate = 1.5;       // zoom units per second (full range orbit -> ground in ~0.7 s at the cap)
+	// Pan feel (keyboard and edge pan): the requested pan velocity (screen heights per second) is approached at
+	// PanAccel and released at PanDecel, so the view eases in and glides to a stop.
+	double PanAccel = 9.0;          // 1/s
+	double PanDecel = 6.0;          // 1/s
 	double TurnLambda = 10.0;
 	double TurnMaxSpeed = 6.0;      // rad/s: the heading never turns faster than about a turn per second
 	double InertiaDecay = 3.0;      // orbit inertia after a drag (1/s)
@@ -99,8 +116,17 @@ public:
 	const FDmCameraView& View() const { return V; }
 	/** Drag by pixels (screen x right, y down): the surface under the view follows the pointer. */
 	void Orbit(double DxPx, double DyPx);
-	/** Keyboard pan: fractions of the screen height per call along screen right / screen up. */
+	/** Keyboard pan: fractions of the screen height per call along screen right / screen up (immediate). */
 	void Pan(double RightFrac, double UpFrac);
+	/** Smoothed pan (keyboard, edge pan): request a pan VELOCITY in screen heights per second for this frame;
+	 *  requests of one frame add up and are consumed by Update (eased in, glides out). */
+	void AddPanInput(double RightPerSec, double UpPerSec) { PanIn += FVector2D(RightPerSec, UpPerSec); }
+	FVector2D GetPanVelocity() const { return PanVel; }
+	double GetZoomVelocity() const { return ZoomVel; }
+	/** Rendered-ground query (see FDmFloorFn); empty = the sim ground only. */
+	void SetFloorFn(FDmFloorFn Fn) { FloorFn = MoveTemp(Fn); }
+	/** True while a zoom-toward-the-pointer anchor is active; its pixel and planet direction. */
+	bool GetZoomAnchor(FVector2D& OutPx, FVector& OutDir, double& OutR) const { OutPx = ZoomAnchorPx; OutDir = ZoomAnchor; OutR = ZoomAnchorR; return bZoomAnchor && ZoomAnchorR > 0.0; }
 	/** Positive = closer. Optional unit direction (planet frame) to zoom toward (pointer). */
 	void ZoomBy(double Amount, const FVector* TowardDir = nullptr);
 	/** Change heading (radians, positive = view turns clockwise, compass). Smoothed. */
@@ -193,5 +219,10 @@ private:
 
 	double VpW = 1920.0, VpH = 1080.0;
 	double TargetGround = 100.0;     // radius of the ground under the focus (km)
+	double ZoomVel = 0.0;            // zoom units per second (spring state)
+	double AnchorMaxThisFrame = 0.0; // zoom-anchor correction budget left this frame (rad)
+	bool bAnchorPass = false;
+	FVector2D PanIn = FVector2D::ZeroVector, PanVel = FVector2D::ZeroVector;   // screen heights per second
+	FDmFloorFn FloorFn;
 	FDmCameraView V;
 };

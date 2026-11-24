@@ -25,6 +25,7 @@
 
 class UCameraComponent;
 class UDmInputRouter;
+class ADmPlanet;
 namespace dm { struct Event; struct World; }
 
 /** Optional renderer height: planet-frame unit direction -> surface radius in uu (<= 0: unknown). */
@@ -63,6 +64,11 @@ public:
 	FVector WorldToPlanetDir(const FVector& World) const;
 	/** Ground radius (km) under a planet-frame direction: the max of the sim surface and the provider. */
 	double GroundKm(const FVector& PlanetDir) const;
+	/** Rendered ground radius (km) under a direction: the planet module's LOD surface (ground or water,
+	 *  full detail), or <= 0 when the scene has no planet. The rig keeps its hard floor above it. */
+	double RenderedGroundKm(const FVector& PlanetDir) const;
+	/** Rendered-ground queries made by the camera (tests: cost per frame). */
+	mutable int64 FloorQueries = 0;
 	/** Apply the rig's view to the camera component now (scenarios after a Jump). */
 	void ApplyView();
 
@@ -73,6 +79,8 @@ public:
 	/** Frame statistics for tests: minimum clearance seen (km above the sim ground under the eye). */
 	double MinAltitudeSeenKm = 1e9;
 	int64 FramesTicked = 0;
+	/** Game-thread cost of the last frame's camera work (input router + rig update + view), microseconds. */
+	double LastCameraUs = 0.0;
 	bool bAdoptHarnessView = true;
 
 private:
@@ -82,5 +90,7 @@ private:
 	FDmCameraRig CameraRig;
 	FDelegateHandle SimHandle;
 	mutable int32 GroundHint = -1;
+	mutable TWeakObjectPtr<ADmPlanet> PlanetCache;
+	mutable double PlanetLookupTime = -1e9;
 	bool bAdopted = false;
 };

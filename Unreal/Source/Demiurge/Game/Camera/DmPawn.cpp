@@ -8,6 +8,7 @@
 #include "Game/Core/DmSimSubsystem.h"
 #include "Game/Input/DmControl.h"
 #include "Game/Input/DmInputRouter.h"
+#include "Game/Planet/DmPlanet.h"
 
 #include "Camera/CameraActor.h"
 #include "Camera/CameraComponent.h"
@@ -16,6 +17,7 @@
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/World.h"
+#include "HAL/PlatformTime.h"
 #include "GameFramework/PlayerController.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDmPawn, Log, All);
@@ -75,6 +77,7 @@ void ADmPawn::BeginPlay()
 	if (UDmControlSubsystem* C = UDmControlSubsystem::Get(this)) C->RegisterPawn(this);
 	UpdateViewport();
 	CameraRig.Reset();
+	CameraRig.SetFloorFn([this](const FVector& D) { return RenderedGroundKm(D); });
 	ApplyView();
 	UE_LOG(LogDmPawn, Display, TEXT("DmPawn: ready (orbit distance %.1f km, zoom-1 height %.2f km, vfov %.0f)"),
 		CameraRig.OrbitDistance(), CameraRig.Tune.NearHeightKm, CameraRig.Tune.VFovDeg);
@@ -121,6 +124,25 @@ double ADmPawn::GroundKm(const FVector& PlanetDir) const
 		if (FMath::IsFinite(P) && P > R) R = P;
 	}
 	return (FMath::IsFinite(R) && R > 1.0 ? R : DmCoords::RadiusUU) / DmCoords::UUPerKm;
+}
+
+double ADmPawn::RenderedGroundKm(const FVector& PlanetDir) const
+{
+	ADmPlanet* P = PlanetCache.Get();
+	if (!P)
+	{
+		// look the planet up at most twice a second (scenes without one, or before it spawns)
+		const UWorld* W = GetWorld();
+		const double T = W ? W->GetRealTimeSeconds() : 0.0;
+		if (T - PlanetLookupTime < 0.5 && T >= PlanetLookupTime) return -1.0;
+		PlanetLookupTime = T;
+		P = ADmPlanet::Find(this);
+		PlanetCache = P;
+		if (!P) return -1.0;
+	}
+	++FloorQueries;
+	const double H = P->SurfaceHeightM(PlanetDir);
+	return FMath::IsFinite(H) && H > -1e6 ? DmCoords::RadiusKm + H * 0.001 : -1.0;
 }
 
 FVector ADmPawn::PlanetKmToWorld(const FVector& Km) const
@@ -234,6 +256,7 @@ void ADmPawn::Tick(float DeltaSeconds)
 	}
 
 	if (const UDmControlSubsystem* C = UDmControlSubsystem::Get(this)) CameraRig.Tune.ShakeScale = C->ShakeSetting;
+	const double CamT0 = FPlatformTime::Seconds();
 	Router->ProcessFrame(DeltaSeconds);
 	CameraRig.Update(DeltaSeconds, [this](const FVector& D) { return GroundKm(D); });
 	if (!CameraRig.IsFinite())
@@ -243,4 +266,5 @@ void ADmPawn::Tick(float DeltaSeconds)
 	}
 	MinAltitudeSeenKm = FMath::Min(MinAltitudeSeenKm, CameraRig.View().AltitudeKm);
 	ApplyView();
+	LastCameraUs = (FPlatformTime::Seconds() - CamT0) * 1e6;
 }

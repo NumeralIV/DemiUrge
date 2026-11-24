@@ -15,6 +15,8 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "InputModifiers.h"
+#include "Misc/App.h"
+#include "Game/Core/DmScenario.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogDmInput, Log, All);
 
@@ -421,9 +423,11 @@ void UDmInputRouter::ProcessFrame(float Dt)
 	FVector2D Ptr;
 	const bool bHave = GetPointer(Ptr);
 
+	if (!bSettingsArgs) ApplySettingsArgs();
 	const bool bTouchActive = ProcessTouch(Dt);
 	if (!bTouchActive) ProcessMouse(Ptr, bHave, Dt);
 	if (!KeysBlocked()) ProcessKeys(Dt);
+	ProcessEdgePan(Ptr, bHave && !bTouchActive, Dt);
 
 	// hover: <= 10 Hz of real time, every frame while armed or stroking
 	const double TNow = Now();
@@ -548,7 +552,10 @@ void UDmInputRouter::ProcessMouse(const FVector2D& Ptr, bool bHave, float Dt)
 	{
 		FVector Dir;
 		const bool bHit = bHave && PickCell(Ptr, &Dir) >= 0;
-		R.ZoomBy(WheelAccum * WheelStep, bHit ? &Dir : nullptr);
+		// trackpads send many fractional wheel deltas, mice whole notches: both are summed per frame and
+		// become one zoom-target step; the rig's spring and speed cap make either feel continuous
+		const float Sgn = C->bInvertZoom ? -1.f : 1.f;
+		R.ZoomBy(Sgn * WheelAccum * WheelStep * FMath::Clamp(C->ZoomSpeedSetting, 0.25f, 4.f), bHit ? &Dir : nullptr);
 		WheelAccum = 0.f;
 	}
 }
@@ -560,12 +567,65 @@ void UDmInputRouter::ProcessKeys(float Dt)
 	const UEnhancedPlayerInput* EPI = P ? Cast<UEnhancedPlayerInput>(P->PlayerInput) : nullptr;
 	if (!EPI || !Pw) return;
 	FDmCameraRig& R = Pw->Rig();
+	const UDmControlSubsystem* Cs = Control();
+	const float PanK = Cs ? FMath::Clamp(Cs->PanSpeedSetting, 0.25f, 4.f) : 1.f;
+	const float ZoomK = Cs ? FMath::Clamp(Cs->ZoomSpeedSetting, 0.25f, 4.f) : 1.f;
 	const FVector2D O = EPI->GetActionValue(FindAction(NOrbit)).Get<FVector2D>();
-	if (!O.IsNearlyZero()) R.Pan(O.X * KeyPanRate * Dt, O.Y * KeyPanRate * Dt);
+	if (!O.IsNearlyZero())
+	{
+		const bool bFast = P->IsInputKeyDown(EKeys::LeftShift) || P->IsInputKeyDown(EKeys::RightShift);
+		const double K = KeyPanRate * PanK * (bFast ? KeyPanFast : 1.f);
+		const FVector2D On = O.Size() > 1.0 ? O / O.Size() : O;   // diagonals are not faster
+		R.AddPanInput(On.X * K, On.Y * K);
+	}
 	const float Tn = EPI->GetActionValue(FindAction(NTurn)).Get<float>();
 	if (Tn != 0.f) R.Turn(Tn * KeyTurnRate * Dt);
 	const float Z = EPI->GetActionValue(FindAction(NZoom)).Get<float>();
-	if (Z != 0.f) R.ZoomBy(Z * KeyZoomRate * Dt);
+	if (Z != 0.f) R.ZoomBy(Z * KeyZoomRate * ZoomK * Dt);
+}
+
+void UDmInputRouter::ApplySettingsArgs()
+{
+	bSettingsArgs = true;
+	UDmControlSubsystem* C = Control();
+	if (!C) return;
+	int32 I = 0;
+	double X = 0.0;
+	if (FDmShotArgs::Value(TEXT("-edgepan="), I)) C->bEdgePan = I != 0;
+	if (FDmShotArgs::Value(TEXT("-zoomspeed="), X)) C->ZoomSpeedSetting = float(FMath::Clamp(X, 0.25, 4.0));
+	if (FDmShotArgs::Value(TEXT("-panspeed="), X)) C->PanSpeedSetting = float(FMath::Clamp(X, 0.25, 4.0));
+	if (FDmShotArgs::Value(TEXT("-invertzoom="), I)) C->bInvertZoom = I != 0;
+	UE_LOG(LogDmInput, Display, TEXT("DmInput: camera settings edge pan %s, zoom speed %.2f, pan speed %.2f%s"),
+		C->bEdgePan ? TEXT("on") : TEXT("off"), C->ZoomSpeedSetting, C->PanSpeedSetting, C->bInvertZoom ? TEXT(", zoom inverted") : TEXT(""));
+}
+
+void UDmInputRouter::ProcessEdgePan(const FVector2D& Ptr, bool bHave, float Dt)
+{
+	LastEdgePan = FVector2D::ZeroVector;
+	UDmControlSubsystem* C = Control();
+	ADmPawn* Pw = Pawn();
+	if (!C || !Pw || !C->bEdgePan || !bHave) { EdgeTime = 0.0; return; }
+	FDmCameraRig& R = Pw->Rig();
+	const double W = R.ViewportW(), H = R.ViewportH();
+	// only with the window focused (a real cursor) and nothing held (a drag to the edge is a drag)
+	const bool bFocus = bVirtualPointer || FApp::HasFocus();
+	bool bHeld = bStroke || R.IsGrabbing();
+	for (const FButton& B : Btn) bHeld |= B.bDown;
+	const bool bInside = Ptr.X >= 0.0 && Ptr.Y >= 0.0 && Ptr.X <= W - 1.0 && Ptr.Y <= H - 1.0;
+	if (!bFocus || bHeld || !bInside || R.Busy()) { EdgeTime = 0.0; return; }
+	const double M = FMath::Max(EdgePanMarginPx, 1.f);
+	auto Depth = [M](double Lo, double Hi) { return Lo < M ? -(1.0 - Lo / M) : (Hi < M ? (1.0 - Hi / M) : 0.0); };
+	const double Ex = Depth(Ptr.X, W - 1.0 - Ptr.X);           // -1 left .. +1 right
+	const double Ey = Depth(Ptr.Y, H - 1.0 - Ptr.Y);           // -1 top .. +1 bottom
+	if (Ex == 0.0 && Ey == 0.0) { EdgeTime = 0.0; return; }
+	EdgeTime += Dt;
+	if (EdgeTime < EdgePanDwell) return;
+	// 0.4 of the rate at the band's inner edge, the full rate at the screen edge
+	const double K = EdgePanRate * FMath::Clamp(C->PanSpeedSetting, 0.25f, 4.f);
+	FVector2D V(Ex == 0.0 ? 0.0 : FMath::Sign(Ex) * (0.4 + 0.6 * FMath::Abs(Ex)), Ey == 0.0 ? 0.0 : -FMath::Sign(Ey) * (0.4 + 0.6 * FMath::Abs(Ey)));
+	if (V.Size() > 1.0) V /= V.Size();
+	LastEdgePan = V * K;
+	R.AddPanInput(LastEdgePan.X, LastEdgePan.Y);
 }
 
 bool UDmInputRouter::ProcessTouch(float Dt)
