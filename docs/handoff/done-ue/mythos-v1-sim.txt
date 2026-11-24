@@ -1,0 +1,143 @@
+2026-11-24, mythos-v1-sim (track V1 "mythos-verify-v1", SPEC-MYTHOS 9 phase 1): independent adversarial verification of
+the v1 mythos in the sim, after B1. Score 6 / 10.
+
+Summary
+- The engineering holds up on new seeds. The guardrails pass, runs are deterministic, there are no NaNs, saves round-trip, and the
+  tick cost is inside budget. Four defects turned up under attack and are fixed. None of them showed in B1's tables.
+- The design still falls short. Emergent stays off, and 23 of the 88 mythos target rows fail on seeds 9-24. That is roughly the
+  same picture B1 reported on seeds 1-8: the v1 systems run, but most of the "the god's habit shows in the world" targets are not
+  met. That is why the score is 6, not 8.
+
+Everything was re-run on NEW seeds (9-24; B1 used 1-8), 4,500 years, L 6, phase 1, emergent off:
+- Guardrails:
+  - phase0-guardrail 32 of 32, on the B1 tree and on the final tree.
+  - phase1-guardrail 32 of 32, on both trees.
+  - Rule 2 on new seeds: phase 0 vs phase 1 core hash for seeds 9-24 x all 20 pre-mythos policies x 4,000 years.
+    320 of 320 match.
+- Determinism and saves (mythos-check.ps1 -Seeds 9-24, final tree):
+  - 240 of 240 (seed, v1 policy) hashes stable 3x, 0 non-finite.
+  - 48 of 48 --saveload card replays identical, 0 bad re-saves.
+- Base vs final: the B1 tree and the final tree give the same core hash on 136 of 140 runs (seeds 9-12 x 35 policies). The other
+  4 are stern, whose script was changed on purpose (below). Full hashes differ only by the mythos records of the waking-card lapse.
+- Tests: run.ps1 all on the final tree, 999 tests, every one passing. The run had 992 passing and 7 failing. All 7 were wall-clock
+  timing tests run while 14 simrun threads were busy. Re-run on an idle CPU, those 12 timing tests pass 12 of 12.
+- Performance, thread CPU at --jobs 4 (seed 9; passive, lawgiver, random-myth, responder-myth):
+  - Mean tick 1.38-1.72 ms against the 2.5 ms target; max 17.96-20.87 ms against 30 ms.
+  - The 16-seed passive table at --jobs 14: mean 1.55-1.90 ms, max 17.4-22.6 ms.
+  - mythos::yearly + cards::yearly: mean 0.056 ms, worst 0.214 ms (target 0.35 ms mean).
+  - Wall-clock maxima of 370-400 ms appeared once each in two mythos runs. These are informational and include descheduled time;
+    other workflows were compiling at the time.
+
+New test file: Unreal/SimTests/test_mythos_v1_adv.cpp (9 tests; real modules only, so run.ps1 all). Results on the final tree:
+- Bad ids and out-of-range answers:
+  - Cards: ids -1 / 0 / INT_MIN / INT_MAX; choices -128, 127, 128, 255, 1000, INT_MAX.
+  - Presence: Walk, and the value 9.
+  - Words: bad culture, clarity, area, stance, content or figure; repealing a decree the people do not hold.
+  - Also: bad towns for candidates, factors, faith and aspect reads; NaN and out-of-range traits passed to shapeTraits.
+  - Every call is refused, no Awe is spent, and no NaN appears.
+- A world with no living people (before the waking, and with every people dead): every pass, read and save is safe.
+- Proposal flood: 200 random matters a year for 3,000 years, with random answers. Results: 19 openings (the budget's limit),
+  minimum gap 70, never more than 1 opening a year or 2 open, tokens at most 2, closed cards pruned to 48. The flooded world
+  saves and loads.
+- Word spam: every tick, every content, clarity, channel and figure, to every people, for 1,500 years. Results: one word per
+  people per 10 years, at most one decree per area, at most 64 words kept, faith values in range, re-save byte for byte, and
+  the MYTH and BASE blocks together 23 KB (bound 80 KB).
+- Awe-short answers leave the card open and cost nothing. Look into the heart is paid once (20).
+- Save / load at awkward moments: right after a waking card opened, after it was answered, after a budgeted card opened,
+  after it was answered, and at 0.25, 0.5 and 0.75 of a year.
+  - The cards, the counters (num) and the re-saved bytes all come back exactly.
+  - Two loads of the same save, with the same god acting, end identical.
+  - A loaded world is not bit-identical to one that was never saved, because State.cpp quantizes cell fields by design (simrun
+    says so too). The test reports the difference instead of failing on it.
+
+Defects found and fixed
+1. A Messenger choice card stacked for every town armed. Arming the Messenger on each of 11 towns of one people opened 11
+   MessengerChoice cards; after one choice, the other 10 stayed open, unanswerable, until their 60-year window ran out.
+   Fix in Sim/Cards.cpp:
+   - cards::open: arming again for the same people replaces that people's open armed choice (the latest arming wins).
+   - cards::answer: once a messenger is chosen, the people's other MessengerChoice cards are withdrawn.
+   Now 1 card opens and 0 are left over.
+2. A budgeted card's window had no upper bound. A source asking for a window of 1e7 years held a director slot for good (1,199
+   years, still open). Fix in Sim/Cards.cpp openCard: a director card's window is capped at CardsTune::maxGap (420). The v1
+   windows are 15-80 years, so no real card changes.
+3. The waking cards never closed. ShapePeople and Presence stayed open "until answered", so a god could:
+   - answer ShapePeople in the Iron age and reshape the nature of every root people for free;
+   - answer Presence centuries later for a stance change that skips the 100 Awe and the once-per-age rule.
+   Fix in Sim/Balance.cpp: both cards now get a window of CardsTune::firstYear (90). Their lapse changes nothing: the people keep
+   their rolled nature and today's stance, and a lapse is not a deed, so it touches no people. The client pauses genesis on these
+   cards, so a player never sees the window run out. The core hash is unchanged (136 of 140 above; phase1-guardrail 32 of 32).
+4. The stern script did not test what the spec compares. stern played a passive god while merciful played the kind god, so
+   "stern vs merciful" measured passive against kind: stern was less obedient than merciful (0.33 vs 0.45) and ended forgotten
+   8 of 8.
+   Fix in Tools/simrun/Policies.cpp: stern now plays the same kind god as merciful, with the same words (1 a year) and the same
+   Awe reserve; only the judging habit differs. On seeds 1-16:
+   - stern's obedience at 2,500 is >= merciful's on 14 of 16 seeds.
+   - The +0.1 bar is met on 2 of 16. Too few judgements reach each people, the same reason judge-deeds vs judge-hearts fails.
+   - stern now ends beloved 16 of 16 (target: feared or parting >= 5/8; still failing).
+Tests adjusted for the new rules: test_cards.cpp, 2 tests. The maxOpen test drives 400 years instead of 1,000, so its 5,000-year
+window is not capped mid-test. In the closed-cards save-bound test, the last open MessengerChoice is for a second people. No
+expectation was weakened.
+
+Found and reported, not changed
+- Starvation by priority, which follows the spec. One people whose matters are always graver takes every card the budget allows:
+  19 of 19 openings in 3,000 years, the four quieter peoples 0. The cultureGap (150 years) never binds while the budget refills
+  more slowly (targetGap 170), and severity >= 0.8 jumps the gap anyway. Possible fixes: cultureGap >= targetGap, or a waiting
+  bonus for a people with no card in N years. That is a lead / B2 decision; I tried a narrow guard and reverted it as too small.
+- An Exact word naming a figure that does not exist (or another people's messenger) silently goes through the people's own
+  messenger, or through the sky under Wonders, at the doubled Exact-from-the-sky cost (120 instead of 60). No bad id is stored.
+  The chooser must show canSpeak's cost.
+- Free cards are outside maxOpen. With two budgeted cards open, an armed MessengerChoice makes three on the panel. Spec 6.1 says
+  "at most 2 cards"; the client should stack the third.
+- On seeds 9-24, 6 per-policy SPEC-SIM rows fail and 3 of 8 cross-policy rows fail. Phase 0 gives the same results (320 of 320
+  above), so these are v3.1 seed variance, not mythos:
+  - review 4 stretch 0/16 and review 6 Awe caps 0/16, as before;
+  - passive: one run with 2 nuclear exchanges (seed 12), 15/16;
+  - cruel: one run at war in 34.6 % of its years, 15/16;
+  - review 3: 13/16; review 9: 9/16; review 11 Omen: 13/16 (bars 5/6).
+  The one mythos-caused SPEC-SIM failure: exact-only seed 9 was at war in 33.6 % of its years, above the v3.1 third.
+- Mythos targets on seeds 9-24 (B1 tree): 65 pass / 23 fail of the 88 rows.
+  - Confirmed from B1: kind sees a Parent 16/16; lawgiver sees a Ruler 10/16 (exactly the 5/8 bar); lawgiver war share 14/16;
+    valour 14/16; gentle compassionate 16/16; msg-kind beloved 16/16; parable-only 16/16 on every row; sign-only catastrophes
+    10/16; unseen-kind agency 15/16.
+  - Failing as B1 said:
+    - passive cadence (7-12 cards, 0 competing prayers, Atomic and Space without a card);
+    - responder-myth: 15-28 cards 10/16, every age 7/16;
+    - "no opening within 1 minute" 0/16 (it conflicts with minGap 70);
+    - exact-only agency 0/16;
+    - judge-deeds vs judge-hearts 0/16; stern 0/16;
+    - unseen-kind ends beloved 16/16 (target: forgotten or parting);
+    - lawgiver: Obedient 0/16, famine 2/16 (B1 had 4/8), conflict cards 10/16;
+    - cruel Threat 8/16; prayers dependence 1/16; kingmaker never chooses.
+  - Table: docs/handoff/mythos-v1/verify/v1-summary-seeds9-24.txt.
+- Reading as a player (seed 13, gentle, 3,648 years, Ark / beloved, legacy a compassionate civilisation; chronicle, tale and
+  --mythos report):
+  - The mythos lines read well and in voice: the shepherd messenger, the child messenger, a Queen judged by the heart, decrees
+    received in dreams by one town only, breaches told dryly. No banned word, no game term, no "prophet" in new lines.
+  - Weak spots:
+    - The tale says "Of the god's decrees, the Tomamepo kept none to the end" and then "They worshipped by keeping guest-halls",
+      which is their decree, kept at 0.23. It reads as a contradiction (Chronicle's belief paragraph uses kept >= 0.5).
+    - The pre-mythos caravan line ("salt, dyed cloth and gossip") appears 10 times in one history, word for word.
+    - Several year ordinals are one year off from the entry's year ("In the 2600th year" on an entry dated 2601; also 968/969,
+      1273/1274, 2921/2922).
+    - The report shows 20 decrees given and 12 held at the end, but kept only 0.15 on average. A gentle god's Dream decrees
+      barely bind, so the "Decree tablet" would mostly show "kept by few".
+  - Chronicle, Society and B1-balance owners should look at these.
+
+Owned or changed files (stated loudly)
+- Sim/Cards.cpp: open (one armed MessengerChoice per people), answer (withdraw a chosen people's other MessengerChoice
+  cards), openCard (window capped at maxGap). Each change is marked "(V1)".
+- Sim/Balance.cpp: CA.deadline[ShapePeople] and CA.deadline[Presence] = CA.firstYear, with the reason next to it.
+- Tools/simrun/Policies.cpp: stern plays the kind god with merciful's words and reserve.
+- SimTests/test_mythos_v1_adv.cpp (new); SimTests/test_cards.cpp (2 tests adjusted, see above).
+- docs/handoff/mythos-v1/verify/v1-summary-seeds9-24.txt (new); this marker.
+- No header changed; nothing under Game/ was touched. Unreal/build.ps1 was not run: these are .cpp edits in plain C++20, compiled
+  by run.ps1 with the Unreal flags.
+- Private build dirs (can be deleted): Tools/simrun/build-v1, build-v1b; SimTests/build/*-v1. The private run.ps1 copy was
+  removed.
+
+Recommendations for the lead
+1. Starvation: decide on cultureGap >= targetGap (or a waiting bonus) before B2 turns emergent on. Prayers add many severe
+   Victory pairs, which makes it worse.
+2. Re-run B1's 16-seed check of lapse | prayers with the stern fix. The stern vs merciful rows are now a fair comparison, and
+   they still need more judgements per people (cultureGap and the Judgement weight).
+3. Add a client-side rule for a third (free) card on the panel.

@@ -23,17 +23,34 @@
 // progress-years) and wrath that hits a capital or an academy sets research back; an awakening wakes
 // two bands; Consecrate buys durable things (a temple; a Wonder in a capital, once an age); Rain and
 // Bloom cost double off every territory; one press of Lower Land cannot drown a town (drown:warning).
+//
+// v4 mythos (track M7 "powers-v4", SPEC-MYTHOS 2.1, 3.8, 3.9, 9): the Word group (speak, bless, reveal, test, renew)
+// is Locked while MythosTune::phase < its row's unlock.mythos (phase 0: all five, v3.1 bit for bit). speak hands
+// UseOpts::word to doctrine::canSpeak / speak; bless, test, reveal and renew to mythos::bless, characters::test,
+// doctrine::reveal and renewal::begin. Powers pays each one itself, only after the module accepted it (nothing is
+// spent on a refused word), then emits power:used and counts the deed. can() of a Word power checks the target
+// (speak: the people's 10-year gap -> Target / None; test: a living ruler, messenger, healer or hero at the town;
+// renew: once per world) and the Awe of its cheapest choice; cost() shows that cheapest choice. prophet with
+// UseOpts::choose at phase >= 1 opens the MessengerChoice card instead (3.8; nothing spent until it is answered).
+// powers::pay spends Awe for the other mythos acts (cards, Look into the heart, presence), awe:short per act.
+// While the god has withdrawn (3.29, phase >= 3) every power refuses with Reason::Withdrawn.
 #include "Powers.h"
 
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <limits>
+#include <map>
 #include <string>
 #include <vector>
 
+#include "Cards.h"
+#include "Characters.h"
 #include "Civ.h"
+#include "Doctrine.h"
 #include "Life.h"
+#include "Mythos.h"
+#include "Renewal.h"
 #include "Sim.h"
 #include "Society.h"
 #include "Terrain.h"
@@ -65,6 +82,7 @@ struct PowersScratch {
 	std::array<double, kPowerCount> lastShort{};        // clock at the last awe:short, per power
 	std::array<BrushPace, kPowerCount> brush{};
 	std::vector<int32_t> cells;                         // geo.within output
+	std::map<std::string, double, std::less<>> payShort; // (v4 mythos, M7) clock at the last awe:short of pay(), per act
 	bool init = false;
 };
 
@@ -97,6 +115,8 @@ Reason phaseLock(const World& w, const PowerDef& d) {
 	const Unlock& u = d.unlock;
 	if (u.phaseOnly) return w.phase == u.phase ? Reason::Ok : Reason::Phase;
 	if (!reached(w, u.phase)) return Reason::Phase;
+	// (v4 mythos, M0) the Word powers need their mythos phase (MythosTune::phase 0 = locked, as before mythos)
+	if (u.mythos > 0 && w.tune<MythosTune>().phase < u.mythos) return Reason::Locked;
 	if (is(d, "awaken")) {
 		if (w.phase == Phase::People) return Reason::Ok;
 		if (nobodyAlive(w)) return Reason::Ok;
@@ -576,6 +596,226 @@ void witnessClick(World& w, const PowerDef& d, int cell, Act& a) {
 	society::witness(w, cell, d.wAng, a.wo);
 }
 
+// ------------------------------------------------------------------ (v4 mythos, M7) the Word powers
+
+// What Powers knows of the mythos systems (SPEC-MYTHOS 2.1, 3.8, 3.9, 3.16, 3.18, 3.25, 3.29, 3.30). Every Word power
+// is Locked while MythosTune::phase < its unlock.mythos (phaseLock), so at phase 0 nothing below is ever reached and
+// no mythos module is ever called from here (v3.1 bit for bit). Powers pays every Word power itself, after the owning
+// module accepted the act (doctrine::speak, mythos::bless, characters::test, doctrine::reveal, renewal::begin must
+// NOT spend Awe themselves): a refused word costs nothing.
+
+int mythPhase(const World& w) { return w.tune<MythosTune>().phase; }
+
+// (3.29) a century of silence: every power refuses with Reason::Withdrawn (a v3 system: phase >= 3 only)
+bool withdrawnNow(const World& w) {
+	if (mythPhase(w) < 3) return false;
+	const double u = w.mythos.withdrawnUntil;
+	return std::isfinite(u) && u > w.year + 1e-9;
+}
+
+int cultureAt(const World& w, int sid) {
+	const Settlement* s = state::settlement(w, sid);
+	return s && !s->dead ? s->culture : -1;
+}
+
+// the probe word of can() / cost(): an Answer by Dream is valid content for every culture, so canSpeak only reports
+// what does not depend on the chooser (phase, the people, the 10-year gap)
+WordOpts probeWord(Clarity c = Clarity::Dream) {
+	WordOpts o;
+	o.content = WordContent::Answer;
+	o.clarity = c;
+	o.channel = c == Clarity::Dream ? Channel::Dream : c == Clarity::Sign ? Channel::Sky : Channel::Messenger;
+	return o;
+}
+
+// the cheapest word for this culture (3.9 table x presence); 0 when Doctrine names no price
+double cheapestWord(const World& w, int cid) {
+	double best = std::numeric_limits<double>::infinity();
+	for (int k = 0; k < enumCount<Clarity>(); k++) {
+		const double c = doctrine::wordCost(w, cid, probeWord(Clarity(k)));
+		if (std::isfinite(c) && c > 0 && c < best) best = c;
+	}
+	return std::isfinite(best) ? best : 0.0;
+}
+
+double blessCost(const World& w, BlessingKind k) {
+	const MythosTune& M = w.tune<MythosTune>();
+	switch (k) {
+	case BlessingKind::Prosperity: return M.prosperityCost;
+	case BlessingKind::Healer: return M.healerCost;
+	case BlessingKind::Endurance: return M.enduranceCost;
+	default: return -1;                                  // no blessing chosen: refused
+	}
+}
+double trialCost(const World& w, TrialKind k) {
+	const auto& a = w.tune<CharactersTune>().trialCost;
+	return size_t(k) < a.size() ? a[size_t(k)] : -1;
+}
+double revealCost(const World& w, RevelationKind k) {
+	const auto& a = w.tune<DoctrineTune>().revealCost;
+	return size_t(k) < a.size() ? a[size_t(k)] : -1;
+}
+template <class A> double cheapestOf(const A& a) {
+	double best = std::numeric_limits<double>::infinity();
+	for (double x : a) if (std::isfinite(x) && x >= 0 && x < best) best = x;
+	return std::isfinite(best) ? best : -1;
+}
+
+// (3.18) a figure the god may test at this town: a living ruler, messenger, healer or hero whose home it is
+bool testable(const Figure& f, int sid) {
+	if (f.home != sid || f.died >= 0 || f.fate != uint8_t(FigureFate::Living)) return false;
+	const FigureKind k = FigureKind(f.kind);
+	return k == FigureKind::Ruler || k == FigureKind::Messenger || k == FigureKind::Healer || k == FigureKind::Hero;
+}
+// the figure a test at sid is for: `wanted` when it is testable there, else (wanted -1) the lowest testable id
+int testFigure(const World& w, int sid, int wanted) {
+	int first = -1;
+	for (const Figure& f : w.mythos.figures) {
+		if (!testable(f, sid)) continue;
+		if (f.id == wanted) return f.id;
+		if (first < 0 || f.id < first) first = f.id;
+	}
+	return wanted >= 0 ? -1 : first;                     // a named figure that is not here: refused
+}
+
+// a renewal was begun in this world (once per world, 3.30)
+bool renewedOnce(const World& w) { return w.mythos.renewal != 0 || w.mythos.renewedYear >= 0 || renewal::active(w); }
+
+// The Word-specific part of can()'s Target check (after the table's own target rule). why None = "not now".
+TargetCheck wordTarget(const World& w, const PowerDef& d, TargetCheck tc) {
+	if (!tc.ok) return tc;
+	if (is(d, "speak")) {
+		const doctrine::SpeakCheck k = doctrine::canSpeak(w, cultureAt(w, tc.sid), probeWord());
+		// Awe is Powers' own check (the cheapest word); Content / NoMessenger cannot happen for the probe
+		if (k.ok || k.why == doctrine::WordWhy::Awe) return tc;
+		tc.ok = false;
+		tc.why = k.why == doctrine::WordWhy::Target ? Why::Settlement : Why::None;   // Gap: one word per 10 years
+		return tc;
+	}
+	if (is(d, "test")) {
+		if (testFigure(w, tc.sid, -1) < 0) { tc.ok = false; tc.why = Why::None; }
+		return tc;
+	}
+	if (is(d, "renew")) {
+		if (renewedOnce(w)) { tc.ok = false; tc.why = Why::None; }
+		return tc;
+	}
+	return tc;
+}
+
+// The price a Word power shows without a choice (cost()): its cheapest choice.
+double wordShownCost(const World& w, const PowerDef& d, int cell) {
+	if (mythPhase(w) < d.unlock.mythos) return d.cost;
+	if (is(d, "speak")) {
+		const int cid = w.valid(cell) ? cultureAt(w, civ::at(w, cell)) : -1;
+		const double c = cid >= 0 ? cheapestWord(w, cid) : 0.0;
+		return c > 0 ? c : d.cost;
+	}
+	if (is(d, "bless")) {
+		const MythosTune& M = w.tune<MythosTune>();
+		const double c = cheapestOf(std::array<double, 3>{ M.prosperityCost, M.healerCost, M.enduranceCost });
+		return c >= 0 ? c : d.cost;
+	}
+	if (is(d, "test")) { const double c = cheapestOf(w.tune<CharactersTune>().trialCost); return c >= 0 ? c : d.cost; }
+	if (is(d, "reveal")) { const double c = cheapestOf(w.tune<DoctrineTune>().revealCost); return c >= 0 ? c : d.cost; }
+	if (is(d, "renew")) return std::max(finiteOr(w.tune<RenewalTune>().minAwe, d.cost), payable(w));   // all Awe, at least minAwe
+	return d.cost;
+}
+
+// use() of a Word power once the table's checks passed (phase, target). The act first, then the price, power:used,
+// the deed and (bless only: the table's Radius) the witness. False with nothing spent when refused.
+bool useWord(World& w, PowersScratch& S, const PowerDef& d, int idx, int cell, const TargetCheck& tc, const UseOpts& opts) {
+	const int sid = tc.sid;
+	// (3.9) a Dream is dreamed in one town: the town the god clicked, unless the chooser named another
+	WordOpts o = opts.word;
+	if (is(d, "speak") && o.clarity == Clarity::Dream && o.ref < 0) o.ref = sid;
+	const int cid = cultureAt(w, sid);
+	double price = -1;
+	bool witness = false;
+	society::WitnessOpts wo;
+	wo.kind = d.id;
+	wo.faith = d.faith;
+	if (is(d, "speak")) {
+		const doctrine::SpeakCheck k = doctrine::canSpeak(w, cid, o);
+		if (!k.ok) {
+			if (k.why == doctrine::WordWhy::Awe) aweShort(w, S, d, idx);
+			return false;
+		}
+		price = std::max(0.0, finiteOr(k.cost, 0));
+		if (payable(w) + 1e-9 < price) { aweShort(w, S, d, idx); return false; }
+		if (doctrine::speak(w, cid, o) < 0) return false;
+	} else if (is(d, "bless")) {
+		price = blessCost(w, o.blessing);
+		if (!(price >= 0)) return false;
+		if (payable(w) + 1e-9 < price) { aweShort(w, S, d, idx); return false; }
+		if (!mythos::bless(w, sid, o.blessing)) return false;
+		witness = d.wScope != WScope::None;
+		wo.good = 0.8;
+	} else if (is(d, "test")) {
+		const int fig = testFigure(w, sid, o.figure);
+		price = trialCost(w, o.trial);
+		if (fig < 0 || !(price >= 0)) return false;
+		if (payable(w) + 1e-9 < price) { aweShort(w, S, d, idx); return false; }
+		if (!characters::test(w, fig, o.trial)) return false;
+	} else if (is(d, "reveal")) {
+		price = revealCost(w, o.revelation);
+		if (cid < 0 || !(price >= 0) || uint8_t(o.clarity) >= uint8_t(enumCount<Clarity>())) return false;
+		if (payable(w) + 1e-9 < price) { aweShort(w, S, d, idx); return false; }
+		if (!doctrine::reveal(w, cid, o.revelation, o.clarity)) return false;
+	} else if (is(d, "renew")) {
+		if (o.renewal == RenewalKind::None || uint8_t(o.renewal) >= uint8_t(enumCount<RenewalKind>())) return false;
+		const double need = finiteOr(w.tune<RenewalTune>().minAwe, d.cost);
+		if (payable(w) + 1e-9 < need) { aweShort(w, S, d, idx); return false; }
+		std::vector<int> remnant;
+		for (int r : o.remnant) if (r >= 0 && std::find(remnant.begin(), remnant.end(), r) == remnant.end()) remnant.push_back(r);
+		if (!renewal::begin(w, o.renewal, remnant)) return false;
+		price = payable(w);                                // it costs all the Awe the god has
+	} else {
+		return false;
+	}
+	spend(w, price);
+	w.bus.emit(EvPowerUsed{ std::string(d.id), cell, 0.0, false });
+	countDeed(w, d);
+	if (witness) society::witness(w, cell, d.wAng, wo);
+	return true;
+}
+
+// (3.8) prophet at MythosTune::phase >= 1 with UseOpts::choose: the MessengerChoice card on the town (three
+// candidates, characters::candidates). Not budgeted (cards::open); re-arming the same town shows the same card.
+// Nothing is spent, nothing is witnessed: the card's answer pays the power's cost (Characters' choiceCost falls back to
+// the prophet row) and "none" is the refund. False when the people already have a voice or no candidate exists.
+bool openMessengerChoice(World& w, int sid) {
+	const Settlement* s = state::settlement(w, sid);
+	if (!s || s->dead) return false;
+	const int cid = s->culture;
+	const Culture* cu = state::culture(w, cid);
+	if (!cu || cu->dead || cu->prophet || characters::messenger(w, cid) >= 0) return false;
+	if (characters::candidates(w, sid).empty()) return false;
+	double world = 0;
+	for (const Settlement& t : w.settlements) if (!t.dead && std::isfinite(t.pop) && t.pop > 0) world += t.pop;
+	cards::Proposal p;
+	p.kind = CardKind::MessengerChoice;
+	p.culture = cid;
+	p.settlement = sid;
+	p.cell = s->cell;
+	p.severity = world > 0 ? clamp(finiteOr(s->pop, 0) / world * (s->capital ? 1.5 : 1.0), 0.0, 1.0) : 0.0;
+	p.ref = { sid, -1, -1, -1 };
+	p.data["decade"] = double(int64_t(std::floor(std::isfinite(w.year) ? w.year : 0)) / 10);
+	p.data["armed"] = 1;                                 // the god armed it (not "they seek a voice")
+	return cards::open(w, p) >= 0;
+}
+
+// pay()'s clock: like use(), elapsed ticks count at the fastest game speed (pay has no real dt)
+void advanceClock(const World& w, PowersScratch& S) {
+	const PowersTune& T = w.tune<PowersTune>();
+	if (S.haveTick && w.tick > S.lastTick) {
+		const double speed = T.maxGameSpeed > 1 ? T.maxGameSpeed : 1;
+		S.clock += double(w.tick - S.lastTick) * sim::kRealPerTick / speed;
+	}
+	S.haveTick = true;
+	S.lastTick = w.tick;
+}
+
 } // namespace
 
 // ================================================================== public API
@@ -625,6 +865,8 @@ double cost(const World& w, std::string_view id, double ang, int cell) {
 		if (nobodyAlive(w)) return 0;
 		return std::max(0.0, std::min(T.awakenMaxCost, finiteOr(w.god.aweMax, 0)));
 	}
+	// (v4 mythos, M7) a Word power shows its cheapest choice (the chooser asks the owning module for the rest)
+	if (d->group == Group::Word) return std::max(0.0, finiteOr(wordShownCost(w, *d, cell), d->cost));
 	return d->cost;
 }
 
@@ -634,7 +876,9 @@ CanResult can(const World& w, std::string_view id, int cell) {
 	if (!d) return r;                                   // { false, Locked }
 	const Reason pl = phaseLock(w, *d);
 	if (pl != Reason::Ok) { r.reason = pl; return r; }
-	const TargetCheck tc = checkTarget(w, *d, cell);
+	if (withdrawnNow(w)) { r.reason = Reason::Withdrawn; return r; }   // (v4 mythos, 3.29)
+	TargetCheck tc = checkTarget(w, *d, cell);
+	if (d->group == Group::Word) tc = wordTarget(w, *d, tc);           // (v4 mythos, M7)
 	r.why = tc.why;
 	if (!tc.ok) { r.reason = Reason::Target; return r; }
 	const double c = cost(w, id, -1, cell);
@@ -687,6 +931,7 @@ bool use(World& w, std::string_view id, int cell, const UseOpts& opts) {
 
 	// ---- may it be used here?
 	if (phaseLock(w, d) != Reason::Ok) return false;
+	if (withdrawnNow(w)) return false;                                 // (v4 mythos, 3.29)
 	const TargetCheck tc = checkTarget(w, d, cell);
 	if (!tc.ok) return false;
 	const double ang = effAng(w, d, opts.ang);
@@ -698,6 +943,10 @@ bool use(World& w, std::string_view id, int cell, const UseOpts& opts) {
 		aweShort(w, S, d, idx);
 		return false;
 	}
+	// (v4 mythos, M7) the Word powers: the owning module acts, then Powers pays (nothing is spent on a refused word)
+	if (d.group == Group::Word) return useWord(w, S, d, idx, cell, tc, opts);
+	// (v4 mythos, M7, 3.8) the Messenger choice, when the caller asks for it: a card, nothing spent yet
+	if (is(d, "prophet") && opts.choose && mythPhase(w) >= 1) return openMessengerChoice(w, tc.sid);
 
 	if (d.brush) {
 		spend(w, price);
@@ -748,6 +997,28 @@ bool use(World& w, std::string_view id, int cell, const UseOpts& opts) {
 	w.bus.emit(EvPowerUsed{ std::string(d.id), cell, ang, false });
 	countDeed(w, d);
 	witnessClick(w, d, cell, a);
+	return true;
+}
+
+// (v4 mythos, M7) the god pays for a mythos act (a card answer, Look into the heart, a presence change, a Keeper's
+// upkeep ...). Only mythos code calls it (never at MythosTune::phase 0). Never a deed, never witnessed, no power:used.
+// A non-finite amount is refused (false, no event); amount <= 0 is free. Short of Awe: awe:short { what }, at most
+// once per PowersTune::aweShortEvery seconds of the Powers clock per `what` (ticks count at the fastest speed).
+bool pay(World& w, std::string_view what, double amount) {
+	if (!std::isfinite(amount)) return false;
+	if (amount <= 0) return true;
+	PowersScratch& S = scr(w);
+	advanceClock(w, S);
+	if (payable(w) + 1e-9 < amount) {
+		const PowersTune& T = w.tune<PowersTune>();
+		auto it = S.payShort.find(what);
+		if (it == S.payShort.end() || S.clock - it->second >= T.aweShortEvery - 1e-9) {
+			S.payShort[std::string(what)] = S.clock;
+			w.bus.emit(EvAweShort{ std::string(what) });
+		}
+		return false;
+	}
+	spend(w, amount);
 	return true;
 }
 

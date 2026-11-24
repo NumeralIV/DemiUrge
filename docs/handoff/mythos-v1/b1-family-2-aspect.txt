@@ -1,0 +1,94 @@
+B1 emergent family 'aspect' alone (mythos.families=2) vs emergent off; simrun --seeds 1-8 --years 4500 --policy everything --mythos-phase 1 --summary, spec tuning
+
+policy          | Ark             | war%            | wars            | famE            | fp dead k       | cult            | ag2000          | cards           | cust            | moods before -> after
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+passive         | 3752 -> 3752    | 9.9 -> 9.9      | 21 -> 21        | 62 -> 62        | 1070 -> 1070    | 8 -> 8          | 0.85 -> 0.85    | 8 -> 8          | 0 -> 0          | forg 8 -> forg 8
+cruel           | 4078 -> 4045    | 15.8 -> 17.9    | 36 -> 48        | 62 -> 64        | 1090 -> 987     | 7 -> 10         | 0.67 -> 0.63    | 16 -> 16        | 0 -> 0          | fear 8 -> fear 8
+kind            | 3483 -> 3522    | 7.7 -> 11.3     | 24 -> 34        | 58 -> 62        | 924 -> 992      | 8 -> 6          | 0.60 -> 0.59    | 15 -> 14        | 0 -> 0          | belo 8 -> belo 8
+doom            | - -> -          | 0.0 -> 0.0      | 0 -> 0          | 0 -> 0          | 0 -> 0          | 0 -> 0          | - -> -          | 1 -> 1          | 0 -> 0          | quie 8 -> quie 8
+chaotic         | 3848 -> 3698    | 13.8 -> 13.4    | 32 -> 32        | 67 -> 64        | 1055 -> 1150    | 8 -> 8          | 0.81 -> 0.82    | 16 -> 14        | 0 -> 0          | part 8 -> part 8
+curious         | 3586 -> 3632    | 11.2 -> 12.4    | 24 -> 26        | 54 -> 59        | 1050 -> 1035    | 8 -> 7          | 0.85 -> 0.85    | 10 -> 10        | 0 -> 0          | part 8 -> part 8
+blessonly       | 3556 -> 3612    | 9.2 -> 10.2     | 21 -> 20        | 55 -> 62        | 1025 -> 1065    | 7 -> 7          | 0.86 -> 0.85    | 9 -> 9          | 0 -> 0          | part 8 -> part 8
+prayers         | 3462 -> 3472    | 12.3 -> 8.8     | 43 -> 30        | 58 -> 54        | 920 -> 990      | 7 -> 6          | 0.61 -> 0.70    | 16 -> 14        | 0 -> 0          | belo 8 -> belo 8
+repent          | 3538 -> 3518    | 11.3 -> 13.4    | 28 -> 28        | 48 -> 46        | 798 -> 1025     | 7 -> 7          | 0.64 -> 0.64    | 15 -> 14        | 0 -> 0          | part 8 -> part 8
+late-kind       | 3752 -> 3752    | 9.7 -> 9.7      | 21 -> 21        | 61 -> 60        | 990 -> 996      | 8 -> 8          | 0.85 -> 0.85    | 9 -> 8          | 0 -> 0          | belo 1 part 7 -> part 8
+sculptor        | 3679 -> 3679    | 13.9 -> 12.6    | 29 -> 26        | 60 -> 65        | 945 -> 1003     | 8 -> 7          | 0.83 -> 0.84    | 11 -> 10        | 0 -> 0          | fear 1 forg 1 part 6 -> fear 1 forg 1 part 6
+late-cruel      | 3776 -> 3770    | 10.1 -> 9.8     | 22 -> 22        | 63 -> 63        | 1145 -> 1230    | 8 -> 8          | 0.85 -> 0.85    | 8 -> 8          | 0 -> 0          | forg 4 part 4 -> forg 5 part 3
+inspire-spam    | 3288 -> 3302    | 9.6 -> 11.1     | 18 -> 21        | 44 -> 42        | 849 -> 892      | 8 -> 7          | 0.82 -> 0.82    | 14 -> 13        | 0 -> 0          | belo 6 part 2 -> belo 5 part 3
+hoarder         | 3462 -> 3472    | 12.3 -> 8.8     | 43 -> 30        | 58 -> 54        | 920 -> 990      | 7 -> 6          | 0.61 -> 0.70    | 16 -> 14        | 0 -> 0          | belo 8 -> belo 8
+builder         | 3534 -> 3509    | 12.4 -> 11.6    | 32 -> 28        | 62 -> 62        | 906 -> 1165     | 8 -> 6          | 0.68 -> 0.65    | 16 -> 15        | 0 -> 0          | belo 8 -> belo 8
+atomic-kind     | 3716 -> 3716    | 10.0 -> 10.1    | 24 -> 24        | 48 -> 53        | 727 -> 820      | 8 -> 7          | 0.85 -> 0.85    | 10 -> 10        | 0 -> 0          | belo 1 part 7 -> belo 1 part 7
+atomic-cruel    | 3861 -> 3866    | 12.0 -> 11.2    | 30 -> 29        | 60 -> 64        | 1006 -> 1185    | 8 -> 8          | 0.85 -> 0.85    | 8 -> 8          | 0 -> 0          | fear 8 -> fear 7 forg 1
+peacemaker      | 3764 -> 3748    | 6.7 -> 6.7      | 16 -> 16        | 60 -> 60        | 814 -> 954      | 6 -> 6          | 0.69 -> 0.67    | 17 -> 16        | 0 -> 0          | belo 5 part 3 -> belo 4 part 4
+favourite       | 3352 -> 3475    | 17.2 -> 18.2    | 38 -> 32        | 50 -> 49        | 924 -> 923      | 9 -> 7          | 0.56 -> 0.64    | 16 -> 16        | 0 -> 0          | belo 8 -> belo 8
+scourge         | 3711 -> 3708    | 13.9 -> 12.1    | 28 -> 32        | 56 -> 56        | 1080 -> 919     | 8 -> 10         | 0.84 -> 0.85    | 16 -> 15        | 0 -> 0          | forg 7 part 1 -> forg 7 part 1
+responder-myth  | 3421 -> 3421    | 13.3 -> 13.3    | 38 -> 38        | 66 -> 66        | 1110 -> 1110    | 6 -> 6          | 0.60 -> 0.60    | 12 -> 12        | 0 -> 0          | belo 8 -> belo 8
+random-myth     | 3500 -> 3500    | 10.6 -> 10.6    | 20 -> 20        | 68 -> 68        | 896 -> 896      | 8 -> 8          | 0.88 -> 0.88    | 14 -> 14        | 2 -> 2          | part 8 -> part 8
+lawgiver        | 3788 -> 3788    | 4.5 -> 4.5      | 10 -> 10        | 59 -> 59        | 938 -> 938      | 6 -> 6          | 0.81 -> 0.81    | 15 -> 15        | 0 -> 0          | forg 1 part 7 -> forg 1 part 7
+valour          | 3710 -> 3710    | 18.5 -> 18.5    | 46 -> 46        | 51 -> 51        | 1080 -> 1080    | 8 -> 8          | 0.84 -> 0.84    | 12 -> 12        | 0 -> 0          | forg 8 -> forg 8
+exact-only      | 3724 -> 3724    | 10.4 -> 10.4    | 24 -> 24        | 60 -> 60        | 908 -> 908      | 8 -> 8          | 0.69 -> 0.69    | 11 -> 11        | 0 -> 0          | forg 8 -> forg 8
+parable-only    | 3704 -> 3766    | 10.0 -> 8.6     | 26 -> 20        | 58 -> 62        | 973 -> 874      | 8 -> 8          | 0.76 -> 0.78    | 10 -> 10        | 0 -> 0          | forg 8 -> forg 8
+sign-only       | 3762 -> 3762    | 9.9 -> 9.9      | 25 -> 25        | 62 -> 62        | 918 -> 918      | 6 -> 6          | 0.89 -> 0.89    | 10 -> 10        | 0 -> 0          | forg 8 -> forg 8
+unseen-kind     | 3492 -> 3492    | 9.8 -> 9.8      | 28 -> 28        | 66 -> 66        | 976 -> 976      | 8 -> 8          | 0.91 -> 0.91    | 12 -> 12        | 0 -> 0          | belo 8 -> belo 8
+msg-kind        | 3440 -> 3440    | 12.7 -> 12.7    | 34 -> 34        | 60 -> 60        | 963 -> 963      | 8 -> 8          | 0.74 -> 0.74    | 11 -> 11        | 0 -> 0          | belo 8 -> belo 8
+judge-deeds     | 3718 -> 3718    | 8.1 -> 8.1      | 24 -> 24        | 58 -> 58        | 991 -> 991      | 8 -> 8          | 0.86 -> 0.86    | 10 -> 10        | 0 -> 0          | forg 8 -> forg 8
+judge-hearts    | 3718 -> 3718    | 8.6 -> 8.6      | 24 -> 24        | 61 -> 61        | 1045 -> 1045    | 8 -> 8          | 0.86 -> 0.86    | 10 -> 10        | 0 -> 0          | forg 8 -> forg 8
+merciful        | 3462 -> 3494    | 10.7 -> 12.4    | 28 -> 28        | 60 -> 68        | 970 -> 1023     | 8 -> 8          | 0.64 -> 0.65    | 16 -> 16        | 0 -> 0          | belo 8 -> belo 8
+stern           | 3695 -> 3695    | 9.4 -> 9.4      | 20 -> 20        | 61 -> 61        | 957 -> 957      | 6 -> 6          | 0.85 -> 0.85    | 10 -> 10        | 0 -> 0          | forg 8 -> forg 8
+kingmaker       | 3758 -> 3747    | 8.9 -> 9.3      | 18 -> 20        | 62 -> 60        | 1024 -> 897     | 8 -> 7          | 0.85 -> 0.85    | 8 -> 8          | 0 -> 0          | forg 8 -> forg 8
+gentle          | 3464 -> 3492    | 11.2 -> 8.9     | 32 -> 24        | 58 -> 52        | 1140 -> 950     | 8 -> 8          | 0.60 -> 0.60    | 13 -> 13        | 0 -> 0          | belo 8 -> belo 8
+
+(medians over the 8 seeds; Ark = launch year; war% = share of years at war; famE = famine chronicle entries; fp dead = famine and plague deaths (k); cult = cultures born; ag2000 = people-weighted agency at year 2,000; cards = budgeted card openings; cust = customs formed)
+
+targets (timing rows excluded: measured with --jobs 22): before 256 pass / 30 fail, after 251 pass / 35 fail
+targets whose result moved:
+  cruel: legacy a terrified world >= 6/8 (4)                                                 PASS 6/8 -> FAIL 5/8
+  cruel: the Ark culture sees a Threat >= 6/8 (3.3)                                          FAIL 2/8 -> FAIL 3/8
+  kind: review 11: the god is thanked: kind's victors thank it for >= 1 war on >= 5/6        PASS 7/8 -> PASS 8/8
+  kind: the Ark culture sees a Parent >= 6/8 (3.3)                                           FAIL 3/8 -> FAIL 4/8
+  late-kind: review 1b: late-kind is not beloved on >= 4/6                                   PASS 7/8 -> PASS 8/8
+  passive: >= 90 % of gaps <= 420 years                                                      FAIL 0/8 -> FAIL 1/8
+  passive: auto-paced, a card in >= 80 % of 3-minute windows                                 FAIL 5/8 -> FAIL 6/8
+  passive: median gap between openings 150-260 years                                         FAIL 6/8 -> FAIL 4/8
+  review 11: the Omen of Peace: kind's peoples are at war less than cruel's on >= 5/6        PASS 7/8 -> FAIL 6/8
+  review 3: cruel launches the Ark >= 150 years after passive on >= 5/6                      PASS 8/8 -> FAIL 6/8
+  review 3: kind launches the Ark >= 150 years before passive on >= 5/6                      PASS 7/8 -> FAIL 6/8
+  review 6: hoarder ends with lower devotion than builder on >= 5/6                          PASS 7/8 -> FAIL 4/8
+  review 9: kind has no more famine entries than passive on >= 5/6                           FAIL 4/8 -> FAIL 3/8
+
+failing after:
+  cruel: legacy a terrified world >= 6/8 (4)  5/8  [thriving-wilderness terrified-world thriving-wilderness terrified-world terrified-world te]
+  cruel: the Ark culture sees a Threat >= 6/8 (3.3)  3/8  [mystery mystery mystery threat threat mystery threat mystery]
+  exact-only: agency <= 0.25 and obedience >= 0.65 at 2,000 >= 6/8 (3.4)  0/8  [0.72/0.43/0.01 0.70/0.40/0.02 0.69/0.39/0.01 0.69/0.44/0.02 0.65/0.45/0.02 0.67/0.39/0.02 ]
+  judge-deeds: obedience at 2,500 >= judge-hearts' + 0.1 >= 6/8 (3.11)  0/8  [0.05/0.05 0.05/0.05 0.05/0.05 0.06/0.05 0.05/0.05 0.06/0.06 0.05/0.05 0.05/0.05]
+  judge-hearts: agency at 2,500 >= judge-deeds' + 0.1 >= 6/8 (3.11)  0/8  [0.88/0.88 0.89/0.89 0.88/0.88 0.85/0.85 0.86/0.86 0.85/0.85 0.86/0.86 0.87/0.87]
+  kind: the Ark culture sees a Parent >= 6/8 (3.3)  4/8  [parent parent parent mystery mystery mystery parent mystery]
+  kingmaker: the culture it stood with launches the Ark >= 5/8 (3.10)  0/8  [never chose never chose never chose never chose never chose never chose never chose never ]
+  lawgiver: >= 2 decree-conflict cards per history >= 6/8 (3.7)  0/8  [0 0 0 0 0 0 0 0]
+  lawgiver: famine and plague deaths <= 0.8 x passive's >= 6/8 (3.6; passive at phase >= 1)  3/8  [967.7k/1.00M 708.2k/1.15M 946.2k/1.22M 1.49M/932.7k 868.8k/972.9k 928.9k/910.8k 1.19M/1.14]
+  lawgiver: legacy an obedient empire >= 5/8 (4)  0/8  [compassionate-civilisation compassionate-civilisation compassionate-civilisation compassio]
+  lawgiver: the Ark culture sees a Ruler >= 5/8 (3.3)  0/8  [mystery mystery mystery mystery mystery mystery mystery mystery]
+  lawgiver: war share <= 0.6 x passive's >= 5/8 (3.6)  4/8  [23/8 6/7 3/8 5/11 4/6 4/13 21/24 4/11]
+  passive: 15-28 cards per 3,600-year history (2.2)  0/8  [7 8 8 8 10 7 3 7]
+  passive: >= 2 competing-prayer cards per history >= 6/8 (3.10)  0/8  [0 0 0 0 0 0 0 0]
+  passive: >= 90 % of gaps <= 420 years  1/8  [67% 71% 71% 71% 89% 67% 100% 67%]
+  passive: auto-paced, a card in >= 80 % of 3-minute windows  6/8  [80% 80% 80% 67% 83% 80% 33% 80%]
+  passive: auto-paced, no opening within 1 minute of another  1/8  [32s 32s 39s 32s 35s 38s 104s 41s]
+  passive: every age of >= 200 years opens >= 1 card  0/8  [Iron,Atomic,Space Atomic,Space Atomic,Space Atomic,Space Atomic,Space Atomic,Space Iron,Sa]
+  passive: median gap between openings 150-260 years  4/8  [338 235 234 256 200 338 368 326]
+  passive: review 4: longest stretch without a weight-2 entry in 0-1000 <= 150 y  0/8  [182 299 168 247 169 237 216 169]
+  passive: review 6: passive at the Awe cap in <= 50% of years  0/8  [88% 88% 88% 89% 89% 88% 89% 88%]
+  prayers: dependence >= 0.55 at 2,000 >= 6/8 (3.4)  0/8  [0.58/0.50/0.40 0.71/0.45/0.28 0.73/0.42/0.23 0.74/0.42/0.29 0.74/0.43/0.23 0.69/0.46/0.32 ]
+  prayers: review 6: prayers at the Awe cap in <= 15% of years  0/8  [22% 45% 62% 47% 66% 37% 26% 42%]
+  responder-myth: 15-28 cards per 3,600-year history (2.2)  0/8  [14 14 13 14 13 13 13 14]
+  responder-myth: auto-paced, no opening within 1 minute of another  0/8  [18s 18s 18s 32s 32s 32s 22s 32s]
+  responder-myth: every age of >= 200 years opens >= 1 card  2/8  [Space Space ok Space ok Space Space Space]
+  responder-myth: median gap between openings 150-260 years  6/8  [223 214 314 242 295 254 200 200]
+  review 11: the Omen of Peace: kind's peoples are at war less than cruel's on >= 5/6  6/8  [17/23 11/9 11/9 8/22 7/15 12/16 12/20 19/23]
+  review 3: cruel launches the Ark >= 150 years after passive on >= 5/6  6/8  [+179 +105 +397 +274 +316 +446 -111 +292]
+  review 3: kind launches the Ark >= 150 years before passive on >= 5/6  6/8  [-270 -334 +2 -254 -359 -127 -359 -401]
+  review 6: hoarder ends with lower devotion than builder on >= 5/6  4/8  [0.31/0.31 0.30/0.29 0.30/0.31 0.30/0.34 0.36/0.35 0.29/0.35 0.27/0.26 0.30/0.31]
+  review 9: kind has no more famine entries than passive on >= 5/6  3/8  [47/61 28/63 90/72 59/57 66/60 58/64 64/62 72/57]
+  stern: ends feared or parting >= 5/8 (3.12)  0/8  [forgotten forgotten forgotten forgotten forgotten forgotten forgotten forgotten]
+  stern: obedience at 2,500 >= merciful's + 0.1 >= 6/8 (3.12)  0/8  [0.06/0.16 0.05/0.17 0.05/0.18 0.05/0.17 0.05/0.16 0.06/0.18 0.05/0.17 0.06/0.18]
+  unseen-kind: ends forgotten or parting >= 5/8 (3.2)  0/8  [beloved beloved beloved beloved beloved beloved beloved beloved]

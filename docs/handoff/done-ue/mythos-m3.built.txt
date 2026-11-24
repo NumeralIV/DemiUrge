@@ -1,0 +1,60 @@
+2026-11-20, mythos-m3 (track M3 "doctrine", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- run.ps1 doctrine: 34 passed, 0 failed (the other 25 modules stubbed).
+- run.ps1 all: 939 passed, 5 failed. Every doctrine test passes with all modules real; the 5 failures are the
+  economy-world-v4 track's own tests (test_civ_v4 / test_economy_v4 / test_climate_v4: they set Factors records that
+  the now-real Mythos replaces), nothing of Doctrine's. (The shared SimTests/build/all directory was being linked by
+  other tracks at the same time: two runs died with LNK1104; the counted run used a private build directory.)
+- Phase-0 guardrail: "phase0-guardrail 32 of 32 match" (8 seeds x passive, kind, cruel, chaotic, with every module
+  of this moment real). The shared Tools/simrun/build/simrun.exe was locked by another track, so the run used copies
+  of phase0-guardrail.ps1 / simrun.ps1 that differ only in the build directory (Tools/simrun/build-m3/; the tests'
+  private one is SimTests/build/all-m3/: both are build output and can be deleted).
+- Guardrail 2 (phase 1, emergent off, a god who never speaks or answers): held at unit level by
+  test_doctrine_decrees "guardrail 2" (no w.rng draw, the pre-mythos save view byte-identical after 600 years with
+  wars, famine, plague and shrines); Doctrine only proposes FirstDecree cards there (records).
+
+Owned files (only these were edited)
+- Unreal/Source/Demiurge/Sim/Doctrine.cpp (the real module; Doctrine.h untouched)
+- Unreal/SimTests/test_doctrine_decrees.cpp, test_doctrine_word.cpp, test_doctrine_judgement.cpp,
+  test_doctrine_conflicts.cpp, test_doctrine_rite.cpp, test_doctrine_fixture.h (the shared synthetic world)
+- No header change.
+
+Built (SPEC-MYTHOS 3.6, 3.7, 3.9, 3.11, 3.12, 3.13)
+- Decrees: one per area, kept drifts (keptDrift a year) toward obedience x fidelity x messenger reach (archReach by
+  town class) x the Shepherd's 20-year ramp x the Dream's "personal" share; a breach costs kept 0.1 for 20 years.
+- Customs (emergent only): at the culture's year 200 and its first shrine, the rite first (Beautiful: Art,
+  Generous: World), then the area the traits press most; customStance is pure (a hash jitter, no rng). A custom's
+  kept is 1; Mythos folds it in at customStrength. Its decree event has clarity "custom". Never breached.
+- Breaches: P = breachBase x strictness (effective: +0.2 literal, -0.3 bent Truth) x pressure x (1 - obedience) x
+  judgement doctrine (deeds 0.9, hearts 1.1); every pressure of the 3.6 and 3.13 tables ("never" = 0, "low" = 0.1);
+  severity = the pressed town's share of the people x pressure (x 1.2 judged by deeds); >= 0.5 waits on the decree
+  for 20 years as a Judgement proposal (ref = breach id, area, circumstance, HeartKind; data heartKind, deedWrong 1,
+  heartWrong, repeat), re-proposed yearly until a card for it exists.
+- Conflict cases (3.7): raided weak, hidden stranger, temple granary, enemy at the gate, altar or bread, clever and
+  true, strong and weak (wood or children is v2). One open case per culture, the same case again after 150 years
+  (remembered in mythos.num past the closed-card cap). Answers: acts-as stances with expiry, Truth bent for good,
+  makePeace, House moves, nudges, Bloom; a literal decree loses its bending answer; lapse: the stricter decree wins,
+  the other's kept -0.1 (Mythos applies lapseObey).
+- The Word: canSpeak (phase, target, content, presence, 10-year gap, messenger, Awe), wordCost (x 0.6 Messengers,
+  Exact from the sky x 2), fidelity (credFloor + credK x credibility, 0.5 without a messenger; Truth, Discretion,
+  Writing, Child, Shepherd parable, Queen exact, Unbelieved x 0.4, vindicated +0.05, discredited 0, marvels x 1.2;
+  cap 0.98), speak: one fork per word, readings per the 3.9 table (literal / catastrophe; wisdom / sect; personal /
+  rival / catastrophe; House-read / rival / catastrophe) with their effects (purge or war of zeal, exodus,
+  strikeKnowledge or a burnt temple, seedRival, adjustHouse, credibility, compassion +0.02). Last 64 words kept.
+- Judgement and sentences: 8 options (deed / heart x forgive / warn / remove / disaster) with costs; forgive
+  nudges love (x 1.3 for a hearts people), remove through characters::fell + fear in the capital, disaster =
+  powers::use("lightning") on the town (refused: the card stays open). Emits judgement; Mythos applies judgedBy,
+  mercy, sternness, survivor memory and just / unjust from the card data.
+- FirstDecree card: proposed (shrine or culture year 200, no decree, once); answer 0 speaks the decree the people
+  lean to (a parable through their messenger, else a dream), answer 1 a custom; lapse = a custom only if emergent.
+
+Tests: outcome shares over 10,000 forked rolls per clarity within 2 % of the table; breach rate within 15 % of
+0.02 x 0.9 over 20,000 years; guardrail 2 at unit level (phase 1, emergent off, a silent god: w.rng untouched and the
+pre-mythos save view byte-identical after 600 years); save round trip replays identically.
+
+Not built here (left to the named tracks, entry points neutral): pacts, the Land decree, LandClaim, warnings spoken
+as words (M3b); revelations, beliefs about death (M3c). Deviations: the Disaster sentence always uses lightning (the
+choice encoding has no power slot); "the famine ends in the town", "defence x 0.6 / x 0.8", "K x 1.1", "Wonder
+delayed" and "relations +0.1" answers of 3.7 have no owner API, so those answers act through nudges / makePeace only;
+curiosity's x(1 + 0.5c) on sects is not applied (it would move the binding 3.9 shares).

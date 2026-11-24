@@ -9,6 +9,14 @@
 //            a disaster is removed when t >= dur.
 //   natural  the yearly roll for natural events with the protection rules.
 //
+// (v4 mythos, M7 "powers-v4", SPEC-MYTHOS 3.1 / 1.4) natural rates x the world's archetype
+// (mythos::archetypeParams: natural for every type, x quakeVolcano for quakes and eruptions, x drought for droughts;
+// Balanced = x 1 exactly, so today's worlds draw the same numbers) and Factors::naturalRate per culture (read only at
+// MythosTune::phase >= 1, and only when some culture's rate is not 1: the expected count is scaled by the largest
+// rate and an event aimed at a culture's land is kept with rate / largest through a fork, never w.rng). The Strange
+// archetype's storm ring: one long storm (data["ring"] = 1) held over the sea cell farthest from land, re-formed by
+// natural() whenever none is alive (no w.rng draw while it lives).
+//
 // Writers: lava and w.disasters (owner), wet (raised by storms and waves), fert (ash, flood silt),
 // seaLevel (comet impacts, before history only), farm / urban cleared under lava (SPEC-SIM 3.10
 // "destroying farms and urban cells"; reported deviation from the writers table). Everything else
@@ -36,6 +44,7 @@
 #include "Civ.h"
 #include "Climate.h"
 #include "Life.h"
+#include "Mythos.h"
 #include "Sim.h"
 #include "Society.h"
 #include "Terrain.h"
@@ -154,6 +163,112 @@ bool protectedCell(const World& w, int c, const std::vector<int>& liveIds) {
 		if (w.geo->angle(c, s.cell) <= r) return true;
 	}
 	return false;
+}
+
+// (v4 mythos, M7) What scales this year's natural events: the archetype (3.1) and the cultures' Factors (1.4).
+struct NaturalMul {
+	double all = 1, quakeVolcano = 1, drought = 1;   // ArchetypeParams natural, quakeVolcano, drought
+	double top = 1;                                   // the largest Factors::naturalRate (>= 1): x the expected counts
+	bool factors = false;                             // some live culture's rate is not 1
+};
+double rateOr1(double x) { return isFinite(x) && x >= 0 ? x : 1.0; }
+NaturalMul naturalMul(const World& w) {
+	NaturalMul m;
+	const ArchetypeParams a = mythos::archetypeParams(w);
+	m.all = rateOr1(a.natural);
+	m.quakeVolcano = rateOr1(a.quakeVolcano);
+	m.drought = rateOr1(a.drought);
+	if (w.tune<MythosTune>().phase >= 1) {
+		for (const Culture& c : w.cultures) {
+			if (c.dead) continue;
+			const double r = rateOr1(mythos::factors(w, c.id).naturalRate);
+			if (r != 1.0) m.factors = true;
+			m.top = std::max(m.top, r);
+		}
+	}
+	return m;
+}
+// Is an event aimed at cell kept? With every rate 1 (always at phase 0): yes, without a draw. Else the culture owning
+// the cell (unowned land: rate 1) keeps it with rate / top, from a fork of w.rng (the main stream is not advanced).
+bool keepNatural(const World& w, const NaturalMul& m, int cell, const char* kind) {
+	if (!m.factors || !w.valid(cell)) return true;
+	double r = 1;
+	const int sid = w.owner.size() == size_t(w.n) ? int(w.owner[size_t(cell)]) : -1;
+	if (sid >= 0 && size_t(sid) < w.settlements.size()) r = rateOr1(mythos::factors(w, w.settlements[size_t(sid)].culture).naturalRate);
+	const double p = m.top > 0 ? r / m.top : 1.0;
+	if (p >= 1) return true;
+	if (!(p > 0)) return false;
+	Rng f = w.rng.fork(std::string("myth:disasters:spared:") + kind + ":" + std::to_string(cell) + ":" + std::to_string(w.tick));
+	return f.f() < p;
+}
+
+// (v4 mythos, M7) the Strange archetype's storm ring (3.1): constants (DisastersTune is frozen with the headers)
+constexpr double kRingYears = 150;                    // one ring storm lives this long, then re-forms the next year
+constexpr double kRingPower = 0.9;
+constexpr double kRingAngMin = 0.08, kRingAngMax = 0.25, kRingAngShare = 0.8;   // radius: share of the distance to land
+
+bool isRing(const Disaster& d) {
+	if (d.type != DisasterType::Storm) return false;
+	const auto it = d.data.find("ring");
+	return it != d.data.end() && it->second > 0;
+}
+
+// The ring's centre: the sea cell farthest (in hops) from any land, ties to the lowest id; kept in
+// vars.num["disasters_ring_cell" / "disasters_ring_hops"] while it is still sea. -1 if the world has no sea or no land.
+int ringCentre(World& w, int& hops) {
+	NumBag& num = w.vars.num;
+	const auto it = num.find("disasters_ring_cell");
+	const auto ih = num.find("disasters_ring_hops");
+	if (it != num.end() && ih != num.end() && isFinite(it->second) && isFinite(ih->second) && w.valid(int(it->second)) &&
+		state::isSea(w, int(it->second))) {
+		hops = int(ih->second);
+		return int(it->second);
+	}
+	const Geo& g = *w.geo;
+	std::vector<int32_t> dist(size_t(w.n), -1);
+	std::vector<int32_t> q;
+	q.reserve(size_t(w.n));
+	for (int c = 0; c < w.n; c++) if (isLand(w, c)) { dist[size_t(c)] = 0; q.push_back(int32_t(c)); }
+	if (q.empty() || q.size() == size_t(w.n)) return -1;
+	for (size_t i = 0; i < q.size(); i++) {
+		const int c = q[i];
+		for (int k = 0; k < g.nbrN[size_t(c)]; k++) {
+			const int m = g.nbr[size_t(6 * c + k)];
+			if (m < 0 || dist[size_t(m)] >= 0) continue;
+			dist[size_t(m)] = dist[size_t(c)] + 1;
+			q.push_back(int32_t(m));
+		}
+	}
+	int best = -1;
+	for (int c = 0; c < w.n; c++)
+		if (!isLand(w, c) && (best < 0 || dist[size_t(c)] > dist[size_t(best)])) best = c;
+	if (best < 0) return -1;
+	hops = dist[size_t(best)];
+	num["disasters_ring_cell"] = best;
+	num["disasters_ring_hops"] = hops;
+	return best;
+}
+
+// Form the ring when the archetype has one and none is alive (natural() calls it every year of history).
+void stormRing(World& w) {
+	if (!mythos::archetypeParams(w).stormRing) return;
+	for (const Disaster& d : w.disasters) if (isRing(d)) return;
+	int hops = 0;
+	const int c = ringCentre(w, hops);
+	if (c < 0) return;
+	const Geo& g = *w.geo;
+	Vec3 e, nn;
+	v3::basis(g.dir(c), e, nn);
+	powers::StartOpts so;
+	so.natural = true;
+	so.power = kRingPower;
+	so.ang = clamp(kRingAngShare * double(std::max(1, hops)) * g.step, kRingAngMin, kRingAngMax);
+	so.dur = kRingYears;
+	so.data["ring"] = 1;
+	so.data["hx"] = e.x;
+	so.data["hy"] = e.y;
+	so.data["hz"] = e.z;
+	powers::start(w, DisasterType::Storm, c, so);
 }
 
 // ------------------------------------------------------------------ tsunami distance order
@@ -563,8 +678,10 @@ bool tickStorm(World& w, int id, double dt) {
 	d->t += dt;
 	int c = d->cell;
 	Vec3 H{ d->data.count("hx") ? d->data["hx"] : 0.0, d->data.count("hy") ? d->data["hy"] : 0.0, d->data.count("hz") ? d->data["hz"] : 0.0 };
+	// (v4 mythos, M7) the Strange storm ring holds its place and its power (no draw)
+	const bool ring = isRing(*d);
 	// drift: at most one hop per tick, along the heading
-	{
+	if (!ring) {
 		const Vec3 p = g.dir(c);
 		if (!isFinite(H.x) || !isFinite(H.y) || !isFinite(H.z)) H = Vec3{ 0, 0, 0 };   // a broken stored heading
 		H = H - p * v3::dot(H, p);
@@ -601,7 +718,7 @@ bool tickStorm(World& w, int id, double dt) {
 	d->data["hy"] = H.y;
 	d->data["hz"] = H.z;
 	const bool overLand = isLand(w, c);
-	d->power = std::max(0.0, d->power * (1 - (overLand ? T.stormLandDecay : T.stormSeaDecay)));
+	if (!ring) d->power = std::max(0.0, d->power * (1 - (overLand ? T.stormLandDecay : T.stormSeaDecay)));
 	const double pw = d->power;
 	const double ang = d->ang;
 	// rain
@@ -659,11 +776,11 @@ int sampleCell(World& w, const std::vector<int>& liveIds, const std::function<bo
 	return fallback;
 }
 
-void naturalLightning(World& w, const std::vector<int>& liveIds) {
+void naturalLightning(World& w, const std::vector<int>& liveIds, const NaturalMul& M) {
 	const PowersTune& P = w.tune<PowersTune>();
 	const int c = sampleCell(w, liveIds, [&](int m) { return isLand(w, m); },
 	                         [&](int m) { return w.veg[size_t(m)] >= 0.25f; });
-	if (c < 0) return;
+	if (c < 0 || !keepNatural(w, M, c, "lightning")) return;
 	const Geo& g = *w.geo;
 	w.bus.emit(EvLightning{ c, true });
 	life::ignite(w, c, 1);
@@ -673,7 +790,7 @@ void naturalLightning(World& w, const std::vector<int>& liveIds) {
 	witnessNatural(w, c, "lightning");
 }
 
-void naturalStorm(World& w, const std::vector<int>& liveIds) {
+void naturalStorm(World& w, const std::vector<int>& liveIds, const NaturalMul& M) {
 	const DisastersTune& T = w.tune<DisastersTune>();
 	const Geo& g = *w.geo;
 	DisastersScratch& S = scr(w);
@@ -698,6 +815,7 @@ void naturalStorm(World& w, const std::vector<int>& liveIds) {
 			if (a > best + 1e-12) { best = a; o = m; }
 		}
 		if (o < 0 || protectedCell(w, o, liveIds)) continue;
+		if (!keepNatural(w, M, L, "storm")) return;
 		const Vec3 h = tangentToward(w, o, L);
 		powers::StartOpts so;
 		so.natural = true;
@@ -709,15 +827,15 @@ void naturalStorm(World& w, const std::vector<int>& liveIds) {
 	}
 }
 
-void naturalDrought(World& w, const std::vector<int>& liveIds) {
+void naturalDrought(World& w, const std::vector<int>& liveIds, const NaturalMul& M) {
 	const int c = sampleCell(w, liveIds, [&](int m) { return isLand(w, m); });
-	if (c < 0) return;
+	if (c < 0 || !keepNatural(w, M, c, "drought")) return;
 	powers::StartOpts so;
 	so.natural = true;
 	powers::start(w, DisasterType::Drought, c, so);
 }
 
-void naturalQuake(World& w, const std::vector<int>& liveIds) {
+void naturalQuake(World& w, const std::vector<int>& liveIds, const NaturalMul& M) {
 	const DisastersTune& T = w.tune<DisastersTune>();
 	const PowersTune& P = w.tune<PowersTune>();
 	const Geo& g = *w.geo;
@@ -731,7 +849,7 @@ void naturalQuake(World& w, const std::vector<int>& liveIds) {
 	int c = -1;
 	if (wantSea) c = sampleCell(w, liveIds, [&](int m) { return state::isSea(w, m) && nearLand(m); });
 	if (c < 0) c = sampleCell(w, liveIds, [&](int m) { return isLand(w, m); });
-	if (c < 0) return;
+	if (c < 0 || !keepNatural(w, M, c, "quake")) return;
 	const double pw = w.rng.range(0.5, 1.0);
 	const double ang = T.quakeAng;
 	const bool sea = state::isSea(w, c);
@@ -749,7 +867,7 @@ void naturalQuake(World& w, const std::vector<int>& liveIds) {
 	witnessNatural(w, c, "quake");
 }
 
-void naturalPlague(World& w, const std::vector<int>& liveIds) {
+void naturalPlague(World& w, const std::vector<int>& liveIds, const NaturalMul& M) {
 	std::vector<int> cities;
 	for (int sid : liveIds) {
 		if (sid < 0 || size_t(sid) >= w.settlements.size()) continue;
@@ -760,15 +878,16 @@ void naturalPlague(World& w, const std::vector<int>& liveIds) {
 	if (cities.empty()) return;
 	const int sid = cities[size_t(w.rng.pickIndex(int(cities.size())))];
 	const int cell = w.settlements[size_t(sid)].cell;
+	if (!keepNatural(w, M, cell, "plague")) return;
 	// an immune city shrugs it off: no plague, nothing to witness
 	if (civ::infect(w, sid, w.tune<PowersTune>().plagueSeverity)) witnessNatural(w, cell, "plague");
 }
 
-void naturalEruption(World& w, const std::vector<int>& liveIds) {
+void naturalEruption(World& w, const std::vector<int>& liveIds, const NaturalMul& M) {
 	const DisastersTune& T = w.tune<DisastersTune>();
 	const int c = sampleCell(w, liveIds, [&](int m) { return double(w.elev[size_t(m)]) > w.seaLevel - T.eruptSeaDepth; },
 	                         [&](int m) { return isLand(w, m); });
-	if (c < 0) return;
+	if (c < 0 || !keepNatural(w, M, c, "eruption")) return;
 	powers::StartOpts so;
 	so.natural = true;
 	if (powers::start(w, DisasterType::Volcano, c, so)) witnessNatural(w, c, "volcano");
@@ -983,6 +1102,7 @@ void natural(World& w) {
 	// (v3.1, design review finding 13) the young world is busier, the old one quieter
 	const double ageMul = T.calamityAge[size_t(std::clamp(w.age, 0, 6))];
 	const double cal = w.settings.calamity * (isFinite(ageMul) ? std::max(0.0, ageMul) : 1.0);
+	stormRing(w);                                        // (v4 mythos, M7) Strange: the ring is not a calamity
 	if (!(cal > 0) || !isFinite(cal)) return;
 	const std::vector<int> liveIds = civ::live(w);
 	// (v3, design review finding 4) the first trial: a dry spell over the first people's camp in
@@ -1001,18 +1121,21 @@ void natural(World& w) {
 			powers::start(w, DisasterType::Drought, w.settlements[size_t(cap)].cell, so);
 		}
 	}
-	const int nL = rollCount(w, "lightning", T.lightningPerCentury, cal);
-	const int nS = rollCount(w, "storm", T.stormsPerCentury, cal);
-	const int nD = rollCount(w, "drought", T.droughtsPerCentury, cal);
-	const int nQ = rollCount(w, "quake", T.quakesPerCentury, cal);
-	const int nP = rollCount(w, "plague", T.plaguesPerCentury, cal);
-	const int nE = rollCount(w, "eruption", T.eruptionsPerCentury, cal);
-	for (int i = 0; i < nL; i++) naturalLightning(w, liveIds);
-	for (int i = 0; i < nS; i++) naturalStorm(w, liveIds);
-	for (int i = 0; i < nD; i++) naturalDrought(w, liveIds);
-	for (int i = 0; i < nQ; i++) naturalQuake(w, civ::live(w));
-	for (int i = 0; i < nP; i++) naturalPlague(w, civ::live(w));
-	for (int i = 0; i < nE; i++) naturalEruption(w, civ::live(w));
+	// (v4 mythos, M7) x the archetype (Balanced: x 1, the same numbers) and x the largest culture rate
+	const NaturalMul M = naturalMul(w);
+	const double calAll = cal * M.all * M.top;
+	const int nL = rollCount(w, "lightning", T.lightningPerCentury, calAll);
+	const int nS = rollCount(w, "storm", T.stormsPerCentury, calAll);
+	const int nD = rollCount(w, "drought", T.droughtsPerCentury, calAll * M.drought);
+	const int nQ = rollCount(w, "quake", T.quakesPerCentury, calAll * M.quakeVolcano);
+	const int nP = rollCount(w, "plague", T.plaguesPerCentury, calAll);
+	const int nE = rollCount(w, "eruption", T.eruptionsPerCentury, calAll * M.quakeVolcano);
+	for (int i = 0; i < nL; i++) naturalLightning(w, liveIds, M);
+	for (int i = 0; i < nS; i++) naturalStorm(w, liveIds, M);
+	for (int i = 0; i < nD; i++) naturalDrought(w, liveIds, M);
+	for (int i = 0; i < nQ; i++) naturalQuake(w, civ::live(w), M);
+	for (int i = 0; i < nP; i++) naturalPlague(w, civ::live(w), M);
+	for (int i = 0; i < nE; i++) naturalEruption(w, civ::live(w), M);
 }
 
 } // namespace powers

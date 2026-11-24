@@ -26,6 +26,27 @@
 //
 // generate uses only + - * /, sqrt, floor, dm::noise3 / hashf and dm::Rng (all deterministic to
 // the bit), so a seed gives the same planet in every build.
+//
+// (v4 mythos, track M6 economy-world-v4, SPEC-MYTHOS 3.1) World archetypes. generate reads
+// mythos::archetypeParams(w) (the row of settings.archetype) once and builds from an adjusted COPY of
+// TerrainTune; Balanced changes nothing (every adjustment is skipped at its neutral value, so a
+// Balanced world is bit-identical to v3.1):
+//   ridgeK (Dangerous 1.3): more mountains and volcanic belts: belts, plateaus, old sutures and arcs are
+//     ridgeK wider, arcs ridgeK higher, fewer fossil edges are left without a range (oldCut / ridgeK),
+//     weaker convergence already raises a belt (convMin / ridgeK); per 0.3 of ridgeK one more hotspot chain
+//     and two more fossil sutures; the normalisation's upland and alpine shares (1 - midQ, 1 - highQ) x ridgeK.
+//   shelfK (Beautiful 1.3): more coast: more convoluted continents (warpCont x shelfK), ragged coastlines
+//     (coastLo / coastHi x shelfK) and wide shallow shelves (shelfLim / shelfK).
+//   islandK (Beautiful 1.3): more islands: more hotspot chains (x islandK), more one-cell islands survive
+//     (speckKeep x islandK), island arcs islandK higher.
+//   fert (Generous +0.15, Dangerous -0.05): added to the initial fertility before its 0.15..1 clamp
+//     (Life adds the same offset to the natural level, so it lasts).
+//   marvels (Strange 3..6): placed after the elevation is final, on land 0.5..4.5 above the shore with at
+//     least 4 land neighbours, never within 7 hops of another (forked stream "terrain-marvels"); their
+//     fert is at least 0.8. Written to vars.num (the only keys Terrain writes there; erased first by every
+//     generate): "terrain_marvels" = count, "terrain_marvel_<i>" = cell id, "terrain_marvel_kind_<i>" =
+//     0 singing stones, 1 warm springs in the ice, 2 a lake that glows, 3 a wood that whispers.
+//     Life keeps them unburnt and their fert >= 0.8; Mythos / Legends / the client read the keys.
 #include "Terrain.h"
 
 #include <algorithm>
@@ -33,7 +54,10 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <string>
 #include <vector>
+
+#include "Mythos.h"
 
 namespace dm {
 namespace {
@@ -909,6 +933,86 @@ struct Candidate {
 	int t = 0;
 };
 
+// ------------------------------------------------------------------ (v4 mythos) world archetypes
+
+// a multiplier from the archetype row: 1 unless it is a finite positive number
+double kOf(double k) { return std::isfinite(k) && k > 0 ? k : 1.0; }
+
+// The generation tuning of this world's archetype (SPEC-MYTHOS 3.1): an adjusted copy of TerrainTune.
+// Every adjustment is skipped at its neutral value, so Balanced returns the tuning unchanged.
+TerrainTune archetypeTune(const TerrainTune& base, const ArchetypeParams& ap) {
+	TerrainTune P = base;
+	const double rk = kOf(ap.ridgeK), sk = kOf(ap.shelfK), ik = kOf(ap.islandK);
+	if (rk != 1) {
+		P.beltW *= rk;
+		P.wideW *= rk;
+		P.oldW *= rk;
+		P.arcW *= rk;
+		P.arcH *= rk;
+		P.oldCut /= rk;
+		P.convMin /= rk;
+		const int more = rk > 1 ? int(std::floor((rk - 1) / 0.3 + 0.5)) : 0;
+		P.chainsMin += more;
+		P.chainsMax += more;
+		P.fossilMin += 2 * more;
+		P.fossilMax += 2 * more;
+		// and the normalisation lets ridgeK more of the land rise into uplands and alpine heights
+		P.midQ = std::max(0.5, 1 - (1 - P.midQ) * rk);
+		P.highQ = std::max(P.midQ, 1 - (1 - P.highQ) * rk);
+	}
+	if (sk != 1) {
+		P.warpCont *= sk;
+		P.coastLo *= sk;
+		P.coastHi *= sk;
+		for (double& s : P.shelfLim) s /= sk;
+	}
+	if (ik != 1) {
+		P.chainsMin = std::max(0, int(std::floor(P.chainsMin * ik + 0.5)));
+		P.chainsMax = std::max(P.chainsMin, int(std::floor(P.chainsMax * ik + 0.5)));
+		P.speckKeep = P.speckKeep * ik > 1 ? 1.0 : P.speckKeep * ik;
+		P.arcH *= ik;
+	}
+	return P;
+}
+
+// Strange worlds: 3-6 marvels on land, never within 7 hops of each other (see the top comment).
+void placeMarvels(World& w, const ArchetypeParams& ap, const Rng& root) {
+	// drop the marvels of an earlier generate of this world (erasing absent keys changes nothing)
+	for (auto it = w.vars.num.lower_bound("terrain_marvel"); it != w.vars.num.end() && it->first.rfind("terrain_marvel", 0) == 0;)
+		it = w.vars.num.erase(it);
+	const int lo = std::clamp(ap.marvels, 0, 16), hi = std::clamp(std::max(ap.marvels, ap.marvelsMax), 0, 16);
+	if (hi <= 0) return;
+	const Geo& g = *w.geo;
+	const int n = w.n;
+	Rng r = root.fork("terrain-marvels");
+	const int want = lo >= hi ? hi : r.integer(lo, hi);
+	std::vector<int32_t> cand;
+	for (int c = 0; c < n; c++) {
+		const double e = w.elev[size_t(c)];
+		if (!(e >= 0.5 && e <= 4.5)) continue;                        // well above the shore (the sea may settle a little high)
+		int landNbr = 0;
+		for (int k = 0; k < g.nbrN[size_t(c)]; k++) landNbr += w.elev[size_t(g.nbr[size_t(6 * c + k)])] >= 0 ? 1 : 0;
+		if (landNbr >= 4) cand.push_back(c);
+	}
+	if (cand.empty()) return;
+	std::vector<uint8_t> blocked(size_t(n), 0);
+	std::vector<int32_t> ringOut;
+	int placed = 0;
+	for (int tries = 0; tries < 64 * want && placed < want; tries++) {
+		const int c = cand[size_t(r.pickIndex(int(cand.size())))];
+		if (blocked[size_t(c)]) continue;
+		g.ring(c, 7, ringOut);
+		for (const int32_t m : ringOut) blocked[size_t(m)] = 1;
+		const double lat = std::fabs(double(g.lat[size_t(c)]));
+		const int kind = lat > 0.87 ? 1 : w.elev[size_t(c)] > 1.6 ? 0 : (hashf(uint32_t(c), w.seed + 31u) < 0.5 ? 2 : 3);
+		w.vars.num["terrain_marvel_" + std::to_string(placed)] = c;
+		w.vars.num["terrain_marvel_kind_" + std::to_string(placed)] = kind;
+		if (w.fert[size_t(c)] < 0.8f) w.fert[size_t(c)] = 0.8f;
+		placed++;
+	}
+	w.vars.num["terrain_marvels"] = placed;
+}
+
 } // namespace
 
 namespace terrain {
@@ -1234,7 +1338,10 @@ void derive(World& w) {
 
 void generate(World& w) {
 	if (!w.geo || w.n <= 0 || w.elev.size() != size_t(w.n)) return;
-	const TerrainTune& P = w.tune<TerrainTune>();
+	// (v4 mythos) the archetype's tuning; Balanced = w.tune<TerrainTune>() exactly
+	const ArchetypeParams AP = mythos::archetypeParams(w);
+	const TerrainTune P = archetypeTune(w.tune<TerrainTune>(), AP);
+	const double fertAdd = std::isfinite(AP.fert) ? AP.fert : 0.0;
 	const Geo& geo = *w.geo;
 	const int n = w.n;
 	const float* pos = geo.pos.data();
@@ -1324,9 +1431,11 @@ void generate(World& w) {
 			if (e < 1.5) f += 0.2 * sat(std::sqrt(G.acc[cc] / accRef)) * (1 - e / 1.5);
 		}
 		f += 0.18 * (G.volc[cc] > 1 ? 1.0 : double(G.volc[cc]));
+		if (fertAdd != 0) f += fertAdd;                            // (v4) Generous / Dangerous soils
 		if (!std::isfinite(f)) f = 0.5;
 		w.fert[cc] = float(f < 0.15 ? 0.15 : f > 1 ? 1 : f);
 	}
+	placeMarvels(w, AP, root);                                     // (v4) Strange worlds; nothing for the others
 
 	w.dirty = Dirty{};                                             // every dirty flag true
 	w.need = Need{};                                               // every need flag true

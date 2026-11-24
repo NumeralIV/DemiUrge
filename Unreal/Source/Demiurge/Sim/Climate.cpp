@@ -43,6 +43,16 @@
 #include <numeric>
 
 #include "Life.h"
+#include "Mythos.h"
+
+// (v4 mythos, track M6 economy-world-v4) Climate's mythos reads (SPEC-MYTHOS 1.4, 3.1, 3.13); each is skipped
+// at its neutral value, so a Balanced world with neutral Factors is v3.1 to the bit:
+//   - archetype noiseK (Beautiful 1.3): the temperature wobble (tNoise) and the rain-lift wobble (rainNoise) are
+//     noiseK stronger: more varied biomes. (Folded into the per-world cache signature.)
+//   - archetype moistBias (Generous +0.05): added to every land cell's moist before the 0..1 clamp.
+//   - Factors::co2Uptake (the World rite): the vegetation term of the yearly CO2 uptake is scaled by the
+//     land-weighted mean of the owning cultures' co2Uptake (unowned land counts 1):
+//     co2 -= co2 x uptake x (0.5 + veg x mean). Cells are read only when some culture's co2Uptake is not 1.
 
 namespace dm {
 namespace {
@@ -70,8 +80,13 @@ std::array<double, 21> gridSigOf(const ClimateTune& T) {
 	return { T.band1, T.band2, T.bandBlend, T.merid, T.windMix, T.windAgree, T.subsHum, T.frontHum, T.beltEq, T.beltEqW,
 		T.dryLat, T.dryW, T.beltDry, T.liftBase, T.liftEq, T.liftEqW, T.liftMid, T.midLat, T.midW, T.liftDry, T.liftMin };
 }
-std::array<double, 6> cacheSigOf(const ClimateTune& T) {
-	return { T.tEquator, T.tPole, T.tShape, T.tNoise, T.tNoiseFreq, T.rainNoise };
+// (v4) the archetype's noise multiplier (1 unless a finite positive number)
+double noiseKOf(const World& w) {
+	const double k = mythos::archetypeParams(w).noiseK;
+	return std::isfinite(k) && k > 0 ? k : 1.0;
+}
+std::array<double, 6> cacheSigOf(const ClimateTune& T, double nk) {
+	return { T.tEquator, T.tPole, T.tShape, T.tNoise * nk, T.tNoiseFreq, T.rainNoise * nk };
 }
 template <size_t N>
 bool sameSig(const std::array<double, N>& p, const std::array<double, N>& q) {
@@ -211,19 +226,21 @@ ClimateScratch& gridFor(const World& w) {
 ClimateScratch& cacheFor(const World& w) {
 	ClimateScratch& S = gridFor(w);
 	const ClimateTune& T = w.tune<ClimateTune>();
-	const auto sig = cacheSigOf(T);
+	const double nk = noiseKOf(w);                                     // (v4) Beautiful: more varied
+	const auto sig = cacheSigOf(T, nk);
 	if (S.cacheOk && S.cacheN == w.n && S.cacheSeed == w.seed && sameSig(S.cacheSig, sig)) return S;
 	const Geo& g = *w.geo;
 	const size_t un = size_t(w.n);
 	S.base.assign(un, 0.f); S.wob.assign(un, 1.f); S.t0.assign(un, 0.f); S.mh.assign(un, 0.f);
 	const double ox = hashf(w.seed, 101) * 64, oy = hashf(w.seed, 102) * 64, oz = hashf(w.seed, 103) * 64;
 	const double f = T.tNoiseFreq, span = T.tEquator - T.tPole;
+	const double tNoise = T.tNoise * nk, rainNoise = T.rainNoise * nk;
 	for (size_t c = 0; c < un; c++) {
 		const double x = g.pos[3 * c], y = g.pos[3 * c + 1], z = g.pos[3 * c + 2];
 		const double cl = std::sqrt(std::max(0.0, 1 - y * y));
-		const double bt = T.tPole + span * std::pow(cl, T.tShape) + T.tNoise * fbm3(x * f + ox, y * f + oy, z * f + oz, 2);
+		const double bt = T.tPole + span * std::pow(cl, T.tShape) + tNoise * fbm3(x * f + ox, y * f + oy, z * f + oz, 2);
 		S.base[c] = float(fin(bt, 0));
-		S.wob[c] = float(fin(std::max(0.4, 1 + T.rainNoise * noise3(x * 2.1 - oy, y * 2.1 + oz, z * 2.1 - ox)), 1));
+		S.wob[c] = float(fin(std::max(0.4, 1 + rainNoise * noise3(x * 2.1 - oy, y * 2.1 + oz, z * 2.1 - ox)), 1));
 	}
 	S.cacheOk = true;
 	S.cacheN = w.n;
@@ -428,6 +445,8 @@ double rainfall(World& w, ClimateScratch& S) {
 	const bool anyDr = droughts(w, S);
 	const double inv = 1 / (T.rainRef > 1e-9 ? T.rainRef : 1e-9), dry = T.droughtDry;
 	const double knee = T.rainKnee < 1 ? (T.rainKnee > 0 ? T.rainKnee : 0) : 1, over = 1 - knee;
+	const double biasRaw = mythos::archetypeParams(w).moistBias;          // (v4) Generous: wetter land
+	const double bias = std::isfinite(biasRaw) ? biasRaw : 0.0;
 	double maxD = 0;
 	for (int c = 0; c < n; c++) {
 		const size_t uc = size_t(c);
@@ -438,6 +457,7 @@ double rainfall(World& w, ClimateScratch& S) {
 		if (m > knee && over > 0) m = knee + over * (1 - std::exp((knee - m) / over));   // the wettest places approach 1
 		m += w.wet[uc];
 		if (anyDr) m -= dry * S.dr[uc];
+		if (bias != 0 && landAt(w.elev[uc], sea)) m += bias;          // (v4) the archetype's moisture
 		m = m > 0 ? (m < 1 ? m : 1) : 0;                              // also turns NaN into 0
 		if (landAt(w.elev[uc], sea)) { const double d = std::fabs(m - S.mh[uc]); if (d > maxD) maxD = d; }
 		w.moist[uc] = float(m);
@@ -518,6 +538,32 @@ double coverVeg(const World& w) {
 	if (std::isfinite(cv.veg) && cv.veg >= 0) return cv.veg > 1 ? 1 : cv.veg;
 	const double d = w.tune<ClimateTune>().vegDefault;
 	return std::isfinite(d) ? sat(d) : 0.5;
+}
+
+// (v4 mythos, the World rite 3.13) the land-weighted mean of the owners' Factors::co2Uptake (unowned land: 1).
+// Exactly 1 (and no cell is read) while every culture's factor is 1.
+double uptakeOf(const World& w) {
+	const size_t nc = w.cultures.size();
+	std::vector<double> k(nc, 1.0);
+	bool any = false;
+	for (size_t id = 0; id < nc; id++) {
+		const double f = mythos::factors(w, int(id)).co2Uptake;
+		if (std::isfinite(f) && f >= 0 && f != 1) { k[id] = f; any = true; }
+	}
+	if (!any || w.owner.size() != size_t(w.n) || w.elev.size() != size_t(w.n)) return 1.0;
+	const double sea = w.seaLevel;
+	double sum = 0;
+	int land = 0;
+	for (size_t c = 0; c < size_t(w.n); c++) {
+		if (!landAt(w.elev[c], sea)) continue;
+		land++;
+		double f = 1;
+		const Settlement* s = state::settlement(w, w.owner[c]);
+		if (s && !s->dead && s->culture >= 0 && size_t(s->culture) < nc) f = k[size_t(s->culture)];
+		sum += f;
+	}
+	const double m = land > 0 ? sum / land : 1.0;
+	return std::isfinite(m) ? m : 1.0;
 }
 
 double numOr(const World& w, const char* key, double d) {
@@ -613,7 +659,7 @@ void yearly(World& w) {
 		const double base = *v.seaBase;
 		// greenhouse
 		double co2 = fin(w.co2, 0);
-		co2 = fin(co2 - co2 * T.uptake * (0.5 + coverVeg(w)), co2);
+		co2 = fin(co2 - co2 * T.uptake * (0.5 + coverVeg(w) * uptakeOf(w)), co2);   // (v4) x the World rite's uptake
 		w.co2 = clamp(co2, 0, co2Cap(T));
 		double gt = fin(w.globalTemp, 0);
 		gt = fin(gt + (T.sens * std::log2(1 + w.co2 / 100) - gt) / (T.lag > 1 ? T.lag : 1), gt);

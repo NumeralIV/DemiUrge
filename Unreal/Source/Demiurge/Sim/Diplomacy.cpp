@@ -58,6 +58,18 @@
 //   rad = max(rad, 0.8) within 2 hops, life::ignite within 1 hop, climate::addDust 0.10,
 //   society::witness(kind "nuke", faith 0, good 0, ang 0.3); then vars.lastNuke and peace (truce 100).
 // At most searchesPerYear (4) path::find calls per diplomacy() call (armies first, then traders).
+//
+// v4 mythos (track M5 "society-v4", SPEC-MYTHOS 1.4, 3.5, 3.6, 3.8). Diplomacy READS each culture's Factors
+// (mythos::factors; neutral = Factors{} = v3.1 exactly) and never writes MythosState:
+//   aggression (added to the trait in the relations and war rules), warV (the aggressor's, added to
+//   DiplomacyTune::warV), warStrength (the aggressor's, x the 0.6 gate), relDrift (each side's, added to dv of a pair
+//   in contact), battle (attacker's strength), defence (defender's) and harmTaken (the defender culture's x the
+//   town's townFactors: capture needs strength / harmTaken; Endurance 0.5 = x 2), plagueHop (the receiving culture's,
+//   x the caravan's infection chance: Open gates 1.3, Closed 0.7), tradeEvery (the town's culture, x the cadence).
+//   A messenger's visit raises devotion by prophetDevotion x (0.5 + credibility) (characters::credibility; an
+//   unnamed prophet, figure -1, is the v3.1 visit).
+// Offsets are added only when non-zero and multipliers of 1 are exact, and no draw on w.rng changes:
+// test_diplomacy_v4_trace.cpp checks a recorded 300-year trace.
 #include "Society.h"
 
 #include <algorithm>
@@ -71,10 +83,12 @@
 #include <utility>
 #include <vector>
 
+#include "Characters.h"
 #include "Civ.h"
 #include "Climate.h"
 #include "Hydro.h"
 #include "Life.h"
+#include "Mythos.h"
 #include "Path.h"
 #include "Units.h"
 
@@ -171,6 +185,14 @@ double techOf(const World& w, int cultureId) {
 	return T.tech[size_t(a)];
 }
 double finiteOr(double v, double def) { return isFinite(v) ? v : def; }
+// (v4) a finite Factors multiplier / offset (a bad record never poisons the sim)
+double mulOf(double x) { return isFinite(x) ? x : 1.0; }
+double addOf(double x) { return isFinite(x) ? x : 0.0; }
+// Mythos is read only once it is on (MythosTune::phase >= 1); at phase 0 its reads are neutral by contract, so the
+// v3.1 call graph and cost stay exactly as they were.
+bool mythOn(const World& w) { return w.tune<MythosTune>().phase >= 1; }
+Factors mythFactors(const World& w, int cid) { return mythOn(w) ? mythos::factors(w, cid) : Factors{}; }
+double townHarm(const World& w, int sid) { return mythOn(w) ? mulOf(mythos::townFactors(w, sid).harmTaken) : 1.0; }
 
 NavalMode navalOf(const World& w, const Settlement& s) {
 	if (!cultureOk(w, s.culture)) return NavalMode::Land;
@@ -483,9 +505,16 @@ void battle(World& w, int unitId) {
 	const int defender = s->culture;
 	if (defender == attacker) return;                                    // already ours: the army stands down
 	if (!society::atWar(w, attacker, defender)) { units::kill(w, unitId, "disbanded"); return; }
-	const double attack = size * techOf(w, attacker) * w.rng.range(T.battleLo, T.battleHi);
+	// (v4, 1.4) battle x the attacker's Factors, defence x the defender's; harmTaken (the culture's x the town's,
+	// Endurance) makes the town harder to take: strength / harmTaken
+	const Factors fa = mythFactors(w, attacker), fd = mythFactors(w, defender);
+	const double battleK = std::max(0.0, mulOf(fa.battle));
+	const double defenceK = std::max(0.0, mulOf(fd.defence));
+	double harm = mulOf(fd.harmTaken) * townHarm(w, sid);
+	if (!(harm > 0)) harm = 1;
+	const double attack = size * techOf(w, attacker) * w.rng.range(T.battleLo, T.battleHi) * battleK;
 	const double pop = std::max(0.0, finiteOr(s->pop, 0));
-	const double defence = T.defenceK * pop * (1 + (s->has(Building::WALLS) ? 1 : 0)) * techOf(w, defender);
+	const double defence = T.defenceK * pop * (1 + (s->has(Building::WALLS) ? 1 : 0)) * techOf(w, defender) * defenceK / harm;
 	const bool won = attack > defence;
 	const int cell = s->cell;
 	w.bus.emit(EvBattle{ cell, attacker, defender, won, sid });
@@ -531,7 +560,9 @@ void caravan(World& w, int unitId) {
 	const Settlement* origin = state::settlement(w, from);
 	if (origin && origin->plague > 0 && isFinite(origin->plague)) {
 		const double sev = std::clamp(origin->plague, 0.0, 1.0);
-		if (w.rng.chance(T.plagueHop * sev)) civ::infect(w, to, std::max(0.3, sev));
+		// (v4, 3.6) the receiving people's gates: Open x 1.3, Closed x 0.7 (Factors plagueHop; 1 = v3.1)
+		const double hop = std::max(0.0, mulOf(mythFactors(w, tc).plagueHop));
+		if (w.rng.chance(T.plagueHop * sev * hop)) civ::infect(w, to, std::max(0.3, sev));
 	}
 	// roads along the land part of the route
 	if (w.road.size() == size_t(w.n)) {
@@ -565,7 +596,14 @@ void prophetVisit(World& w, int unitId) {
 	if (!state::settlement(w, to)) return;
 	Settlement& s = w.settlements[size_t(to)];
 	if (s.dead || s.culture != c) return;
-	s.devotion = std::clamp(finiteOr(s.devotion, 0) + ST.prophetDevotion, 0.0, 1.0);
+	// (v4, 3.8) a messenger's visit counts by how far they are believed: x (0.5 + credibility); an unnamed
+	// prophet (figure -1) is the v3.1 visit (x 1)
+	double gain = ST.prophetDevotion;
+	if (cu.prophet->figure >= 0) {
+		const double cred = characters::credibility(w, cu.prophet->figure);
+		gain = ST.prophetDevotion * (0.5 + (isFinite(cred) ? std::clamp(cred, 0.0, 1.0) : 0.5));
+	}
+	s.devotion = std::clamp(finiteOr(s.devotion, 0) + gain, 0.0, 1.0);
 	cu.prophet->settlement = to;
 }
 
@@ -854,6 +892,9 @@ void diplomacy(World& w) {
 	std::vector<Agg> ag = aggregates(w);
 	std::vector<int> minGap, edges;
 	geometry(w, ag, minGap, edges);
+	// (v4, 1.4) each culture's Factors this year (decrees, the rite, traits, beliefs ...); Factors{} = v3.1
+	std::vector<Factors> F(nc);
+	for (size_t k = 0; k < nc; k++) F[k] = mythFactors(w, int(k));
 	auto inContact = [&](int a, int b) {
 		if (minGap[size_t(a) * nc + size_t(b)] <= T.contactHops) return true;
 		const Relation* r = peek(w, a, b);
@@ -872,6 +913,8 @@ void diplomacy(World& w) {
 	auto aggr = [&](int a, int b) {
 		double x = finiteOr(w.cultures[size_t(a)].traits.aggression, 0.5);
 		if (ag[size_t(a)].crusadeTarget == b) x += ST.crusadeAggression;
+		const double fx = addOf(F[size_t(a)].aggression);
+		if (fx != 0) x += fx;
 		return x;
 	};
 
@@ -977,6 +1020,10 @@ void diplomacy(World& w) {
 						if (z != a && z != b && atWar(w, ia, int(z)) && atWar(w, ib, int(z))) common = true;
 					if (common) dv += T.commonEnemyV;
 				}
+				// (v4, 3.6 / 3.13 / 3.24) each people's own drift with those it meets (Open gates, Valour, Kindness ...)
+				const double da = addOf(F[a].relDrift), db = addOf(F[b].relDrift);
+				if (da != 0) dv += da;
+				if (db != 0) dv += db;
 			}
 			v = std::clamp(v + finiteOr(dv, 0), -1.0, 1.0);
 			r->v = v;
@@ -1038,18 +1085,24 @@ void diplomacy(World& w) {
 			if (!ag[b].alive || ag[b].towns == 0) continue;
 			const int ia = int(a), ib = int(b);
 			const Relation* r = peek(w, ia, ib);
-			if (!r || r->war || !r->contact || !(r->v < T.warV) || w.year < r->truce) continue;
-			if (w.cultures[a].edict == Edict::Peace || w.cultures[b].edict == Edict::Peace) continue;
-			if (isAlly(w, ia, ib)) continue;
+			if (!r || r->war || !r->contact || w.year < r->truce) continue;
 			const double xa = aggr(ia, ib), xb = aggr(ib, ia);
 			const int agg = xb > xa ? ib : ia;
 			const int def = agg == ia ? ib : ia;
+			// (v4, 1.4) the would-be aggressor's warV offset: negative = harder to start a war (Peace decree, a pact)
+			const double dWarV = addOf(F[size_t(agg)].warV);
+			if (!(r->v < (dWarV == 0 ? T.warV : T.warV + dWarV))) continue;
+			if (w.cultures[a].edict == Edict::Peace || w.cultures[b].edict == Edict::Peace) continue;
+			if (isAlly(w, ia, ib)) continue;
 			// (v3.1) a people still weary from its last war, or from a century of them, starts no new one
 			if (finiteOr(w.cultures[size_t(agg)].exhaustion, 0) > T.warWeary) continue;
 			if (T.warredMax > 0 && getNum(w, "diplomacy_warred" + ns(agg), 0) > T.warredMax) continue;
 			const double sAgg = ag[size_t(agg)].pop * ag[size_t(agg)].tech;
 			double sDef = ag[size_t(def)].pop * ag[size_t(def)].tech;
-			if (!(sAgg >= T.warStrength * sDef) || !(sAgg > 0)) continue;
+			// (v4, 3.5 / 3.6) the strength gate x the aggressor's warStrength (courage: they attack stronger peoples)
+			const double gateK = std::max(0.0, mulOf(F[size_t(agg)].warStrength));
+			const double strength = gateK == 1 ? T.warStrength : T.warStrength * gateK;
+			if (!(sAgg >= strength * sDef) || !(sAgg > 0)) continue;
 			if (!canReach(w, agg, def, minGap[a * nc + b])) continue;
 			// (v3.1) the defender's allies who would come: an aggressor must match them too
 			if (T.allyDeter && T.allyCall) {
@@ -1061,7 +1114,7 @@ void diplomacy(World& w) {
 					if (!canReach(w, z, agg, 255)) continue;
 					sDef += ag[size_t(z)].pop * ag[size_t(z)].tech;
 				}
-				if (!(sAgg >= T.warStrength * sDef)) continue;
+				if (!(sAgg >= strength * sDef)) continue;
 			}
 			declareWar(w, agg, def);
 		}
@@ -1108,6 +1161,11 @@ void diplomacy(World& w) {
 	// 6. trade: towns with a market, every tradeEvery years (staggered by id)
 	struct Due { int id; double last; };
 	std::vector<Due> due;
+	// (v4, 3.6) the cadence x the town's culture's tradeEvery (Gain 0.8); 1 = v3.1
+	auto everyOf = [&](int cu) {
+		const double k = cultureOk(w, cu) ? std::max(0.0, mulOf(F[size_t(cu)].tradeEvery)) : 1.0;
+		return k == 1 ? T.tradeEvery : T.tradeEvery * k;
+	};
 	for (const Settlement& s : w.settlements) {
 		if (s.dead || s.tier < 2 || !s.has(Building::MARKET) || !cultureAlive(w, s.culture)) continue;
 		const std::string key = "diplomacy_trade" + ns(s.id);
@@ -1116,7 +1174,7 @@ void diplomacy(World& w) {
 			const double start = w.year - double(s.id % std::max(1, int(T.tradeEvery)));
 			it = w.vars.num.insert_or_assign(key, start).first;
 		}
-		if (w.year - it->second >= T.tradeEvery) due.push_back({ s.id, it->second });
+		if (w.year - it->second >= everyOf(s.culture)) due.push_back({ s.id, it->second });
 	}
 	std::sort(due.begin(), due.end(), [](const Due& x, const Due& y) {
 		if (x.last != y.last) return x.last < y.last;
@@ -1126,7 +1184,7 @@ void diplomacy(World& w) {
 		const bool sent = sendTrader(w, d.id);
 		const std::string key = "diplomacy_trade" + ns(d.id);
 		if (sent) setNum(w, key, w.year);
-		else if (S.budget > 0) setNum(w, key, w.year - T.tradeEvery + T.tradeRetry);   // nobody to trade with: retry soon
+		else if (S.budget > 0) setNum(w, key, w.year - everyOf(w.settlements[size_t(d.id)].culture) + T.tradeRetry);   // nobody to trade with: retry soon
 		// out of search budget: stays due, first in line next year
 	}
 

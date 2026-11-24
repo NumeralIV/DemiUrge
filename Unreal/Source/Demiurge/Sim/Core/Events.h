@@ -36,7 +36,8 @@
 
 namespace dm {
 
-// X(StructSuffix, "event:name")  — the order is the order of DM.EVENTS.
+// X(StructSuffix, "event:name")  — the order is the order of DM.EVENTS; the 22 mythos rows of SPEC-MYTHOS 1.8
+// (v4, M0) are appended after the UI events so no existing Ev value moves.
 #define DM_EVENT_LIST(X)                                  \
 	X(Phase, "phase")                                     \
 	X(PowerUsed, "power:used")                            \
@@ -94,7 +95,29 @@ namespace dm {
 	X(UiHud, "ui:hud")                                    \
 	X(UiSettings, "ui:settings")                          \
 	X(UiToast, "ui:toast")                                \
-	X(CameraShake, "camera:shake")
+	X(CameraShake, "camera:shake")                        \
+	X(Card, "card")                       \
+	X(Presence, "presence")               \
+	X(Aspect, "aspect")                   \
+	X(Decree, "decree")                   \
+	X(Breach, "breach")                   \
+	X(Word, "word")                       \
+	X(Pact, "pact")                       \
+	X(Figure, "figure")                   \
+	X(Trial, "trial")                     \
+	X(Judgement, "judgement")             \
+	X(Legend, "legend")                   \
+	X(Blessing, "blessing")               \
+	X(Omen, "omen")                       \
+	X(Dispute, "dispute")                 \
+	X(House, "house")                     \
+	X(Rival, "rival")                     \
+	X(Bearers, "bearers")                 \
+	X(Revelation, "revelation")           \
+	X(Keeper, "keeper")                   \
+	X(Grown, "grown")                     \
+	X(Withdraw, "withdraw")               \
+	X(Renewal, "renewal")
 
 enum class Ev : uint16_t {
 #define DM_EV_ENUM(T, s) T,
@@ -228,8 +251,9 @@ struct EvAweShort { static constexpr Ev kType = Ev::AweShort; std::string id;
 struct EvPeopleLost { static constexpr Ev kType = Ev::PeopleLost;
 	template <class F> void fields(F&&) const {} };
 // the world.ending object
-struct EvEnding { static constexpr Ev kType = Ev::Ending; EndingType type = EndingType::Ark; Mood mood = Mood::Parting; int culture = -1; int settlement = -1; double year = 0;
-	template <class F> void fields(F&& f) const { DM_F(type); DM_F(mood); DM_F(culture); DM_F(settlement); DM_F(year); } };
+// (v4 mythos, M0) legacy = Ending::legacy (SPEC-MYTHOS 4; None until mythos::legacy is built)
+struct EvEnding { static constexpr Ev kType = Ev::Ending; EndingType type = EndingType::Ark; Mood mood = Mood::Parting; int culture = -1; int settlement = -1; double year = 0; Legacy legacy = Legacy::None;
+	template <class F> void fields(F&& f) const { DM_F(type); DM_F(mood); DM_F(culture); DM_F(settlement); DM_F(year); DM_F(legacy); } };
 // (v3, design review finding 10) a Lower Land press stopped at a settlement's centre just above the sea
 // (sea level + 0.05) instead of drowning it: a second press after this one ends would drown it.
 // id = the settlement, cell = its centre. At most once per settlement per press. (verifier) A town the
@@ -260,6 +284,73 @@ struct EvUiToast { static constexpr Ev kType = Ev::UiToast; std::string text, ki
 	template <class F> void fields(F&& f) const { DM_F(text); DM_F(kind); } };
 struct EvCameraShake { static constexpr Ev kType = Ev::CameraShake; double amount = 0;
 	template <class F> void fields(F&& f) const { DM_F(amount); } };
+// ---- (v4 mythos, M0) SPEC-MYTHOS 1.8: payload strings are open sets (std::string), ids int (-1 none), numbers double.
+// kind = toStr(CardKind) ("judgement"); stage "open" | "answered" | "lapsed" | "withdrawn"; choice -1 unless answered / lapsed
+struct EvCard { static constexpr Ev kType = Ev::Card; int id = -1; std::string kind; std::string stage; int culture = -1; int choice = -1;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(kind); DM_F(stage); DM_F(culture); DM_F(choice); } };
+// toStr(Presence) of the new and the previous stance
+struct EvPresence { static constexpr Ev kType = Ev::Presence; std::string presence; std::string prev;
+	template <class F> void fields(F&& f) const { DM_F(presence); DM_F(prev); } };
+// toStr(Aspect)
+struct EvAspect { static constexpr Ev kType = Ev::Aspect; int culture = -1; std::string aspect; std::string prev;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(aspect); DM_F(prev); } };
+// area toStr(DecreeArea); stance / prev stanceName(area, s) ("repealed" when a decree is repealed, prev "none" for a first decree); clarity toStr(Clarity)
+struct EvDecree { static constexpr Ev kType = Ev::Decree; int culture = -1; std::string area; std::string stance; std::string prev; std::string clarity;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(area); DM_F(stance); DM_F(prev); DM_F(clarity); } };
+// severity 0..1 (3.6)
+struct EvBreach { static constexpr Ev kType = Ev::Breach; int culture = -1; std::string area; int settlement = -1; int figure = -1; double severity = 0;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(area); DM_F(settlement); DM_F(figure); DM_F(severity); } };
+// outcome "heard" | "wisdom" | "sect" | "misread" | "catastrophe" (toStr(WordOutcome) for the finer ones is allowed: open set)
+struct EvWord { static constexpr Ev kType = Ev::Word; int id = -1; int culture = -1; std::string content; std::string clarity; std::string channel; std::string outcome;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(culture); DM_F(content); DM_F(clarity); DM_F(channel); DM_F(outcome); } };
+// what "sworn" | "kept" | "god-broke" | "people-broke" | "forgiven" | "lapsed"
+struct EvPact { static constexpr Ev kType = Ev::Pact; int id = -1; int culture = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(culture); DM_F(what); } };
+// kind toStr(FigureKind); what "chosen" | "rise" | "vindicated" | "discredited" | "redeemed" | "fallen" | "exalted" | "died"
+struct EvFigure { static constexpr Ev kType = Ev::Figure; int id = -1; std::string kind; int culture = -1; int settlement = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(kind); DM_F(culture); DM_F(settlement); DM_F(what); } };
+// kind toStr(TrialKind); what "begun" | "passed" | "failed"
+struct EvTrial { static constexpr Ev kType = Ev::Trial; int figure = -1; std::string kind; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(figure); DM_F(kind); DM_F(what); } };
+// by "deed" | "heart"; sentence "forgive" | "warn" | "remove" | "disaster"
+struct EvJudgement { static constexpr Ev kType = Ev::Judgement; int card = -1; int culture = -1; std::string by; std::string sentence;
+	template <class F> void fields(F&& f) const { DM_F(card); DM_F(culture); DM_F(by); DM_F(sentence); } };
+// what "born" | "grew" | "credited" | "forgotten" | "inherited"
+struct EvLegend { static constexpr Ev kType = Ev::Legend; int id = -1; int culture = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(culture); DM_F(what); } };
+// kind toStr(BlessingKind); start false when it ends
+struct EvBlessing { static constexpr Ev kType = Ev::Blessing; int settlement = -1; std::string kind; bool start = true;
+	template <class F> void fields(F&& f) const { DM_F(settlement); DM_F(kind); DM_F(start); } };
+// kind toStr(OmenKind); what "foreseen" | "warned" | "repented" | "prepared" | "exploited" | "dismissed" | "struck" | "averted"
+struct EvOmen { static constexpr Ev kType = Ev::Omen; int id = -1; std::string kind; int cell = -1; int culture = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(kind); DM_F(cell); DM_F(culture); DM_F(what); } };
+// kind toStr(DisputeKind); answer toStr(DisputeAnswer) or "" while open
+struct EvDispute { static constexpr Ev kType = Ev::Dispute; int culture = -1; std::string kind; std::string answer;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(kind); DM_F(answer); } };
+// what "rose" | "corrupt" | "cleansed" | "reformed" | "endorsed" | "fell"
+struct EvHouse { static constexpr Ev kType = Ev::House; int culture = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(what); } };
+// what "rise" | "exposed" | "martyr" | "faded" | "split"
+struct EvRival { static constexpr Ev kType = Ev::Rival; int id = -1; int culture = -1; int figure = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(culture); DM_F(figure); DM_F(what); } };
+// charge toStr(Charge); what "chosen" | "proud" | "rebuked" | "released" | "replaced"
+struct EvBearers { static constexpr Ev kType = Ev::Bearers; int culture = -1; std::string charge; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(charge); DM_F(what); } };
+// kind toStr(RevelationKind); what "given" | "shared" | "hoarded" | "weaponised"
+struct EvRevelation { static constexpr Ev kType = Ev::Revelation; int culture = -1; std::string kind; std::string what; bool early = false;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(kind); DM_F(what); DM_F(early); } };
+// domain toStr(KeeperDomain); what "appointed" | "acted" | "disagreed" | "rogue" | "dismissed"
+struct EvKeeper { static constexpr Ev kType = Ev::Keeper; int id = -1; std::string domain; int culture = -1; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(id); DM_F(domain); DM_F(culture); DM_F(what); } };
+// answer "" when they come of age, else the ComingOfAge answer ("bless" | "remind" | "hold")
+struct EvGrown { static constexpr Ev kType = Ev::Grown; int culture = -1; std::string answer;
+	template <class F> void fields(F&& f) const { DM_F(culture); DM_F(answer); } };
+// start false when the silence ends
+struct EvWithdraw { static constexpr Ev kType = Ev::Withdraw; bool start = true; bool announced = false;
+	template <class F> void fields(F&& f) const { DM_F(start); DM_F(announced); } };
+// kind toStr(RenewalKind); what "begun" | "remnant" | "ended"
+struct EvRenewal { static constexpr Ev kType = Ev::Renewal; std::string kind; std::string what;
+	template <class F> void fields(F&& f) const { DM_F(kind); DM_F(what); } };
 #undef DM_F
 
 using EventPayload = std::variant<

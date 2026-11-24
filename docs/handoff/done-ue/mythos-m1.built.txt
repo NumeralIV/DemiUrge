@@ -1,0 +1,43 @@
+2026-11-20, mythos-m1 (track M1 "mythos-core", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- run.ps1 mythos: 31 passed, 0 failed (every other module stubbed). run.ps1 link: 3 passed, 0 failed.
+- run.ps1 all: 943 passed, 1 failed, run on a private snapshot of Sim/ SimTests/ Tools/ at 11:48, because three
+  other workflows were building SimTests/build/all at the same time (object-file "Permission denied" collisions).
+  The one failure is M6's "economy v4: ... cooldown x expandCooldown" (test_economy_v4.cpp:299, real Path), which
+  reads Factors through the same honest read as the stub and does not involve Mythos. With the real submodules
+  mythos::yearly took 0.0135 ms mean.
+- Phase-0 guardrail: phase0-guardrail.ps1 on the same snapshot (every track's current code): "32 of 32 match".
+- Phase-1 guardrail (5.1 rule 2) in test_mythos_guard.cpp, all only: a real 300-year L5 history at phase 1, emergent off,
+  with an ordinary god (heal / lightning through powers::use) and mythos::yearly every year: the version-1 bytes
+  (everything but the mythos extensions) equal the phase-0 run; every Factors record neutral.
+- Cost: mythos::yearly own share (submodules stubbed) at L6, 120 settlements, 6 cultures, about 50 acts a year:
+  mean 0.005-0.006 ms, worst 0.05-0.08 ms (target 0.1 ms mean).
+
+Built (files owned: Sim/Mythos.cpp, SimTests/test_mythos_{core,factors,legacy,guard}.cpp; no header changed)
+- attach: bus recorders that only append MythAct records (witnessed god acts per settlement, answered prayers,
+  breaches, decree / word / judgement / pact events, answered or lapsed cards). Phase 0 subscribes nothing.
+- yearly: Doctrine and Characters yearly (phase >= 1; Faiths, Omens, Legends at >= 2; Keepers, Renewal at >= 3), then
+  the own pass: Faith records per culture (root peoples get the archetype seeds, daughters inherit the parent's view),
+  the waking cards (ShapePeople, Presence via cards::open, once), the acts consumed into impressions (3.3 table, by
+  presence), visible deeds, clarity (fading mean with a 0.5 prior), judgedBy, mercy / sternness, survivor memory,
+  the 3.7 case lines Doctrine leaves to Mythos; fading; Mystery 0.2 per silent century; the aspect (min 0.15, lead
+  1.2 x, hold 40 years, `aspect` event); the will targets of 3.4 and drift; the Factors assembly.
+- Factors: decrees and customs (kept x, customs x customStrength) incl. the rite and the Land decree; the shaped traits
+  (3.5) once shaped or emergent; aspect and dependence effects once the god used a mythos act on the people
+  ("touched") or emergent; agency's research / schism and dependence's research terms emergent only; survivors' love
+  target; beliefs about death (when Doctrine forms them); the archetype's devotion offset (Balanced 0).
+- witnessScale (3.2), setPresence (Walk refused, once per age, 100 Awe via powers::pay, Dispute proposals on Unseen),
+  the ShapePeople and Presence card handlers / options (244 and 3 answers), legacyScores / legacy (4), townFactors
+  (reads blessings that exist, phase >= 2), archetypeParams, rite, faith, aspect.
+- Left neutral for M1b / M1c: bless, withdraw, warGoal, neglectScale, the Blessing / Dispute / ComingOfAge /
+  SilenceReport answers.
+
+Interfaces other tracks rely on (read the Mythos.cpp header comment)
+- Decree / rite / trait effect sizes are the spec's starting values in Mythos.cpp (no TUNE field: headers frozen).
+- Archetype Awe income and natural rates are NOT folded into Factors (Society reads aweIncome; Disasters the rates).
+- Later woken peoples inherit the shaping in Society's newCulture; Mythos only marks them shaped.
+- A Disaster sentence is just per the card's data deedWrong / heartWrong (Doctrine's keys), fallback "just".
+- mythos::factors stays an honest read of w.mythos.factors at every phase (the M0 contract that the civ, economy
+  and climate v4 tests rely on); at phase 0 Mythos never fills the vector.
+- Unbuilt Unreal side: Unreal/build.ps1 was not run (this track only touches Sim/Mythos.cpp, standard C++).

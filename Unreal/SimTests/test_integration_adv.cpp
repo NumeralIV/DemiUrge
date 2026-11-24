@@ -111,7 +111,11 @@ struct Abuser {
 		int attempts = 0;
 		while (r.f() < perTick && attempts < 4) {
 			attempts++;
-			const powers::PowerDef& d = powers::kPowers[size_t(r.pickIndex(int(powers::kPowerCount)))];
+			// (v4 mythos, M0) only the pre-mythos rows: the Word rows are appended at the end and locked at phase 0,
+			// so the abusive god keeps its v3 random stream and its number of acts
+			int preMythos = 0;
+			for (const powers::PowerDef& pd : powers::kPowers) if (pd.group != powers::Group::Word) preMythos++;
+			const powers::PowerDef& d = powers::kPowers[size_t(r.pickIndex(preMythos))];
 			if (d.group == powers::Group::Genesis && std::string(d.id) != "awaken") continue;
 			if (!powers::unlocked(w, d.id)) continue;
 			const int cell = pickTarget(w, d);

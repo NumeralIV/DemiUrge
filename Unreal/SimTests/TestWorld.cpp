@@ -232,6 +232,45 @@ std::string checkFinite(const World& w) {
 	if (w.vars.ark && !std::isfinite(w.vars.ark->year)) return "vars.ark";
 	if (w.ending && !std::isfinite(w.ending->year)) return "ending";
 	for (const ChronicleEntry& e : w.chronicle) if (!std::isfinite(e.year)) return "chronicle " + std::to_string(e.id);
+	// (v4 mythos, M0) every number of the MythosState and the v4 culture fields
+	for (const Culture& c : w.cultures)
+		if (!std::isfinite(c.traits.compassion) || !std::isfinite(c.traits.ambition) || !std::isfinite(c.traits.courage)) return "culture " + std::to_string(c.id) + " traits";
+	{
+		const MythosState& m = w.mythos;
+		auto all = [](std::initializer_list<double> v) { for (double x : v) if (!std::isfinite(x)) return false; return true; };
+		if (!all({ m.presenceSince, m.withdrawnUntil, m.renewedYear }) || badBag(m.num)) return "mythos";
+		for (size_t i = 0; i < m.faith.size(); i++) {
+			const Faith& f = m.faith[i];
+			if (!all({ f.aspectSince, f.image[0], f.image[1], f.image[2], f.image[3], f.agency, f.obedience, f.dependence, f.selfReliance,
+				f.clarity, f.visible, f.judgedBy, f.mercy, f.sternness, f.survivorLove, f.survivorFear, f.survivorUntil, f.bearer,
+				f.superiority, f.grown }) || badBag(f.data)) return "mythos.faith " + std::to_string(i);
+		}
+		for (size_t i = 0; i < m.factors.size(); i++) {
+			const Factors& f = m.factors[i];
+			if (!all({ f.growthR, f.K, f.famineLoss, f.plagueDeath, f.research, f.expandCooldown, f.farmConvert, f.devotionBase,
+				f.loveTarget, f.prayerChance, f.answeredGain, f.unansweredPenalty, f.aweS, f.schism, f.warV, f.aggression, f.battle,
+				f.defence, f.relDrift, f.plagueHop, f.warStrength, f.tradeEvery, f.naturalRate, f.harmTaken, f.co2Uptake,
+				f.expect[0], f.expect[1], f.expect[2], f.expect[3], f.expect[4], f.expect[5] })) return "mythos.factors " + std::to_string(i);
+		}
+		for (const Decree& d : m.decrees) if (!all({ d.since, d.kept }) || badBag(d.data)) return "mythos.decrees";
+		for (const Utterance& u : m.words) if (!all({ u.year, u.fidelity }) || badBag(u.data)) return "mythos.words " + std::to_string(u.id);
+		for (const Pact& p : m.pacts) if (!all({ p.sworn, p.until, p.godKept, p.peopleKept }) || badBag(p.data)) return "mythos.pacts " + std::to_string(p.id);
+		for (const Figure& f : m.figures) {
+			bool fine = all({ f.born, f.died, f.credibility, f.reach, f.fame }) && !badBag(f.data);
+			for (float x : f.person) if (!std::isfinite(x)) fine = false;
+			for (float x : f.heart) if (!std::isfinite(x)) fine = false;
+			if (!fine) return "mythos.figures " + std::to_string(f.id);
+		}
+		for (const Card& c : m.cards) if (!all({ c.opened, c.deadline, c.severity }) || badBag(c.data)) return "mythos.cards " + std::to_string(c.id);
+		for (const Legend& l : m.legends) if (!all({ l.year, l.truth, l.told, l.vitality }) || badBag(l.data)) return "mythos.legends " + std::to_string(l.id);
+		for (const House& h : m.houses) if (!all({ h.strength, h.wealth, h.authority, h.corruption, h.since }) || badBag(h.data)) return "mythos.houses";
+		for (const RivalVoice& r : m.rivals) if (!all({ r.following, r.since }) || badBag(r.data)) return "mythos.rivals " + std::to_string(r.id);
+		for (const Omen& o : m.omens) if (!all({ o.due, o.power, o.ang }) || badBag(o.data)) return "mythos.omens " + std::to_string(o.id);
+		for (const Keeper& k : m.keepers) if (!all({ k.appointed, k.loyalty, k.will, k.rogueUntil }) || badBag(k.data)) return "mythos.keepers " + std::to_string(k.id);
+		for (const Revelation& r : m.revelations) if (!all({ r.year }) || badBag(r.data)) return "mythos.revelations";
+		for (const TownMyth& t : m.towns) if (!all({ t.blessedSince, t.blessedUntil, t.remnantUntil }) || badBag(t.data)) return "mythos.towns " + std::to_string(t.settlement);
+		for (const MythAct& a : m.acts) if (!all({ a.year, a.good })) return "mythos.acts";
+	}
 	for (size_t r = 0; r < w.rivers.size(); r++)
 		for (float f : w.rivers[r].flow) if (!std::isfinite(f)) return "rivers[" + std::to_string(r) + "]";
 	return std::string();

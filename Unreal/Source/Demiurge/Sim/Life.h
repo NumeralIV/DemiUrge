@@ -139,6 +139,10 @@ struct LifeTune {
 	double habSlope[2] = { 0.25, 1.6 };        // slope factor falls from 1 to 0 across this range
 	double habCoast[3] = { 1, 1.12, 1.06 };    // coastal bonus by hops to the sea
 	double habMin = 0.05;          // a cell counts as habitable (w.cache.landHab) above this
+	// ---- (v4 mythos, M0) old growth (SPEC-MYTHOS 3.22): wild[c] counts decades of unbroken forest cover
+	// (veg >= wildVeg, farm < wildFarm, urban < wildUrban), reset when cleared, burned below wildBurn or farmed;
+	// old growth at wild >= wildAncient; 255 = a sacred grove (never farmed). Written by the economy-life-v4b track.
+	double wildVeg = 0.6, wildBurn = 0.3, wildFarm = 0.1, wildUrban = 0.05; int wildAncient = 30;
 };
 
 namespace life {

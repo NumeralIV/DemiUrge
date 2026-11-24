@@ -146,7 +146,9 @@ struct DisastersTune {
 namespace powers {
 
 // [powers] power definition (SPEC-SIM 3.10 table as data)
-enum class Group : uint8_t { Genesis, Shape, Sky, Wrath, Grace };
+// (v4 mythos, M0) Word: the god speaks, blesses, tests, reveals, renews (SPEC-MYTHOS 2.1; the palette shows it
+// between Grace and the genesis powers).
+enum class Group : uint8_t { Genesis, Shape, Sky, Wrath, Grace, Word };
 enum class Target : uint8_t { Any, Land, Sea, Settlement };
 // How the witness radius is given: Radius = wAng radians; BrushRel = wAng x the brush ang;
 // Cultures = everyone of the cultures involved (Omen of Peace: "both cultures"); None = no witnesses.
@@ -156,6 +158,8 @@ struct Unlock {
 	int age = 0;                         // ... and (w.age >= age ...
 	double awe = 0;                      // ... or god.aweMax >= awe); awe <= 0 means "age only" (v3: every power past Bronze)
 	bool phaseOnly = false;              // genesis powers: available ONLY in `phase`
+	int mythos = 0;                      // (v4 mythos, M0) MythosTune::phase the power needs (0 = not a mythos power);
+	                                     // below it the power is Locked whatever the age (phase 0: every Word power)
 };
 struct PowerDef {
 	const char* id;
@@ -194,6 +198,14 @@ inline constexpr PowerDef kPowers[] = {
 	{ "prophet",   "Prophet",       'P', Group::Grace,   false, 120, 0,    Target::Settlement, { Phase::History, Age::IRON,     0,   false }, WScope::Radius,   0.15, 0.15, "Raise a prophet." },
 	{ "peace",     "Omen of Peace", 'O', Group::Grace,   false, 100, 0,    Target::Settlement, { Phase::History, Age::IRON,     0,   false }, WScope::Cultures, 0,    0.10, "End a war." },
 	{ "consecrate","Consecrate",    'Y', Group::Grace,   false, 150, 0,    Target::Settlement, { Phase::History, Age::BRONZE,   0,   false }, WScope::Radius,   0.10, 0.10, "Raise a shrine into a temple; in a capital, a Wonder." },
+	// (v4 mythos, M0) the Word group (SPEC-MYTHOS 2.1, 3.9, 3.16, 3.18, 3.25, 3.30). cost = the cheapest choice;
+	// the real cost comes from UseOpts::word (doctrine::wordCost, MythosTune, CharactersTune, DoctrineTune,
+	// RenewalTune). Locked while MythosTune::phase < unlock.mythos. renew has no key.
+	{ "speak",     "Speak",         '5', Group::Word,    false,  30, 0,    Target::Settlement, { Phase::History, Age::STONE,    0,   false, 1 }, WScope::None,     0,    0,    "Speak to a people: a decree, a warning, a promise, an answer." },
+	{ "bless",     "Bless",         '6', Group::Word,    false,  80, 0,    Target::Settlement, { Phase::History, Age::BRONZE,   0,   false, 2 }, WScope::Radius,   0.10, 0.10, "Bless a town: prosperity, a healer, endurance." },
+	{ "reveal",    "Reveal",        '7', Group::Word,    false, 150, 0,    Target::Settlement, { Phase::History, Age::BRONZE,   0,   false, 3 }, WScope::None,     0,    0,    "Give a people knowledge, in time or too early." },
+	{ "test",      "Test",          '8', Group::Word,    false,  40, 0,    Target::Settlement, { Phase::History, Age::IRON,     0,   false, 2 }, WScope::None,     0,    0,    "Test a notable person." },
+	{ "renew",     "Renew",         '\0', Group::Word, false, 600, 0,    Target::Any,        { Phase::History, Age::IRON,     0,   false, 3 }, WScope::None,     0,    0,    "The Great Water or the Great Burning: begin again, with a remnant." },
 };
 inline constexpr int kPowerCount = int(sizeof(kPowers) / sizeof(kPowers[0]));
 
@@ -219,10 +231,11 @@ inline const PowerDef* byId(std::string_view id) {
 
 // [powers] can() result: reason 'ok' | 'locked' | 'awe' | 'target' | 'phase'; why (reason Target, or
 // ok with Small for awaken on a landmass with fewer than 600 habitable cells).
-enum class Reason : uint8_t { Ok, Locked, Awe, Target, Phase };
+// (v4 mythos, M0) Withdrawn: the god keeps a century of silence (SPEC-MYTHOS 3.29).
+enum class Reason : uint8_t { Ok, Locked, Awe, Target, Phase, Withdrawn };
 enum class Why : uint8_t { None, Sea, Land, Settlement, Barren, Crowded, Small };
 inline const char* toStr(Reason r) {
-	switch (r) { case Reason::Ok: return "ok"; case Reason::Locked: return "locked"; case Reason::Awe: return "awe"; case Reason::Target: return "target"; default: return "phase"; }
+	switch (r) { case Reason::Ok: return "ok"; case Reason::Locked: return "locked"; case Reason::Awe: return "awe"; case Reason::Target: return "target"; case Reason::Withdrawn: return "withdrawn"; default: return "phase"; }
 }
 inline const char* toStr(Why y) {
 	switch (y) { case Why::None: return "none"; case Why::Sea: return "sea"; case Why::Land: return "land"; case Why::Settlement: return "settlement"; case Why::Barren: return "barren"; case Why::Crowded: return "crowded"; default: return "small"; }
@@ -240,6 +253,12 @@ struct CanResult {
 struct UseOpts {
 	double ang = -1;
 	double dt = 0;
+	WordOpts word;                       // (v4 mythos, M0) what the Word powers say or give (MythosTypes.h)
+	// (v4 mythos, M7; additive) prophet (shown as Messenger) at MythosTune::phase >= 1: true = open the MessengerChoice
+	// card on the town (SPEC-MYTHOS 3.8: three candidates; nothing is spent now, the card's answer pays the power's
+	// cost through powers::pay). false (the default) = the v3.1 unnamed prophet at once, so a god or policy that
+	// never asks for the choice keeps the v3.1 history (SPEC-MYTHOS 5.1 rule 2). The client sets it when arming.
+	bool choose = false;
 };
 
 // [disasters] start() options (JS { power, ang, dur, natural, data }); unset = the type's default.
@@ -290,6 +309,11 @@ CanResult can(const World& w, std::string_view id, int cell);
 // player's volcano is witnessed here, at launch (harmed = settlements within
 // DisastersTune::ashAngMul x ang, good -1 for them, 0 for others). Quake under the sea starts its tsunami through powers::start(Tsunami) with default options.
 bool use(World& w, std::string_view id, int cell, const UseOpts& opts = {});
+// [powers] (v4 mythos, M0) The god pays for a mythos act (a card answer, a word, Look into the heart, a Keeper's
+// upkeep): spends `amount` Awe and returns true, or emits awe:short { what } (rate-limited like use) and returns
+// false when god.awe < amount. what = an id for the act ("card:judgement", "look", "keeper:upkeep" ...).
+// amount <= 0 is free (true). Never a deed, never witnessed (the act itself is, where it shows).
+bool pay(World& w, std::string_view what, double amount);
 
 // ---------------------------------------------------------------- [disasters] (Disasters.cpp)
 

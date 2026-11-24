@@ -656,7 +656,7 @@ DM_TEST("save: header and envelope edits are each refused with a reason") {
 	const size_t blobAt = 20 + (4 + w->name.size() + 4 + 8 + 1 + 4 + 8 + 8) + 4;
 	if (blobAt + 8 < good.size()) {
 		{ std::vector<uint8_t> m = good; m[blobAt] = 'X'; resign(m); cases.push_back({ "world blob magic changed", m, "format" }); }
-		{ std::vector<uint8_t> m = good; m[blobAt + 4] = 2; resign(m); cases.push_back({ "world blob version 2", m, "version" }); }
+		{ std::vector<uint8_t> m = good; m[blobAt + 4] = 3; resign(m); cases.push_back({ "world blob version 3", m, "version" }); }   // (v4 mythos) 1 and 2 load
 	}
 
 	for (const Case& c : cases) {

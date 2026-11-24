@@ -26,7 +26,7 @@ void forEachPayload(const std::function<void(size_t, const Event&)>& f) {
 } // namespace
 
 DM_TEST("events: the table is DM.EVENTS and every payload struct matches it") {
-	eq(kEventCount, 57, "event count (DM.EVENTS has 55 entries; v3, design review: + drown:warning; v3.1: + alliance)");
+	eq(kEventCount, 79, "event count (DM.EVENTS has 55 entries; v3, design review: + drown:warning; v3.1: + alliance; v4 mythos M0: + 22)");
 	std::set<std::string> names;
 	for (int i = 0; i < kEventCount; i++) names.insert(kEventTable[i].name);
 	eq(names.size(), size_t(kEventCount), "names are unique");
@@ -42,7 +42,13 @@ DM_TEST("events: the table is DM.EVENTS and every payload struct matches it") {
 		eq(checkEvent(e, 10), std::string(), std::string("default payload of ") + kEventTable[i].name + " passes the checker");
 	});
 	// each struct's kType is its own index in the variant
-	ok(int(EvPhase::kType) == 0 && int(EvCameraShake::kType) == kEventCount - 1, "kType order");
+	ok(int(EvPhase::kType) == 0 && int(EvRenewal::kType) == kEventCount - 1, "kType order");
+	// (v4 mythos, M0) the 22 rows of SPEC-MYTHOS 1.8 follow the UI events, in the spec's order; ending gains legacy
+	const char* mythosRows[] = { "card", "presence", "aspect", "decree", "breach", "word", "pact", "figure", "trial", "judgement",
+		"legend", "blessing", "omen", "dispute", "house", "rival", "bearers", "revelation", "keeper", "grown", "withdraw", "renewal" };
+	for (int i = 0; i < 22; i++) eq(std::string(kEventTable[int(Ev::CameraShake) + 1 + i].name), std::string(mythosRows[i]), "mythos event row " + std::to_string(i));
+	eq(std::string(kEventTable[int(Ev::Ending)].keys[5]), std::string("legacy"), "ending.legacy");
+	eq(kEventTable[int(Ev::Word)].nKeys, 6, "word has 6 keys");
 	ok(EventPayload(EvBattle{}).index() == size_t(Ev::Battle), "variant index == Ev");
 }
 

@@ -31,6 +31,21 @@
 //   Sea-rise evacuation: the best site (siteScore) within drownedHops that is land, not a lake,
 //     habitable and at least crowdHops from land owned by any OTHER settlement; else the nearest
 //     live settlement of the culture; the evacuees travel with NavalMode::Open.
+//
+// (v4 mythos, track M6 economy-world-v4, SPEC-MYTHOS 1.4) Economy reads the culture's Factors
+// (mythos::factors) and, for a real settlement, its TownFactors (mythos::townFactors) at exactly these
+// places; every factor multiplies ONE tuning constant or a finished amount, so the neutral records
+// (Factors{}, TownFactors{}: all 1) reproduce v3.1 to the bit:
+//   K           capacity: K x F.K x TF.K (after granary, plant and the blessed gift); a candidate site
+//               (expansion, civ::found before it exists) takes its culture's F.K only
+//   growthR     growth rate r x F.growthR x TF.growthR
+//   famineLoss  the famine loss x F.famineLoss x F.harmTaken x TF.harmTaken
+//   plagueDeath plague deaths: plague x (plagueDeath x F.plagueDeath x TF.plagueDeath) x pop
+//   farmConvert farm[] growth per year on farmed cells: farmRate x F.farmConvert
+//   expandCooldown the settler cooldown x F.expandCooldown
+//   research    the culture's research rate: clamp(sizeF x buildF x traitF x inspireF x catchUp x
+//               F.research, rateMin, rateMax)
+// (harmTaken of war and disasters is applied by civ::damage in Civ.cpp: callers pass the raw share.)
 #include "Civ.h"
 
 #include <algorithm>
@@ -42,6 +57,7 @@
 
 #include "Climate.h"
 #include "Hydro.h"
+#include "Mythos.h"
 #include "Path.h"
 #include "Society.h"
 #include "Units.h"
@@ -79,6 +95,13 @@ inline int cultureAge(const World& w, int cultureId) {
 }
 
 inline int clampTier(int t) { return t < 0 ? 0 : t > 4 ? 4 : t; }
+
+// (v4 mythos) a factor from a mythos record: a finite non-negative number, else neutral 1
+inline double fac(double x) { return isFinite(x) && x >= 0 ? x : 1.0; }
+// (v4 mythos) is s a settlement of the world (not a candidate site copied for capacity)?
+inline bool inWorld(const World& w, const Settlement& s) {
+	return s.id >= 0 && size_t(s.id) < w.settlements.size() && &w.settlements[size_t(s.id)] == &s;
+}
 
 double suit(const EconomyTune& T, const World& w, int c) {
 	const double t = w.temp[size_t(c)];
@@ -170,6 +193,9 @@ Survey survey(const World& w, const Settlement& s) {
 	// (v3) a blessed town's fields give more; the gift fades over its last blessedFade years, so the
 	// end of a blessing is an ebb the people follow, not a famine
 	if (s.blessed > 0) K *= 1 + (T.blessedK - 1) * (T.blessedFade > 0 ? std::min(1.0, s.blessed / T.blessedFade) : 1.0);
+	// (v4 mythos) the culture's K (decrees, revelations, the Land) and the town's own (blessings, omens)
+	K *= fac(mythos::factors(w, s.culture).K);
+	if (inWorld(w, s)) K *= fac(mythos::townFactors(w, s.id).K);
 	out.K = (isFinite(K) && K > 0) ? K : 0;
 	return out;
 }
@@ -229,6 +255,7 @@ void tendLand(World& w, int sid) {
 	Settlement& s = w.settlements[size_t(sid)];
 	const Geo& g = *w.geo;
 	const double tech = T.techYield[size_t(cultureAge(w, s.culture))];
+	const double farmRate = T.farmRate * fac(mythos::factors(w, s.culture).farmConvert);   // (v4 mythos)
 	// farms: the best arable cells by farmPot until their sum reaches farmTarget x pop
 	S.farmCand.clear();
 	for (const int32_t c : s.cells) {
@@ -250,7 +277,7 @@ void tendLand(World& w, int sid) {
 		double f1;
 		if (acc < need) {
 			acc += -fc.first;
-			f1 = std::min(1.0, f0 + T.farmRate);
+			f1 = std::min(1.0, f0 + farmRate);
 			const double v0 = w.veg[i];
 			const double v1 = std::min(v0, std::max(0.0, 1 - f1));
 			if (v1 < v0) {
@@ -374,12 +401,15 @@ void settlementYear(World& w, int sid, const std::vector<uint8_t>& warFlag) {
 		w.settlements[size_t(sid)].K = sv.K;
 		tendLand(w, sid);
 		Settlement& s = w.settlements[size_t(sid)];
+		// (v4 mythos) the culture's and the town's factors (neutral = 1: v3.1 exactly)
+		const Factors F = mythos::factors(w, s.culture);
+		const TownFactors TF = mythos::townFactors(w, sid);
 		// growth and famine
 		const double p0 = isFinite(s.pop) ? std::max(0.0, s.pop) : 0.0;
 		double pop = p0;
 		const double Keff = std::max(s.K, 1.0);
 		if (pop <= Keff) {
-			const double r = T.growthR * (1 + T.granaryR * s.b[Building::GRANARY] + T.blessedR * (s.blessed > 0 ? 1 : 0)
+			const double r = T.growthR * fac(F.growthR) * fac(TF.growthR) * (1 + T.granaryR * s.b[Building::GRANARY] + T.blessedR * (s.blessed > 0 ? 1 : 0)
 				+ T.loveR * std::max(0.0, isFinite(s.love) ? s.love : 0.0));
 			pop += r * pop * (1 - pop / Keff);
 			s.famine = 0;
@@ -387,7 +417,9 @@ void settlementYear(World& w, int sid, const std::vector<uint8_t>& warFlag) {
 			// (v3, design review finding 9) a blessed town is not starving: the god's gifts carry it while
 			// its people fall back to what the land feeds
 			const bool hungry = pop > Keff * (1 + T.famineSlack) && !(s.blessed > 0);
-			pop -= std::min(T.famineLoss * pop, T.famineGap * (pop - Keff));
+			const double loss = std::min(T.famineLoss * pop, T.famineGap * (pop - Keff))
+				* (fac(F.famineLoss) * fac(F.harmTaken) * fac(TF.harmTaken));
+			pop -= std::min(pop, loss);
 			if (hungry) {
 				s.famine += 1;
 				if (s.famine == T.famineEvent) w.bus.emit(EvSettlementFamine{ sid });
@@ -398,7 +430,7 @@ void settlementYear(World& w, int sid, const std::vector<uint8_t>& warFlag) {
 		// plague deaths and fading
 		bool cureNow = false;
 		if (s.plague > 0) {
-			pop -= std::min(pop, s.plague * T.plagueDeath * pop);
+			pop -= std::min(pop, s.plague * (T.plagueDeath * fac(F.plagueDeath) * fac(TF.plagueDeath)) * pop);
 			s.plague *= (1 - T.plagueFade);
 			if (s.plague < T.plagueCure) cureNow = true;
 		}
@@ -479,7 +511,7 @@ void expansion(World& w) {
 		const int age = cu->age < 0 ? 0 : cu->age > Age::SPACE ? int(Age::SPACE) : cu->age;
 		const double base = T.expandCooldownAge[size_t(age)] > 0 ? T.expandCooldownAge[size_t(age)] : T.expandCooldown;
 		const double ratio = T.expandCooldown > 0 ? T.expandEdict / T.expandCooldown : 0.5;
-		const double cool = cu->edict == Edict::Expand ? base * ratio : base;
+		const double cool = (cu->edict == Edict::Expand ? base * ratio : base) * fac(mythos::factors(w, s.culture).expandCooldown);   // (v4 mythos)
 		if (s.pop >= T.expandK * s.K && s.pop >= T.expandPop && w.year - s.lastExpand >= cool)
 			S.waiting.emplace_back(s.lastExpand, s.id);
 	}
@@ -597,7 +629,7 @@ void research(World& w) {
 				const Relation* r = society::peek(w, int(id), int(o));
 				if (r && r->contact) { catchUp = T.catchUp; break; }
 			}
-			double rate = clamp(sizeF * buildF * traitF * inspireF * catchUp, T.rateMin, T.rateMax);
+			double rate = clamp(sizeF * buildF * traitF * inspireF * catchUp * fac(mythos::factors(w, int(id)).research), T.rateMin, T.rateMax);   // (v4 mythos)
 			if (!isFinite(rate)) rate = T.rateMin;
 			cu.science = (isFinite(cu.science) ? std::max(0.0, cu.science) : 0.0) + rate;
 			while (cu.age < Age::SPACE && cu.science >= T.ageNeed[size_t(cu.age)]) {

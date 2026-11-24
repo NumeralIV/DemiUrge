@@ -143,9 +143,10 @@ DM_TEST("state: kCellFields is the contract table (order, types, defaults, codec
 		{ "urban", FieldType::F32, 0, SaveCodec::Q8, 0, 1 }, { "road", FieldType::U8, 0, SaveCodec::Raw, 0, 0 },
 		{ "hab", FieldType::F32, 0, SaveCodec::None, 0, 0 }, { "slope", FieldType::F32, 0, SaveCodec::None, 0, 0 },
 		{ "coast", FieldType::U8, 255, SaveCodec::None, 0, 0 }, { "fresh", FieldType::U8, 255, SaveCodec::None, 0, 0 },
+		{ "wild", FieldType::U8, 0, SaveCodec::Raw, 0, 0 },     // (v4 mythos, M0) SPEC-MYTHOS 3.22, save version 2
 	};
-	if (!eq(state::kCellFieldCount, 24, "field count")) return;
-	for (int i = 0; i < 24; i++) {
+	if (!eq(state::kCellFieldCount, 25, "field count (v4 mythos: + wild)")) return;
+	for (int i = 0; i < 25; i++) {
 		const CellField& f = state::kCellFields[i];
 		ok(std::string(f.name) == want[i].name && f.type == want[i].t && f.def == want[i].def && f.save == want[i].s &&
 		   (f.save == SaveCodec::None || f.save == SaveCodec::Raw || (f.min == want[i].mn && f.max == want[i].mx)), std::string("row ") + want[i].name);
@@ -241,7 +242,7 @@ DM_TEST("serialize: marker, version, layout of the header and of a known cell") 
 	std::vector<uint8_t> b;
 	if (!ok(state::serialize(*w, b), "serializes")) return;
 	ok(std::memcmp(b.data(), "DMWD", 4) == 0, "format marker");
-	eq(uint32_t(b[4] | (b[5] << 8)), 1u, "version 1, little-endian");
+	eq(uint32_t(b[4] | (b[5] << 8)), 2u, "version 2 (v4 mythos), little-endian");
 	eq(uint32_t(b[8]) | uint32_t(b[9]) << 8 | uint32_t(b[10]) << 16 | uint32_t(b[11]) << 24, 0xABCDEF01u, "seed");
 	eq(state::quantize(state::kCellFields[0], 4.0), 32768u);
 	eq(state::quantize(state::kCellFields[7], 0.5), 128u);
@@ -392,7 +393,7 @@ DM_TEST("deserialize: rejects garbage, wrong markers / versions, every truncatio
 	ok(!state::deserialize(junk), "random bytes");
 	auto bad = b; bad[0] = 'X';
 	ok(!state::deserialize(bad, &why) && why == "bad save: format", "marker: " + why);
-	bad = b; bad[4] = 2;
+	bad = b; bad[4] = 3;                                    // (v4 mythos) 1 and 2 load; 3 does not
 	ok(!state::deserialize(bad, &why) && why == "bad save: version", "version: " + why);
 	int accepted = 0;
 	for (size_t len = 0; len < b.size(); len++) if (state::deserialize(b.data(), len)) accepted++;
@@ -421,12 +422,12 @@ DM_TEST("deserialize: rejects garbage, wrong markers / versions, every truncatio
 	ok(!state::deserialize(ub, &why), "a cell id beyond n is refused: " + why);
 }
 
-DM_TEST("save size: an empty L = 6 world is about 19 bytes per cell, well under 1.2 MB") {
+DM_TEST("save size: an empty L = 6 world is about 20 bytes per cell, well under 1.2 MB") {
 	auto w = mk(6);
 	const size_t n = state::sizeOf(*w);
 	std::printf("       empty L=6 save: %zu bytes (%.2f bytes per cell)\n", n, double(n) / w->n);
 	ok(n < 1200000, "under 1.2 MB");
-	ok(n > size_t(19 * w->n) && n < size_t(19 * w->n + 2000), "19 bytes per cell plus a small header");
+	ok(n > size_t(20 * w->n) && n < size_t(20 * w->n + 2000), "20 bytes per cell (v4 mythos: + wild) plus a small header");
 	const double t = nowMs();
 	std::vector<uint8_t> b;
 	for (int i = 0; i < 10; i++) state::serialize(*w, b);

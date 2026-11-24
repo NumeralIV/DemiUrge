@@ -9,6 +9,8 @@
 //   the state::serialize blob, the snapshots (optional: Snapshot is memory-only in the State format;
 //   each frame is stored as its difference to the previous one, run-length coded),
 //   a checksum over everything before it. Little-endian on every platform.
+// (v4 mythos, M0) The container stays version 1; the state blob inside carries its own version (state::kVersion
+// 2: tagged extension blocks), and decode loads version-1 and version-2 blobs alike (FOUNDATION-CPP 22).
 // Loading checks magic, version, lengths and checksum; never returns a half-loaded world. The
 // caller runs sim::use on the result (balance, chronicle subscription, derived fields, caches).
 // Files are written atomically (temporary file + rename) so a crash never leaves a broken slot.

@@ -231,7 +231,7 @@ check against it). `cell` is a cell id or −1. Culture and settlement reference
 | `culture:born` | `{ id, parent, cell, reason: 'awaken'|'schism'|'distance' }` | Society |
 | `culture:died` `{ id }` | | Society |
 | `culture:age` `{ id, age, prev }` · `world:age` `{ age }` | | Civ |
-| `war:declared` `{ a, b, ally, blamed }` (a = aggressor) · `war:ended` `{ a, b, victor, thanked }` (−1 = draw) | culture ids. (v3.1, design review 11/13) `ally` ≥ 0: a joined the war as the ally of `ally`, whom b attacked; `blamed`: a's people blamed the god for this war (its wrath on them, or its favour of b over them, lately); `thanked`: the victor's people thanked the god for the victory (its grace was with them) | Society |
+| `war:declared` `{ a, b, ally, blamed, envied }` (a = aggressor) · `war:ended` `{ a, b, victor, thanked }` (−1 = draw) | culture ids. (v3.1, design review 11/13) `ally` ≥ 0: a joined the war as the ally of `ally`, whom b attacked; `blamed`: a's people blamed the god for this war (its wrath on them, or its favour of b over them, lately); (chronicle-diplomacy) `envied`: the blame was envy, the god's favour of b weighed more than its wrath on a ("the god favoured them"; blamed and not envied: "the god struck us"), never true without `blamed`; `thanked`: the victor's people thanked the god for the victory (its grace was with them) | Society |
 | `alliance` (v3.1) | `{ a, b, formed }` culture ids a < b: they became allies (formed) or their alliance ended | Society |
 | `battle` | `{ cell, attacker, defender, won, settlement }` (culture ids; `settlement` = the defending settlement; `won` = attacker won) | Society |
 | `trade:route` | `{ a, b }` (settlement ids; first caravan between a pair) | Society |
@@ -576,6 +576,7 @@ Society.atWar(world, a, b) → bool
 Society.declareWar(world, a, b)        Society.makePeace(world, a, b, truceYears = 40, victor = -1)
 Society.swearPeace(world, a, b) → bool (v3.1) the Omen's sworn peace: for omenYears the pair rests at omenTarget
 Society.tense(world, c) → [ids]        (v3.1) cultures in contact with c, at peace, v ≤ omenTension (the Omen may calm them)
+Society.swornUntil(world, a, b) → year | −1   (chronicle-diplomacy) when the Omen's sworn peace of the pair ends (read-only)
 Society.onArrive(world, unit)          traders, armies and prophets reaching their destination
 Society.diplomacy(world)               yearly: contact, relations, wars, armies, trade, nuclear risk
 ```
@@ -680,7 +681,9 @@ Society.diplomacy(world)               yearly: contact, relations, wars, armies,
   the wars its allies joined end with it (the victor's ally wins too). **The Omen of Peace**: a peace it
   makes is sworn (`diplomacy_sworn<lo>_<hi>` = until): for 80 years the pair rests at +0.3 instead of
   relTarget; and with no war it may calm a neighbour on the brink (`Society.tense`: v ≤ −0.4): truce 40
-  years, v + 0.4, sworn, witnessed with good 0.3. **Blame and thanks**: `war:declared.blamed` when the
+  years, v + 0.4, sworn, witnessed with good 0.3. (chronicle-diplomacy, `omenWide`) An Omen that ends a people's wars also
+  calms every other tense neighbour of that people the same way; (`omenNoEnvy`) the Omen leaves no envy: its witnesses add
+  nothing to the favour sums, and a sworn pair does not envy each other's favour while the oath lasts. **Blame and thanks**: `war:declared.blamed` when the
   aggressor's wrath rate, or the defender's grace rate over its own, is ≥ 0.004; at a peace with a victor
   whose grace rate is ≥ 0.004 the victor thanks the god (`war:ended.thanked`, devotion + 0.05 in its
   towns, the loser's love − 0.05). **Not constant war**: each further war of a pair lengthens its truce
@@ -835,7 +838,9 @@ Effects:
   peace is sworn (`Society.swearPeace`: 80 years resting at +0.3); with no war, the Omen may be cast on a
   culture with a neighbour on the brink (`Society.tense`, v ≤ −0.4): truce 40 years, relations +0.4, sworn,
   witnessed with good 0.3 (a war averted is felt less than a war ended). `can` refuses it only when
-  there is neither a war nor a brink.
+  there is neither a war nor a brink. (chronicle-diplomacy) With `omenWide` an Omen that ends wars also calms the
+  culture's other neighbours on the brink, and all of them witness it; with `omenNoEnvy` its witness carries
+  `favour: false` (no `society_fgrace`: a peace no neighbour envies).
 - **Tsunami**: `data.front` expands over sea cells each tick up to `ang`; where the front meets
   a coast, land cells within a few hops and lower than the wave height (decaying with distance)
   are flooded: `wet = 1`, settlements there lose people by depth (destroyed with cause `wave`
@@ -871,7 +876,12 @@ milestones, the Ark. Several templates per event; rate-limit minor entries. Epit
 what the god has actually done to that culture (`culture.seen`, `god.deeds`) and how its people
 feel (`Society.regard`): mostly rain and bloom → 'the Rain-Giver', 'the Green Hand'; meteors →
 'She Who Burns the Sky', 'the Hammer'; floods → 'the Drowner'; nothing for centuries → 'the
-Silent One'. **Snapshots**: `{ year, heat, seaLevel, pop, biome: Uint8Array(n), owner:
+Silent One'. (chronicle-diplomacy) The diplomacy of v3.1 is told: `alliance` formed (notable) and ended in
+peace (minor, at the year's close), allies who came to blows (the alliance broken in the war's own declaration:
+a betrayal), `war:declared.ally` (the ally answering the call), `.blamed` with `.envied` ("the god favoured
+them") or without ("the god struck us"), `war:ended.thanked` (the victors thank their god for the victory and
+the peace), and the Omen of Peace that calms neighbours before a war (its own lines, naming every people it
+calmed). Only blamed and thanked lines name the god in a war. **Snapshots**: `{ year, heat, seaLevel, pop, biome: Uint8Array(n), owner:
 Int8Array(n) (culture id of the owning settlement, −1 none), urban: Uint8Array(n)
 (round(urban × 255)) }`. Sim calls `Chronicle.snapshot(world)` in every yearly group and
 `snapshot(world, true)` on every phase change; Chronicle alone decides when one is due
@@ -1012,3 +1022,45 @@ prints them, plus the per-policy tables "diplomacy", "pacing" and "ending mix").
   real minute in the Industry-Space ages ≤ 3.5 × those of the Stone-Bronze ages ≥ 5/6 (v3: about 4.6).
   Moments = wars declared / ended, peoples born / dead, towns destroyed / captured, Wonders, prophets,
   prayers begun, nukes, quakes, eruptions, impacts, droughts begun, Arks begun, alliances made / broken.
+
+---
+
+## 5. v4 mythos (pointer; SPEC-MYTHOS is binding for it)
+
+`docs/SPEC-MYTHOS.md` adds how the god relates to its people: nine new sim modules (`Mythos`, `Cards`, `Doctrine`,
+`Characters`, `Legends`, `Faiths`, `Omens`, `Keepers`, `Renewal`), their state in `world.mythos` (one
+`MythosState`, C++ in `Sim/MythosTypes.h`) and the save version 2. The contracts (headers, events, writers, save)
+were built by the M0 contracts track on 2026-11-20 and are documented in `docs/FOUNDATION-CPP.md` part 3.
+**`MythosTune::phase` 0 (the default) is this spec, bit for bit** (the phase-0 guardrail:
+`Unreal/Tools/simrun/phase0-guardrail.ps1`).
+
+**Writers added to 1.1** (SPEC-MYTHOS 1.7): `mythos.presence`, `faith[*]` (aspect, image, agency, obedience,
+dependence, selfReliance, clarity, visible, judgedBy, mercy, sternness, survivor memory, grown), `factors`,
+`withdrawnUntil`, blessings, `acts`: Mythos. `faith[*].death / deathSure`, `decrees`, `words`, `pacts`,
+`revelations`: Doctrine. `faith[*].bearer / superiority / charge`, `houses`, `rivals`: Faiths. `figures`: Characters
+(Faiths through `characters::spawn`). `cards`: Cards. `legends`: Legends. `omens`: Omens (Disasters reports through
+`omens::foresee`). `keepers`: Keepers. `renewal`, `renewedYear`, the Remnant: Renewal. `mythos.archetype`: Sim (a
+copy of `settings.archetype`). `culture.traits.compassion / ambition / courage`: Society. `culture.prophet.figure`:
+Society (`raiseProphet` with `RaiseOpts::figure`). Devotion and love changes caused by mythos: Society only, through
+`society::nudge`. Awe spent by mythos acts: Powers only, through `powers::pay`. `ending.legacy`: Sim. Per-cell
+`wild` (decades of old growth): Life. Mythos never writes a settlement, culture, relation or cell field; it reaches
+the rest of the sim through per-culture **Factors** (neutral = no effect) that each owner reads.
+
+**Events added to 2** (SPEC-MYTHOS 1.8; payload strings are open sets): `card { id, kind, stage, culture, choice }`,
+`presence { presence, prev }`, `aspect { culture, aspect, prev }`, `decree { culture, area, stance, prev, clarity }`,
+`breach { culture, area, settlement, figure, severity }`, `word { id, culture, content, clarity, channel, outcome }`,
+`pact { id, culture, what }`, `figure { id, kind, culture, settlement, what }`, `trial { figure, kind, what }`,
+`judgement { card, culture, by, sentence }`, `legend { id, culture, what }`, `blessing { settlement, kind, start }`,
+`omen { id, kind, cell, culture, what }`, `dispute { culture, kind, answer }`, `house { culture, what }`,
+`rival { id, culture, figure, what }`, `bearers { culture, charge, what }`, `revelation { culture, kind, what, early }`,
+`keeper { id, domain, culture, what }`, `grown { culture, answer }`, `withdraw { start, announced }`,
+`renewal { kind, what }`; `ending` gains `legacy`.
+
+**Schema additions:** `Traits` compassion, ambition, courage (0.5); `Prophet.figure` (-1); `Ending.legacy` (none);
+`Settings.archetype` (balanced); `PrayerKind` victory, sun; `Cause` deluge, burning; `DisasterType` deluge, burning;
+the power group `word` with `speak`, `bless`, `reveal`, `test`, `renew` (locked while `MythosTune::phase` is below
+each one's phase); `Reason` withdrawn.
+
+**Schedule** (SPEC-MYTHOS 1.5, built by the mythos-tools track): `civ::yearly -> society::yearly -> mythos::yearly ->
+cards::yearly -> climate::yearly -> powers::natural -> sim::refreshStats -> chronicle::snapshot -> sim::checkEnding`;
+`sim::use` calls `mythos::attach` before `chronicle::attach` and `mythos::rebuild` after `sim::rederive`.

@@ -27,14 +27,25 @@
 // Private transient state lives in LifeScratch (w.scratch): static noise fields, seed pressure over dead
 // ground, per-slice green counts, the cover cache, an edit counter, the colour accumulator, the fire:start
 // rate limiter and the bookkeeping that tells whether w.cache.fires is current.
+//
+// (v4 mythos, track M6 economy-world-v4, SPEC-MYTHOS 3.1) World archetypes, read through
+// mythos::archetypeParams(w); Balanced changes nothing (the world's LifeTune is used as it is):
+//   - capacityK (Generous 1.1): every biome's vegetation capacity (LifeTune::cap) x capacityK (still at most 1
+//     per cell);
+//   - fert (Generous +0.15, Dangerous -0.05): added to the natural soil level (fertBase), so the fertility
+//     Terrain generated keeps its offset instead of relaxing away;
+//   - marvels (Strange; Terrain's vars.num "terrain_marvels" / "terrain_marvel_<i>"): a marvel cell never
+//     catches fire (ignite refuses it, fires do not spread onto it) and its fert is held at >= 0.8 by step.
 #include "Life.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include "Climate.h"
+#include "Mythos.h"
 #include "Sim.h"
 
 namespace dm {
@@ -74,7 +85,11 @@ struct LifeScratch {
 	uint32_t coverVer = 0;
 	double coverSea = 0;
 	life::Cover coverVal;
+	// (v4 mythos) the archetype-adjusted copy of LifeTune (only used when the archetype is not neutral)
+	LifeTune archTune;
 };
+
+constexpr int kMaxMarvels = 16;
 
 inline LifeScratch& scr(const World& w) {
 	LifeScratch& S = w.scratch<LifeScratch>();
@@ -88,6 +103,40 @@ inline LifeScratch& scr(const World& w) {
 		S.nzOk = false;
 	}
 	return S;
+}
+
+// (v4 mythos) The LifeTune of this world's archetype: the world's own when the archetype is neutral for Life
+// (Balanced: bit-identical), else a copy in scratch with cap[] x capacityK and fertBase + fert.
+const LifeTune& tuneOf(const World& w) {
+	const LifeTune& T = w.tune<LifeTune>();
+	const ArchetypeParams ap = mythos::archetypeParams(w);
+	const double capK = isFinite(ap.capacityK) && ap.capacityK > 0 ? ap.capacityK : 1.0;
+	const double fertAdd = isFinite(ap.fert) ? ap.fert : 0.0;
+	if (capK == 1 && fertAdd == 0) return T;
+	LifeTune& A = scr(w).archTune;
+	A = T;
+	if (capK != 1) for (double& k : A.cap) k *= capK;
+	A.fertBase += fertAdd;
+	return A;
+}
+
+// (v4 mythos) The marvel cells Terrain placed (vars.num "terrain_marvels" / "terrain_marvel_<i>"); returns the
+// count written to out (at most kMaxMarvels). No marvels: one map lookup, 0.
+int marvelsOf(const World& w, int32_t* out) {
+	const auto it = w.vars.num.find("terrain_marvels");
+	if (it == w.vars.num.end() || !(it->second >= 1)) return 0;
+	const int k = it->second > kMaxMarvels ? kMaxMarvels : int(it->second);
+	int m = 0;
+	for (int i = 0; i < k; i++) {
+		const auto jt = w.vars.num.find("terrain_marvel_" + std::to_string(i));
+		if (jt == w.vars.num.end() || !(jt->second >= 0) || !(jt->second < w.n)) continue;
+		out[m++] = int32_t(jt->second);
+	}
+	return m;
+}
+inline bool isMarvel(const int32_t* mv, int nm, int c) {
+	for (int k = 0; k < nm; k++) if (mv[k] == c) return true;
+	return false;
 }
 
 inline double sm(double e0, double e1, double x) {            // smoothstep, safe for e0 == e1
@@ -271,7 +320,7 @@ namespace life {
 
 double capacity(const World& w, int c) {
 	if (!w.valid(c) || !usable(w)) return 0;
-	return capOf(w, c, w.tune<LifeTune>());
+	return capOf(w, c, tuneOf(w));
 }
 
 // ------------------------------------------------------------------ biomes
@@ -338,6 +387,11 @@ bool ignite(World& w, int c, double intensity) {
 	const LifeTune& T = w.tune<LifeTune>();
 	if (!(intensity > 0)) return false;
 	if (!flammable(w, c, T)) return false;
+	{
+		int32_t mv[kMaxMarvels];
+		const int nm = marvelsOf(w, mv);
+		if (nm > 0 && isMarvel(mv, nm, c)) return false;               // (v4) a marvel never burns
+	}
 	std::vector<int32_t>& F = firesOf(w);
 	if (int(F.size()) >= T.maxBurning) return false;
 	w.fire[size_t(c)] = float(kFireNew + (1 - kFireNew) * sat(intensity));
@@ -363,6 +417,8 @@ void burn(World& w) {
 	const double fP = T.fireP, dA = T.dryA, dB = T.dryB, fVeg = T.fireMinVeg, fWet = T.wetOut, keep = unit(1 - T.burnVeg, 0.2);
 	const double keepFauna = unit(1 - T.burnFauna, 0.5), ash = isFinite(T.burnFert) ? T.burnFert : 0.0;
 	std::vector<float>& fire = w.fire;
+	int32_t mv[kMaxMarvels];
+	const int nm = marvelsOf(w, mv);                                    // (v4) marvels never catch fire
 	cells.reserve(n0 + size_t(std::max(0, fmax)) + 8);
 	// Pass 1, the fires as the tick finds them. Ground that can no longer burn (drowned, frozen, rained on) goes
 	// out at once. A fire on its second tick is spent, but stays marked (negative, cleared below) until the tick is
@@ -395,6 +451,7 @@ void burn(World& w) {
 			const size_t mi = size_t(m);
 			const double vm = w.veg[mi];
 			if (!(vm >= fVeg) || fire[mi] != 0 || w.elev[mi] < sea || w.ice[mi] > iceT || w.water[mi] > lake) continue;
+			if (nm > 0 && isMarvel(mv, nm, m)) continue;
 			const double wm = w.wet[mi];
 			if (wm > fWet) continue;
 			double dry = dA - dB * (double(w.moist[mi]) + wm);
@@ -441,7 +498,7 @@ void burn(World& w) {
 // ------------------------------------------------------------------ the step
 void step(World& w, int part, int parts) {
 	if (!usable(w)) return;
-	const LifeTune& T = w.tune<LifeTune>();
+	const LifeTune& T = tuneOf(w);
 	const int n = w.n;
 	if (parts <= 0) parts = 1;
 	part = part > 0 ? part % parts : 0;
@@ -625,6 +682,16 @@ void step(World& w, int part, int parts) {
 		if (bi == Biome::BARREN && !(w.lava[i] > lavaT) && !(s > T.scorchBarren)) relife = true;
 	}
 	for (size_t k = 0; k < ns; k++) w.veg[size_t(S.sproutC[k])] = S.sproutV[k];
+	// (v4 mythos) a marvel keeps its rich soil (fert >= 0.8) whatever the natural level says
+	{
+		int32_t mv[kMaxMarvels];
+		const int nm = marvelsOf(w, mv);
+		for (int k = 0; k < nm; k++) {
+			const int c = mv[k];
+			if (c % parts != part || w.elev[size_t(c)] < sea) continue;
+			if (!(w.fert[size_t(c)] >= 0.8f)) w.fert[size_t(c)] = 0.8f;
+		}
+	}
 
 	// Did any slice hold vegetation when it was last visited? (On a dead planet the drift has nothing to look for.)
 	bool track = false, alive = true;
@@ -684,7 +751,7 @@ void step(World& w, int part, int parts) {
 // ------------------------------------------------------------------ direct edits
 void seed(World& w, int c, double ang) {
 	if (!w.valid(c) || !usable(w)) return;
-	const LifeTune& T = w.tune<LifeTune>();
+	const LifeTune& T = tuneOf(w);
 	if (!(ang >= 0)) ang = 0.12;
 	LifeScratch& S = scr(w);
 	const int cnt = w.geo->within(c, ang, S.list);
@@ -700,7 +767,7 @@ void seed(World& w, int c, double ang) {
 
 void bloom(World& w, int c, double ang, double amount) {
 	if (!w.valid(c) || !usable(w) || !(amount > 0)) return;
-	const LifeTune& T = w.tune<LifeTune>();
+	const LifeTune& T = tuneOf(w);
 	const Geo& g = *w.geo;
 	if (!(ang >= 0)) ang = 0.08;
 	LifeScratch& S = scr(w);
@@ -734,7 +801,7 @@ void bloom(World& w, int c, double ang, double amount) {
 
 void fill(World& w, double frac) {
 	if (!usable(w)) return;
-	const LifeTune& T = w.tune<LifeTune>();
+	const LifeTune& T = tuneOf(w);
 	frac = sat(frac);
 	if (!(frac >= 0)) frac = 1;
 	const double sea = w.seaLevel;
@@ -801,7 +868,7 @@ Cover cover(const World& w) {
 	if (!usable(w)) return Cover{};
 	LifeScratch& S = scr(w);
 	if (S.coverOk && S.coverTick == w.tick && S.coverVer == S.ver && S.coverSea == w.seaLevel) return S.coverVal;
-	const LifeTune& T = w.tune<LifeTune>();
+	const LifeTune& T = tuneOf(w);
 	const int n = w.n;
 	const double sea = w.seaLevel, fv = T.forestVeg;
 	int land = 0, forest = 0;

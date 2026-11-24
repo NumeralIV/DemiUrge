@@ -208,6 +208,12 @@ int bandSite(const World& w, int cell);
 // [civ] (v3, design review finding 6) Consecrate: settlement sid's shrine becomes a temple (b[TEMPLE],
 // settlement:building). False if it is dead, has no shrine or already has a temple.
 bool consecrate(World& w, int sid);
+// [civ] (v4 mythos, M0) A share of settlement sid's people leaves as a settler party (a misread Dream, the Long
+// Sleep's plague flight; SPEC-MYTHOS 3.9, 3.27). The unit id, or -1. Neutral until the economy-world-v4 track.
+int exodus(World& w, int sid, double share);
+// [civ] (v4 mythos, M0) The House is cleansed: settlement sid loses its temple (b[TEMPLE] = 0; SPEC-MYTHOS 3.20).
+// False if it is dead or has no temple. Neutral until the economy-life-v4b track.
+bool demoteTemple(World& w, int sid);
 
 // ---------------------------------------------------------------- [economy] (Economy.cpp)
 

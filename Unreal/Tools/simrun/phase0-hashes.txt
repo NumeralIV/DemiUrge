@@ -1,0 +1,37 @@
+# DEMIURGE — the phase-0 guardrail (SPEC-MYTHOS 5.1 rule 1): simrun --hash of the PRE-mythos build (simrun.exe of
+# 2026-11-20 08:57, before the M0 contracts track), 4,000 years, L 6, genesis skipped, sea 0, calamity 1.
+# Command: simrun --seeds 1-8 --policy passive,kind,cruel,chaotic --hash --quiet --jobs 8
+# Checked by phase0-guardrail.ps1; never edit these numbers (a mismatch means phase 0 changed the game).
+# seed policy hash
+1 chaotic 72f931dc
+2 chaotic ee0eb06b
+3 chaotic e5ec35df
+4 chaotic d547b09c
+5 chaotic 7ab27da1
+6 chaotic 54d9c9ef
+7 chaotic 63da5c1f
+8 chaotic cfa03702
+1 cruel 06fe9697
+2 cruel bce3a4fb
+3 cruel 24cd923d
+4 cruel c882e989
+5 cruel fb7c2d27
+6 cruel 5886fd78
+7 cruel 61659886
+8 cruel bc5eca6d
+1 kind f854d13c
+2 kind 3fe1ef2d
+3 kind e0d667f2
+4 kind c5a9303f
+5 kind b3adb88d
+6 kind 7672007b
+7 kind d953a56f
+8 kind 15d3d4e3
+1 passive 545312f8
+2 passive 5f8a78aa
+3 passive c1d4d7df
+4 passive 94743583
+5 passive 01ac5403
+6 passive 55118678
+7 passive cf1ab931
+8 passive 90554ec5

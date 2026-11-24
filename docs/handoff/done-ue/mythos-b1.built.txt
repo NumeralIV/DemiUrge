@@ -1,0 +1,121 @@
+2026-11-23, mythos-b1 (track B1 "mythos-balance-v1", SPEC-MYTHOS 5.1 and 9 phase 1), built.
+
+Result
+- Balance.cpp now turns the mythos on: MythosTune::phase = 1 (the v1 systems). The header default stays 0, as
+  SPEC-SIM 5 says.
+- emergent stays OFF. Each rule family was switched on by itself on 8 seeds x 35 policies x 4,500 years
+  (the 20 pre-mythos gods + the 15 v1 gods; "40" in the task brief means these 35 scripted gods). Every family that
+  does anything broke at least one SPEC-SIM 4 / v3 / v3.1 target, and 5.1 rule 3 says each family may go on only if
+  every one of those targets still passes. Tables: docs/handoff/mythos-v1/b1-family-*.txt.
+  - customs (1): passive went to war in 13 % of years (seed 6 only 2.9 %), so the 3-25 % band fails. One passive
+    world had 2 nuclear exchanges. Cruel-after-passive dropped to 5/8, hoarder < builder to 4/8.
+  - aspect (2): kind-before-passive 6/8, cruel-after-passive 6/8, hoarder < builder 4/8, the Omen 6/8.
+  - agency (3): the passive Ark came 113 years earlier (median 3,752 -> 3,639), so kind kept its 150-year lead on
+    only 6/8 seeds. The passive war band also failed (seed 1 at 26.5 %).
+  - dependence (4): review 3 fell to 5/8 and 5/8, review 9 to 0/8, the passive war band failed, the valour third
+    failed.
+  - traits (5): passive war went from 9.9 % to 16.2 %, settlements at year 1,000 out of range on 1/8 seeds.
+  - lapse (6): no change at all. With no Victory or Sun prayers it has no card to act on.
+  - prayers, i.e. Victory and Sun (7): came closest, and fixes the cadence and competing-prayer targets. Passive gets
+    8/8 seeds with >= 2 competing-prayer cards (7-18 per history), a median gap of 150-260 years on 8/8, and a card
+    in >= 80 % of 3-minute windows on 8/8. Responder-myth gets 15-28 cards on 8/8. But each 8-seed sample left one
+    ordering target at 6/8 against its 5/6 bar: review 13 and the Omen on the first sample, review 3 cruel on the
+    second. Turning Victory off removes every competing-prayer card, so the cards come from the Victory pairs.
+  - MythosTune::families is set to lapse | prayers, so whoever turns `emergent` on next starts with those two.
+- The B1 retunes act only on peoples the god has touched, so a card-ignoring world is unchanged. They are in
+  Balance.cpp, with the reason for each written next to it:
+  - The silence rule now matches 3.3 ("each 100 years without a deed"): silenceYears 100. The god's words, decrees,
+    judgements, pacts and answered cards now count as deeds (actDeed), and a heard word adds its clarity value to
+    `visible` (wordVisible 1).
+  - Will: agencyBase 0.08, agencyClarity 0.6, obedienceBase 0.35, obedienceDevotion 0.45, obedienceBurden 0.2,
+    obedienceDecrees 0.02, dependAgency 0.15, dependAnsweredRef 4.
+  - Doctrine: judgedStep 0.5, judgedHalfLife 600, deedObey 0.12, deedAgency -0.05, heartAgency 0.08, breachCard 0.1.
+  - Cards: targetGap 170, Judgement weight 2.
+- Final table: docs/handoff/mythos-v1/b1-final.txt. It compares the shipped Balance with the M9 baseline (phase 1,
+  emergent off, spec tuning).
+  - All 160 runs of the 20 pre-mythos gods are identical: the result, events, peaks and ending lines all match. So
+    every SPEC-SIM 4 / v3 / v3.1 table is exactly v3.1. The same four design-review targets fail as before: review 4
+    stretch, review 6 passive cap, review 6 prayers cap, and review 9 at 4/8.
+  - No SPEC-SIM / v3 / v3.1 row moved for the mythos gods either.
+  - Mythos targets: 259 pass / 27 fail, up from 256 / 30.
+    - Newly passing: kind sees a Parent (3/8 -> 8/8), lawgiver sees a Ruler (0/8 -> 7/8), lawgiver war share
+      <= 0.6 x passive (4/8 -> 7/8).
+    - Better but still failing: cruel sees a Threat (2 -> 4/8), lawgiver conflict cards (0 -> 3/8), lawgiver famine
+      (3 -> 4/8), prayers dependence (0 -> 2/8), responder 15-28 cards (0 -> 2/8), responder every-age (2 -> 4/8).
+    - Also better: sign-only catastrophe (4 -> 7/8), valour war share (6 -> 7/8). Gentle Compassionate went 8 -> 7/8,
+      still passing.
+- Guardrails and checks, all on the final tree:
+  - phase0-guardrail 32 of 32 match.
+  - phase1-guardrail 32 of 32 match.
+  - mythos-check PASS: 120/120 hashes stable 3x, 0 non-finite, 24/24 replays from a save at a card opening
+    identical, 0 bad re-saves.
+  - --hash twice on 8 seeds x 35 policies x 4,500 years: 280/280 equal. No non-finite value anywhere.
+  - v2 saves: --saveload 1500 on 8 seeds x 7 policies (passive, kind, cruel, chaotic, prayers, responder-myth,
+    lawgiver). 56/56 re-saves of the loaded world are byte-identical.
+  - v1 saves: the v1 fixture tests in run.ps1 all pass.
+- run.ps1 all: 990 passed, 0 failed. It was run through a private copy of run.ps1 with build dir build\<key>-b1,
+  as M9 did; the copy has since been removed.
+- Tick cost, --jobs 1, 2 seeds x passive / kind / responder-myth / lawgiver: mean 1.33-1.79 ms, max 18.4-21.7 ms.
+  Targets are <= 2.5 ms and <= 30 ms. The --jobs 22 tables show contended timings only.
+- Unreal/build.ps1 was not run. The only header change is a tuning field plus an inline helper; Sim is plain C++20
+  and run.ps1 compiles it with the Unreal flags.
+
+Owned or changed files (stated loudly; the task allowed edits to any Sim file to fix integration)
+- Sim/Balance.cpp
+  - The B1 block in apply().
+  - ~125 new set() keys: mythos.phase / emergent / families, the will, aspect, presence and silence knobs, cards.*
+    (cards.weight.N is indexed by CardKind), doctrine.*, characters.*, society.sunWet / sunYears /
+    victoryExhaustion / victoryWindow.
+- Sim/Mythos.h (HEADER CHANGE: tuning only, nothing saved). MythosTune gains:
+  - enum Family (customs, aspect, agency, dependence, traits, lapse, prayers)
+  - `unsigned families` (default all), and `emergentOn(family)`, which is emergent && the family's bit
+  - silenceYears (default 1), wordVisible (0), actDeed (false). The defaults keep M1's behaviour.
+  With families = all, emergent on is bit-identical to before B1. Checked with --hash on 2 seeds x passive and
+  responder-myth.
+- Sim/Mythos.cpp:
+  - The aspect, dependence, agency and traits gates go through emergentOn. The research term is still one product,
+    so the bits are unchanged.
+  - The silence rule reads silenceYears.
+  - actDeed and wordVisible are read in consumeActs.
+- Sim/Doctrine.cpp: customs use FamCustoms.
+- Sim/Society.cpp: Victory and Sun prayers use FamPrayers; mythActive uses FamAspect | FamTraits.
+- Sim/Cards.cpp: a competing-prayer lapse uses FamLapse.
+- Sim/Chronicle.cpp: a lapse line needs FamLapse; mythTouched needs FamAspect. Narration only.
+- Tools/simrun/phase0-guardrail.ps1: passes --mythos-phase 0, because the build's default is now phase 1.
+- Tests, edited only where they assumed the build's default phase was 0:
+  - test_link.cpp: phase 0 after balance::apply.
+  - test_sim_phase0.cpp: checks the header default; the world is set to phase 0 before the waking.
+  - test_mythos_guard.cpp: the phase is set before the waking.
+  - test_mythos_integration.cpp: historyWorld and loadAt set the phase again after sim::use; the "back at phase 0"
+    check attaches directly.
+  No expectation was weakened.
+
+Not met (v1 targets), with the reason
+- Cadence with emergent off:
+  - Passive gets 5-11 cards per 3,600 years and none in Atomic or Space; the prayers family fixes the count.
+  - "Every age of >= 200 years opens a card": Space (about 220 years) often has no proposal.
+  - "No auto-paced opening within 1 minute of another" conflicts with minGap 70, as M9 found. To hold it, a gap must
+    be at least 240 years minus the years the card stays open, which also breaks the 150-260 median.
+- kingmaker never chooses and passive has 0 competing-prayer cards: both need the prayers family. With it on,
+  kingmaker's culture launches the Ark on 1-3/8.
+- exact-only agency is 0.45-0.55 against <= 0.25 (obedience 0.62-0.65). An Exact word costs 60, or 120 from the sky,
+  so the policy can afford about one per people per 150 years, and clarity fades back toward 0.5 in between.
+- judge-deeds vs judge-hearts, and stern vs merciful, are within 0.02. The targets are people-weighted over the
+  whole world, but judgements come 2-13 per history across 6+ peoples (the director's cultureGap and budget), so
+  doctrine reaches only the judged peoples.
+- stern ends forgotten, and unseen-kind ends beloved (Society's beloved-by-prayers rule answers the kind half).
+- Lawgiver is Obedient 0/8. Its decree set includes Shelter, so the Compassionate score (about 0.66) beats the
+  Obedient score, which is capped near 0.55 without House authority (v2).
+- Rival Ways and the Unbelieved's vindication need Faiths and Omens (v2).
+
+Notes for the lead
+1. Recommended next step: turn emergent on with families = lapse | prayers, after a 16-seed check of review 3, 11
+   and 13. Each failed by one seed at a 5/6 bar, one target per sample, which looks like seed noise rather than a
+   systematic shift.
+   Agency would need a re-centred research term: the 0.4 in (1 + 0.12 x (agency - 0.4)) is hard-coded, and
+   passive's agency is about 0.8. It would also need an ageNeed retune.
+   Customs and traits need smaller diplomacy terms (relDrift, aggression) before they can go on.
+2. Because the build is now phase 1, sim::create attaches Mythos and the client gets cards by default. A phase-0
+   world must set the phase after create and call mythos::attach. sim::use re-applies Balance (phase 1).
+3. Scratch outputs (raw simrun summaries, the sweep and table scripts) are in the session scratchpad, not the repo.
+   The build dirs Tools/simrun/build-b1 and SimTests/build/*-b1 can be deleted.

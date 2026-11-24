@@ -4,6 +4,7 @@
 //   Enums with name tables:  Biome::Id (u8 cell values), Building::Id, Age::Id, Phase, Cause,
 //                            UnitType, NavalMode, DisasterType, Edict, PrayerKind, FoundedBy,
 //                            CaptureHow, BirthReason, ImpactKind, MilestoneKind, EndingType, Mood
+//                            (+ the mythos enums of MythosTypes.h, whose toStr / fromStr live in Schema.cpp)
 //   toStr(x) -> "name" (the JS string), fromStr(text, x&) -> bool
 //   kBiomeNames, kAgeNames, kBuildingNames, kCultureColors, state::kVegT
 //   Entities: Settlement, Culture, Relation, Unit, Disaster, ChronicleEntry, Prophet, Prayer,
@@ -28,6 +29,8 @@
 #include <string_view>
 #include <utility>
 #include <vector>
+
+#include "MythosTypes.h"   // (v4 mythos, M0) the mythos enums and records; Ending::legacy needs Legacy
 
 namespace dm {
 
@@ -73,13 +76,16 @@ enum class Phase : uint8_t { Molten, Water, Life, People, History, Ended };
 // Why a settlement was destroyed ('drowned', 'meteor', ...). None = alive / unknown.
 // Sea (v3, design review finding 7): the centre went under a sea the people's own engines raised (Climate's
 // sea rise), never the god's doing; Drowned is the god's (Lower Land, quakes) or a flooded lake.
-enum class Cause : uint8_t { None, Drowned, Meteor, Lava, War, Famine, Plague, Quake, Nuke, Abandoned, Wave, Lightning, Sea };
+// (v4 mythos, M0) Deluge / Burning: the Great Water and the Great Burning (SPEC-MYTHOS 3.30).
+enum class Cause : uint8_t { None, Drowned, Meteor, Lava, War, Famine, Plague, Quake, Nuke, Abandoned, Wave, Lightning, Sea, Deluge, Burning };
 enum class UnitType : uint8_t { Settler, Trader, Army, Prophet };
 // What a unit may cross: Land = JS false, Coastal = 'coastal', Open = JS true (Path section 3.6).
 enum class NavalMode : uint8_t { Land, Coastal, Open };
-enum class DisasterType : uint8_t { None, Comet, Meteor, Volcano, Tsunami, Storm, Drought };
+// (v4 mythos, M0) Deluge / Burning: the Great Water and the Great Burning (SPEC-MYTHOS 3.30; Disasters builds them).
+enum class DisasterType : uint8_t { None, Comet, Meteor, Volcano, Tsunami, Storm, Drought, Deluge, Burning };
 enum class Edict : uint8_t { None, Peace, Expand, Build, Crusade };
-enum class PrayerKind : uint8_t { Rain, Heal, Peace, Bloom };
+// (v4 mythos, M0) Victory and Sun: SPEC-MYTHOS 3.10 (Society starts them; none before M5).
+enum class PrayerKind : uint8_t { Rain, Heal, Peace, Bloom, Victory, Sun };
 enum class FoundedBy : uint8_t { Awaken, Settlers };
 enum class CaptureHow : uint8_t { War, Schism };
 enum class BirthReason : uint8_t { Awaken, Schism, Distance };
@@ -106,12 +112,12 @@ const char* toStr(Mood v);          bool fromStr(std::string_view s, Mood& out);
 // Number of enumerators (for loops and validation).
 template <class E> constexpr int enumCount();
 template <> constexpr int enumCount<Phase>() { return 6; }
-template <> constexpr int enumCount<Cause>() { return 13; }
+template <> constexpr int enumCount<Cause>() { return 15; }
 template <> constexpr int enumCount<UnitType>() { return 4; }
 template <> constexpr int enumCount<NavalMode>() { return 3; }
-template <> constexpr int enumCount<DisasterType>() { return 7; }
+template <> constexpr int enumCount<DisasterType>() { return 9; }
 template <> constexpr int enumCount<Edict>() { return 5; }
-template <> constexpr int enumCount<PrayerKind>() { return 4; }
+template <> constexpr int enumCount<PrayerKind>() { return 6; }
 template <> constexpr int enumCount<FoundedBy>() { return 2; }
 template <> constexpr int enumCount<CaptureHow>() { return 2; }
 template <> constexpr int enumCount<BirthReason>() { return 3; }
@@ -121,6 +127,7 @@ template <> constexpr int enumCount<EndingType>() { return 2; }
 template <> constexpr int enumCount<Mood>() { return 6; }
 
 // Free-form persisted numbers keyed by name (sorted map: iteration order is deterministic).
+// (MythosTypes.h, included above, declares the same alias.)
 using NumBag = std::map<std::string, double>;
 
 // ------------------------------------------------------------------ entities
@@ -167,6 +174,8 @@ struct Settlement {
 
 struct Traits {
 	double piety = 0.5, aggression = 0.5, curiosity = 0.5, seafaring = 0.5;
+	// (v4 mythos, M0) SPEC-MYTHOS 3.5; Society rolls them (M5); 0.5 until then. Saved in the "BASE" block.
+	double compassion = 0.5, ambition = 0.5, courage = 0.5;
 	bool operator==(const Traits&) const = default;
 };
 
@@ -174,6 +183,7 @@ struct Prophet {
 	std::string name;
 	int settlement = -1;                    // where he lives now
 	double until = 0;                       // year his term ends
+	int figure = -1;                        // (v4 mythos, M0) the messenger's Figure id (SPEC-MYTHOS 3.8), -1 none
 	bool operator==(const Prophet&) const = default;
 };
 
@@ -276,6 +286,7 @@ struct Ending {
 	Mood mood = Mood::Parting;
 	int culture = -1, settlement = -1;
 	double year = 0;
+	Legacy legacy = Legacy::None;           // (v4 mythos, M0) SPEC-MYTHOS 4; Sim fills it from mythos::legacy
 	bool operator==(const Ending&) const = default;
 };
 

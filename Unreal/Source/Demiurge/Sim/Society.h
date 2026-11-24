@@ -117,6 +117,9 @@ struct SocietyTune {
 	// (13) fewer, bigger prayers late: a town begins a rain prayer for a famine only after this many famine
 	// years in a row, by its culture's age (droughts start one at once in every age)
 	std::array<int, 7> rainFamineAge{ 1, 1, 1, 1, 1, 1, 1 };
+	// --- (v4 mythos, M0) SPEC-MYTHOS 3.10: the Victory and Sun prayers (Society starts them from M5 on)
+	double sunWet = 0.7; int sunYears = 3; double victoryExhaustion = 0.4, victoryWindow = 15;
+	double sunAnswerYears = 10;          // a Sun prayer is answered by no rain there this many years after the card
 };
 
 // [diplomacy] Starting values from SPEC-SIM 3.8 (relations half).
@@ -275,10 +278,15 @@ int witness(World& w, int cell, double ang, const WitnessOpts& opts);
 // [society] Society.regard: population-weighted means over the culture's live settlements
 // (-1 = everyone); mood by the ending thresholds. Read-only.
 Regard regard(const World& w, int cultureId = -1);
+// [society] (v4 mythos, M0) raiseProphet options: figure = the messenger's Figure id (Characters creates it;
+// SPEC-MYTHOS 3.8), stored in Prophet::figure; -1 = an unnamed prophet as before.
+struct RaiseOpts {
+	int figure = -1;
+};
 // [society] Society.raiseProphet: the culture of settlement sid gets a named prophet for ~60 years
 // living there (prophet:risen). nullptr if invalid or the culture already has one. The pointer
-// points into the culture: keep the culture id.
-Prophet* raiseProphet(World& w, int sid);
+// points into the culture: keep the culture id. (v4) opts.figure is copied to Prophet::figure.
+Prophet* raiseProphet(World& w, int sid, const RaiseOpts& opts = {});
 // [society] Society.setEdict: needs a living prophet; one per culture; may be changed once every
 // 20 years; lasts until the prophet dies. Emits edict. Edicts are free.
 bool setEdict(World& w, int cultureId, Edict edict);
@@ -300,6 +308,21 @@ Memory memory(const World& w, int cultureId = -1);
 // with its name, settlement:building). False if it is dead or already has one. Used by the build edict
 // and by Consecrate on a capital.
 bool raiseWonder(World& w, int sid);
+// ---- [society] (v4 mythos, M0) the owner APIs Mythos acts through (SPEC-MYTHOS 1.7); neutral until M5 / M5b / M5c.
+// The first people's shaping (the ShapePeople card, 3.5): sets the culture's five shaped traits (curiosity,
+// compassion, ambition, courage, aggression) to t's values, clamped 0..1 (piety and seafaring unchanged).
+// False for a bad culture.
+bool shapeTraits(World& w, int cultureId, const Traits& t);
+// Mythos asks Society to move a settlement's belief: devotion += dDevotion, love += dLove (clamped, never NaN).
+void nudge(World& w, int sid, double dDevotion, double dLove);
+// Add to the culture's long memory as a witnessed deed would (a pact the god broke, a renewal): grace, wrath >= 0.
+void remember(World& w, int cultureId, double grace, double wrath);
+// A group of towns leaves its culture (a rival voice's Way, 3.21): Society's schism with that reason;
+// rivalId = the RivalVoice whose Way it is (-1 none). The new culture, or nullptr.
+Culture* secede(World& w, const std::vector<int>& towns, BirthReason reason, int rivalId = -1);
+// Answer settlement sid's prayer at `scale` of the full effect (a Keeper of a People, a competing prayer's
+// middle way). False when it is not praying.
+bool answerPrayer(World& w, int sid, double scale);
 // [society] notes for the readers of edicts (A9 owner): Society.yearly implements `build` (the
 // Wonder 30 years after edictSince, once per edict) and prophet travel; the other edict effects are
 // read by their owners from culture.edict: `peace` (no new wars, relations +0.02/yr) and `crusade`

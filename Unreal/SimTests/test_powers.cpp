@@ -16,6 +16,7 @@
 #include "Civ.h"
 #include "Life.h"
 #include "MapImg.h"
+#include "Mythos.h"
 #include "Powers.h"
 #include "Sim.h"
 #include "Society.h"
@@ -126,6 +127,7 @@ double sumField(const std::vector<float>& v) {
 struct Row {
 	const char* id; const char* name; char key; pw::Group group; bool brush; double cost, ang; pw::Target target;
 	Phase phase; int age; double awe; bool phaseOnly; pw::WScope scope; double wAng, faith;
+	int mythos = 0;                      // (v4 mythos, M0) MythosTune::phase the power needs
 };
 using G = pw::Group;
 using Tg = pw::Target;
@@ -150,6 +152,12 @@ const Row kSpec[] = {
 	{ "peace", "Omen of Peace", 'O', G::Grace, false, 100, 0, Tg::Settlement, Phase::History, Age::IRON, 0, false, WS::Cultures, 0, 0.10 },
 	// (v3, design review finding 6) a durable thing to buy
 	{ "consecrate", "Consecrate", 'Y', G::Grace, false, 150, 0, Tg::Settlement, Phase::History, Age::BRONZE, 0, false, WS::Radius, 0.10, 0.10 },
+	// (v4 mythos, M0) the Word group (SPEC-MYTHOS 2.1): locked while MythosTune::phase < mythos
+	{ "speak", "Speak", '5', G::Word, false, 30, 0, Tg::Settlement, Phase::History, Age::STONE, 0, false, WS::None, 0, 0, 1 },
+	{ "bless", "Bless", '6', G::Word, false, 80, 0, Tg::Settlement, Phase::History, Age::BRONZE, 0, false, WS::Radius, 0.10, 0.10, 2 },
+	{ "reveal", "Reveal", '7', G::Word, false, 150, 0, Tg::Settlement, Phase::History, Age::BRONZE, 0, false, WS::None, 0, 0, 3 },
+	{ "test", "Test", '8', G::Word, false, 40, 0, Tg::Settlement, Phase::History, Age::IRON, 0, false, WS::None, 0, 0, 2 },
+	{ "renew", "Renew", '\0', G::Word, false, 600, 0, Tg::Any, Phase::History, Age::IRON, 0, false, WS::None, 0, 0, 3 },
 };
 const Phase kPhases[] = { Phase::Molten, Phase::Water, Phase::Life, Phase::People, Phase::History, Phase::Ended };
 
@@ -157,6 +165,7 @@ const Phase kPhases[] = { Phase::Molten, Phase::Water, Phase::Life, Phase::Peopl
 bool specUnlocked(const World& w, const Row& r, bool nobody) {
 	if (r.phaseOnly) return w.phase == r.phase;
 	if (int(w.phase) < int(r.phase)) return false;
+	if (r.mythos > 0 && w.tune<MythosTune>().phase < r.mythos) return false;   // (v4 mythos, M0)
 	if (std::string(r.id) == "awaken") {
 		if (w.phase == Phase::People) return true;
 		if (nobody) return true;
@@ -169,7 +178,7 @@ bool specUnlocked(const World& w, const Row& r, bool nobody) {
 // ================================================================== the table
 
 DM_TEST("powers: LIST equals the spec table field for field") {
-	if (!eq(pw::kPowerCount, int(std::size(kSpec)), "17 powers (v3: + consecrate)")) return;
+	if (!eq(pw::kPowerCount, int(std::size(kSpec)), "22 powers (v3: + consecrate; v4 mythos: + the 5 Word powers)")) return;
 	for (int i = 0; i < pw::kPowerCount; i++) {
 		const pw::PowerDef& d = pw::kPowers[i];
 		const Row& r = kSpec[i];
@@ -186,6 +195,7 @@ DM_TEST("powers: LIST equals the spec table field for field") {
 		eq(d.unlock.age, r.age, tag + " unlock age");
 		eq(d.unlock.awe, r.awe, tag + " unlock awe");
 		eq(d.unlock.phaseOnly, r.phaseOnly, tag + " phase only");
+		eq(d.unlock.mythos, r.mythos, tag + " mythos phase");
 		eq(int(d.wScope), int(r.scope), tag + " witness scope");
 		eq(d.wAng, r.wAng, tag + " wAng");
 		eq(d.faith, r.faith, tag + " faith");
@@ -942,7 +952,7 @@ DM_TEST("powers: prophet through society::raiseProphet; Omen of Peace ends every
 	const int s0b = town(*w, a2, c0, 300);
 	// prophet
 	int asked = -1;
-	stub::hooks().society_raiseProphet = [&](World& ww, int sid) -> Prophet* {
+	stub::hooks().society_raiseProphet = [&](World& ww, int sid, const society::RaiseOpts&) -> Prophet* {   // (v4 mythos: + RaiseOpts)
 		asked = sid;
 		Culture& cu = ww.cultures[size_t(ww.settlements[size_t(sid)].culture)];
 		if (cu.prophet) return nullptr;

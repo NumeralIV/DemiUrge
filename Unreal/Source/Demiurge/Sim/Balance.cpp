@@ -13,9 +13,13 @@
 
 #include "Chronicle.h"
 #include "Civ.h"
+#include "Cards.h"
+#include "Characters.h"
 #include "Climate.h"
+#include "Doctrine.h"
 #include "Hydro.h"
 #include "Life.h"
+#include "Mythos.h"
 #include "Powers.h"
 #include "Sim.h"
 #include "Society.h"
@@ -41,6 +45,8 @@ template <class T, size_t N, std::array<int, N> T::*M, size_t I>
 void setAI(World& w, double v) { (w.tune<T>().*M)[I] = int(std::lround(std::clamp(v, -1e9, 1e9))); }
 template <class T, bool T::*M>
 void setB(World& w, double v) { w.tune<T>().*M = v != 0; }
+template <class T, unsigned T::*M>
+void setU(World& w, double v) { w.tune<T>().*M = unsigned(std::llround(std::clamp(v, 0.0, 4294967295.0))); }
 
 // Registered keys (alphabetical within a module is not required: keys() sorts).
 const KeyRow kKeys[] = {
@@ -321,7 +327,144 @@ const KeyRow kKeys[] = {
 	{ "disasters.calamityAge.3", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 3> },
 	{ "disasters.calamityAge.4", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 4> },
 	{ "disasters.calamityAge.5", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 5> },
-	{ "disasters.calamityAge.6", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 6> },
+	{ "disasters.calamityAge.6", &setA<DisastersTune, 7, &DisastersTune::calamityAge, 6> },	// (B1 mythos-balance-v1) the mythos tunes (SPEC-MYTHOS 1.6); mythos.families is MythosTune::Family as a bitmask
+	{ "mythos.phase", &setI<MythosTune, &MythosTune::phase> },
+	{ "mythos.emergent", &setB<MythosTune, &MythosTune::emergent> },
+	{ "mythos.families", &setU<MythosTune, &MythosTune::families> },
+	{ "mythos.silenceYears", &setD<MythosTune, &MythosTune::silenceYears> },
+	{ "mythos.wordVisible", &setD<MythosTune, &MythosTune::wordVisible> },
+	{ "mythos.actDeed", &setB<MythosTune, &MythosTune::actDeed> },
+	{ "society.sunWet", &setD<SocietyTune, &SocietyTune::sunWet> },
+	{ "society.sunYears", &setI<SocietyTune, &SocietyTune::sunYears> },
+	{ "society.victoryExhaustion", &setD<SocietyTune, &SocietyTune::victoryExhaustion> },
+	{ "society.victoryWindow", &setD<SocietyTune, &SocietyTune::victoryWindow> },
+	{ "mythos.unseenFaith", &setD<MythosTune, &MythosTune::unseenFaith> },
+	{ "mythos.unseenMemory", &setD<MythosTune, &MythosTune::unseenMemory> },
+	{ "mythos.msgFaithFar", &setD<MythosTune, &MythosTune::msgFaithFar> },
+	{ "mythos.agencyDrift", &setD<MythosTune, &MythosTune::agencyDrift> },
+	{ "mythos.obedienceDrift", &setD<MythosTune, &MythosTune::obedienceDrift> },
+	{ "mythos.dependenceDrift", &setD<MythosTune, &MythosTune::dependenceDrift> },
+	{ "mythos.visibleRef", &setD<MythosTune, &MythosTune::visibleRef> },
+	{ "mythos.visibleHalfLife", &setD<MythosTune, &MythosTune::visibleHalfLife> },
+	{ "mythos.clarityHalfLife", &setD<MythosTune, &MythosTune::clarityHalfLife> },
+	{ "mythos.researchAgency", &setD<MythosTune, &MythosTune::researchAgency> },
+	{ "mythos.schismAgency", &setD<MythosTune, &MythosTune::schismAgency> },
+	{ "mythos.dependPray", &setD<MythosTune, &MythosTune::dependPray> },
+	{ "mythos.dependPenalty", &setD<MythosTune, &MythosTune::dependPenalty> },
+	{ "mythos.dependResearch", &setD<MythosTune, &MythosTune::dependResearch> },
+	{ "mythos.agencyBase", &setD<MythosTune, &MythosTune::agencyBase> },
+	{ "mythos.agencyClarity", &setD<MythosTune, &MythosTune::agencyClarity> },
+	{ "mythos.agencyHidden", &setD<MythosTune, &MythosTune::agencyHidden> },
+	{ "mythos.agencyCurious", &setD<MythosTune, &MythosTune::agencyCurious> },
+	{ "mythos.agencyLiteracy", &setD<MythosTune, &MythosTune::agencyLiteracy> },
+	{ "mythos.agencyDepend", &setD<MythosTune, &MythosTune::agencyDepend> },
+	{ "mythos.agencyMin", &setD<MythosTune, &MythosTune::agencyMin> },
+	{ "mythos.agencyMax", &setD<MythosTune, &MythosTune::agencyMax> },
+	{ "mythos.obedienceBase", &setD<MythosTune, &MythosTune::obedienceBase> },
+	{ "mythos.obedienceDevotion", &setD<MythosTune, &MythosTune::obedienceDevotion> },
+	{ "mythos.obedienceHouse", &setD<MythosTune, &MythosTune::obedienceHouse> },
+	{ "mythos.obedienceBurden", &setD<MythosTune, &MythosTune::obedienceBurden> },
+	{ "mythos.obedienceDecrees", &setD<MythosTune, &MythosTune::obedienceDecrees> },
+	{ "mythos.obedienceFreeDecrees", &setD<MythosTune, &MythosTune::obedienceFreeDecrees> },
+	{ "mythos.obedienceMin", &setD<MythosTune, &MythosTune::obedienceMin> },
+	{ "mythos.obedienceMax", &setD<MythosTune, &MythosTune::obedienceMax> },
+	{ "mythos.dependBase", &setD<MythosTune, &MythosTune::dependBase> },
+	{ "mythos.dependAnswered", &setD<MythosTune, &MythosTune::dependAnswered> },
+	{ "mythos.dependAnsweredRef", &setD<MythosTune, &MythosTune::dependAnsweredRef> },
+	{ "mythos.dependBlessing", &setD<MythosTune, &MythosTune::dependBlessing> },
+	{ "mythos.dependParent", &setD<MythosTune, &MythosTune::dependParent> },
+	{ "mythos.dependAgency", &setD<MythosTune, &MythosTune::dependAgency> },
+	{ "mythos.dependSelf", &setD<MythosTune, &MythosTune::dependSelf> },
+	{ "mythos.imageHalfLife", &setD<MythosTune, &MythosTune::imageHalfLife> },
+	{ "mythos.aspectMin", &setD<MythosTune, &MythosTune::aspectMin> },
+	{ "mythos.aspectLead", &setD<MythosTune, &MythosTune::aspectLead> },
+	{ "mythos.aspectHold", &setD<MythosTune, &MythosTune::aspectHold> },
+	{ "mythos.parentPray", &setD<MythosTune, &MythosTune::parentPray> },
+	{ "mythos.parentLove", &setD<MythosTune, &MythosTune::parentLove> },
+	{ "mythos.parentDepend", &setD<MythosTune, &MythosTune::parentDepend> },
+	{ "mythos.rulerObey", &setD<MythosTune, &MythosTune::rulerObey> },
+	{ "mythos.rulerAgency", &setD<MythosTune, &MythosTune::rulerAgency> },
+	{ "mythos.mysteryAgency", &setD<MythosTune, &MythosTune::mysteryAgency> },
+	{ "mythos.mysteryDevotion", &setD<MythosTune, &MythosTune::mysteryDevotion> },
+	{ "mythos.threatObey", &setD<MythosTune, &MythosTune::threatObey> },
+	{ "mythos.threatLove", &setD<MythosTune, &MythosTune::threatLove> },
+	{ "mythos.msgAgency", &setD<MythosTune, &MythosTune::msgAgency> },
+	{ "mythos.unseenAgency", &setD<MythosTune, &MythosTune::unseenAgency> },
+	{ "cards.firstYear", &setD<CardsTune, &CardsTune::firstYear> },
+	{ "cards.minGap", &setD<CardsTune, &CardsTune::minGap> },
+	{ "cards.targetGap", &setD<CardsTune, &CardsTune::targetGap> },
+	{ "cards.maxGap", &setD<CardsTune, &CardsTune::maxGap> },
+	{ "cards.cultureGap", &setD<CardsTune, &CardsTune::cultureGap> },
+	{ "cards.cultureGapSeverity", &setD<CardsTune, &CardsTune::cultureGapSeverity> },
+	{ "cards.kindGap", &setD<CardsTune, &CardsTune::kindGap> },
+	{ "cards.kindGapFactor", &setD<CardsTune, &CardsTune::kindGapFactor> },
+	{ "cards.novelty", &setD<CardsTune, &CardsTune::novelty> },
+	{ "cards.minPriority", &setD<CardsTune, &CardsTune::minPriority> },
+	{ "cards.burst", &setI<CardsTune, &CardsTune::burst> },
+	{ "cards.maxOpen", &setI<CardsTune, &CardsTune::maxOpen> },
+	{ "cards.weight.0", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 0> },
+	{ "cards.weight.1", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 1> },
+	{ "cards.weight.2", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 2> },
+	{ "cards.weight.3", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 3> },
+	{ "cards.weight.4", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 4> },
+	{ "cards.weight.5", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 5> },
+	{ "cards.weight.6", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 6> },
+	{ "cards.weight.7", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 7> },
+	{ "cards.weight.8", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 8> },
+	{ "cards.weight.9", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 9> },
+	{ "cards.weight.10", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 10> },
+	{ "cards.weight.11", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 11> },
+	{ "cards.weight.12", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 12> },
+	{ "cards.weight.13", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 13> },
+	{ "cards.weight.14", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 14> },
+	{ "cards.weight.15", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 15> },
+	{ "cards.weight.16", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 16> },
+	{ "cards.weight.17", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 17> },
+	{ "cards.weight.18", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 18> },
+	{ "cards.weight.19", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 19> },
+	{ "cards.weight.20", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 20> },
+	{ "cards.weight.21", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 21> },
+	{ "cards.weight.22", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 22> },
+	{ "cards.weight.23", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 23> },
+	{ "cards.weight.24", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 24> },
+	{ "cards.weight.25", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 25> },
+	{ "cards.weight.26", &setA<CardsTune, size_t(CardKind::Count), &CardsTune::weight, 26> },
+	{ "doctrine.breachBase", &setD<DoctrineTune, &DoctrineTune::breachBase> },
+	{ "doctrine.breachKept", &setD<DoctrineTune, &DoctrineTune::breachKept> },
+	{ "doctrine.breachYears", &setD<DoctrineTune, &DoctrineTune::breachYears> },
+	{ "doctrine.breachCard", &setD<DoctrineTune, &DoctrineTune::breachCard> },
+	{ "doctrine.pressureIdle", &setD<DoctrineTune, &DoctrineTune::pressureIdle> },
+	{ "doctrine.customYear", &setD<DoctrineTune, &DoctrineTune::customYear> },
+	{ "doctrine.customStrength", &setD<DoctrineTune, &DoctrineTune::customStrength> },
+	{ "doctrine.keptDrift", &setD<DoctrineTune, &DoctrineTune::keptDrift> },
+	{ "doctrine.conflictKept", &setD<DoctrineTune, &DoctrineTune::conflictKept> },
+	{ "doctrine.conflictGap", &setD<DoctrineTune, &DoctrineTune::conflictGap> },
+	{ "doctrine.lapseKept", &setD<DoctrineTune, &DoctrineTune::lapseKept> },
+	{ "doctrine.lapseObey", &setD<DoctrineTune, &DoctrineTune::lapseObey> },
+	{ "doctrine.deedObey", &setD<DoctrineTune, &DoctrineTune::deedObey> },
+	{ "doctrine.deedAgency", &setD<DoctrineTune, &DoctrineTune::deedAgency> },
+	{ "doctrine.heartAgency", &setD<DoctrineTune, &DoctrineTune::heartAgency> },
+	{ "doctrine.deedBreach", &setD<DoctrineTune, &DoctrineTune::deedBreach> },
+	{ "doctrine.heartBreach", &setD<DoctrineTune, &DoctrineTune::heartBreach> },
+	{ "doctrine.judgedStep", &setD<DoctrineTune, &DoctrineTune::judgedStep> },
+	{ "doctrine.judgedLine", &setD<DoctrineTune, &DoctrineTune::judgedLine> },
+	{ "doctrine.judgedHalfLife", &setD<DoctrineTune, &DoctrineTune::judgedHalfLife> },
+	{ "doctrine.warnObey", &setD<DoctrineTune, &DoctrineTune::warnObey> },
+	{ "doctrine.removeObey", &setD<DoctrineTune, &DoctrineTune::removeObey> },
+	{ "doctrine.survWarn", &setD<DoctrineTune, &DoctrineTune::survWarn> },
+	{ "doctrine.survRemove", &setD<DoctrineTune, &DoctrineTune::survRemove> },
+	{ "doctrine.survJust", &setD<DoctrineTune, &DoctrineTune::survJust> },
+	{ "doctrine.survForgive", &setD<DoctrineTune, &DoctrineTune::survForgive> },
+	{ "doctrine.forgiveLove", &setD<DoctrineTune, &DoctrineTune::forgiveLove> },
+	{ "doctrine.literalShare", &setD<DoctrineTune, &DoctrineTune::literalShare> },
+	{ "doctrine.exactCat", &setD<DoctrineTune, &DoctrineTune::exactCat> },
+	{ "doctrine.signCat", &setD<DoctrineTune, &DoctrineTune::signCat> },
+	{ "doctrine.dreamCat", &setD<DoctrineTune, &DoctrineTune::dreamCat> },
+	{ "characters.askYears", &setD<CharactersTune, &CharactersTune::askYears> },
+	{ "characters.askDevotion", &setD<CharactersTune, &CharactersTune::askDevotion> },
+	{ "characters.queenPride", &setD<CharactersTune, &CharactersTune::queenPride> },
+	{ "characters.criminalRelapse", &setD<CharactersTune, &CharactersTune::criminalRelapse> },
+	{ "characters.credDrift", &setD<CharactersTune, &CharactersTune::credDrift> },
 };
 
 } // namespace
@@ -488,6 +631,64 @@ void apply(World& w) {
 	DisastersTune& DT = w.tune<DisastersTune>();
 	DT.calamityAge = { 1.4, 1.2, 1, 1, 0.85, 0.75, 0.7 };
 	S.rainFamineAge = { 1, 1, 1, 1, 2, 2, 2 };
+
+	// ---- v4 mythos, B1 mythos-balance-v1 (SPEC-MYTHOS 5.1, 9), 8 seeds x 35 policies x 4,500 years; tables in
+	// docs/handoff/mythos-v1/. The mythos is on (phase 1, the v1 systems). Guardrails: --mythos-phase 0 is v3.1 bit
+	// for bit (phase0-guardrail 32/32); phase 1 with emergent off leaves a card-ignoring god's world unchanged
+	// (phase1-guardrail 32/32).
+	MythosTune& M = w.tune<MythosTune>();
+	M.phase = 1;
+	// Emergent families (5.1 rule 3), each switched on alone against emergent off on 8 seeds x 35 policies x 4,500
+	// years (b1-family-*.txt). Every family that acts moved at least one SPEC-SIM 4 / v3 / v3.1 target to a fail, so
+	// `emergent` stays off: customs and traits pushed passive wars out of the 8-15 % band (and customs gave one
+	// passive world two nuclear exchanges); agency moved the passive Ark 110 years earlier and kind lost its 150-year
+	// lead (6/8); aspect and dependence broke the review-3 / review-6 / review-11 orderings; the Victory and Sun
+	// prayers came closest (they give passive worlds 7-18 competing-prayer cards and the cadence targets) but left
+	// one ordering target at 6/8 against its 5/6 bar on each of two samples (review 11 Omen, then review 3 cruel).
+	// Lapse alone moves nothing. `families` names the two to switch on first once the lead accepts that.
+	M.emergent = false;
+	M.families = MythosTune::FamLapse | MythosTune::FamPrayers;
+	// The silence rule read as written (3.3 "each 100 years without a deed"): Mystery grows only after a century with
+	// no deed, and the god's words, decrees, judgements, pacts and answered cards are deeds. Under M1's per-year
+	// reading every people the god missed for a single year drifted to Mystery: kind's Ark people saw a Parent 3/8,
+	// lawgiver's a Ruler 0/8; now 8/8 and 7/8. A heard word is presence felt (visible += its clarity value).
+	M.silenceYears = 100;
+	M.actDeed = true;
+	M.wordVisible = 1;
+	// The will (3.4). The spec's starting obedience sank to its 0.05 floor for any god with 4+ decrees (0.45 x agency
+	// x burden), so decrees were kept at 0.02-0.15 and did nothing, and lawgiver's people never saw a Ruler. Clarity
+	// now carries more of agency (0.6, base 0.08), obedience starts higher (0.35 + 0.45 x devotion) and the burden
+	// weighs less. A 0.45 base kept decrees even better but put exact-only's seed 1 at war in 34 % of its years
+	// (above the v3.1 third); 0.40 did the same to valour.
+	M.agencyBase = 0.08;
+	M.agencyClarity = 0.6;
+	M.obedienceBase = 0.35;
+	M.obedienceDevotion = 0.45;
+	M.obedienceBurden = 0.2;
+	M.obedienceDecrees = 0.02;
+	M.dependAgency = 0.15;
+	M.dependAnsweredRef = 4;
+	// Judgement (3.11): a step of 0.5 that fades over 600 years, so two or three judgements set a people's doctrine;
+	// its effects are larger (deeds: obedience +0.12, agency -0.05; hearts: agency +0.08). Breaches of a tenth of
+	// the people or more ask for judgement (0.5 asked for a capital), weighted x 2 in the director.
+	DoctrineTune& DO = w.tune<DoctrineTune>();
+	DO.judgedStep = 0.5;
+	DO.judgedHalfLife = 600;
+	DO.deedObey = 0.12;
+	DO.deedAgency = -0.05;
+	DO.heartAgency = 0.08;
+	DO.breachCard = 0.1;
+	// Cadence (2.2): the budget refills every 170 years (200 gave responder-myth 12-17 cards per 3,600 years).
+	CardsTune& CA = w.tune<CardsTune>();
+	CA.targetGap = 170;
+	CA.weight[size_t(CardKind::Judgement)] = 2;
+	// (V1 mythos-verify-v1) the waking cards close with the waking. "Until answered" left them open for the whole
+	// history, so a god could answer ShapePeople in the Iron age and reshape every root people's nature for free, or
+	// answer the Presence card centuries later for a stance change that skips its 100 Awe and its once-per-age rule.
+	// They now lapse when the director's first year comes (their lapse changes nothing: the people keep their rolled
+	// nature and today's stance). The client pauses genesis on them, so a player never sees the window run out.
+	CA.deadline[size_t(CardKind::ShapePeople)] = CA.firstYear;
+	CA.deadline[size_t(CardKind::Presence)] = CA.firstYear;
 }
 
 bool set(World& w, std::string_view key, double value) {

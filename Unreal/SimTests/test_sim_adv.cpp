@@ -307,7 +307,8 @@ DM_TEST("sim adv: source scan: Sim.cpp assigns only the state the writers table 
 	// w.<a>(.<b>)* = ...  /  w-><a>... = ...  (also +=, -=, ++)
 	const std::regex re(R"(\bw\s*(?:\.|->)\s*([A-Za-z_][A-Za-z0-9_]*(?:\s*\.\s*[A-Za-z_][A-Za-z0-9_]*)*)\s*(?:\[[^\]]*\])?\s*(\+\+|--|[-+*/]?=)(?!=))");
 	const std::set<std::string> allowed = { "phase", "heat", "year", "tick", "ending", "vars.lifeBoost", "vars.t0", "seaLevel",
-		"stats.pop", "stats.believers", "stats.peakPop", "god.awe", "need", "dirty", "name", "settings", "settings.calamity" };
+		"stats.pop", "stats.believers", "stats.peakPop", "god.awe", "need", "dirty", "name", "settings", "settings.calamity",
+		"mythos.archetype" };   // (v4 mythos, M9) SPEC-MYTHOS 1.7: Sim copies settings.archetype at create
 	std::string line, bad;
 	int ln = 0, hits = 0;
 	while (std::getline(in, line)) {

@@ -20,6 +20,20 @@
 //   first tribe the way a player does (powers::use "awaken" at opts.cell, then at civ::bestSite; its
 //   first success calls setPhase(History)); if Powers refuses, society::newCulture + civ::found
 //   directly. Always ends in History (awaken is free there); returns false if nobody woke.
+//
+// (v4 mythos, track M9 "mythos-tools", SPEC-MYTHOS 1.5) the mythos schedule lines:
+// - sim::use: balance::apply -> mythos::attach -> chronicle::attach -> rederive -> mythos::rebuild.
+// - the yearly group: civ::yearly -> society::yearly -> mythos::yearly -> cards::yearly -> climate::yearly ->
+//   powers::natural -> refreshStats -> chronicle::snapshot -> checkEnding.
+// - checkEnding fills ending.legacy from mythos::legacy(w) before setPhase(Ended) and the `ending` event (which
+//   carries it); create copies settings.archetype into mythos.archetype (the Sim row of SPEC-MYTHOS 1.7).
+// - Every mythos call is made only while MythosTune::phase >= 1. At phase 0 (the default) each of them is a no-op
+//   by contract, so skipping them keeps the pre-mythos call sequence, cost and bits exactly (guardrail 1; the
+//   schedule tests of test_sim.cpp read the stub call log). use() also calls attach at phase 0 when this world
+//   was attached at phase >= 1 before (a phase lowered on a live world), so Mythos drops its subscriptions.
+// - firstNonFinite also covers the mythos state (every number of MythosState and its records' data bags).
+// - A run that sets MythosTune after sim::create (simrun --mythos-phase, the tests) makes the two mythos calls of
+//   use() itself (mythos::attach, mythos::rebuild): the tuning is never saved, and create's use() saw phase 0.
 #include "Sim.h"
 
 #include <algorithm>
@@ -28,11 +42,13 @@
 #include <limits>
 
 #include "Balance.h"
+#include "Cards.h"
 #include "Chronicle.h"
 #include "Civ.h"
 #include "Climate.h"
 #include "Hydro.h"
 #include "Life.h"
+#include "Mythos.h"
 #include "Names.h"
 #include "Powers.h"
 #include "Society.h"
@@ -48,7 +64,11 @@ struct SimScratch {
 	int64_t lastClimate = 0;
 	int64_t lastHydro = 0;
 	bool habPending = false;
+	bool mythAttached = false;   // (M9) use() attached Mythos at phase >= 1
 };
+
+// (M9) the mythos modules run only from MythosTune::phase 1 (SPEC-MYTHOS 1.6).
+bool mythosOn(const World& w) { return w.tune<MythosTune>().phase >= 1; }
 
 SimScratch& sched(const World& w) {
 	SimScratch& s = w.scratch<SimScratch>();
@@ -131,6 +151,10 @@ void heavyPass(World& w) {
 void yearlyGroup(World& w) {
 	civ::yearly(w);
 	society::yearly(w);     // ends with society::diplomacy and chronicle::updateEpithets
+	if (mythosOn(w)) {      // (M9, SPEC-MYTHOS 1.5) the submodules propose, then the director opens at most one card
+		mythos::yearly(w);
+		cards::yearly(w);
+	}
 	climate::yearly(w);
 	powers::natural(w);
 	sim::refreshStats(w);
@@ -138,10 +162,15 @@ void yearlyGroup(World& w) {
 	sim::checkEnding(w);
 }
 
-void setEnding(World& w, const Ending& e) {
+// (M9) ending.legacy (SPEC-MYTHOS 4) is read from the world with its ending set, before the phase changes, so the
+// `phase` and `ending` handlers already see it. Returns the ending as stored.
+Ending setEnding(World& w, const Ending& e) {
 	w.ending = e;
+	if (mythosOn(w)) w.ending->legacy = mythos::legacy(w);
+	const Ending stored = *w.ending;
 	sim::setPhase(w, Phase::Ended);
-	w.bus.emit(EvEnding{ e.type, e.mood, e.culture, e.settlement, e.year });
+	w.bus.emit(EvEnding{ stored.type, stored.mood, stored.culture, stored.settlement, stored.year, stored.legacy });
+	return stored;
 }
 
 // FNV-1a over raw bytes.
@@ -175,6 +204,12 @@ std::unique_ptr<World> create(const WorldOpts& opts) {
 	}
 	w->settings = opts.settings;
 	if (!std::isfinite(w->settings.calamity) || w->settings.calamity < 0) w->settings.calamity = 1;
+	if (uint8_t(opts.settings.archetype) >= uint8_t(enumCount<Archetype>())) {   // (M9) an unknown archetype is Balanced
+		Settings st = w->settings;
+		st.archetype = Archetype::Balanced;
+		w->settings = st;
+	}
+	w->mythos.archetype = w->settings.archetype;   // (M9) SPEC-MYTHOS 1.7: a copy of settings.archetype, at create
 	balance::apply(*w);          // terrain tuning may be balanced: apply before generating
 	terrain::generate(*w);
 	use(*w);
@@ -183,8 +218,14 @@ std::unique_ptr<World> create(const WorldOpts& opts) {
 
 void use(World& w) {
 	balance::apply(w);
+	// (M9, SPEC-MYTHOS 1.5) Mythos subscribes before Chronicle and rebuilds its Faith records after the rederive
+	SimScratch& S = sched(w);
+	const bool myth = mythosOn(w);
+	if (myth || S.mythAttached) mythos::attach(w);
+	S.mythAttached = myth;
 	chronicle::attach(w);
 	rederive(w);
+	if (myth) mythos::rebuild(w);
 }
 
 void rederive(World& w) {
@@ -308,8 +349,7 @@ std::optional<Ending> checkEnding(World& w) {
 		e.culture = ark.culture;
 		e.settlement = ark.settlement;
 		e.year = w.year;
-		setEnding(w, e);
-		return e;
+		return setEnding(w, e);
 	}
 	NumBag& num = w.vars.num;
 	if (anyoneAlive(w)) {
@@ -334,8 +374,7 @@ std::optional<Ending> checkEnding(World& w) {
 			e.culture = -1;
 			e.settlement = -1;
 			e.year = w.year;
-			setEnding(w, e);
-			return e;
+			return setEnding(w, e);
 		}
 	} else if (num.find("sim_lost") == num.end()) {
 		num["sim_lost"] = 1;
@@ -523,9 +562,64 @@ Sample sample(const World& w) {
 	return s;
 }
 
+namespace {
+// (M9) The first non-finite number of the v4 mythos state, "" if none (part of firstNonFinite).
+std::string mythosNonFinite(const World& w) {
+	const MythosState& m = w.mythos;
+	auto badBag = [](const NumBag& b) {
+		for (const auto& kv : b) if (!std::isfinite(kv.second)) return true;
+		return false;
+	};
+	auto bad = [](std::initializer_list<double> v) {
+		for (double x : v) if (!std::isfinite(x)) return true;
+		return false;
+	};
+	if (bad({ m.presenceSince, m.withdrawnUntil, m.renewedYear }) || badBag(m.num)) return "mythos";
+	for (size_t i = 0; i < m.faith.size(); i++) {
+		const Faith& f = m.faith[i];
+		bool b = bad({ f.aspectSince, f.agency, f.obedience, f.dependence, f.selfReliance, f.clarity, f.visible, f.judgedBy, f.mercy, f.sternness,
+			f.survivorLove, f.survivorFear, f.survivorUntil, f.bearer, f.superiority, f.grown }) || badBag(f.data);
+		for (double x : f.image) if (!std::isfinite(x)) b = true;
+		if (b) return "mythos.faith[" + std::to_string(i) + "]";
+	}
+	for (size_t i = 0; i < m.factors.size(); i++) {
+		const Factors& f = m.factors[i];
+		bool b = bad({ f.growthR, f.K, f.famineLoss, f.plagueDeath, f.research, f.expandCooldown, f.farmConvert, f.devotionBase, f.loveTarget,
+			f.prayerChance, f.answeredGain, f.unansweredPenalty, f.aweS, f.schism, f.warV, f.aggression, f.battle, f.defence, f.relDrift,
+			f.plagueHop, f.warStrength, f.tradeEvery, f.naturalRate, f.harmTaken, f.co2Uptake });
+		for (double x : f.expect) if (!std::isfinite(x)) b = true;
+		if (b) return "mythos.factors[" + std::to_string(i) + "]";
+	}
+	for (const Decree& d : m.decrees) if (bad({ d.since, d.kept }) || badBag(d.data)) return "mythos decree of culture " + std::to_string(d.culture);
+	for (const Utterance& u : m.words) if (bad({ u.year, u.fidelity }) || badBag(u.data)) return "mythos word " + std::to_string(u.id);
+	for (const Pact& p : m.pacts) if (bad({ p.sworn, p.until, p.godKept, p.peopleKept }) || badBag(p.data)) return "mythos pact " + std::to_string(p.id);
+	for (const Figure& f : m.figures) {
+		bool b = bad({ f.born, f.died, f.credibility, f.reach, f.fame }) || badBag(f.data);
+		for (float x : f.person) if (!std::isfinite(x)) b = true;
+		for (float x : f.heart) if (!std::isfinite(x)) b = true;
+		if (b) return "mythos figure " + std::to_string(f.id);
+	}
+	for (const Card& c : m.cards) if (bad({ c.opened, c.deadline, c.severity }) || badBag(c.data)) return "mythos card " + std::to_string(c.id);
+	for (const Legend& l : m.legends) if (bad({ l.year, l.truth, l.told, l.vitality }) || badBag(l.data)) return "mythos legend " + std::to_string(l.id);
+	for (const House& h : m.houses) if (bad({ h.strength, h.wealth, h.authority, h.corruption, h.since }) || badBag(h.data)) return "mythos house of culture " + std::to_string(h.culture);
+	for (const RivalVoice& r : m.rivals) if (bad({ r.following, r.since }) || badBag(r.data)) return "mythos rival " + std::to_string(r.id);
+	for (const Omen& o : m.omens) if (bad({ o.due, o.power, o.ang }) || badBag(o.data)) return "mythos omen " + std::to_string(o.id);
+	for (const Keeper& k : m.keepers) if (bad({ k.appointed, k.loyalty, k.will, k.rogueUntil }) || badBag(k.data)) return "mythos keeper " + std::to_string(k.id);
+	for (const Revelation& r : m.revelations) if (bad({ r.year }) || badBag(r.data)) return "mythos revelation of culture " + std::to_string(r.culture);
+	for (const TownMyth& t : m.towns) if (bad({ t.blessedSince, t.blessedUntil, t.remnantUntil }) || badBag(t.data)) return "mythos town " + std::to_string(t.settlement);
+	for (const MythAct& a : m.acts) if (bad({ a.year, a.good })) return "mythos act " + a.kind;
+	return std::string();
+}
+} // namespace
+
 uint32_t fingerprint(const World& w) {
 	Fnv f;
+	// (v4 mythos, M0) While everything a version-2 save adds is at its default, hash exactly what the
+	// pre-mythos build hashed (no wild field, the version-1 save layout), so phase 0 keeps today's hashes
+	// bit for bit (SPEC-MYTHOS 5.1 guardrail 1). Otherwise the extensions are hashed too.
+	const bool legacy = state::extensionsDefault(w);
 	for (int i = 0; i < state::kCellFieldCount; i++) {
+		if (legacy && state::fieldSince(i) > 1) continue;
 		const CellArray a = state::cellArray(w, i);
 		if (!a.data) continue;
 		size_t esz = 4;
@@ -538,7 +632,7 @@ uint32_t fingerprint(const World& w) {
 		f.bytes(a.data, a.size * esz);
 	}
 	std::vector<uint8_t> bytes;
-	if (state::serialize(w, bytes)) f.bytes(bytes.data(), bytes.size());
+	if (state::serialize(w, bytes, nullptr, legacy ? 1u : state::kVersion)) f.bytes(bytes.data(), bytes.size());
 	else f.u32(0xdeadbeefu);
 	f.f64(w.year);
 	f.u32(uint32_t(w.tick));
@@ -610,6 +704,8 @@ std::string firstNonFinite(const World& w) {
 	for (const ChronicleEntry& e : w.chronicle) if (!std::isfinite(e.year)) return "chronicle " + std::to_string(e.id);
 	for (size_t r = 0; r < w.rivers.size(); r++)
 		for (float fl : w.rivers[r].flow) if (!std::isfinite(fl)) return "rivers[" + std::to_string(r) + "]";
+	const std::string myth = mythosNonFinite(w);   // (M9) the v4 mythos state (simrun's "without NaN" covers it)
+	if (!myth.empty()) return myth;
 	return std::string();
 }
 

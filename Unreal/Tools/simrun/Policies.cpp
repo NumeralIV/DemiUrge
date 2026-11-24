@@ -3,9 +3,14 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 #include <vector>
 
+#include "Cards.h"
+#include "Characters.h"
 #include "Civ.h"
+#include "Doctrine.h"
+#include "Mythos.h"
 #include "Powers.h"
 #include "Sim.h"
 #include "Society.h"
@@ -85,6 +90,21 @@ const char* toStr(PolicyKind k) {
 	case PolicyKind::Peacemaker: return "peacemaker";
 	case PolicyKind::Favourite: return "favourite";
 	case PolicyKind::Scourge: return "scourge";
+	case PolicyKind::ResponderMyth: return "responder-myth";
+	case PolicyKind::RandomMyth: return "random-myth";
+	case PolicyKind::Lawgiver: return "lawgiver";
+	case PolicyKind::Valour: return "valour";
+	case PolicyKind::ExactOnly: return "exact-only";
+	case PolicyKind::ParableOnly: return "parable-only";
+	case PolicyKind::SignOnly: return "sign-only";
+	case PolicyKind::UnseenKind: return "unseen-kind";
+	case PolicyKind::MsgKind: return "msg-kind";
+	case PolicyKind::JudgeDeeds: return "judge-deeds";
+	case PolicyKind::JudgeHearts: return "judge-hearts";
+	case PolicyKind::Merciful: return "merciful";
+	case PolicyKind::Stern: return "stern";
+	case PolicyKind::Kingmaker: return "kingmaker";
+	case PolicyKind::Gentle: return "gentle";
 	default: return "?";
 	}
 }
@@ -97,9 +117,12 @@ bool policyFromStr(std::string_view s, PolicyKind& out) {
 	return false;
 }
 
-Policy::Policy(PolicyKind kind, uint32_t seed) : kind_(kind), rng_(Rng(seed ^ 0x5eed5eedu).fork("simrun:policy")) {}
+Policy::Policy(PolicyKind kind, uint32_t seed, const MythosPlay& play)
+	: play_(play), kind_(kind), rng_(Rng(seed ^ 0x5eed5eedu).fork("simrun:policy")), cardRng_(Rng(seed ^ 0x5eed5eedu).fork("simrun:policy:myth")) {}
 
 bool Policy::click(World& w, const char* id, int cell) {
+	// (v4 mythos, M9) a mythos policy raises a messenger through the MessengerChoice card (SPEC-MYTHOS 3.8)
+	if (chooseMessenger() && std::string_view(id) == "prophet" && w.tune<MythosTune>().phase >= 1) return armMessenger(w, cell);
 	if (!powers::can(w, id, cell).ok) return false;
 	powers::UseOpts o;
 	if (powers::use(w, id, cell, o)) {
@@ -144,12 +167,15 @@ bool Policy::reawaken(World& w) {
 }
 
 void Policy::before(World& w) {
-	if (kind_ == PolicyKind::Passive) return;
+	const bool cards = cardsOn();
+	if (kind_ == PolicyKind::Passive && !cards) return;
 	if (w.phase != Phase::History) {          // genesis is played by the runner; ended worlds are left alone
 		strokeId_.clear();
 		return;
 	}
 	continueStroke(w);
+	if (cards) playCards(w);                  // (v4 mythos, M9) open cards are answered as soon as they show
+	if (kind_ == PolicyKind::Passive) return;
 	if (kind_ == PolicyKind::LateKind || kind_ == PolicyKind::LateCruel) {
 		if (lateFrom_ < 0) {
 			for (const Settlement& s : w.settlements)
@@ -214,7 +240,20 @@ void Policy::before(World& w) {
 	case PolicyKind::Peacemaker: decidePeacemaker(w); break;
 	case PolicyKind::Favourite: decideFavourite(w); break;
 	case PolicyKind::Scourge: decideScourge(w); break;
-	default: break;
+	// (v4 mythos, M9) the v1 scripted gods (SPEC-MYTHOS 5.3)
+	case PolicyKind::ResponderMyth: case PolicyKind::UnseenKind: decideKind(w); break;
+	case PolicyKind::RandomMyth: decideChaotic(w); break;
+	// (V1) stern plays the same kind god as merciful (SPEC-MYTHOS 3.12 compares one judging habit with the other):
+	// as a passive god it measured passive against kind, not punishment against mercy (it ended forgotten 8/8)
+	case PolicyKind::MsgKind: case PolicyKind::Merciful: case PolicyKind::Gentle: case PolicyKind::Stern:
+		decideMythos(w);                      // the messenger and the words first: the kind player spends the rest
+		decideKind(w);
+		break;
+	case PolicyKind::Lawgiver: case PolicyKind::Valour: case PolicyKind::ExactOnly: case PolicyKind::ParableOnly: case PolicyKind::SignOnly:
+	case PolicyKind::JudgeDeeds: case PolicyKind::JudgeHearts:
+		decideMythos(w);                      // otherwise passive
+		break;
+	default: break;                           // Kingmaker: only its cards
 	}
 }
 
@@ -493,6 +532,8 @@ void Policy::decideChaotic(World& w) {
 	std::vector<const powers::PowerDef*> pool;
 	for (const powers::PowerDef& d : powers::kPowers) {
 		if (d.group == powers::Group::Genesis) continue;
+		// (v4 mythos, M9) the Word powers only for random-myth: chaotic stays the v3.1 player at every phase
+		if (d.group == powers::Group::Word && kind_ != PolicyKind::RandomMyth) continue;
 		if (powers::unlocked(w, d.id)) pool.push_back(&d);
 	}
 	if (pool.empty()) return;
@@ -510,8 +551,420 @@ void Policy::decideChaotic(World& w) {
 		if (powers::can(w, d->id, c).ok) cell = c;
 	}
 	if (cell < 0) return;
+	if (d->group == powers::Group::Word) { randomWord(w, cell); return; }
 	if (d->brush) startStroke(w, d->id, cell, rng_.integer(4, 16), rng_.range(0.03, 0.15));
 	else click(w, d->id, cell);
+}
+
+// ---------------------------------------------------------------- (v4 mythos, M9) cards and words (SPEC-MYTHOS 5.3)
+//
+// Every mythos act goes through the player's own doors: cards::answer / cards::options (the card buttons),
+// powers::use("speak", cell, { word }) after doctrine::canSpeak (the Word chooser), powers::use("prophet", cell,
+// { choose }) (the Messenger chooser). Card and word choices draw from cardRng_ only, so a base player (kind,
+// chaotic) inside a mythos policy keeps its own rng_ draws.
+
+namespace {
+
+int mythPhase(const World& w) { return w.tune<MythosTune>().phase; }
+
+// The town a word to a culture is spoken at: its capital, else its most populous live town; -1 none.
+int townOf(const World& w, int culture) {
+	const Culture* cu = state::culture(w, culture);
+	if (!cu || cu->dead) return -1;
+	if (const Settlement* cap = state::settlement(w, cu->capital); cap && !cap->dead && cap->culture == culture) return cap->id;
+	const std::vector<int> top = topOf(w, culture, 1);
+	return top.empty() ? -1 : top[0];
+}
+
+using DecreeSet = std::vector<std::pair<DecreeArea, int>>;
+// 3.6 lawgiver: Peace, Share, Temples, Truth, Guarded, Shelter (+ Stewardship, phase 2)
+const DecreeSet& lawSet() {
+	static const DecreeSet s{ { DecreeArea::Violence, int(ViolenceStance::Peace) }, { DecreeArea::Wealth, int(WealthStance::Share) },
+		{ DecreeArea::Worship, int(Rite::Temples) }, { DecreeArea::Honesty, int(HonestyStance::Truth) },
+		{ DecreeArea::Hospitality, int(HospitalityStance::Guarded) }, { DecreeArea::Care, int(CareStance::Shelter) },
+		{ DecreeArea::Land, int(LandStance::Stewardship) } };
+	return s;
+}
+// 3.6 valour: Valour, Gain, Closed, Strength
+const DecreeSet& valourSet() {
+	static const DecreeSet s{ { DecreeArea::Violence, int(ViolenceStance::Valour) }, { DecreeArea::Wealth, int(WealthStance::Gain) },
+		{ DecreeArea::Hospitality, int(HospitalityStance::Closed) }, { DecreeArea::Care, int(CareStance::Strength) } };
+	return s;
+}
+// 4 gentle: the Kindness rite and Shelter
+const DecreeSet& gentleSet() {
+	static const DecreeSet s{ { DecreeArea::Worship, int(Rite::Kindness) }, { DecreeArea::Care, int(CareStance::Shelter) } };
+	return s;
+}
+
+// The channel a word of this clarity takes (3.9): Exact through the messenger when there is one, else from the sky.
+WordOpts wordFor(const World& w, int culture, Clarity clarity) {
+	WordOpts o;
+	o.clarity = clarity;
+	const int msg = characters::messenger(w, culture);
+	switch (clarity) {
+	case Clarity::Exact: o.channel = msg >= 0 ? Channel::Messenger : Channel::Sky; o.figure = msg; break;
+	case Clarity::Parable: o.channel = Channel::Messenger; o.figure = msg; break;
+	case Clarity::Dream: o.channel = Channel::Dream; break;
+	default: o.channel = Channel::Sky; break;
+	}
+	return o;
+}
+
+double bagNum(const NumBag& b, const char* k, double def) {
+	const auto it = b.find(k);
+	return it == b.end() || !std::isfinite(it->second) ? def : it->second;
+}
+
+struct ShapePreset { const char* name; const char* code; };   // L / M / H for curiosity, compassion, ambition, courage, aggression
+constexpr ShapePreset kShapes[] = {
+	{ "middling", "MMMMM" }, { "curious-brave", "HLLHM" }, { "kind-meek", "MHMLL" }, { "high-compassion", "MHLMM" },
+	{ "low-compassion", "MLMMM" }, { "high-ambition", "MLHMM" }, { "low-ambition", "MMLMM" }, { "high-courage", "MLMHM" },
+	{ "low-courage", "MMMLM" }, { "curious", "HMMML" }, { "fierce", "LMMMH" },
+};
+
+} // namespace
+
+bool Policy::cardsOn() const {
+	return isMythos(kind_) || play_.cards != CardMode::Lapse || play_.shape >= 0 || play_.presence >= 0;
+}
+
+bool Policy::chooseMessenger() const { return isMythos(kind_); }
+
+const char* toStr(CardMode m) {
+	switch (m) {
+	case CardMode::Lapse: return "lapse";
+	case CardMode::First: return "first";
+	case CardMode::Random: return "random";
+	default: return "policy";
+	}
+}
+
+bool cardModeFromStr(std::string_view s, CardMode& out) {
+	for (int i = 0; i < 4; i++) {
+		if (s == toStr(CardMode(i))) { out = CardMode(i); return true; }
+	}
+	return false;
+}
+
+int shapeFromStr(std::string_view s) {
+	if (s == "chance") return 243;
+	std::string_view code = s;
+	for (const ShapePreset& p : kShapes) if (s == p.name) code = p.code;
+	if (code.size() != 5) return -1;
+	int v = 0, mul = 1, high = 0, low = 0;
+	for (char ch : code) {
+		int lv = -1;
+		if (ch == 'L' || ch == 'l') { lv = int(TraitLevel::Low); low++; }
+		else if (ch == 'M' || ch == 'm') lv = int(TraitLevel::Middling);
+		else if (ch == 'H' || ch == 'h') { lv = int(TraitLevel::High); high++; }
+		if (lv < 0) return -1;
+		v += lv * mul;
+		mul *= 3;
+	}
+	if (high > 2 || low < high) return -1;     // the budget rule of 3.5: at most two High, each with a Low
+	return v;
+}
+
+const char* shapePresets() {
+	return "chance, middling, curious-brave, kind-meek, high-compassion, low-compassion, high-ambition, low-ambition, high-courage, "
+		"low-courage, curious, fierce, or a five-letter L/M/H code (curiosity, compassion, ambition, courage, aggression)";
+}
+
+void Policy::playCards(World& w) {
+	if (mythPhase(w) < 1) return;
+	for (int id : cards::openCards(w)) {
+		const Card* c = cards::find(w, id);
+		if (!c || c->state != uint8_t(CardState::Open)) continue;
+		if (const auto it = cardTried_.find(id); it != cardTried_.end() && w.year - it->second < 5) continue;   // refused: again in 5 years
+		const Card card = *c;                 // a copy: answering changes the list
+		int choice = ruleFor(w, card);
+		if (choice == -2) continue;
+		if (choice < 0) choice = modeChoice(w, card, play_.cards);
+		if (choice < 0) continue;
+		if (cards::answer(w, id, choice)) {
+			stats_.cardsAnswered++;
+			stats_.answers[std::string(toStr(card.kind)) + ":" + std::to_string(choice)]++;
+			cardTried_.erase(id);
+			if (card.kind == CardKind::CompetingPrayers) castArmed(w, id);
+		} else {
+			stats_.cardsRefused++;
+			cardTried_[id] = w.year;
+		}
+	}
+}
+
+int Policy::ruleFor(World& w, const Card& c) {
+	if (c.kind == CardKind::ShapePeople && play_.shape >= 0) return play_.shape;
+	if (c.kind == CardKind::Presence && play_.presence >= 0) return play_.presence;
+	if (c.kind == CardKind::MessengerChoice && isMythos(kind_) && kind_ != PolicyKind::RandomMyth) {
+		const int k = messengerPick(w, c);
+		return k >= 0 ? k : -2;
+	}
+	// a Judgement by `by`: the first sentence of `pref` that can be paid; -2 (wait) when only Awe is short
+	auto judge = [&](JudgeBy by, std::initializer_list<Sentence> pref) {
+		const std::vector<CardOption> opts = cards::options(w, c.id);
+		bool shortOfAwe = false;
+		for (Sentence s : pref) {
+			const int ch = int(by) * 4 + int(s);
+			for (const CardOption& o : opts) {
+				if (o.choice != ch) continue;
+				if (o.ok) return ch;
+				if (o.why == OptionWhy::Awe) shortOfAwe = true;
+			}
+		}
+		return shortOfAwe ? -2 : -1;
+	};
+	const bool judgement = c.kind == CardKind::Judgement;
+	switch (kind_) {
+	case PolicyKind::ResponderMyth: return modeChoice(w, c, CardMode::First);
+	case PolicyKind::RandomMyth: return modeChoice(w, c, CardMode::Random);
+	case PolicyKind::UnseenKind: if (c.kind == CardKind::Presence) return int(Presence::Unseen); break;
+	case PolicyKind::MsgKind: if (c.kind == CardKind::Presence) return int(Presence::Messengers); break;
+	case PolicyKind::Lawgiver: if (judgement) return judge(JudgeBy::Deed, { Sentence::Disaster, Sentence::Warn }); break;
+	case PolicyKind::JudgeDeeds: if (judgement) return judge(JudgeBy::Deed, { Sentence::Warn }); break;
+	case PolicyKind::JudgeHearts: if (judgement) return judge(JudgeBy::Heart, { Sentence::Warn }); break;
+	case PolicyKind::Merciful: case PolicyKind::Gentle: if (judgement) return judge(JudgeBy::Heart, { Sentence::Forgive }); break;
+	case PolicyKind::Stern: if (judgement) return judge(JudgeBy::Deed, { Sentence::Disaster, Sentence::Remove, Sentence::Warn }); break;
+	case PolicyKind::Kingmaker:
+		if (c.kind == CardKind::CompetingPrayers) {
+			// stand with the side whose people remember the god best (society::memory's verdict)
+			const Settlement* a = state::settlement(w, c.ref[0]);
+			const Settlement* b = state::settlement(w, c.ref[1]);
+			const int ca = a && !a->dead ? a->culture : -1, cb = b && !b->dead ? b->culture : -1;
+			const double va = ca >= 0 ? society::memory(w, ca).verdict : -1e9, vb = cb >= 0 ? society::memory(w, cb).verdict : -1e9;
+			const int side = (cb >= 0 && vb > va) ? 1 : 0;
+			for (const CardOption& o : cards::options(w, c.id)) {
+				if (o.choice != side) continue;
+				if (!o.ok) return -1;
+				const int who = side == 0 ? ca : cb;
+				if (who >= 0) stats_.favoured[who]++;
+				return side;
+			}
+			return -1;
+		}
+		break;
+	default: break;
+	}
+	return -1;
+}
+
+int Policy::modeChoice(World& w, const Card& c, CardMode m) {
+	if (m == CardMode::Lapse || m == CardMode::Policy) return -1;
+	if (c.kind == CardKind::ShapePeople && m == CardMode::First) return 243;    // "leave it to chance" is the card's first button
+	std::vector<int> ok;
+	for (const CardOption& o : cards::options(w, c.id)) if (o.ok) ok.push_back(o.choice);
+	if (ok.empty()) return -1;                // nothing payable now: let it be (tried again later)
+	if (m == CardMode::First) return ok.front();
+	return ok[size_t(cardRng_.pickIndex(int(ok.size())))];
+}
+
+void Policy::castArmed(World& w, int cardId) {
+	const Card* c = cards::find(w, cardId);
+	if (!c) return;
+	const int arm = int(bagNum(c->data, "arm", -1));
+	if (arm < 0 || arm >= powers::kPowerCount) return;
+	const powers::PowerDef& d = powers::kPowers[arm];
+	const int cell = int(bagNum(c->data, "armCell", -1));
+	const double angMul = bagNum(c->data, "armAng", 1);
+	if (!w.valid(cell)) return;
+	bool did = false;
+	if (d.brush) {
+		strokeId_.clear();                    // the answer comes first
+		did = startStroke(w, d.id, cell, 8, angMul == 1 ? -1 : d.ang * angMul);
+	} else {
+		did = click(w, d.id, cell);
+	}
+	if (did) stats_.armed++;
+}
+
+bool Policy::armMessenger(World& w, int cell) {
+	if (!powers::can(w, "prophet", cell).ok) return false;
+	const int sid = civ::at(w, cell);
+	powers::UseOpts o;
+	o.choose = true;
+	if (!powers::use(w, "prophet", cell, o)) { stats_.refused++; return false; }
+	// answer the MessengerChoice card on that town now (the chooser's second step)
+	for (int id : cards::openCards(w)) {
+		const Card* c = cards::find(w, id);
+		if (!c || c->kind != CardKind::MessengerChoice || c->settlement != sid) continue;
+		const Card card = *c;
+		const int k = messengerPick(w, card);
+		if (k >= 0 && cards::answer(w, id, k)) {
+			stats_.cardsAnswered++;
+			stats_.answers[std::string(toStr(card.kind)) + ":" + std::to_string(k)]++;
+			stats_.messengers++;
+			stats_.clicks++;
+			stats_.byPower["prophet"]++;
+			return true;
+		}
+		break;
+	}
+	return false;
+}
+
+int Policy::messengerPick(World& w, const Card& c) {
+	const std::vector<Figure> cand = characters::candidates(w, c.settlement);
+	const std::vector<CardOption> opts = cards::options(w, c.id);
+	auto okChoice = [&](int i) {
+		for (const CardOption& o : opts) if (o.choice == i) return o.ok;
+		return false;
+	};
+	// the archetype this god wants first: Shepherds for Parables, Queens for Exact words, else the most credible
+	MessengerArchetype want = MessengerArchetype::None;
+	if (kind_ == PolicyKind::ParableOnly || kind_ == PolicyKind::Gentle) want = MessengerArchetype::Shepherd;
+	else if (kind_ == PolicyKind::Lawgiver || kind_ == PolicyKind::Valour || kind_ == PolicyKind::ExactOnly) want = MessengerArchetype::Queen;
+	int best = -1;
+	double bestScore = -1e9;
+	for (int i = 0; i < int(cand.size()) && i < 3; i++) {
+		if (!okChoice(i)) continue;
+		const double score = (MessengerArchetype(cand[size_t(i)].archetype) == want ? 10.0 : 0.0) + cand[size_t(i)].credibility;
+		if (score > bestScore + 1e-12) { bestScore = score; best = i; }
+	}
+	return best;
+}
+
+bool Policy::speakTo(World& w, int culture, const WordOpts& o) {
+	const int sid = townOf(w, culture);
+	if (sid < 0) return false;
+	const int cell = w.settlements[size_t(sid)].cell;
+	if (!doctrine::canSpeak(w, culture, o).ok) return false;
+	if (!powers::can(w, "speak", cell).ok) return false;
+	powers::UseOpts u;
+	u.word = o;
+	if (o.clarity == Clarity::Dream && u.word.ref < 0) u.word.ref = sid;
+	if (powers::use(w, "speak", cell, u)) {
+		stats_.words++;
+		stats_.wordsBy[std::string(toStr(o.clarity)) + ":" + toStr(o.content)]++;
+		stats_.byPower["speak"]++;
+		return true;
+	}
+	stats_.wordsRefused++;
+	return false;
+}
+
+// Give each living people the decrees of `set` it does not hold yet (one word a people, at most maxWords this year;
+// a decree heard differently is given again after 150 years).
+void Policy::giveDecrees(World& w, const std::vector<std::pair<DecreeArea, int>>& set, Clarity clarity, int maxWords) {
+	if (mythPhase(w) < 1) return;
+	const bool reserve = kind_ == PolicyKind::Merciful || kind_ == PolicyKind::Gentle || kind_ == PolicyKind::MsgKind || kind_ == PolicyKind::Stern;
+	int words = 0;
+	for (const Culture& cu : w.cultures) {
+		if (words >= maxWords) break;
+		if (cu.dead || townOf(w, cu.id) < 0) continue;
+		for (const auto& [area, stance] : set) {
+			if (area == DecreeArea::Land && mythPhase(w) < 2) continue;
+			const Decree* held = doctrine::decree(w, cu.id, area);
+			if (held && !held->custom && held->stance == stance) continue;
+			const auto key = std::make_pair(cu.id, int(area));
+			if (const auto it = decreeTried_.find(key); it != decreeTried_.end() && w.year - it->second < 150) continue;
+			WordOpts o = wordFor(w, cu.id, clarity);
+			o.content = WordContent::Decree;
+			o.area = area;
+			o.stance = stance;
+			if (reserve && w.god.awe < doctrine::wordCost(w, cu.id, o) + 60) return;   // the kind player's prayers come first
+			if (speakTo(w, cu.id, o)) { words++; decreeTried_[key] = w.year; }
+			break;                            // one word a people (the 10-year gate)
+		}
+	}
+}
+
+// exact-only / parable-only / sign-only: the people's own leanings as decrees, then answers, as often as allowed.
+void Policy::wordsOnly(World& w, Clarity clarity) {
+	if (mythPhase(w) < 1) return;
+	int words = 0;
+	for (const Culture& cu : w.cultures) {
+		if (words >= 2) break;
+		if (cu.dead || townOf(w, cu.id) < 0) continue;
+		if (clarity == Clarity::Parable && characters::messenger(w, cu.id) < 0) continue;   // no Parable without a messenger
+		WordOpts o = wordFor(w, cu.id, clarity);
+		o.content = WordContent::Answer;
+		for (int a = 0; a < int(DecreeArea::Count); a++) {
+			const DecreeArea area = DecreeArea(a);
+			if (area == DecreeArea::Land && mythPhase(w) < 2) continue;
+			if (doctrine::decree(w, cu.id, area)) continue;
+			const auto key = std::make_pair(cu.id, a);
+			if (const auto it = decreeTried_.find(key); it != decreeTried_.end() && w.year - it->second < 150) continue;
+			int stance = doctrine::customStance(w, cu.id, area);
+			if (stance < 0) stance = area == DecreeArea::Worship ? int(Rite::Prayer) : 1;   // no leaning: the middle stance
+			o.content = WordContent::Decree;
+			o.area = area;
+			o.stance = stance;
+			break;
+		}
+		if (speakTo(w, cu.id, o)) {
+			words++;
+			if (o.content == WordContent::Decree) decreeTried_[std::make_pair(cu.id, int(o.area))] = w.year;
+		}
+	}
+}
+
+// A chosen messenger in the culture's capital (from the Iron age, when the Messenger power unlocks).
+void Policy::keepMessenger(World& w, int culture) {
+	if (mythPhase(w) < 1) return;
+	const Culture* cu = state::culture(w, culture);
+	if (!cu || cu->dead || cu->prophet || characters::messenger(w, culture) >= 0) return;
+	const Settlement* cap = state::settlement(w, cu->capital);
+	if (!cap || cap->dead) return;
+	if (w.god.awe < powers::cost(w, "prophet") + 10) return;
+	armMessenger(w, cap->cell);
+}
+
+void Policy::randomWord(World& w, int cell) {
+	const int sid = civ::at(w, cell);
+	const Settlement* s = state::settlement(w, sid);
+	if (!s || s->dead) return;
+	const Clarity clarity = Clarity(cardRng_.integer(0, 3));
+	WordOpts o = wordFor(w, s->culture, clarity);
+	if (cardRng_.chance(0.6)) {
+		o.content = WordContent::Decree;
+		o.area = DecreeArea(cardRng_.integer(0, int(DecreeArea::Land) - 1));
+		o.stance = cardRng_.integer(0, stanceCount(o.area) - 1);
+	} else {
+		o.content = WordContent::Answer;
+	}
+	speakTo(w, s->culture, o);
+}
+
+void Policy::decideMythos(World& w) {
+	if (mythPhase(w) < 1) return;
+	const int lead = leadingCulture(w);
+	switch (kind_) {
+	case PolicyKind::Lawgiver:
+		if (lead >= 0) keepMessenger(w, lead);
+		giveDecrees(w, lawSet(), Clarity::Exact, 2);
+		break;
+	case PolicyKind::Valour:
+		if (lead >= 0) keepMessenger(w, lead);
+		giveDecrees(w, valourSet(), Clarity::Exact, 2);
+		break;
+	case PolicyKind::ExactOnly: wordsOnly(w, Clarity::Exact); break;
+	case PolicyKind::ParableOnly: {
+		// one new messenger a year, the leading people first
+		std::vector<int> order;
+		if (lead >= 0) order.push_back(lead);
+		for (const Culture& cu : w.cultures) if (!cu.dead && cu.id != lead) order.push_back(cu.id);
+		for (int c : order) {
+			if (characters::messenger(w, c) >= 0) continue;
+			keepMessenger(w, c);
+			if (characters::messenger(w, c) >= 0) break;
+		}
+		wordsOnly(w, Clarity::Parable);
+		break;
+	}
+	case PolicyKind::SignOnly: wordsOnly(w, Clarity::Sign); break;
+	case PolicyKind::JudgeDeeds: case PolicyKind::JudgeHearts:
+		giveDecrees(w, lawSet(), Clarity::Dream, 2);
+		break;
+	case PolicyKind::Merciful: case PolicyKind::Stern: giveDecrees(w, lawSet(), Clarity::Dream, 1); break;   // (V1) the same words
+	case PolicyKind::MsgKind: if (lead >= 0) keepMessenger(w, lead); break;
+	case PolicyKind::Gentle: {
+		const bool msg = lead >= 0 && characters::messenger(w, lead) >= 0;
+		giveDecrees(w, gentleSet(), msg ? Clarity::Parable : Clarity::Dream, 1);
+		break;
+	}
+	default: break;
+	}
 }
 
 } // namespace dm::simrun

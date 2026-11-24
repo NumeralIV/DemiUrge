@@ -1,0 +1,86 @@
+2026-11-23, mythos-m7 (track M7 "powers-v4", SPEC-MYTHOS 9 phase 1), built. (Second attempt: the first attempt left
+Powers.cpp / Disasters.cpp written but no tests and no marker; this attempt reviewed that code, made one change, and
+wrote the tests.)
+
+Result
+- run.ps1 powers: 51 passed, 0 failed. Every other module is stubbed, the disasters half included. The 20 new tests are
+  in test_powers_v4.cpp (14) and test_powers_v4_disasters.cpp (6). The disasters tests need the real Disasters, so in
+  this key they return at once and they run in `all`.
+- run.ps1 disasters: 39 passed, 0 failed (unchanged).
+- run.ps1 all: 988 passed, 1 failed. The failure is not M7's (see "Open" below). Every powers v4 test passes in `all`.
+- Phase-0 guardrail: Tools/simrun/phase0-guardrail.ps1 -BuildTag m7 printed "phase0-guardrail 32 of 32 match", with every
+  module real.
+- Guardrail 2 (phase 1, emergent off, a god who never uses the Word): proven for Powers and Disasters.
+  - Unit level: the old powers give the same world hash, Awe and events at phase 0 and phase 1. prophet without the
+    choice is the v3.1 prophet. natural() draws the same rng stream at phase 1 with neutral Factors.
+  - Real history: 250 years, Balanced and Strange, at phase 0 and at phase 1. These all match: rng state, year,
+    people, sea, co2, Awe, towns, cultures, units, disasters and wars.
+- No header changed. Powers.h already carried UseOpts::choose, added by the first attempt and marked "(v4 mythos, M7;
+  additive)". Unreal/build.ps1 was not run, because that is not this track's job.
+
+Built (Sim/Powers.cpp, Sim/Disasters.cpp, SimTests/test_powers_v4.cpp, SimTests/test_powers_v4_disasters.cpp)
+- Phase gating in phaseLock: a row with unlock.mythos > MythosTune::phase is Locked. At phase 0 every Word power is
+  Locked, shows its table price and never calls a mythos module.
+  - speak needs phase 1 and the Stone age.
+  - bless needs phase 2 and Bronze; test needs phase 2 and Iron.
+  - reveal needs phase 3 and Bronze; renew needs phase 3 and Iron.
+  - aweMax never unlocks a Word power.
+- speak takes UseOpts.word:
+  - can() asks doctrine::canSpeak with a probe Dream Answer. The 10-year gap gives Target / why None; Doctrine's Target
+    gives why Settlement.
+  - cost() shows the cheapest word for the clicked town's people, from doctrine::wordCost.
+  - use() checks canSpeak with the chosen word and calls doctrine::speak, and only then pays k.cost. It then emits
+    power:used and counts the deed. Powers does not witness the word.
+  - The one change this attempt made: a Dream with no town named (word.ref -1) is dreamed in the clicked town.
+- bless, test, reveal and renew go to their owners: mythos::bless, characters::test, doctrine::reveal and
+  renewal::begin.
+  - Prices: bless by kind (MythosTune), test by trial (CharactersTune::trialCost), reveal by knowledge
+    (DoctrineTune::revealCost). renew needs RenewalTune::minAwe and costs all the Awe the god has.
+  - Each is paid only after the owner accepts. Nothing is spent on a refused word, and no power:used is emitted.
+  - When the god cannot pay: awe:short with the power's id, and the owner is not asked.
+  - bless is witnessed with the table's Radius. test needs a living ruler, messenger, healer or hero at the town.
+  - renew happens once per world (mythos.renewal or renewedYear set means Target).
+- powers::pay(what, amount):
+  - Free when amount <= 0. A non-finite amount is refused with no event.
+  - When short of Awe: false and awe:short { what }, at most once per aweShortEvery per act, on the Powers clock.
+  - Never a deed, never a power:used event.
+- The Messenger choice (3.8): prophet with UseOpts::choose at phase >= 1 opens the MessengerChoice card through
+  cards::open.
+  - Not budgeted. ref[0] is the town; data holds armed = 1 and decade.
+  - Nothing is spent and nothing is witnessed. The card's answer pays the prophet price (Characters' choiceCost).
+  - Refused when the culture has a prophet or a messenger, or has no candidates.
+  - choose false (the default), or phase 0, gives the v3.1 prophet. The client sets choose when arming.
+- Withdrawal (3.29): at phase >= 3, while mythos.withdrawnUntil > year, every power refuses with Reason::Withdrawn.
+  This is a v3 item, harmless before phase 3.
+- Disasters, natural():
+  - Expected counts are multiplied by the archetype. Every type gets x natural; quakes and eruptions also get
+    x quakeVolcano; droughts also get x drought.
+  - Balanced is x 1.0 exactly, so the doubles and draws are bit-identical.
+  - Counts over 3,000 years are within 10 % of the table: Generous x 0.6; Dangerous lightning x 1.6, droughts x 2.08,
+    quakes x 3.2.
+- Factors::naturalRate is read only at phase >= 1, and only when some live culture's rate is not 1. Counts are
+  multiplied by the largest rate. An event aimed at a culture's land is kept with probability rate / largest, from a
+  w.rng fork, so the main stream does not move. Rate 0 means never struck; unowned land counts as rate 1.
+  Mythos currently leaves naturalRate at 1 and gives the archetype directly; there is no double count.
+- Strange storm ring (3.1): one storm with data["ring"] = 1.
+  - Placement: over the sea cell farthest in hops from land (cached in vars.num "disasters_ring_cell" and
+    "disasters_ring_hops").
+  - Radius: 0.8 x that distance, between 0.08 and 0.25. No land lies under it.
+  - Behaviour: power 0.9, lives 150 years, does not drift or weaken, and draws nothing while it lives. Forming it calls
+    start(Storm) once, which draws once. natural() re-forms it the next year, even at calamity 0.
+  - It is visible to the client as an ordinary storm disaster with the "ring" flag.
+
+Open (not M7's files)
+- FAIL test_mythos_guard.cpp:161 (M1's test): "phase 1, emergent off: a real history is unchanged". Diagnosed with a
+  temporary test, since removed.
+  - Rng, people and the whole save without the chronicle are byte-identical at phase 0 and phase 1.
+  - Only chronicle text differs. At phase 1 Chronicle (M8, mid-edit during this run) replaces a banned word in a v3.1
+    line ("... the throat of heaven" becomes "... of the sky").
+  - Either M8 keeps phase-1 chronicle text identical for a passive god, or the lead relaxes the M1 test to the 5.1
+    fingerprint, which excludes the chronicle.
+- An earlier `all` run (before M9's latest Sim.cpp) failed "sim adv: source scan: Sim.cpp assigns only the state the
+  writers table gives it". The final run passed it.
+- simrun targets of 3.1 that depend on M7 have not been checked here, because they need M9's --archetype flag:
+  Dangerous loses >= 1.3 x Balanced's people to natural events; Generous has <= 0.7 x the famines.
+- Foresight scheduling (3.17), bless, test, reveal and renew effects, and the Deluge / Burning belong to M7b / M7c and
+  the owning modules. Powers already routes the Word powers to them.

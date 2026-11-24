@@ -47,12 +47,43 @@
 //                The envy rule's war spiral against a favourite
 //   scourge      strikes one small people only (the smallest of at least 2, never the last): lightning,
 //                a quake when affordable. The scourged blame the spared: extinction cascades, spirals
+//
+// (v4 mythos, track M9 "mythos-tools") the v1 scripted gods of SPEC-MYTHOS 5.3. They need MythosTune::phase >= 1
+// (simrun raises the build's phase to 1 for them unless --mythos-phase says otherwise). They speak only through
+// powers::use("speak", cell, { word }), arm the Messenger with UseOpts::choose (the MessengerChoice card), and
+// answer cards only through cards::answer / cards::lookIntoHeart, exactly like a player. Decrees go to every
+// living people with a town, at most two words a year, keeping Awe for the base player's own acts.
+//   responder-myth  kind, and answers every card with its first answer that can be paid (ShapePeople: "leave it to
+//                   chance"; Presence: Wonders) and casts what an answer arms (a competing prayer's rain or wrath)
+//   random-myth     chaotic (Word powers included, with random words), and answers every card at random
+//   lawgiver        Peace, Share, Temples, Truth, Guarded, Shelter (+ Stewardship from phase 2), Exact words through a
+//                   messenger (a chosen one in the leading people's capital; from the sky until there is one), punishes
+//                   breaches (by the deed, with a disaster when it can pay, else a warning); otherwise passive
+//   valour          Valour, Gain, Closed, Strength, Exact through a messenger; otherwise passive
+//   exact-only      words only Exact (the people's own leanings as decrees, then answers), as often as allowed
+//   parable-only    the same, only Parables through a messenger (none before one is chosen)
+//   sign-only       the same, only Signs in the sky
+//   unseen-kind     kind under Unseen from the waking (the Presence card)
+//   msg-kind        kind under Messengers, keeping a chosen messenger in the leading people's capital
+//   judge-deeds     the lawgiver's decrees as Dreams; every Judgement by the deed, with a warning; otherwise passive
+//   judge-hearts    the same, by the heart
+//   merciful        kind, the lawgiver's decrees as Dreams, forgives every judgement (by the heart)
+//   stern           the lawgiver's decrees as Dreams, punishes every judgement justly (by the deed, with a disaster,
+//                   else removing the ruler, else a warning); otherwise passive
+//   kingmaker       stands with the people of the best verdict (society::memory) in every competing prayer and casts
+//                   what that arms; otherwise passive
+//   gentle          kind, Kindness and Shelter as Parables (Dreams until a messenger is chosen), forgives by the heart
+// Every mythos policy answers the MessengerChoice card it armed (the most credible candidate; Shepherds first for
+// Parables, Queens first for Exact words). Cards a policy has no rule for follow --cards (default lapse); the
+// existing policies answer no card unless --cards / --shape / --presence ask for it.
 #pragma once
 
 #include <cstdint>
 #include <map>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 #include "Core/Rng.h"
 #include "State.h"
@@ -60,9 +91,32 @@
 namespace dm::simrun {
 
 enum class PolicyKind : uint8_t { Passive, Kind, Cruel, Chaotic, Doom, Curious, BlessOnly, Prayers, Repent, Sculptor, LateKind, LateCruel,
-	InspireSpam, Hoarder, Builder, AtomicKind, AtomicCruel, Peacemaker, Favourite, Scourge, Count };
+	InspireSpam, Hoarder, Builder, AtomicKind, AtomicCruel, Peacemaker, Favourite, Scourge,
+	// (v4 mythos, M9) the v1 scripted gods (SPEC-MYTHOS 5.3)
+	ResponderMyth, RandomMyth, Lawgiver, Valour, ExactOnly, ParableOnly, SignOnly, UnseenKind, MsgKind, JudgeDeeds, JudgeHearts,
+	Merciful, Stern, Kingmaker, Gentle, Count };
+inline constexpr int kFirstMythPolicy = int(PolicyKind::ResponderMyth);   // the pre-mythos set is 0 .. this - 1 ("all")
 const char* toStr(PolicyKind k);
 bool policyFromStr(std::string_view s, PolicyKind& out);
+// A v4 mythos policy (needs MythosTune::phase >= 1).
+inline bool isMythos(PolicyKind k) { return int(k) >= kFirstMythPolicy && k != PolicyKind::Count; }
+
+// How cards are answered when the policy has no rule for a kind (simrun --cards, SPEC-MYTHOS 5.2).
+enum class CardMode : uint8_t { Lapse, First, Random, Policy };
+const char* toStr(CardMode m);
+bool cardModeFromStr(std::string_view s, CardMode& out);
+
+// The run's card options (simrun --cards, --shape, --presence).
+struct MythosPlay {
+	CardMode cards = CardMode::Lapse;
+	int shape = -1;                       // the ShapePeople answer (0 .. 243), -1 = no rule
+	int presence = -1;                    // the Presence answer (0 Wonders, 1 Messengers, 2 Unseen), -1 = no rule
+};
+// A --shape preset ("curious-brave", "kind-meek", "chance", "middling", ...) or a five-letter code of L / M / H for
+// curiosity, compassion, ambition, courage, aggression (e.g. "HLMHL") -> the ShapePeople choice; -1 if unknown.
+int shapeFromStr(std::string_view s);
+// The preset names, for --help.
+const char* shapePresets();
 
 struct PolicyStats {
 	int clicks = 0;                       // successful click powers
@@ -70,17 +124,43 @@ struct PolicyStats {
 	int refused = 0;                      // powers::use returned false after can() said ok
 	std::map<std::string, int> byPower;   // successful uses (clicks) / strokes per power id
 	int edicts = 0;
+	// (v4 mythos, M9)
+	int cardsAnswered = 0, cardsRefused = 0, hearts = 0;   // cards::answer true / false; Look into the heart
+	std::map<std::string, int> answers;   // "<kind>:<choice>" answered
+	int words = 0, wordsRefused = 0;      // speak used / refused after doctrine::canSpeak said ok
+	std::map<std::string, int> wordsBy;   // "<clarity>:<content>"
+	int armed = 0;                        // answers whose armed act (rain, lightning ...) was then cast
+	int messengers = 0;                   // MessengerChoice cards this policy armed and answered
+	std::map<int, int> favoured;          // kingmaker: culture -> competing-prayer cards it stood with
 };
 
 class Policy {
 public:
-	Policy(PolicyKind kind, uint32_t seed);
+	Policy(PolicyKind kind, uint32_t seed, const MythosPlay& play = {});
 	// Call before every sim::advance(w, 1).
 	void before(World& w);
 	PolicyKind kind() const { return kind_; }
 	const PolicyStats& stats() const { return stats_; }
 
 private:
+	// (v4 mythos, M9) cards and words
+	bool cardsOn() const;                                 // answers cards at all (a mythos policy, or --cards / --shape / --presence)
+	void playCards(World& w);
+	int ruleFor(World& w, const Card& c);                 // the policy's answer, -1 none (then the card mode), -2 leave it
+	int modeChoice(World& w, const Card& c, CardMode m);  // first / random answer that can be paid, -1 none
+	void castArmed(World& w, int cardId);
+	void decideMythos(World& w);                          // the words and messengers of the mythos policies
+	bool speakTo(World& w, int culture, const WordOpts& o);
+	void giveDecrees(World& w, const std::vector<std::pair<DecreeArea, int>>& set, Clarity clarity, int maxWords);
+	void wordsOnly(World& w, Clarity clarity);
+	void keepMessenger(World& w, int culture);
+	void randomWord(World& w, int cell);
+	bool chooseMessenger() const;                         // prophet arms the MessengerChoice card (every mythos policy)
+	bool armMessenger(World& w, int cell);                // prophet with UseOpts::choose, then the card's answer
+	int messengerPick(World& w, const Card& c);           // the candidate this policy chooses, -1 none payable
+	MythosPlay play_;
+	std::map<int, double> cardTried_;                     // card id -> year of the last refused answer
+	std::map<std::pair<int, int>, double> decreeTried_;   // (culture, area) -> year of the last decree word
 	bool click(World& w, const char* id, int cell);
 	bool startStroke(World& w, const char* id, int cell, int ticks, double ang = -1);
 	void continueStroke(World& w);
@@ -103,6 +183,7 @@ private:
 
 	PolicyKind kind_;
 	Rng rng_;
+	Rng cardRng_;                         // (M9) card and word choices: never touches rng_, so the base players keep their draws
 	PolicyStats stats_;
 	double nextYear_ = 0;                 // next decision year (history)
 	// the brush stroke in progress

@@ -1,0 +1,51 @@
+2026-11-20, mythos-m6 (track M6 "economy-world-v4", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- Own keys (every other module stubbed): terrain 58/0, climate 54/0, life 63/0, civ 39/0, economy 42/0
+  (new: test_terrain_v4 5, test_climate_v4 5, test_life_v4 5, test_civ_v4 5, test_economy_v4 4).
+- run.ps1 all: 945 passed, 0 failed (with the other phase-1 tracks' files as they stood at the time).
+- Phase-0 guardrail: Tools/simrun/phase0-guardrail.ps1 -> "phase0-guardrail 32 of 32 match", every module real.
+  (An earlier run with `--stub Cards`, while M2's Cards.cpp was mid-edit and did not compile, also gave 32 of 32.)
+- Guardrail 2 (phase >= 1, emergent off): M6 only reads Factors / TownFactors; neutral records are proven bit-identical
+  by the v4 tests (40 years of civ::yearly, damage, capacity, climate yearly, Balanced terrain / climate / life).
+  The factor tests switch MythosTune::phase to 1 because the real Mythos answers Factors{} below phase 1.
+- No header changed (Civ.h, Terrain.h, Climate.h, Life.h, Mythos.h untouched). Unreal/build.ps1 not run (not this track's).
+
+Built (files: Sim/Terrain.cpp, Sim/Climate.cpp, Sim/Life.cpp, Sim/Civ.cpp, Sim/Economy.cpp, SimTests/test_*_v4.cpp)
+- Factors reads (Economy.cpp; each multiplies one tuning constant or a finished amount, so Factors{} / TownFactors{}
+  are v3.1 to the bit): K (capacity: x F.K for any site of the culture, x TF.K for a real town only), growthR
+  (F x TF), famine loss x F.famineLoss x F.harmTaken x TF.harmTaken, plague deaths x F.plagueDeath x TF.plagueDeath,
+  farm conversion (farmRate x F.farmConvert), settler cooldown x F.expandCooldown, research rate x F.research inside
+  the rateMin..rateMax clamp. Non-finite or negative factors read as 1.
+- harmTaken for war and disasters is applied ONCE, centrally, in civ::damage (Civ.cpp): share x F.harmTaken x
+  TF.harmTaken (share stays <= 1). Disasters / Diplomacy / Powers / Renewal must pass the raw share and NOT scale it.
+- civ::exodus(sid, share): share x pop (at least minPeople stay; >= 1 person) leaves as settlers (unit data
+  "civ_exodus" = 1) for the best canSettle site within 12 hops (siteScore, ties lower cell), else joins the nearest
+  live town of its culture; Land / Coastal (Bronze, coast) / Open (Sail, port). People leave only after spawn
+  succeeds; -1 and no change otherwise. demoteTemple stays neutral (M6b's).
+- Climate: Factors::co2Uptake = land-weighted mean of the owners' factors (unowned land 1) on the vegetation term:
+  co2 -= co2 x uptake x (0.5 + veg x mean); cells read only when some culture's factor is not 1.
+- Archetypes (3.1), all through mythos::archetypeParams(w), Balanced = untouched code paths:
+  Terrain: ridgeK (wider belts / plateaus / sutures / arcs, higher arcs, more fossil ranges and hotspot chains, the
+  normalisation's upland and alpine shares x ridgeK), shelfK (warpCont, coastLo/Hi x k, shelfLim / k), islandK
+  (hotspot chains, surviving one-cell islands, arc height), fert offset at generation, marvels.
+  Climate: noiseK on tNoise and rainNoise (in the cache signature), moistBias on land moist.
+  Life: capacityK on LifeTune::cap (capped at 1 per cell), the fert offset added to the natural soil level so it lasts.
+- Marvels (Strange, 3-6): land 0.5-4.5 above the shore with >= 4 land neighbours, never within 7 hops of each other,
+  fert >= 0.8; Life never lets them burn (ignite refuses, spread skips) and holds fert >= 0.8.
+  KEYS (no header carries them; readers: Mythos fidelity near marvels, Legends, the client's decals/audio):
+  vars.num "terrain_marvels" = count, "terrain_marvel_<i>" = cell, "terrain_marvel_kind_<i>" = 0 singing stones,
+  1 warm springs in the ice, 2 a lake that glows, 3 a wood that whispers. Erased by every terrain::generate.
+
+Numbers (6 seeds, L 5; land fraction is 0.390 for every archetype)
+- mountains (land >= 2.0): Balanced 0.117, Dangerous 0.141 (1.21x); coast cells / land: Balanced 0.367, Beautiful 0.411
+  (1.12x); landmasses: Balanced 33.7, Beautiful 44.8, Dangerous 39.7; mean land fert: Balanced 0.552, Generous 0.701,
+  Dangerous 0.504. Marvels on 8 Strange worlds (L 5 and 6): 32, all four kinds. Maps: shots/ue-mythos-m6-*.png.
+
+Notes for other tracks / the lead
+- Non-Balanced archetypes pick a different plate layout for the same seed (the archetype changes the tuning the
+  layout is scored with). Balanced is the pinned v3.1 planet.
+- Real Mythos.cpp currently gates factors by phase (>= 1) and townFactors by phase (>= 2); archetypeParams is not
+  phase-gated, so an archetype set at phase 0 already shapes the planet (the default Balanced does not).
+- The simrun targets of 3.1 (Ark window per archetype, Dangerous natural losses, Generous famine) need M7's natural
+  rates and M9's --archetype flag; not checked here.

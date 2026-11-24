@@ -1,0 +1,93 @@
+2026-11-20, mythos-m4 (track M4 "characters", SPEC-MYTHOS 9 phase 1: 3.8 messengers, 3.23 rulers), built.
+
+Result
+- run.ps1 characters: 22 passed, 0 failed (every other module a stub; Society's raiseProphet, Cards' propose,
+  Faiths' adjustHouse and Society's nudge hooked where a test needs a collaborator to act).
+- run.ps1 all (a private copy of run.ps1 with its own build folder, because other agents were writing
+  SimTests/build/all at the same time): the 22 characters tests pass with every module real. The whole run was
+  935 passed, 8 failed. All 8 failures are other tracks' in-progress v4 tests (civ v4, climate v4, economy v4,
+  doctrine decrees, mythos factors); none touches Characters.
+- Phase-0 guardrail: "phase0-guardrail 32 of 32 match", run through a private copy of simrun.ps1 and
+  phase0-guardrail.ps1 with their own build folder. The shared Tools/simrun/build/simrun.exe was locked by other
+  agents' runs (LNK1104).
+- Guardrail 2 (phase 1, emergent off, a god who ignores every card): new test "characters guardrail 2". It runs a
+  real 500-year history at phase 1 twice, with and without characters::yearly every year. The rng state, year,
+  every town's people, devotion and love, the cultures' voices and traits, units, relations and Awe are identical.
+- run.ps1 link: 3 passed. Unreal/build.ps1 was not run (only the contracts, balance and verify tracks run it).
+
+Built (Sim/Characters.cpp replaced in full; header unchanged, no header change needed)
+- candidates(w, sid): three distinct archetypes per town. The Criminal is offered only in a town or larger. The
+  Queen is offered only in the capital, or in a town or larger of a culture that has a living ruler. The draw is a
+  pure read forked from Rng(w.seed) by "myth:characters:candidates:<sid>:<decade>". w.rng's state moves every tick,
+  so a w.rng fork could not show the same three people when the power is armed again in the same decade. Names
+  come from Names (names::person, names::epithet), with non-empty fallbacks. Person and hidden heart are biased by
+  archetype. Credibility starts at the archetype's value. Reach is the archetype's rural / town / court / outcast
+  row weighted by where the culture's people live.
+- choose(w, sid, i) creates the Messenger figure, then calls society::raiseProphet(w, sid, { figure }). If that is
+  refused, the figure is removed and nextId is restored. At the choice it forks the risks: the Criminal relapses at
+  20 % within 30 years, the Queen shows pride at 25 %. The Queen adds House authority +0.1 through
+  faiths::adjustHouse. Emits figure chosen.
+- yearly (phase >= 1; mythos::yearly calls it). Messengers:
+  - A messenger dies when the culture's Culture::prophet no longer names the figure.
+  - Credibility: +0.05 per kind of miracle per year in the home or current town (x1.5 under Messengers); -0.1 for
+    wrath the messenger did not foretell (no Warning word through them in 30 years); a 1 % drift toward the
+    archetype's start; the Child +0.01 a year. Acts are read from MythosState::acts in [last pass, this year).
+  - Criminal: redeemed by a miracle within 20 years (+0.4, flag, figure redeemed; then the House's corruption falls
+    0.01 a year through adjustHouse). If not redeemed, relapses at the forked year (Relapsed and Discredited flags,
+    figure discredited).
+  - Queen: pride shows at the forked year (Proud flag).
+  - Child: martyred when the home town is taken (culture changed), razed in war, or struck by the god. The fate is
+    Martyred; legends::add asks for the martyr legend; society::nudge lowers love by 0.1 in the town when the god
+    struck it.
+  - Relapse and pride become a standing deed. A Judgement proposal is made each year for up to 30 years until a
+    Judgement card about that figure opens.
+- yearly, rulers: exactly one living ruler per living Bronze+ culture whose capital is alive and its own. Each reign
+  is forked to 15-45 years. On a natural end an heir follows (75 %, same house); otherwise a new house. A new house
+  always follows when the capital fell, was taken or moved. The ruler is removed when the culture loses its capital
+  or dies. Names come from names::ruler and names::epithet; an heir inherits half of the person traits. Emits
+  figure rise / died.
+- yearly, "they seek a voice": a Bronze+ culture with no voice for 250 years (counted from its birth or the last
+  year a prophet or messenger lived) and a population-weighted devotion of at least 0.45 proposes MessengerChoice.
+  It does not propose while a MessengerChoice card is open for that culture.
+- adjustCredibility (clamped 0..1): an Unbelieved messenger reaching 0.8 is vindicated, even after death. Effects:
+  Vindicated flag, data quoted = year + 1000, figure vindicated (once), legends::add.
+- spawn: for Faiths' rival voices. Validates culture, home and kind; fills a missing name; sanitises NaN traits;
+  emits figure rise.
+- fell: sets fate and died year and emits figure died (Died) or fallen (other fates). A removed ruler is succeeded
+  in the same call by a new house.
+- The MessengerChoice card handlers:
+  - options: choices 0-2 cost card.data["cost"] if set (askCost 60 on a "seek a voice" card), else the prophet
+    power's 120. A choice is marked Awe when the god cannot pay, and Unavailable when the culture already has a
+    voice or the candidate is missing. Choice 3 (none) is free.
+  - answer: uses the candidates of the decade the card opened in (data["decade"], else floor(opened / 10)).
+  - lapse: nothing (none).
+- Registry cap 160: when full, the longest-dead figure that nothing names is dropped. "Names" means prophets,
+  decrees, words, pacts, cards, rival voices, omens or healer towns. A vindicated voice still being quoted is kept.
+  Ids are always below nextId, so the save's MYTH validation holds.
+- Phase 0: candidates, choose, spawn, fell, adjustCredibility, answer and options are neutral, and yearly does
+  nothing. ruler, messenger, credibility and figure stay honest reads.
+
+Not built here (later tracks, all still neutral): trials (test, trialOdds, Trial card; M4b), healers (M4b), Lives
+(M4c). No ruler deeds: "a ruler razing a town" needs the attacker, which neither Settlement nor anything Characters
+may read records.
+
+Contract notes for other tracks (no header change made)
+- Judgement proposals from Characters (Doctrine answers them):
+  - figure = the figure, settlement = home, ref = { figure id, deed, -1, -1 }, data["deed"] = deed.
+  - deed 1 = a messenger's relapse, deed 2 = a Queen's pride.
+  - Severity is 0.5..1. The heart is left to Doctrine (forked from Figure::heart).
+- MessengerChoice: Powers (M7) opens the player-armed card with cards::open, settlement = the town. It should set
+  data["cost"] = 0 if it already charged on arming; otherwise the card answer pays 120. Characters' own proposals
+  carry data cost, asked and decade; Cards (M2) should copy Proposal::data into Card::data.
+- Society (M5): the Child's 80-year term (CharactersTune::childYears) and the Shepherd's 7-year travel
+  (shepherdTravel) are Society's to apply. raiseProphet names the voice itself; using the figure's name would keep
+  the two the same. When a figure dies (martyr, fell), Society should end the voice whose Prophet::figure names it.
+  Characters cannot clear Culture::prophet.
+- Mythos (M1): the 3.2 rule "a miracle near a living messenger: credibility +0.05" is implemented here (x
+  msgCredMul under Messengers). MythosTune::msgCred should not be applied a second time. Characters reads
+  MythosState::acts before Mythos's own pass, so acts must still be in the list when characters::yearly runs.
+- Doctrine and Faiths read the flags: Discredited (words fail), Redeemed, Vindicated (and data quoted), Proud.
+- Save size: a full registry of 160 figures is 28.8 KB with real names, about a third of the 80 KB MYTH bound.
+
+Files: Unreal/Source/Demiurge/Sim/Characters.cpp, Unreal/SimTests/test_characters_messengers.cpp (15 tests),
+Unreal/SimTests/test_characters_rulers.cpp (7 tests).

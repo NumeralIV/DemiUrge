@@ -45,8 +45,8 @@ DM_TEST("link: the stub registry matches the stub files") {
 		for (const char* m : stub::kStubModules) if (std::string(m) == f.module) known = true;
 		ok(known, std::string("row of an unknown module: ") + f.module + " " + f.hook);
 	}
-	eq(stub::kStubFnCount, 144, "declared module functions (v3, design review: +8; v3.1: + society::swearPeace, society::tense; chronicle-diplomacy: + society::swornUntil)");
-	eq(powers::kPowerCount, 17, "power table rows (SPEC-SIM 3.10; v3: + consecrate)");
+	eq(stub::kStubFnCount, 254, "declared module functions (v3, design review: +8; v3.1: + society::swearPeace, society::tense; chronicle-diplomacy: + society::swornUntil; v4 mythos M0: + 102 in the nine mythos modules, powers::pay, 5 society, 2 civ)");
+	eq(powers::kPowerCount, 22, "power table rows (SPEC-SIM 3.10; v3: + consecrate; v4 mythos: + speak, bless, reveal, test, renew)");
 }
 
 DM_TEST("link: every declared function is callable") {
@@ -211,6 +211,7 @@ DM_TEST("link: every declared function is callable") {
 	chronicle::updateEpithets(w);
 	(void)chronicle::snapshot(w, true);
 	balance::apply(w);
+	w.tune<MythosTune>().phase = 0;           // (B1) Balance.cpp turns the mythos on; the block below checks phase 0
 	{
 		units::SpawnOpts so;
 		so.type = UnitType::Settler;
@@ -221,6 +222,131 @@ DM_TEST("link: every declared function is callable") {
 		(void)units::spawn(w, so);
 	}
 	(void)civ::found(w, c2, cu, 30, FoundedBy::Settlers, {});
+
+	// ---- (v4 mythos, M0) the mythos modules and the new owner APIs (neutral at phase 0, stubs and real alike)
+	{
+		WordOpts wo;
+		wo.content = WordContent::Decree; wo.area = DecreeArea::Violence; wo.stance = 0; wo.clarity = Clarity::Parable;
+		cards::Proposal pr;
+		pr.kind = CardKind::Dispute; pr.culture = cu; pr.settlement = sid; pr.severity = 0.5;
+		Figure proto;
+		proto.kind = uint8_t(FigureKind::RivalVoice); proto.culture = cu; proto.home = sid;
+		Legend seed;
+		seed.culture = cu; seed.deed = "rain"; seed.truth = 1;
+		mythos::attach(w);
+		mythos::rebuild(w);
+		mythos::yearly(w);
+		eq(int(mythos::legacy(w)), int(Legacy::None), "mythos::legacy neutral");
+		(void)mythos::legacyScores(w);
+		ok(mythos::factors(w, cu) == Factors{}, "mythos::factors neutral");
+		ok(mythos::factors(w, 999) == Factors{}, "mythos::factors bad id neutral");
+		ok(mythos::townFactors(w, sid) == TownFactors{}, "mythos::townFactors neutral");
+		ok(mythos::witnessScale(w, c, "rain") == WitnessScale{}, "mythos::witnessScale neutral");
+		eq(int(mythos::aspect(w, cu)), int(Aspect::Unknown), "mythos::aspect");
+		eq(mythos::warGoal(w, cu), -1, "mythos::warGoal");
+		eq(mythos::neglectScale(w, cu), 1.0, "mythos::neglectScale");
+		eq(mythos::archetypeParams(w).natural, 1.0, "mythos::archetypeParams Balanced");
+		eq(int(mythos::rite(w, cu)), int(Rite::None), "mythos::rite");
+		ok(mythos::faith(w, cu) == nullptr, "mythos::faith before rebuild at phase 0");
+		ok(!mythos::setPresence(w, Presence::Walk), "Walk is refused");
+		(void)mythos::setPresence(w, Presence::Unseen);
+		(void)mythos::withdraw(w, true);
+		(void)mythos::bless(w, sid, BlessingKind::Prosperity);
+		(void)mythos::answer(w, 1, 0);
+		mythos::lapse(w, 1);
+		(void)mythos::options(w, 1);
+		(void)cards::propose(w, pr);
+		cards::yearly(w);
+		(void)cards::open(w, pr);
+		(void)cards::answer(w, 1, 0);
+		(void)cards::withdraw(w, 1);
+		(void)cards::lookIntoHeart(w, 1);
+		(void)cards::options(w, 1);
+		ok(cards::find(w, 1) == nullptr, "cards::find");
+		ok(cards::openCards(w).empty(), "cards::openCards");
+		(void)cards::priority(w, pr);
+		(void)cards::answerOwn(w, 1, 0);
+		cards::lapseOwn(w, 1);
+		(void)cards::optionsOwn(w, 1);
+		doctrine::yearly(w);
+		(void)doctrine::speak(w, cu, wo);
+		(void)doctrine::canSpeak(w, cu, wo);
+		(void)doctrine::wordCost(w, cu, wo);
+		(void)doctrine::fidelity(w, cu, wo);
+		ok(doctrine::decree(w, cu, DecreeArea::Violence) == nullptr, "doctrine::decree");
+		eq(doctrine::kept(w, cu, DecreeArea::Violence), 0.0, "doctrine::kept");
+		(void)doctrine::burden(w, cu);
+		eq(doctrine::strictness(w, DecreeArea::Violence, 0), 0.9, "doctrine::strictness Peace");
+		eq(doctrine::strictness(w, DecreeArea::Count, 0), 0.0, "doctrine::strictness bad area");
+		(void)doctrine::customStance(w, cu, DecreeArea::Care);
+		(void)doctrine::swearPact(w, cu, GodTerm::Rain, PeopleTerm::NoWar, 100, -1);
+		(void)doctrine::reveal(w, cu, RevelationKind::Writing, Clarity::Dream);
+		eq(int(doctrine::deathBelief(w, cu)), int(DeathBelief::None), "doctrine::deathBelief");
+		(void)doctrine::answer(w, 1, 0);
+		doctrine::lapse(w, 1);
+		(void)doctrine::options(w, 1);
+		characters::yearly(w);
+		(void)characters::candidates(w, sid);
+		(void)characters::choose(w, sid, 0);
+		(void)characters::spawn(w, proto);
+		(void)characters::fell(w, 1, FigureFate::Fallen);
+		eq(characters::ruler(w, cu), -1, "characters::ruler");
+		eq(characters::messenger(w, cu), -1, "characters::messenger");
+		eq(characters::credibility(w, -1), 0.5, "characters::credibility neutral");
+		(void)characters::adjustCredibility(w, 1, 0.1);
+		ok(characters::figure(w, 1) == nullptr, "characters::figure");
+		(void)characters::test(w, 1, TrialKind::Power);
+		(void)characters::trialOdds(w, 1, TrialKind::Power);
+		(void)characters::answer(w, 1, 0);
+		characters::lapse(w, 1);
+		(void)characters::options(w, 1);
+		legends::yearly(w);
+		(void)legends::add(w, seed);
+		(void)legends::strongest(w, cu, 3);
+		faiths::yearly(w);
+		ok(faiths::house(w, cu) == nullptr, "faiths::house");
+		(void)faiths::adjustHouse(w, cu, 0.1, 0, 0, 0);
+		(void)faiths::seedRival(w, cu, sid, 0.1);
+		(void)faiths::chooseBearers(w, cu, Charge::CarryWord);
+		eq(faiths::bearers(w), -1, "faiths::bearers");
+		(void)faiths::answer(w, 1, 0);
+		faiths::lapse(w, 1);
+		(void)faiths::options(w, 1);
+		omens::yearly(w);
+		(void)omens::foresee(w, OmenKind::Quake, c, w.year + 30, 1, 0.1);
+		(void)omens::foretell(w, sid, w.year + 30, -1);
+		(void)omens::struck(w, 1);
+		(void)omens::warn(w, 1, WarningWay::Dreams);
+		ok(!omens::foresightOn(w), "omens::foresightOn off at phase 0");
+		(void)omens::answer(w, 1, 0);
+		omens::lapse(w, 1);
+		(void)omens::options(w, 1);
+		keepers::yearly(w);
+		(void)keepers::appoint(w, KeeperDomain::Deep, Temper::Gentle, cu);
+		(void)keepers::dismiss(w, 1);
+		(void)keepers::setTemper(w, 1, Temper::Stern);
+		eq(keepers::slots(w), 0, "keepers::slots at phase 0");
+		(void)keepers::answer(w, 1, 0);
+		keepers::lapse(w, 1);
+		(void)keepers::options(w, 1);
+		renewal::yearly(w);
+		(void)renewal::begin(w, RenewalKind::Water, { sid });
+		ok(!renewal::active(w), "renewal::active");
+		ok(!renewal::remnant(w, sid), "renewal::remnant");
+		(void)renewal::answer(w, 1, 0);
+		renewal::lapse(w, 1);
+		(void)renewal::options(w, 1);
+		ok(!powers::pay(w, "link", 10), "powers::pay is neutral at M0");
+		ok(!powers::unlocked(w, "speak"), "the Word powers are locked at phase 0");
+		{
+			Traits t;
+			(void)society::shapeTraits(w, cu, t);
+		}
+		society::nudge(w, sid, 0.1, 0.1);
+		society::remember(w, cu, 0.1, 0.1);
+		(void)society::answerPrayer(w, sid, 0.5);
+		(void)civ::demoteTemple(w, sid);
+	}
 	if (neutral) eq(hash(w), h0, "neutral stubs leave the world unchanged");
 
 	// ---- the yearly passes and the destructive ones
@@ -236,6 +362,8 @@ DM_TEST("link: every declared function is callable") {
 	(void)units::kill(w, uid, "test");
 	(void)society::newCulture(w, { -1, c2, BirthReason::Awaken });
 	(void)civ::damage(w, sid, 0.1, Cause::War);
+	(void)civ::exodus(w, sid, 0.3);                    // (v4 mythos, M0)
+	(void)society::secede(w, { sid }, BirthReason::Schism, -1);
 	civ::setCulture(w, sid, cuB);
 	civ::capture(w, sid, cu);
 	civ::destroy(w, sid, Cause::Famine);
@@ -263,6 +391,8 @@ DM_TEST("link: every declared function is callable") {
 			(void)sim::genesis::skip(*w2, {});
 			(void)sim::runTicks(*w2, 2, {}, false);
 			noNaN(*w2, "sim world");
+			(void)renewal::reseed(*w2, {});      // (v4 mythos, M0)
+			(void)legends::importOld(*w2, w, 2);
 		}
 	}
 

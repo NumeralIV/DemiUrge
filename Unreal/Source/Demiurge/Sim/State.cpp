@@ -1,5 +1,19 @@
 // DEMIURGE — Sim/State.cpp : see State.h (port of js/sim/state.js; the save format is binary).
 //
+// Save layout, version 2 (v4 mythos, M0): exactly the version-1 layout below (with u32 version = 2 and the
+// version-2 cell field wild in the field list), then, before 'E' 'N' 'D' '!', a list of extension blocks
+//   { char tag[4], u16 block version, u32 length, length bytes } ... and the 4-byte terminator 'E' 'N' 'D' '_'
+// "BASE" v1: u32 cultures, per culture f64 compassion, ambition, courage, i32 prophet.figure (-1 without a
+//            prophet); u8 settings.archetype; u8 ending.legacy (0 without an ending)
+// "MYTH" v1: its own block list (same framing, own "END_"): "MCOR" (presence, presenceSince, archetype, faith,
+//            factors, towns, acts, withdrawal, renewal, num, nextId), "CARD" (cards), "DOCT" (decrees, words,
+//            pacts, revelations), "CHAR" (figures), "LEGN" (legends), "FAIT" (houses, rivals), "OMEN" (omens),
+//            "KEEP" (keepers); see putMythos / readMythos.
+// A loader skips a block whose tag it does not know or whose version is newer than it reads (the state stays
+// at its defaults), refuses a block that appears twice or is not consumed exactly, and validates every id in
+// MYTH (mythosRefsOk). A version-1 blob (no blocks) loads with wild 0 and an empty MythosState.
+// serialize(w, out, why, 1) writes the version-1 layout byte for byte (no wild, no blocks).
+//
 // Save layout, version 1 (all little-endian; str = u32 length + bytes; opt<x> = u8 0/1 + x):
 //   'D' 'M' 'W' 'D', u32 version, u32 seed, str name, u8 L, u32 n, u32 rng.s
 //   f64 year, i64 tick, u8 phase, f64 heat, f64 seaLevel, f64 globalTemp, f64 co2, f64 dust, i32 age
@@ -11,6 +25,7 @@
 // does not know, so adding a row to DM_CELL_FIELDS keeps older saves loadable.
 #include "State.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 
@@ -185,9 +200,163 @@ bool refuse(std::vector<uint8_t>& out, std::string* why, const std::string& what
 	return false;
 }
 
+// ---- (v4 mythos, M0) extension blocks of version 2: { char tag[4], u16 version, u32 length, bytes }
+void putBlock(ByteWriter& o, const char* tag, uint16_t ver, const ByteWriter& body) {
+	o.bytes(reinterpret_cast<const uint8_t*>(tag), 4);
+	o.u16(ver);
+	o.u32(uint32_t(body.buf.size()));
+	o.bytes(body.buf.data(), body.buf.size());
+}
+void putI8(ByteWriter& o, int v) { o.u8(uint8_t(int8_t(v))); }
+
+void putFaith(ByteWriter& o, const Faith& f) {
+	o.u8(uint8_t(f.aspect)); o.f64(fin(f.aspectSince));
+	for (double v : f.image) o.f64(fin(v));
+	o.f64(fin(f.agency)); o.f64(fin(f.obedience)); o.f64(fin(f.dependence)); o.f64(fin(f.selfReliance));
+	o.f64(fin(f.clarity)); o.f64(fin(f.visible)); o.f64(fin(f.judgedBy)); o.f64(fin(f.mercy)); o.f64(fin(f.sternness));
+	o.f64(fin(f.survivorLove)); o.f64(fin(f.survivorFear)); o.f64(fin(f.survivorUntil));
+	putI8(o, f.death); putI8(o, f.deathSure);
+	o.f64(fin(f.bearer)); o.f64(fin(f.superiority)); putI8(o, f.charge); o.f64(fin(f.grown));
+	putBag(o, f.data);
+}
+void putFactors(ByteWriter& o, const Factors& f) {
+	const double d[] = { f.growthR, f.K, f.famineLoss, f.plagueDeath, f.research, f.expandCooldown, f.farmConvert,
+		f.devotionBase, f.loveTarget, f.prayerChance, f.answeredGain, f.unansweredPenalty, f.aweS, f.schism,
+		f.warV, f.aggression, f.battle, f.defence, f.relDrift, f.plagueHop, f.warStrength, f.tradeEvery,
+		f.naturalRate, f.harmTaken, f.co2Uptake };
+	for (double v : d) o.f64(fin(v));
+	o.boolean(f.farmAncient); o.boolean(f.claimAncient);
+	for (double v : f.expect) o.f64(fin(v));
+}
+void putTown(ByteWriter& o, const TownMyth& t) {
+	o.i32(t.settlement); o.u8(uint8_t(t.blessing)); o.f64(fin(t.blessedSince)); o.f64(fin(t.blessedUntil));
+	o.i32(t.healer); o.f64(fin(t.remnantUntil)); putBag(o, t.data);
+}
+void putAct(ByteWriter& o, const MythAct& a) {
+	o.f64(fin(a.year)); o.str(a.kind); o.i32(a.cell); o.i32(a.settlement); o.i32(a.culture); o.f64(fin(a.good)); o.boolean(a.natural);
+}
+void putDecree(ByteWriter& o, const Decree& d) {
+	o.i32(d.culture); o.u8(uint8_t(d.area)); putI8(o, d.stance); o.u8(uint8_t(d.clarity));
+	o.f64(fin(d.since)); o.f64(fin(d.kept)); o.i32(d.by); o.boolean(d.custom); putBag(o, d.data);
+}
+void putWord(ByteWriter& o, const Utterance& u) {
+	o.i32(u.id); o.i32(u.culture); o.i32(u.figure); o.u8(u.content); o.u8(uint8_t(u.clarity)); o.u8(uint8_t(u.channel));
+	o.f64(fin(u.year)); o.f64(fin(u.fidelity)); putI8(o, u.meant); putI8(o, u.heard); o.u8(u.outcome); putI8(o, u.area);
+	putBag(o, u.data);
+}
+void putPact(ByteWriter& o, const Pact& p) {
+	o.i32(p.id); o.i32(p.culture); o.u8(p.godTerm); o.u8(p.peopleTerm); o.f64(fin(p.sworn)); o.f64(fin(p.until));
+	o.f64(fin(p.godKept)); o.f64(fin(p.peopleKept)); o.u8(p.state); o.i32(p.figure); putBag(o, p.data);
+}
+void putRevelation(ByteWriter& o, const Revelation& r) {
+	o.i32(r.culture); o.u8(r.kind); o.u8(r.outcome); o.f64(fin(r.year)); o.boolean(r.early); putBag(o, r.data);
+}
+void putFigure(ByteWriter& o, const Figure& f) {
+	o.i32(f.id); o.u8(f.kind); o.u8(f.archetype); o.i32(f.culture); o.i32(f.home); o.str(f.name); o.str(f.byname);
+	o.f64(fin(f.born)); o.f64(fin(f.died)); o.f64(fin(f.credibility)); o.f64(fin(f.reach)); o.f64(fin(f.fame));
+	for (float v : f.person) o.f32(std::isfinite(v) ? v : 0.0f);
+	for (float v : f.heart) o.f32(std::isfinite(v) ? v : 0.0f);
+	o.u8(f.fate); o.u16(f.flags); o.i32(f.trial); putBag(o, f.data);
+}
+void putCard(ByteWriter& o, const Card& c) {
+	o.i32(c.id); o.u8(uint8_t(c.kind)); o.u8(c.state); o.i32(c.culture); o.i32(c.other); o.i32(c.settlement); o.i32(c.figure);
+	o.i32(c.cell); o.f64(fin(c.opened)); o.f64(fin(c.deadline)); o.f64(fin(c.severity)); putI8(o, c.choice); putI8(o, c.lapse);
+	for (int v : c.ref) o.i32(v);
+	putBag(o, c.data);
+}
+void putLegend(ByteWriter& o, const Legend& l) {
+	o.i32(l.id); o.i32(l.culture); o.i32(l.settlement); o.i32(l.cell); o.str(l.deed);
+	o.f64(fin(l.year)); o.f64(fin(l.truth)); o.f64(fin(l.told)); o.f64(fin(l.vitality));
+	o.u8(l.moral); o.u8(l.credit); o.u8(l.versions); o.i32(l.source); putBag(o, l.data);
+}
+void putHouse(ByteWriter& o, const House& h) {
+	o.i32(h.culture); o.f64(fin(h.strength)); o.f64(fin(h.wealth)); o.f64(fin(h.authority)); o.f64(fin(h.corruption));
+	o.f64(fin(h.since)); putBag(o, h.data);
+}
+void putRival(ByteWriter& o, const RivalVoice& r) {
+	o.i32(r.id); o.i32(r.culture); o.i32(r.figure); o.f64(fin(r.following)); o.f64(fin(r.since)); o.i32(r.way); o.u8(r.state);
+	putBag(o, r.data);
+}
+void putOmen(ByteWriter& o, const Omen& m) {
+	o.i32(m.id); o.u8(m.kind); o.i32(m.cell); o.i32(m.culture); o.f64(fin(m.due)); o.f64(fin(m.power)); o.f64(fin(m.ang));
+	o.u8(m.warned); o.u8(m.response); o.i32(m.figure); putBag(o, m.data);
+}
+void putKeeper(ByteWriter& o, const Keeper& k) {
+	o.i32(k.id); o.u8(k.domain); o.u8(k.disposition); o.i32(k.culture); o.str(k.name); o.f64(fin(k.appointed));
+	o.f64(fin(k.loyalty)); o.f64(fin(k.will)); o.f64(fin(k.rogueUntil)); putBag(o, k.data);
+}
+template <class T, class F> void putList(ByteWriter& o, const std::vector<T>& v, F put) {
+	o.u32(uint32_t(v.size()));
+	for (const T& x : v) put(o, x);
+}
+
+// The "MYTH" block: one sub-block per module (so modules can version their part alone), then "END_".
+void putMythos(ByteWriter& o, const MythosState& m) {
+	ByteWriter b;
+	b.u8(uint8_t(m.presence)); b.f64(fin(m.presenceSince)); b.u8(uint8_t(m.archetype));
+	putList(b, m.faith, putFaith); putList(b, m.factors, putFactors); putList(b, m.towns, putTown); putList(b, m.acts, putAct);
+	b.f64(fin(m.withdrawnUntil)); b.boolean(m.withdrawAnnounced); b.i32(m.renewal); b.f64(fin(m.renewedYear));
+	putBag(b, m.num); b.i32(m.nextId);
+	putBlock(o, "MCOR", 1, b);
+	b.buf.clear(); putList(b, m.cards, putCard); putBlock(o, "CARD", 1, b);
+	b.buf.clear(); putList(b, m.decrees, putDecree); putList(b, m.words, putWord); putList(b, m.pacts, putPact);
+	putList(b, m.revelations, putRevelation); putBlock(o, "DOCT", 1, b);
+	b.buf.clear(); putList(b, m.figures, putFigure); putBlock(o, "CHAR", 1, b);
+	b.buf.clear(); putList(b, m.legends, putLegend); putBlock(o, "LEGN", 1, b);
+	b.buf.clear(); putList(b, m.houses, putHouse); putList(b, m.rivals, putRival); putBlock(o, "FAIT", 1, b);
+	b.buf.clear(); putList(b, m.omens, putOmen); putBlock(o, "OMEN", 1, b);
+	b.buf.clear(); putList(b, m.keepers, putKeeper); putBlock(o, "KEEP", 1, b);
+	o.bytes(reinterpret_cast<const uint8_t*>("END_"), 4);
+}
+
+// The "BASE" block: the fields v4 added to the version-1 entities (Traits, Prophet, Settings, Ending).
+void putBase(ByteWriter& o, const World& w) {
+	o.u32(uint32_t(w.cultures.size()));
+	for (const Culture& c : w.cultures) {
+		o.f64(fin(c.traits.compassion)); o.f64(fin(c.traits.ambition)); o.f64(fin(c.traits.courage));
+		o.i32(c.prophet ? c.prophet->figure : -1);
+	}
+	o.u8(uint8_t(w.settings.archetype));
+	o.u8(uint8_t(w.ending ? w.ending->legacy : Legacy::None));
+}
+
+const char* const kV2Fields[] = { "wild" };
+bool isV2Field(const char* nm) {
+	for (const char* f : kV2Fields) if (std::strcmp(f, nm) == 0) return true;
+	return false;
+}
+
+bool mythosDefault(const MythosState& m) {
+	const MythosState d;
+	return m.presence == d.presence && m.presenceSince == d.presenceSince && m.archetype == d.archetype &&
+		m.faith.empty() && m.factors.empty() && m.decrees.empty() && m.words.empty() && m.pacts.empty() &&
+		m.figures.empty() && m.cards.empty() && m.legends.empty() && m.houses.empty() && m.rivals.empty() &&
+		m.omens.empty() && m.keepers.empty() && m.revelations.empty() && m.towns.empty() && m.acts.empty() &&
+		m.withdrawnUntil == d.withdrawnUntil && m.withdrawAnnounced == d.withdrawAnnounced &&
+		m.renewal == d.renewal && m.renewedYear == d.renewedYear && m.num.empty() && m.nextId == d.nextId;
+}
+
 } // namespace
 
-bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why) {
+uint32_t fieldSince(int fieldIdx) {
+	if (fieldIdx < 0 || fieldIdx >= kCellFieldCount) return 0;
+	return isV2Field(kCellFields[fieldIdx].name) ? 2u : 1u;
+}
+
+bool extensionsDefault(const World& w) {
+	for (uint8_t v : w.wild) if (v != 0) return false;
+	for (const Culture& c : w.cultures) {
+		if (c.traits.compassion != 0.5 || c.traits.ambition != 0.5 || c.traits.courage != 0.5) return false;
+		if (c.prophet && c.prophet->figure != -1) return false;
+	}
+	if (w.settings.archetype != Archetype::Balanced) return false;
+	if (w.ending && w.ending->legacy != Legacy::None) return false;
+	return mythosDefault(w.mythos);
+}
+
+bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why, uint32_t version) {
+	if (version != 1 && version != kVersion) return refuse(out, why, "unsupported save version " + std::to_string(version));
+	if (version >= 2 && w.mythos.presence == Presence::Walk) return refuse(out, why, "world.mythos.presence is Walk (reserved)");
 	const struct { const char* nm; double v; } scalars[] = {
 		{ "year", w.year }, { "heat", w.heat }, { "seaLevel", w.seaLevel }, { "globalTemp", w.globalTemp },
 		{ "co2", w.co2 }, { "dust", w.dust }, { "god.awe", w.god.awe }, { "god.aweMax", w.god.aweMax },
@@ -205,7 +374,7 @@ bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why) {
 	ByteWriter o;
 	o.buf.reserve(n * 20 + 4096);
 	o.bytes(reinterpret_cast<const uint8_t*>(kFormat), 4);
-	o.u32(kVersion);
+	o.u32(version);
 	o.u32(w.seed);
 	o.str(w.name);
 	o.u8(uint8_t(w.L));
@@ -215,11 +384,11 @@ bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why) {
 	o.f64(w.globalTemp); o.f64(w.co2); o.f64(w.dust); o.i32(w.age);
 
 	int persisted = 0;
-	for (int i = 0; i < kCellFieldCount; i++) if (kCellFields[i].save != SaveCodec::None) persisted++;
+	for (int i = 0; i < kCellFieldCount; i++) if (kCellFields[i].save != SaveCodec::None && fieldSince(i) <= version) persisted++;
 	o.u8(uint8_t(persisted));
 	for (int i = 0; i < kCellFieldCount; i++) {
 		const CellField& f = kCellFields[i];
-		if (f.save == SaveCodec::None) continue;
+		if (f.save == SaveCodec::None || fieldSince(i) > version) continue;
 		o.str(f.name);
 		o.u8(uint8_t(f.save));
 		o.u8(uint8_t(f.type));
@@ -278,11 +447,21 @@ bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why) {
 		o.u8(uint8_t(w.ending->type)); o.u8(uint8_t(w.ending->mood));
 		o.i32(w.ending->culture); o.i32(w.ending->settlement); o.f64(fin(w.ending->year));
 	}
+	if (version >= 2) {
+		ByteWriter b;
+		putBase(b, w);
+		putBlock(o, "BASE", 1, b);
+		b.buf.clear();
+		putMythos(b, w.mythos);
+		putBlock(o, "MYTH", 1, b);
+		o.bytes(reinterpret_cast<const uint8_t*>("END_"), 4);
+	}
 	o.bytes(reinterpret_cast<const uint8_t*>("END!"), 4);
 	out = std::move(o.buf);
 	return true;
 }
 
+// sizeOf measures the current version (kVersion).
 size_t sizeOf(const World& w) {
 	std::vector<uint8_t> b;
 	return serialize(w, b) ? b.size() : 0;
@@ -432,11 +611,247 @@ bool refsOk(Loader& L, const World& w) {
 	return true;
 }
 
+// ---- (v4 mythos, M0) the extension blocks of version 2
+
+int8_t i8(Loader& L) { return int8_t(L.r.u8()); }
+template <class E> uint8_t enumByte(Loader& L, const char* what) { return uint8_t(L.enm<E>(what)); }
+
+void readFaith(Loader& L, Faith& f) {
+	ByteReader& r = L.r;
+	f.aspect = L.enm<Aspect>("faith.aspect"); f.aspectSince = L.num();
+	for (double& v : f.image) v = L.num();
+	f.agency = L.num(); f.obedience = L.num(); f.dependence = L.num(); f.selfReliance = L.num();
+	f.clarity = L.num(); f.visible = L.num(); f.judgedBy = L.num(); f.mercy = L.num(); f.sternness = L.num();
+	f.survivorLove = L.num(); f.survivorFear = L.num(); f.survivorUntil = L.num();
+	f.death = i8(L); f.deathSure = i8(L);
+	if (f.death < 0 || f.death >= enumCount<DeathBelief>() || f.deathSure < 0 || f.deathSure >= enumCount<Certainty>()) L.bad("faith.death");
+	f.bearer = L.num(); f.superiority = L.num(); f.charge = i8(L); f.grown = L.num();
+	if (f.charge < 0 || f.charge >= enumCount<Charge>()) L.bad("faith.charge");
+	f.data = L.bag();
+	(void)r;
+}
+void readFactors(Loader& L, Factors& f) {
+	double* d[] = { &f.growthR, &f.K, &f.famineLoss, &f.plagueDeath, &f.research, &f.expandCooldown, &f.farmConvert,
+		&f.devotionBase, &f.loveTarget, &f.prayerChance, &f.answeredGain, &f.unansweredPenalty, &f.aweS, &f.schism,
+		&f.warV, &f.aggression, &f.battle, &f.defence, &f.relDrift, &f.plagueHop, &f.warStrength, &f.tradeEvery,
+		&f.naturalRate, &f.harmTaken, &f.co2Uptake };
+	for (double* p : d) *p = L.num();
+	f.farmAncient = L.r.boolean(); f.claimAncient = L.r.boolean();
+	for (double& v : f.expect) v = L.num();
+}
+void readTown(Loader& L, TownMyth& t) {
+	t.settlement = L.r.i32(); t.blessing = L.enm<BlessingKind>("town.blessing"); t.blessedSince = L.num(); t.blessedUntil = L.num();
+	t.healer = L.r.i32(); t.remnantUntil = L.num(); t.data = L.bag();
+}
+void readAct(Loader& L, MythAct& a) {
+	a.year = L.num(); a.kind = L.r.str(256); a.cell = L.cellRef("act.cell"); a.settlement = L.r.i32(); a.culture = L.r.i32();
+	a.good = L.num(); a.natural = L.r.boolean();
+}
+void readDecree(Loader& L, Decree& d) {
+	d.culture = L.r.i32(); d.area = L.enm<DecreeArea>("decree.area"); d.stance = i8(L); d.clarity = L.enm<Clarity>("decree.clarity");
+	if (d.stance < -1 || d.stance >= stanceCount(d.area)) L.bad("decree.stance");
+	d.since = L.num(); d.kept = L.num(); d.by = L.r.i32(); d.custom = L.r.boolean(); d.data = L.bag();
+}
+void readWord(Loader& L, Utterance& u) {
+	u.id = L.r.i32(); u.culture = L.r.i32(); u.figure = L.r.i32(); u.content = enumByte<WordContent>(L, "word.content");
+	u.clarity = L.enm<Clarity>("word.clarity"); u.channel = L.enm<Channel>("word.channel");
+	u.year = L.num(); u.fidelity = L.num(); u.meant = i8(L); u.heard = i8(L); u.outcome = enumByte<WordOutcome>(L, "word.outcome");
+	u.area = i8(L);
+	if (u.area < -1 || u.area >= enumCount<DecreeArea>()) L.bad("word.area");
+	if (u.meant < -1 || u.meant > 4 || u.heard < -1 || u.heard > 4) L.bad("word.stance");
+	u.data = L.bag();
+}
+void readPact(Loader& L, Pact& p) {
+	p.id = L.r.i32(); p.culture = L.r.i32(); p.godTerm = enumByte<GodTerm>(L, "pact.godTerm"); p.peopleTerm = enumByte<PeopleTerm>(L, "pact.peopleTerm");
+	p.sworn = L.num(); p.until = L.num(); p.godKept = L.num(); p.peopleKept = L.num(); p.state = enumByte<PactState>(L, "pact.state");
+	p.figure = L.r.i32(); p.data = L.bag();
+}
+void readRevelation(Loader& L, Revelation& v) {
+	v.culture = L.r.i32(); v.kind = enumByte<RevelationKind>(L, "revelation.kind"); v.outcome = enumByte<RevelationOutcome>(L, "revelation.outcome");
+	v.year = L.num(); v.early = L.r.boolean(); v.data = L.bag();
+}
+void readFigure(Loader& L, Figure& f) {
+	ByteReader& r = L.r;
+	f.id = r.i32(); f.kind = enumByte<FigureKind>(L, "figure.kind"); f.archetype = enumByte<MessengerArchetype>(L, "figure.archetype");
+	f.culture = r.i32(); f.home = r.i32(); f.name = r.str(4096); f.byname = r.str(4096);
+	f.born = L.num(); f.died = L.num(); f.credibility = L.num(); f.reach = L.num(); f.fame = L.num();
+	for (float& v : f.person) { v = r.f32(); if (!std::isfinite(v)) L.bad("figure.person"); }
+	for (float& v : f.heart) { v = r.f32(); if (!std::isfinite(v)) L.bad("figure.heart"); }
+	f.fate = enumByte<FigureFate>(L, "figure.fate"); f.flags = r.u16(); f.trial = r.i32();
+	if (f.trial < -1 || f.trial >= enumCount<TrialKind>()) L.bad("figure.trial");
+	f.data = L.bag();
+}
+void readCard(Loader& L, Card& c) {
+	ByteReader& r = L.r;
+	c.id = r.i32(); c.kind = L.enm<CardKind>("card.kind"); c.state = enumByte<CardState>(L, "card.state");
+	c.culture = r.i32(); c.other = r.i32(); c.settlement = r.i32(); c.figure = r.i32(); c.cell = L.cellRef("card.cell");
+	c.opened = L.num(); c.deadline = L.num(); c.severity = L.num(); c.choice = i8(L); c.lapse = i8(L);
+	for (int& v : c.ref) v = r.i32();
+	c.data = L.bag();
+}
+void readLegend(Loader& L, Legend& l) {
+	ByteReader& r = L.r;
+	l.id = r.i32(); l.culture = r.i32(); l.settlement = r.i32(); l.cell = L.cellRef("legend.cell"); l.deed = r.str(4096);
+	l.year = L.num(); l.truth = L.num(); l.told = L.num(); l.vitality = L.num();
+	l.moral = enumByte<LegendMoral>(L, "legend.moral"); l.credit = enumByte<LegendCredit>(L, "legend.credit"); l.versions = r.u8();
+	l.source = r.i32(); l.data = L.bag();
+}
+void readHouse(Loader& L, House& h) {
+	h.culture = L.r.i32(); h.strength = L.num(); h.wealth = L.num(); h.authority = L.num(); h.corruption = L.num();
+	h.since = L.num(); h.data = L.bag();
+}
+void readRival(Loader& L, RivalVoice& v) {
+	v.id = L.r.i32(); v.culture = L.r.i32(); v.figure = L.r.i32(); v.following = L.num(); v.since = L.num(); v.way = L.r.i32();
+	v.state = enumByte<RivalState>(L, "rival.state"); v.data = L.bag();
+}
+void readOmen(Loader& L, Omen& m) {
+	m.id = L.r.i32(); m.kind = enumByte<OmenKind>(L, "omen.kind"); m.cell = L.cellRef("omen.cell"); m.culture = L.r.i32();
+	m.due = L.num(); m.power = L.num(); m.ang = L.num(); m.warned = enumByte<WarningWay>(L, "omen.warned");
+	m.response = enumByte<OmenResponse>(L, "omen.response"); m.figure = L.r.i32(); m.data = L.bag();
+}
+void readKeeper(Loader& L, Keeper& k) {
+	k.id = L.r.i32(); k.domain = enumByte<KeeperDomain>(L, "keeper.domain"); k.disposition = enumByte<Temper>(L, "keeper.temper");
+	k.culture = L.r.i32(); k.name = L.r.str(4096); k.appointed = L.num(); k.loyalty = L.num(); k.will = L.num();
+	k.rogueUntil = L.num(); k.data = L.bag();
+}
+template <class T, class F> void readList(Loader& L, std::vector<T>& v, size_t minItemBytes, F read) {
+	const uint32_t k = L.count(minItemBytes);
+	v.clear();
+	if (!L.good()) return;
+	v.resize(k);
+	for (uint32_t i = 0; i < k && L.good(); i++) read(L, v[i]);
+	if (!L.good()) v.clear();
+}
+
+// One { tag, version, length } block; calls body(sub, version) on a Loader over its bytes, which must be
+// consumed exactly. Returns false at the "END_" terminator or on an error (L.bad set).
+template <class F> bool readBlocks(Loader& L, const char* where, F body) {
+	std::vector<std::string> seen;
+	for (;;) {
+		const uint8_t* tag = L.r.take(4);
+		if (!tag) { L.bad(std::string(where) + ": truncated block list"); return false; }
+		const std::string t(reinterpret_cast<const char*>(tag), 4);
+		if (t == "END_") return true;
+		const uint16_t ver = L.r.u16();
+		const uint32_t len = L.r.u32();
+		const uint8_t* p = len > 0 ? L.r.take(len) : nullptr;
+		if (!L.good() || (len > 0 && !p)) { L.bad(std::string(where) + "." + t + ": truncated"); return false; }
+		if (std::find(seen.begin(), seen.end(), t) != seen.end()) { L.bad(std::string(where) + "." + t + ": twice"); return false; }
+		seen.push_back(t);
+		static const uint8_t kEmpty[1] = { 0 };
+		Loader sub(p ? p : kEmpty, len);
+		sub.n = L.n;
+		const int handled = body(t, ver, sub);         // 1 parsed, 0 unknown tag or newer version (skipped)
+		if (handled == 1 && (!sub.good() || !sub.r.atEnd())) {
+			L.bad(std::string(where) + "." + t + ": " + (sub.err.empty() ? std::string("length") : sub.err));
+			return false;
+		}
+	}
+}
+
+void readMythos(Loader& L, MythosState& m) {
+	readBlocks(L, "MYTH", [&](const std::string& t, uint16_t ver, Loader& S) -> int {
+		if (ver != 1) return 0;
+		if (t == "MCOR") {
+			m.presence = S.enm<Presence>("presence");
+			if (m.presence == Presence::Walk) S.bad("presence Walk (reserved)");
+			m.presenceSince = S.num(); m.archetype = S.enm<Archetype>("archetype");
+			readList(S, m.faith, 100, readFaith); readList(S, m.factors, 200, readFactors);
+			readList(S, m.towns, 30, readTown); readList(S, m.acts, 30, readAct);
+			m.withdrawnUntil = S.num(); m.withdrawAnnounced = S.r.boolean(); m.renewal = S.r.i32(); m.renewedYear = S.num();
+			if (m.renewal < 0 || m.renewal >= enumCount<RenewalKind>()) S.bad("renewal");
+			m.num = S.bag(); m.nextId = S.r.i32();
+			return 1;
+		}
+		if (t == "CARD") { readList(S, m.cards, 60, readCard); return 1; }
+		if (t == "DOCT") {
+			readList(S, m.decrees, 20, readDecree); readList(S, m.words, 30, readWord);
+			readList(S, m.pacts, 40, readPact); readList(S, m.revelations, 15, readRevelation);
+			return 1;
+		}
+		if (t == "CHAR") { readList(S, m.figures, 60, readFigure); return 1; }
+		if (t == "LEGN") { readList(S, m.legends, 50, readLegend); return 1; }
+		if (t == "FAIT") { readList(S, m.houses, 40, readHouse); readList(S, m.rivals, 30, readRival); return 1; }
+		if (t == "OMEN") { readList(S, m.omens, 40, readOmen); return 1; }
+		if (t == "KEEP") { readList(S, m.keepers, 40, readKeeper); return 1; }
+		return 0;
+	});
+}
+
+void readBase(Loader& L, World& w) {
+	const uint32_t k = L.count(28);
+	if (L.good() && k != w.cultures.size()) { L.bad("culture count"); return; }
+	for (uint32_t i = 0; i < k && L.good(); i++) {
+		Culture& c = w.cultures[i];
+		c.traits.compassion = L.num(); c.traits.ambition = L.num(); c.traits.courage = L.num();
+		const int fig = L.r.i32();
+		if (c.prophet) c.prophet->figure = fig;
+		else if (fig != -1) L.bad("prophet.figure without a prophet");
+	}
+	w.settings.archetype = L.enm<Archetype>("settings.archetype");
+	const Legacy lg = L.enm<Legacy>("ending.legacy");
+	if (w.ending) w.ending->legacy = lg;
+	else if (lg != Legacy::None) L.bad("ending.legacy without an ending");
+}
+
+// Every id inside the MYTH block names an existing entity: cultures and settlements by index, figures and
+// cards by their ids (-1 always allowed); record ids are unique and below nextId.
+bool mythosRefsOk(Loader& L, const World& w) {
+	const MythosState& m = w.mythos;
+	const int ns = int(w.settlements.size()), nc = int(w.cultures.size());
+	auto in = [](int v, int count) { return v >= -1 && v < count; };
+	auto culture = [&](int v) { return v >= 0 && v < nc; };
+	std::vector<int> figs;
+	for (const Figure& f : m.figures) figs.push_back(f.id);
+	std::sort(figs.begin(), figs.end());
+	auto fig = [&](int v) { return v == -1 || std::binary_search(figs.begin(), figs.end(), v); };
+	auto ids = [&](std::vector<int> v, const char* what) {
+		std::sort(v.begin(), v.end());
+		for (size_t i = 0; i < v.size(); i++) {
+			if (v[i] < 1 || v[i] >= m.nextId || (i > 0 && v[i] == v[i - 1])) return L.bad(std::string("mythos.") + what + " ids");
+		}
+		return true;
+	};
+	if (m.nextId < 1) return L.bad("mythos.nextId");
+	if (m.faith.size() > size_t(nc) || m.factors.size() > size_t(nc)) return L.bad("mythos.faith / factors beyond the cultures");
+	if (!ids(figs, "figures")) return false;
+	{ std::vector<int> v; for (const Card& c : m.cards) v.push_back(c.id); if (!ids(v, "cards")) return false; }
+	{ std::vector<int> v; for (const Utterance& u : m.words) v.push_back(u.id); if (!ids(v, "words")) return false; }
+	{ std::vector<int> v; for (const Pact& p : m.pacts) v.push_back(p.id); if (!ids(v, "pacts")) return false; }
+	{ std::vector<int> v; for (const Legend& l : m.legends) v.push_back(l.id); if (!ids(v, "legends")) return false; }
+	{ std::vector<int> v; for (const RivalVoice& r : m.rivals) v.push_back(r.id); if (!ids(v, "rivals")) return false; }
+	{ std::vector<int> v; for (const Omen& o : m.omens) v.push_back(o.id); if (!ids(v, "omens")) return false; }
+	{ std::vector<int> v; for (const Keeper& k : m.keepers) v.push_back(k.id); if (!ids(v, "keepers")) return false; }
+	int prevTown = -1;
+	for (const TownMyth& t : m.towns) {
+		if (t.settlement < 0 || t.settlement >= ns || t.settlement <= prevTown) return L.bad("mythos.towns settlement");
+		prevTown = t.settlement;
+		if (!fig(t.healer)) return L.bad("mythos.towns healer");
+	}
+	for (const MythAct& a : m.acts) if (!in(a.settlement, ns) || !in(a.culture, nc)) return L.bad("mythos.acts ids");
+	for (const Decree& d : m.decrees) if (!culture(d.culture) || !fig(d.by)) return L.bad("mythos.decrees ids");
+	for (const Utterance& u : m.words) if (!culture(u.culture) || !fig(u.figure)) return L.bad("mythos.words ids");
+	for (const Pact& p : m.pacts) if (!culture(p.culture) || !fig(p.figure)) return L.bad("mythos.pacts ids");
+	for (const Revelation& r : m.revelations) if (!culture(r.culture)) return L.bad("mythos.revelations culture");
+	for (const Figure& f : m.figures) if (!in(f.culture, nc) || !in(f.home, ns)) return L.bad("mythos.figures ids");
+	for (const Card& c : m.cards)
+		if (!in(c.culture, nc) || !in(c.other, nc) || !in(c.settlement, ns) || !fig(c.figure)) return L.bad("mythos.cards ids");
+	// (a legend of culture -1 is an Old Story of a reseeded world that no culture has inherited yet, 3.30)
+	for (const Legend& l : m.legends) if (!in(l.culture, nc) || !in(l.settlement, ns) || l.source < -1) return L.bad("mythos.legends ids");
+	for (const House& h : m.houses) if (!culture(h.culture)) return L.bad("mythos.houses culture");
+	for (const RivalVoice& r : m.rivals) if (!culture(r.culture) || !fig(r.figure) || !in(r.way, nc)) return L.bad("mythos.rivals ids");
+	for (const Omen& o : m.omens) if (!in(o.culture, nc) || !fig(o.figure)) return L.bad("mythos.omens ids");
+	for (const Keeper& k : m.keepers) if (!in(k.culture, nc)) return L.bad("mythos.keepers culture");
+	for (const Culture& c : w.cultures) if (c.prophet && !fig(c.prophet->figure)) return L.bad("culture.prophet.figure");
+	return true;
+}
+
 std::unique_ptr<World> load(Loader& L) {
 	ByteReader& r = L.r;
 	const uint8_t* magic = r.take(4);
 	if (!magic || std::memcmp(magic, kFormat, 4) != 0) { L.bad("format"); return nullptr; }
-	if (r.u32() != kVersion) { L.bad("version"); return nullptr; }
+	const uint32_t fileVersion = r.u32();
+	if (fileVersion != 1 && fileVersion != kVersion) { L.bad("version"); return nullptr; }
 	const uint32_t seed = r.u32();
 	std::string nm = r.str(1u << 16);
 	const int Lv = r.u8();
@@ -553,11 +968,21 @@ std::unique_ptr<World> load(Loader& L) {
 		e.culture = r.i32(); e.settlement = r.i32(); e.year = L.num();
 		w->ending = e;
 	}
+	if (fileVersion >= 2 && L.good()) {
+		// (v4 mythos, M0) the extension blocks; unknown tags (and newer block versions) are skipped
+		readBlocks(L, "blocks", [&](const std::string& t, uint16_t ver, Loader& S) -> int {
+			if (ver != 1) return 0;
+			if (t == "BASE") { readBase(S, *w); return 1; }
+			if (t == "MYTH") { readMythos(S, w->mythos); return 1; }
+			return 0;
+		});
+	}
 	const uint8_t* tail = r.take(4);
 	if (!tail || std::memcmp(tail, "END!", 4) != 0) L.bad("end marker");
 	if (!r.atEnd()) L.bad("trailing bytes");
 	if (!L.good()) return nullptr;
 	if (!refsOk(L, *w)) return nullptr;
+	if (!mythosRefsOk(L, *w)) return nullptr;
 	return w;
 }
 

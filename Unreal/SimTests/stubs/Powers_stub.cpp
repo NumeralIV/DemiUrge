@@ -33,5 +33,10 @@ int drownRisk(const World& w, int cell, double ang) {
 	DM_STUB(powers_drownRisk, w, cell, ang);
 	return -1;
 }
+// (v4 mythos, M0) neutral: nothing is spent
+bool pay(World& w, std::string_view what, double amount) {
+	DM_STUB(powers_pay, w, what, amount);
+	return false;
+}
 
 } // namespace dm::powers

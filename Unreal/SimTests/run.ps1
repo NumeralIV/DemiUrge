@@ -6,7 +6,8 @@
 #   Environment: DM_VERBOSE=1 prints every test with its time.
 #
 #   <key>   core | state | link | all | a Stage A key (names terrain climate hydro life path-units civ
-#           economy society diplomacy powers disasters chronicle sim save) | any other word
+#           economy society diplomacy powers disasters chronicle sim save) | a mythos key (mythos cards
+#           doctrine characters legends faiths omens keepers renewal) | any other word
 #   filter  optional substrings: only tests whose DM_TEST name contains one of them run
 #
 # What gets compiled for <key> (into SimTests/build/<key>/, so parallel runs never collide):
@@ -57,6 +58,9 @@ $moduleMap = @{
     'civ' = @('Civ'); 'economy' = @('Economy'); 'society' = @('Society'); 'diplomacy' = @('Diplomacy')
     'powers' = @('Powers'); 'disasters' = @('Disasters'); 'chronicle' = @('Chronicle')
     'sim' = @('Sim', 'Balance'); 'balance' = @('Balance'); 'save' = @('Save'); 'integration' = @()
+    # (v4 mythos, M0) SPEC-MYTHOS 1.1: one key per mythos module
+    'mythos' = @('Mythos'); 'cards' = @('Cards'); 'doctrine' = @('Doctrine'); 'characters' = @('Characters')
+    'legends' = @('Legends'); 'faiths' = @('Faiths'); 'omens' = @('Omens'); 'keepers' = @('Keepers'); 'renewal' = @('Renewal')
 }
 
 # every module: Sim/<M>.cpp (other than the foundation files) and stubs/<M>_stub.cpp

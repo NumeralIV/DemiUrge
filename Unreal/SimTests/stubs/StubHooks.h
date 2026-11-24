@@ -34,14 +34,23 @@
 #include <vector>
 
 #include "Balance.h"
+#include "Cards.h"
+#include "Characters.h"
 #include "Chronicle.h"
 #include "Civ.h"
 #include "Climate.h"
+#include "Doctrine.h"
+#include "Faiths.h"
 #include "Hydro.h"
+#include "Keepers.h"
+#include "Legends.h"
 #include "Life.h"
+#include "Mythos.h"
 #include "Names.h"
+#include "Omens.h"
 #include "Path.h"
 #include "Powers.h"
+#include "Renewal.h"
 #include "Save.h"
 #include "Sim.h"
 #include "Society.h"
@@ -84,7 +93,8 @@
 	X(civ, civ_infect, civ::infect) X(civ, civ_cure, civ::cure) X(civ, civ_at, civ::at) X(civ, civ_near, civ::near) \
 	X(civ, civ_live, civ::live) X(civ, civ_canSettle, civ::canSettle) X(civ, civ_siteScore, civ::siteScore) \
 	X(civ, civ_bestSite, civ::bestSite) X(civ, civ_ageProgress, civ::ageProgress) \
-	X(civ, civ_bandSite, civ::bandSite) X(civ, civ_consecrate, civ::consecrate)
+	X(civ, civ_bandSite, civ::bandSite) X(civ, civ_consecrate, civ::consecrate) \
+	X(civ, civ_exodus, civ::exodus) X(civ, civ_demoteTemple, civ::demoteTemple)
 #define DM_STUBS_ECONOMY(X) \
 	X(economy, civ_yearly, civ::yearly) X(economy, civ_capacity, civ::capacity) \
 	X(economy, civ_addScience, civ::addScience) X(economy, civ_strikeKnowledge, civ::strikeKnowledge)
@@ -93,7 +103,10 @@
 	X(society, society_witness, society::witness) X(society, society_regard, society::regard) \
 	X(society, society_raiseProphet, society::raiseProphet) X(society, society_setEdict, society::setEdict) \
 	X(society, society_aweIncome, society::aweIncome) X(society, society_memory, society::memory) \
-	X(society, society_raiseWonder, society::raiseWonder)
+	X(society, society_raiseWonder, society::raiseWonder) \
+	X(society, society_shapeTraits, society::shapeTraits) X(society, society_nudge, society::nudge) \
+	X(society, society_remember, society::remember) X(society, society_secede, society::secede) \
+	X(society, society_answerPrayer, society::answerPrayer)
 #define DM_STUBS_DIPLOMACY(X) \
 	X(diplomacy, society_rel, society::rel) X(diplomacy, society_peek, society::peek) \
 	X(diplomacy, society_atWar, society::atWar) X(diplomacy, society_declareWar, society::declareWar) \
@@ -102,7 +115,8 @@
 	X(diplomacy, society_swornUntil, society::swornUntil)
 #define DM_STUBS_POWERS(X) \
 	X(powers, powers_unlocked, powers::unlocked) X(powers, powers_cost, powers::cost) X(powers, powers_can, powers::can) \
-	X(powers, powers_use, powers::use) X(powers, powers_upgrade, powers::upgrade) X(powers, powers_drownRisk, powers::drownRisk)
+	X(powers, powers_use, powers::use) X(powers, powers_upgrade, powers::upgrade) X(powers, powers_drownRisk, powers::drownRisk) \
+	X(powers, powers_pay, powers::pay)
 #define DM_STUBS_DISASTERS(X) \
 	X(disasters, powers_start, powers::start) X(disasters, powers_update, powers::update) \
 	X(disasters, powers_tick, powers::tick) X(disasters, powers_natural, powers::natural)
@@ -128,10 +142,60 @@
 	X(save, save_defaultSettings, save::defaultSettings) X(save, save_loadSettings, save::loadSettings) \
 	X(save, save_saveSettings, save::saveSettings)
 
+// (v4 mythos, M0) the nine mythos modules (SPEC-MYTHOS 1.1); headers frozen by the contracts track
+#define DM_STUBS_MYTHOS(X) \
+	X(mythos, mythos_attach, mythos::attach) X(mythos, mythos_rebuild, mythos::rebuild) X(mythos, mythos_yearly, mythos::yearly) \
+	X(mythos, mythos_legacy, mythos::legacy) X(mythos, mythos_legacyScores, mythos::legacyScores) X(mythos, mythos_factors, mythos::factors) \
+	X(mythos, mythos_townFactors, mythos::townFactors) X(mythos, mythos_witnessScale, mythos::witnessScale) X(mythos, mythos_aspect, mythos::aspect) \
+	X(mythos, mythos_warGoal, mythos::warGoal) X(mythos, mythos_neglectScale, mythos::neglectScale) X(mythos, mythos_archetypeParams, mythos::archetypeParams) \
+	X(mythos, mythos_rite, mythos::rite) X(mythos, mythos_faith, mythos::faith) X(mythos, mythos_setPresence, mythos::setPresence) \
+	X(mythos, mythos_withdraw, mythos::withdraw) X(mythos, mythos_bless, mythos::bless) X(mythos, mythos_answer, mythos::answer) \
+	X(mythos, mythos_lapse, mythos::lapse) X(mythos, mythos_options, mythos::options)
+#define DM_STUBS_CARDS(X) \
+	X(cards, cards_propose, cards::propose) X(cards, cards_yearly, cards::yearly) X(cards, cards_open, cards::open) \
+	X(cards, cards_answer, cards::answer) X(cards, cards_withdraw, cards::withdraw) X(cards, cards_lookIntoHeart, cards::lookIntoHeart) \
+	X(cards, cards_options, cards::options) X(cards, cards_find, cards::find) X(cards, cards_openCards, cards::openCards) \
+	X(cards, cards_priority, cards::priority) X(cards, cards_answerOwn, cards::answerOwn) X(cards, cards_lapseOwn, cards::lapseOwn) \
+	X(cards, cards_optionsOwn, cards::optionsOwn)
+#define DM_STUBS_DOCTRINE(X) \
+	X(doctrine, doctrine_yearly, doctrine::yearly) X(doctrine, doctrine_speak, doctrine::speak) X(doctrine, doctrine_canSpeak, doctrine::canSpeak) \
+	X(doctrine, doctrine_wordCost, doctrine::wordCost) X(doctrine, doctrine_fidelity, doctrine::fidelity) X(doctrine, doctrine_decree, doctrine::decree) \
+	X(doctrine, doctrine_kept, doctrine::kept) X(doctrine, doctrine_burden, doctrine::burden) X(doctrine, doctrine_strictness, doctrine::strictness) \
+	X(doctrine, doctrine_customStance, doctrine::customStance) X(doctrine, doctrine_swearPact, doctrine::swearPact) X(doctrine, doctrine_reveal, doctrine::reveal) \
+	X(doctrine, doctrine_deathBelief, doctrine::deathBelief) X(doctrine, doctrine_answer, doctrine::answer) X(doctrine, doctrine_lapse, doctrine::lapse) \
+	X(doctrine, doctrine_options, doctrine::options)
+#define DM_STUBS_CHARACTERS(X) \
+	X(characters, characters_yearly, characters::yearly) X(characters, characters_candidates, characters::candidates) X(characters, characters_choose, characters::choose) \
+	X(characters, characters_spawn, characters::spawn) X(characters, characters_fell, characters::fell) X(characters, characters_ruler, characters::ruler) \
+	X(characters, characters_messenger, characters::messenger) X(characters, characters_credibility, characters::credibility) X(characters, characters_adjustCredibility, characters::adjustCredibility) \
+	X(characters, characters_figure, characters::figure) X(characters, characters_test, characters::test) X(characters, characters_trialOdds, characters::trialOdds) \
+	X(characters, characters_answer, characters::answer) X(characters, characters_lapse, characters::lapse) X(characters, characters_options, characters::options)
+#define DM_STUBS_LEGENDS(X) \
+	X(legends, legends_yearly, legends::yearly) X(legends, legends_add, legends::add) X(legends, legends_strongest, legends::strongest) \
+	X(legends, legends_importOld, legends::importOld)
+#define DM_STUBS_FAITHS(X) \
+	X(faiths, faiths_yearly, faiths::yearly) X(faiths, faiths_house, faiths::house) X(faiths, faiths_adjustHouse, faiths::adjustHouse) \
+	X(faiths, faiths_seedRival, faiths::seedRival) X(faiths, faiths_chooseBearers, faiths::chooseBearers) X(faiths, faiths_bearers, faiths::bearers) \
+	X(faiths, faiths_answer, faiths::answer) X(faiths, faiths_lapse, faiths::lapse) X(faiths, faiths_options, faiths::options)
+#define DM_STUBS_OMENS(X) \
+	X(omens, omens_yearly, omens::yearly) X(omens, omens_foresee, omens::foresee) X(omens, omens_foretell, omens::foretell) \
+	X(omens, omens_struck, omens::struck) X(omens, omens_warn, omens::warn) X(omens, omens_foresightOn, omens::foresightOn) \
+	X(omens, omens_answer, omens::answer) X(omens, omens_lapse, omens::lapse) X(omens, omens_options, omens::options)
+#define DM_STUBS_KEEPERS(X) \
+	X(keepers, keepers_yearly, keepers::yearly) X(keepers, keepers_appoint, keepers::appoint) X(keepers, keepers_dismiss, keepers::dismiss) \
+	X(keepers, keepers_setTemper, keepers::setTemper) X(keepers, keepers_slots, keepers::slots) X(keepers, keepers_answer, keepers::answer) \
+	X(keepers, keepers_lapse, keepers::lapse) X(keepers, keepers_options, keepers::options)
+#define DM_STUBS_RENEWAL(X) \
+	X(renewal, renewal_yearly, renewal::yearly) X(renewal, renewal_begin, renewal::begin) X(renewal, renewal_active, renewal::active) \
+	X(renewal, renewal_remnant, renewal::remnant) X(renewal, renewal_reseed, renewal::reseed) X(renewal, renewal_answer, renewal::answer) \
+	X(renewal, renewal_lapse, renewal::lapse) X(renewal, renewal_options, renewal::options)
+
 #define DM_STUBS_ALL(X) \
 	DM_STUBS_NAMES(X) DM_STUBS_TERRAIN(X) DM_STUBS_CLIMATE(X) DM_STUBS_HYDRO(X) DM_STUBS_LIFE(X) DM_STUBS_PATH(X) \
 	DM_STUBS_UNITS(X) DM_STUBS_CIV(X) DM_STUBS_ECONOMY(X) DM_STUBS_SOCIETY(X) DM_STUBS_DIPLOMACY(X) DM_STUBS_POWERS(X) \
-	DM_STUBS_DISASTERS(X) DM_STUBS_CHRONICLE(X) DM_STUBS_SIM(X) DM_STUBS_BALANCE(X) DM_STUBS_SAVE(X)
+	DM_STUBS_DISASTERS(X) DM_STUBS_CHRONICLE(X) DM_STUBS_SIM(X) DM_STUBS_BALANCE(X) DM_STUBS_SAVE(X) \
+	DM_STUBS_MYTHOS(X) DM_STUBS_CARDS(X) DM_STUBS_DOCTRINE(X) DM_STUBS_CHARACTERS(X) DM_STUBS_LEGENDS(X) \
+	DM_STUBS_FAITHS(X) DM_STUBS_OMENS(X) DM_STUBS_KEEPERS(X) DM_STUBS_RENEWAL(X)
 
 namespace dmt::stub {
 
@@ -152,7 +216,8 @@ inline constexpr StubFn kStubFns[] = {
 inline constexpr int kStubFnCount = int(sizeof(kStubFns) / sizeof(kStubFns[0]));
 // The stub modules (one per SimTests/stubs/<Module>_stub.cpp), lower case.
 inline constexpr const char* kStubModules[] = { "names", "terrain", "climate", "hydro", "life", "path", "units", "civ",
-	"economy", "society", "diplomacy", "powers", "disasters", "chronicle", "sim", "balance", "save" };
+	"economy", "society", "diplomacy", "powers", "disasters", "chronicle", "sim", "balance", "save",
+	"mythos", "cards", "doctrine", "characters", "legends", "faiths", "omens", "keepers", "renewal" };
 
 inline Hooks& hooks() { static Hooks h; return h; }
 inline bool& recording() { static bool on = false; return on; }

@@ -1,0 +1,75 @@
+2026-11-20, mythos-m5 (track M5 "society-v4", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- run.ps1 society: 54 passed, 0 failed (37 v3/v3.1 + 17 v4). run.ps1 diplomacy: 52 passed, 0 failed (43 + 9 v4).
+  run.ps1 link: 3 passed. run.ps1 all and the phase-0 hashes: see the RESULTS block at the end.
+- Acceptance "neutral Factors = identical yearly results (a recorded 300-year trace)":
+  test_society_v4_trace.cpp / test_diplomacy_v4_trace.cpp fold the belief / relations state of every year of a
+  300-year synthetic history into one chain. The chains were RECORDED from the pre-M5 Society.cpp / Diplomacy.cpp
+  (society 23000e9330d597fc, diplomacy 70d34757a17ae42a, stubbed keys) and still match, at phase 0 and at phase 1
+  with neutral Factors records. In run.ps1 all the test compares phase 0 with phase 1 (no constant there).
+- Every existing society and diplomacy test passes unchanged (no existing test file edited).
+
+Files (only M5's): Sim/Society.cpp, Sim/Diplomacy.cpp, SimTests/test_society_v4.cpp, test_society_v4_trace.cpp,
+test_diplomacy_v4.cpp, test_diplomacy_v4_trace.cpp. No header changed.
+
+Built
+- Mythos is read only at MythosTune::phase >= 1 (at phase 0 Society / Diplomacy do not even call it: the v3.1 call
+  graph, cost and bits are kept). Multipliers of 1 are exact, offsets are added only when non-zero, non-finite
+  records count as neutral, and nothing new draws on w.rng (forks only).
+- Factors reads. Society: devotionBase (baseline), loveTarget (love drifts toward it), prayerChance x expect[kind]
+  (above 1 the devotion gate is prayDevotion / p, below 1 a roll forked "myth:society:pray:<sid>:<year>", 0 = no
+  prayer), unansweredPenalty, answeredGain (an answered prayer's faith and its progress-year), aweS (the culture's
+  weight in S), schism (estrangement years needed / schism, 0 = no secession); archetypeParams.aweIncome multiplies
+  the income. Diplomacy: aggression (added to the trait), warV (the aggressor's, added to the -0.5 gate),
+  warStrength (the aggressor's, x the 0.6 gate), relDrift (each side's, added for a pair in contact), battle
+  (attacker), defence (defender), harmTaken (defender culture x townFactors: capture needs strength / harmTaken),
+  plagueHop (the RECEIVING culture's), tradeEvery (the town's culture).
+- witnessScale (3.2) in witness: faith (also the answered-prayer faith), jaded, long memory, favour sums; natural
+  events are never scaled; god.mercy / wrath and the brush love scale use the unscaled act.
+- New traits (3.5): compassion / ambition / courage rolled at phase >= 1 from the fork "myth:society:traits:<id>"
+  (0.5 at phase 0: extensionsDefault holds), daughters drift. shapeTraits sets the five shaped traits (clamped 0..1,
+  refuses a bad / dead culture or a NaN) and records them (vars "society_shape_<trait>"); later ROOT peoples inherit
+  the shaping +- traitDrift.
+- The fear rule by aspect (3.3): a Threat people gets the v3 fear term whatever its love, and courage softens fear's
+  bonus x (1 - 0.5 courage) (3.5); both only where mythos acts on the culture: phase >= 1 and (emergent, or its
+  Factors are not neutral).
+- Victory and Sun prayers (3.10). Victory: a capital at war with exhaustion < victoryExhaustion; it lasts while the
+  war does; answered (in witness, wherever the act falls) by any non-natural harm of the god on a people it is at war
+  with. Sun: territory wet > sunWet for sunYears years (vars "society_wet_<sid>"), a storm over it, or a flooded
+  territory (mean wet >= 0.95); it lasts while wet > sunWet, storm or flood; answered by Raise Land on a flooded or
+  sodden town, or through answerPrayer.
+- Messengers (3.8): visits raise devotion by prophetDevotion x (0.5 + credibility) (unnamed prophet = x 1); a Child
+  lives CharactersTune::childYears, a Shepherd travels every shepherdTravel years.
+- Owner APIs: nudge (clamped, NaN ignored), answerPrayer(sid, scale) (the answered effects at scale <= 1: devotion,
+  love, memory, blessed x scale, answered count, prayer:answered, progress-year x scale), remember (grace / wrath into
+  the long memory and favour sums, heard; the Ark rule kept). secede stays neutral (M5b).
+
+Deviations and decisions, LOUDLY
+1. Victory and Sun start only with phase >= 1 AND MythosTune::emergent: they move a passive world (unanswered
+   penalties, the prayer slot, the memory's prayer counts), which SPEC-MYTHOS 5.1 rule 2 forbids with emergent off.
+   So with emergent off no CompetingPrayers pair can form (M2 / B1: this is a "prayers" family for the balance
+   tables). sunYears <= 0 or victoryExhaustion <= 0 switch either kind off on its own.
+2. The Threat fear rule and the courage term are gated the same way (phase >= 1 and emergent or non-neutral Factors),
+   because mythos::aspect carries no "effects apply" flag.
+3. Constants without a TUNE field (headers frozen): courage's 0.5 on the fear bonus, the flood wetness 0.95, and
+   answerPrayer's faith 0.1 are constexpr in Society.cpp.
+4. "The god not raining there for 10 years after the card" (Sun) is not tracked by Society: the CompetingPrayers
+   handler (M2) should call society::answerPrayer when it decides the Sun side is answered.
+5. answerPrayer (planned for M5c) and remember (M5b) are implemented now (small, and the v1 competing-prayer middle
+   way needs answerPrayer). The ShapePeople budget rule (two High at most, each High with a Low) is the card
+   handler's (M1): shapeTraits takes values and only clamps.
+6. Archetype aweIncome is applied by Society only at phase >= 1; M1 must not fold it into Factors::aweS too.
+   harmTaken in battles is applied to capture strength only (not to the 15 % loss), so Civ may own losses.
+7. The shared build dirs (SimTests/build/all, Tools/simrun/build) are used by several workflows at once; runs were
+   retried on "Permission denied" / LNK1104 collisions.
+
+RESULTS
+- run.ps1 all: 937 passed, 7 failed. All 7 failures are other tracks' in-progress v4 tests (civ v4 harmTaken, climate
+  v4 co2Uptake, economy v4 K / growth / farm, mythos factors decrees / rites); none is a society or diplomacy test.
+  The two M5 traces in all mode: phase 0 = phase 1 neutral (society 8ed8283a313f0286, diplomacy beddef179f87d57e).
+- Phase-0 guardrail: simrun --seeds 1-8 --policy passive,kind,cruel,chaotic --hash, built privately with
+  --stub Renewal (a separate build dir, because other workflows were using Tools/simrun/build; Renewal is neutral at
+  phase 0): 32 of 32 match Tools/simrun/phase0-hashes.txt, with every other module real as of this run.
+- Note for M6 / the lead: civ::damage already applies harmTaken (test_civ_v4), so Diplomacy applies harmTaken only to
+  the capture strength, never to the 15 % war loss: no double count.

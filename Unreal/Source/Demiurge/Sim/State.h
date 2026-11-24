@@ -58,7 +58,10 @@ namespace dm {
 	X(hab,    float,   F32, 0.0,   None, 0.0, 0.0)          \
 	X(slope,  float,   F32, 0.0,   None, 0.0, 0.0)          \
 	X(coast,  uint8_t, U8,  255.0, None, 0.0, 0.0)          \
-	X(fresh,  uint8_t, U8,  255.0, None, 0.0, 0.0)
+	X(fresh,  uint8_t, U8,  255.0, None, 0.0, 0.0)          \
+	X(wild,   uint8_t, U8,  0.0,   Raw,  0.0, 0.0)
+// (v4 mythos, M0) wild: decades of unbroken forest cover, 0..255 (Life writes it, SPEC-MYTHOS 3.22; old growth
+// at >= LifeTune::wildAncient; 255 also marks a sacred grove). Added after save version 1: fieldSince() = 2.
 
 enum class FieldType : uint8_t { F32, U8, I16, I32 };
 // None = derived (recomputed after loading, not saved); Q8 / Q16 = linear quantization of
@@ -97,7 +100,10 @@ struct Stats {
 	int wars = 0, miracles = 0;
 };
 
-struct Settings { double calamity = 1; };  // natural-disaster frequency multiplier (0 = off)
+struct Settings {
+	double calamity = 1;                    // natural-disaster frequency multiplier (0 = off)
+	Archetype archetype = Archetype::Balanced;   // (v4 mythos, M0) the kind of world (SPEC-MYTHOS 3.1); set at setup
+};
 
 // world.vars: persisted module-owned scalars (SPEC-SIM 1.1 lists the owner of each).
 struct Vars {
@@ -173,6 +179,7 @@ struct World {
 	Settings settings;
 	Vars vars;
 	std::optional<Ending> ending;
+	MythosState mythos;                     // (v4 mythos, M0) SPEC-MYTHOS 1.2 (MythosTypes.h); writers per its table
 	Dirty dirty;
 	Need need;
 	WorldCache cache;                       // transient
@@ -207,7 +214,9 @@ namespace state {
 
 inline constexpr double kElevMin = -12, kElevMax = 20;   // hard clamp for elev (= the q16 range)
 inline constexpr char kFormat[4] = { 'D', 'M', 'W', 'D' };
-inline constexpr uint32_t kVersion = 1;
+// (v4 mythos, M0) version 2 = the version-1 payload followed by tagged extension blocks (State.cpp); a
+// version-1 blob still loads (wild 0, the BASE fields at their defaults, an empty MythosState).
+inline constexpr uint32_t kVersion = 2;
 
 // The per-cell field table (FOUNDATION 5.1) and generic access to it.
 extern const CellField kCellFields[];
@@ -240,7 +249,11 @@ inline double surfaceR(const World& w, int c) {
 // Settlement::cells, tune / scratch structs, bus subscribers.
 // Returns false (and leaves `out` empty, `why` set) for a world that could not be loaded back:
 // a non-finite scalar or a cell array of the wrong length.
-bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why = nullptr);
+// (v4 mythos, M0) version: kVersion (the default) or 1, the LEGACY layout, byte for byte what the version-1
+// build wrote: the extensions (wild, the BASE and MYTH blocks) are LEFT OUT, so version 1 is lossy unless
+// extensionsDefault(w). sim::fingerprint uses it to keep the pre-mythos hashes (the phase-0 guardrail).
+// Any other version is refused.
+bool serialize(const World& w, std::vector<uint8_t>& out, std::string* why = nullptr, uint32_t version = kVersion);
 // The inverse. nullptr ("bad save", with `why` set) on malformed, truncated, trailing or
 // wrong-version input; never a half-loaded world. Derived fields come back at their defaults,
 // every dirty / need flag true. Round trip: persisted cells within their quantization step,
@@ -251,6 +264,14 @@ inline std::unique_ptr<World> deserialize(const std::vector<uint8_t>& bytes, std
 }
 // Bytes serialize(w) produces (0 if it would refuse).
 size_t sizeOf(const World& w);
+
+// (v4 mythos, M0) The save version that introduced cell field fieldIdx: 1 for the original table, 2 for wild
+// (0 for a bad index).
+uint32_t fieldSince(int fieldIdx);
+// (v4 mythos, M0) True when everything a version-2 save adds is at its default: every wild cell 0, every
+// culture's compassion / ambition / courage 0.5 and prophet figure -1, settings.archetype Balanced, ending
+// legacy None, and w.mythos equal to a default MythosState. Then serialize(w, out, why, 1) loses nothing.
+bool extensionsDefault(const World& w);
 
 // Quantization used for Q8 / Q16 fields: code = round((v - min) / (max - min) * top), clamped to
 // 0..top; NaN is stored as the default's code. decode(code) = min + (max - min) * code / top.

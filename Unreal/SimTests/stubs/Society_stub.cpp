@@ -24,8 +24,9 @@ Regard regard(const World& w, int cultureId) {
 	DM_STUB(society_regard, w, cultureId);
 	return Regard{};
 }
-Prophet* raiseProphet(World& w, int sid) {
-	DM_STUB(society_raiseProphet, w, sid);
+Prophet* raiseProphet(World& w, int sid, const RaiseOpts& opts) {
+	DM_STUB(society_raiseProphet, w, sid, opts);
+	(void)opts;
 	return nullptr;
 }
 bool setEdict(World& w, int cultureId, Edict edict) {
@@ -42,6 +43,25 @@ Memory memory(const World& w, int cultureId) {
 }
 bool raiseWonder(World& w, int sid) {
 	DM_STUB(society_raiseWonder, w, sid);
+	return false;
+}
+// (v4 mythos, M0) neutral: nothing changes
+bool shapeTraits(World& w, int cultureId, const Traits& t) {
+	DM_STUB(society_shapeTraits, w, cultureId, t);
+	return false;
+}
+void nudge(World& w, int sid, double dDevotion, double dLove) {
+	DM_STUB(society_nudge, w, sid, dDevotion, dLove);
+}
+void remember(World& w, int cultureId, double grace, double wrath) {
+	DM_STUB(society_remember, w, cultureId, grace, wrath);
+}
+Culture* secede(World& w, const std::vector<int>& towns, BirthReason reason, int rivalId) {
+	DM_STUB(society_secede, w, towns, reason, rivalId);
+	return nullptr;
+}
+bool answerPrayer(World& w, int sid, double scale) {
+	DM_STUB(society_answerPrayer, w, sid, scale);
 	return false;
 }
 

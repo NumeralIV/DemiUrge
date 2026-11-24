@@ -104,5 +104,14 @@ bool consecrate(World& w, int sid) {
 	DM_STUB(civ_consecrate, w, sid);
 	return false;
 }
+// (v4 mythos, M0) neutral
+int exodus(World& w, int sid, double share) {
+	DM_STUB(civ_exodus, w, sid, share);
+	return -1;
+}
+bool demoteTemple(World& w, int sid) {
+	DM_STUB(civ_demoteTemple, w, sid);
+	return false;
+}
 
 } // namespace dm::civ

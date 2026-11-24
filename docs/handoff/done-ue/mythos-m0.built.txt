@@ -1,0 +1,34 @@
+2026-11-20, mythos-m0 (track M0 "mythos-contracts", SPEC-MYTHOS 9 phase 0), built.
+
+Result
+- run.ps1 all: 781 passed, 0 failed. link 3/0, state 24/0, core 45/0, foundation 15/0, powers 31/0, society 37/0,
+  civ 34/0, sim 45/0, save 41/0, chronicle 54/0; each mythos key (mythos cards doctrine characters legends faiths
+  omens keepers renewal) builds alone against the stubs (0 tests: the owning tracks write them).
+- Phase-0 guardrail: Tools/simrun/phase0-guardrail.ps1 -> "phase0-guardrail 32 of 32 match" (simrun --hash, 8 seeds x
+  passive, kind, cruel, chaotic, 4,000 years, equal to the pre-mythos simrun.exe; hashes in phase0-hashes.txt).
+- Unreal/build.ps1: Succeeded, 0 errors / warnings (51.5 s). (A first attempt failed on Game/Core/DmSimSubsystem.cpp
+  including Game/Core/DmFrameMonitor.h while another workflow was adding that file; nothing of M0's.)
+
+Built (contracts; documented in docs/FOUNDATION-CPP.md part 3, sections 19-23; headers FROZEN)
+- Sim/MythosTypes.h: every persisted struct and enum of SPEC-MYTHOS 1.2 (+ the small field enums, WordOpts,
+  CardOption, TownMyth, MythAct; a NumBag data on every record); toStr / fromStr for all in Schema.cpp.
+- Headers with every v1-v3 declaration and TUNE block: Mythos.h, Cards.h (kCardKinds table), Doctrine.h, Characters.h,
+  Legends.h, Faiths.h, Omens.h, Keepers.h, Renewal.h. Neutral Sim/<Module>.cpp x 9, SimTests/stubs/<Module>_stub.cpp x 9,
+  StubHooks.h rows (254 functions), test_link calls them all, run.ps1 keys.
+- World::mythos, Settings::archetype, cell field wild (u8 Raw), Traits compassion / ambition / courage, Prophet::figure,
+  Ending::legacy, PrayerKind Victory / Sun, Cause and DisasterType Deluge / Burning, 22 events + ending.legacy.
+- Save version 2: version-1 payload + tagged blocks (BASE, MYTH with MCOR CARD DOCT CHAR LEGN FAIT OMEN KEEP), END_;
+  version-1 blobs load; MYTH id validation; serialize(w, out, why, 1) = the pre-mythos bytes exactly.
+- Powers.h: Group::Word, rows speak bless reveal test renew (locked below their MythosTune::phase), Reason::Withdrawn,
+  UseOpts::word, powers::pay. Society.h: RaiseOpts, shapeTraits, nudge, remember, secede, answerPrayer. Civ.h: exodus,
+  demoteTemple. LifeTune old-growth fields, SocietyTune Victory / Sun fields.
+- Tests: test_state_mythos.cpp (v1 fixture fixture_state_v1.h from the pre-mythos build, populated round trip, 17
+  refusals, unknown blocks, enum / stance names, checkFinite), test_sim_phase0.cpp (a real 400-year phase-0 history).
+
+Deviations (all needed for "phase 0 bit for bit" or to link)
+- Edited outside the M0 file list: Powers.cpp (the mythos-phase lock in phaseLock; neutral pay), Society.cpp
+  (raiseProphet's opts; neutral new APIs), Civ.cpp (neutral exodus / demoteTemple), Sim.cpp (fingerprint hashes the
+  pre-mythos view while every extension is default), TestWorld.cpp (checkFinite covers mythos); re-baselined
+  test_state, test_save, test_core_events, test_link, test_powers, test_foundation_adv, test_integration_adv.
+- For the client tracks: renew has key '\0' (spec: no key), so the input scenario that counts one hotkey per power will
+  count 21 of 22 (CM2); the Word rows exist in kPowers but the HUD lists only its five groups.

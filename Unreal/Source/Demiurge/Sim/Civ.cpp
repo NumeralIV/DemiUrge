@@ -51,7 +51,20 @@
 #include <vector>
 
 #include "Hydro.h"
+#include "Mythos.h"
 #include "Names.h"
+#include "Units.h"
+
+// (v4 mythos, track M6 economy-world-v4):
+//   - damage: the share killed is multiplied by the culture's Factors::harmTaken and the town's
+//     TownFactors::harmTaken (non-finite or negative = 1; the share stays <= 1; neutral = v3.1 exactly). This is THE place where
+//     war and disaster harm meets harmTaken: callers (Disasters, Diplomacy, Powers, Renewal) pass the raw
+//     share and must not scale it again. (Famine's share is scaled in Economy.)
+//   - exodus(sid, share): a settler party of share x pop (clamped so that at least minPeople stay; at least
+//     one person) leaves for the best settleable site (canSettle ok, siteScore, ties lower cell) within
+//     exodusHops = 12 hops; if none, or Units finds no route, it joins the nearest other live settlement of
+//     its culture; Land, Coastal from Bronze on a coast, Open from Sail with a port (as the settlers of
+//     Economy's expansion). People leave only once units::spawn succeeded; returns the unit id or -1.
 
 namespace dm::civ {
 namespace {
@@ -127,6 +140,9 @@ Settlement* liveSett(World& w, int id) {
 	Settlement& s = w.settlements[size_t(id)];
 	return s.dead ? nullptr : &s;
 }
+
+// (v4 mythos) a harmTaken factor: a finite non-negative number, else neutral 1
+double harmOf(double x) { return isFinite(x) && x >= 0 ? x : 1.0; }
 
 bool ownedByLive(const World& w, int c) {
 	const int o = w.owner[size_t(c)];
@@ -748,6 +764,14 @@ double damage(World& w, int sid, double frac, Cause cause) {
 	Settlement* s = liveSett(w, sid);
 	if (!s || !(frac > 0)) return 0.0;
 	if (frac > 1) frac = 1;
+	{
+		// (v4 mythos, SPEC-MYTHOS 1.4 / 3.16) what the town takes from war and disaster: the culture's harmTaken
+		// x the town's (Endurance, the Remnant, preparation); neutral 1 = v3.1 exactly
+		const double h = harmOf(mythos::factors(w, s->culture).harmTaken) * harmOf(mythos::townFactors(w, sid).harmTaken);
+		if (h != 1) frac *= h;
+		if (!(frac > 0)) return 0.0;
+		if (frac > 1) frac = 1;
+	}
 	const double before = (isFinite(s->pop) && s->pop > 0) ? s->pop : 0.0;
 	const double killed = before * frac;
 	if (before - killed < w.tune<CivTune>().minPeople) {
@@ -779,6 +803,74 @@ bool cure(World& w, int sid, double immuneYears) {
 	s->immune = (isFinite(immuneYears) && immuneYears > 0) ? immuneYears : 0.0;
 	if (was) w.bus.emit(EvSettlementPlague{ sid, false });
 	return true;
+}
+
+// ---- (v4 mythos, M0) neutral bodies of the new [civ] APIs (Civ.h); the economy-world-v4 tracks replace them.
+int exodus(World& w, int sid, double share) {
+	constexpr int kExodusHops = 12;
+	if (!usable(w)) return -1;
+	const Settlement* src = liveSett(w, sid);
+	if (!src || !w.valid(src->cell) || !(share > 0)) return -1;
+	if (share > 1) share = 1;
+	const Culture* cu = state::culture(w, src->culture);
+	if (!cu || cu->dead) return -1;
+	const double pop = (isFinite(src->pop) && src->pop > 0) ? src->pop : 0.0;
+	const double size = std::min(share * pop, pop - w.tune<CivTune>().minPeople);
+	if (!(size >= 1)) return -1;
+	const int culture = src->culture, from = src->cell;
+	const int age = cu->age < 0 ? 0 : cu->age;
+	const bool coastal = int(w.coast[size_t(from)]) <= src->radius + 1;
+	NavalMode naval = NavalMode::Land;
+	if (age >= Age::SAIL && src->has(Building::PORT)) naval = NavalMode::Open;
+	else if (age >= Age::BRONZE && coastal) naval = NavalMode::Coastal;
+	// the best free site nearby (canSettle: not sea or lake, not barren, not crowded)
+	const Geo& g = *w.geo;
+	std::vector<int32_t> ringCells;
+	g.ring(from, kExodusHops, ringCells);
+	int best = -1;
+	double bestScore = -std::numeric_limits<double>::infinity();
+	for (const int32_t c : ringCells) {
+		if (!canSettle(w, c).ok) continue;
+		const double sc = siteScore(w, c);
+		if (!isFinite(sc)) continue;
+		if (sc > bestScore || (sc == bestScore && c < best)) { bestScore = sc; best = c; }
+	}
+	units::SpawnOpts o;
+	o.type = UnitType::Settler;
+	o.culture = culture;
+	o.from = sid;
+	o.size = size;
+	o.naval = naval;
+	o.data["civ_exodus"] = 1;                      // (an exodus column, for the chronicle and the client)
+	Unit* u = nullptr;
+	if (best >= 0) {
+		o.to = -1;
+		o.dest = best;
+		u = units::spawn(w, o);
+	}
+	if (!u) {
+		// no free site or no route: they go to the nearest other town of their people
+		int join = -1;
+		double joinAng = std::numeric_limits<double>::infinity();
+		for (const Settlement& t : w.settlements) {
+			if (t.dead || t.id == sid || t.culture != culture || !w.valid(t.cell)) continue;
+			const double a = g.angle(from, t.cell);
+			if (a < joinAng) { joinAng = a; join = t.id; }
+		}
+		if (join < 0) return -1;
+		o.to = join;
+		o.dest = w.settlements[size_t(join)].cell;
+		u = units::spawn(w, o);
+	}
+	if (!u) return -1;
+	const int uid = u->id;
+	Settlement& s2 = w.settlements[size_t(sid)];   // re-fetch: never hold a reference across spawn
+	s2.pop = std::max(0.0, s2.pop - size);
+	return uid;
+}
+bool demoteTemple(World& w, int sid) {
+	(void)w; (void)sid;
+	return false;
 }
 
 } // namespace dm::civ

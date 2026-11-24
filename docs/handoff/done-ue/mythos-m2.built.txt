@@ -1,0 +1,91 @@
+2026-11-20, mythos-m2 (track M2 "cards", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- run.ps1 cards: 27 passed, 0 failed (Cards real, every other module stubbed).
+- run.ps1 all: 937 passed, 7 failed. None of the 7 is a cards test. They belong to tracks still being written
+  beside this one: mythos factors x2 (test_mythos_factors: decree effects scaled by the kept value differ from the
+  expected exact values), economy v4 x3, civ v4 x1, climate v4 x1. Every test_cards test passes in all.
+- Phase-0 guardrail: Tools/simrun/phase0-guardrail.ps1 prints "phase0-guardrail 32 of 32 match". It rebuilt simrun
+  with the real Cards.cpp and the other tracks' current files.
+- No header changed. Files written: Unreal/Source/Demiurge/Sim/Cards.cpp (replaces the neutral file),
+  Unreal/SimTests/test_cards.cpp. SimTests/stubs/Cards_stub.cpp is unchanged and still matches Cards.h.
+
+Built (SPEC-MYTHOS 2.2, 2.3, 3.10)
+- The director, cards::yearly once a year:
+  1. refill the budget: one token per targetGap years, at most burst;
+  2. close: withdraw the cards of dead cultures; lapse due cards (every card that has a window lapses at once while
+     the god has withdrawn); withdraw competing-prayer cards whose prayers ended;
+  3. pair this year's competing prayers;
+  4. open at most one budgeted proposal. It opens only when every gate holds: firstYear reached, a token left,
+     minGap since the last opening, fewer than maxOpen budgeted cards open, and the culture's cultureGap passed
+     (unless severity >= 0.8). Its priority must reach minPriority, or maxGap must have passed (the best one then
+     opens even if weak). Priority = severity x weight x novelty x kind-gap factor x ageFit; a kind that is not live
+     at this phase scores 0. Ties go by kind order, then culture id, then ref[0], then proposal order;
+  5. keep every open card and the last 48 closed ones (the save reads at most 60).
+  Counters persist in mythos.num "cards_*": tokens, tokensYear, lastOpen, kind_<kind>, culture_<id>, opened,
+  answered, lapsed, withdrawn, digest*.
+- propose: refuses a kind that is not live or not budgeted, and malformed input (NaN, bad culture, settlement,
+  cell or figure). Identical (kind, culture, ref[0]) proposals merge and the stronger one stands. A matter already
+  held by an open card does not open again.
+- open (not budgeted): uses no token and no gap and never counts toward maxOpen (data["cards_free"] = 1). Opening
+  the same matter again returns the same card. While the god has withdrawn only SilenceReport opens.
+- answer: checks the choice range and the kind's phase, and validates the choice against the source's options
+  (ok, or only short of Awe). Then it checks Awe, dispatches to the source through a static const
+  function-pointer table indexed by CardSource, and pays through powers::pay. It marks the card answered, adds
+  god.deeds["card:<kind>"] and emits card { answered, choice }.
+- lapse: dispatches <source>::lapse while the card is still open, then marks it lapsed with its default and emits
+  card { lapsed }.
+- withdraw, lookIntoHeart (Judgement and Trial cards only; pays lookCost once; sets data["heartSeen"] = 1),
+  options, find, openCards, priority.
+- Competing prayers (Cards is the source). Four pairs: Rain/Sun within competeAng (the nearest sun town),
+  Victory/Victory (two capitals at war), Victory/Peace (aggressor against defender), Heal/Victory (a sick city
+  against the capital praying for victory over it). Card ref = { a, b, pair, -1 }; data holds both prayers' kind
+  and start year. The window is the prayers' own remaining years, at most 15. Severity = pair base (0.30 / 0.50 /
+  0.45 / 0.45) + 0.5 x the mean stake (town share of its people, x 1.5 for a capital).
+  - Answering a side: society::answerPrayer for the winner; the loser gets the extra (competePenalty - 1) x
+    prayerPenalty through society::nudge.
+  - Middle way (Rain/Sun only): both answered at competeMiddleEffect. Victory/Victory's third answer is the Omen
+    of Peace (both prayers fail).
+  - Neither: both get half the penalty back now, so they lapse at half.
+  - The act an answer arms (rain, lightning on the enemy's nearest town, heal, the Omen) is stored in
+    data arm / armTown / armCell / armAng / armCost for the client.
+  - The lapse (neither) acts only with MythosTune::emergent on.
+
+Acceptance (SPEC-MYTHOS 9, M2)
+- Synthetic proposal streams meet the cadence rules of 2.2 exactly:
+  - A strong stream opens at 90, 160, 290 and then every 200 years: 19 cards in 3,600 years, median gap 200, no
+    gap under 70, all gaps <= 420.
+  - A weak stream opens only at maxGap: 510, 930, 1350, 1770.
+  - The culture gap, maxOpen, merging, the one-year life of a proposal, ties, novelty, kind gap, age bands and
+    phases each have their own test.
+- Open cards survive save / load: a world saved with an open card continues for about 1,800 more years identically
+  to the unsaved one (cards, counters and nextId equal), and saves again.
+- Two runs give identical card lists over 4,500 years (hash equal, card by card).
+- Guardrails:
+  - Phase 0: every function is a no-op and the world hash is unchanged.
+  - Phase 1 with no answers: the director never draws w.rng, spends no Awe and changes no settlement. Its lapses
+    act only through the sources, and its own lapse is gated by emergent.
+
+Decisions for the lead (none changes a header)
+1. Order of answer: the contract text (FOUNDATION-CPP 19) says "pays, then calls the source". Cards checks Awe first
+   (short: powers::pay emits awe:short, the card stays open), calls the source, and pays only when the source
+   accepted. This way a refused answer never costs Awe. A source that spends Awe itself should give that answer
+   cost 0.
+2. Proposals are stamped with w.year, and only that year's cards::yearly uses them. A proposal made between two
+   yearly groups (for example from an answer handler) is dropped, so a save can never lose a pending proposal.
+3. Lapse gating: Cards dispatches every lapse. Each source gates its own lapse effects that move a passive world
+   behind MythosTune::emergent (SPEC-MYTHOS 5.1 rule 2), as Cards does for competing prayers. M1, M3, M4 and the v2
+   sources should check this.
+4. Header gap (reported, not changed): Card::choice / lapse are int8_t, but a packed ShapePeople choice is 0..243.
+   Cards stores 127 in the field and the full value in data["cards_choice"]. A default lapse above 127 is stored as
+   -1 (the source's rule) with the value in data["cards_lapse"]. Events carry full values.
+5. A budgeted card left without a window by both the tune and the proposal (Warning, whose tune value is 0) lapses
+   after 60 years. Omens should pass Proposal::deadline (until 10 years before the event).
+6. Competing prayers: every answer costs 0 Awe at the card; the armed act is paid when it is cast. Envy (Society's
+   favour sums) and the Mystery +0.2 of "neither" are not Cards' to write. Society and Mythos (reading
+   card { answered, choice }) own them. The pairs only appear once M5 starts Victory and Sun prayers.
+7. While withdrawn, each year's live proposals are counted into mythos.num "cards_digest" and
+   "cards_digest_<kind>", reset at each new withdrawal, for M1c's SilenceReport.
+8. The director withdraws the open cards of a dead culture. Before each pass it clears card figure references that
+   no longer name a figure, so the save always validates.
+9. Sim.cpp does not call cards::yearly yet. M9 wires the schedule line (mythos::yearly -> cards::yearly).

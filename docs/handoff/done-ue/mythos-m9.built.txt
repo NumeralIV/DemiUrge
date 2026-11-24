@@ -1,0 +1,130 @@
+2026-11-23, mythos-m9 (track M9 "mythos-tools", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- Acceptance (SPEC-MYTHOS 9, M9), Tools/simrun/mythos-check.ps1 -> "mythos-check PASS":
+  - 8 seeds x all 15 v1 policies x 4,500 years, run 3 times from one frozen binary: 120 of 120 hashes stable 3x,
+    0 non-finite values (firstNonFinite now covers the whole MythosState too).
+  - --saveload card (save / load right after the first budgeted card opens) on 8 seeds x responder-myth, lawgiver,
+    sign-only, twice: 24 saves at a card opening, 24 of 24 replays identical, every re-save byte-identical.
+- Guardrail 1: phase0-guardrail.ps1 -> "phase0-guardrail 32 of 32 match" (every module real, current tree).
+- Guardrail 2: new Tools/simrun/phase1-guardrail.ps1 -> "phase1-guardrail 32 of 32 match". 8 seeds x passive, kind,
+  cruel, chaotic, 4,000 years, at --mythos-phase 0 and at --mythos-phase 1 --emergent off: the "core" hash is equal
+  for every pair. The core hash is the v3.1 view of the world. It is the version-1 state without the mythos extensions
+  and without the narration (the chronicle, its "chronicle_" counters, god.epithet, each culture's epithet, the entry
+  ids). Narration is left out because at phase 1 Chronicle (M8) tells the mythos even for a god who ignores it: cards
+  open and lapse, rulers rise, and the epithet families follow aspect. That changed one culture's epithet in year 382
+  of seed 1 cruel, so a hash that includes narration cannot match. The sim itself matches bit for bit.
+- run.ps1 all: 989 passed, 0 failed (a private copy of run.ps1 with build dir build\<key>-m9, because other workflows
+  were building at the same time). sim 45/0, mythos 40/0 (M1's 31 + this track's 9, which return at once with stubs),
+  link 3/0. simrun.ps1 --tests "mythos integration": 9 passed, 0 failed with every module real.
+- Cost: mythos::yearly + cards::yearly on a real L6 world at year 1,320 (41 towns, 6 cultures, 160 figures, a lawgiver):
+  mean 0.079 ms, worst 0.117 ms. Targets: 0.35 ms mean, 3 ms any. 8-seed mythos runs: mean tick 1.4-2.3 ms (thread CPU).
+- Unreal/build.ps1 not run: only the contracts, balance and verify tracks run it. Sim.cpp is plain C++20 and is
+  compiled by run.ps1 with the Unreal flags.
+
+Owned files (written or changed)
+- Unreal/Source/Demiurge/Sim/Sim.cpp
+  - The schedule lines of 1.5. sim::use: balance::apply -> mythos::attach -> chronicle::attach -> rederive ->
+    mythos::rebuild.
+  - The yearly group: ... society::yearly -> mythos::yearly -> cards::yearly -> climate::yearly ...
+  - checkEnding fills ending.legacy from mythos::legacy before setPhase(Ended), and the ending event carries it.
+  - create copies settings.archetype into mythos.archetype (an out-of-range archetype becomes Balanced).
+  - Every mythos call is made only at MythosTune::phase >= 1, so phase 0 keeps the pre-mythos call sequence and
+    bits. use() calls attach again at phase 0 when the world was attached before, which drops the subscriptions.
+  - firstNonFinite also checks every MythosState number and data bag.
+- Unreal/Tools/simrun/Policies.h, Policies.cpp: the 15 v1 scripted gods of 5.3, plus MythosPlay, CardMode and the
+  ShapePeople presets.
+  - The policies act only through cards::answer / cards::options, powers::use("speak", { word }) after
+    doctrine::canSpeak, and powers::use("prophet", { choose }) for the Messenger card.
+  - Card and word choices draw from their own Rng (cardRng_). The base players keep their rng_ draws.
+  - chaotic never picks a Word power, so it stays the v3.1 player at every phase. The existing policies answer no
+    card unless --cards, --shape or --presence is given.
+- Unreal/Tools/simrun/simrun.cpp: the 5.2 flags (each new one is described in --help):
+  - --mythos-phase, --emergent, --archetype a[,b|all], --shape s[,t], --presence, --cards lapse|first|random|policy
+  - --mythos (the full report), --saveload card, --core-every Y (finds the year two runs diverge)
+  - --policy myth / everything. "all" stays the pre-mythos set.
+  The mythos report per run covers:
+  - cadence: openings per 3,600 years and per real minute at 1x and auto-paced v2; gaps (median, p90, max, min);
+    the most cards open at once; 3-minute windows; ages without a card
+  - the will at years 500..4,500 and the leading people's aspect
+  - words by clarity and outcome, decrees, customs, breaches, judgements, figures, cards by kind and age
+  - the legacy and its scores, the final aspect, famine and plague deaths, the mythos share of notable entries
+  The summary gains a mythos table and "mythos targets" (2.2, 3.1-3.13, 4), pass or fail per policy and variant.
+  The hash line gains "core %08x". The JSON output gains a mythos object.
+- Unreal/Tools/simrun/simrun.ps1: --build-tag <name> (a private build directory). --tests also builds
+  test_mythos_integration*.cpp.
+- Unreal/Tools/simrun/phase0-guardrail.ps1: -BuildTag. New: phase1-guardrail.ps1, mythos-check.ps1. Both build once
+  and run one copied binary, because another workflow rebuilding between repeats had made a first attempt compare
+  two different games.
+- Unreal/SimTests/test_mythos_integration.cpp, 9 tests. They compile Tools/simrun/Policies.cpp into the file, so they
+  drive the same players as simrun. They need the real modules; Chronicle may be stubbed. They check:
+  - phase 0: nothing is recorded and the legacy is None
+  - sim::use attaches Mythos exactly once, rebuilds the Faith records, and detaches again at phase 0
+  - the waking cards and budgeted cards open on a real world, which shows mythos::yearly runs before cards::yearly
+  - ending.legacy and the ending event
+  - guardrail 2 through Sim's own schedule (passive and kind, 500 years)
+  - every v1 god plays 700 years without NaN and its world saves and loads
+  - determinism with responder-myth and random-myth acting
+  - save / load at a card opening: the open cards, the counters and nextId survive, and two loads continue identically
+  - the cost line above (reported)
+
+Outside the file list (stated loudly)
+- Unreal/SimTests/test_sim_adv.cpp: added "mythos.archetype" to the allowed set of the test "Sim.cpp assigns only the
+  state the writers table gives it". SPEC-MYTHOS 1.7 makes Sim the writer of mythos.archetype at create. It was the
+  only failure of run.ps1 sim. No other test edited. No header changed.
+
+The v1 baseline for B1 (simrun --seeds 1-8 --years 4500 --policy passive,kind,cruel,prayers,myth --mythos-phase 1
+--summary: 152 runs, no non-finite value). With emergent off, many targets cannot pass yet. They are B1's to tune.
+- PASS:
+  - passive: Mystery or nothing 8/8; agency >= 0.6 at 2,000 8/8; <= 1 conflict card; never Terrified; never Unneeded
+  - responder-myth: >= 90 % of gaps <= 420 years; at most 2 open; Awe below 90 % in 100 % of years; mythos notable
+    entries 0.2-0.5 per real minute
+  - cruel: Terrified 6/8
+  - lawgiver: the Ark in its window 8/8
+  - valour: war share >= 1.3 x passive's 6/8, never above a third of the years
+  - parable-only: agency >= 0.5 8/8, 0 catastrophes 8/8, >= 1 sect 8/8
+  - sign-only: >= 1 catastrophe 4/8
+  - exact-only: <= 1 rival Way
+  - msg-kind and merciful: Beloved 8/8
+  - gentle: Compassionate 8/8
+  - unseen-kind: agency at 2,000 >= kind's + 0.2, 8/8
+- FAIL:
+  - Cadence:
+    - cards per 3,600 years: passive 5-10, responder 13-14 (target 15-28)
+    - every age of >= 200 years opens a card: Atomic and Space get none
+    - "no auto-paced opening within 1 minute of another" cannot pass while CardsTune::minGap = 70 years. That is
+      17.5 s at 2x and 35 s at 1x, so it is a spec conflict between 2.2 (minGap 70) and 5.4 (1 minute).
+  - kingmaker never chooses and passive opens 0 competing-prayer cards: M5 starts Victory and Sun prayers only with
+    emergent on.
+  - Aspect: lawgiver ends Mystery 8/8 (Ruler wanted); kind Parent 3/8; cruel Threat 2/8.
+  - exact-only agency is about 0.7 (want <= 0.25); prayers dependence 0.29-0.44 (want >= 0.55).
+  - judge-deeds and judge-hearts are identical (obedience 0.05, agency 0.88): the judgement doctrine does not yet
+    separate them. stern ends Forgotten 8/8.
+  - lawgiver: no conflict cards; Compassionate, not Obedient; war and famine against passive 4/8 and 3/8.
+  - The obedience floor of about 0.05 under Dream words, and decrees kept at only 0.1-0.3, are the largest levers.
+- Info:
+  - Queens proud in 36 % of 356 (target 15-35 %)
+  - 11 Criminals, 0 redeemed, 4 relapsed
+  - 18 Unbelieved, none vindicated (needs v2's warner)
+  - rival Ways need Faiths v2; sign-only has 21-35 rival readings per history
+  - only 3 of 5 legacies are some policy's most common (Wilderness and Unneeded need v2 / v3 policies)
+
+Notes and decisions for the lead
+1. simrun sets the mythos tuning after sim::create. The tuning is per world and never saved, and create's sim::use
+   saw phase 0. So simrun calls mythos::attach + mythos::rebuild itself, the two calls use() makes at phase >= 1,
+   with no rederive, so the bits stay the same. After a --saveload it sets the tuning before sim::use. The game
+   client should set MythosTune before sim::create's use(). Once B1 puts phase in Balance.cpp, balance::apply does
+   this.
+2. test_mythos_guard.cpp (M1) compares version-1 bytes that include the chronicle, and it calls mythos::yearly by hand
+   on top of Sim's schedule, so it now runs a second yearly pass. It passes in the current tree. A diagnosis run
+   showed its sim view is identical with or without the extra pass. Its narration-inclusive comparison will break
+   whenever M8's mythos lines tell a passive god's world. M1b should compare the narration-free view (as in
+   test_mythos_integration.cpp) and drop the manual yearly.
+3. Famine deaths in the targets are Mythos's own famine-and-plague count (Faith data m_fpDead). "People lost to
+   natural events" (3.1) is proxied by natural disaster events. No exact counters exist.
+4. Not built (later tracks): v2 / v3 policies and the reseed (M9b / M9c). The 3.13 rite comparison (kind with
+   Kindness against kind with Prayer) has no v1 policy in 5.3.
+5. Build output left behind: Tools/simrun/build-m9*, SimTests/build/*-m9 (safe to delete). The private copy of
+   SimTests/run.ps1 was removed.
+6. A 0-byte file "Sim.cpp" at the project root (dated 2026-11-20 12:07, from the interrupted first attempt) is not
+   part of the build and was left alone.

@@ -5,11 +5,13 @@
 #   e.g.  ... simrun.ps1 --seed 7 --years 4000 --policy passive
 #         ... simrun.ps1 --seeds 1-6 --years 4000 --policy passive --summary --jobs 6
 #         ... simrun.ps1 --build-only
-#         ... simrun.ps1 --tests [filters]   builds SimTests/test_sim*.cpp and test_integration*.cpp against EVERY real module (no
+#         ... simrun.ps1 --tests [filters]   builds SimTests/test_sim*.cpp, test_integration*.cpp and test_mythos_integration*.cpp against EVERY real module (no
 #             stubs; like `run.ps1 all` but private to this folder: build-tests/) and runs it
 #         ... simrun.ps1 --stub Chronicle,Save --seed 3     (link those modules' SimTests stubs instead of
 #             the real files, e.g. while one is mid-edit; separate build dir build-stub-<names>; simrun
 #             prints a warning line naming them)
+#         ... simrun.ps1 --build-tag m9 --seed 3   (v4 mythos, M9) a private build directory build-<tag>[-stub-..][-tests],
+#             so a run never collides with another workflow building Tools/simrun/build at the same time
 #   simrun --help lists every flag.
 #
 # Compiles EVERY real Sim/<Module>.cpp (no stubs), Sim/Core/*.cpp, Tools/MapImg.cpp and
@@ -31,16 +33,20 @@ $buildOnly = $false
 $testMode = $false
 $passArgs = @()
 $stubbed = @()
+$buildTag = ''
 for ($i = 0; $i -lt $args.Count; $i++) {
     $a = $args[$i]
     if ($a -eq '--build-only') { $buildOnly = $true }
     elseif ($a -eq '--tests') { $testMode = $true }
     elseif ($a -eq '--stub' -and $i + 1 -lt $args.Count) { $i++; $stubbed += @($args[$i] -split ',' | Where-Object { $_ -ne '' }) }
+    elseif ($a -eq '--build-tag' -and $i + 1 -lt $args.Count) { $i++; $buildTag = ($args[$i] -replace '[^A-Za-z0-9_-]', '') }
     else { $passArgs += $a }
 }
 $stubbed = @($stubbed | Sort-Object -Unique)
-$buildDir = Join-Path $here 'build'
-if ($stubbed.Count -gt 0) { $buildDir = Join-Path $here ('build-stub-' + (($stubbed | ForEach-Object { $_.ToLowerInvariant() }) -join '-')) }
+$buildName = 'build'
+if ($buildTag -ne '') { $buildName = 'build-' + $buildTag.ToLowerInvariant() }
+$buildDir = Join-Path $here $buildName
+if ($stubbed.Count -gt 0) { $buildDir = Join-Path $here ($buildName + '-stub-' + (($stubbed | ForEach-Object { $_.ToLowerInvariant() }) -join '-')) }
 if ($testMode) { $buildDir = $buildDir + '-tests' }
 New-Item -ItemType Directory -Force -Path $buildDir | Out-Null
 
@@ -66,6 +72,7 @@ if ($testMode) {
     $sources.Add((Join-Path $simTests 'TestWorld.cpp'))
     foreach ($f in (Get-ChildItem -LiteralPath $simTests -Filter 'test_sim*.cpp' -File)) { $sources.Add($f.FullName) }   # test_sim.cpp + test_sim_adv.cpp
     foreach ($f in (Get-ChildItem -LiteralPath $simTests -Filter 'test_integration*.cpp' -File)) { $sources.Add($f.FullName) }   # the integrator's cross-module tests
+    foreach ($f in (Get-ChildItem -LiteralPath $simTests -Filter 'test_mythos_integration*.cpp' -File)) { $sources.Add($f.FullName) }   # (v4 mythos, M9) the mythos integration tests
 } else {
     foreach ($f in (Get-ChildItem -LiteralPath $here -Filter '*.cpp' -File)) { $sources.Add($f.FullName) }
 }

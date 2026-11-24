@@ -40,6 +40,9 @@
 //   snapshots     time-lapse frames per SPEC-SIM 3.11; past maxFrames every second history frame is
 //                 dropped and the interval doubled.
 //   tale          read-only retelling built from the world's entities, stats and epochal entries.
+//   mythos        (v4, track M8 "chronicle-mythos", SPEC-MYTHOS 3.31) the v1 mythos entry types, the neutral words,
+//                 the aspect epithets and the tale's belief and legacy paragraphs: see "(v4 mythos, M8) the mythos
+//                 chronicle" below. Everything mythos is MythosTune::phase >= 1 only (phase 0: bit for bit as before).
 #include "Chronicle.h"
 
 #include <algorithm>
@@ -53,6 +56,8 @@
 #include <vector>
 
 #include "Civ.h"
+#include "Doctrine.h"
+#include "Mythos.h"
 #include "Names.h"
 #include "Society.h"
 
@@ -125,6 +130,15 @@ struct ChronicleScratch {
 	int64_t peaceAnsTick = -1;
 	double peaceAnsYear = -1e9;
 	int peaceAnsCulture = -1;
+	// (v4 mythos, M8) the mythos entries written (or folded) since the last card event: a card whose source told its
+	// answer this tick (a judgement, a decree, a chosen messenger, a presence) gets no second line (3.31: never more
+	// than one card-resolution entry per card)
+	struct MythMark { int64_t tick = -1; double year = 0; int culture = -1; string type; int card = -1; };
+	std::vector<MythMark> mythMarks;
+	// the word told this tick (its decree event that follows is part of it)
+	int64_t wordTick = -1;
+	double wordYear = -1e9;
+	int wordCulture = -1, wordArea = -1;
 };
 constexpr size_t kRecentTemplates = 10;
 
@@ -208,6 +222,87 @@ string yearsInWords(double years) {
 string worldName(const World& w) { return w.name.empty() ? string("the world") : w.name; }
 
 bool startsWith(string_view s, string_view p) { return s.size() >= p.size() && s.substr(0, p.size()) == p; }
+
+// ====================================================================== (v4 mythos, M8) basics
+// SPEC-MYTHOS 3.31. Everything mythos does in this file runs only while MythosTune::phase >= 1: at phase 0 no
+// mythos event is ever emitted, no line, epithet, tale paragraph or vars.num key changes, so the chronicle (which
+// sim::fingerprint hashes) is the pre-mythos one bit for bit (guardrail 5.1 rule 1).
+bool mythOn(const World& w) { return w.tune<MythosTune>().phase >= 1; }
+bool mythTouched(const World& w, int cid);             // (with the epithets) the god used a mythos act on them
+Aspect mythAspect(const World& w, int cid);             // their aspect, Unknown for a bad id
+
+// (3.8 name migration) the word a people uses for one who speaks for the god, by culture family: daughters keep
+// their mother's word (the root ancestor's language decides), so "messenger", "seer" or "voice" is stable per family.
+const char* msgrWord(const World& w, int cid) {
+	static const char* const kWords[] = { "messenger", "seer", "voice" };
+	const Culture* c = cult(w, cid);
+	for (int guard = 0; c && c->parent >= 0 && guard < 64; guard++) {
+		const Culture* p = cult(w, c->parent);
+		if (!p || p == c) break;
+		c = p;
+	}
+	if (!c) return kWords[0];
+	uint32_t h = 2166136261u;
+	for (char ch : c->lang) { h ^= uint8_t(ch); h *= 16777619u; }
+	h ^= uint32_t(c->id) * 2654435761u;
+	return kWords[(h >> 7) % 3u];
+}
+
+bool isLetter(char ch) { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'); }
+// Whole-word, exact-case replacement of `from` by `to` in s.
+void replaceWord(string& s, const string& from, const string& to) {
+	if (from.empty()) return;
+	for (size_t p = s.find(from); p != string::npos; p = s.find(from, p)) {
+		const bool lb = p == 0 || !isLetter(s[p - 1]);
+		const bool rb = p + from.size() >= s.size() || !isLetter(s[p + from.size()]);
+		if (lb && rb) { s.replace(p, from.size(), to); p += to.size(); }
+		else p += from.size();
+	}
+}
+// Has this world's god engaged the mythos: `emergent`, or a people the god used a mythos act on (Mythos's
+// Faith::data "m_touched")? Until then a phase >= 1 world keeps today's words, so a god who ignores every card and
+// word keeps the phase-0 chronicle bit for bit (guardrail 5.1 rule 2, as test_mythos_guard checks it: the version-1
+// bytes, the chronicle included). vars.num "chronicle_mv" = 1 once the book was re-voiced (mythRevoice).
+bool mythVoice(const World& w) {
+	if (!mythOn(w)) return false;
+	const auto mv = w.vars.num.find("chronicle_mv");
+	if (mv != w.vars.num.end() && mv->second > 0) return true;
+	if (w.tune<MythosTune>().emergent) return true;
+	for (const Faith& f : w.mythos.faith) {
+		const auto it = f.data.find("m_touched");
+		if (it != f.data.end() && it->second > 0) return true;
+	}
+	return false;
+}
+// (0.2 neutral names, 3.8 migration) Once the god engages the mythos, the older lines are read through the neutral
+// vocabulary: the prophet becomes the people's messenger / seer / voice, disciples followers, heaven the sky, sins
+// wrongs. The template bodies (and so their use counts) are unchanged; only the written words are. Before that (and
+// at phase 0): the text as is.
+string neutral(const World& w, int cid, string s) {
+	if (!mythVoice(w)) return s;
+	const string m = msgrWord(w, cid);
+	string M = m;
+	M[0] = char(M[0] - 'a' + 'A');
+	replaceWord(s, "prophets", m + "s"); replaceWord(s, "Prophets", M + "s");
+	replaceWord(s, "prophet", m);        replaceWord(s, "Prophet", M);
+	replaceWord(s, "disciples", "followers"); replaceWord(s, "Disciples", "Followers");
+	replaceWord(s, "disciple", "follower");   replaceWord(s, "Disciple", "Follower");
+	replaceWord(s, "heavens", "the skies");   replaceWord(s, "Heavens", "the Skies");
+	replaceWord(s, "heaven", "the sky");      replaceWord(s, "Heaven", "the Sky");
+	replaceWord(s, "sins", "wrongs");         replaceWord(s, "sin", "wrong");
+	for (size_t p = 0; (p = s.find("the the ", p)) != string::npos;) s.erase(p, 4);
+	for (size_t p = 0; (p = s.find("The the ", p)) != string::npos;) s.erase(p + 4, 4);
+	return s;
+}
+// The first time the god engages the mythos, the book is re-voiced once: the entries already written, the peoples'
+// names for the god and the god's own (so no later line quotes "the Spear of Heaven"). Chronicle writes all three.
+void mythRevoice(World& w) {
+	if (!mythOn(w) || w.vars.num.count("chronicle_mv") || !mythVoice(w)) return;
+	w.vars.num["chronicle_mv"] = 1;
+	for (ChronicleEntry& e : w.chronicle) e.text = neutral(w, e.culture, e.text);
+	for (Culture& c : w.cultures) if (!c.epithet.empty()) c.epithet = neutral(w, c.id, c.epithet);
+	if (!w.god.epithet.empty()) w.god.epithet = neutral(w, -1, w.god.epithet);
+}
 
 // ====================================================================== template engine
 
@@ -643,6 +738,8 @@ const char* groupOf(string_view type, int weight) {
 		{ "trade", "trade" }, { "battle", "battle" }, { "captured", "take" }, { "schism", "take" }, { "settlers-lost", "lost" },
 		{ "fire", "weather" }, { "lightning", "weather" }, { "storm", "weather" }, { "drought", "weather" }, { "drought-end", "weather" },
 		{ "tsunami", "weather" }, { "volcano-end", "weather" }, { "wrath-lightning", "bolt" },
+		// (v4 mythos, M8) the mythos chronicle's minor lines fold like the world's (no such entry exists at phase 0)
+		{ "breach", "breach" }, { "word", "word" }, { "decree", "word" }, { "card-lapsed", "lapse" }, { "aspect", "view" },
 	};
 	if (type == "quake") return weight <= 1 ? "weather" : nullptr;     // a natural tremor; the god's quake is story
 	if (type == "destroyed") return weight <= 1 ? "empty" : nullptr;   // a hamlet given up; a town or city destroyed is tellable
@@ -697,8 +794,17 @@ const char* const kClBuild[] = {
 	"{cS} raised {n} new buildings", "{cS} put up {n} new buildings, each the finest yet by their own account",
 	"{n} new buildings went up among {cO}", "the builders of {cP} finished {n} new halls, granaries and walls",
 };
+// (v4 mythos, M8) the mythos groups
+const char* const kClBreach[] = { "{n} decrees of {cP} were broken", "{cS} broke their decrees {n} times", "the decrees of {cP} were broken {n} times over" };
+const char* const kClWord[] = { "{g} spoke to {cO} {n} times", "{n} words of {g} came to {cO}", "{cS} heard from {g} {n} times" };
+const char* const kClLapse[] = { "{cS} settled {n} matters without the god", "{n} times {cS} were left to decide for themselves", "{cS} answered {n} questions of their own" };
+const char* const kClView[] = { "{cS} changed their minds about {g} {n} times", "the way {cS} spoke of {g} changed {n} times", "{n} times {cS} saw {g} in a new light" };
 struct Clause { const char* group; double sig; Tpl t; };
 const Clause kClauses[] = {
+	{ "view", 1.0, tpl(kClView) },
+	{ "word", 1.3, tpl(kClWord) },
+	{ "breach", 1.2, tpl(kClBreach) },
+	{ "lapse", 1.0, tpl(kClLapse) },
 	{ "answer", 1.5, tpl(kClAnswer) },
 	{ "take", 1.5, tpl(kClTake) },
 	{ "famine", 1.3, tpl(kClFamine) },
@@ -929,7 +1035,11 @@ int budgetGate(World& w, const char* type, int weight, int culture, Tpl t, Tpl a
 	// their own bucket allows
 	const bool tellable = weight >= 2 && (S.tellNext || ty == "destroyed" || ty == "war" || ty == "peace" || (ty == "age" && weight == 2) ||
 		ty == "prophet" || ty == "prophet-died" || ty == "edict" || ty == "miracle-heal" || ty == "miracle-inspire" ||
-		ty == "miracle-peace" || ty == "wrath-plague" || ty == "alliance");
+		ty == "miracle-peace" || ty == "wrath-plague" || ty == "alliance" ||
+		// (v4 mythos, M8) card resolutions and the god's mythos acts: story entries through the story bucket (3.31),
+		// after the mythos bucket (mythWeight) allowed them to be notable at all
+		ty == "card" || ty == "presence" || ty == "aspect" || ty == "decree" || ty == "word" || ty == "figure" ||
+		ty == "judgement" || ty == "breach");
 	S.tellNext = false;
 	// (verify) a people born or dead is epochal while the epochal bucket allows, else notable (never minor): five
 	// peoples born in one Bronze age were 1.4 epochal entries a real minute
@@ -956,7 +1066,8 @@ int budgetGate(World& w, const char* type, int weight, int culture, Tpl t, Tpl a
 	const bool spent = familySpent(w, t, T.templateCap) && (!alt.t || familySpent(w, alt, T.templateCap));
 	// the god's own small acts (answers, rain, bloom, moved ground, bolts) are the player's reply from the world:
 	// once per kind and people a decade, but never crowded out by the world's own small news
-	const bool godsAct = ty == "prayer-answered" || ty == "miracle-rain" || ty == "miracle-bloom" || ty == "miracle-shape" || ty == "wrath-lightning";
+	const bool godsAct = ty == "prayer-answered" || ty == "miracle-rain" || ty == "miracle-bloom" || ty == "miracle-shape" || ty == "wrath-lightning" ||
+		ty == "word" || ty == "decree";                    // (M8) the god's words: never crowded out by the world's small news
 	if (again || spent || (!godsAct && !take(mb))) {
 		foldInto(w, culture, group);
 		w.vars.num["chronicle_f." + std::to_string(culture) + "." + string(ty)] = fin(w.year);
@@ -974,7 +1085,7 @@ int budgetGate(World& w, const char* type, int weight, int culture, Tpl t, Tpl a
 // fork of w.rng.
 ChronicleEntry* writeComposed(World& w, const char* type, int weight, int cell, int culture, Tpl t, const string& key,
 	Tpl sfx, const string& sfxKey, const Ctx& x0, Tpl alt = Tpl{ nullptr, 0 }, const string& altKey = string(), double altP = 0,
-	bool altSfx = false) {
+	bool altSfx = false, std::vector<const char*>* bodies = nullptr, int maxWords = 0) {
 	if (!t.t || t.n <= 0) return nullptr;
 	ChronicleScratch& S = w.scratch<ChronicleScratch>();
 	// (chronicle budget) the weight this entry may have, or 0: folded into the decade's digest
@@ -994,10 +1105,28 @@ ChronicleEntry* writeComposed(World& w, const char* type, int weight, int cell, 
 	const int idx = pickTemplate(w, S, famKey, t, r);
 	string body = t.t[idx];
 	markUsed(S, t.t[idx]);
-	if (sfx.t && sfx.n > 0) body += sfx.t[pickTemplate(w, S, sfxKey, sfx, r)];
+	if (bodies) bodies->push_back(t.t[idx]);
+	if (sfx.t && sfx.n > 0) {
+		const int si = pickTemplate(w, S, sfxKey, sfx, r);
+		body += sfx.t[si];
+		if (bodies) bodies->push_back(sfx.t[si]);
+	}
 	string raw;
 	expandInto(raw, body, x, r, 0);
-	const string text = tidy(renameRepeats(raw, x));
+	string text = tidy(neutral(w, culture, renameRepeats(raw, x)));   // (M8) neutral words at phase >= 1
+	if (maxWords > 0 && sfx.t && sfx.n > 0) {
+		// (M8, 3.31 lint) long names can push a two-sentence entry past maxWords: then the first sentence stands alone
+		int nw = 0;
+		bool in = false;
+		for (char ch : text) { const bool sp = ch == ' '; if (!sp && !in) nw++; in = !sp; }
+		if (nw > maxWords) {
+			Rng r2 = w.rng.fork("chron:" + std::to_string(w.nextId.entry));
+			string raw2;
+			expandInto(raw2, t.t[idx], x, r2, 0);
+			text = tidy(neutral(w, culture, renameRepeats(raw2, x)));
+			if (bodies && bodies->size() >= 2) bodies->pop_back();
+		}
+	}
 	if (text.size() < 2) return nullptr;
 	chronicle::EntryOpts o;
 	o.type = type;
@@ -1778,6 +1907,17 @@ const char* const kAnsBloom[] = {
 	"{s} asked {g} to heal the burnt land, and green shoots answered them.",
 	"Over the black fields of {s} the god breathed, as its people had begged, and the ash turned to grass.",
 };
+// (v4 mythos, 3.10) the prayers of phase >= 1
+const char* const kAnsVictory[] = {
+	"{s} asked {g} for victory, and the sky fell on its enemies. The enemies have not forgotten whose sky it was.",
+	"The elders of {s} prayed to win their war, and the god struck the other side, and {c} sang about it for a generation.",
+	"{c} asked for victory at {s}, and were given it, and did not ask what the price had been, or who had paid it.",
+};
+const char* const kAnsSun[] = {
+	"{s} prayed for the rain to stop, and it stopped, and the people put their floors out to dry.",
+	"After three wet years {s} asked {g} for the sun, and the clouds went somewhere else, to be somebody else's trouble.",
+	"The god held the rain back from {s}, as its people had begged, and the river went down to its own bed.",
+};
 const char* const kCultureDistance[] = {
 	"From {c2} came {c}, as a branch comes from a tree: the same wood, pointing elsewhere.",   // v23
 	"Far from their old capital, the people about {s} began to call themselves {c}[, and spoke a tongue {c2} could barely follow|, and paid no more taxes to {c2}].",
@@ -2193,13 +2333,34 @@ void heardBy(World& w, int cid) {
 	w.vars.num["chronicle_h." + std::to_string(cid)] = fin(w.year);
 }
 
+// (v4 mythos, SPEC-MYTHOS 3.1) the kind of world, once, as the people are about to wake (w3, and told in the tale);
+// only for a world made other than Balanced (today's world has no such line), index = Archetype - 1
+const char* const kArchetypeLine[4][3] = {
+	{ "The world was made soft and wet and full of fruit, and the first people never once went hungry, and never once asked why.",   // 3.1
+	  "On {W} the rivers were full and the trees bent with fruit, and the first people learned to eat long before they learned to ask.",
+	  "{W} was a generous place. Its first people grew fat and kind and incurious, and thanked nobody in particular." },
+	{ "{W} was made hard: its mountains smoked, its ground shook, and its rivers changed course without warning. Its first people learned to pray before they learned to plant.",
+	  "On {W} the ground was never quite still, and the first people built light houses and kept their eyes on the hills.",
+	  "The world the first people woke to was a dangerous one, and they looked at its sky the way travellers look at a gathering storm." },
+	{ "{W} was made beautiful: a thousand islands, reefs like spilled paint, and forests of every colour, and its first people spent their first years simply looking.",
+	  "There were more shores on {W} than anyone could count, and every one of them was worth the walk.",
+	  "The first people of {W} woke in a world so lovely that their first word, it is said, was a word of praise, though nobody agrees which." },
+	{ "There were stones on that world that sang at dusk, and nobody ever learned who had taught them.",   // 3.1
+	  "On {W} there were springs that steamed in the ice and a lake that glowed at night, and the first people left offerings at both, to be safe.",
+	  "{W} was a strange world, with woods that whispered and a storm that never left the sea, and its people grew up expecting the unexpected." },
+};
+
 void onPhase(World& w, const EvPhase& e) {
 	Ctx x;
 	ctxWorld(x, w);
 	switch (e.phase) {
 	case Phase::Water: write(w, "genesis", 3, -1, -1, tpl(kGenWater), "genesis-water", x); break;
 	case Phase::Life: write(w, "genesis", 3, -1, -1, tpl(kGenLife), "genesis-life", x); break;
-	case Phase::People: writeAlt(w, "genesis", 3, -1, -1, tpl(kGenPeopleVoice), "genesis-people-v", tpl(kGenPeople), "genesis-people", kOwnShare, x); break;
+	case Phase::People:
+		writeAlt(w, "genesis", 3, -1, -1, tpl(kGenPeopleVoice), "genesis-people-v", tpl(kGenPeople), "genesis-people", kOwnShare, x);
+		if (mythOn(w) && w.settings.archetype != Archetype::Balanced && uint8_t(w.settings.archetype) < uint8_t(enumCount<Archetype>()))
+			write(w, "genesis", 3, -1, -1, Tpl{ kArchetypeLine[int(w.settings.archetype) - 1], 3 }, string("genesis-archetype-") + toStr(w.settings.archetype), x);
+		break;
 	case Phase::History: write(w, "genesis", 3, -1, -1, tpl(kGenHistory), "genesis-history", x); break;
 	default: break;
 	}
@@ -2887,8 +3048,18 @@ const char* wantOf(PrayerKind k) {
 	case PrayerKind::Heal: return "healing";
 	case PrayerKind::Peace: return "peace";
 	case PrayerKind::Bloom: return "green fields";
+	case PrayerKind::Victory: return "victory";             // (v4 mythos, 3.10; these prayers exist only at phase >= 1)
+	case PrayerKind::Sun: return "an end to the rain";
 	}
 	return "mercy";
+}
+
+// (v4 mythos, M8) a competing-prayer card names this town and is being answered: its line tells the answer
+bool competingOpen(const World& w, int sid) {
+	if (!mythVoice(w)) return false;                       // a god who ignores the cards: today's line, as at phase 0
+	for (const Card& c : w.mythos.cards)
+		if (c.kind == CardKind::CompetingPrayers && c.state == uint8_t(CardState::Open) && (c.ref[0] == sid || c.ref[1] == sid)) return true;
+	return false;
 }
 
 void onPrayer(World& w, const EvPrayer& e) {
@@ -2941,6 +3112,7 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 	S.answered.push_back(e.id);
 	const int cid = s->culture;
 	heardBy(w, cid);
+	if (competingOpen(w, e.id)) return;                    // (M8) the competing-prayer card's line tells this answer
 	Ctx x;
 	ctxSettlement(x, w, e.id);
 	ctxCulture(x, w, cid);
@@ -2987,6 +3159,8 @@ void onPrayerAnswered(World& w, const EvPrayerAnswered& e) {
 		}
 		break;
 	case PrayerKind::Bloom: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsBloom), "ans-bloom", x); break;
+	case PrayerKind::Victory: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsVictory), "ans-victory", x); break;
+	case PrayerKind::Sun: write(w, "prayer-answered", wgt, s->cell, cid, tpl(kAnsSun), "ans-sun", x); break;
 	}
 }
 
@@ -3239,8 +3413,14 @@ void onTradeRoute(World& w, const EvTradeRoute& e) {
 	write(w, "trade", 1, a->cell, a->culture, tpl(kTrade), "trade", x);
 }
 
+// (v4 mythos, M8) the prophet's messenger figure (3.8): defined with the mythos handlers below
+bool mythProphetRisen(World& w, const EvProphetRisen& e);
+bool mythProphetDied(World& w, const EvProphetDied& e, string& name);
+string mythProphetName(const World& w, int cid, const string& fallback);
+
 void onProphetRisen(World& w, const EvProphetRisen& e) {
 	if (!cult(w, e.culture)) return;
+	if (mythOn(w) && mythProphetRisen(w, e)) return;       // a chosen messenger: the figure's own line tells it
 	Ctx x;
 	ctxCulture(x, w, e.culture);
 	ctxSettlement(x, w, e.settlement);
@@ -3252,9 +3432,11 @@ void onProphetRisen(World& w, const EvProphetRisen& e) {
 
 void onProphetDied(World& w, const EvProphetDied& e) {
 	if (!cult(w, e.culture)) return;
+	string name = e.name;
+	if (mythOn(w) && mythProphetDied(w, e, name)) return;  // a martyred messenger was told at the martyrdom
 	Ctx x;
 	ctxCulture(x, w, e.culture);
-	x.set("n", e.name.empty() ? string("The nameless prophet") : e.name);
+	x.set("n", name.empty() ? string("The nameless prophet") : name);
 	write(w, "prophet-died", 2, -1, e.culture, tpl(kProphetDied), "prophet-died", x);
 }
 
@@ -3264,6 +3446,7 @@ void onEdict(World& w, const EvEdict& e) {
 	Ctx x;
 	ctxCulture(x, w, e.culture);
 	x.set("n", c->prophet && !c->prophet->name.empty() ? c->prophet->name : string("the prophet"));
+	if (mythOn(w) && c->prophet) x.set("n", mythProphetName(w, e.culture, c->prophet->name.empty() ? string("the prophet") : c->prophet->name));
 	Tpl t = tpl(kEdictPeace);
 	string key = "edict-peace";
 	switch (e.edict) {
@@ -3595,6 +3778,1062 @@ void flushPending(World& w, bool all) {
 	}
 }
 
+// ====================================================================== (v4 mythos, M8) the mythos chronicle
+// SPEC-MYTHOS 3.31 (v1 entry types; W3's lines were not delivered, so these are the track's own, >= 3 per type and
+// per stance or kind, in the approved voice). Entry types written here (all only at MythosTune::phase >= 1):
+//   presence (w2)    the presence stance changed (3.2)            aspect (w2)   how a people sees the god (3.3)
+//   decree (w2)      a decree heard as meant, a rite, a repeal     custom (w1)   the people's own custom (3.6)
+//   word (w2)        a word misread (literal, wisdom, sect, a dream kept by one town, a rival reading, the House's
+//                    reading, a catastrophe) or an answer (3.9)
+//   breach (w1/w2)   a decree broken (w2 when severe, 3.6)        figure (w2)   a messenger chosen, redeemed,
+//                    vindicated, martyred (w1 discredited) (3.8)
+//   judgement (w2)   a sentence, by deed or by heart (3.11, 3.12)  survivors (w1) the last who saw it died (3.12)
+//   card (w2)        a card's resolution that no source event tells: the shaping of the first people, the stance
+//                    kept at the waking, no messenger chosen, a decree conflict, competing prayers (3.5, 3.7, 3.10)
+//   card-lapsed (w1) a lapsed card whose lapse did something (decree conflicts always; competing prayers and
+//                    judgements only under `emergent`, because only then does their lapse act)
+//   genesis (w3)     the kind of world (3.1), when the people are about to wake, for a world made other than Balanced
+// Elsewhere in this file (also phase >= 1 only): the prophet -> messenger / seer / voice migration and the other
+// neutral words (neutral, mythRevoice: from the god's first mythos act on, the whole book once), the aspect epithet
+// families (aspectCat) and the absent names under the Unseen stance, Victory and Sun prayers, the tale's "What they
+// believed" and Legacy paragraphs (beliefParagraph, kLegacyText: 5 legacies x 6 moods), the people's will named once
+// in the god's paragraph. The waking clause of 3.5 ("... and they woke asking questions") is the ShapePeople card's
+// resolution line, written the year the first people wake: the shaping is answered after the waking entry is written.
+// Gates and budget:
+//   - one card-resolution entry per card: a card answered in the tick its source told the answer (judgement,
+//     decree / word / custom, figure, presence) gets no line of its own (ChronicleScratch::mythMarks);
+//   - aspect lines and aspect epithets need `emergent` or a touched people (mythTouched): a god who ignores every
+//     card and word keeps the phase-0 chronicle bit for bit (guardrail 5.1 rule 2; M1's test_mythos_guard checks it);
+//   - mythos notables pass the mythos bucket first (kMythPerDecade per decade, kMythBurst: mythos adds at most ~1.1
+//     notable entries a real minute, 3.31 "1.2"), then the story bucket like every story entry; over budget they
+//     are minor (breaches, words and lapses then fold into the digest). vars.num keys: "chronicle_my.b" / ".t" (the
+//     bucket), "chronicle_mu.<hash>" (how often each mythos template body was written: the lint's "no body > 10"),
+//     "chronicle_pf.<culture>" (the messenger figure of the living prophet), "chronicle_jb.<culture>" (judged by
+//     deed 1 / heart 2 told), "chronicle_sv.<c>" / "chronicle_ss.<c>" / "chronicle_se.<c>" (the sentence the
+//     survivors remember, its town, the survivor memory already told).
+// Not in a TUNE struct (Chronicle.h is frozen for this track): kMythPerDecade and kMythBurst; the lead may move them.
+
+constexpr double kMythPerDecade = 0.09;     // mythos notable entries: refill per decade (0.09 x 12 = 1.08 per real minute)
+constexpr double kMythBurst = 2;            // ... and bucket size
+constexpr int kMythMaxWords = 50;           // 3.31 lint: a weight 1-2 entry has at most this many words
+
+// The weight a mythos entry may have: notable while the mythos bucket has a token, else minor.
+int mythWeight(World& w, int weight) {
+	if (weight < 2 || !tuneOf(w).budget) return weight;
+	const double year = fin(w.year);
+	auto b = w.vars.num.find("chronicle_my.b");
+	if (b == w.vars.num.end() || !std::isfinite(b->second)) { w.vars.num["chronicle_my.b"] = kMythBurst; b = w.vars.num.find("chronicle_my.b"); }
+	auto t = w.vars.num.find("chronicle_my.t");
+	if (t == w.vars.num.end() || !std::isfinite(t->second) || year < t->second) w.vars.num["chronicle_my.t"] = year;
+	else {
+		b->second = std::min(kMythBurst, b->second + kMythPerDecade * (year - t->second) / 10.0);
+		t->second = year;
+	}
+	b = w.vars.num.find("chronicle_my.b");
+	if (b->second >= 1 - 1e-9) { b->second -= 1; return weight; }
+	return 1;
+}
+
+ChronicleEntry* mythWrite(World& w, const char* type, int weight, int cell, int culture, Tpl t, const string& key, const Ctx& x,
+	Tpl sfx = Tpl{ nullptr, 0 }, const string& sfxKey = string(), int card = -1) {
+	if (!mythOn(w) || !t.t || t.n <= 0) return nullptr;
+	mythRevoice(w);
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	S.mythMarks.erase(std::remove_if(S.mythMarks.begin(), S.mythMarks.end(), [&](const ChronicleScratch::MythMark& m) {
+		return m.tick != w.tick || m.year != fin(w.year);
+	}), S.mythMarks.end());
+	const int wt = mythWeight(w, weight);
+	// (3.31 lint: no template body more than templateCap times a history) only the lines still under the cap are
+	// offered: a second sentence with none left is left off (the first stands alone); a minor entry with none left
+	// folds into the digest (its group) or goes untold. Notable entries (at most ~1 a real minute) always speak.
+	const int cap = tuneOf(w).templateCap;
+	std::vector<const char*> freshT, freshS;
+	string tkey = key, skey = sfxKey;
+	auto filter = [&](Tpl& f, std::vector<const char*>& keep, string& k) {
+		if (!f.t || f.n <= 0 || cap <= 0) return;
+		uint32_t mask = 0;
+		for (int i = 0; i < f.n; i++) if (useCount(w, f.t[i]) < cap) { keep.push_back(f.t[i]); mask |= 1u << (i & 31); }
+		if (int(keep.size()) == f.n) return;
+		f = keep.empty() ? Tpl{ nullptr, 0 } : Tpl{ keep.data(), int(keep.size()) };
+		k += "#" + std::to_string(mask);
+	};
+	filter(sfx, freshS, skey);
+	{
+		const Tpl all = t;
+		const string allKey = tkey;
+		filter(t, freshT, tkey);
+		// every line spent: a kind that folds (words, breaches, views, lapses) is counted for the digest even when it
+		// would have been notable; the rare kinds (a presence, a figure, a judgement, a card) still speak
+		if (!t.t && wt >= 2 && !groupOf(type, 1)) { t = all; tkey = allKey; }
+		if (!t.t) {
+			const char* g = groupOf(type, 1);
+			if (g && tuneOf(w).budget && cult(w, culture)) {
+				foldInto(w, culture, g);
+				S.foldedLast = true;
+				S.mythMarks.push_back(ChronicleScratch::MythMark{ w.tick, fin(w.year), culture, string(type), card });
+			}
+			return nullptr;
+		}
+	}
+	std::vector<const char*> bodies;
+	ChronicleEntry* e = writeComposed(w, type, wt, cell, culture, t, tkey, sfx, skey, x, Tpl{ nullptr, 0 }, string(), 0, false, &bodies, kMythMaxWords);
+	if (e || S.foldedLast) S.mythMarks.push_back(ChronicleScratch::MythMark{ w.tick, fin(w.year), culture, string(type), card });
+	if (e) for (const char* body : bodies) {
+		double& v = w.vars.num["chronicle_mu." + useKey(body).substr(12)];
+		v = fin(v) + 1;
+	}
+	return e;
+}
+
+// ---- small reads
+
+// The culture's capital if it lives and is theirs, else its most populous live town, else -1.
+int mythTown(const World& w, int cid) {
+	const Culture* c = cult(w, cid);
+	if (!c) return -1;
+	const Settlement* cap = sett(w, c->capital);
+	if (cap && !cap->dead && cap->culture == cid) return cap->id;
+	int best = -1; double bp = -1;
+	for (const Settlement& s : w.settlements) if (!s.dead && s.culture == cid && fin(s.pop) > bp) { bp = fin(s.pop); best = s.id; }
+	return best;
+}
+// The most populous living culture (ties: lower id), -1 none.
+int mythLeading(const World& w) {
+	int best = -1; double bp = -1;
+	for (const Culture& c : w.cultures) {
+		if (c.dead) continue;
+		double p = 0;
+		for (const Settlement& s : w.settlements) if (!s.dead && s.culture == c.id) p += std::max(0.0, fin(s.pop));
+		if (p > bp) { bp = p; best = c.id; }
+	}
+	return best;
+}
+const Figure* mythFigure(const World& w, int id) {
+	if (id < 0) return nullptr;
+	for (const Figure& f : w.mythos.figures) if (f.id == id) return &f;
+	return nullptr;
+}
+const Card* mythCard(const World& w, int id) {
+	for (const Card& c : w.mythos.cards) if (c.id == id) return &c;
+	return nullptr;
+}
+const Utterance* mythWord(const World& w, int id) {
+	for (size_t i = w.mythos.words.size(); i-- > 0;) if (w.mythos.words[i].id == id) return &w.mythos.words[i];
+	return nullptr;
+}
+// Fills {c} ... and {s} (the culture's town), {msgr}; false when the culture or every town of it is gone.
+bool mythCtx(Ctx& x, const World& w, int cid, int sid = -1) {
+	if (!cult(w, cid) || cult(w, cid)->dead) return false;
+	ctxCulture(x, w, cid);
+	const Settlement* s = sett(w, sid);
+	if (!s || s->dead) sid = mythTown(w, cid);
+	if (sid < 0) return false;
+	ctxSettlement(x, w, sid);
+	x.set("msgr", msgrWord(w, cid));
+	return true;
+}
+
+// ---- decrees (3.6, 3.13, 3.22): the areas and their stances in the chronicle's words
+
+struct AreaText { const char* decree; const char* about; const char* over; };
+const AreaText kAreaText[int(DecreeArea::Count)] = {
+	{ "the Decree of Blood", "blood", "[over a well|in a quarrel about a boundary stone|at a wedding that went wrong]" },
+	{ "the Decree of Bread", "bread", "[over a sack of grain|in a hungry month|over the corner of a field]" },
+	{ "the Decree of the Altar", "worship", "[on a feast day|in a dry season|while the priests were away]" },
+	{ "the Decree of the Tongue", "lies", "[in a quarrel over a horse|to save a friend|in front of the elders]" },
+	{ "the Decree of the Gate", "strangers", "[when a stranger came at night|in a hard winter|when the strangers were too many]" },
+	{ "the Decree of the Weak", "the weak", "[in the hungry year|when the fever came|on a long march]" },
+	{ "the Decree of the Land", "the land", "[for a field of barley|in a hungry spring|with an axe and a good excuse]" },
+};
+// inf: after "to" / "would" / "must"; ger: the rite's "worship by ..." form (Worship only)
+struct StanceText { const char* inf; const char* ger; };
+constexpr int kStanceRows = 23;
+const StanceText kStanceText[kStanceRows] = {
+	{ "shed no blood", "" }, { "shed blood only at the gate", "" }, { "hold strength holy", "" },
+	{ "leave the corners of the field for strangers", "" }, { "give a tenth of every harvest to the god's house", "" }, { "count every increase a blessing", "" },
+	{ "worship by asking, and asking again", "asking, and asking again" }, { "worship by building for the god", "building for the god" },
+	{ "worship by serving one another", "keeping guest-halls and serving one another" }, { "worship by making beautiful things", "making beautiful things" },
+	{ "worship by keeping the land", "keeping the land" },
+	{ "speak no false word", "" }, { "give the truth to those it is owed", "" }, { "count the clever blessed", "" },
+	{ "let the stranger eat first", "" }, { "feed the stranger at the gate", "" }, { "keep their bread for their own", "" },
+	{ "carry the ones who cannot walk", "" }, { "begin their care at the hearth", "" }, { "let the strong endure", "" },
+	{ "take the land, for it was given to them", "" }, { "take, and tend", "" }, { "leave the old forest be, for it was not theirs", "" },
+};
+// what came of it: three lines per stance (the entry's second sentence)
+const char* const kStanceImg[kStanceRows][3] = {
+	{ " They cut it over the door of every house.", " The smiths of {s} were sorry to hear it, and turned to ploughshares.",
+	  " Their spears went up into the rafters, out of the children's reach and everyone else's." },
+	{ " They built their walls higher and their spears shorter.", " After that every quarrel at {s} began with a long argument about where the gate was.",
+	  " The watchmen of {s} took it as a promotion." },
+	{ " The young of {s} took to wrestling at weddings, and then at funerals.", " Their neighbours heard of it and began, quietly, to count spears.",
+	  " From then on no {ca} child was allowed to lose a game gracefully." },
+	{ " They left the corners, and argued for a generation about how big a corner was.", " In the lean years the corners of the fields at {s} fed more than their owners.",
+	  " The gleaners of {s} praised the god by name, which the landowners found harder." },
+	{ " The priests of {s} built a bigger storehouse, and then a bigger one.", " Every tenth sheaf went up the temple steps, and some came down again in the famine years.",
+	  " They counted the tenth carefully, and argued about it more carefully still." },
+	{ " The merchants of {s} took it as permission, which it was.", " From then on a full purse was a kind of prayer, and the poor prayed less.",
+	  " They weighed their coins twice and thanked the god for both." },
+	{ " Every village raised a prayer pole, and every pole had a queue.", " Lanterns went up the hill at {s} every evening, and came down again with the dawn.",
+	  " The god, it was said, was never short of news from {c}." },
+	{ " The quarries of {s} were never quiet again.", " Their temples grew taller every generation, and so did the priests' opinion of themselves.",
+	  " A stranger could tell the towns of {c} from a long way off: the god's house was always the tallest thing in them." },
+	{ " A stranger could walk from the mountains to the sea and never once pay for supper.", " The guest-halls of {s} were always full, and nobody asked the guests where they came from.",
+	  " Their wells were free and their almshouses warm, and their armies, it was noticed, were small." },
+	{ " Within a generation every wall in {s} was painted, and some of them twice.", " Their carvers and singers were said to be the god's favourites, and did not disagree.",
+	  " They made the god something fine every year, and their towns grew crowded and very beautiful." },
+	{ " They planted groves where they had cut, and terraces where they had ploughed.", " The river shrines of {s} were kept with flowers, and the river, it was said, ran cleaner for it.",
+	  " They asked the forest's pardon before they felled a tree, and felled fewer." },
+	{ " Their merchants became famous for it, and their envoys became rare.", " Even the poets of {s} had to say which parts were invented.",
+	  " It made them poor liars and good neighbours, which most of them thought a fair trade." },
+	{ " The elders of {s} spent years deciding who was owed what.", " Their secrets were kept well and their promises better.",
+	  " They told the truth carefully, like a thing that could break." },
+	{ " The traders of {s} grew rich, and their customers grew careful.", " From then on a well-made lie was admired at {s}, and a badly made one punished.",
+	  " Their children learned riddles before they learned their letters." },
+	{ " Their gates stood open, and their tables were always one chair too long.", " Travellers learned to arrive at {s} hungry.",
+	  " Sometimes the stranger brought a fever, and they fed the stranger anyway." },
+	{ " They fed them at the gate, and counted the spoons.", " The gatehouses of {s} grew kitchens.",
+	  " No stranger went hungry at {s}, and none slept inside the walls." },
+	{ " Their gates shut at dusk, and then at noon.", " Strangers learned to go round {s}, which suited everyone at {s}.",
+	  " They were well fed and lonely, and did not much mind the second." },
+	{ " In the hungry years they carried the old and the lame to the granaries first.", " At {s} the sick were nursed in the best houses, which the owners of the best houses noticed.",
+	  " It slowed their marches and filled their almshouses, and they never once regretted it aloud." },
+	{ " Every family of {s} looked after its own, and kept a careful list of who that was.", " Grandmothers were never alone at {s}, and strangers often were.",
+	  " They cared for their kin first, and for the rest when there was bread to spare." },
+	{ " Their children were tough, and fewer of them lived to say so.", " In the hungry years at {s} the weak went last to the granary, and often found it empty.",
+	  " They were a hard people after that, and proud of it, and the graves of their children were small." },
+	{ " They cleared the old woods for barley and did not look back.", " Their ploughs went where their grandparents had hunted.",
+	  " Every hill near {s} was a field within two generations." },
+	{ " They took what they needed from the forest and planted what they took.", " Their fields rested every seventh year, and so, they said, did the god.",
+	  " The old woods near {s} grew smaller, but slowly, and never quite went." },
+	{ " They built their fences on the outside of it, which surprised the forest.", " The old woods near {s} stayed old, and the farmers went hungry in a few bad years.",
+	  " They walked around the great trees as they would around a sleeping elder." },
+};
+int stanceRow(DecreeArea a, int s) {
+	static const int kOff[int(DecreeArea::Count)] = { 0, 3, 6, 11, 14, 17, 20 };
+	const int ai = int(a);
+	if (ai < 0 || ai >= int(DecreeArea::Count) || s < 0 || s >= stanceCount(a)) return -1;
+	return kOff[ai] + s;
+}
+// Sets {decree} {about} {over} (area) and, for a stance, {sw} {ger}; the stance's image family, or none.
+Tpl decreeCtx(Ctx& x, DecreeArea a, int stance) {
+	if (int(a) < 0 || int(a) >= int(DecreeArea::Count)) return Tpl{ nullptr, 0 };
+	x.set("decree", kAreaText[int(a)].decree);
+	x.set("about", kAreaText[int(a)].about);
+	x.set("over", kAreaText[int(a)].over, true);
+	const int row = stanceRow(a, stance);
+	if (row < 0) return Tpl{ nullptr, 0 };
+	x.set("sw", kStanceText[row].inf);
+	x.set("ger", kStanceText[row].ger);
+	return Tpl{ kStanceImg[row], 3 };
+}
+const char* clarityHow(Clarity c) {
+	switch (c) {
+	case Clarity::Exact: return "in words nobody could mistake";
+	case Clarity::Parable: return "in a story";
+	case Clarity::Dream: return "in a dream";
+	default: return "by signs in the sky";
+	}
+}
+
+const char* const kDecExact[] = {
+	"{IN}{c} were told, in words nobody could mistake, to {sw}.",   // SPEC-MYTHOS 3.6
+	"There was no mistaking what {g} asked of {c} that year: they were to {sw}.",
+	"{g} gave {c} {decree}, as plain as a cut stone: they were to {sw}.",
+	"A voice out of the clear sky over {s} told {c} to {sw}, and nobody could pretend afterwards not to have heard it.",
+};
+const char* const kDecExactBy[] = {
+	"{IN}{n} came to the market of {s} with the god's word, and it was plain: {c} were to {sw}.",
+	"The word came to {c} through {n}, and there was no arguing with it: they were to {sw}.",
+	"{n} carried {decree} to every town of {c}, word for word: they were to {sw}.",
+};
+const char* const kDecParable[] = {
+	"{IN}{g} told {c} a story{thr}, and after a generation of argument they agreed it meant they should {sw}.",
+	"The story {c} were told{thr} that year had a stranger and a well in it, and at the end of it they knew they must {sw}.",
+	"{c} were given a parable{thr} instead of a law, and found at the bottom of it that they should {sw}.",
+};
+const char* const kDecDream[] = {
+	"{IN}the people of {s} dreamed the same dream for a winter, and woke knowing they must {sw}.",
+	"A dream went from house to house in {s}, and afterwards {c} knew that they must {sw}.",
+	"{g} came to the sleepers of {s} in a dream, and by spring all of {c} knew that they must {sw}.",
+};
+const char* const kDecSign[] = {
+	"{IN}strange stars stood over {c} all winter, and when they faded {c} had agreed what they meant: they must {sw}.",
+	"A sign hung in the sky above {s} for a season, and {c} took it to mean that they must {sw}.",
+	"The sky over {c} filled with colours nobody had a name for, and when it cleared they had resolved to {sw}.",
+};
+const char* const kDecRite[] = {
+	"{IN}{c} were taught, {how}, to worship {g} by {ger}.",
+	"From then on {c} worshipped {g} by {ger}, for so they had been told, {how}.",   // SPEC-MYTHOS 3.13
+	"{g} showed {c}, {how}, what their worship should be: {ger}.",
+};
+const char* const kDecRepeal[] = {
+	"{IN}{c} were released from {decree}. Some of them were glad; the rest kept it anyway, out of habit.",
+	"{g} unsaid {decree}, and {c} spent a generation deciding whether that meant they should do the opposite.",
+	"{decree} was lifted from {c}. The words stayed cut over their doors, but nobody read them aloud any more.",
+};
+const char* const kCustom[] = {
+	"{c} had no law about {about}, so they made one of their own: they would {sw}.",   // SPEC-MYTHOS 3.6
+	"Nobody had told {c} what to do about {about}, so they decided for themselves to {sw}.",
+	"The elders of {s} settled the matter of {about} without waiting for the god: {c} would {sw}.",
+};
+const char* const kCustomRite[] = {
+	"Nobody taught {c} how to worship, so they found their own way: by {ger}.",
+	"Left to themselves, {c} took to worshipping {g} by {ger}.",
+	"{c} worked out for themselves what worship should be, and settled on {ger}.",
+};
+const char* const kBreach[] = {
+	"At {s} {decree} was broken {over}, and the town was ashamed all winter.",   // SPEC-MYTHOS 3.6
+	"{IN}someone at {s} broke {decree} {over}. Everyone knew who, and nobody said.",
+	"{decree} was broken at {s} {over}, and the elders sat up late about it.",
+	"The people of {s} broke {decree} {over}, and were sorry, mostly.",
+};
+
+// ---- the word (3.9)
+const char* const kWordLiteral[] = {
+	"{c} were told to {sw}, and they kept it to the letter and past it, as some people keep a fence long after the field is gone.",
+	"{IN}the word came to {c} plainly: they were to {sw}. They kept it by the letter, and would hear no argument about what it meant.",
+	"The priests of {c} wrote down exactly what {g} had said, that they should {sw}, and after that refused to hear another word on the matter.",
+};
+const char* const kWordCatExact[] = {
+	"The god's word to {c} was plain, and some of them took it as a knife and went looking for whoever was not keeping it. The god's voice was blamed for what came after.",
+	"The word to {c} was plain, and the zealots of {s} made it plainer still with fire. Afterwards {c} were careful to blame the voice and not the hands.",
+	"{IN}{c} heard the god's command exactly, and that was the trouble: they turned the letter of it on their neighbours, and the neighbours remembered.",
+};
+const char* const kWordWisdom[] = {
+	"{c} never agreed what the god's story meant, but they all began to {sw}, which may have been the point.",   // SPEC-MYTHOS 3.9
+	"The parable {g} gave {c} was heard a little differently from the way it was told, and more gently: in the end they resolved to {sw}.",
+	"{c} argued over the story for a generation and came out of it kinder than they went in, resolved to {sw}.",
+};
+const char* const kWordSect[] = {
+	"The story {g} told {c} had two endings by the time it reached {s}, and the people who preferred the second began to meet apart.",
+	"{c} could not agree what the parable meant, and the half who were sure began to call the other half by a new name.",
+	"Out of one story of {g}'s, {c} made two, and out of two stories, two ways of praying.",
+};
+const char* const kWordPersonal[] = {
+	"Only the dreamers of {s} took the dream to heart, and resolved to {sw}. The rest of {c} said it had been the cheese.",
+	"{s} dreamed the god's dream and kept it: they would {sw}. The other towns of {c} had slept through it.",
+	"The dream came to {s} and stayed there. The people of {s} resolved to {sw}; their cousins elsewhere were polite about it.",
+};
+const char* const kWordRival[] = {
+	"Someone at {s} said the god had meant something else entirely, and some of {c} believed it.",
+	"What the god meant was read two ways among {c}, and the second reading found a voice of its own at {s}.",
+	"Before {c} had decided what the god meant, someone at {s} had decided for them, and began to preach it.",
+};
+const char* const kWordHouse[] = {
+	"Three red stars stood over {s} all winter. The priests said they meant that {c} must {sw}, and so it was done, and nobody asked the stars.",   // 3.9
+	"The priests of {c} read the sign for them, as priests do, and it said what the priests had hoped: they were to {sw}.",
+	"{IN}a sign stood over {c}, and the House of the god explained it, at length and strictly: they were to {sw}.",
+};
+const char* const kWordCatDream[] = {
+	"The dream that came to {s} was a frightening one, and a great part of the town packed its carts and left before anyone could explain it.",
+	"{IN}the sleepers of {s} woke from the god's dream in terror, and many of them walked out of the town that morning and did not come back.",
+	"Nobody at {s} could say what the dream had meant, only that it meant leaving, and a third of them left.",
+};
+const char* const kWordCatSign[] = {
+	"A sign burned in the sky over {c}, and in the fear that followed somebody burned the scholars' house at {s}, to be safe.",
+	"{c} read the strange stars as anger, and burned what they thought had angered them. Most of it was books.",
+	"The sky over {s} filled with fire that was not fire, and the people answered it with real fire, in the wrong place.",
+};
+const char* const kWordAnswer[4][3] = {
+	{ "{IN}{g} answered {c} plainly{thr}, and for once the elders did not need to argue about it.",
+	  "The answer came to {c}{thr} in plain words, and they wrote it on the wall of the shrine at {s}.",
+	  "{c} had asked, and {g} answered them{thr}, so clearly that the priests were almost disappointed." },
+	{ "{c} asked, and {g} answered them with a story{thr}, which they repeated to their children for a long time.",
+	  "The god's answer to {c} came as a parable{thr}, and they are still arguing about the ending.",
+	  "{IN}{g} told {c} a story{thr} by way of an answer. It was a good story, and most of them felt answered." },
+	{ "An answer came to the sleepers of {s} in a dream, and they woke less afraid.",
+	  "{IN}{c} dreamed the god's answer, and could not repeat it in the morning, but all of them woke calmer.",   // 3.19
+	  "The god answered {c} in their sleep, and in the morning they found the question had gone." },
+	{ "Signs stood over {c} for a season, and the priests said the god had answered, and most people agreed it had.",
+	  "{IN}a light stood in the sky over {s}, and {c} took it for an answer, and stopped asking.",
+	  "The god answered {c} with a sign, and every town read it a little differently, and every town felt answered." },
+};
+const char* const kWordRepealLost[] = {
+	"{g} spoke to {c} about {decree}, and they heard only that the god was angry.",
+	"{IN}the god spoke to {c} of {decree}, and they took it for a rebuke and kept the decree twice as hard.",
+	"{c} could not tell whether {decree} had been lifted or doubled, and to be safe they doubled it.",
+};
+
+// ---- presence (3.2) and aspect (3.3)
+const char* const kPresMessengers[] = {
+	"After that the god spoke only through the mouths of the people's own.",   // SPEC-MYTHOS 3.2
+	"{IN}the god stopped speaking out of the sky. From then on the word came on foot, through people anyone could have passed in the road.",
+	"From that year the god's wonders were done where a {msgr} stood, and nowhere else, and {c} learned to look for the {msgr} first.",
+};
+const char* const kPresUnseen[] = {
+	"From that year {c} no longer saw the hand that fed them, and began to thank the weather instead.",   // SPEC-MYTHOS 3.2
+	"{IN}the god withdrew behind the sky. The rain still came and the sick still rose, and {c} called it luck.",
+	"After that nobody saw the god's hand in anything, though things went on happening, and the priests of {c} began to argue about whether they ever had.",
+};
+const char* const kPresWonders[] = {
+	"{IN}the god came out from behind the sky again, and {c} did not know whether to be glad.",
+	"From then on the god's deeds were done in the open, where everyone could see whose they were.",
+	"The god walked openly in the sky of {c} again, and the old stories turned out to have been true.",
+};
+const char* const kAspectLines[4][3] = {
+	{ "By then {c} no longer spoke of the god as a stranger. They spoke of the god as a parent: they asked, and they expected.",
+	  "{IN}{c} began to call the god by the names children use, and to bring it their small troubles as well as their great ones.",
+	  "{c} had come to think of the god as one who fed them and would go on feeding them, and they set an extra place at the harvest table." },
+	{ "By then {c} {wasThreat}called the god a judge, and kept their accounts in order.",   // SPEC-MYTHOS 3.3 ({wasThreat}: after Threat)
+	  "{IN}{c} began to speak of the god as a lord, and to bow when they said the name.",
+	  "{c} had come to think of the god as a ruler above their rulers, and their rulers did not entirely like it." },
+	{ "By then {c} had stopped trying to say what the god was. They said only that it was, and lit lamps.",
+	  "{IN}the god became a riddle to {c}, and their priests became riddlers.",
+	  "{c} no longer expected to understand the god, and found, somewhat to their surprise, that they did not mind." },
+	{ "By then {c} spoke of the god the way sailors speak of the sea: quietly, and never after dark.",
+	  "{IN}{c} began to fear the god more than they loved it, and to build their houses low.",
+	  "{c} had come to think of the god as a storm that might break over them at any time, and they prayed the way people bail a boat." },
+};
+
+// ---- messengers (3.8)
+const char* const kFigChosen[6][3] = {
+	{ "The god chose {n} of {s} to speak for it, and {c} began, slowly, to listen.",
+	  "{IN}{n} of {s} was chosen to carry the god's word, and {c} had a {msgr} again.",
+	  "Of all the people of {s}, the god chose {n}, and nobody could say afterwards why it should have been anyone else." },
+	{ "{IN}the god chose {n}, who kept goats above {s}. The elders laughed for a week, and then they listened.",   // SPEC-MYTHOS 3.8
+	  "The {msgr} the god chose for {c} was {n}, a herder from the hills over {s}, who smelled of sheep and spoke very plainly.",
+	  "Of all the people of {s}, the god chose {n}, who was out with the flocks at the time and had to be fetched." },
+	{ "The god chose {n} of {s} to speak for it, and half of {s} remembered what {n} had stolen from them.",
+	  "{IN}{c} were told that the god's chosen {msgr} was {n}, a thief of {s}, and many of them laughed, and some of them locked their doors.",
+	  "The god chose {n}, whom {s} had once put in the stocks. The stocks were quietly taken down." },
+	{ "The god chose {n}, a child of {s}, to carry its word, and {c} learned to kneel to someone half their height.",
+	  "{IN}a child of {s} named {n} began to repeat the god's words exactly, and the grown people of {c} found they could not argue with a child.",
+	  "The god's word came to {s} through a child, {n}, and the elders had to bend down to listen." },
+	{ "The god chose {n}, who already ruled at {s}, to speak for it as well, and after that it was hard to tell which voice was which.",
+	  "{IN}{n} of {s}, who had a crown already, was given the god's word to carry too, and the court of {c} grew very quiet.",
+	  "The god's {msgr} among {c} was {n}, who sat on the high seat at {s} and now spoke from it twice over." },
+	{ "The god chose {n} of {s}, whom nobody had ever believed about anything, and nobody believed {n} now.",
+	  "{IN}{n} began to speak for the god at {s}, and {c} went on with their business as if nobody had spoken at all.",
+	  "{n} of {s} said the god had spoken, and {c} smiled the way people smile at a cousin who has said such things before." },
+};
+const char* const kFigRedeemed[] = {
+	"{n} had stolen from half of {s}. When a sick child rose from bed at the word of {n}, the other half began to listen too.",   // 3.8
+	"{IN}the god did a wonder at {s} while {n} stood by, and the thief became, to the surprise of the town, the one everyone went to for advice.",
+	"Nobody at {s} trusted {n} until the day the god answered the prayer of {n} in front of them all. After that nobody trusted anyone else as much.",
+};
+const char* const kFigDiscredited[] = {
+	"{n} went back to the old ways at {s}, and the god's word went out of fashion there along with {n}.",
+	"{IN}{n} was caught stealing again at {s}, and {c} wondered aloud what else their {msgr} had taken.",
+	"The people of {s} found their purses lighter and {n} gone to the hills. After that the god's word was harder to sell at {s}.",
+};
+const char* const kFigVindicated[] = {
+	"For forty years nobody believed {n}. Then what {n} had said came true, exactly, and {c} built {n} a house of stone, too late to live in.",   // 3.8
+	"{IN}{c} found that everything {n} had told them had come to pass, and began, very late, to quote {n} to each other.",
+	"{n} of {s} had been laughed at for a lifetime. After this year nobody at {s} laughed at the name of {n}, and many gave it to their children.",
+};
+const char* const kFigMartyr[] = {
+	"{n}, the child who spoke for the god, died when {s} fell, and {c} have not forgiven whoever did it.",
+	"{IN}{n}, the young {msgr} of {s}, was killed, and {c} carried the name of {n} through the streets for a generation.",
+	"They buried {n}, the child who had carried the god's word at {s}, facing the dawn, and every child of {c} learned the name.",
+};
+
+// ---- judgement and sentences (3.11, 3.12)
+const char* const kJudgeHeart[] = {
+	"When {g} judged {who}, who had {deed}, it looked past the deed into the heart, and {sent}.",   // SPEC-MYTHOS 3.11
+	"{IN}{g} looked not at what {who} had done but at why, and {sent}.",
+	"{g} weighed the heart of {who}, who had {deed}, and {sent}.",
+};
+const char* const kJudgeDeed[] = {
+	"When {g} judged {who}, who had {deed}, it judged the deed and not the reason, and {sent}.",   // SPEC-MYTHOS 3.11
+	"{IN}{g} judged {who} by the deed alone, and {sent}.",
+	"{g} looked only at what {who} had done, which was to have {deed}, and {sent}.",
+};
+const char* const kJudgeHeartTail[] = { " After that {c} judged their own by what they had meant.", " From then on {c} asked first what the accused had meant." };
+const char* const kJudgeDeedTail[] = { " After that the judges of {c} grew grim and fair.", " From then on {c} judged only what had been done." };
+const char* const kSentence[4] = {
+	"[forgave {them}|spared {them}|let {them} go free]",
+	"[sent {them} a dream that nobody at {s} forgot|warned {them} with a sign over {s}, and harmed no one|let {them} off with a fright]",
+	"[struck down the ruler of {c} where the ruler sat|took away the one who ruled {c} and gave the high seat to another|the ruler of {c} did not see the next spring]",
+	"[sent fire out of a clear sky on {s}|turned its anger on {s}|let ruin fall on {s}]",
+};
+const char* const kSurvivors[4][3] = {
+	{ "The last of those who had seen the god forgive {s} died in the {yo} year, and after that it was only a story, and grew.",   // 3.12
+	  "{IN}the last of {c} who remembered the mercy at {s} was buried. The children told it better than it had been.",
+	  "By the {yo} year nobody was left who had seen {s} forgiven, and the priests could tell it however they liked." },
+	{ "The last of those who had seen the god's warning over {s} died in the {yo} year. Their grandchildren kept the warning and forgot the fright.",
+	  "{IN}the old ones who remembered the sign over {s} were gone, and the sign became a story for winter nights.",
+	  "By the {yo} year nobody at {s} remembered being warned, only that they had been, which is not the same." },
+	{ "In the {yo} year the last of {c} who remembered the ruler the god struck down was buried, and the story began to change.",
+	  "{IN}the last who had seen a ruler of {c} fall at the god's word died, and the rulers of {c} grew a little bolder.",
+	  "By the {yo} year the fall of that old ruler was something grandparents told, and the young did not believe all of it." },
+	{ "The last of those who had lived through the god's anger at {s} died in the {yo} year. The young had only the ruins to go on.",
+	  "{IN}the old ones of {s} who had seen the god's fire were all buried, and the town began, slowly, to build where it had fallen.",
+	  "By the {yo} year nobody at {s} remembered the day the god struck, and children played where it had happened." },
+};
+
+// ---- card resolutions (3.5, 3.2, 3.7, 3.8, 3.10, 3.11)
+const char* const kCardShape[] = {
+	"When {c} first woke, {t1}, and {t2}.",
+	"{IN}{c} were made, and they were made so: {t1}, and {t2}.",
+	"It was said of {c} from the beginning that {t1}, and that {t2}.",
+};
+// the waking clause of the two strongest traits (3.5: "... and they woke asking questions, and would not stop")
+const char* const kTraitClause[5] = {
+	"[they asked questions, and would not stop|they took the first thing they found apart to see how it worked|they had named the stars before they had named themselves]",
+	"[the first thing they did was carry the lame one to the fire|they shared their first meal with a stranger and were glad of it|nobody was left behind on the first long walk]",
+	"[they had marked out a city before they had built a hut|they were arguing about who should lead before the first fire was lit|the first thing they wanted was more]",
+	"[they walked into the first night without a torch|they climbed the nearest mountain to see what was on the other side|they faced the first wolf, and the wolf left]",
+	"[the first thing they made was a spear|they had their first quarrel before their first fire|they woke ready to fight whatever came, and something always came]",
+};
+const char* const kCardPresence[] = {
+	"From the first, the god did its deeds in the open sky, where {c} could see whose they were.",
+	"{c} were not long awake before they learned that the god of their sky did not hide.",
+	"From their first night {c} could point to the god's work and say whose it was, and they did, often.",
+};
+const char* const kCardNoMessenger[] = {
+	"The god looked over the would-be {msgr}s of {s} and chose none of them, and {c} went on waiting.",
+	"{IN}three people of {s} stood up to speak for the god, and the god let all three sit down again.",
+	"None of those who offered to carry the god's word at {s} were chosen, and {c} learned that the god could be particular.",
+};
+// decree conflicts (3.7): one setup per case (Doctrine's case order), the outcomes by answer
+const char* const kConflictSetup[8] = {
+	"{c} had been told to shed no blood and to carry the weak, and when {c2} came for the weak they had to choose.",   // 3.7
+	"{c} had been told never to lie and to shelter the helpless, and then {c2} came asking where the refugees were hidden.",
+	"{s} was starving while the god's house was full of the tithe, and {c} had been told to give the tenth and to feed the weak.",
+	"An army of {c2} came to the gate of {s}, and {c} had been told to let the stranger eat first.",
+	"{s} was hungry, and the only good land left was the old forest that {c} had been told was not theirs.",
+	"A great work for the god was due at {s} while the town starved, and {c} had been told to build for the god and to share their bread.",
+	"{c} and {c2} had been told opposite things about the truth, and each people was sure the other had misheard.",
+	"Fever came to {s}, and {c} had been told both that the strong endure and that they should serve one another.",
+};
+const char* const kConflictOut[8][3] = {
+	{ "{setup} They held the gate, and wept about it after, and the god said nothing against it.",   // 3.7
+	  "{setup} They laid down their spears and carried the weak away instead, and many of them died doing it.",
+	  "{setup} A sign stood between the armies, and {c2} turned back, and nobody had to choose after all." },
+	{ "{setup} They lied, and the refugees lived, and the god let the lie stand.",
+	  "{setup} They told the truth, and the refugees were taken, and {c} did not sleep well for a long time.",
+	  "{setup} A dream came instead of an answer, and each household of {c} chose for itself." },
+	{ "{setup} The stores were opened, and the hungry ate, and the priests counted what was left with long faces.",
+	  "{setup} The god said the tenth was its own, and the stores stayed shut, and {s} remembered it.",
+	  "{setup} The fields of {s} came green out of season, and nobody had to choose." },
+	{ "{setup} They fed the soldiers and sent them home, and the soldiers, being full, went.",
+	  "{setup} The gate shut, and for a generation the {ca} welcome had a lock on it.", nullptr },
+	{ "{setup} They cut the wood and ate, and their children never saw a tree that old again.",
+	  "{setup} The wood stood, and {s} went hungry that year.",
+	  "{setup} They cleared half of it and kept the oldest trees as a grove, which they still keep." },
+	{ "{setup} They built it on time, and the hungry watched it go up.",
+	  "{setup} The hungry were fed first, and the work waited a generation, and nobody minded but the builders.", nullptr },
+	{ "{setup} The god said both were its own, which satisfied nobody and silenced everyone.",
+	  "{setup} The god took one side, and the other has not forgotten which.", nullptr },
+	{ "{setup} They let the sickness choose, and it chose a great many, and the ones it left were very strong.",
+	  "{setup} They carried the sick, and more of the weak lived than anyone had expected.", nullptr },
+};
+const char* const kConflictAny[] = { "{setup} They chose, and lived with it, and argued about it for a long time after." };
+const char* const kConflictLapse[] = {
+	"{setup} They could not keep both, and the stricter word won, and nobody was pleased.",
+	"{setup} No word came, and the stricter law won, and the other was kept a little less after that.",
+	"{setup} Left to choose, {c} chose the harder law, and kept the other with a guilty face.",
+};
+// competing prayers (3.10): Cards' pair order (ref[2]) and answer order
+const char* const kCompeteSetup[4] = {
+	"{s} prayed for rain and {s2} for an end to it, in the same week,",
+	"{c} and {c2} both asked the god for victory,",
+	"{c} prayed for victory and {c2} for peace,",
+	"Fever burned in {s} while {c2} prayed for victory over {c},",
+};
+const char* const kCompeteOut[4][4] = {
+	{ "{setup} and the god gave {s} the rain, and {s2} has not stopped complaining.",
+	  "{setup} and the god held the rain, and {s} went thirsty while {s2} dried its floors.",
+	  "{setup} and the god gave {s} a little and {s2} a little, and both towns complained, which was how they knew it was fair.",   // 3.10
+	  "{setup} and the god answered neither, and both towns decided the god was busy." },
+	{ "{setup} and the sky fell on {c2} at {s2}. {c2} have not forgotten whose sky it was.",   // 3.10
+	  "{setup} and the sky fell on {c} at {s}. {c} have not forgotten whose sky it was.",
+	  "{setup} and a sign stood between their armies instead, and both peoples remembered that the god had held them apart.",
+	  "{setup} and the god gave victory to neither, and the war went on without the god in it." },
+	{ "{setup} and the god stood with {c}, and {c2} learned that peace is not always given to those who ask.",
+	  "{setup} and the sign of peace stood over the armies, and {c} lowered their spears to look at it.",
+	  "{setup} and the god answered neither, and the war went on.",
+	  "{setup} and the god answered neither, and the war went on." },
+	{ "{setup} and the god healed {s}, and {c2} decided the god had chosen a side.",
+	  "{setup} and the god let the fever run, and {c2} called it an answer.",
+	  "{setup} and the god did nothing, and the fever and the war went on as if neither had been prayed about.",
+	  "{setup} and the god did nothing, and the fever and the war went on as if neither had been prayed about." },
+};
+const char* const kCompeteLapse[] = {
+	"{setup} and neither prayer was answered, and each side blamed the other's.",
+	"{setup} and no answer came to either, and both learned to pray more quietly.",
+};
+const char* const kJudgeLapse[] = {
+	"The god said nothing about {who}, so {c} judged for themselves, and were hard about it.",
+	"{IN}{c} waited for the god to judge {who}, and when nothing came they held a trial of their own.",
+	"No sentence came from the sky for {who}, and the elders of {c} gave one instead.",
+};
+
+// ---- the handlers
+
+// A card was answered in the tick its own source event told the answer: the entry types that tell each kind.
+bool toldBy(CardKind k, const string& type) {
+	switch (k) {
+	case CardKind::Presence: return type == "presence";
+	case CardKind::FirstDecree: return type == "decree" || type == "word" || type == "custom";
+	case CardKind::MessengerChoice: return type == "figure";
+	case CardKind::Judgement: return type == "judgement";
+	default: return false;
+	}
+}
+
+// {who} {them} {deed} of a judgement card (3.11): a figure's deed, or a town's breach
+void judgedCtx(Ctx& x, const World& w, const Card& k) {
+	const Figure* f = mythFigure(w, k.figure);
+	if (f) {
+		x.set("who", f->name.empty() ? string("the accused") : f->name);
+		x.set("them", f->name.empty() ? string("the accused") : f->name);
+		const auto dd = k.data.find("deed");
+		const int deed = dd != k.data.end() ? int(dd->second) : k.ref[1];
+		x.set("deed", deed == 1 ? "gone back to stealing" : deed == 2 ? "made a crown of the god's word" : "done what could not be overlooked");
+		x.set("n", f->name.empty() ? string("the accused") : f->name);
+		return;
+	}
+	const Settlement* s = sett(w, k.settlement);
+	x.set("who", "the people of " + (s ? settlementName(w, s->id) : string("the town")));
+	x.set("them", "them");
+	const auto ad = k.data.find("area");
+	const int ai = ad != k.data.end() ? int(ad->second) : k.ref[1];
+	const string decree = ai >= 0 && ai < int(DecreeArea::Count) ? kAreaText[ai].decree : "a decree";
+	const auto cd = k.data.find("circumstance");
+	const int ci = cd != k.data.end() ? int(cd->second) : k.ref[2];
+	static const char* const kCirc[] = { "", " in a famine", " in time of war", " in a plague year", " out of fear", " because they had been ordered to" };
+	x.set("deed", "broken " + decree + (ci >= 0 && ci < 6 ? kCirc[ci] : ""));
+}
+
+void onMythCard(World& w, const EvCard& e) {
+	if (!mythOn(w)) return;
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	const Card* k = mythCard(w, e.id);
+	CardKind kind = CardKind::Count;
+	if (k) kind = k->kind;
+	else if (!fromStr(e.kind, kind)) kind = CardKind::Count;
+	// what this card's source told since the last card event
+	bool told = false;
+	for (const ChronicleScratch::MythMark& m : S.mythMarks)
+		if (m.tick == w.tick && m.year == fin(w.year) && (m.card == e.id || (m.card < 0 && (m.culture == e.culture || m.culture < 0 || e.culture < 0) && toldBy(kind, m.type)))) told = true;
+	S.mythMarks.clear();
+	if (!k || told || (e.stage != "answered" && e.stage != "lapsed")) return;
+	const bool answered = e.stage == "answered";
+	const bool emergent = w.tune<MythosTune>().emergentOn(MythosTune::FamLapse);   // (B1) lapse effects are their family
+	Ctx x;
+	const int cid = k->culture >= 0 ? k->culture : e.culture;
+	switch (kind) {
+	case CardKind::ShapePeople: {
+		if (!answered || !mythCtx(x, w, cid, k->settlement)) return;
+		const Culture* c = cult(w, cid);
+		const double v[5] = { c->traits.curiosity, c->traits.compassion, c->traits.ambition, c->traits.courage, c->traits.aggression };
+		int a = 0;
+		for (int i = 1; i < 5; i++) if (fin(v[i]) > fin(v[a])) a = i;
+		int b = a == 0 ? 1 : 0;
+		for (int i = 0; i < 5; i++) if (i != a && fin(v[i]) > fin(v[b])) b = i;
+		x.set("t1", kTraitClause[a], true);
+		x.set("t2", kTraitClause[b], true);
+		const Settlement* s = sett(w, mythTown(w, cid));
+		mythWrite(w, "card", 2, s ? s->cell : -1, cid, tpl(kCardShape), "my-shape", x, Tpl{ nullptr, 0 }, string(), e.id);
+		return;
+	}
+	case CardKind::Presence:
+		if (!answered || e.choice != 0 || !mythCtx(x, w, cid)) return;   // another stance is told by its presence event
+		mythWrite(w, "card", 2, -1, cid, tpl(kCardPresence), "my-card-presence", x, Tpl{ nullptr, 0 }, string(), e.id);
+		return;
+	case CardKind::MessengerChoice:
+		if (!answered || e.choice != 3 || !mythCtx(x, w, cid, k->settlement)) return;   // a chosen one is told by its figure event
+		mythWrite(w, "card", 2, k->cell, cid, tpl(kCardNoMessenger), "my-card-nomsgr", x, Tpl{ nullptr, 0 }, string(), e.id);
+		return;
+	case CardKind::DecreeConflict: {
+		const int kase = k->ref[0];
+		if (kase < 0 || kase >= 8 || !mythCtx(x, w, cid, k->settlement)) return;
+		if (cult(w, k->other)) ctxCulture(x, w, k->other, "2");
+		else x.set("c2", "their neighbours");
+		x.set("setup", kConflictSetup[kase], true);
+		if (!answered) {
+			mythWrite(w, "card-lapsed", 1, k->cell, cid, tpl(kConflictLapse), "my-conflict-lapse", x, Tpl{ nullptr, 0 }, string(), e.id);
+			return;
+		}
+		const int ch = e.choice;
+		const char* const* line = (ch >= 0 && ch < 3 && kConflictOut[kase][ch]) ? &kConflictOut[kase][ch] : nullptr;
+		if (line) mythWrite(w, "card", 2, k->cell, cid, Tpl{ line, 1 }, "my-conflict-" + std::to_string(kase) + "-" + std::to_string(ch), x, Tpl{ nullptr, 0 }, string(), e.id);
+		else mythWrite(w, "card", 2, k->cell, cid, tpl(kConflictAny), "my-conflict-any", x, Tpl{ nullptr, 0 }, string(), e.id);
+		return;
+	}
+	case CardKind::CompetingPrayers: {
+		const int pair = k->ref[2];
+		const Settlement* a = sett(w, k->ref[0]);
+		const Settlement* b = sett(w, k->ref[1]);
+		if (pair < 0 || pair >= 4 || !a || !b || !cult(w, a->culture) || !cult(w, b->culture)) return;
+		if (!answered && !emergent) return;                 // a lapse acts only under emergent (Cards' rule)
+		ctxCulture(x, w, a->culture);
+		ctxSettlement(x, w, a->id);
+		ctxCulture(x, w, b->culture, "2");
+		ctxSettlement(x, w, b->id, "2");
+		x.set("setup", kCompeteSetup[pair], true);
+		if (!answered) { mythWrite(w, "card-lapsed", 1, a->cell, a->culture, tpl(kCompeteLapse), "my-compete-lapse", x, Tpl{ nullptr, 0 }, string(), e.id); return; }
+		const int ch = std::clamp(e.choice, 0, 3);
+		mythWrite(w, "card", 2, a->cell, a->culture, Tpl{ &kCompeteOut[pair][ch], 1 }, "my-compete-" + std::to_string(pair) + "-" + std::to_string(ch), x,
+			Tpl{ nullptr, 0 }, string(), e.id);
+		return;
+	}
+	case CardKind::Judgement:
+		if (answered || !emergent || !mythCtx(x, w, cid, k->settlement)) return;   // an answer is told by its judgement event
+		judgedCtx(x, w, *k);
+		mythWrite(w, "card-lapsed", 1, k->cell, cid, tpl(kJudgeLapse), "my-judge-lapse", x, Tpl{ nullptr, 0 }, string(), e.id);
+		return;
+	default:
+		return;                                             // FirstDecree: its decree or custom tells it; v2 / v3 kinds: M8b / M8c
+	}
+}
+
+void onMythPresence(World& w, const EvPresence& e) {
+	if (!mythOn(w)) return;
+	Presence p = Presence::Wonders;
+	if (!fromStr(e.presence, p) || p == Presence::Walk) return;
+	Ctx x;
+	if (!mythCtx(x, w, mythLeading(w))) return;
+	const Tpl t = p == Presence::Messengers ? tpl(kPresMessengers) : p == Presence::Unseen ? tpl(kPresUnseen) : tpl(kPresWonders);
+	mythWrite(w, "presence", 2, -1, -1, t, string("my-presence-") + e.presence, x);
+}
+
+void onMythAspect(World& w, const EvAspect& e) {
+	if (!mythOn(w) || !mythTouched(w, e.culture)) return;   // the people's view moves the book only where it moves the world
+	Aspect a = Aspect::Unknown;
+	if (!fromStr(e.aspect, a) || a == Aspect::Unknown) return;
+	Ctx x;
+	if (!mythCtx(x, w, e.culture)) return;
+	const Tpl t{ kAspectLines[int(a) - 1], 3 };
+	x.set("wasThreat", e.prev == "threat" ? string("no longer called the god a storm. They ") : string());
+	mythWrite(w, "aspect", 2, -1, e.culture, t, string("my-aspect-") + e.aspect, x);
+}
+
+// A decree heard as meant (any source): the frame of its clarity (the rite's own), the stance's image.
+ChronicleEntry* tellDecree(World& w, int cid, DecreeArea area, int stance, Clarity cl, int figure, int sid, const char* type) {
+	Ctx x;
+	if (!mythCtx(x, w, cid, sid)) return nullptr;
+	const Tpl img = decreeCtx(x, area, stance);
+	if (!img.t) return nullptr;
+	const Figure* f = mythFigure(w, figure);
+	x.set("n", f && !f->name.empty() ? f->name : string("a {msgr}"), true);
+	x.set("thr", f && !f->name.empty() ? " through " + f->name : string());
+	x.set("how", clarityHow(cl));
+	Tpl t = tpl(kDecExact);
+	string key = "my-dec-exact";
+	if (area == DecreeArea::Worship) { t = tpl(kDecRite); key = "my-dec-rite"; }
+	else if (cl == Clarity::Exact && f) { t = tpl(kDecExactBy); key = "my-dec-exact-by"; }
+	else if (cl == Clarity::Parable) { t = tpl(kDecParable); key = "my-dec-parable"; }
+	else if (cl == Clarity::Dream) { t = tpl(kDecDream); key = "my-dec-dream"; }
+	else if (cl == Clarity::Sign) { t = tpl(kDecSign); key = "my-dec-sign"; }
+	const Settlement* s = sett(w, mythTown(w, cid));
+	return mythWrite(w, type, 2, s ? s->cell : -1, cid, t, key, x, img, "my-img-" + std::to_string(stanceRow(area, stance)));
+}
+
+void onMythDecree(World& w, const EvDecree& e) {
+	if (!mythOn(w)) return;
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	DecreeArea area = DecreeArea::Count;
+	if (!fromStr(e.area, area) || area == DecreeArea::Count) return;
+	if (e.clarity == "custom") {                            // the people's own custom (3.6)
+		int st = -1;
+		if (!stanceFromName(area, e.stance, st) || st < 0) return;
+		Ctx x;
+		if (!mythCtx(x, w, e.culture)) return;
+		const Tpl img = decreeCtx(x, area, st);
+		const Settlement* s = sett(w, mythTown(w, e.culture));
+		mythWrite(w, "custom", 1, s ? s->cell : -1, e.culture, area == DecreeArea::Worship ? tpl(kCustomRite) : tpl(kCustom),
+			area == DecreeArea::Worship ? "my-custom-rite" : "my-custom", x, img, "my-img-" + std::to_string(stanceRow(area, st)));
+		return;
+	}
+	// the word that gave it was told this tick (its outcome line names the decree)
+	if (S.wordTick == w.tick && S.wordYear == fin(w.year) && S.wordCulture == e.culture && S.wordArea == int(area)) return;
+	if (e.stance == "repealed") {
+		Ctx x;
+		if (!mythCtx(x, w, e.culture)) return;
+		decreeCtx(x, area, -1);
+		mythWrite(w, "decree", 2, -1, e.culture, tpl(kDecRepeal), "my-dec-repeal", x);
+		return;
+	}
+	int st = -1;
+	if (!stanceFromName(area, e.stance, st) || st < 0) return;
+	Clarity cl = Clarity::Exact;
+	if (!fromStr(e.clarity, cl)) cl = Clarity::Sign;
+	int by = -1;
+	for (const Decree& d : w.mythos.decrees) if (d.culture == e.culture && d.area == area) by = d.by;
+	tellDecree(w, e.culture, area, st, cl, by, -1, "decree");
+}
+
+void onMythBreach(World& w, const EvBreach& e) {
+	if (!mythOn(w)) return;
+	DecreeArea area = DecreeArea::Count;
+	if (!fromStr(e.area, area) || area == DecreeArea::Count) return;
+	Ctx x;
+	if (!mythCtx(x, w, e.culture, e.settlement)) return;
+	decreeCtx(x, area, -1);
+	const Settlement* s = sett(w, e.settlement);
+	mythWrite(w, "breach", fin(e.severity) >= w.tune<DoctrineTune>().breachCard - 1e-9 ? 2 : 1, s ? s->cell : -1, e.culture, tpl(kBreach), "my-breach", x);
+}
+
+void onMythWord(World& w, const EvWord& e) {
+	if (!mythOn(w)) return;
+	ChronicleScratch& S = w.scratch<ChronicleScratch>();
+	const Utterance* u = mythWord(w, e.id);
+	WordContent content = WordContent::Answer;
+	Clarity cl = Clarity::Dream;
+	WordOutcome out = WordOutcome::Heard;
+	if (!fromStr(e.content, content)) content = WordContent::Answer;
+	if (!fromStr(e.clarity, cl)) cl = Clarity::Dream;
+	if (!fromStr(e.outcome, out)) out = WordOutcome::Heard;
+	const DecreeArea area = u && u->area >= 0 && u->area < int8_t(DecreeArea::Count) ? DecreeArea(u->area) : DecreeArea::Count;
+	const bool decreeWord = (content == WordContent::Decree || content == WordContent::Repeal) && area != DecreeArea::Count;
+	if (decreeWord) { S.wordTick = w.tick; S.wordYear = fin(w.year); S.wordCulture = e.culture; S.wordArea = int(area); }
+	int sid = -1;
+	if (u && cl == Clarity::Dream) {
+		const auto d = u->data.find("dreamer");
+		if (d != u->data.end()) sid = int(d->second);
+	}
+	const int fig = u ? u->figure : -1;
+	if (content == WordContent::Decree && decreeWord && out == WordOutcome::Heard) {
+		if (u && u->heard >= 0) tellDecree(w, e.culture, area, u->heard, cl, fig, sid, "decree");
+		return;
+	}
+	Ctx x;
+	if (!mythCtx(x, w, e.culture, sid)) return;
+	const Figure* f = mythFigure(w, fig);
+	x.set("thr", f && !f->name.empty() ? " through " + f->name : string());
+	Tpl img{ nullptr, 0 };
+	if (decreeWord) img = decreeCtx(x, area, content == WordContent::Decree && u ? u->heard : -1);
+	Tpl t{ nullptr, 0 };
+	string key;
+	const bool hasStance = decreeWord && content == WordContent::Decree && u && u->heard >= 0;
+	if (content == WordContent::Repeal && decreeWord) {
+		if (out == WordOutcome::Catastrophe) { t = tpl(kWordRepealLost); key = "my-word-repeal-lost"; }
+		else { t = tpl(kDecRepeal); key = "my-dec-repeal"; }
+		img = Tpl{ nullptr, 0 };
+	} else {
+		switch (out) {
+		case WordOutcome::Literal: if (hasStance) { t = tpl(kWordLiteral); key = "my-word-literal"; } break;
+		case WordOutcome::Wisdom: if (hasStance) { t = tpl(kWordWisdom); key = "my-word-wisdom"; } break;
+		case WordOutcome::Personal: if (hasStance) { t = tpl(kWordPersonal); key = "my-word-personal"; } break;
+		case WordOutcome::HouseRead: if (hasStance) { t = tpl(kWordHouse); key = "my-word-house"; } break;
+		case WordOutcome::Sect: t = tpl(kWordSect); key = "my-word-sect"; img = Tpl{ nullptr, 0 }; break;
+		case WordOutcome::Rival: t = tpl(kWordRival); key = "my-word-rival"; img = Tpl{ nullptr, 0 }; break;
+		case WordOutcome::Catastrophe:
+			img = Tpl{ nullptr, 0 };
+			if (cl == Clarity::Exact) { t = tpl(kWordCatExact); key = "my-word-cat-exact"; }
+			else if (cl == Clarity::Dream) { t = tpl(kWordCatDream); key = "my-word-cat-dream"; }
+			else if (cl == Clarity::Sign) { t = tpl(kWordCatSign); key = "my-word-cat-sign"; }
+			else { t = tpl(kWordSect); key = "my-word-sect"; }
+			break;
+		default: break;
+		}
+		if (!t.t) {                                          // an answer (or a misread with no stance): heard as an answer
+			t = Tpl{ kWordAnswer[std::clamp(int(cl), 0, 3)], 3 };
+			key = "my-word-answer-" + std::to_string(int(cl));
+			img = Tpl{ nullptr, 0 };
+		}
+		// the misread lines say what came of it in their own words: the stance's image only after a kept stance
+		if (out == WordOutcome::Literal || out == WordOutcome::HouseRead) img = Tpl{ nullptr, 0 };
+	}
+	const Settlement* s = sett(w, mythTown(w, e.culture));
+	const int row = decreeWord && u ? stanceRow(area, u->heard) : -1;
+	mythWrite(w, "word", 2, s ? s->cell : -1, e.culture, t, key, x, img, "my-img-" + std::to_string(row));
+}
+
+void onMythFigure(World& w, const EvFigure& e) {
+	if (!mythOn(w)) return;
+	const Figure* f = mythFigure(w, e.id);
+	if (!f || f->kind != uint8_t(FigureKind::Messenger)) return;   // rulers come and go without a line (3.23: no sim effect)
+	Ctx x;
+	if (!mythCtx(x, w, f->culture, f->home)) return;
+	x.set("n", f->name.empty() ? string("one who would not give a name") : f->name);
+	const Settlement* s = sett(w, f->home);
+	const int cell = s ? s->cell : -1;
+	if (e.what == "chosen") {
+		const int a = f->archetype < 6 ? int(f->archetype) : 0;
+		mythWrite(w, "figure", 2, cell, f->culture, Tpl{ kFigChosen[a], 3 }, "my-fig-chosen-" + std::to_string(a), x);
+	} else if (e.what == "redeemed") {
+		mythWrite(w, "figure", 2, cell, f->culture, tpl(kFigRedeemed), "my-fig-redeemed", x);
+	} else if (e.what == "discredited") {
+		mythWrite(w, "figure", 1, cell, f->culture, tpl(kFigDiscredited), "my-fig-discredited", x);
+	} else if (e.what == "vindicated") {
+		mythWrite(w, "figure", 2, cell, f->culture, tpl(kFigVindicated), "my-fig-vindicated", x);
+	} else if (e.what == "fallen" && f->fate == uint8_t(FigureFate::Martyred)) {
+		mythWrite(w, "figure", 2, cell, f->culture, tpl(kFigMartyr), "my-fig-martyr", x);
+	}
+	// "died": Society's prophet:died tells it; "rise": rulers and rival voices' figures (v2: M8b)
+}
+
+void onMythJudgement(World& w, const EvJudgement& e) {
+	if (!mythOn(w)) return;
+	const Card* k = mythCard(w, e.card);
+	JudgeBy by = JudgeBy::Deed;
+	Sentence sn = Sentence::Forgive;
+	if (!fromStr(e.by, by) || !fromStr(e.sentence, sn)) return;
+	Ctx x;
+	const int sid = k ? k->settlement : -1;
+	if (!mythCtx(x, w, e.culture, sid)) return;
+	if (k) judgedCtx(x, w, *k);
+	else { x.set("who", "the accused"); x.set("them", "them"); x.set("deed", "done what could not be overlooked"); }
+	x.set("sent", kSentence[std::clamp(int(sn), 0, 3)], true);
+	// the first judgement of each kind for this people names the doctrine it begins
+	const string jk = "chronicle_jb." + std::to_string(e.culture);
+	const int bit = by == JudgeBy::Heart ? 2 : 1;
+	const int seen = int(fin(w.vars.num.count(jk) ? w.vars.num[jk] : 0));
+	const Tpl tail = (seen & bit) ? Tpl{ nullptr, 0 } : (by == JudgeBy::Heart ? tpl(kJudgeHeartTail) : tpl(kJudgeDeedTail));
+	const Settlement* s = sett(w, sid);
+	ChronicleEntry* en = mythWrite(w, "judgement", 2, s ? s->cell : -1, e.culture, by == JudgeBy::Heart ? tpl(kJudgeHeart) : tpl(kJudgeDeed),
+		by == JudgeBy::Heart ? "my-judge-heart" : "my-judge-deed", x, tail, by == JudgeBy::Heart ? "my-judge-heart-tail" : "my-judge-deed-tail", e.card);
+	if (en) w.vars.num[jk] = double(seen | bit);
+	// the survivors remember this sentence (3.12)
+	w.vars.num["chronicle_sv." + std::to_string(e.culture)] = double(int(sn) + 1);
+	w.vars.num["chronicle_ss." + std::to_string(e.culture)] = double(sid);
+}
+
+// (3.12) The survivors' memory ended: once per memory, when Mythos's survivorUntil has passed. Yearly.
+void mythSurvivors(World& w) {
+	for (size_t ci = 0; ci < w.mythos.faith.size() && ci < w.cultures.size(); ci++) {
+		const int cid = int(ci);
+		const Faith& f = w.mythos.faith[ci];
+		if (!(fin(f.survivorUntil, -1) > 0) || fin(w.year) < f.survivorUntil - 1e-9) continue;
+		const string c = std::to_string(cid);
+		const auto sv = w.vars.num.find("chronicle_sv." + c);
+		if (sv == w.vars.num.end()) continue;
+		const auto se = w.vars.num.find("chronicle_se." + c);
+		if (se != w.vars.num.end() && se->second == f.survivorUntil) continue;
+		w.vars.num["chronicle_se." + c] = f.survivorUntil;
+		const int sn = std::clamp(int(sv->second) - 1, 0, 3);
+		const auto ss = w.vars.num.find("chronicle_ss." + c);
+		Ctx x;
+		if (!mythCtx(x, w, cid, ss != w.vars.num.end() ? int(ss->second) : -1)) continue;
+		if (ss != w.vars.num.end() && sett(w, int(ss->second))) ctxSettlement(x, w, int(ss->second));   // a fallen town keeps its name
+		mythWrite(w, "survivors", 1, -1, cid, Tpl{ kSurvivors[sn], 3 }, "my-survivors-" + std::to_string(sn), x);
+	}
+}
+
+// (3.8) the prophet's messenger figure: a chosen messenger is told by the figure's line, not the prophet's
+bool mythProphetRisen(World& w, const EvProphetRisen& e) {
+	const Culture* c = cult(w, e.culture);
+	const int fig = c && c->prophet ? c->prophet->figure : -1;
+	const string key = "chronicle_pf." + std::to_string(e.culture);
+	if (fig >= 0) w.vars.num[key] = double(fig);
+	else w.vars.num.erase(key);
+	const Figure* f = mythFigure(w, fig);
+	return f && f->kind == uint8_t(FigureKind::Messenger);
+}
+bool mythProphetDied(World& w, const EvProphetDied& e, string& name) {
+	const string key = "chronicle_pf." + std::to_string(e.culture);
+	const auto it = w.vars.num.find(key);
+	if (it == w.vars.num.end()) return false;
+	const Figure* f = mythFigure(w, int(it->second));
+	w.vars.num.erase(key);
+	if (!f) return false;
+	if (f->fate == uint8_t(FigureFate::Martyred)) return true;   // told at the martyrdom
+	if (!f->name.empty()) name = f->name;
+	return false;
+}
+string mythProphetName(const World& w, int cid, const string& fallback) {
+	const Culture* c = cult(w, cid);
+	const Figure* f = c && c->prophet ? mythFigure(w, c->prophet->figure) : nullptr;
+	return f && !f->name.empty() ? f->name : fallback;
+}
+
+// ---- the tale (3.31: "What they believed"; 4: the Legacy paragraph)
+
+string listNames(const std::vector<string>& v);
+
+const char* const kLegacyText[5][6] = {   // Legacy (ObedientEmpire ..) x Mood (Beloved, Feared, Forgotten, Parting, Ash, Quiet)
+	{ "They had lived as the god asked, in good order, and been glad of it. In the towns of {c} the decrees were cut over every door, and kept, and the people who kept them slept well.",
+	  "They had lived in good order because they dared not live otherwise. Every decree was kept in every town of {c}, and nobody could say any longer whether out of faith or out of fear.",
+	  "They had kept the god's laws so long that they forgot whose laws they were. The decrees stood over the doors of {c} like the names of streets: obeyed, and never read.",
+	  "They had been a people of laws, and the laws had held them together. They took the laws with them when they went, and left the god a very tidy world.",
+	  "They had obeyed in everything, and in the end they obeyed the order to burn. Their empire was the best kept in the history of {W}, until the last day.",
+	  "They had been an orderly people, and they went out in good order, one town at a time. The decrees are still cut over the empty doors of {W}." },
+	{ "Under the god's care they had learned to care for one another. In the towns of {c} the sick were carried, the stranger was fed, and the old were never left alone at the hearth.",
+	  "They feared the god, and loved each other the more for it. Whatever came out of the sky, in the towns of {c} nobody went hungry alone.",
+	  "They forgot the god, but not the kindness they had learned under the god's sky. The guest-halls of {c} stayed open long after the shrines had closed.",
+	  "They had been a gentle people, and they left gently. The last thing they did on {W} was make sure that nobody was left behind.",
+	  "They had been kind for a very long time, and then, for one terrible season, they were not. The guest-halls of {W} burned with everything else.",
+	  "They were kind to the last. When the towns of {W} emptied, the last people in them were still carrying each other." },
+	{ "They loved the god, and they were afraid of the god, and they never learned how to stop doing either. The children of {c} were taught to pray before they were taught to speak.",
+	  "It had been a frightened world. The people of {c} built low and spoke quietly and watched the sky, and they never once forgot whose sky it was.",
+	  "They were afraid for so long that the fear outlived the memory of what they feared. They still flinched at thunder, and could not have said why.",
+	  "They had lived under the sky as people live under a cliff that has fallen before. When they could leave it, they did.",
+	  "Fear had made them hard, and hardness made them cruel, and in the end they turned the fire on each other. The sky of {W} was quiet afterwards.",
+	  "They lived afraid and died out afraid, a town at a time, under a sky they never trusted. {W} is quiet now, and nothing is afraid of it." },
+	{ "They had loved the god and kept the land, and the land kept them. The old forests of {W} still stood when they left, taller than anyone remembered.",
+	  "They had been afraid to cut what the god had planted, and so the forests of {W} grew old around their fences.",
+	  "They forgot the god, but they never forgot the forest. The old woods of {W} outlived the temples, and will outlive the stories of them.",
+	  "They took only what they needed from {W}, and left the rest. Behind them the forests closed over the fields like water over a stone.",
+	  "They burned their cities, but not, in the end, the world. The old forests of {W} were green again within a lifetime of the last fire.",
+	  "When the last of them were gone the forests came back to {W} as if they had only been waiting, which they had." },
+	{ "They had been loved, and had grown up, and did not need to be told any more. They still sang the old songs, and meant them, and made their own choices.",
+	  "They had outgrown their fear of the god before they outgrew the god. By the end they asked for nothing, and were afraid of nothing.",
+	  "They had learned to do without the god so well that they forgot there had been anything to do without.",
+	  "They had learned to think without being told, and to mend without being healed. They said goodbye like grown children, and promised to write.",
+	  "They had needed no god to make their wars, and none to end the world with. They had come of age, and that was what they did with it.",
+	  "They had grown past their need of the god, and then past their need of {W}. Their towns emptied without a prayer, because nobody thought to say one." },
+};
+int moodIndex(Mood m) {
+	switch (m) {
+	case Mood::Beloved: return 0; case Mood::Feared: return 1; case Mood::Forgotten: return 2;
+	case Mood::Parting: return 3; case Mood::Ash: return 4; default: return 5;
+	}
+}
+
+// The people the tale's mythos paragraphs are about: the Ark's, else the most populous living, else the last.
+int taleCulture(const World& w) {
+	if (w.ending && cult(w, w.ending->culture)) return w.ending->culture;
+	const int lead = mythLeading(w);
+	if (lead >= 0) return lead;
+	return w.cultures.empty() ? -1 : int(w.cultures.size()) - 1;
+}
+
+string beliefParagraph(const World& w, int cid) {
+	const Culture* c = cult(w, cid);
+	if (!c) return string();
+	const string C = culturePlural(w, cid);
+	std::vector<string> kept;
+	bool custom = false, lostAll = false;
+	string rite;
+	for (const Decree& d : w.mythos.decrees) {
+		if (d.culture != cid || d.stance < 0 || int(d.area) >= int(DecreeArea::Count)) continue;
+		if (d.area == DecreeArea::Worship) {
+			const int row = stanceRow(d.area, d.stance);
+			if (row >= 0) rite = kStanceText[row].ger;
+		}
+		if (d.custom) { custom = true; continue; }
+		if (fin(d.kept) >= 0.5) kept.push_back(kAreaText[int(d.area)].decree);
+		else lostAll = true;
+	}
+	std::vector<string> bits;
+	if (!kept.empty()) bits.push_back("At the end " + C + " still kept " + listNames(kept) + (custom ? ", and customs of their own." : "."));
+	else if (custom) bits.push_back("At the end " + C + " lived by customs of their own making.");
+	else if (lostAll) bits.push_back("Of the god's decrees, " + C + " kept none to the end.");
+	if (!rite.empty()) bits.push_back("They worshipped by " + rite + ".");
+	switch (mythAspect(w, cid)) {
+	case Aspect::Parent: bits.push_back("They thought of the god as a parent, who would always feed them."); break;
+	case Aspect::Ruler: bits.push_back("They thought of the god as a ruler, and kept its laws as one keeps a lord's."); break;
+	case Aspect::Mystery: bits.push_back("They no longer tried to say what the god was."); break;
+	case Aspect::Threat: bits.push_back("They feared the god, and said so only in whispers."); break;
+	default: break;
+	}
+	if (cid >= 0 && size_t(cid) < w.mythos.faith.size()) {   // beliefs about death (3.27, v3: Doctrine forms them)
+		static const char* const kDeath[] = { "", "that the dead cross to the Further Shore", "that the dead come back as others, in the Turning",
+			"that the dead would one day return", "that the dead sleep the Long Sleep" };
+		static const char* const kSure[] = { "", ", though few were sure of it", ", and many had glimpsed it", ", and they were certain" };
+		const int d = w.mythos.faith[size_t(cid)].death, k = w.mythos.faith[size_t(cid)].deathSure;
+		if (d > 0 && d < 5) bits.push_back(string("They believed ") + kDeath[d] + (k > 0 && k < 4 ? kSure[k] : "") + ".");
+	}
+	{                                                       // the strongest living legend, told beside the truth (3.15, v2)
+		const Legend* best = nullptr;
+		for (const Legend& l : w.mythos.legends)
+			if (l.culture == cid && fin(l.vitality) > 0.1 && (!best || fin(l.told) * fin(l.vitality) > fin(best->told) * fin(best->vitality))) best = &l;
+		if (best) {
+			const double ratio = fin(best->truth) > 0 ? fin(best->told) / fin(best->truth) : 1;
+			const string where = sett(w, best->settlement) ? " at " + settlementName(w, best->settlement) : string();
+			bits.push_back("The story they told most often was of what the god had done" + where + (ratio >= 3 ? ", which had grown in the telling far beyond what really happened."
+				: ratio >= 1.5 ? ", which was larger in the telling than it had been in the doing." : ", and they told it much as it had happened."));
+		}
+	}
+	if (bits.empty()) return string();
+	string p = "What " + C + " believed, in the end, was this.";
+	for (const string& b : bits) p += " " + b;
+	return tidy(neutral(w, cid, p));
+}
+
 template <class T> void sub(World& w, ChronicleScratch& S, void (*fn)(World&, const T&)) {
 	World* wp = &w;
 	S.tokens.push_back(w.bus.on<T>([wp, fn](const T& e) { flushPending(*wp, false); fn(*wp, e); }));
@@ -3607,6 +4846,7 @@ enum Cat : int {
 	CatRain, CatGreen, CatHealer, CatLamp, CatPeace, CatVoice, CatShaper,
 	CatDrowner, CatThunder, CatShaker, CatFever, CatStar, CatFire,
 	CatBeloved, CatDreaded,          // from society::regard when no deed stands out
+	CatParent, CatRuler, CatMystery, CatThreat,   // (v4 mythos, 3.3) how they see the god, when no deed stands out
 	CatCount
 };
 // (voice, section 3) the god's epithets by the behaviour that earns them. The voice's 40 come first in
@@ -3642,11 +4882,17 @@ const char* const kEpFire[] = { "the Mountain-Maker", "the Fire-Mountain", "the 
 const char* const kEpPeace[] = { "the Breaker of Spears", "the Quiet Between Armies", "the Peacemaker" };
 const char* const kEpBeloved[] = { "the Gentle Hand", "the Kind Sky", "Mother of Harvests", "the Patient One", "He Who Keeps the Lamp Lit" };
 const char* const kEpDreaded[] = { "the Unkind Sky", "the Hungry One", "the Tyrant Above", "the One We Do Not Name" };
+// (v4 mythos, SPEC-MYTHOS 3.3) one ungendered family per aspect (the spec's name first)
+const char* const kEpParent[] = { "the Keeper of the Hearth", "the One Who Feeds Us", "the Hearth-Fire" };
+const char* const kEpRuler[] = { "the Lawgiver", "the Judge Above", "the High Seat" };
+const char* const kEpMystery[] = { "the Unseen", "the Hidden One", "the Veiled Sky" };
+const char* const kEpThreat[] = { "the Storm Over Us", "the Dread Above", "the Watching Fire" };
 const Tpl kEpithets[CatCount] = {
 	tpl(kEpWaker), tpl(kEpAncestral), tpl(kEpSilent), tpl(kEpMixed),
 	tpl(kEpRain), tpl(kEpGreen), tpl(kEpHealer), tpl(kEpLamp), tpl(kEpPeace), tpl(kEpVoice), tpl(kEpShaper),
 	tpl(kEpDrowner), tpl(kEpThunder), tpl(kEpShaker), tpl(kEpFever), tpl(kEpStar), tpl(kEpFire),
 	tpl(kEpBeloved), tpl(kEpDreaded),
+	tpl(kEpParent), tpl(kEpRuler), tpl(kEpMystery), tpl(kEpThreat),
 };
 // (voice review 2, lead decision) how many names at the head of each group are the approved voice's 40
 // (section 3; "the Maker" is its fallback). They are each people's primary choice: an invented name
@@ -3656,6 +4902,7 @@ constexpr int kEpApproved[CatCount] = {
 	4, 3, 2, 1, 2, 1, 1,
 	2, 1, 1, 2, 3, 1,
 	5, 4,
+	3, 3, 3, 3,                      // (M8) the aspect families are all the lead's own (SPEC-MYTHOS 3.3)
 };
 
 // What a culture remembers: kinds of culture.seen plus "drown" (settlements lost to the sea).
@@ -3747,6 +4994,34 @@ Scores scoresOf(const Memory& m) {
 
 int chooseRaw(const World& w, const Culture& c, const Memory& m);
 
+// (v4 mythos, M8) Has the god used a mythos act on this people (a word, decree, judgement, answered card, presence
+// change or the shaping)? Mythos marks it in its Faith record (Faith::data "m_touched", Mythos.cpp header); read
+// only. Aspect lines and aspect epithets follow the same gate as the aspect's effects (3.3): `emergent`, or a
+// touched people, so a god who ignores every card and word keeps the phase-0 chronicle (guardrail 5.1 rule 2).
+bool mythTouched(const World& w, int cid) {
+	if (!mythOn(w)) return false;
+	if (w.tune<MythosTune>().emergentOn(MythosTune::FamAspect)) return true;   // (B1) the aspect family
+	if (cid < 0 || size_t(cid) >= w.mythos.faith.size()) return false;
+	const auto it = w.mythos.faith[size_t(cid)].data.find("m_touched");
+	return it != w.mythos.faith[size_t(cid)].data.end() && it->second > 0;
+}
+Aspect mythAspect(const World& w, int cid) {
+	if (cid < 0 || size_t(cid) >= w.mythos.faith.size()) return Aspect::Unknown;
+	const Aspect a = w.mythos.faith[size_t(cid)].aspect;
+	return uint8_t(a) < uint8_t(enumCount<Aspect>()) ? a : Aspect::Unknown;
+}
+// The aspect's epithet category (3.3), or -1 (phase 0, untouched, Unknown).
+int aspectCat(const World& w, int cid) {
+	if (!mythTouched(w, cid)) return -1;
+	switch (mythAspect(w, cid)) {
+	case Aspect::Parent: return CatParent;
+	case Aspect::Ruler: return CatRuler;
+	case Aspect::Mystery: return CatMystery;
+	case Aspect::Threat: return CatThreat;
+	default: return -1;
+	}
+}
+
 // A name, once given, is kept for at least epithetHold years (no flapping between two deeds of
 // similar weight), except that the waker / ancestral / silent names give way at once.
 int chooseCat(const World& w, const Culture& c, const Memory& m) {
@@ -3767,12 +5042,20 @@ int chooseRaw(const World& w, const Culture& c, const Memory& m) {
 	const double year = fin(w.year);
 	if (year - std::max(m.heard, fin(c.born)) >= T.silentYears) return CatSilent;
 	const Scores s = scoresOf(m);
+	// (v4 mythos, 3.2) under the Unseen stance the god's acts read as fortune: no deed earns a name; how they see
+	// the god names it, else the absent family
+	if (mythOn(w) && w.mythos.presence == Presence::Unseen && s.total >= T.minDeeds) {
+		const int ac = aspectCat(w, c.id);
+		return ac >= 0 ? ac : CatSilent;
+	}
 	// (integration verifier) hysteresis: a god named for a deed keeps that name until the memory has
 	// faded below forgetDeeds x minDeeds (natural eruptions hovering at the threshold flipped 'the
 	// Elder' <-> 'She Who Opens the Mountains' five times in 300 years)
 	const bool deedNamed = (m.cat >= CatRain && m.cat <= CatFire) || m.cat == CatMixed;
 	const double need = deedNamed ? T.minDeeds * fin(T.forgetDeeds, 0.5) : T.minDeeds;
 	if (s.total < need) {
+		// (v4 mythos, 3.3) nothing distinct to remember: how they see the god names it first
+		if (const int ac = aspectCat(w, c.id); ac >= 0) return ac;
 		// nothing distinct to remember: how the people feel about their god names it
 		const society::Regard rg = society::regard(w, c.id);
 		const double love = fin(rg.love), dev = fin(rg.devotion);
@@ -3823,8 +5106,8 @@ string epithetText(const World& w, int cid, int cat) {
 	if (g.n <= 0) return string("the Maker");
 	const int approved = std::clamp(kEpApproved[cat], 0, g.n), invented = g.n - approved;
 	const bool useInvented = invented > 0 && (approved == 0 || (h / 7u) % 5u == 0);
-	if (!useInvented) return string(g.t[h % uint32_t(approved)]);
-	return string(g.t[approved + int(h % uint32_t(invented))]);
+	if (!useInvented) return neutral(w, cid, string(g.t[h % uint32_t(approved)]));   // (M8) "the Sender of Messengers"
+	return neutral(w, cid, string(g.t[approved + int(h % uint32_t(invented))]));
 }
 
 // Population per living culture from its live settlements (culture.pop may be a year stale).
@@ -3973,6 +5256,15 @@ void attach(World& w) {
 	sub<EvUnitDied>(w, S, onUnitDied);
 	sub<EvPeopleLost>(w, S, onPeopleLost);
 	sub<EvEnding>(w, S, onEnding);
+	// (v4 mythos, M8) the v1 mythos events (emitted only at MythosTune::phase >= 1; the handlers check it too)
+	sub<EvCard>(w, S, onMythCard);
+	sub<EvPresence>(w, S, onMythPresence);
+	sub<EvAspect>(w, S, onMythAspect);
+	sub<EvDecree>(w, S, onMythDecree);
+	sub<EvBreach>(w, S, onMythBreach);
+	sub<EvWord>(w, S, onMythWord);
+	sub<EvFigure>(w, S, onMythFigure);
+	sub<EvJudgement>(w, S, onMythJudgement);
 }
 
 ChronicleEntry* add(World& w, const EntryOpts& opts) {
@@ -4015,6 +5307,7 @@ std::string epithet(const World& w, int cultureId) {
 }
 
 void updateEpithets(World& w) {
+	mythRevoice(w);                                        // (v4 mythos, M8) once: the neutral words from now on
 	flushPending(w, true);                                 // (voice review 2) the year's held-back endings
 	flushDigest(w);                                        // (chronicle budget) the last decade's digest, if one is due
 	pruneStrokes(w);
@@ -4060,6 +5353,7 @@ void updateEpithets(World& w) {
 		if (p > bestP) { bestP = p; bestC = cid; }
 	}
 	if (bestC >= 0) w.god.epithet = w.cultures[size_t(bestC)].epithet;
+	if (mythOn(w)) mythSurvivors(w);                       // (v4 mythos, M8) the survivors of a sentence (3.12)
 }
 
 bool snapshot(World& w, bool force) {
@@ -4180,6 +5474,11 @@ Tale tale(const World& w) {
 			const int k = r.pickIndex(4);                      // the voice's telling half the time
 			out.paragraphs.push_back(expandOne(kP[k <= 1 ? 0 : k - 1], x, r));
 		}
+		// (v4 mythos, 3.1) the kind of world it was, after the making (a fork of its own: the rest of the tale is unchanged)
+		if (mythOn(w) && w.settings.archetype != Archetype::Balanced && uint8_t(w.settings.archetype) < uint8_t(enumCount<Archetype>())) {
+			Rng ra = w.rng.fork("chron:tale:archetype");
+			out.paragraphs.back() += " " + expandOne(kArchetypeLine[int(w.settings.archetype) - 1][ra.pickIndex(3)], x, ra);
+		}
 	}
 
 	// ---- 2. the first people
@@ -4248,7 +5547,12 @@ Tale tale(const World& w) {
 	// ---- 5. the god
 	{
 		std::vector<std::pair<int, string>> deeds;
-		for (const auto& kv : w.god.deeds) if (kv.second > 0 && kv.first != "awaken") deeds.push_back({ kv.second, kv.first });
+		for (const auto& kv : w.god.deeds) {
+			if (!(kv.second > 0) || kv.first == "awaken") continue;
+			// (v4 mythos, M8) answered cards ("card:<kind>") and other bookkeeping ids are not deeds the scribes saw
+			if (mythOn(w) && kv.first.find(':') != string::npos) continue;
+			deeds.push_back({ kv.second, kv.first });
+		}
 		std::sort(deeds.begin(), deeds.end(), [](const auto& a, const auto& b) { return a.first != b.first ? a.first > b.first : a.second < b.second; });
 		string p;
 		if (deeds.empty()) {
@@ -4263,6 +5567,9 @@ Tale tale(const World& w) {
 				else if (id == "plague") word = "sickness"; else if (id == "meteor") word = "falling stars"; else if (id == "volcano") word = "mountains of fire";
 				else if (id == "heal") word = "healing"; else if (id == "inspire") word = "inspiration"; else if (id == "prophet") word = "prophets";
 				else if (id == "peace") word = "omens of peace"; else if (id == "comet") word = "comets"; else if (id == "seed") word = "the first seeds";
+				else if (mythOn(w) && id == "speak") word = "the word";   // (v4 mythos, M8) the Word powers
+				else if (mythOn(w) && id == "bless") word = "blessings"; else if (mythOn(w) && id == "test") word = "trials";
+				else if (mythOn(w) && id == "reveal") word = "revelations"; else if (mythOn(w) && id == "renew") word = "the great renewal";
 				what.push_back(word);
 			}
 			p = "The god was known for " + listNames(what) + ".";
@@ -4275,6 +5582,15 @@ Tale tale(const World& w) {
 		else if (answered > 0) p += " Of the prayers the scribes wrote down, " + countWord(answered) + (answered == 1 ? " was" : " were") + " answered, and none went unheard.";
 		else if (unanswered > 0) p += " The peoples prayed, and " + countWord(unanswered) + (unanswered == 1 ? " prayer" : " prayers") + " went unheard.";
 		if (!w.god.epithet.empty()) p += " In the end, most of them called the god " + w.god.epithet + ".";
+		// (v4 mythos, SPEC-MYTHOS 3.4) the people's will, named once: it has no entry of its own
+		if (mythOn(w)) {
+			const int tc = taleCulture(w);
+			if (tc >= 0 && size_t(tc) < w.mythos.faith.size()) {
+				const Faith& f = w.mythos.faith[size_t(tc)];
+				if (fin(f.agency) >= 0.6) p += " They had learned to think without being told, and they never quite forgave it.";
+				else if (fin(f.agency) <= 0.2 && fin(f.obedience) >= 0.65) p += " They never learned to decide anything without the god, and never wished to.";
+			}
+		}
 		out.paragraphs.push_back(tidy(p));
 	}
 
@@ -4346,6 +5662,25 @@ Tale tale(const World& w) {
 	const size_t lo = size_t(std::max(1, T.taleMinParagraphs)), hi = size_t(std::max(T.taleMinParagraphs, T.taleMaxParagraphs));
 	while (out.paragraphs.size() > hi) out.paragraphs.erase(out.paragraphs.end() - 2);
 	while (out.paragraphs.size() < lo) out.paragraphs.insert(out.paragraphs.end() - 1, tidy("The rest is told in the chronicle, year by year, for those who have the patience to read it"));
+
+	// (v4 mythos, M8) "What they believed" before the end, the Legacy after it (SPEC-MYTHOS 3.31, 4): beside the
+	// taleMaxParagraphs of today's tale, so nothing it told is dropped for them; and the neutral words throughout
+	if (mythOn(w)) {
+		const int tc = taleCulture(w);
+		const string belief = beliefParagraph(w, tc);
+		if (!belief.empty()) out.paragraphs.insert(out.paragraphs.end() - 1, belief);
+		if (w.ending) {
+			Legacy lg = w.ending->legacy;
+			if (lg == Legacy::None) lg = mythos::legacy(w);
+			if (lg != Legacy::None && int(lg) <= 5) {
+				Ctx ex;
+				endingCtx(ex, w, w.ending->mood, w.ending->culture, w.ending->settlement, w.ending->year);
+				out.paragraphs.push_back(expandOne(kLegacyText[int(lg) - 1][moodIndex(w.ending->mood)], ex, r));
+			}
+		}
+		for (string& p : out.paragraphs) p = tidy(neutral(w, tc, p));
+		out.stats["legacy"] = w.ending ? double(int(w.ending->legacy)) : 0.0;
+	}
 
 	out.stats["years"] = years;
 	out.stats["peakPop"] = peak;

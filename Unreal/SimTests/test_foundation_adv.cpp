@@ -414,11 +414,12 @@ DM_TEST("foundation-adv: event table = SPEC-SIM 2 (names and payload keys in ord
 		{ "ark:launched", { "culture", "settlement" } }, { "climate:milestone", { "kind", "value", "culture" } },   // (v3: + culture)
 		{ "unit:spawned", { "id", "type", "culture", "cell" } }, { "unit:arrived", { "id", "type", "culture", "cell" } },
 		{ "unit:died", { "id", "type", "culture", "cell", "cause" } }, { "chronicle:entry", { "entry" } },
-		{ "awe:short", { "id" } }, { "people:lost", {} }, { "ending", { "type", "mood", "culture", "settlement", "year" } },
+		{ "awe:short", { "id" } }, { "people:lost", {} }, { "ending", { "type", "mood", "culture", "settlement", "year", "legacy" } },
 		{ "drown:warning", { "id", "cell" } },   // (v3, design review)
 		{ "alliance", { "a", "b", "formed" } },   // (v3.1, design review 11/13)
 	};
 	eq(spec.size(), size_t(48), "spec rows (v3: + drown:warning; v3.1: + alliance)");
+	// (v4 mythos, M0) the ending payload gains legacy (SPEC-MYTHOS 1.8): its spec row below lists 6 keys
 	for (const Row& row : spec) {
 		const Ev t = eventFromName(row.name);
 		if (!ok(t != Ev::Count, std::string("missing event ") + row.name)) continue;
@@ -641,7 +642,7 @@ DM_TEST("foundation-adv: power table = SPEC-SIM 3.10") {
 		{ "prophet", 'P', false, 120, 0, T::Settlement, 0.15, 0.15, Age::IRON, 0 }, { "peace", 'O', false, 100, 0, T::Settlement, 0, 0.10, Age::IRON, 0 },
 		{ "consecrate", 'Y', false, 150, 0, T::Settlement, 0.10, 0.10, Age::BRONZE, 0 },   // (v3, design review)
 	};
-	eq(powers::kPowerCount, 17, "power count (v3: + consecrate)");
+	eq(powers::kPowerCount, 22, "power count (v3: + consecrate; v4 mythos: + speak, bless, reveal, test, renew)");
 	std::set<char> keys;
 	for (int i = 0; i < 17 && i < powers::kPowerCount; i++) {
 		const powers::PowerDef& d = powers::kPowers[i];

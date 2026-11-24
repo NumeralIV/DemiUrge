@@ -1,0 +1,76 @@
+2026-11-23, mythos-m8 (track M8 "chronicle-mythos", SPEC-MYTHOS 9 phase 1), built.
+
+Result
+- run.ps1 chronicle: 70 passed, 0 failed (every other module stubbed; the 54 existing chronicle tests, the
+  chronicle-budget tests among them, plus 16 new ones).
+- run.ps1 all: 990 passed, 0 failed (run on a private build directory with a copy of run.ps1 that differs only in
+  its build path, because other workflows were building SimTests/build/all at the same time; the tree included the
+  other tracks' work in progress as of 19:00).
+- Phase-0 guardrail: phase0-guardrail.ps1 -BuildTag m8 prints "phase0-guardrail 32 of 32 match".
+- Phase-1 guardrail (5.1 rule 2): M1's test_mythos_guard (the version-1 bytes, the chronicle included, of a real
+  300-year history at phase 1 with an ordinary god equal those of phase 0) passes, and the new
+  test_chronicle_mythos_histories checks the chronicle word for word at phase 0 and 1 (passive and kind, 2 seeds,
+  600 years): no mythos entry, the same text.
+- The lint (3.31) on 8 seeds x 6 scripted gods: default (in all) L4 x 1,500 years: 48 histories, 12,605 entries,
+  0 faults, mythos notable entries 0.63 a real minute on average (worst history 1.20), no mythos template body more
+  than 10 times. DM_LONG=1 (the spec's history length) L5 x 3,600 years: 48 histories in 201 s, 38,775 entries, 0
+  faults, mythos notable 0.43 a real minute on average (worst 1.03), no body more than 10 times. Over those long
+  runs: word 2446, decree 963, breach 631, figure 533, aspect 131, card 56, judgement 30, survivors 30, presence 14,
+  custom 1 entries.
+
+Built (files owned: Sim/Chronicle.cpp, SimTests/test_chronicle_mythos*.cpp and the shared lint header
+SimTests/test_chronicle_mythos_lint.h; no header changed)
+- v1 entry types (W3 was not delivered, so the lines are the track's own, >= 3 per type and per stance / kind, the
+  spec's sample lines first): presence (w2), aspect (w2), decree (w2: every area x stance x clarity, the rite's own
+  frames, repeals), custom (w1), breach (w1, w2 when severe), word (w2: literal, wisdom, sect, a dream kept by one
+  town, a rival reading, the House's reading, the three catastrophes, answers by clarity), figure (w2: a messenger
+  chosen by archetype, redeemed, vindicated, martyred; w1 discredited; rulers untold), judgement (w2: by deed / heart
+  x the four sentences, the doctrine it begins told once per people), survivors (w1, once when Mythos's
+  survivorUntil passes), card (w2: the shaping's two strongest traits = the waking clause of 3.5, Wonders kept at the
+  waking, no messenger chosen, every decree-conflict case x answer, every competing-prayer pair x answer),
+  card-lapsed (w1: decree conflicts; competing prayers and judgements only under emergent, where their lapse acts),
+  genesis (w3: the archetype's line of 3.1, also told in the tale). Victory and Sun prayers have words and answers.
+- One card-resolution entry per card: a card answered in the tick its source told it (judgement; decree / word /
+  custom; figure; presence) gets no line of its own; a word and the decree it gave are one entry; a chosen
+  messenger's prophet:risen is not told twice; a competing prayer's Society answer is told by the card's line.
+- Budget: mythos notables pass a mythos bucket first (0.09 a decade, burst 2: <= 1.08 a real minute plus the burst)
+  and then the story bucket; over it they are minor, and words, decrees, breaches, views (aspect) and lapses fold
+  into the decade digest (new clause families). No mythos template line is offered once written templateCap (10)
+  times; a second sentence that would take an entry past 50 words is left off.
+- The prophet -> messenger migration (owner decision 10.2, recommended default): from the god's first mythos act on,
+  the older lines say the people's own word, "messenger", "seer" or "voice", by culture family (the root ancestor's
+  language: daughters keep it), and the other banned words of 0.2 found in today's lines go too (heaven -> the sky,
+  sins -> wrongs, disciples -> followers; the epithets "the Sender of Prophets", "the Mouth / Spear of Heaven"). The
+  whole book is re-voiced once at that moment (entries, the peoples' epithets, the god's), so it reads as one book.
+  Messenger lines and edicts use the messenger figure's name (Society names its prophet separately).
+- Aspect epithet families (3.3): the Keeper of the Hearth / the Lawgiver / the Unseen / the Storm Over Us (three
+  names each) when no deed stands out; under the Unseen stance deeds read as fortune: the aspect's name, else the
+  absent family. Aspect lines and epithets need emergent or a touched people (the gate of the aspect's effects).
+- The tale (3.31, 4): "What they believed" before the end (decrees kept, customs, the rite, the aspect, the death
+  belief and the strongest legend when v2 / v3 make them), the Legacy paragraph after the ending's (5 legacies x 6
+  moods = 30, pronoun-free; W6 was not delivered), the people's will named once in the god's paragraph, answered
+  cards no longer listed as deeds; these sit beside taleMaxParagraphs (at most 10 at phase >= 1).
+
+Decisions where the spec leaves the C++ open (the lead may move them)
+- Why the migration waits for the god's first mythos act: M1's test_mythos_guard compares the version-1 save bytes
+  (the chronicle is in them) of a phase-1 and a phase-0 history with an ordinary god, which is stricter than the
+  5.1 fingerprint; any word changed at phase 1 for a god who ignores the mythos would break it. So a phase-1 world
+  whose god never touches the mythos keeps today's words; the lint's six gods all use the mythos. If the lead wants
+  the neutral words for every phase-1 world, mythVoice() is the one switch, and test_mythos_guard would then need
+  to compare the sim fields instead of the whole save.
+- Constants not in ChronicleTune (Chronicle.h untouched): kMythPerDecade 0.09, kMythBurst 2, kMythMaxWords 50.
+- vars.num keys (phase >= 1 only): chronicle_my.b / .t (bucket), chronicle_mu.<hash> (mythos line use counts),
+  chronicle_mv (re-voiced), chronicle_pf.<c> (the prophet's figure), chronicle_jb.<c>, chronicle_sv / ss / se.<c>.
+- Reads of other modules' state are read-only: Faith::data "m_touched" (Mythos's private key) for the gate, the
+  card, utterance, decree and figure records for context.
+- The lint's six gods are scripted in the test (Tools/simrun's v1 policies are compiled into
+  test_mythos_integration.cpp and cannot be linked a second time): responder, random, lawgiver, stern, quiet, speaker.
+
+Left for M8b / M8c: the v2 / v3 entry types (pact, trial, legend, blessing, omen, dispute, house, rival, way, bearers,
+revelation, keeper, belief, grown, withdraw, renewal), Lives, the reseed opening.
+
+Notes
+- Unreal/build.ps1 was not run (sim tracks do not; Chronicle.cpp is standard C++ built with the same warning flags).
+- Build directories created: Tools/simrun/build-m8 (the guardrail's private simrun build).
+- Observed, not mine: only 2-7 cards open per 1,500-3,600-year history in these runs (the 15-28 cadence target is
+  the cards / balance tracks').
