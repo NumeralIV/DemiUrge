@@ -18,7 +18,7 @@ while ($true) {
     # Anything compiled and run from inside the project or the temp folder (test harnesses, simrun variants).
     $procs += Get-Process -ErrorAction SilentlyContinue | Where-Object {
         $_.Path -and ($_.Path.StartsWith($projectRoot, 'OrdinalIgnoreCase') -or $_.Path.StartsWith($env:TEMP, 'OrdinalIgnoreCase')) -and
-        $_.Path -notmatch '\\claude\\|powershell|bash' }
+        $_.Name -notin @('claude', 'node', 'powershell', 'pwsh', 'bash', 'git', 'conhost') }
     foreach ($w in Get-CimInstance Win32_Process -Filter "Name='powershell.exe' OR Name='pwsh.exe' OR Name='bash.exe' OR Name='cmd.exe'" -ErrorAction SilentlyContinue) {
         if ($w.CommandLine -and $w.CommandLine -match $launchers -and $w.CommandLine -notmatch 'cpu_governor') {
             $procs += Get-Process -Id $w.ProcessId -ErrorAction SilentlyContinue
