@@ -210,18 +210,25 @@ namespace
 	{
 		const double St = S.St;
 		const double LnR = FMath::Loge(FMath::Max(R, 1e-3));
-		const double Eye = Smooth(0.05, 0.085, R);
+		// (wave 4) The eye: a wider, soft-walled funnel (was a hard step at 0.05 - 0.085 R: a 1 km pinhole that read as a hard black
+		// dot from orbit), the CDO's top sloping down into it (the stadium) and a floor of scattered low cloud, so it shades
+		// from the bright wall through grey to the sea instead of punching a black hole.
+		// (s5m: the 0.07-0.17 funnel still read as a dark crater close up and a black dot at dusk) a softer ramp, a deeper
+		// stadium and a fuller, higher floor that keeps some light at low sun
+		const double Eye = Smooth(0.05, 0.16, R);
 		const double Cdo = FMath::Exp(-Sq(R / 0.5)) * (1.0 - Smooth(1.0, 1.6, R));
+		const double Stadium = FMath::Lerp(0.3, 1.0, Smooth(0.06, 0.45, R));
+		const double Floor = (1.0 - Smooth(0.06, 0.15, R)) * 0.55;
 		// rain bands: log spirals that turn anticyclonically traced outward (Th grows cyclonically)
 		const double Sp = 2.0 * (Th + 1.9 * LnR) - S.Phase + Nb + 2.2 * Nw;
 		const double Seg = Smooth(-0.35, 0.15, Sg + 0.1);
 		const double Cb = 0.5 + 0.5 * FMath::Cos(Sp);
 		const double Band = FMath::Pow(Cb, 1.1) * Smooth(0.12, 0.35, R) * FMath::Exp(-Sq(R / 1.6)) * (1.0 - Smooth(1.7, 2.6, R)) * Seg;
-		const double Wall = FMath::Exp(-Sq((R - 0.11) / 0.045));
+		const double Wall = FMath::Exp(-Sq((R - 0.16) / 0.06));
 		const double C = Eye * FMath::Max(FMath::Max(Cdo, Band * (0.9 + 0.5 * Nb)), Wall);
-		TC = FMath::Max(TC, Sat(C * 1.3) * St);
-		TCTop = FMath::Max(TCTop, Eye * FMath::Max(Cdo, Band * 0.75) * St);
-		TCCum = FMath::Max(TCCum, (Band * 0.9 + Wall * 0.6) * St);
+		TC = FMath::Max(TC, FMath::Max(Sat(C * 1.3), Floor * (0.75 + 0.5 * Nb)) * St);
+		TCTop = FMath::Max(TCTop, FMath::Max(Eye * Stadium * FMath::Max(Cdo, Band * 0.75), Floor * 0.5) * St);
+		TCCum = FMath::Max(TCCum, (Band * 0.9 + Wall * 0.6 + Floor * 1.2) * St);
 		TCThick = FMath::Max(TCThick, Eye * FMath::Max(FMath::Sqrt(Cdo), Band * 0.6) * St);
 		// outflow cirrus: filaments spiralling out of the CDO (the warp shears the ridge noise)
 		Ci = FMath::Max(Ci, St * Smooth(0.25, 0.55, R) * FMath::Exp(-Sq(R / 1.8)) * (1.0 - Smooth(1.8, 2.8, R)) * (0.05 + 0.95 * Rf) * 0.6);

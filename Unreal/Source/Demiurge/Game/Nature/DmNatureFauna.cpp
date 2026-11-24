@@ -32,7 +32,7 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureFauna::Build(const FDmNat
 			Bi = &BatchOf.Add(Slot, Out->Batches.Num() - 1);
 		}
 		Out->Batches[*Bi].Xf.Add(X);
-		Out->Batches[*Bi].Custom.Append({ C0, C1, C2 });
+		Out->Batches[*Bi].Custom.Append({ C0, C1, C2, 0.f });
 		Out->PerKind[int32(Id)]++;
 		Out->Instances++;
 	};
@@ -66,13 +66,18 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureFauna::Build(const FDmNat
 			|| B == dm::Biome::TAIGA || B == dm::Biome::WETLAND;
 		if (!bSea && bGrazeLand && Fa > 0.2f && Hash01(Hash3(C, 1, 0, 0xFA01u)) < 0.4f * Fa)
 		{
-			int32 Var = 0;
+			// herd species by biome (docs/ASSET-INTEGRATION.md 4.7; EDmGrazer): savanna wildebeest and antelope (now and
+			// then a pride of lions nearby), grassland / steppe bison, wildebeest and antelope, tundra bison, forest,
+			// taiga and wetland deer (does with a stag)
+			int32 Var = int32(EDmGrazer::Doe);
 			const float Hs = Hash01(Hash3(C, 2, 0, 0xFA01u));
-			if (B == dm::Biome::SAVANNA) Var = Hs < 0.7f ? 1 : 2;
-			else if (B == dm::Biome::GRASSLAND) Var = Hs < 0.5f ? 2 : 0;
-			else if (B == dm::Biome::TAIGA || B == dm::Biome::TUNDRA) Var = 3;
+			if (B == dm::Biome::SAVANNA) Var = int32(Hs < 0.6f ? EDmGrazer::Wildebeest : EDmGrazer::Antelope);
+			else if (B == dm::Biome::GRASSLAND) Var = int32(Hs < 0.55f ? EDmGrazer::Bison : Hs < 0.8f ? EDmGrazer::Wildebeest : EDmGrazer::Antelope);
+			else if (B == dm::Biome::TUNDRA) Var = int32(EDmGrazer::Bison);
+			const bool bDeer = Var == int32(EDmGrazer::Doe);
 			const FVector Hc = Offset(Dir, (Hash01(Hash3(C, 3, 0, 0xFA01u)) - 0.5) * Step * 60000.0, (Hash01(Hash3(C, 4, 0, 0xFA01u)) - 0.5) * Step * 60000.0);
-			const int32 Count = 6 + int32(26.f * Fa * Hash01(Hash3(C, 5, 0, 0xFA01u))) + (Var == 2 ? 10 : 0);
+			const int32 Count = bDeer ? 4 + int32(9.f * Fa * Hash01(Hash3(C, 5, 0, 0xFA01u)))
+				: 6 + int32(26.f * Fa * Hash01(Hash3(C, 5, 0, 0xFA01u))) + (Var == int32(EDmGrazer::Wildebeest) ? 10 : 0);
 			const double Spread = 25.0 + 70.0 * Hash01(Hash3(C, 6, 0, 0xFA01u));
 			const double Heading = Hash01(Hash3(C, 7, 0, 0xFA01u)) * 2.0 * UE_DOUBLE_PI;
 			const float Tint = 0.88f + 0.24f * Hash01(Hash3(C, 8, 0, 0xFA01u));
@@ -87,7 +92,26 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureFauna::Build(const FDmNat
 				const double H = Heading + (Hash01(Hash3(C, K, 3, 0xFA02u)) - 0.5) * 1.4;
 				const float Sc = 0.88f + 0.24f * Hash01(Hash3(C, K, 4, 0xFA02u));
 				const float Tk = Tint * (0.94f + 0.12f * Hash01(Hash3(C, K, 5, 0xFA02u)));
-				Emit(EDmNatureMesh::Grazer, Var, FTransform(Frame(D, H), D * (Rg - 4.0) - Out->Center, FVector(Sc)), Tk, Tk, Tk * (0.97f + 0.06f * Hash01(Hash3(C, K, 6, 0xFA02u))));
+				const int32 V = bDeer && K == 0 ? int32(EDmGrazer::Stag) : Var;
+				Emit(EDmNatureMesh::Grazer, V, FTransform(Frame(D, H), D * (Rg - 4.0) - Out->Center, FVector(Sc)), Tk, Tk, Tk * (0.97f + 0.06f * Hash01(Hash3(C, K, 6, 0xFA02u))));
+			}
+			// a pride resting at the edge of a savanna herd (about 1 herd in 6)
+			if (B == dm::Biome::SAVANNA && Hash01(Hash3(C, 9, 0, 0xFA01u)) < 0.17f)
+			{
+				const double Pa = Heading + UE_DOUBLE_PI * 0.5;
+				const FVector Pc = Offset(Hc, FMath::Cos(Pa) * (Spread + 60.0), FMath::Sin(Pa) * (Spread + 60.0));
+				const int32 NP = 2 + int32(3.f * Hash01(Hash3(C, 10, 0, 0xFA01u)));
+				for (int32 K = 0; K < NP; ++K)
+				{
+					const double A = Hash01(Hash3(C, K, 7, 0xFA02u)) * 2.0 * UE_DOUBLE_PI;
+					const double R = 3.0 + 9.0 * Hash01(Hash3(C, K, 8, 0xFA02u));
+					const FVector D = Offset(Pc, FMath::Cos(A) * R, FMath::Sin(A) * R);
+					FVector Nrm;
+					const double Rg = G.Radius(D, &Nrm);
+					if (Rg - SeaR < 150.0 || FVector::DotProduct(Nrm, D) < 0.85) continue;
+					const float Tk = 0.92f + 0.16f * Hash01(Hash3(C, K, 9, 0xFA02u));
+					Emit(EDmNatureMesh::Grazer, int32(K == 0 ? EDmGrazer::Lion : EDmGrazer::Lioness), FTransform(Frame(D, A * 1.7), D * (Rg - 4.0) - Out->Center, FVector(1.0)), Tk, Tk, Tk);
+				}
 			}
 		}
 		// ---- birds: soaring flocks over land, gulls along coasts

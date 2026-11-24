@@ -83,6 +83,9 @@ public:
 	uint32 Fingerprint() const;
 	/** -cyclone=lat,lon[,radiusDeg]: pin the NH tropical cyclone there (scenarios). */
 	void PinTropical(double LatDeg, double LonDeg, double RadiusDeg);
+	/** (wave 4, shots and checks) bring every live sim storm to its full strength at once (they grow over a few real seconds,
+	 *  and a static fixture's first frames showed a storm still forming: no cyclone in sky-cyclone). Returns how many. */
+	int32 SettleSimStorms();
 
 	TArray<FDmCyclone> Systems;
 	FDmFlash Flashes[FlashSlots];

@@ -1,7 +1,7 @@
 // DEMIURGE — Game/Sky/DmSkyLook.cpp : the sky's look-development sweep (wave 3). Owner: C2 sky.
 //
 //   shot.ps1 sky-look [-views=orbit-day,50km-golden,...] [-site=lat,lon] [-hold=<frames>] [-skyold] [-ab]
-//                     [-variants=apNear:veilNear:veilOrbit:fill[:goldenEv],...]   (look development: each view is shot once per
+//                     [-variants=apNear:veilNear:veilOrbit:fill[:goldenEv[:moonNearLux:nightEvNear:cloudNight]],...]   (look development: each view is shot once per
 //                     variant, <view>-v<i>, 150 frames apart; "-" keeps a value) [-lookprofile] (ProfileGPU at each shot)
 //
 // One launch, one forest site, every altitude the player sees (orbit 700 km, a terminator pass at 400 km, 50 km,
@@ -12,6 +12,8 @@
 // give the before / after pictures. -ab does both in one launch: each view is first settled and measured with the old
 // look (shot <view>-old), then switched to the new look, settled again and measured (shot <view>), so the frame-time
 // difference is taken under the same machine load ("DmSkyLook: ab <view> old ... new ... delta").
+//
+// (wave 4) -turn=<rate>: the sky clock runs at <rate> over the last 90 frames of each view (live play turns the planet).
 //
 //   shot.ps1 sky-lookcheck -noshot   numeric checks of the wave-3 look (sky fill on by day near the ground and off
 //                                    from orbit and at night, capture point on the ground, haze curve, star sphere
@@ -38,6 +40,7 @@ namespace
 		double DistKm, Pitch, Fov;
 		double SunEl, SunAz;        // sun elevation / compass azimuth at the site, degrees
 		int32 Hold;                 // frames before the shot
+		bool bStorm = false;        // (wave 4) framed on the world's own storm (else the site), the storm grown at once
 	};
 
 	// heading 35 (the nature views' framing); low suns come from the front-left (long shadows toward the camera, glint)
@@ -62,6 +65,10 @@ namespace
 		// and the frame runs on across the terminator into the night (one capture lights the whole frame)
 		{ TEXT("50km-away"), 60.0, 25.0, 60.0, 10.0, 215.0, 260 },
 		{ TEXT("20km-away"), 25.0, 15.0, 60.0, 6.0, 215.0, 300 },
+		// (wave 4) the storm: from 250 km at mid morning, at dusk from 400 km (where the eye read as a hard black dot), and close
+		{ TEXT("cyclone"), 250.0, 70.0, 45.0, 45.0, -90.0, 240, true },
+		{ TEXT("cyclone-dusk"), 400.0, 70.0, 40.0, 4.0, -90.0, 240, true },
+		{ TEXT("cyclone-close"), 70.0, 55.0, 55.0, 35.0, -90.0, 260, true },
 	};
 	constexpr double kHeading = 35.0;
 
@@ -71,6 +78,7 @@ namespace
 		int32 Index = -1;
 		int32 StartFrame = 0;
 		double SiteLat = -22.093, SiteLon = -145.277;
+		double ViewLat = 0.0, ViewLon = 0.0;   // where the current view looks (the site, or the storm)
 		int32 HoldArg = -1;
 		TArray<double> Frame, Game, Render, Gpu;
 		double SumGpu = 0.0, SumFrame = 0.0;
@@ -79,6 +87,7 @@ namespace
 		int32 Phase = 0;               // -ab: 0 old look, 1 new look; -variants: index of the variant
 		TArray<TArray<double>> Variants;
 		double OldFrame = 0, OldGpu = 0, SumDFrame = 0, SumDGpu = 0;
+		double TurnRate = 0.0;        // (wave 4) -turn=: sky clock rate over the last 90 frames of each view
 		int32 SwitchFrame = -1;       // (verifier) frame at which the next -ab phase / variant is applied (after its shot is written)
 	};
 	FLookRun GLook;
@@ -100,14 +109,26 @@ namespace
 	{
 		FLookRun& R = GLook;
 		const FLookView& V = *R.Views[R.Index];
-		Ctx.LookAt(R.SiteLat, R.SiteLon, V.DistKm, kHeading, V.Pitch, V.Fov);
+		R.ViewLat = R.SiteLat; R.ViewLon = R.SiteLon;
+		if (V.bStorm)
+			if (ADmSky* Sky = ADmSky::Get(Ctx.World))
+			{
+				// the world's own storm first, else the strongest climatological hurricane
+				const FDmCyclone* Best = nullptr;
+				for (const FDmCyclone& C : Sky->GetStorms().Systems)
+					if (C.Type == EDmCycloneType::Tropical && (!Best || (C.SimId >= 0 && Best->SimId < 0) || ((C.SimId >= 0) == (Best->SimId >= 0) && C.Strength > Best->Strength))) Best = &C;
+				if (Best) { R.ViewLat = Best->LatDeg; R.ViewLon = Best->LonDeg; }
+				Sky->GetStormsMutable().SettleSimStorms();
+			}
+		Ctx.LookAt(R.ViewLat, R.ViewLon, V.DistKm, kHeading, V.Pitch, V.Fov);
 		double SLat, SLon;
-		SubsolarFor(R.SiteLat, R.SiteLon, V.SunEl, V.SunAz, SLat, SLon);
+		SubsolarFor(R.ViewLat, R.ViewLon, V.SunEl, V.SunAz, SLat, SLon);
 		Ctx.SetSubsolar(SLat, SLon);
+		if (R.TurnRate > 0.0) if (ADmSky* Sky = ADmSky::Get(Ctx.World)) Sky->SetForcedRate(-1.0);
 		R.StartFrame = Ctx.Frame;
 		R.Phase = 0;
 		if (R.bAB) if (ADmSky* Sky = ADmSky::Get(Ctx.World)) Sky->SetOldLook(true);
-		if (R.Variants.Num()) if (ADmSky* Sky = ADmSky::Get(Ctx.World)) { const TArray<double>& Vr = R.Variants[0]; Sky->SetLookParams(Vr[0], Vr[1], Vr[2], Vr[3], Vr[4]); }
+		if (R.Variants.Num()) if (ADmSky* Sky = ADmSky::Get(Ctx.World)) { const TArray<double>& Vr = R.Variants[0]; Sky->SetLookParams(Vr[0], Vr[1], Vr[2], Vr[3], Vr[4]); Sky->SetNightParams(Vr[5], Vr[6], Vr[7]); }
 		R.Frame.Reset(); R.Game.Reset(); R.Render.Reset(); R.Gpu.Reset();
 		Ctx.Log(FString::Printf(TEXT("DmSkyLook: start %s: %.2f km, pitch %.0f, fov %.0f, sun el %.0f az %.0f (subsolar %.1f %.1f)"),
 			V.Name, V.DistKm, V.Pitch, V.Fov, V.SunEl, V.SunAz, SLat, SLon));
@@ -126,6 +147,7 @@ static FDmScenarioRegistrar GSkyLook(TEXT("sky-look"), TEXT("sky"),
 		if (FDmShotArgs::List(TEXT("-site="), Site, 2) == 2) { R.SiteLat = Site[0]; R.SiteLon = Site[1]; }
 		FDmShotArgs::Value(TEXT("-hold="), R.HoldArg);
 		R.bAB = FDmShotArgs::Param(TEXT("ab"));
+		FDmShotArgs::Value(TEXT("-turn="), R.TurnRate);
 		FString VarList;
 		if (FDmShotArgs::Value(TEXT("-variants="), VarList))
 		{
@@ -134,7 +156,7 @@ static FDmScenarioRegistrar GSkyLook(TEXT("sky-look"), TEXT("sky"),
 			{
 				TArray<FString> F; It.ParseIntoArray(F, TEXT(":"), false);
 				TArray<double> V;
-				for (int32 K = 0; K < 5; ++K) V.Add(K < F.Num() && F[K] != TEXT("-") && !F[K].IsEmpty() ? FCString::Atod(*F[K]) : -1.0);
+				for (int32 K = 0; K < 8; ++K) V.Add(K < F.Num() && F[K] != TEXT("-") && !F[K].IsEmpty() ? FCString::Atod(*F[K]) : -1.0);
 				R.Variants.Add(V);
 			}
 			R.bAB = false;
@@ -169,7 +191,7 @@ static FDmScenarioRegistrar GSkyLook(TEXT("sky-look"), TEXT("sky"),
 			if (R.Variants.Num())
 			{
 				const TArray<double>& Vr = R.Variants[R.Phase];
-				if (Sky) Sky->SetLookParams(Vr[0], Vr[1], Vr[2], Vr[3], Vr[4]);
+				if (Sky) { Sky->SetLookParams(Vr[0], Vr[1], Vr[2], Vr[3], Vr[4]); Sky->SetNightParams(Vr[5], Vr[6], Vr[7]); }
 				R.StartFrame = Ctx.Frame - FMath::Max(0, Hold - 150);
 			}
 			else
@@ -181,7 +203,14 @@ static FDmScenarioRegistrar GSkyLook(TEXT("sky-look"), TEXT("sky"),
 			return;
 		}
 		// re-aim every 30 frames: the harness camera keeps its place but the planet frame may be republished
-		if (Age > 0 && Age % 30 == 0 && Age < Hold - 60) Ctx.LookAt(R.SiteLat, R.SiteLon, V.DistKm, kHeading, V.Pitch, V.Fov);
+		if (Age > 0 && Age % 30 == 0 && Age < Hold - 60) Ctx.LookAt(R.ViewLat, R.ViewLon, V.DistKm, kHeading, V.Pitch, V.Fov);
+		// (wave 4) -turn=<sky seconds per second>: the last 90 frames before the shot run the sky clock (the sun is unpinned), as in
+		// live play, so the clouds' temporal reconstruction and the cloud shadows are seen while the planet turns
+		if (R.TurnRate > 0.0 && Age == Hold - 90 && Ctx.Sim)
+		{
+			Ctx.Sim->UnpinSun();
+			if (ADmSky* Sky = ADmSky::Get(Ctx.World)) Sky->SetForcedRate(R.TurnRate);
+		}
 		if (Age >= Hold - 60 && Age < Hold)
 		{
 			double G = 0, Rn = 0, Rhi = 0, Gpu = 0;
@@ -283,7 +312,19 @@ static FDmScenarioRegistrar GSkyLookCheck(TEXT("sky-lookcheck"), TEXT("sky"),
 		case 240:
 			Check(!L.bFill, TEXT("5 km at night: no sky fill (keeps the moonlit sea and ground) ") + St);
 			Check(L.bStars, TEXT("5 km at night: stars shown ") + St);
-			Check(FMath::IsNearlyEqual(L.Lift, 2.6, 0.1), TEXT("5 km at night: the night lift (2.6 EV), not raised by the low-sun lift ") + St);
+			if (L.bNightV4)
+			{
+				// (wave 4) near the ground the moonlight carries the night, the exposure lift is small (emissives not x6)
+				const FString Ms = FString::Printf(TEXT(" (moon %.2f lux at %.0f deg)"), L.MoonLux, L.MoonEl);
+				Check(FMath::IsNearlyEqual(L.Lift, FMath::Max(L.NightEvNear, L.GoldenEv), 0.1), TEXT("5 km at night: the near-ground night lift (1 EV), not the 2.6 EV from orbit ") + St);
+				Check(L.MoonLux >= 0.74 * L.MoonNearLux && L.MoonLux <= 1.01 * L.MoonNearLux, TEXT("5 km at night: moonlight at the near-ground key, any moon phase") + Ms);
+				Check(L.MoonEl >= L.MoonMinEl - 1.0, TEXT("5 km at night: the moon stands high over the ground in view (no black, shadowed land)") + Ms);
+			}
+			else Check(FMath::IsNearlyEqual(L.Lift, 2.6, 0.1), TEXT("5 km at night: the night lift (2.6 EV), not raised by the low-sun lift ") + St);
+			View(700.0, 90.0, -25.0); break;
+		case 270:
+			// (wave 4) from orbit the night side keeps the wave-3 look: full night lift, moonlight from the moon's own side
+			Check(!L.bNightV4 || L.Lift > 1.8, TEXT("orbit at night: the orbit night lift is kept ") + St);
 			View(5.0, 26.0, 6.0); break;
 		case 300:
 			Check(L.bFill && L.FillSunSin > 0.05, TEXT("5 km golden hour: sky fill on ") + St);

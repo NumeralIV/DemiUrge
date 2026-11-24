@@ -89,7 +89,7 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 	F.NearClearings(CDir, AngR, Near);
 
 	TMap<int32, int32> BatchOf;   // Id * 8 + variant -> batch index
-	auto Emit = [&](EDmNatureMesh Id, int32 Var, const FTransform& X, float C0, float C1, float C2)
+	auto Emit = [&](EDmNatureMesh Id, int32 Var, const FTransform& X, float C0, float C1, float C2, float C3 = 0.f)
 	{
 		const int32 Slot = int32(Id) * 8 + Var;
 		int32* Bi = BatchOf.Find(Slot);
@@ -101,7 +101,7 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 		}
 		FDmTileBatch& B = Out->Batches[*Bi];
 		B.Xf.Add(X);
-		B.Custom.Append({ C0, C1, C2 });
+		B.Custom.Append({ C0, C1, C2, C3 });
 		Out->PerKind[int32(Id)]++;
 		Out->Instances++;
 	};
@@ -113,6 +113,8 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 	};
 
 	const float Dens = S.Density;
+	const bool bA = S.bAssetTrees;
+	const float CanK = bA ? 0.5f : 1.f;           // closed-canopy density (real-scale crowns: about 8 m spacing)
 	const int32 NV = FMath::Clamp(S.MaxVariants, 1, 4);
 	const uint32 FaceSeed = uint32(Key.Face) * 0x9E3779B9u;
 
@@ -153,7 +155,7 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 				}
 				const float Desert = 0.004f * Smooth(0.25f, 0.08f, Mo) * Smooth(6.f, 16.f, Tc);
 				const float Burn = Smooth(0.08f, 0.4f, Scorch);
-				float P0 = (Can * 0.62f * (1.f - 0.15f * Wet) * (1.f - Burn) + Can * 0.45f * Burn + (1.f - Can) * Open + 0.06f * Hot + Desert) * float(AreaK) * Dens;
+				float P0 = (Can * 0.62f * CanK * (1.f - 0.15f * Wet) * (1.f - Burn) + Can * 0.45f * Burn + (1.f - Can) * Open + (bA ? 0.16f : 0.06f) * Hot + Desert) * float(AreaK) * Dens;
 				// shrubs: forest edges and open land; few under a closed canopy (they would not be seen)
 				const float Edge = 1.f - FMath::Abs(Can * 2.f - 1.f);
 				const float Ps0 = bShrubTry ? (0.025f + 0.07f * Rp * (1.f - Can) + 0.3f * Edge * Smooth(0.02f, 0.1f, Rp) + 0.08f * Smooth(-12.f, -2.f, Tc) * Smooth(0.f, 0.1f, Rp + 0.05f)) * float(ShrubK) * Dens : 0.f;
@@ -172,12 +174,14 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 				const float Cos = float(FVector::DotProduct(Nrm, D));
 				const float SlopeK = Smooth(0.62f, 0.8f, Cos);
 				const float HeightK = Smooth(1.5f, 4.f, Hm);
-				const float Coast = Smooth(14.f, 2.f, Hm) * Hot;
+				// hot coasts: a palm band (wider for the real-scale palms, which also stand denser there)
+				const float Coast = (bA ? Smooth(34.f, 3.f, Hm) : Smooth(14.f, 2.f, Hm)) * Hot;
+				const float CoastP = bA ? 0.16f : 0.06f;
 				const float Base = Clear * LakeK * SlopeK;
 				if (bTreeTry)
 				{
 					const float CanH = Can * HeightK;
-					const float P = (CanH * 0.62f * (1.f - 0.15f * Wet) * (1.f - Burn) + CanH * 0.45f * Burn + (1.f - CanH) * Open + Coast * 0.06f + Desert) * float(AreaK) * Dens * Base;
+					const float P = (CanH * 0.62f * CanK * (1.f - 0.15f * Wet) * (1.f - Burn) + CanH * 0.45f * Burn + (1.f - CanH) * Open + Coast * CoastP + Desert) * float(AreaK) * Dens * Base;
 					if (Rnd < P)
 					{
 						const float Px = float(D.X * 100000.0), Py = float(D.Y * 100000.0), Pz = float(D.Z * 100000.0);
@@ -185,7 +189,7 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 						float Wk[6];
 						Wk[0] = Smooth(13.f, 5.f, Tc) + 0.6f * Smooth(0.05f, 0.35f, Patch) * Smooth(19.f, 11.f, Tc) + 0.4f * Con * Smooth(0.f, 0.2f, Patch + 0.1f);
 						Wk[1] = Smooth(3.f, 10.f, Tc) * Smooth(0.2f, 0.4f, Mo) * (1.f - 0.85f * Coast) * FMath::Lerp(1.f, Smooth(0.3f, 0.55f, Mo), Hot);
-						Wk[2] = Hot * (Smooth(25.f, 3.f, Hm) * 4.f + 0.35f * Smooth(0.6f, 0.8f, Mo));
+						Wk[2] = Hot * ((bA ? Smooth(40.f, 4.f, Hm) * 7.f : Smooth(25.f, 3.f, Hm) * 4.f) + 0.35f * Smooth(0.6f, 0.8f, Mo));
 						Wk[3] = Smooth(16.f, 21.f, Tc) * FMath::Max(DryK, Dry) * (CanH < 0.5f ? 3.f : 0.6f);
 						Wk[4] = 0.f;
 						Wk[5] = 0.012f + Desert * 400.f + 0.3f * Smooth(-6.f, -12.f, Tc);
@@ -199,21 +203,45 @@ TSharedPtr<FDmTileResult, ESPMode::ThreadSafe> DmNatureScatter::BuildTile(const 
 							for (Kind = 0; Kind < 5; ++Kind) { if (Pick < Wk[Kind]) break; Pick -= Wk[Kind]; }
 						}
 						const EDmNatureMesh Id = EDmNatureMesh(Kind);
-						const int32 Var = int32(Hash3(Gx, Gy, Key.Face, 0x11u) % uint32(NV));
+						int32 Var = int32(Hash3(Gx, Gy, Key.Face, 0x11u) % uint32(NV));
+						if (bA && Id == EDmNatureMesh::Broadleaf && NV == 4 && CanH >= 0.5f)
+						{
+							// under a closed canopy the domed crowns (0 mature oak, 3 old spreading oak) and young trees (2)
+							// make the rounded, mixed-size canopy; the tall narrow beech (1) only now and then
+							const float Hv = Hash01(Hash3(Gx, Gy, Key.Face, 0x18u));
+							Var = Hv < 0.36f ? 0 : Hv < 0.68f ? 3 : Hv < 0.88f ? 2 : 1;
+						}
+						else if (bA && Id == EDmNatureMesh::Broadleaf && NV < 4)
+							Var = Hash01(Hash3(Gx, Gy, Key.Face, 0x18u)) < 0.55f ? 0 : 3;   // far tiles: the two domed crowns
 						const float H1 = Hash01(Hash3(Gx, Gy, Key.Face, 0x12u));
-						float Scale = FMath::Lerp(0.72f, 1.22f, H1);
-						if (CanH < 0.3f) Scale *= 0.9f + 0.25f * Hash01(Hash3(Gx, Gy, Key.Face, 0x13u));   // lone trees spread wide
+						float Scale = bA ? FMath::Lerp(0.85f, 1.12f, H1) : FMath::Lerp(0.72f, 1.22f, H1);
+						if (CanH < 0.3f) Scale *= bA ? 0.95f + 0.12f * Hash01(Hash3(Gx, Gy, Key.Face, 0x13u)) : 0.9f + 0.25f * Hash01(Hash3(Gx, Gy, Key.Face, 0x13u));   // lone trees spread wide
 						Scale *= FMath::Lerp(0.72f, 1.f, Smooth(-7.f, 2.f, Tc));                          // stunted in the cold
 						if (Id == EDmNatureMesh::Broadleaf) Scale *= 1.f + 0.35f * Wet + (Hash01(Hash3(Gx, Gy, Key.Face, 0x17u)) < 0.04f * Wet ? 0.6f : 0.f);
 						if (Id == EDmNatureMesh::Dead && Burn <= 0.f) Scale *= 0.85f;
-						const float Stretch = FMath::Lerp(0.9f, 1.1f, Hash01(Hash3(Gx, Gy, Key.Face, 0x16u)));
+						float Stretch = FMath::Lerp(0.9f, 1.1f, Hash01(Hash3(Gx, Gy, Key.Face, 0x16u)));
+						float Wide = 1.f;
+						if (bA && Id == EDmNatureMesh::Broadleaf)
+						{
+							// rounder crowns from the god camera: a little broader and lower (docs/lab/trees.md 11, crown shape)
+							const float Hr = Hash01(Hash3(Gx, Gy, Key.Face, 0x19u));
+							Wide = FMath::Lerp(1.06f, 1.2f, Hr);
+							Stretch = FMath::Lerp(0.84f, 0.96f, Hash01(Hash3(Gx, Gy, Key.Face, 0x16u)));
+						}
 						const float Yaw = Hash01(Hash3(Gx, Gy, Key.Face, 0x14u)) * 2.f * PI;
 						const float Tilt = (Hash01(Hash3(Gx, Gy, Key.Face, 0x15u)) - 0.5f) * 0.06f;
-						const FTransform X = Place(D, Rg - 20.0, Yaw, Tilt, Yaw * 1.7f, FVector(Scale, Scale, Scale * Stretch));
+						const FTransform X = Place(D, Rg - 20.0, Yaw, Tilt, Yaw * 1.7f, FVector(Scale * Wide, Scale * Wide, Scale * Stretch));
 						const float SnowK = Snow * (0.65f + 0.35f * Hash01(Hb >> 3));
 						const float DryTint = FMath::Clamp(Dry * 0.9f + 0.5f * Smooth(0.35f, 0.15f, Mo), 0.f, 1.f) * (Id == EDmNatureMesh::Conifer ? 0.3f : 1.f);
 						const float BurnC = Id == EDmNatureMesh::Dead ? FMath::Max(Burn, 0.f) : 0.f;
-						Emit(Id, Var, X, BurnC, SnowK, DryTint);
+						// autumn accent: temperate broadleaf only (about 1 crown in 25); 0 in the tropics, the cold and dry land
+						float Au = 0.f;
+						if (Id == EDmNatureMesh::Broadleaf)
+						{
+							const float Temperate = Smooth(3.f, 7.f, Tc) * Smooth(17.f, 12.f, Tc) * (1.f - Hot) * (1.f - Wet) * Smooth(0.25f, 0.4f, Mo);
+							if (Hash01(Hash3(Gx, Gy, Key.Face, 0x1Au)) < 0.04f * Temperate) Au = 0.55f + 0.45f * Hash01(Hash3(Gx, Gy, Key.Face, 0x1Bu));
+						}
+						Emit(Id, Var, X, BurnC, SnowK, DryTint, Au);
 					}
 				}
 				if (bShrub && Hm > 0.6f)

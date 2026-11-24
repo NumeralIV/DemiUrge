@@ -94,8 +94,12 @@ public:
 	/** Override the sky clock rate (sky seconds per real second); negative = follow the sim. */
 	void SetForcedRate(double Rate) { ForcedRate = Rate; }
 	double GetSkyTime() const { return SkyTime; }
-	/** Planet yaw in radians (world = Rz(yaw) * planet). */
-	double GetPlanetYaw() const { return Yaw; }
+	/** Planet yaw in radians (world = Rz(yaw) * planet): 0 in the static frame (wave 4 default: the planet stands still in the
+	 *  world and the sun and sky turn round it), the time-of-day angle with -skyturn. */
+	double GetPlanetYaw() const { return bTurnWorld ? Yaw : 0.0; }
+	/** The time-of-day angle in radians (decreases as the planet turns eastward), in either frame. */
+	double GetDayAngle() const { return Yaw; }
+	bool IsWorldTurning() const { return bTurnWorld; }
 	/** Put the moon in the camera's view (azimuth / elevation degrees relative to the view, distance in planet
 	 *  radii, radius km), for shots; it is still lit by the sun. Negative distance: back on its orbit. */
 	void SetMoonInView(double AzDeg, double ElDeg, double DistR = 25.0, double RadiusKm = 27.0);
@@ -108,7 +112,8 @@ public:
 	/** One line for logs: sky fill intensity / capture altitude, aerial perspective scale and haze luminance. */
 	FString DescribeLook() const;
 	/** The look state this frame (checks): sky fill, haze, stars. */
-	struct FLookState { bool bFill = false; float Fill = 0.f; double FillAltKm = 0.0; double FillSunSin = 0.0; float Ap = 0.f; float Veil = 1.f; bool bStars = false; double FillGain = 0.0; double ApNear = 0.0, ApOrbit = 0.0, VeilNear = 1.0, VeilOrbit = 1.0; double Lift = 0.0, GoldenEv = 0.0; int32 FillSets = 0, FillToggles = 0, AtmoDirty = 0; double FrameMinSunSin = 0.0; };
+	struct FLookState { bool bFill = false; float Fill = 0.f; double FillAltKm = 0.0; double FillSunSin = 0.0; float Ap = 0.f; float Veil = 1.f; bool bStars = false; double FillGain = 0.0; double ApNear = 0.0, ApOrbit = 0.0, VeilNear = 1.0, VeilOrbit = 1.0; double Lift = 0.0, GoldenEv = 0.0; int32 FillSets = 0, FillToggles = 0, AtmoDirty = 0; double FrameMinSunSin = 0.0;
+		double MoonLux = 0.0, MoonEl = 0.0, MoonNearLux = 0.0, NightEvNear = 0.0, MoonMinEl = 0.0; bool bNightV4 = false; };
 	FLookState GetLookState() const;
 	/** Switch between the wave-3 look and the look before it at run time (frame-time A/B under the same load). */
 	void SetOldLook(bool bOld);
@@ -116,6 +121,8 @@ public:
 	/** Look tuning at run time (look development): aerial perspective near the ground, haze luminance near the ground and
 	 *  from orbit, sky fill gain. Negative = keep. */
 	void SetLookParams(double InApNear, double InVeilNear, double InVeilOrbit, double InFill, double InGoldenEv = -1.0);
+	/** (wave 4) night near the ground at run time: moonlight (lux), exposure lift (EV), cloud ambient boost. Negative = keep. */
+	void SetNightParams(double InMoonNearLux, double InNightEvNear, double InCloudNightBoost);
 	const FDmSkyStorms& GetStorms() const { return Storms; }
 	FDmSkyStorms& GetStormsMutable() { return Storms; }
 	FDmSkyTune Tune;
@@ -167,7 +174,8 @@ private:
 
 	// time and frame
 	double SkyTime = 0.0, SkyDt = 0.0, SkyRate = 0.0, ForcedRate = -1.0;
-	double Yaw = 0.0;                 // radians
+	double Yaw = 0.0;                 // radians: the time-of-day angle (the planet's yaw in the world only with -skyturn)
+	bool bTurnWorld = false;          // -skyturn: the planet turns in the world under a fixed sun (before wave 4)
 	double SunAzimuth = 0.0;          // world azimuth of the fixed sun (radians)
 	double SunDecl = 0.0;             // current declination (degrees), eased toward the season
 	bool bWasPinned = true;
@@ -235,6 +243,7 @@ private:
 	double NightAmbGain = 14.0;       // night cloud ambient per unit of moonlight / sunlight (-nightamb=)
 	double OrbitScale = 0.45;         // cloud view samples from 250 km out (-cloudorbitscale=; 0.6 cost ~1.5 ms more at the terminator)
 	double ForceViewScale = -1.0;     // -cloudviewscale= forces the view sample scale (tests)
+	double MidScale = 0.6;            // (wave 4 verifier) cloud view samples from 40 to 120 km (-cloudmidscale=; 1 = before)
 	double ApScale = 0.38;             // aerial perspective from orbit (-apscale=; 1 near the ground)
 	float LastAp = -1.f;
 	double AtmoDropKm = 0.0;          // the atmosphere's ground sits this far below the sea
@@ -246,6 +255,19 @@ private:
 	double FrameMinSunSin = 0.0;      // lowest sun (sine) at the frame's corners, for the fill's dusk gate and logs
 	double MoonNear = 4.0;           // -moonnear= (verifier) moonlight gain near the ground (1 = as from orbit)
 	double GoldenEv = 1.0;           // -goldenev= (verifier) exposure lift for a low sun near the ground (sky-look sv3d: 0 / 0.8 / 1.4)
+	// wave 4 night near the ground (UpdateLights): -nightv3 restores the wave-3 night (MoonNear x the phase-dependent moonlight)
+	bool bNightV4 = true;
+	double MoonNearLux = 2.0;        // -moonnearlux= moonlight below ~8 km (x0.75 at new moon .. x1 at full), with the 1 EV lift (sky-look s4d: 1.0 / 1.6 / 2.6)
+	double MoonMinEl = 40.0;         // -moonminel= lowest moon elevation (deg) over the ground in view below ~8 km
+	double NightEvNear = 1.0;        // -nightevnear= night exposure lift below ~8 km (Tune.NightEv from ~60 km up; = the golden-hour lift, so dusk has no step)
+	float MoonNearColor[3] = { 0.52f, 0.68f, 1.0f };   // -mooncolor=r,g,b moonlight colour below ~8 km (wave 4)
+	double FineCubicArg = 1.0;
+	bool bWeatherPool = false;
+	double NightTone = 1.0;          // -nighttone= strength of the near-ground night split toning (0 = off, A/B)       // -skywxpool: build the weather maps in the shared thread pool (before wave 4)       // -finecubic= cubic cell lookup in the cloud material (0 = the old bilinear, A/B)
+	double CloudNightBoost = 3.0;    // -cloudnight= extra cloud sky ambient at night near the ground (x(1 + boost))
+	double NearT = 0.0;              // 1 below ~8 km, 0 from ~60 km (UpdateLights)
+	float LastSkyAmb = -1.f;
+	double LastMoonLux = 0.0, LastMoonEl = 0.0, LastNightAmb = 0.0;   // for logs
 	float LastFill = -1.f;
 	double FillAltKm = 0.0;           // capture point altitude above the sea (km), for logs
 	double FillSunEl = 0.0;           // sine of the sun elevation at the capture point, for logs

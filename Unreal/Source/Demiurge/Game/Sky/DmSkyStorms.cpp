@@ -129,6 +129,14 @@ void FDmSkyStorms::PinTropical(double LatDeg, double LonDeg, double RadiusDeg)
 		}
 }
 
+int32 FDmSkyStorms::SettleSimStorms()
+{
+	int32 N = 0;
+	for (FDmCyclone& C : Systems)
+		if (!C.bClimate && C.SimId >= 0 && !C.bEnding) { C.Strength = C.Peak; ++N; }
+	return N;
+}
+
 void FDmSkyStorms::Step(double SkyDt, double RealDt, double SkyRate, const dm::World* W, const FDmSkyWeather& Weather, double SunDeclDeg, double DayLength)
 {
 	// planet-day based speeds: degrees per planet day -> per sky second

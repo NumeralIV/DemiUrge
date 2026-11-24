@@ -3,6 +3,9 @@
 //   shot.ps1 nature-<view> [-site=forest|taiga|tropic|savanna|desert|burnt|lat,lon] [-heading=] [-sunel=] [-sunaz=]
 //   views: orbit (700 km), high (120 km), mid (25 km), low (5 km), close (1.2 km), ground (250 m), lineup (every mesh)
 //   shot.ps1 nature-check -noshot     regression test (DmCheck lines, exit code 0 = pass)
+//   shot.ps1 nature-ladder-<tag> -scenario=nature-ladder -site=forest|taiga|tropic|savanna|palmcoast [-ladder=0.05,0.3,1.2,5]
+//            [-ladderpitch=12,20,28,40] [-sunel= -sunaz=]: one launch, one site, a shot per camera distance (km) with
+//            the GPU / game / render medians of the 60 settled frames before each shot ("DmNatureLadder" lines)
 // The scenario waits for the fields and the site, frames the camera on the VISIBLE ground (DmNatureGround),
 // waits until every wanted tile is built plus 90 frames (TSR, Lumen), shoots and exits. With -shot (the
 // default of shot.ps1) the harness also shoots at -warm; the settled shot overwrites it.
@@ -12,8 +15,10 @@
 #include "Game/Nature/DmNatureMesh.h"
 #include "Game/Nature/DmNatureScatter.h"
 #include "Game/Core/DmCoords.h"
+#include "Game/Core/DmGameMode.h"
 #include "Game/Core/DmScenario.h"
 #include "Game/Core/DmSimSubsystem.h"
+#include "Game/Planet/DmPlanet.h"
 
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SkyLightComponent.h"
@@ -26,6 +31,9 @@
 #include "StaticMeshResources.h"
 #include "UObject/UObjectIterator.h"
 #include "HAL/PlatformTime.h"
+#if WITH_EDITOR
+#include "ShaderCompiler.h"
+#endif
 #include "Sim/Core/Geo.h"
 
 namespace
@@ -54,7 +62,7 @@ namespace
 	};
 
 	/** Best cell for a site kind (score over every land cell). */
-	bool FindSite(const FDmNatureFields& F, const FString& Kind, FVector& OutDir)
+	bool FindSite(const FDmNatureFields& F, const FString& Kind, FVector& OutDir, FVector* OutSeaDir = nullptr)
 	{
 		{
 			TArray<FString> Parts;
@@ -89,10 +97,26 @@ namespace
 			if (Kind == TEXT("forest")) S = Forest * 2.0 + (1.0 - MinR) * 1.2 + Relief * 0.5 - FMath::Abs(T - 11.0) * 0.05 - Cn.Z;
 			else if (Kind == TEXT("taiga")) S = Forest * 2.0 + Cn.Y * 1.5 + (1.0 - MinR) * 0.6 - FMath::Abs(T + 1.0) * 0.06;
 			else if (Kind == TEXT("tropic")) S = Forest * 1.5 + Cn.Z * 2.0 + (1.0 - Relief) * 0.6;
-			else if (Kind == TEXT("savanna")) S = Cn.W * 2.0 + (Cn.X > 0.15f && Cn.X < 0.55f ? 1.0 : 0.0) + F.Fauna[C] * 0.8;
+			else if (Kind == TEXT("savanna"))
+			{
+				// open acacia country: hot, dry-share land with some tree potential (not bare plain, not closed forest),
+				// unburnt, away from the coast (palms) and the frost line; a little wildlife
+				bool bSeaNear = false;
+				for (int32 K = 0; K < Deg; ++K) bSeaNear |= F.Elev[G.nbr[size_t(6 * C + K)]] < F.SeaLevel;
+				S = Cn.W * 2.0 + (Cn.X > 0.25f && Cn.X < 0.6f ? 1.5 : 0.0) + FMath::Min(1.0, double(Cn.X) * 3.0) + F.Fauna[C] * 0.5
+					- FMath::Max(0.0, 20.0 - T) * 0.2 - Cl.W * 4.0 - (bSeaNear ? 2.0 : 0.0) - Relief * 0.3;
+			}
 			else if (Kind == TEXT("desert")) S = (1.0 - Cl.Y) * 2.0 + (T > 14.f ? 1.0 : 0.0) - Cn.X * 3.0;
 			else if (Kind == TEXT("burnt")) S = Cl.W * 3.0 + Forest;
 			else if (Kind == TEXT("herd")) S = F.Fauna[C] * 3.0 + (Cn.X > 0.1f && Cn.X < 0.5f ? 0.8 : 0.0) - FMath::Abs(T - 16.0) * 0.03;
+			else if (Kind == TEXT("palmcoast"))
+			{
+				// a hot, wet-enough coast: low land next to the sea with trees on it (where the palms must stand)
+				bool bSeaNear = false;
+				for (int32 K = 0; K < Deg; ++K) bSeaNear |= F.Elev[G.nbr[size_t(6 * C + K)]] < F.SeaLevel;
+				const double Low = F.Elev[C] - F.SeaLevel;
+				S = (bSeaNear ? 2.0 : 0.0) + (Low < 0.6 ? 1.0 : 0.0) + FMath::Min(1.0, double(Cn.X) * 2.0) - FMath::Max(0.0, 24.0 - T) * 0.25 - FMath::Abs(Cl.Y - 0.6) * 0.8;
+			}
 			else if (Kind == TEXT("meadow")) S = (Cn.X > 0.3f && Cn.X < 0.48f ? 1.5 : 0.0) + MaxR * 0.8 - FMath::Abs(T - 12.0) * 0.05 + F.Fauna[C] * 0.3;
 			S += 0.001 * DmNature::Hash01(DmNature::Hash2(C, 0, 99));
 			if (S > Best) { Best = S; BestC = C; }
@@ -100,7 +124,51 @@ namespace
 		if (BestC < 0) return false;
 		const float* P = &G.pos[size_t(BestC) * 3];
 		OutDir = DmCoords::SimToUE(P[0], P[1], P[2]).GetSafeNormal();
+		if (OutSeaDir)
+		{
+			// the lowest neighbour below sea level: where the sea is, seen from the site
+			*OutSeaDir = FVector::ZeroVector;
+			double Lo = F.SeaLevel;
+			for (int32 K = 0; K < G.nbrN[size_t(BestC)]; ++K)
+			{
+				const int32 M = G.nbr[size_t(6 * BestC + K)];
+				if (F.Elev[M] >= Lo) continue;
+				Lo = F.Elev[M];
+				*OutSeaDir = DmCoords::SimToUE(G.pos[size_t(M) * 3], G.pos[size_t(M) * 3 + 1], G.pos[size_t(M) * 3 + 2]).GetSafeNormal();
+			}
+		}
 		return true;
+	}
+
+	/** Walks from Site towards SeaDir on the visible ground to the shoreline and returns a point InlandM metres inland
+	 *  of it (the palm band of the hot coasts is the first ~30 m above the sea); Site unchanged when no shore is found. */
+	FVector ToShore(const FDmNatureGround& Gr, double SeaRadiusUU, const FVector& Site, const FVector& SeaDir, double InlandM, double* OutHeadingDeg)
+	{
+		if (SeaDir.IsNearlyZero()) return Site;
+		const FVector Axis = FVector::CrossProduct(Site, SeaDir).GetSafeNormal();
+		if (Axis.IsNearlyZero()) return Site;
+		const double StepRad = 15.0 * 100.0 / SeaRadiusUU;    // 15 m steps
+		FVector Last = Site;
+		for (int32 I = 1; I < 600; ++I)                         // up to 9 km
+		{
+			const FVector D = Site.RotateAngleAxisRad(StepRad * I, Axis);
+			const double Hm = (Gr.Radius(D) - SeaRadiusUU) / 100.0;
+			if (Hm < 1.0)
+			{
+				const FVector Back = Site.RotateAngleAxisRad(FMath::Max(0.0, StepRad * I - InlandM * 100.0 / SeaRadiusUU), Axis);
+				if (OutHeadingDeg)
+				{
+					// compass heading of the shore direction at the result (east / north basis)
+					FVector East, North;
+					DmCoords::Basis(Back, East, North);
+					const FVector To = (D - Back).GetSafeNormal();
+					*OutHeadingDeg = FMath::RadiansToDegrees(FMath::Atan2(FVector::DotProduct(To, East), FVector::DotProduct(To, North)));
+				}
+				return Back.GetSafeNormal();
+			}
+			Last = D;
+		}
+		return Site;
 	}
 
 	struct FRun
@@ -113,6 +181,26 @@ namespace
 		double DistKm = 0, Heading = 0, Pitch = 0, Fov = 0;
 	};
 	FRun GRun;
+
+	/** Shaders still compiling (new materials render with the grey default material until they finish, -game runs of the
+	 *  editor build compile on demand): shots wait for them. */
+	bool ShadersBusy()
+	{
+#if WITH_EDITOR
+		return GShaderCompilingManager && GShaderCompilingManager->GetNumRemainingJobs() > 0;
+#else
+		return false;
+#endif
+	}
+
+	/** The real planet (C1) still building patches for the view (wave4 verification: one palmcoast 50 m shot of four was
+	 *  taken while the shore was still coarse, and showed the sea over the beach instead of the palms). */
+	bool PlanetBusy(UWorld* W)
+	{
+		if (!W) return false;
+		for (TActorIterator<ADmPlanet> It(W); It; ++It) if (!It->IsSettled()) return true;
+		return false;
+	}
 
 	/** Places the camera on the visible ground; bFull also sets the sun and the atmosphere (once: moving the sun again
 	 *  re-renders every virtual shadow page and recaptures the sky, a 100-200 ms frame that polluted the frame stats). */
@@ -278,13 +366,14 @@ namespace
 		if (R.Phase == 1)
 		{
 			if (Ctx.Frame % 30 == 0) Frame(Ctx, N, R, false);   // re-frame the camera (the ground may have been refined)
-			const bool bSettled = N->IsSettled();
+			const bool bSettled = N->IsSettled() && !ShadersBusy() && !PlanetBusy(Ctx.World);
 			if (bSettled && R.SettledFrame < 0) { R.SettledFrame = Ctx.Frame; R.SettleSeconds = FPlatformTime::Seconds() - R.FramedAt; }
 			if (!bSettled) R.SettledFrame = -1;
 			const bool bTimeout = Ctx.Frame > 2400;
 			if ((R.SettledFrame >= 0 && Ctx.Frame - R.SettledFrame >= 90 && Ctx.Frame >= 240) || bTimeout)
 			{
-				Ctx.Log(FString::Printf(TEXT("DmNatureShot: %s after %.1f s%s: %s"), R.View.Name, R.SettleSeconds, bTimeout ? TEXT(" (TIMEOUT)") : TEXT(""), *N->Describe()));
+				Ctx.Log(FString::Printf(TEXT("DmNatureShot: %s after %.1f s%s: %s"), R.View.Name, R.SettleSeconds, bTimeout ? *FString::Printf(TEXT(" (TIMEOUT: nature %s, shaders %s, planet %s)"),
+					N->IsSettled() ? TEXT("settled") : TEXT("busy"), ShadersBusy() ? TEXT("compiling") : TEXT("done"), PlanetBusy(Ctx.World) ? TEXT("building") : TEXT("settled")) : TEXT(""), *N->Describe()));
 				Ctx.Shot(TEXT(""));
 				// -natureprofile: dump a GPU profile of this frame into the log (judging the budget per pass)
 				if (FDmShotArgs::Param(TEXT("natureprofile")) && GEngine) GEngine->Exec(Ctx.World, TEXT("ProfileGPU"));
@@ -356,15 +445,30 @@ static FDmScenarioRegistrar GDmNatureCheck(TEXT("nature-check"), TEXT("nature"),
 					bMeshes &= Fa && Fa->Get(EDmNatureMesh(I), V).Mesh != nullptr;
 			Expect(Ctx, bMeshes, TEXT("every mesh id and variant has a mesh"));
 			{
-				// far LODs carry the camera-facing clump-card data (UV2..UV4) and the trees have 4 LODs
+				// trees have 4 LODs; the far LOD is a camera-facing card set: the generated stand-ins' clump cards (UV2..UV4)
+				// or the Blender trees' 12-triangle impostor (UV2 = card offset and code)
 				bool bFar = true;
-				for (EDmNatureMesh Id : { EDmNatureMesh::Conifer, EDmNatureMesh::Broadleaf, EDmNatureMesh::Shrub })
-				{
-					const UStaticMesh* Sm = Fa ? Fa->Get(Id, 0).Mesh : nullptr;
-					const FStaticMeshRenderData* Rd = Sm ? Sm->GetRenderData() : nullptr;
-					bFar &= Rd && Rd->LODResources.Num() == 4 && Rd->LODResources[3].GetNumTexCoords() >= 5;
-				}
-				Expect(Ctx, bFar, TEXT("trees have 4 LODs with camera-facing far-LOD card data (5 UV channels)"));
+				for (EDmNatureMesh Id : { EDmNatureMesh::Conifer, EDmNatureMesh::Broadleaf, EDmNatureMesh::Palm, EDmNatureMesh::Acacia, EDmNatureMesh::Shrub })
+					for (int32 V = 0; V < UDmNatureFactory::NumVariants(Id); ++V)
+					{
+						const FDmNatureMeshInfo& In = Fa ? Fa->Get(Id, V) : FDmNatureMeshInfo();
+						const FStaticMeshRenderData* Rd = In.Mesh ? In.Mesh->GetRenderData() : nullptr;
+						bFar &= Rd && Rd->LODResources.Num() == 4 && (In.bAsset ? (Rd->LODResources[3].GetNumTriangles() <= 24 && Rd->LODResources[3].GetNumTexCoords() >= 3)
+							: Rd->LODResources[3].GetNumTexCoords() >= 5);
+					}
+				Expect(Ctx, bFar, TEXT("trees have 4 LODs with a camera-facing far LOD (impostor or clump cards)"));
+				Ctx.Log(FString::Printf(TEXT("DmCheck INFO trees %s, %d Blender meshes"), Fa && Fa->TreeAssets() ? TEXT("Blender assets") : TEXT("generated"), Fa ? Fa->NumAssetMeshes() : 0));
+				// every asset mesh has a material on every slot (no grey default)
+				int32 Unset = 0;
+				for (int32 I = 0; Fa && I < int32(EDmNatureMesh::Num); ++I)
+					for (int32 V = 0; V < UDmNatureFactory::NumVariants(EDmNatureMesh(I)); ++V)
+					{
+						const FDmNatureMeshInfo& In = Fa->Get(EDmNatureMesh(I), V);
+						if (!In.bAsset) continue;
+						for (UMaterialInterface* M : In.Materials) Unset += M ? 0 : 1;
+						Unset += In.Materials.Num() == In.Mesh->GetStaticMaterials().Num() ? 0 : 1;
+					}
+				Expect(Ctx, Unset == 0, FString::Printf(TEXT("every Blender mesh slot has a nature material (%d unset)"), Unset));
 			}
 			Expect(Ctx, Fa && Fa->BuildSeconds < 3.0, FString::Printf(TEXT("factory build %.2f s < 3 s"), Fa ? Fa->BuildSeconds : -1.0));
 			const FDmNatureFieldsPtr F = N->GetFields();
@@ -495,5 +599,131 @@ static FDmScenarioRegistrar GDmNatureCheck(TEXT("nature-check"), TEXT("nature"),
 			Ctx.SetExitCode(C.Fails ? 1 : 0);
 			Ctx.Finish();
 			C.Phase = 10;
+		}
+	});
+
+// ------------------------------------------------------------ distance ladder (one site, several camera distances)
+namespace
+{
+	struct FLadder
+	{
+		TArray<double> Dists, Pitches;
+		int32 Stop = 0, Phase = 0, FramedFrame = -1, SettledFrame = -1, ShotFrame = -1;
+		TArray<float> Gpu, Game, Render, FrameMs;
+		FRun R;
+		FString Site;
+		TArray<FString> Sites;       // -sites=a,b,c: one launch, every site in turn (shots <name>-<site>-<dist>m)
+		int32 SiteIdx = 0;
+	};
+	FLadder GLad;
+
+	TArray<double> ParseList(const TCHAR* Key, const TArray<double>& Def)
+	{
+		FString V;
+		if (!FDmShotArgs::Value(Key, V)) return Def;
+		TArray<FString> P; V.ParseIntoArray(P, TEXT(","));
+		TArray<double> Out;
+		for (const FString& X : P) Out.Add(FCString::Atod(*X));
+		return Out.Num() ? Out : Def;
+	}
+
+	float Median(TArray<float> V) { if (!V.Num()) return 0.f; V.Sort(); return V[V.Num() / 2]; }
+	float P95(TArray<float> V) { if (!V.Num()) return 0.f; V.Sort(); return V[FMath::Min(V.Num() - 1, int32(V.Num() * 0.95f))]; }
+}
+
+static FDmScenarioRegistrar GDmNatureLadder(TEXT("nature-ladder"), TEXT("nature"),
+	TEXT("nature distance ladder: one site, a shot per camera distance with GPU medians (shot.ps1 nature-ladder-<tag> -scenario=nature-ladder -site=...)"),
+	[](FDmScenarioContext& Ctx)
+	{
+		GLad = FLadder();
+		GLad.Dists = ParseList(TEXT("-ladder="), { 0.05, 0.3, 1.2, 5.0 });
+		GLad.Pitches = ParseList(TEXT("-ladderpitch="), { 12.0, 20.0, 28.0, 40.0 });
+		{
+			FString V;
+			if (FDmShotArgs::Value(TEXT("-sites="), V)) V.ParseIntoArray(GLad.Sites, TEXT(","));
+		}
+		Ctx.BuildScene();
+		Ctx.HoldExit();
+		Ctx.LookAt(20.0, 30.0, 700.0, 0.0, 90.0, 30.0);
+	},
+	[](FDmScenarioContext& Ctx, float Dt)
+	{
+		FLadder& L = GLad;
+		ADmNature* N = FindNature(Ctx.World);
+		if (!N) { if (Ctx.Frame == 30) { Ctx.Log(TEXT("DmNatureLadder: no nature actor")); Ctx.Finish(); } return; }
+		auto SetStop = [&L](int32 I)
+		{
+			L.R.DistKm = L.Dists[I];
+			L.R.Pitch = L.Pitches.IsValidIndex(I) ? L.Pitches[I] : L.Pitches.Last();
+		};
+		if (L.Phase == 0)
+		{
+			if (!N->HasFields() || !N->GetGround()) return;
+			L.Site = TEXT("forest");
+			FDmShotArgs::Value(TEXT("-site="), L.Site);
+			if (L.Sites.IsValidIndex(L.SiteIdx)) L.Site = L.Sites[L.SiteIdx];
+			L.R = FRun();
+			L.R.View = { TEXT("ladder"), L.Dists[0], 20.0, 55.0, TEXT("forest") };
+			L.R.Fov = 55.0;
+			L.R.Heading = 35.0;
+			FDmShotArgs::Value(TEXT("-heading="), L.R.Heading);
+			FDmShotArgs::Value(TEXT("-fov="), L.R.Fov);
+			FVector SeaDir = FVector::ZeroVector;
+			if (!FindSite(*N->GetFields(), L.Site, L.R.Site, &SeaDir)) L.R.Site = DmCoords::LatLonToDir(20.0, 30.0);
+			if (L.Site == TEXT("palmcoast") && N->GetGround())
+			{
+				// on the shore itself, looking along the beach with the sea to the right (unless -heading= is given)
+				double ShoreH = 0.0;
+				L.R.Site = ToShore(*N->GetGround(), N->GetFields()->SeaRadiusUU, L.R.Site, SeaDir, 45.0, &ShoreH);
+				double Hd = 0.0;
+				if (!FDmShotArgs::Value(TEXT("-heading="), Hd)) L.R.Heading = ShoreH - 65.0;
+				Ctx.Log(FString::Printf(TEXT("DmNatureLadder palmcoast: shore heading %.0f, camera heading %.0f"), ShoreH, L.R.Heading));
+			}
+			SetStop(0);
+			Frame(Ctx, N, L.R, true);
+			L.Phase = 1; L.FramedFrame = Ctx.Frame; L.SettledFrame = -1;
+			return;
+		}
+		if (L.Phase == 1)
+		{
+			if (Ctx.Frame % 30 == 0) Frame(Ctx, N, L.R, false);
+			const bool bSettled = N->IsSettled() && !ShadersBusy() && !PlanetBusy(Ctx.World);
+			if (bSettled && L.SettledFrame < 0) L.SettledFrame = Ctx.Frame;
+			if (!bSettled) L.SettledFrame = -1;
+			if (const ADmGameMode* M = Cast<ADmGameMode>(Ctx.World->GetAuthGameMode()))
+			{
+				double G, Rn, Rh, Gp;
+				M->GetLastUnitMs(G, Rn, Rh, Gp);
+				L.Gpu.Add(float(Gp)); L.Game.Add(float(G)); L.Render.Add(float(Rn)); L.FrameMs.Add(Dt * 1000.f);
+				while (L.Gpu.Num() > 60) { L.Gpu.RemoveAt(0); L.Game.RemoveAt(0); L.Render.RemoveAt(0); L.FrameMs.RemoveAt(0); }
+			}
+			const bool bTimeout = Ctx.Frame - L.FramedFrame > 2400;
+			if ((L.SettledFrame >= 0 && Ctx.Frame - L.SettledFrame >= 90 && Ctx.Frame - L.FramedFrame >= 150) || bTimeout)
+			{
+				const int32 Dm = int32(FMath::RoundToInt(L.R.DistKm * 1000.0));
+				int32 Trees = 0;
+				for (EDmNatureMesh Id : { EDmNatureMesh::Conifer, EDmNatureMesh::Broadleaf, EDmNatureMesh::Palm, EDmNatureMesh::Acacia, EDmNatureMesh::Shrub, EDmNatureMesh::Dead })
+					Trees += N->CountInstances(Id);
+				Ctx.Log(FString::Printf(TEXT("DmNatureLadder %s %d m pitch %.0f: gpu median %.2f ms p95 %.2f | game %.2f render %.2f | frame median %.2f p95 %.2f | trees+shrubs %d comps %d%s"),
+					*L.Site, Dm, L.R.Pitch, Median(L.Gpu), P95(L.Gpu), Median(L.Game), Median(L.Render), Median(L.FrameMs), P95(L.FrameMs), Trees, N->NumComponents(), bTimeout ? *FString::Printf(TEXT(" (TIMEOUT: nature %s, shaders %s, planet %s)"), N->IsSettled() ? TEXT("settled") : TEXT("busy"),
+						ShadersBusy() ? TEXT("compiling") : TEXT("done"), PlanetBusy(Ctx.World) ? TEXT("building") : TEXT("settled")) : TEXT("")));
+				Ctx.Log(FString::Printf(TEXT("DmNatureLadder %s %d m: %s"), *L.Site, Dm, *N->Describe()));
+				Ctx.Shot(L.Sites.Num() ? FString::Printf(TEXT("%s-%dm"), *L.Site, Dm) : FString::Printf(TEXT("%dm"), Dm));
+				L.ShotFrame = Ctx.Frame;
+				L.Phase = 2;
+			}
+			return;
+		}
+		if (L.Phase == 2 && Ctx.Frame > L.ShotFrame + 30)
+		{
+			if (++L.Stop >= L.Dists.Num())
+			{
+				if (++L.SiteIdx < L.Sites.Num()) { L.Stop = 0; L.Phase = 0; L.Gpu.Reset(); L.Game.Reset(); L.Render.Reset(); L.FrameMs.Reset(); return; }
+				Ctx.Finish(); L.Phase = 3; return;
+			}
+			SetStop(L.Stop);
+			Frame(Ctx, N, L.R, false);
+			L.Gpu.Reset(); L.Game.Reset(); L.Render.Reset(); L.FrameMs.Reset();
+			L.Phase = 1; L.FramedFrame = Ctx.Frame; L.SettledFrame = -1;
 		}
 	});

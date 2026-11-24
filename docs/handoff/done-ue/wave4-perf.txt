@@ -1,0 +1,99 @@
+2026-11-24, wave4-perf: independent adversarial verification of track "perf" (builder lane perf4). Fresh lane perf4-verify
+(Unreal/lanes/perf4-verify.owned: Game/Core/**, Config/**). Synced with `lane.ps1 sync perf4-verify -Force` (Core is also
+claimed by 'bridge'; 1 file copied, 32 identical), synced file touched, Unreal/build.ps1 on main Succeeded (0 errors /
+0 warnings). bridgecheck in the lane: DmCheck RESULT PASS (29 ok). package.ps1: BUILD SUCCESSFUL (576 s, 1,102,523,409
+bytes) on the third try; the first two failed to link (LNK2019 in Game/Audio, stale objects, see below).
+
+SCORE: 4 / 10
+
+SUMMARY
+The target is not met: 60+ fps in every view with no frame over 50 ms at 1080p High. No run, by the builder or by me, came
+near it. The builder's diagnosis holds up: the near-ground hitches come from render tasks and game-thread waits that don't
+get a core while the game's own long jobs fill the workers. The worker split (7 foreground + 15 background) probably helps
+under heavy load, but "4.6x fewer frames over 50 ms" does not reproduce reliably: 3 of my 4 back-to-back pairs favour the
+split, and 1 reverses it. But the track shipped a crash. The worker restart ran at EndOfEngineInit, while the first map was
+already rendering, and one packaged launch in seven died at startup with EXCEPTION_INT_DIVIDE_BY_ZERO in the renderer
+(fixed here, below). The builder's report also left out its own final editor run A3 (22 / 51 / 56 fps), which was worse
+than the A1 / A2 runs it reported.
+
+MACHINE
+i7-13700K (8 P + 8 E cores, 24 threads), RTX 3060. During every run: CPU 97-100 % (2-4 other Unreal / Demiurge processes,
+bursts of 25 cl.exe compiles), so every fps below is a lower bound and A/B pairs are noisy. Load samples for each run are in
+docs/handoff/perf4-verify/runs-summary.txt. A quiet machine never came up during this check.
+
+FOUND AND FIXED (Game/Core/DmTaskTuning.cpp, in main)
+1. CRASH at startup (critical). Packaged run vL1 (builder's package, core split, -pyear=2000) crashed at frame 0: "Unhandled
+   Exception: EXCEPTION_INT_DIVIDE_BY_ZERO, Demiurge.exe!FGatherShadowPrimitivesPrepareTask::DoTask()" on Background Worker
+   #7. The DmTasks line was never logged, so it died during the restart.
+   Cause: FScheduler::RestartWorkers stops every worker and then starts new ones. For a moment the scheduler has 0 workers,
+   and the renderer computes FMath::DivideAndRoundUp(NumPackets, Min(GetNumWorkerThreads(), NumPackets))
+   (Engine ShadowSetup.cpp:5167-5168). The track did this at EndOfEngineInit, which runs after GEngine->Start(): the first
+   map's BeginPlay (the scenario's world, towns, nature, sky) has already run and the render thread is drawing it.
+   Fix: restart at FCoreDelegates::OnPostEngineInit, before GEngine->Start() loads the first map, with EndOfEngineInit kept as
+   a fallback. Call FlushRenderingCommands() first, so the render thread is idle while the game thread sits blocked in
+   RestartWorkers. Skip it in commandlets (the cook loads the module too).
+2. Startup stall. At EndOfEngineInit, RestartWorkers had to join the long jobs the scene parts had already queued. Builder's
+   logs: "restarted in" 478, 1,860, 2,093, 2,385, 3,770 ms. After the fix, the new package logs "restarted in 10.3-14.4 ms
+   (post engine init, before the first map)" in all 4 core-split launches (vC1, vC2, vN1, vC3), and the lane logs 34.5 ms.
+   No crash in those 4 packaged launches or in the editor bridgecheck. That is too few launches to prove the race is gone,
+   but the window it needs (a scene rendering during the restart) no longer exists.
+3. The header comment called the target CPU "12-core / 24-thread"; corrected to 16 cores / 24 threads (8 P + 8 E).
+
+RE-MEASURED (packaged perf-play, 1920x1080, -tier=high, 8x, 25 s per stop; fps (frames over 50 ms); back-to-back pairs)
+                                   mid         low         close        run
+  builder package, core 7+15     34 (39)     42 (12)     55 (12)      vA1   pyear 1600
+  builder package, engine 2+20   31 (52)     11 (151)     9 (136)     vB1
+  builder package, core 7+15     24 (121)    17 (295)    23 (175)     vA2
+  builder package, engine 2+20   35 (55)     43 (54)     37 (55)      vB2   <- reverses
+  builder package, core, -pyear=2000 -stop=all: CRASH at startup                                 vL1
+  builder package, engine, -pyear=2000: orbit 76 (11), mid 55 (12), low 22 (218), close 7 (69, the Ark ending screen)  vM1
+  NEW package, core 7+15         70 (19)     43 (54)     41 (49)      vC1
+  NEW package, engine 2+20       23 (65)     16 (66)     12 (68)      vD1
+  NEW package, core 7+15         52 (40)     62 (69)     48 (75)      vC2
+  NEW package, engine 2+20       38 (53)     22 (67)     10 (71)      vD2
+  NEW package, core 7+15         30 (24)     48 (38)     25 (79)      vC3
+  NEW package, -pyear=2000 orbit / mid: core 75 (8) / 66 (11) (vN1); engine 44 (30) / 24 (96) (vP1)
+Reading: under this load the engine split collapses near the ground (game thread 47-111 ms on average at low / close,
+hitch cause "game thread busy": the game thread waits for foreground tasks that its 2 foreground workers can't serve).
+The core split avoids that in 4 of 5 pairs. Still, no run on either split had fewer than 8 frames over 50 ms in any stop,
+and the worst single frames were 2-6 s (max 5,934 ms, vC1 low).
+
+BUILDER'S CLAIMS CHECKED
+- Root cause (long jobs fill the workers; render tasks starve; frame-end wait): consistent with every log here. The new
+  "frame-end wait" / "render thread" causes dominate the core-split runs; "game thread busy" dominates the engine-split runs.
+- 4.6x fewer frames over 50 ms: NOT reliably reproduced (above). Same direction in 4 of 5 pairs, reversed in 1.
+- Picker rebuild: correct. The per-grid cache key (geo pointer + n) is safe because Geo::build(L) is deterministic. No
+  "slow dirty flush" line in 13 runs; bridgecheck pick checks pass. Speed-up still not traced.
+- Frame monitor sync / frame-end wait: correct for both handler orders (MarkDrawn takes the max).
+- I3 (perf-play reaches the ending): confirmed. vM1 from year 2000 reached "DmFlow: play -> ending" during the close stop
+  and measured the ending screen (docs/handoff/perf4-verify/ue-perf-verify-close-ending.png). -pyear=1600 runs end around
+  year 2860.
+- T2 (towns exit hang): confirmed and frequent. "joined N planning tasks in" 6,981 / 16,733 / 23,238 / 38,977 / 47,172 /
+  48,371 / 64,918 / 76,372 ms.
+- Omitted from the report: the builder's own run A3 (editor lane, shipped setup, 23:00): 22 / 51 / 56 fps, 65 and 73
+  frames over 50 ms at low / close (scratchpad perf4/w5/A3.log).
+
+SCREENSHOTS LOOKED AT (vA1 low / close, vB1 mid, vM1 orbit / close, vC1 low, vC2 mid)
+Live play renders without corruption, with HUD, towns, fields, rivers and clouds. Against "cinematic strategy graphics" they
+fail, though not because of this track: at mid range the capital is a grey pixelated smear with no buildings; fields are
+brick-like slabs at every range; at low range the city sits in a white glare column that washes it out; and the "A City
+Falls" banner covers the centre of the view for seconds at a time (release-notes known issues 1 and 3).
+
+FOR THE LEAD / OTHER OWNERS
+- The 60-fps target needs the module fixes in docs/handoff/perf4-findings.md (T1 towns priorities, N1 / N2 nature,
+  P1-P3 planet, T2 exit hang) and a quiet-machine perf-play. The commands are in that file's new verification section.
+- Packaging on main failed twice with LNK2019 in Game/Audio: DmAudioScenarios.obj referenced the old DmAudioTest::Checks
+  and ADmAudioDirector::PlayCue signatures. The audio headers were synced with old timestamps (release-notes known issue 8 /
+  findings B1). Fixed by touching Game/Audio/* and Game/Sky/* (timestamps only, no content change). lane.ps1 should touch
+  what it copies.
+- The builder's load samplers are still running (scratchpad perf4/sampler.py: python PIDs 30192, 40500, 13624, 26180
+  and nohup 35340 at 00:40 on 2026-11-24). They use little CPU. The builder's attempt to stop them was refused by the
+  permission system, so the owner should end them by hand.
+
+FILES
+- Unreal/Source/Demiurge/Game/Core/DmTaskTuning.cpp (fix; synced to main)
+- Unreal/lanes/perf4-verify.owned, Unreal/Lanes/perf4-verify/
+- docs/handoff/perf4-findings.md (verification section appended)
+- docs/handoff/perf4-verify/: runs-summary.txt, 13 packaged logs (vA1..vC3, incl. the crash log vL1.log),
+  bridgecheck-lane.log, ue-perf-verify-{orbit,mid,low,close-ending}.png
+- Package log: Unreal/Saved/Logs/package-20261123-234153.log; dist/DEMIURGE-Win64-Development (rebuilt with the fix)

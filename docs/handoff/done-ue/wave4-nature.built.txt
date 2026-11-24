@@ -1,0 +1,97 @@
+2026-11-23 wave4 track "nature" (lane nature4): the real Blender tree and animal families in the nature factory.
+Lane Unreal/Lanes/nature4 (owned list Unreal/lanes/nature4.owned). The first attempt (2026-11-20) imported the assets and
+wired most of the factory but never synced or reported; this run refreshed the lane from main, finished the look and
+budget work, re-shot everything, synced (lane.ps1 sync nature4 -Force: 61 copied, 0 conflicts; -Force only because
+'integration' claims Game/** and Content/**), touched the synced files and built main: Unreal/build.ps1 Succeeded
+(0 errors). nature-check on MAIN: DmCheck RESULT PASS (0 failed), "trees Blender assets, 31 Blender meshes".
+
+WHAT IS IN THE GAME NOW
+- Trees: Conifer, Broadleaf, Palm, Acacia, Shrub x 4 variants = 20 Blender meshes (art/trees), LOD0-2 + a 12-triangle
+  baked-normal impostor (LOD3), in /Game/Nature/Trees (+ Textures: leaf atlas, impostor albedo + normal atlases, 5 bark
+  albedo + normal). The Dead tree stays generated (no asset; ASSET-INTEGRATION 4.9 gap).
+- Animals: 11 meshes in /Game/Nature/Animals. Herds by biome (DmNatureFauna): savanna wildebeest / antelope with a
+  resting pride (lion + lionesses) at ~1 herd in 6; grassland bison / wildebeest / antelope; tundra bison; forest, taiga
+  and wetland deer (does + a stag). Birds: starling flocks (land) and egrets (coast / wetland) shown x4 / x1.3 through
+  the material's MeshScale; fish: sardine shoals at two sizes. Birds and fish are yawed 90 deg (assets face +X, the paths
+  expect +Y) in the instance transform and the material (MeshYaw90). The humpback whale is imported but not placed.
+- Every id falls back to the generated stand-in if its asset is missing; -gentrees / -genfauna force the stand-ins
+  (that is how the "before" shots below were made: same build, same sites, same frame).
+- Materials (Scripts/nature.py, re-run with Scripts/nature-mats.ps1): new M_NatureImpostor (yaw-only billboard, baked
+  normals, wind sway); M_NatureLeaf / M_NatureBark get the Blender branch-bend wind (UV2 bend + limb phase, the trees'
+  vertex contract), M_NatureLeaf / M_NatureImpostor a Saturation trim and an Autumn accent (custom data 3),
+  M_NatureBark a vertex-AO term (BarkAO) and BarkBright, M_NatureCreature MeshYaw90 / MeshScale / GrazeScale.
+- Scripts/nature_assets.py + nature-assets.ps1: moves the import tool's output (import_assets.ps1 -Families
+  trees,animals into /Game/Assets) to /Game/Nature, re-points every slot at the nature materials, sets full-precision
+  UVs, no distance fields, never-streamed coverage-mip atlases, linear impostor normals. Result: RESULT PASS, 31 meshes,
+  0 dependencies on /Game/Assets (so nothing here touches the towns track's Content/Assets).
+
+TREES VERIFIER'S OPEN ITEMS (docs/lab/trees.md 11 / 12.3) THAT BELONG TO NATURE
+1 Golden-hour leaf saturation (M_NatureLeaf values): transmission (0.6, 0.72, 0.38), TintA (0.80, 0.86, 0.78), TintB
+  (1.08, 1.0, 0.82), Saturation 0.75 on the Blender leaves and impostors (stand-ins unchanged). Canopy HSV saturation,
+  forest site, golden hour (-sunel=6): 300 m 0.79 before -> 0.57 after; day 300 m 0.71 -> 0.49; 1200 m 0.44 -> 0.29;
+  concept biome-temperate-broadleaf 0.42 (lower 60 % of the frame, shots/ue-nature4-sheet-goldhour.jpg). Better, not
+  yet the concept: lit golden-hour tops are still yellow-green rather than olive (R ~ G).
+2 Rounder broadleaf crowns: under a closed canopy the scatter picks the domed variants (0 mature oak, 3 spreading oak)
+  and young trees, the tall narrow beech only ~12 %; crowns x1.06-1.2 wider and x0.84-0.96 lower; far tiles use the
+  two domed crowns. shots/ue-nature4-sheet-forest.jpg 300 m: rounded domes of mixed size instead of lollipops.
+3 No autumn colours in the tropics: the Autumn accent is custom data 3, set by the scatter only on temperate
+  broadleaf (3-7 C .. 12-17 C, not hot, not wet, moisture > 0.25-0.4), ~1 crown in 25; 0 in the tropics, cold and dry.
+4 Palms on palm coasts: a wider, denser hot-coast palm band (to ~34 m above the sea, weight x7) for the real-scale
+  palms. New scenario site "palmcoast" finds the shoreline and looks along the beach: palms line the beach at 50 m and
+  read as a fringe at 300 m (shots/ue-nature4-sheet-palmcoast.jpg). The "savanna" site was a bare crater plain (and its
+  50 m shot was black, camera in the ground); it now finds open acacia country (shots/ue-nature4-sheet-savanna.jpg).
+- Also: the Blender trees' leaves read near-black in the game (no sky-light fill under the game's sky): asset leaf
+  brightness 0.78 -> 1.2 (median canopy 300 m #121b0d -> #1b2613); bark AO in vertex alpha now used (limbs inside the
+  crown no longer shine through) and the baked bark atlases dimmed (BarkBright 0.55, impostor bark texels x0.5): pale
+  "dead" forks at 250-400 m are gone in the forest.
+
+FRAME COST (GPU median ms, 60 settled frames per shot, 1080p, editor -game, same build; "before" = -gentrees -genfauna)
+The machine was never quiet: other agents' simrun / compiles held the CPU at 99-100 % and other games shared the GPU
+for the whole session, so single numbers swing 2-5 ms between runs; compare rows, not absolutes. Before 19:xx, after
+21:3x (final LODs), no-trees baseline 20:xx:
+  site        50 m   before/after    300 m  before/after    1200 m  before/after    5000 m  before/after
+  forest           16.6 / 15.8            14.7 / 14.0            17.7 / 15.4             19.0 / 15.8
+  taiga            21.7 / 18.9            16.1 / 17.7            19.0 / 16.1             17.8 / 17.0   (before: p95 95-258 ms, contended)
+  tropic           17.6 / 14.6            19.0 / 20.3            20.5 / 19.4             20.0 / 19.0
+  palmcoast        13.5 / 12.5            22.7 / 21.5            20.6 / 19.6             19.3 / 17.3
+  savanna          12.3 / 11.4            18.8 / 17.7            16.1 / 15.6             14.6 / 14.4
+  -> after is cheaper in 18 of 20 views; +1.6 ms taiga 300 m, +1.3 ms tropic 300 m. Instances drop ~40 % (forest 1.2 km
+  359 k -> 221 k: real-scale crowns, closed-canopy density x0.5).
+  Forest trees' own cost (minus the -notrees run 9.2 / 11.0 / 8.7 / 12.9): before 7.4 / 3.7 / 8.9 / 6.1, after 6.6 /
+  3.0 / 6.7 / 2.9 ms. Within the 5 ms towns+nature+units budget at 300 m and 5 km only; 50 m and 1.2 km forest views
+  are over it for nature alone (they were before too).
+- Budget fix made in this run: the assets' LOD screen sizes 1 / 0.45 / 0.2 / 0.08 kept LOD2 (1-2 k tris) out to ~600 m on
+  the game's crowns; forest 300 m cost 19.5 ms (8.5 ms of trees). The factory now uses 1 / 0.6 / 0.3 / 0.15 (LOD1 from
+  ~80 m, LOD2 ~160 m, impostor ~320 m): 14.0 ms. -treelods=a,b,c overrides for tests.
+- Game thread: the factory loads the assets in 0.73 s (generated stand-ins: 1.35 s); tile apply max 2.8-4 ms.
+- Wind: -naturewind=4 (storm), two frames 2 s apart at 50 m: crowns, limbs and trunks move together (mean pixel change
+  19 / 255, 31 % of pixels > 24), no tearing (shots/ue-nature4-wind-forest-50m.png / -51m.png).
+
+SHOTS (shots/, every one looked at): ue-nature4-sheet-{forest,taiga,tropic,palmcoast,savanna}.jpg = before row /
+after row at 50 m, 300 m, 1.2 km, 5 km; full frames ue-nature4-{before,after}-<site>-<50|300|1200|5000>m.png;
+ue-nature4-sheet-goldhour.jpg (gold-hour before / after / concept, plus the savanna herd); ue-nature4-gold-after-*;
+ue-nature4-after-herd.png and -after-lineup.png (Nov 20, same fauna code). palmcoast / savanna "after" frames are from
+the run before the last bark-dim tweak (BarkBright 0.6 instead of 0.55).
+
+TESTS: nature-check on the lane PASS (twice) and on main PASS. Under the full-CPU contention two runs failed timing
+checks only ("factory build < 3 s", "ground rebuilt within 10 s"); the generated stand-ins (-gentrees -genfauna) failed
+the same factory check (8.46 s) in the same conditions, the asset run right before passed (0.73 s): load, not code.
+
+FILES (all synced to main): Source/Demiurge/Game/Nature/DmNatureFactory.{h,cpp}, DmNatureScatter.{h,cpp},
+DmNatureFauna.{h,cpp}, DmNatureActor.cpp, DmNatureScenarios.cpp (nature-ladder scenario: -sites=a,b,c -ladder=km,...
+-ladderpitch=..., GPU / game / render medians per stop; palmcoast site; shader-compile wait before shots);
+Scripts/nature.py, Scripts/nature_assets.py, Scripts/nature-assets.ps1; Content/Nature/M_Nature*.uasset (6, new
+M_NatureImpostor), Content/Nature/Trees/** (20 meshes, 15 textures), Content/Nature/Animals/** (11 meshes), 43 MB.
+
+NOT DONE / FOR THE LEAD
+- Tropic interiors are palm groves (palm weight there is Hot x moisture, unchanged in spirit): the rainforest concept
+  wants broadleaf giants; needs the tropical broadleaf family (trees.md 11) or a lower inland palm weight.
+- Palm impostors (300 m+) show pale cream trunks: the palm trunk texels are too saturated for the impostor bark dim;
+  needs a bark mask in the impostor bake (art/trees) or a darker palm bark atlas.
+- Golden-hour lit tops still a little lime (0.57 vs 0.42); the 50 m forest views are dark under the canopy (no sky
+  light in the game's sky, C2 item already reported).
+- The forest 1.2 km view shows ground between crowns (closed canopy x0.5): a darker forest-floor tint in the canopy
+  decal would read as continuous canopy without more instances.
+- Whale not placed (open-ocean pod: new critter, small); skeletal animals unused (close-ups only, per 6.3).
+- The orbit-rule sun differs between some runs of the same view (lodC run): not investigated.
+- Re-measure the table on a quiet machine before committing a budget.

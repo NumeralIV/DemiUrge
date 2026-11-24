@@ -234,6 +234,10 @@ void ADmNature::UpdateGround(const dm::World& W)
 	// elevation changes that keep coming (a volcano, a brush) rebuild the ground once they settle, not every tick
 	if (Ground && uint32(GroundSig & 0xFFFFFFFFull) != GroundEpoch && Now - LastEpochTime < 1.0) return;
 	LastGroundCheck = Now;
+	// (wave4 verification) the ground rebuild after an elevation change runs ahead of the other background jobs: an
+	// elevation flag also starts the towns' re-plans (56 s of tasks in nature-check) and the planet's patch builds, and
+	// at BackgroundNormal the ground waited behind them for > 10 s (trees left floating / buried after Raise / Lower Land)
+	const UE::Tasks::ETaskPriority GroundPri = UE::Tasks::ETaskPriority::BackgroundHigh;
 
 	// 1. a registered provider wins
 	if (FDmNatureGround::HasProvider())
@@ -243,7 +247,7 @@ void ADmNature::UpdateGround(const dm::World& W)
 		{
 			PendingGroundSig = Sig;
 			FDmNatureGroundPtr G = FDmNatureGround::FromProvider(W);
-			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; }, UE::Tasks::ETaskPriority::BackgroundNormal);
+			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; }, GroundPri);
 			bGroundTask = true;
 		}
 		return;
@@ -259,7 +263,7 @@ void ADmNature::UpdateGround(const dm::World& W)
 			if (Ground && Ground->GetSource() == FDmNatureGround::ESource::PlanetTerrain && Sig == GroundSig) return;
 			PendingGroundSig = Sig;
 			TSharedPtr<FDmNatureGround, ESPMode::ThreadSafe> Shell = FDmNatureGround::PlanetShell(W);
-			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Shell]() -> FDmNatureGroundPtr { return FDmNatureGround::FinishPlanet(Shell); }, UE::Tasks::ETaskPriority::BackgroundNormal);
+			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Shell]() -> FDmNatureGroundPtr { return FDmNatureGround::FinishPlanet(Shell); }, GroundPri);
 			bGroundTask = true;
 			return;
 		}
@@ -293,7 +297,7 @@ void ADmNature::UpdateGround(const dm::World& W)
 			GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [Shell, Vp, Ip]() -> FDmNatureGroundPtr
 			{
 				return FDmNatureGround::FromMeshShell(Shell, MoveTemp(*Vp), MoveTemp(*Ip));
-			}, UE::Tasks::ETaskPriority::BackgroundNormal);
+			}, GroundPri);
 			bGroundTask = true;
 			return;
 		}
@@ -305,7 +309,7 @@ void ADmNature::UpdateGround(const dm::World& W)
 	{
 		PendingGroundSig = Sig;
 		FDmNatureGroundPtr G = FDmNatureGround::FromSim(W);
-		GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; }, UE::Tasks::ETaskPriority::BackgroundNormal);
+		GroundTask = UE::Tasks::Launch(UE_SOURCE_LOCATION, [G]() { return G; }, GroundPri);
 		bGroundTask = true;
 	}
 }
@@ -423,6 +427,7 @@ void ADmNature::UpdateStreaming(const FVector& Cam)
 		if (St && St->Level == Wn.Level && St->FieldsVersion == FieldsVersion && St->GroundVersion == GroundVersion) continue;
 		FDmScatterSettings S;
 		S.Density = Density;
+		S.bAssetTrees = Factory && Factory->TreeAssets();
 		if (Wn.Key.Layer == uint8(EDmNatureLayer::Trees))
 		{
 			S.Keep = kTreeLevels[Wn.Level].Keep;
@@ -486,6 +491,15 @@ TArray<UHierarchicalInstancedStaticMeshComponent*> ADmNature::MakeComps(const FD
 		const TArray<FTransform>* Xf = &B.Xf;
 		const TArray<float>* Cu = &B.Custom;
 		TArray<FTransform> FXf; TArray<float> FCu;
+		TArray<FTransform> YXf;
+		if (Info.YawDeg != 0.f)
+		{
+			// asset birds and fish face +X; the flight / swim paths are built for +Y noses (the material turns them back)
+			const FQuat Yaw(FVector::UpVector, FMath::DegreesToRadians(double(Info.YawDeg)));
+			YXf = B.Xf;
+			for (FTransform& T : YXf) T.SetRotation(T.GetRotation() * Yaw);
+			Xf = &YXf;
+		}
 		if (bLineup && UDmNatureFactory::IsTree(B.Id))
 		{
 			const FVector L = LineupDir * Fields->SeaRadiusUU - R.Center;
@@ -503,6 +517,7 @@ TArray<UHierarchicalInstancedStaticMeshComponent*> ADmNature::MakeComps(const FD
 		C->SetupAttachment(Root);
 		C->SetRelativeLocation(R.Center);
 		C->SetStaticMesh(Info.Mesh);
+		for (int32 M = 0; M < Info.Materials.Num(); ++M) if (Info.Materials[M]) C->SetMaterial(M, Info.Materials[M]);
 		C->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		C->SetCanEverAffectNavigation(false);
 		C->SetGenerateOverlapEvents(false);
@@ -644,11 +659,11 @@ void ADmNature::BuildLineup(const FVector& PlanetDir)
 	for (int32 K = 0; K < int32(EDmTreeKind::Num); ++K)
 		for (int32 V = 0; V < 4; ++V)
 		{
-			Add(EDmNatureMesh(K), bLods ? 0 : V, (V - 1.5) * 26.0, (K - 2.5) * 30.0, bLods ? 0.6f : V * 1.3f, { 0.f, 0.f, 0.f });
+			Add(EDmNatureMesh(K), bLods ? 0 : V, (V - 1.5) * 26.0, (K - 2.5) * 30.0, bLods ? 0.6f : V * 1.3f, { 0.f, 0.f, 0.f, 0.f });
 			if (bLods) R.Batches.Last().ForcedLod = V;
 		}
-	for (int32 V = 0; V < 4; ++V)
-		Add(EDmNatureMesh::Grazer, V, (V - 1.5) * 26.0, -105.0, 1.2f, { 1.f, 1.f, 1.f });
+	for (int32 V = 0; V < UDmNatureFactory::NumVariants(EDmNatureMesh::Grazer); ++V)
+		Add(EDmNatureMesh::Grazer, V, (V - 3.0) * 12.0, -105.0, 1.2f, { 1.f, 1.f, 1.f, 0.f });
 	for (const FDmTileBatch& B : R.Batches) R.Instances += B.Xf.Num();
 	const bool bWas = bLineup;
 	bLineup = false;   // MakeComps must not clear the lineup itself

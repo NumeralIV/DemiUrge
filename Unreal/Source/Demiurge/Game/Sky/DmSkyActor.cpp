@@ -167,7 +167,9 @@ ADmSky::ADmSky()
 	Sun->SetLightSourceAngle(0.53f);
 	Sun->bCastCloudShadows = true;
 	Sun->CloudShadowStrength = 1.f;
-	Sun->CloudShadowOnSurfaceStrength = 1.f;
+	// (wave 4) 0.85: a cloud shadow keeps a little sun, so it reads as shade (green, a little cool), not as a navy hole lit only
+	// by the strong blue of the scaled sky (shots/ue-power-volcano.png)
+	Sun->CloudShadowOnSurfaceStrength = 0.85f;
 	Sun->CloudShadowOnAtmosphereStrength = 0.f;   // > 0 draws streaky shafts across the whole disc from orbit
 	Sun->CloudShadowRaySampleCountScale = 2.f;
 	Sun->CloudShadowMapResolutionScale = 4.f;    // 2048^2 (cvar cap raised in BeginPlay)
@@ -274,14 +276,24 @@ void ADmSky::ReadArgs()
 	if (FDmShotArgs::Value(TEXT("-moon="), Tmp)) { bMoonOverride = true; ArgList(TEXT("-moon="), MoonArgs, 4); }
 	FDmShotArgs::Value(TEXT("-cloudorbitscale="), OrbitScale);
 	FDmShotArgs::Value(TEXT("-cloudviewscale="), ForceViewScale);
+	FDmShotArgs::Value(TEXT("-cloudmidscale="), MidScale);
 	FDmShotArgs::Value(TEXT("-atmodrop="), AtmoDropKm);
 	FDmShotArgs::Value(TEXT("-nightamb="), NightAmbGain);
 	ArgList(TEXT("-cloudshadoworbit="), OrbitShadow, 2);
 	bTrace = FDmShotArgs::Param(TEXT("skytrace"));
+	bWeatherPool = FDmShotArgs::Param(TEXT("skywxpool"));   // (wave 4 A/B) the weather build in the shared thread pool again
 	bOldLook = FDmShotArgs::Param(TEXT("skyold"));
 	FDmShotArgs::Value(TEXT("-skyfill="), FillGainArg);
 	FDmShotArgs::Value(TEXT("-goldenev="), GoldenEv);
 	FDmShotArgs::Value(TEXT("-moonnear="), MoonNear);
+	bNightV4 = !FDmShotArgs::Param(TEXT("nightv3"));
+	FDmShotArgs::Value(TEXT("-nightevnear="), NightEvNear);
+	FDmShotArgs::Value(TEXT("-cloudnight="), CloudNightBoost);
+	FDmShotArgs::Value(TEXT("-moonnearlux="), MoonNearLux);
+	FDmShotArgs::Value(TEXT("-moonminel="), MoonMinEl);
+	{ double Mc[3]; if (FDmShotArgs::List(TEXT("-mooncolor="), Mc, 3) == 3) for (int32 K = 0; K < 3; ++K) MoonNearColor[K] = float(Mc[K]); }
+	FDmShotArgs::Value(TEXT("-finecubic="), FineCubicArg);
+	FDmShotArgs::Value(TEXT("-nighttone="), NightTone);
 	if (FDmShotArgs::Param(TEXT("nodusk"))) bFillDuskGate = false;
 	FillGain = bOldLook ? 0.0 : FillGainArg;
 	FDmShotArgs::Value(TEXT("-apveil="), VeilOrbit);
@@ -289,6 +301,7 @@ void ADmSky::ReadArgs()
 	FDmShotArgs::Value(TEXT("-apnear="), ApNear);
 	bNoClouds = FDmShotArgs::Param(TEXT("noclouds"));
 	bNoCyclones = FDmShotArgs::Param(TEXT("nocyclones"));
+	bTurnWorld = FDmShotArgs::Param(TEXT("skyturn"));
 	// the planet's yaw at sky time 0 is 0, so -skytime= turns it too (scenarios that want a time of day)
 	Yaw = -SkyTime * 2.0 * UE_DOUBLE_PI / Tune.DayLength;
 }
@@ -307,6 +320,12 @@ void ADmSky::BeginPlay()
 		SetCVar(TEXT("r.VolumetricCloud.ViewRaySampleMaxCount"), 512.f);
 		SetCVar(TEXT("r.VolumetricCloud.ShadowMap.MaxResolution"), 4096.f);
 		SetCVar(TEXT("r.VolumetricCloud.ShadowMap.TemporalFiltering.NewFrameWeight"), 0.25f);
+		// (wave 4) The shadow map is traced at half its resolution by the temporal filter and magnified near the ground: one
+		// dilation / smoothing pass left hard square shadows (texels of 70-90 m at 5-20 km, known issue 1c). Three passes
+		// (the engine allows four) round them off for a fraction of a millisecond on a 768^2 map.
+		double Sf = 3.0;
+		FDmShotArgs::Value(TEXT("-cloudshadowfilter="), Sf);
+		SetCVar(TEXT("r.VolumetricCloud.ShadowMap.SpatialFiltering"), float(Sf));
 		// stride over clear air (zero conservative density). Measured: > 1 lands the first sample deep inside dense
 		// cloud, whose long shadow ray then darkens whole frontal sheets (sky-front), for no real saving: keep 1
 		double Stride = 1.0;
@@ -500,6 +519,7 @@ void ADmSky::SetupClouds()
 		MoltenMID = UMaterialInstanceDynamic::Create(CMM, this);
 	CloudTex(TEXT("WeatherA"), WeatherTex[1 - Cur]);
 	CloudTex(TEXT("WeatherB"), WeatherTex[Cur]);
+	CloudScalar(TEXT("FineCubic"), float(FineCubicArg));   // (wave 4) -finecubic=0: the old bilinear cell lookup (A/B)
 	CloudTex(TEXT("WarpA"), WarpTex[1 - Cur]);
 	CloudTex(TEXT("WarpB"), WarpTex[Cur]);
 	CloudTex(TEXT("Fine"), FineTex);
@@ -587,7 +607,7 @@ void ADmSky::SetupStarsMoonAurora()
 void ADmSky::UpdateFlashes()
 {
 	// a lightning stroke lights the cloud around it: an additive glow laid just above the cloud tops
-	const FQuat Q = FRotator(0.0, FMath::RadiansToDegrees(Yaw), 0.0).Quaternion();
+	const FQuat Q = FRotator(0.0, FMath::RadiansToDegrees(GetPlanetYaw()), 0.0).Quaternion();
 	for (int32 I = 0; I < FDmSkyStorms::FlashSlots; ++I)
 	{
 		if (!FlashMID[I]) continue;
@@ -596,11 +616,15 @@ void ADmSky::UpdateFlashes()
 		if (In < 0.01 || bNoClouds) { if (FlashDisc[I]->IsVisible()) FlashDisc[I]->SetVisibility(false); continue; }
 		const FVector Up = Q.RotateVector(F.Dir);
 		const double Night = Smooth(0.1, -0.15, FVector::DotProduct(Up, SunWorld));
+		// (wave 4) by day a stroke is not seen from above the cloud (the glow drew soft grey-white discs over the hurricane's
+		// overcast and, before a storm had formed, over clear sea): night and dusk only, and only over cloud
+		const double Over = Smooth(0.25, 0.5, double(CoverAt(F.Dir).R));
+		if (Night * Over < 0.02) { if (FlashDisc[I]->IsVisible()) FlashDisc[I]->SetVisibility(false); continue; }
 		const double RadKm = 3.0 + 2.5 * FMath::Frac(F.Dir.X * 977.0);   // one storm cell lit from inside
 		FlashDisc[I]->SetWorldLocationAndRotation(Up * (SeaRadiusKm + 1.95) * DmCoords::UUPerKm, FRotationMatrix::MakeFromZ(Up).ToQuat());
 		FlashDisc[I]->SetWorldScale3D(FVector(RadKm * DmCoords::UUPerKm / 50.0));
 		// the night side is shown about 2.6 EV brighter (UpdateGrade): keep the flash from clipping into a flat disc
-		FlashMID[I]->SetScalarParameterValue(TEXT("Intensity"), float(In * FlashGain * (0.25 + 0.75 * Night) / (1.0 + 4.0 * Night)));
+		FlashMID[I]->SetScalarParameterValue(TEXT("Intensity"), float(In * FlashGain * Night * Over / (1.0 + 4.0 * Night)));
 		if (!FlashDisc[I]->IsVisible()) FlashDisc[I]->SetVisibility(true);
 	}
 }
@@ -661,7 +685,12 @@ void ADmSky::StartWeather(bool bSync)
 		Pending = Pr.GetFuture();
 		Pr.SetValue(Job());
 	}
-	else Pending = Async(EAsyncExecution::ThreadPool, MoveTemp(Job));
+	// (wave 4) its own thread at the OS's normal priority (TPri_SlightlyBelowNormal; the build's ParallelFor still lends it idle
+	// workers): in the shared thread pool, and on a below-normal thread, the build queued behind the planet's and towns' jobs
+	// and never landed on a busy machine (sky-cyclone / sky-check -skytrace: "maps 0 pending 1" for every frame, so a sim
+	// storm stayed at its first, zero strength, no cyclone on screen and the weather froze)
+	else if (bWeatherPool) Pending = Async(EAsyncExecution::ThreadPool, MoveTemp(Job));
+	else Pending = AsyncThread(MoveTemp(Job), 0, TPri_SlightlyBelowNormal);
 	bPending = true;
 }
 
@@ -698,7 +727,7 @@ void ADmSky::PumpWeather(double RealDt)
 				SeaFraction = R->SeaFraction;
 				if (!bStormsReady) { Storms.Reset(WxSeed, *Weather, SunDecl); bStormsReady = true; }
 			}
-			if (RealTime - LastLog > 10.0)
+			if (RealTime - LastLog > 10.0 || MapsBuilt == 1)
 			{
 				LastLog = RealTime;
 				UE_LOG(LogDmSky, Display, TEXT("DmSky: weather maps #%lld (sky %.1f s) built in %.2f s (mean %.3f, max %.3f)%s; systems %s"), MapsBuilt, R->MorphTime, R->Seconds,
@@ -767,7 +796,9 @@ void ADmSky::UpdateTime(UDmSimSubsystem* Sim, double RealDt)
 		{
 			// resume from wherever the sun was (no jump)
 			SunWorld = Sim->GetSunDirection().GetSafeNormal();
-			SunAzimuth = FMath::Atan2(SunWorld.Y, SunWorld.X);
+			// the fixed sun of the turning frame: static frame, sun = Rz(-Yaw) x fixed sun, so the fixed sun's azimuth is
+			// the current one plus the yaw
+			SunAzimuth = FMath::Atan2(SunWorld.Y, SunWorld.X) + (bTurnWorld ? 0.0 : Yaw);
 			SunDecl = FMath::RadiansToDegrees(FMath::Asin(FMath::Clamp(SunWorld.Z, -1.0, 1.0)));
 			bWasPinned = false;
 		}
@@ -776,9 +807,18 @@ void ADmSky::UpdateTime(UDmSimSubsystem* Sim, double RealDt)
 		SunDecl = RealDt > 0.0 ? FMath::FInterpTo(SunDecl, SeasonDeclDeg(W), RealDt, 0.6) : SunDecl;
 		const double Dc = SunDecl * Deg;
 		SunWorld = FVector(FMath::Cos(Dc) * FMath::Cos(SunAzimuth), FMath::Cos(Dc) * FMath::Sin(SunAzimuth), FMath::Sin(Dc));
+		// (wave 4) static frame: the planet stands still in the world and the sun (and the sky) turn round it instead
+		if (!bTurnWorld) SunWorld = FRotator(0.0, -FMath::RadiansToDegrees(Yaw), 0.0).RotateVector(SunWorld);
 		Sim->SetSunDirection(SunWorld);
 	}
-	Sim->SetPlanetToWorld(FTransform(FRotator(0.0, FMath::RadiansToDegrees(Yaw), 0.0)));
+	// (wave 4) The planet frame is the world frame (identity) unless -skyturn: a planet turning in the world moved the camera
+	// and every town, tree and cloud kilometres per frame in world space (9 deg/s at 1x). The clouds' temporal reconstruction
+	// reprojects with the camera's motion as if the clouds stood still in the world, so in live play it threw its history away
+	// every frame and the quarter-resolution trace showed as a dotted dither at every cloud edge and in the cloud shadows
+	// (docs/handoff/release-notes.md known issue 1c, shots/ue-power-volcano.png); the cloud shadow map, snapped to the world,
+	// crawled over the ground; and every primitive on the planet was re-transformed each frame. Turning the sun instead gives
+	// the same picture in the planet frame.
+	Sim->SetPlanetToWorld(bTurnWorld ? FTransform(FRotator(0.0, FMath::RadiansToDegrees(Yaw), 0.0)) : FTransform::Identity);
 }
 
 void ADmSky::UpdateAtmosphere(const dm::World* W)
@@ -861,15 +901,46 @@ void ADmSky::UpdateLights(UDmSimSubsystem* Sim, const FVector& CamPos)
 	// (wave 3 verifier) near the ground the moonlit night was black (sky-look 5km-night / 300m-night: mean luma 1 of 255,
 	// forest and hills invisible) while the night side from orbit reads: MoonNear x the moonlight below ~8 km, back to 1x
 	// by 60 km (sky-look sv3e: 4 lux showed the forest and the hills under a dark sky)
-	const double NearMoon = bOldLook ? 1.0 : FMath::Lerp(MoonNear, 1.0, Smooth(8.0, 60.0, Alt));
-	const double Lux = Tune.MoonLux * Phase * Night * NearMoon;
+	FVector FillDir = (MoonDirWorld * Illum - SunWorld * (1.5 - Illum)).GetSafeNormal();
+	NearT = (bOldLook || !bNightV4) ? 0.0 : 1.0 - Smooth(8.0, 60.0, Alt);
+	double Lux = Tune.MoonLux * Phase * Night;
 	MoonAmbient = Tune.MoonLux * Phase / FMath::Max(0.1, Tune.SunLux);
-	const FVector FillDir = (MoonDirWorld * Illum - SunWorld * (1.5 - Illum)).GetSafeNormal();
+	if (bOldLook) { /* the look before wave 3: as from orbit everywhere */ }
+	else if (!bNightV4)
+	{
+		const double NearMoon = FMath::Lerp(MoonNear, 1.0, Smooth(8.0, 60.0, Alt));
+		Lux *= NearMoon;
+	}
+	else
+	{
+		// (wave 4) Near the ground the night was a lottery: the moonlight's strength followed the moon's phase (x0.4 .. x1) and
+		// the wave-3 x4 boost, and its direction followed the moon and the antisolar point, so one night view was brighter than
+		// the day (perf-ab night at a city: mean luma 171 against 144 by day, cream "daylight") and another black (sky-look
+		// 5km-night: luma 0.2, the moon 10 deg above the hills, everything in shadow). Below ~60 km the moonlight is now a
+		// fixed, moderate key (MoonNearLux, a little brighter at full moon) from at least MoonMinEl above the ground in view,
+		// on the moon's side; the exposure lift and the cool, desaturated night grade (UpdateGrade) make it read as moonlight.
+		if (NearT > 0.0)
+		{
+			FVector H = FillDir - Up * FVector::DotProduct(FillDir, Up);
+			if (!H.Normalize()) { FVector E, N; DmCoords::Basis(Up, E, N); H = N; }
+			const double El = FMath::Asin(FMath::Clamp(FVector::DotProduct(FillDir, Up), -1.0, 1.0));
+			const double WantEl = FMath::Max(El, MoonMinEl * Deg);
+			const FVector Dn = (Up * FMath::Sin(WantEl) + H * FMath::Cos(WantEl)).GetSafeNormal();
+			FillDir = FMath::Lerp(FillDir, Dn, NearT).GetSafeNormal();
+			Lux = FMath::Lerp(Lux, MoonNearLux * (0.75 + 0.25 * Illum) * Night, NearT);
+		}
+	}
+	LastMoonLux = Lux;
+	LastMoonEl = FMath::RadiansToDegrees(FMath::Asin(FMath::Clamp(FVector::DotProduct(FillDir, Up), -1.0, 1.0)));
 	if (Lux > 0.003)
 	{
 		if (!MoonLight->IsVisible()) MoonLight->SetVisibility(true);
 		MoonLight->SetIntensity(float(Lux));
 		MoonLight->SetWorldRotation((-FillDir).Rotation());
+		// (wave 4) near the ground the moonlight itself is blue (the Purkinje look: blue-black land), so the grade can leave the
+		// warm city lights warm (UpdateGrade)
+		const FLinearColor MoonCol = FMath::Lerp(FLinearColor(0.75f, 0.85f, 1.0f), FLinearColor(MoonNearColor[0], MoonNearColor[1], MoonNearColor[2]), float(NearT));
+		if (!MoonLight->GetLightColor().Equals(MoonCol, 0.004f)) MoonLight->SetLightColor(MoonCol);
 	}
 	else if (MoonLight->IsVisible()) MoonLight->SetVisibility(false);
 }
@@ -995,6 +1066,8 @@ ADmSky::FLookState ADmSky::GetLookState() const
 	L.GoldenEv = bOldLook ? 0.0 : GoldenEv;
 	L.FrameMinSunSin = FrameMinSunSin;
 	L.FillSets = NumFillSets; L.FillToggles = NumFillToggles; L.AtmoDirty = NumAtmoDirty;
+	L.MoonLux = MoonLight && MoonLight->IsVisible() ? LastMoonLux : 0.0; L.MoonEl = LastMoonEl;
+	L.MoonNearLux = MoonNearLux; L.NightEvNear = NightEvNear; L.MoonMinEl = MoonMinEl; L.bNightV4 = bNightV4 && !bOldLook;
 	return L;
 }
 
@@ -1004,6 +1077,13 @@ void ADmSky::SetOldLook(bool bOld)
 	FillGain = bOld ? 0.0 : FillGainArg;
 	LastAp = -1.f;
 	LastVeil = -1.f;
+}
+
+void ADmSky::SetNightParams(double InMoonNearLux, double InNightEvNear, double InCloudNightBoost)
+{
+	if (InMoonNearLux >= 0.0) MoonNearLux = InMoonNearLux;
+	if (InNightEvNear >= 0.0) NightEvNear = InNightEvNear;
+	if (InCloudNightBoost >= 0.0) CloudNightBoost = InCloudNightBoost;
 }
 
 void ADmSky::SetLookParams(double InApNear, double InVeilNear, double InVeilOrbit, double InFill, double InGoldenEv)
@@ -1018,7 +1098,8 @@ void ADmSky::SetLookParams(double InApNear, double InVeilNear, double InVeilOrbi
 
 FString ADmSky::DescribeLook() const
 {
-	return FString::Printf(TEXT("fill %.2f%s (capture %.2f km up, sun sin %.2f, frame min %.2f), ap %.2f, veil %.2f, lift %.2f EV, pptrans %d, clouds %s cover %.2f, stars %d, camera %.2f km%s"), LastFill < 0.f ? 0.f : LastFill,
+	return FString::Printf(TEXT("moon %.3f lux el %.0f, night amb %.3f, fill %.2f%s (capture %.2f km up, sun sin %.2f, frame min %.2f), ap %.2f, veil %.2f, lift %.2f EV, pptrans %d, clouds %s cover %.2f, stars %d, camera %.2f km%s"),
+		MoonLight && MoonLight->IsVisible() ? LastMoonLux : 0.0, LastMoonEl, LastNightAmb, LastFill < 0.f ? 0.f : LastFill,
 		Fill && Fill->IsVisible() ? TEXT("") : TEXT(" off"), FillAltKm, FillSunEl, FrameMinSunSin, LastAp, LastVeil < 0.f ? 1.f : LastVeil, Post ? double(Post->Settings.AutoExposureBias) - Ev : 0.0,
 		Sun && Sun->bPerPixelAtmosphereTransmittance ? 1 : 0, Clouds && Clouds->IsVisible() ? TEXT("on") : TEXT("off"), LastCover,
 		Stars && Stars->IsVisible() ? 1 : 0, LastCamAltKm, bOldLook ? TEXT(", old look") : TEXT(""));
@@ -1033,8 +1114,12 @@ void ADmSky::UpdateClouds(const dm::World* W, const FVector& CamPos, double Real
 	// Continuous in altitude (a step pops the cloud grain): 2x only right under / inside the 1.6 km layer, where few
 	// samples per km show as grain from below; 1x from 8 km (measured at 9 km: 2x cost 7-11 ms of view pass, 1x 4 ms,
 	// mean image change 1 grey level); the orbit scale far out.
-	const double NearT = FMath::Clamp((Alt - 2.0) / 6.0, 0.0, 1.0), FarT = FMath::Clamp((Alt - 120.0) / 130.0, 0.0, 1.0);
-	float ViewScale = float(FMath::Lerp(FMath::Lerp(2.0, 1.0, NearT), OrbitScale, FarT));
+	// (wave 4 verifier) 1x is kept only up to 20 km: from 40 km the mid scale (0.6) is enough. ProfileGPU VolumetricCloud, 1x ->
+	// 0.6: 50km-day 3.3 -> 1.8 ms, 50km-night 6.2 -> 3.0 ms, cyclone-close (62 km, the hurricane's overcast) 7.9 -> 3.7 ms, with a
+	// mean image change of 0.7-1.8 grey levels (shots/ue-s4v-prof-* vs ue-s4v-vs06-*); those views were over the 16.7 ms budget.
+	// -cloudmidscale=1 restores the old curve (A/B).
+	const double SampleT = FMath::Clamp((Alt - 2.0) / 6.0, 0.0, 1.0), MidT = FMath::Clamp((Alt - 20.0) / 20.0, 0.0, 1.0), FarT = FMath::Clamp((Alt - 120.0) / 130.0, 0.0, 1.0);
+	float ViewScale = float(FMath::Lerp(FMath::Lerp(FMath::Lerp(2.0, 1.0, SampleT), FMath::Max(MidScale, OrbitScale), MidT), OrbitScale, FarT));
 	ViewScale = float(FMath::RoundToDouble(ViewScale * 20.0) / 20.0);   // quantised: no per-frame component update while the camera moves
 	if (ForceViewScale > 0.0) ViewScale = float(ForceViewScale);
 	if (ViewScale != LastViewScale) { LastViewScale = ViewScale; Clouds->SetViewSampleCountScale(ViewScale); }
@@ -1056,7 +1141,7 @@ void ADmSky::UpdateClouds(const dm::World* W, const FVector& CamPos, double Real
 	// the close views are (a village at 2.6 km was all cloud), so the cover thins as the camera comes down, to a
 	// few wisps by 3 km; from 28 km up the weather is whole (old SPEC-RENDER: clouds fade on zoom)
 	if (!FDmShotArgs::Param(TEXT("keepclouds"))) Cover *= FMath::Lerp(0.08, 1.0, Smooth(3.0, 28.0, Alt));
-	CloudScalar(TEXT("Yaw"), float(Yaw));
+	CloudScalar(TEXT("Yaw"), float(GetPlanetYaw()));
 	CloudScalar(TEXT("SkyTime"), float(FMath::Fmod(SkyTime, 86400.0)));
 	CloudScalar(TEXT("Blend"), float(Blend));
 	CloudScalar(TEXT("CoverScale"), float(Cover));
@@ -1065,7 +1150,14 @@ void ADmSky::UpdateClouds(const dm::World* W, const FVector& CamPos, double Real
 	// moonlit night clouds: the material's ambient on the night side, a little blue (NightAmb scales SkyAmb)
 	// (scaled by how much the view is a night view: the same ambient beside the lit day side, at no exposure lift,
 	// turned the night half of a terminator shot into white daylight clouds)
-	CloudScalar(TEXT("NightAmb"), float(FMath::Clamp(MoonAmbient * NightAmbGain * (0.12 + 0.88 * NightView), 0.0, 0.75)));   // moonlit clouds outshine the ground
+	LastNightAmb = FMath::Clamp(MoonAmbient * NightAmbGain * (0.12 + 0.88 * NightView), 0.0, 0.75);
+	CloudScalar(TEXT("NightAmb"), float(LastNightAmb));   // moonlit clouds outshine the ground
+	// (wave 4) near the ground at night the thin cloud read as dark blotches over the moonlit land (the moonlight is not an
+	// atmospheric light, so the clouds only get the faint night sky ambient): lift their ambient there
+	{
+		const float Amb = float(0.8 * (1.0 + CloudNightBoost * NightView * NearT));
+		if (FMath::Abs(Amb - LastSkyAmb) > 0.01f) { LastSkyAmb = Amb; CloudScalar(TEXT("SkyAmb"), Amb); }
+	}
 	// water cloud a touch cool (sunlight through the scaled air yellows the tops); a molten world's ash veil warm grey
 	const FLinearColor Alb = FMath::Lerp(FLinearColor(0.93f, 0.955f, 1.0f, 1.f), FLinearColor(0.32f, 0.31f, 0.30f, 1.f), float(Heat));
 	CloudVec(TEXT("Albedo"), Alb);
@@ -1093,6 +1185,7 @@ void ADmSky::UpdateMoon(const FVector& CamPos, const FRotator& CamRot)
 		const double Th = 1.3 + SkyTime * 2.0 * UE_DOUBLE_PI / (Tune.MoonPeriodDays * Tune.DayLength);
 		const double I = Tune.MoonInclDeg * Deg;
 		Pos = FVector(FMath::Cos(Th), FMath::Sin(Th) * FMath::Cos(I), FMath::Sin(Th) * FMath::Sin(I)) * (Tune.MoonDistR * DmCoords::RadiusUU);
+		if (!bTurnWorld) Pos = FRotator(0.0, -FMath::RadiansToDegrees(Yaw), 0.0).RotateVector(Pos);   // (wave 4) static frame: the sky turns
 	}
 	MoonDirWorld = Pos.GetSafeNormal();
 	if (MoonMID) MoonMID->SetVectorParameterValue(TEXT("SunDir"), FLinearColor(float(SunWorld.X), float(SunWorld.Y), float(SunWorld.Z), 0.f));
@@ -1148,7 +1241,11 @@ void ADmSky::UpdateGrade(const dm::World* W, const FVector& CamPos, double RealD
 	// readable docs/concept/nature descent-5). Lift up to GoldenEv as the sun sinks below ~20 deg; the night lift takes
 	// over below the horizon (max, so the two join without a step). Low: none from orbit or at the terminator pass.
 	const double LowSun = bOldLook ? 0.0 : Low * Smooth(0.35, 0.06, E);
-	const double Lift = FMath::Max(Tune.NightEv * Night, GoldenEv * LowSun) + 0.6 * Heat;
+	// (wave 4) near the ground the night lift is small and the moonlight carries the picture (UpdateLights): the +2.6 EV lift
+	// multiplied every emissive by 6 (the planet's orbital city glow became a cream sheet over the ground round a city at 3 km,
+	// perf-ab night, luma 171), and the town windows into white blobs
+	const double NightEvHere = FMath::Lerp(Tune.NightEv, NightEvNear, NearT);
+	const double Lift = FMath::Max(NightEvHere * Night, GoldenEv * LowSun) + 0.6 * Heat;
 	P.AutoExposureBias = float(Ev + Lift);
 	// the sky behind the planet is not part of the night side: keep the star field and the milky way from rising with
 	// the night exposure (at +2 EV the galactic band turned into grey smoke across the black)
@@ -1169,12 +1266,29 @@ void ADmSky::UpdateGrade(const dm::World* W, const FVector& CamPos, double RealD
 		StarMID->SetScalarParameterValue(TEXT("StarBrightness"), float(StarFade * StarBright * FMath::Pow(2.0, -0.75 * Lift)));
 		StarMID->SetScalarParameterValue(TEXT("Galaxy"), float(StarFade * FMath::Pow(2.0, -Lift)));
 	}
-	P.WhiteTemp = float(6500.0 + MoodWarm + 900.0 * Golden - 700.0 * Night + 900.0 * Heat);
+	// (wave 4) near the ground the night's blue comes from the moonlight's own colour (UpdateLights), not from the grade: a
+	// cooler white point, a blue scene tint and a strong desaturation turned the warm (orange) city glow and town windows
+	// cream-white, the "bright cream daylight" of release-notes known issue 1a (docs/concept/night: blue-black land, WARM lights)
+	const double NightCool = FMath::Lerp(700.0, 250.0, NearT);
+	P.WhiteTemp = float(6500.0 + MoodWarm + 900.0 * Golden - NightCool * Night + 900.0 * Heat);
+	if (P.bOverride_SceneColorTint) { P.bOverride_SceneColorTint = false; P.SceneColorTint = FLinearColor::White; }
+	// Split toning instead: the dark and mid tones (the moonlit land and sea) go blue and pale, the highlights (city glow,
+	// windows, fires) keep their warmth (the planet material's own night ambient left the moonlit land olive green, s5j)
+	{
+		const float Nt = float(Night * NearT * NightTone);
+		const auto Mix4 = [Nt](float R, float G, float B, float A) { return FVector4(FMath::Lerp(1.f, R, Nt), FMath::Lerp(1.f, G, Nt), FMath::Lerp(1.f, B, Nt), FMath::Lerp(1.f, A, Nt)); };
+		// (the moonlit land sits far below 0.1 of scene luminance; the city glow is above it: toning the midtones too turned the
+		// glow pale again, perf-ab night s5o)
+		P.bOverride_ColorSaturationShadows = P.bOverride_ColorGainShadows = P.bOverride_ColorCorrectionShadowsMax = true;
+		P.ColorSaturationShadows = Mix4(1.f, 1.f, 1.f, 0.45f);
+		P.ColorGainShadows = Mix4(0.76f, 0.92f, 1.34f, 1.f);
+		P.ColorCorrectionShadowsMax = FMath::Lerp(0.09f, 0.12f, Nt);
+	}
 	// (wave 3) from high up the land read pale olive against docs/concept/world-states/state-healthy.png (mean saturation
 	// 0.33 vs 0.49 in sky-look orbit-day): the thin remaining haze still greys it, so the grade adds a little colour back
 	// with altitude (none below 10 km, +12 % from 120 km)
 	const double HighSat = bOldLook ? 0.0 : 0.12 * Smooth(10.0, 120.0, Alt);
-	const float Sat = float(MoodSat * (1.0 + 0.08 * Golden - 0.25 * Night + HighSat));
+	const float Sat = float(MoodSat * (1.0 + 0.08 * Golden - FMath::Lerp(0.25, 0.1, NearT) * Night + HighSat));
 	P.ColorSaturation = FVector4(Sat, Sat, Sat, 1.0);
 	const float Con = float(MoodContrast * (1.0 + 0.04 * Heat));
 	P.ColorContrast = FVector4(Con, Con, Con, 1.0);
@@ -1200,6 +1314,7 @@ void ADmSky::Tick(float DeltaSeconds)
 	if (Frames == 200 && FDmShotArgs::Param(TEXT("skyprofile"))) GEngine->Exec(GetWorld(), TEXT("ProfileGPU"));
 	if (bTrace && Frames % 15 == 0)
 		UE_LOG(LogDmSky, Display, TEXT("DmSkyTrace: frame %d sky %.4f rate %.3f yaw %.5f blend %.3f cur %d maps %lld pending %d fp %u"), Frames, SkyTime, SkyRate, Yaw, Blend, Cur, MapsBuilt, bPending ? 1 : 0, Storms.Fingerprint());
+	if (bTrace && Frames % 120 == 0) UE_LOG(LogDmSky, Display, TEXT("DmSkyTrace: look near %.2f: %s"), NearT, *DescribeLook());
 	const double RealDt = FMath::Clamp(double(DeltaSeconds), 0.0, 0.25);
 	RealTime += RealDt;
 	UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this);
@@ -1235,11 +1350,13 @@ void ADmSky::Tick(float DeltaSeconds)
 	const double RainTarget = (W && W->phase == dm::Phase::Water) ? 1.0 : 0.0;
 	CometRain = FMath::FInterpTo(CometRain, RainTarget, RealDt, 0.5);
 	if (StarMID) StarMID->SetScalarParameterValue(TEXT("CometRain"), float(CometRain));
+	// (wave 4) static frame: the star field turns round the planet (M_SkyStars rotates the view direction by StarYaw)
+	if (StarMID) StarMID->SetScalarParameterValue(TEXT("StarYaw"), bTurnWorld ? 0.f : float(Yaw));
 
 	// aurora turns with the planet, glows on the night side
 	if (AuroraMID)
 	{
-		Aurora->SetWorldRotation(FRotator(0.0, FMath::RadiansToDegrees(Yaw), 0.0));
+		{ const FRotator Ar(0.0, FMath::RadiansToDegrees(GetPlanetYaw()), 0.0); if (!Aurora->GetComponentRotation().Equals(Ar, 1e-4)) Aurora->SetWorldRotation(Ar); }
 		AuroraBoost = FMath::Max(0.0, AuroraBoost - AuroraBoostRate * RealDt);
 		AuroraMID->SetVectorParameterValue(TEXT("SunDir"), FLinearColor(float(SunWorld.X), float(SunWorld.Y), float(SunWorld.Z), 0.f));
 		AuroraMID->SetScalarParameterValue(TEXT("Strength"), float(Tune.AuroraGain * (1.0 + 3.0 * AuroraBoost)));

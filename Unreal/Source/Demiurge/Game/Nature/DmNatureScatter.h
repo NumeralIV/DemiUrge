@@ -13,6 +13,10 @@
 //   P      = Canopy 0.62 (1 - 0.45 Wet) + (1 - Canopy) Open + coast palms + desert / burn snags
 //   kinds by temperature, moisture, coast, dryness; burnt land -> charred dead trees; per-instance
 //   burn / snow / dry tint, yaw, tilt, scale 0.72-1.22, rainforest emergents.
+// Real-scale Blender trees (S.bAssetTrees, docs/lab/trees.md 7 and 12.3): the closed-canopy term is halved (crowns are
+// 12-18 m wide), scale jitter 0.85-1.12, broadleaf crowns broadened and flattened a little and the forest-grown domed
+// variants preferred under a closed canopy, a wider palm band on hot coasts, and an autumn accent (custom data 3) on
+// about 1 temperate broadleaf crown in 25, never in the tropics or the cold.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -62,6 +66,7 @@ struct FDmScatterSettings
 	bool bShrubs = true;
 	int32 MaxVariants = 4;        // far tiles use fewer variants (fewer components)
 	bool bLineup = false;         // unused by the scatter; lineup is built by the actor
+	bool bAssetTrees = false;     // the factory's trees are the real-scale Blender families
 };
 
 namespace DmNatureScatter

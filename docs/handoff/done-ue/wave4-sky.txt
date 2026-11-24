@@ -1,0 +1,76 @@
+2026-11-24 wave4 track "sky" (lane sky4) VERIFIED with one fix by an independent verifier (lane sky4-verify, owned list
+Unreal/lanes/sky4-verify.owned = the sky4 list; I did not build the track). Builder's marker: docs/handoff/done-ue/wave4-sky.built.txt.
+SCORE: 6/10 (as built 6/10). The static planet frame, the weather thread and the moonlit near-ground night are real, proven gains;
+but the headline view of the brief (a city at night near the ground) still renders as bright tan daylight, the dusk eye is still a
+hard black pit, the limb "popcorn" is untouched, and the frame-time claim left two views over budget (one fixed here).
+IN MAIN: lane.ps1 sync sky4-verify -Force (the 'integration' lane claims Game/**): 2 copied (DmSkyActor.cpp/.h), 15 identical,
+0 conflicts. Synced files touched, Unreal/build.ps1 on main: Succeeded (39 s, DmSkyActor.cpp recompiled, 0 errors; the one "error"
+line is UHT's -WarningsAsErrors flag). Main sky-check (shot.ps1 s4v-main-check -noshot): RESULT PASS 13/13, 2 new maps.
+
+HOW IT WAS CHECKED
+Fresh lane from main (lane build 196 s, 0 errors). sky-look (all requested views + 50 km / 20 km / golden), perf-ab -abshots,
+sky-check, sky-lookcheck, powers-check (live 1x play), sky-look -turn A/B against -skyturn, -noparts=fx and -cloudviewscale A/Bs,
+ProfileGPU (-lookprofile). Shots in shots/: ue-s4v-look-*, ue-s4v-new-*, ue-s4v-fin-* (final), ue-s4v-finold-* (same binary,
+-cloudmidscale=1), ue-s4v-t2-* / ue-s4v-t2old-* (turning sky, static vs turning frame), ue-s4v-vs1-* (no FX, 1x samples),
+ue-s4v-prof-* / ue-s4v-vs06-*, ue-s4v-power-* (powers-check copies), ue-ab-*-base.png (perf-ab), ue-s4v-mainfin-* (main).
+Machine: other agents' games kept the GPU near 86 %; per-run GPU medians wander by 2-6 ms, so the fix below is judged on the
+ProfileGPU VolumetricCloud pass, which is stable.
+
+WHAT HOLDS (reproduced)
+- Static planet frame (GetPlanetToWorld = identity, the sun / moon / stars turn): the sun, star and moon rotations agree in sign
+  (star_sky.hlsl Rz(+yaw) on the view vector = stars at Rz(-yaw), like the sun); aurora stays on the planet. In a turning-sky A/B
+  (-turn=1.5) the old turning frame shows heavy checkerboard dither in every cloud (ue-s4v-t2old-50km-day) and the static frame
+  shows clean clouds (ue-s4v-t2-50km-day). Live 1x play (powers-check, ue-s4v-power-volcano vs the old ue-power-volcano): no square
+  cloud chunks and no hard square shadows any more; cloud edges are rounded puffs.
+- Weather maps on their own thread: first map 2.7-6.3 s after start under load, maps keep landing while sky time runs (sky-check
+  2 new; up to 27 maps in a turning run); a build left running at exit was abandoned cleanly in 5 runs.
+- Night near the ground: 5km-night luma 24 blue-black, 300m-night luma 14, forest and hills readable, the moon at 40 deg, 1 EV lift
+  (sky-lookcheck 20/20 PASS twice). Orbit night keeps its 1.95 EV lift and warm city lights.
+- Cyclone: the world's storm is now drawn (before: none); from 250 km a small grey eye in a bright spiral, close to
+  docs/concept/world-states/state-warming. The grey discs by day and the white "pearls" ringing the eye at dusk are FX quads
+  (both gone with -noparts=fx, ue-s4v-vs1-cyclone*), not clouds.
+- Checks: sky-check 13/13 and sky-lookcheck 20/20 in the lane (before and after my fix) and sky-check 13/13 on main.
+
+FOUND AND FIXED (Game/Sky/DmSkyActor.cpp/.h)
+F1 Frame time: 50 km views and the hurricane close-up were over the 16.7 ms budget at High, and the cloud pass was the biggest
+   single pass (ProfileGPU VolumetricCloud: 50km-day 2.5-3.3 ms, 50km-night 5.1-6.2 ms, cyclone-close 7.1-7.9 ms) because the
+   view sample scale stayed at 1x from 8 km all the way to 120 km. It now ramps from 1x at 20 km to 0.6 at 40 km (orbit scale
+   unchanged from 120 km; -cloudmidscale=1 restores the old curve). Same binary, back to back (ue-s4v-fin vs ue-s4v-finold):
+   VolumetricCloud 50km-day 2.50 -> 1.59, 50km-night 5.15 -> 3.02, cyclone-close 7.08 -> 3.97 ms; GPU median 50km-night 20.3 ->
+   18.1, cyclone-close 21.1 -> 18.0 ms; orbit, terminator, 5 km and 300 m unchanged (0.01-0.9 ms noise). Image change 0.7-1.8 grey
+   levels where the scale moved (no visible grain, ue-s4v-vs06-* crops). On main: cloud pass 50km-night 2.87, cyclone-close
+   3.41 ms (ue-s4v-mainfin log).
+Tried and reverted (not synced): a grazing-angle mip bias for the cell texture in cloud_density.hlsl, aimed at the limb popcorn.
+   The before/after crops of orbit-day and terminator were nearly identical (the popcorn is the cell noise itself, not aliasing);
+   more view samples (-cloudviewscale=1) did not change it either but cost 2.6-5 ms. Lane materials restored to main's.
+
+NOT FIXED (sky)
+1 The headline: perf-ab night over a city at 2 km still reads as daylight: shots/ue-ab-night-base.png (this run) mean luma 117
+  against 118 for the day view (ue-s5q-ab). The builder's diagnosis is right (it stays without clouds, Lumen or the moon; the
+  dark "cloud-shadow" blotches are the planet glow's 1.4 km clump noise, ue-s5b-night-noclouds), so the fix belongs to the planet
+  owner (below), but the owner-visible defect is unchanged; the sky only changed its tint from cream to tan.
+2 Dusk eye: still a hard black round pit in a smooth white overcast (ue-s4v-fin-cyclone-dusk; crop: eye shadowed by its wall
+  at sun 4 deg). By day from 250 km the eye is now so filled that it barely reads. The close-up overcast is a flat, featureless disc.
+3 Limb / terminator: the coarse "popcorn" cell texture and vertical streaks at the dusk limb from orbit are unchanged (cell noise
+  design, not sampling; needs a different far-field cloud look).
+4 Remaining over budget after F1 (GPU medians, loaded machine): 50 km views 17.6-18.1 ms, cyclone-close ~18 ms; the rest is base
+  pass / lighting (planet, towns). Idle-machine numbers are still owed.
+
+FOR OTHER OWNERS
+- Planet: (a) ground city glow (Scripts/planet/land.hlsl line 607-608, lightsK x 3.5): fade it near the ground, e.g. x
+  saturate((fp - 60) / 400), and replace the 1.4 km / 450 m clump blobs; (b) the far sea glows saturated cyan along the horizon
+  and through cloud gaps at night from 40 km (ue-s4v-look-50km-night top edge); (c) sea polygons still visible at 50 km night;
+  (d) exit: "DmPlanet: end play: worker jobs STILL RUNNING after 2004 ms" and then the game hung until killed at 60 s
+  (sky-lookcheck run 1, script exit 2).
+- Towns: exit still joins planning tasks: 25 s (powers-check) and 38 s (sky-check run 2, killed at 60 s, exit 2).
+- FX: storm quads read as grey discs by day and as a ring of white pearls round the eye at dusk.
+- Integration: powers-check on main code: "DmPowers: RESULT FAIL (5 of 19 powers failed)" (bless / reveal / test / renew / speak
+  family; not sky). I restored the original shots/ue-power-*.png after the run; this run's are ue-s4v-power-*.
+- Perf: perf-ab -abshots writes fixed names (shots/ue-ab-<view>-base.png) and overwrote the wave-3 reference ue-ab-night-base.png
+  that release-notes known issue 1a cites (the builder's runs had already done so); give it a run prefix.
+
+FRAME TIMES (final code, sky-look, 1920x1080 High, ms, frame / GPU median, other agents rendering)
+orbit-day 16.0 / 11.1, terminator 15.6 / 14.2, orbit-night 14.0 / 13.0, 50km-day 19.0 / 17.6, 50km-night 19.6 / 18.1,
+20km-away 11.2 / 9.6, 5km-night 17.9 / 15.4, 300m-night 15.2 / 12.4, cyclone 16.3 / 13.8, cyclone-dusk 16.3 / 14.6,
+cyclone-close 19.5 / 18.0. perf-ab (lane, measured before F1, not re-run after it): GPU median orbit 14.1, term 13.2,
+mid 15.3, low 16.0, close 13.8, night 14.0.

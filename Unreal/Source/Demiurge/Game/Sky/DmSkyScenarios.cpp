@@ -33,7 +33,14 @@ namespace
 		const FDmCyclone* Best = nullptr;
 		// the world's own storm first (climatological hurricanes give way to it)
 		for (const FDmCyclone& C : Sky->GetStorms().Systems)
-			if (C.SimId >= 0) { Lat = C.LatDeg; Lon = C.LonDeg; RadDeg = FMath::RadiansToDegrees(C.RadiusRad); return true; }
+			if (C.SimId >= 0)
+			{
+				Lat = C.LatDeg; Lon = C.LonDeg; RadDeg = FMath::RadiansToDegrees(C.RadiusRad);
+				// (wave 4) a sim storm grows over a few real seconds and the 240-frame shots caught it still forming (no cyclone
+				// at all in sky-cyclone): show it grown (the weather maps rebuild on the change, PumpWeather)
+				Sky->GetStormsMutable().SettleSimStorms();
+				return true;
+			}
 		for (const FDmCyclone& C : Sky->GetStorms().Systems)
 			if (C.Type == EDmCycloneType::Tropical && (!Best || C.Strength * (C.Sign > 0 ? 2.0 : 1.0) > Best->Strength * (Best->Sign > 0 ? 2.0 : 1.0))) Best = &C;
 		if (!Best) return false;
@@ -306,29 +313,40 @@ static FDmScenarioRegistrar GSkyCheck(TEXT("sky-check"), TEXT("sky"),
 		if (Ctx.Frame == 5)
 		{
 			// static fixture: nothing turns
-			Yaw0 = Sky->GetPlanetYaw(); T0 = Sky->GetSkyTime(); Sun0 = Sim->GetSunDirection();
-			Check(FMath::IsNearlyEqual(Sim->GetPlanetToWorld().GetRotation().Rotator().Yaw, FMath::RadiansToDegrees(Yaw0), 1e-3), TEXT("planet frame published = sky yaw"));
+			Yaw0 = Sky->GetDayAngle(); T0 = Sky->GetSkyTime(); Sun0 = Sim->GetSunDirection();
+			Check(FMath::IsNearlyEqual(Sim->GetPlanetToWorld().GetRotation().Rotator().Yaw, FMath::RadiansToDegrees(Sky->GetPlanetYaw()), 1e-3), TEXT("planet frame published = sky yaw"));
+			// (wave 4) static frame: the planet frame is the world frame
+			if (!Sky->IsWorldTurning()) Check(Sim->GetPlanetToWorld().Equals(FTransform::Identity, 1e-9), TEXT("static frame: planet to world is the identity"));
 			Check(Sim->GetPlanetToWorld().GetLocation().IsNearlyZero(), TEXT("planet centre at the world origin"));
 			Sim->PinSunAt(10.0, 50.0);
 		}
 		if (Ctx.Frame == 30)
 		{
-			Check(FMath::IsNearlyEqual(Sky->GetPlanetYaw(), Yaw0, 1e-9), TEXT("static fixture: the planet does not turn"));
+			Check(FMath::IsNearlyEqual(Sky->GetDayAngle(), Yaw0, 1e-9), TEXT("static fixture: the planet does not turn"));
 			const FVector Want = Sim->GetPlanetToWorld().TransformVectorNoScale(DmCoords::LatLonToDir(10.0, 50.0));
 			Check(FVector::DotProduct(Want, Sim->GetSunDirection()) > 0.99999, TEXT("pinned sun kept"));
 			Sun0 = Sim->GetSunDirection();
 			{ double La; DmCoords::DirToLatLon(Sim->GetPlanetToWorld().InverseTransformVectorNoScale(Sun0), La, SubLon0); }
 			Sim->UnpinSun();
 			Sky->SetForcedRate(1.0);
-			Yaw0 = Sky->GetPlanetYaw(); T0 = Sky->GetSkyTime();
+			Yaw0 = Sky->GetDayAngle(); T0 = Sky->GetSkyTime();
 			Maps0 = Sky->GetMapsBuilt();
+			// (wave 4) the storm at its full strength from here, so the shape check below does not depend on how far it grew
+			// on a busy machine (s5o: overcast 0.31 with one map built while it was still forming)
+			Sky->GetStormsMutable().SettleSimStorms();
 		}
 		if (Ctx.Frame == 31)
 			Check(FVector::DotProduct(Sun0, Sim->GetSunDirection()) > 0.9999, TEXT("unpin resumes without a jump"));
-		if (Ctx.Frame == 150)
+		// (wave 4) the window is sky time, not frames: a weather map is only due every WeatherInterval (1.5) sky seconds, and
+		// 120 fast frames (1.33 s) gave "0 new maps" and then a storm still drawn at its weak first strength (the wave-3
+		// verifier's "flake under load": the two failures always came together)
+		static bool bDone = false;
+		if (Ctx.Frame == 5) bDone = false;
+		if (!bDone && Ctx.Frame >= 150 && ((Sky->GetSkyTime() - T0 > 2.5 * Sky->Tune.WeatherInterval && Sky->GetMapsBuilt() >= Maps0 + 2) || Ctx.Frame >= 1200))
 		{
+			bDone = true;
 			const double Dt = Sky->GetSkyTime() - T0;
-			const double Turned = FMath::UnwindRadians(Sky->GetPlanetYaw() - Yaw0);
+			const double Turned = FMath::UnwindRadians(Sky->GetDayAngle() - Yaw0);
 			const double Expect = -Dt * 2.0 * UE_DOUBLE_PI / Sky->Tune.DayLength;
 			Check(Dt > 0.5 && FMath::Abs(FMath::UnwindRadians(Turned - Expect)) < 1e-4, FString::Printf(TEXT("planet turns eastward once per %.0f sky s (%.3f s: %.4f rad, want %.4f)"), Sky->Tune.DayLength, Dt, Turned, Expect));
 			// subsolar longitude must DEcrease... the sun moves west over the ground: sim longitude grows
@@ -355,7 +373,9 @@ static FDmScenarioRegistrar GSkyCheck(TEXT("sky-check"), TEXT("sky"),
 					const FVector Ring = (C.Dir + E * FMath::Tan(0.3 * C.RadiusRad)).GetSafeNormal();
 					const float Eye = Sky->CoverAt(C.Dir).R, Cdo = Sky->CoverAt(Ring).R;
 					// (the storm is still growing in the first seconds and the maps lag it a little: compare, do not threshold)
-					Check(Eye < 0.35f && Cdo > Eye + 0.2f, FString::Printf(TEXT("storm: clear eye (cover %.2f) inside its overcast (%.2f)"), Eye, Cdo));
+					// (wave 4) the eye has a floor of scattered low cloud (DmSkyWeather Tropical: grey, not a black hole), so it is
+				// thinner than its overcast rather than empty
+				Check(Eye < 0.6f && Cdo > Eye + 0.25f, FString::Printf(TEXT("storm: thin eye (cover %.2f) inside its overcast (%.2f)"), Eye, Cdo));
 				}
 			// deserts stay clear: dry land (moisture < 0.15) away from the equator
 			if (const dm::World* W = Sim->Sim())
