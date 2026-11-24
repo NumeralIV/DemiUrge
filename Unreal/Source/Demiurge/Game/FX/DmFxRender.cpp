@@ -141,7 +141,9 @@ int32 FDmFxRenderer::End()
 		UV0[B + 1] = FVector2D(Q.U0x[1], 0.0);
 		UV0[B + 2] = FVector2D(Q.U0x[1], 1.0);
 		UV0[B + 3] = FVector2D(Q.U0x[0], 1.0);
-		const double SoftUU = Q.Soft > 0.f ? double(Q.Soft) : 0.6 * FMath::Min(Q.U.Size(), Q.V.Size());
+		// wave 4b: a floor of 1.2 % of the distance: ground-hugging quads with a 30-60 m fade showed as golden
+		// per-pixel speckle at strategy distances (the depth fade flipped with TSR jitter and terrain relief)
+		const double SoftUU = FMath::Max(Q.Soft > 0.f ? double(Q.Soft) : 0.6 * FMath::Min(Q.U.Size(), Q.V.Size()), Dist * 0.012);
 		const FVector2D S1(double(uint8(Q.Shape)), SoftUU * 1.0e-5);
 		const FVector2D S2(Q.Col.R * Dim, Q.Col.G * Dim);
 		const FVector2D S3(Q.Col.B * Dim, FMath::Clamp(Q.Col.A * Dim, 0.f, 1.f));

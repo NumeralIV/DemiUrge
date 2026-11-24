@@ -2,7 +2,8 @@
 // Owner: C9 audio.
 //
 //   #include "Game/Audio/DmAudio.h"
-//   FDmAudio::Play(this, TEXT("click"));                    // UI cue (hover, click, arm, deny, unlock)
+//   FDmAudio::Play(this, TEXT("click"));                    // UI cue (hover, click, arm, deny, unlock, toast, chronicle)
+//   FDmAudio::PlayIndexed(this, TEXT("hover"), ButtonIndex); // hover steps by scale degree with the button's index in its group
 //   FDmAudio::Play(this, TEXT("thunder"), Cell, 0.8f);       // placed at a cell: volume / pan / muffle from the camera
 //   FDmAudio::Stinger(this, TEXT("miracle"));
 //   FDmAudio::ApplySettings(this, Settings);                 // dm::save::UserSettings (C8 screens, on change)
@@ -24,6 +25,8 @@ class DEMIURGE_API FDmAudio
 public:
 	/** One-shot cue by its SPEC-UI 7 name; Cell = -1 plays it unplaced (UI). Returns false if ignored. */
 	static bool Play(const UObject* WorldContext, const TCHAR* Name, int32 Cell = -1, float Vol = 1.f);
+	/** A UI cue with an index: hover pitches by scale degree with the button's index in its group (sound-direction 4). */
+	static bool PlayIndexed(const UObject* WorldContext, const TCHAR* Name, int32 Index);
 	/** "age", "founding", "miracle", "wrath", "ending-<mood>". */
 	static bool Stinger(const UObject* WorldContext, const TCHAR* Name);
 	static void ApplySettings(const UObject* WorldContext, const dm::save::UserSettings& S);

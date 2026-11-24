@@ -1,0 +1,113 @@
+2026-11-23, wave 4b audio: independent adversarial verification of lane audio4b (verifier lane audio4b-verify,
+Unreal/lanes/audio4b-verify.owned = Source/Demiurge/Game/Audio/**). Builder's report: docs/handoff/done-ue/wave4b-audio.built.txt.
+
+SCORE: 6 / 10 for the build as handed over (7 / 10 for the track with the verifier's fixes below).
+Broad and mostly faithful to docs/content/sound-direction.md, and the live director works. But the offline suite
+proved less than the builder said. Every level was tuned on seed 7, the only seed the suite rendered, and the 5.5
+table was never checked. On three other seeds, 21 renders failed, including one "must never happen" rule.
+
+NOT IN MAIN. `lane.ps1 sync audio4b-verify` refuses all 15 Game/Audio files because the stale wave-C9 lists
+Unreal/lanes/audio.owned and audio-verify.owned (2026-11-19) still claim them. My one `sync audio4b-verify -Force` was
+denied by the permission check, as the builder's was. I did not edit other lanes' .owned files. Status: every file
+"yours", none "both changed", so a forced sync is safe. For the lead:
+  powershell -NoProfile -ExecutionPolicy Bypass -File Unreal/lane.ps1 sync audio4b-verify -Force
+  (or retire audio.owned and audio-verify.owned and sync normally), then Unreal/build.ps1 on main.
+Sync audio4b-verify, not audio4b: it holds all of audio4b's work plus the fixes. After it, audio4b is superseded.
+
+How it was checked (every launch through tools/render_slot.py)
+- Fresh lane from main. audio4b's Game/Audio copied in (byte-identical, 16 files). Clean full build: 0 errors, 0 C warnings.
+- The builder's code under stricter checks: audio-render on seeds 7, 8, 1234 and 99 (both scale families).
+  - Seed 7 passed 105/105.
+  - Seed 8 failed 3: thunder-far, horn-industry, fall.
+  - Seed 1234 failed 7: orbit, plague score, thunder-far, quake, choir, horn-space, fall.
+  - Seed 99 failed 11: ambience-space sub-bass 27.3 % (rule 5.4.3 < 25 %), stone score, plague score,
+    thunder-far, rumble, wave, wave-comet, inspire, chime-peace, choir, fall.
+  - Across seeds:
+    - far thunder averaged -24.5 (target -28).
+    - prophet choir -33.5 (target -31).
+    - plague score -30.5 on every seed (target -29).
+- audio-live with the builder's code, extended: each injected event now has to produce its own named cue.
+  - Every one did, including Bless, Test and Renew, which the builder never injected.
+  - The game asserted on exit (QueuedThreadPoolWrapper Work->GetRefCount() == 0) right after
+    "DmSky: EndPlay left a weather build running". The fault is in Sky, not audio; the rerun exited cleanly.
+
+Defects found and fixed (all in Game/Audio)
+1. Calibration overfit to one seed (above). DmAudioCues.cpp:
+   - far thunder gain x0.7 -> x0.48
+   - prophet choir 0.14 -> 0.175 and awaken choir 0.14 -> 0.155
+   - quake 0.4 -> 0.47
+   - wave trim -5.4 -> -6.9 dB
+   - industry/atomic horn 0.10 -> 0.12
+   DmAudioMusic.cpp: the plague mood lifts the rest of the score by 1.2 dB, since it loses the pulse and thins the ground.
+2. Space hum over the sub-bass rule on some seeds (15-27 %). DmAudioEngine.cpp: the 55 Hz sine is now 8 dB under
+   the 82.5 Hz one (was 6). Now 10.8-19.8 % on four seeds; ambience-space -38.3 to -39.4 LUFS.
+3. Meteor impact: the 70 -> 38 Hz boom glide (3.2) was inside a // comment, so the boom never fell.
+   Now real code, tau 30 ms. Impact sub-bass 18-23 %.
+4. Surf (2.2): the hiss tail's low-pass stopped at 1.9 kHz; the direction says it falls from 4 kHz to 1 kHz.
+   Now it does, and the fizz is doubled. Landscape bed > 4 kHz 0.2 % -> 0.9 % (LUFS -32.1 -> -31.1);
+   probe-surf click check still passes.
+5. The test suite (DmAudioTest.cpp/.h, DmAudioScenarios.cpp, DmAudioDirector.h/.cpp: test hook only):
+   - Every script now renders on seeds 7, 8, 1234 and 99 by default (-audioseeds= to change).
+   - Each cue and score level is judged on its mean over the seeds: cues +/- 2 LU, scores +/- 1 LU.
+     A single render gets the designed +/- 1.5 dB per-play jitter as extra room (cues +/- 4, scores +/- 2).
+   - The 5.5 table is now checked per scenario: peak, RMS range (0.5 dB rounding room), sub-bass, and the upper
+     bound of > 4 kHz. Before, it was only claimed.
+   - The cost rule (< 15 % of real time) is judged on each script's cheapest render. On the loaded machine one
+     fast-time render read 24.5 % of real time; the others read 7.3-7.6 %.
+   - The fall cue's window is 4.5 s; at 3.5 s the cue's sky tail was cut off.
+   - audio-live checks that each of 17 injected events produced its own cue(s). Before, the check was "the run
+     contained choir, toast and toll somewhere". It now also injects Bless, Test and Renew.
+     DmAudioDirector gained GetNotesTotal() for this.
+
+Final proof (lane audio4b-verify, refreshed from main afterwards, rebuilt clean: see the end of this file)
+- audio-render: RESULT PASS. 105/105 scripts on each of 4 seeds, 9010 s of audio rendered at 2.2 % of real time.
+  - Calibration across seeds: 36/36 levels on target. Examples:
+    - thunder-far -27.7, choir -31.5, quake -25.5
+    - wave -22.2, comet water -27.2
+    - plague score -29.3, stone score -30.9
+  - Cost: dearest script 4.9 % of real time. Deterministic (seed 7 twice 60f033d9; seed 8 differs).
+  - Seed-7 5.5 table:
+    - orbit -17.4 peak / -30.2 RMS
+    - coast-day -8.7 / -27.6
+    - forest-night -16.3 / -30.3
+    - city -15.1 / -30.3
+    - storm -5.0 / -26.9
+    - meteor -3.4 / -27.5
+    - age-advance -12.5 / -29.3
+    - stone -19.5 / -33.5
+    - industry -14.6 / -27.9
+    - space -18.1 / -33.3
+  - Ambience: landscape -31.1, town -33.2, orbit -36.0, space -38.3 LUFS.
+  - Marathon (300 s) -22.6 LUFS, peak -1.3 dBFS, above -18 LUFS for 0.4 s; stress-all peak -1.1.
+  - Zero clips, NaN or DC anywhere.
+- audio-live: RESULT PASS, 35.9 s captured.
+  - Mix: -25.0 LUFS, peak -6.2 dBFS, sub 9.2 %, harsh 2.7 %, never silent.
+  - Beds: city town 0.97, forest birds 0.93, coast surf 0.97, orbit space 1.00, storm rain 0.83.
+  - All 17 injected events made their cues. Director Sense 0.046 ms per call. Clean exit (code 0).
+- Panels I looked at: shots/ue-audio-live.png and shots/ue-audio-summary.png (all mix scenarios PASS).
+
+Open (not fixed; for the lead and other owners)
+- Darker than the reference previews. Above 4 kHz the landscape bed has 0.9 % of its energy (preview 10.2 %) and the
+  town bed 1.0 % (preview 9.8 %). Coast-day (0.5 %), forest-night (0.9 %), city (0.3 %) and storm (4.3 %) stay under
+  the lower "> 4 kHz" bounds of 5.5 (10 / 5 / 5 / 15 %). The live capture spectrum falls about 25 dB from 1 kHz to
+  8 kHz. Owner listening test needed: if the game sounds muffled next to docs/audio-preview/ambience-landscape.wav,
+  the birds, leaves and surf crash need more air. Noted in docs/audio-preview/index.md.
+- 5.3 says "music: at most 16 oscillator voices"; the score uses a 40-note pool (documented by the builder, not changed).
+- UI (HUD owner): nothing plays `hover`, and the settings screen has no UI volume slider.
+  Gameplay-v4 3.10 asks for a stinger per situation stage (omen / crisis / answered / lost); the sim emits card
+  stages open / answered / lapsed / withdrawn, and audio plays cues (far toll, peace chime, softer toll) rather
+  than stingers. There is no "crisis" stage to hook.
+- Word powers cannot be armed from the HUD (the builder's powers-check finding; not re-run here, outside Game/Audio).
+- Sky: the exit assert after "DmSky: EndPlay left a weather build running" (seen once in this verification).
+
+Compiles on today's main: after the tests I ran `lane.ps1 refresh audio4b-verify`, which pulled 40 files from main
+(planet, config and others). The lane then rebuilt clean: 0 errors, 0 C warnings, 272 s.
+- I did not rerun the tests after the refresh. No Game/Audio file changed, and audio-render does not use the world.
+- Lane-tool gotcha for the lead: the first build after the refresh failed in DmPlanet.h and DmPawn.h with 93
+  GENERATED_BODY errors. refresh copies files with their old timestamps, so UHT kept stale .generated.h files.
+  Touching the lane's headers fixed it. refresh should touch the files it pulls.
+
+Files (lane): Unreal/Lanes/audio4b-verify/Source/Demiurge/Game/Audio/{DmAudioCues.cpp, DmAudioEngine.cpp, DmAudioMusic.cpp,
+DmAudioTest.cpp, DmAudioTest.h, DmAudioScenarios.cpp, DmAudioDirector.cpp, DmAudioDirector.h}.
+Logs: Unreal/Lanes/audio4b-verify/Saved/Logs/shot-audio-render.log, shot-audio-live.log.
+Doc: docs/audio-preview/index.md (verification paragraph).

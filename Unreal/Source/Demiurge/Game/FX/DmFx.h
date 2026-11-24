@@ -54,6 +54,8 @@ struct FDmFxEffect
 {
 	virtual ~FDmFxEffect() {}
 	virtual bool Tick(ADmFx& Fx, float Dt) = 0;
+	/** A held brush's next pulse (wave 4b): continue this effect at Cell instead of starting another (false: not supported). */
+	virtual bool Refresh(int32 Cell) { return false; }
 	float T = 0.f;           // seconds since start (advanced by the actor before each Tick)
 	int32 DisasterId = -1;   // effects that follow a sim disaster
 	const TCHAR* Kind = TEXT("fx");
@@ -96,6 +98,7 @@ public:
 	int32 GetParticleCount() const { return Particles.Num(); }
 	int32 GetEffectCount() const { return Effects.Num(); }
 	int32 GetQuadCount() const { return Renderer.LastDrawn; }
+	int32 GetPendingQuads() const { return Renderer.NumPending(); }
 
 	// ------------------------------------------------------------ for effects (planet frame, uu, seconds)
 	const dm::World* W() const;
@@ -106,6 +109,8 @@ public:
 	DmFx::FParticle* Emit(const DmFx::FParticle& P);
 	void AddEffect(FDmFxEffect* E);
 	bool HasEffectFor(int32 DisasterId) const;
+	/** The newest running effect of this Kind (the TEXT literal its factory set), or nullptr. */
+	FDmFxEffect* FindEffect(const TCHAR* Kind) const;
 
 	/** Quads from planet-frame geometry. bLit: Col.rgb is an albedo, lit by sun / sky / FX lights. */
 	void AddFacing(const FVector& P, float Half, DmFx::EShape Shape, const FLinearColor& Col, bool bLit = false, uint8 Seed = 0, uint8 Param = 0, float Rot = 0.f, float Age = 0.f);
@@ -142,6 +147,10 @@ public:
 	FVector CellGround(int32 Cell, double Lift = 0.0) const;    // ground (sea floor on sea) + Lift
 	bool IsSeaCell(int32 Cell) const;
 	int32 CellAt(const FVector& Dir) const;
+	/** Land under a planet-frame direction at sub-cell precision: elevation above sea level interpolated over the
+	 *  sim triangle that holds the direction (as the rendered relief is), not the nearest cell, whose Voronoi region
+	 *  straddles the drawn coastline by up to a cell (~1.7 km). For effects that must stop at the shore. */
+	bool IsLandAt(const FVector& Dir) const;
 	/** Surface radius (uu) under a planet-frame direction: land elev + water, or the sea. */
 	double SurfaceR(const FVector& Dir) const;
 	/** A point on the surface at angular offset (Ang rad, toward azimuth Az rad from north) from Centre. */

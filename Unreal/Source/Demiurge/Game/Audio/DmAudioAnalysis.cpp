@@ -255,7 +255,7 @@ FDmAudioStats DmAudioAnalysis::Analyse(const float* L, const float* R, int64 N, 
 		}
 		if (Frames == 0) PowerSpectrum(L, 0, N, Nfft, Re, Im, Acc, true);
 		const double BinHz = double(Sr) / Nfft;
-		double Tot = 0, Sub = 0, Low = 0, Mid = 0, High = 0, Harsh = 0, Cen = 0;
+		double Tot = 0, Sub = 0, Low = 0, Mid = 0, High = 0, Harsh = 0, Cen = 0, Air = 0;
 		for (int32 K = 1; K <= Nfft / 2; ++K)
 		{
 			const double F = K * BinHz, P = Acc[K];
@@ -263,11 +263,12 @@ FDmAudioStats DmAudioAnalysis::Analyse(const float* L, const float* R, int64 N, 
 			Tot += P; Cen += F * P;
 			if (F < 60.0) Sub += P; else if (F < 250.0) Low += P; else if (F < 4000.0) Mid += P; else High += P;
 			if (F >= 2500.0 && F < 6000.0) Harsh += P;
+			if (F >= 12000.0) Air += P;
 		}
 		if (Tot > 0)
 		{
 			S.Sub = float(Sub / Tot); S.Low = float(Low / Tot); S.Mid = float(Mid / Tot); S.High = float(High / Tot);
-			S.Harsh = float(Harsh / Tot); S.Centroid = float(Cen / Tot);
+			S.Harsh = float(Harsh / Tot); S.Centroid = float(Cen / Tot); S.Air12k = float(Air / Tot);
 		}
 		// log-spaced curve, normalised so a full-scale sine reads about 0 dB
 		const double Norm = 16.0 / (double(FMath::Max(1, Frames)) * 2.0 * double(Nfft) * double(Nfft));
@@ -282,6 +283,103 @@ FDmAudioStats DmAudioAnalysis::Analyse(const float* L, const float* R, int64 N, 
 			P /= double(K1 - K0 + 1);
 			S.SpecHz[I] = float(std::sqrt(F0 * F1));
 			S.SpecDb[I] = Db(P * Norm);
+		}
+	}
+
+	// ITU-R BS.1770-4 loudness: K-weighting (the pre-filter shelf and the RLB high-pass, coefficients for any rate),
+	// 400 ms blocks with 75 % overlap gated at -70 LUFS and -10 LU (integrated), 3 s windows every 100 ms (short-term)
+	{
+		auto Biquad = [](double F0, double Q, double G, bool bShelf, double Fs, double B[3], double A[3])
+		{
+			const double K = std::tan(3.14159265358979 * F0 / Fs);
+			const double A0 = 1.0 + K / Q + K * K;
+			if (bShelf)
+			{
+				const double Vh = std::pow(10.0, G / 20.0), Vb = std::pow(Vh, 0.4996667741545416);
+				B[0] = (Vh + Vb * K / Q + K * K) / A0; B[1] = 2.0 * (K * K - Vh) / A0; B[2] = (Vh - Vb * K / Q + K * K) / A0;
+			}
+			else { B[0] = 1.0; B[1] = -2.0; B[2] = 1.0; }
+			A[0] = 1.0; A[1] = 2.0 * (K * K - 1.0) / A0; A[2] = (1.0 - K / Q + K * K) / A0;
+		};
+		double Bs[3], As[3], Bh[3], Ah[3];
+		Biquad(1681.974450955533, 0.7071752369554196, 3.999843853973347, true, Sr, Bs, As);
+		Biquad(38.13547087602444, 0.5003270373238773, 0.0, false, Sr, Bh, Ah);
+		const int64 Hop = FMath::Max<int64>(1, int64(0.1 * Sr));
+		const int64 NH = N / Hop;
+		TArray<double> HopPow;
+		HopPow.SetNumZeroed(int32(NH));
+		for (int32 Ch = 0; Ch < 2; ++Ch)
+		{
+			const float* X = Ch ? R : L;
+			double X1 = 0, X2 = 0, Y1 = 0, Y2 = 0, Z1 = 0, Z2 = 0;
+			for (int64 I = 0; I < NH * Hop; ++I)
+			{
+				const double V = std::isfinite(X[I]) ? double(X[I]) : 0.0;
+				const double Y = Bs[0] * V + Bs[1] * X1 + Bs[2] * X2 - As[1] * Y1 - As[2] * Y2;
+				X2 = X1; X1 = V;
+				const double Z = Bh[0] * Y + Bh[1] * Y1 + Bh[2] * Y2 - Ah[1] * Z1 - Ah[2] * Z2;
+				Y2 = Y1; Y1 = Y; Z2 = Z1; Z1 = Z;
+				HopPow[int32(I / Hop)] += Z * Z;
+			}
+		}
+		auto Lu = [](double Ms) { return -0.691 + 10.0 * std::log10(FMath::Max(Ms, 1e-20)); };
+		TArray<double> M4;
+		for (int32 I = 0; I + 4 <= int32(NH); ++I) M4.Add((HopPow[I] + HopPow[I + 1] + HopPow[I + 2] + HopPow[I + 3]) / double(4 * Hop));
+		double Sum1 = 0;
+		int32 C1 = 0;
+		for (double M : M4) { S.MomMax = FMath::Max(S.MomMax, float(Lu(M))); if (Lu(M) > -70.0) { Sum1 += M; ++C1; } }
+		if (C1 > 0)
+		{
+			const double Rel = Lu(Sum1 / C1) - 10.0;
+			double Sum2 = 0;
+			int32 C2 = 0;
+			for (double M : M4) if (Lu(M) > -70.0 && Lu(M) > Rel) { Sum2 += M; ++C2; }
+			S.Lufs = C2 > 0 ? float(Lu(Sum2 / C2)) : -120.f;
+		}
+		TArray<float> St;
+		for (int32 I = 0; I + 30 <= int32(NH); ++I)
+		{
+			double P = 0;
+			for (int32 K = 0; K < 30; ++K) P += HopPow[I + K];
+			St.Add(float(Lu(P / double(30 * Hop))));
+		}
+		if (St.Num() == 0 && NH > 0) { double P = 0; for (double H : HopPow) P += H; St.Add(float(Lu(P / double(NH * Hop)))); }
+		for (float V : St) { S.StMax = FMath::Max(S.StMax, V); if (V > -18.f) S.StAboveM18 += 0.1f; }
+		if (St.Num())
+		{
+			TArray<float> Sorted = St;
+			Sorted.Sort();
+			S.StMedian = Sorted[Sorted.Num() / 2];
+		}
+	}
+	// the worst 3 s window's share of 2-5 kHz energy (frames of 4096, hop 2048)
+	{
+		const int32 Nfft = 4096;
+		TArray<float> Re, Im;
+		TArray<double> Acc, Pres, Tot;
+		const double BinHz = double(Sr) / Nfft;
+		for (int64 Start = 0; Start + Nfft <= N; Start += Nfft / 2)
+		{
+			Acc.Reset();
+			Acc.SetNumZeroed(Nfft / 2 + 1);
+			PowerSpectrum(L, Start, N, Nfft, Re, Im, Acc, true);
+			PowerSpectrum(R, Start, N, Nfft, Re, Im, Acc, true);
+			double P = 0, T = 0;
+			for (int32 K = 1; K <= Nfft / 2; ++K)
+			{
+				const double F = K * BinHz;
+				if (F < 15.0) continue;
+				T += Acc[K];
+				if (F >= 2000.0 && F < 5000.0) P += Acc[K];
+			}
+			Pres.Add(P); Tot.Add(T);
+		}
+		const int32 W = FMath::Max(1, int32(3.0 * Sr / (Nfft / 2)));
+		for (int32 I = 0; I + W <= Pres.Num(); ++I)
+		{
+			double P = 0, T = 0;
+			for (int32 K = 0; K < W; ++K) { P += Pres[I + K]; T += Tot[I + K]; }
+			if (T > 1e-9 * W) S.PresenceWorst = FMath::Max(S.PresenceWorst, float(P / T));
 		}
 	}
 	return S;
@@ -312,8 +410,8 @@ bool DmAudioAnalysis::WriteWav(const FString& Path, const float* L, const float*
 
 FString DmAudioAnalysis::Describe(const FDmAudioStats& S)
 {
-	return FString::Printf(TEXT("%.1fs peak %.1f dBFS rms %.1f dBFS loud400 %.1f quiet400 %.1f clipped %lld nan %lld dc %.5f | sub %.1f%% low %.1f%% mid %.1f%% high %.1f%% harsh %.1f%% | centroid %.0f Hz zc %.0f/s silent %.0f%% crest %.1f dB corr %.2f"),
-		S.Seconds, S.PeakDb, S.RmsDb, S.LoudestDb, S.QuietestDb, S.Clipped, S.NaN, S.Dc, S.Sub * 100.f, S.Low * 100.f, S.Mid * 100.f, S.High * 100.f, S.Harsh * 100.f,
+	return FString::Printf(TEXT("%.1fs LUFS %.1f st-max %.1f st-med %.1f >-18 %.1fs pres3s %.1f%% air %.2f%% | peak %.1f dBFS rms %.1f dBFS loud400 %.1f quiet400 %.1f clipped %lld nan %lld dc %.5f | sub %.1f%% low %.1f%% mid %.1f%% high %.1f%% harsh %.1f%% | centroid %.0f Hz zc %.0f/s silent %.0f%% crest %.1f dB corr %.2f"),
+		S.Seconds, S.Lufs, S.StMax, S.StMedian, S.StAboveM18, S.PresenceWorst * 100.f, S.Air12k * 100.f, S.PeakDb, S.RmsDb, S.LoudestDb, S.QuietestDb, S.Clipped, S.NaN, S.Dc, S.Sub * 100.f, S.Low * 100.f, S.Mid * 100.f, S.High * 100.f, S.Harsh * 100.f,
 		S.Centroid, S.ZeroCross, S.Silent * 100.f, S.CrestDb, S.Corr);
 }
 

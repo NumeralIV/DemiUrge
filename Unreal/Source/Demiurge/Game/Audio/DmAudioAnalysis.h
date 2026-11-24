@@ -25,6 +25,11 @@ struct FDmAudioStats
 	float Silent = 0.f;          // fraction of 100 ms windows below -60 dBFS
 	float CrestDb = 0.f;
 	float Corr = 0.f;            // L/R correlation
+	// ITU-R BS.1770 loudness (K-weighted): integrated (gated), short-term (3 s windows, 100 ms hop), momentary (400 ms)
+	float Lufs = -120.f, StMax = -120.f, StMedian = -120.f, MomMax = -120.f;
+	float StAboveM18 = 0.f;      // seconds of short-term loudness above -18 LUFS (sound-direction 5.4 rule 4)
+	float PresenceWorst = 0.f;   // the worst 3 s window's share of energy in 2-5 kHz (5.4 rule 2)
+	float Air12k = 0.f;          // share of energy above 12 kHz
 	TArray<float> SpecHz, SpecDb;   // average spectrum, log-spaced points
 };
 

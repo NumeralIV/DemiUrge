@@ -84,7 +84,9 @@ namespace
 
 	void Godly(FDmScenarioContext& Ctx)
 	{
-		if (dm::World* M = Ctx.Sim->SimMutable()) { M->god.awe = 1.0e5; M->god.aweMax = 1.0e5; }
+		// (wave 4b) also the world's age: v3 unlocks every power past Bronze by age only, so on the Sail-age
+		// fixture Volcano (and later powers) were REFUSED and their scenarios showed nothing
+		if (dm::World* M = Ctx.Sim->SimMutable()) { M->god.awe = 1.0e5; M->god.aweMax = 1.0e5; if (M->age < dm::Age::INDUSTRY) M->age = dm::Age::INDUSTRY; }   // (not Atomic / Space: Monsoon and Star-fall would change rain and meteor)
 	}
 
 	int32 BiggestTown(const dm::World& W, bool bCoastal = false)

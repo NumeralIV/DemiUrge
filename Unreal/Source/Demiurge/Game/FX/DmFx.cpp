@@ -38,6 +38,13 @@ namespace
 	// lit smoke considers only the strongest FX lights (verifier fix: every burning cell asks for a light, and a
 	// 300-cell wildfire made LightAt loop over ~180 lights for each of 6,000 particles, ~4 ms a frame)
 	constexpr int32 kSmokeLights = 24;
+	constexpr float kMotePx = 3.5f;   // largest on-screen half size of a mote (wave 4b)
+	// wave 4b retry: smallest on-screen half size of any particle. Sparks and embers 10-50 m across are a fraction
+	// of a pixel at strategy distances: only the quads that happened to cover a pixel centre were drawn, so a burning
+	// forest or a meteor's ejecta showed as a sparse field of random hot pixels ("golden grain",
+	// shots/ue-fx-meteor-4b-f300). Below this size a particle is drawn at this size with its light and opacity
+	// scaled down by the area it gained (energy kept): a soft faint glow instead of aliased grain.
+	constexpr float kMinPx = 0.9f;
 	float GSunScale = 1.f;      // -fxsun: sunlit smoke brightness trim
 	float GLightScale = 1.f;    // -fxlight: point-light intensity trim
 }
@@ -201,6 +208,13 @@ bool ADmFx::HasEffectFor(int32 DisasterId) const
 	return false;
 }
 
+FDmFxEffect* ADmFx::FindEffect(const TCHAR* Kind) const
+{
+	for (int32 I = Effects.Num() - 1; I >= 0; --I)
+		if (Effects[I] && Effects[I]->Kind && FCString::Strcmp(Effects[I]->Kind, Kind) == 0) return Effects[I].Get();
+	return nullptr;
+}
+
 // ------------------------------------------------------------------ geometry helpers
 
 void ADmFx::TangentBasis(const FVector& Up, FVector& East, FVector& North) { DmCoords::Basis(Up, East, North); }
@@ -239,6 +253,37 @@ int32 ADmFx::CellAt(const FVector& Dir) const
 	if (!Wd || !Wd->geo) return -1;
 	const dm::Vec3 S = DmCoords::UEToSim(Dir.GetSafeNormal());
 	return Wd->geo->cellAt(S.x, S.y, S.z);
+}
+
+bool ADmFx::IsLandAt(const FVector& Dir) const
+{
+	const dm::World* Wd = W();
+	if (!Wd || !Wd->geo) return false;
+	const dm::Vec3 S = DmCoords::UEToSim(Dir.GetSafeNormal());
+	const int32 C = Wd->geo->cellAt(S.x, S.y, S.z);
+	if (C < 0 || C >= Wd->n) return false;
+	const double D[3] = { S.x, S.y, S.z };
+	auto Triple = [&D](const float* Av, const float* Bv)
+	{
+		return D[0] * (double(Av[1]) * Bv[2] - double(Av[2]) * Bv[1]) + D[1] * (double(Av[2]) * Bv[0] - double(Av[0]) * Bv[2]) + D[2] * (double(Av[0]) * Bv[1] - double(Av[1]) * Bv[0]);
+	};
+	auto H = [Wd](int32 K) { return double(Wd->elev[size_t(K)]) - Wd->seaLevel; };
+	const float* PC = &Wd->geo->pos[size_t(3 * C)];
+	const int32 Deg = Wd->geo->nbrN[size_t(C)];
+	for (int32 K = 0; K < Deg; ++K)
+	{
+		const int32 A = Wd->geo->nbr[size_t(6 * C + K)];
+		const int32 B = Wd->geo->nbr[size_t(6 * C + (K + 1) % Deg)];
+		const float* PA = &Wd->geo->pos[size_t(3 * A)];
+		const float* PB = &Wd->geo->pos[size_t(3 * B)];
+		const double WC = Triple(PA, PB), WA = Triple(PB, PC), WB = Triple(PC, PA);
+		const bool bPos = WC >= 0 && WA >= 0 && WB >= 0, bNeg = WC <= 0 && WA <= 0 && WB <= 0;
+		if (!bPos && !bNeg) continue;
+		const double Sum = WC + WA + WB;
+		if (FMath::Abs(Sum) < 1e-300) break;
+		return (WC * H(C) + WA * H(A) + WB * H(B)) / Sum > 0.0;
+	}
+	return H(C) > 0.0;
 }
 
 double ADmFx::SurfaceR(const FVector& Dir) const
@@ -280,14 +325,15 @@ FLinearColor ADmFx::LightAt(const FVector& P) const
 	const float Day = Smooth01(float((Mu - (Mu0 - 0.04)) / 0.16));
 	const float Warm = Smooth01(float((Mu - Mu0) * 4.0));
 	const float KSun = 3.2f * GSunScale;
-	FLinearColor L = FMath::Lerp(FLinearColor(1.0f, 0.36f, 0.14f), FLinearColor(1.0f, 0.96f, 0.90f), Warm) * (Day * KSun);
+	// wave 4b: a softer sunset tint (1, 0.36, 0.14 turned dark ash salmon-pink at dusk)
+	FLinearColor L = FMath::Lerp(FLinearColor(1.0f, 0.52f, 0.3f), FLinearColor(1.0f, 0.96f, 0.90f), Warm) * (Day * KSun);
 	L += FLinearColor(0.35f, 0.50f, 0.85f) * (0.10f * KSun * FMath::Min(1.f, Day * 1.5f));
 	// night floor (moon and stars): smoke stays faintly readable; exempt from the exposure compensation (the
 	// moonlit ground it sits on is lifted by the same exposure)
 	L += FLinearColor(0.030f, 0.036f, 0.055f) * (1.f / FMath::Max(ExposureComp, 0.05f));
 	// FX light is mostly a night effect, like the point lights (ApplyLights): by day a vent's 14-23 units made
 	// the whole ash column pink, a second sun (verifier fix: 0.25 by day .. 1 at night)
-	const float FxDay = 0.25f + 0.75f * (1.f - Day);
+	const float FxDay = 0.1f + 0.9f * (1.f - Day);   // wave 4b: 0.25 by day still turned grey smoke salmon-pink
 	const int32 NL = FMath::Min(LightReqs.Num(), kSmokeLights);
 	for (int32 I = 0; I < NL; ++I)
 	{
@@ -623,7 +669,9 @@ void ADmFx::ApplyLights()
 			L->SetLightColor(FLinearColor(R.Col.R, R.Col.G, R.Col.B, 1.f), false);
 			// mostly a night effect: by day the sun dominates, and strong point lights on the planet's land
 			// material showed as a grainy speckle (Lumen / material noise), so they are scaled down by day
-			L->SetIntensity(R.Intensity * GLightScale * LightComp * (0.2f + 0.8f * (1.f - DayAt(R.P))));
+			// wave 4b: 0.06 by day (was 0.2): a lightning strike's or a wildfire's light still showed as a disc of golden
+			// speckle on the sunlit land (fx-lightning-4b); by day the effect's own glow carries it
+			L->SetIntensity(R.Intensity * GLightScale * LightComp * (0.06f + 0.94f * (1.f - DayAt(R.P))));
 			L->SetAttenuationRadius(R.Radius * 2.5f);
 			if (!L->IsVisible()) L->SetVisibility(true);
 		}
@@ -732,8 +780,21 @@ void ADmFx::DrawParticles()
 	{
 		if (!VisibleFromCamera(P.P)) continue;
 		const float T = FMath::Clamp(P.Age / FMath::Max(P.Life, 1e-3f), 0.f, 1.f);
-		const float S = FMath::Lerp(P.Size0, P.Size1, FMath::Pow(T, P.SizePow));
+		float S = FMath::Lerp(P.Size0, P.Size1, FMath::Pow(T, P.SizePow));
+		// wave 4b: motes are points of light (pollen, dust in a sunbeam, sparks of grace): at most kMotePx pixels
+		// across however close the camera is (Bloom's 45 m motes filled a close view with giant stars)
+		const float PxUU = FMath::Max(1e-9f, Vw.PxPerUU(FVector::Dist(P.P, CamP)));
+		if (P.Shape == EShape::Mote) S = FMath::Min(S, kMotePx / PxUU);
+		float Thin = 1.f;   // energy kept when a sub-pixel particle is drawn larger (kMinPx)
+		if (S * PxUU < kMinPx && S > 0.f)
+		{
+			const float Grow = kMinPx / (S * PxUU);
+			// a velocity-stretched streak keeps its length: only its width grows
+			Thin = P.Orient == EOrient::Velocity ? 1.f / Grow : 1.f / (Grow * Grow);
+			S *= Grow;
+		}
 		FLinearColor C = FMath::Lerp(P.C0, P.C1, FMath::Pow(T, P.ColorPow));
+		C.A *= Thin;
 		const float Fade = FMath::Clamp(T / FMath::Max(P.FadeIn, 1e-3f), 0.f, 1.f) * FMath::Clamp((1.f - T) / FMath::Max(P.FadeOut, 1e-3f), 0.f, 1.f);
 		C.A *= Fade;
 		float Flick = 1.f;
@@ -757,6 +818,10 @@ void ADmFx::DrawParticles()
 			const FVector Vw3 = P2W.TransformVectorNoScale(P.V);
 			const double Sp = Vw3.Size();
 			const FVector Dir = Sp > 1e-3 ? Vw3 / Sp : UpW;
+			// (verifier fx4b-verify: Len uses the GROWN size, so a widened sub-pixel streak is also Grow x longer and
+			// keeps Grow x its energy, not 1 x as Thin assumes. Tried keeping the pre-grow length: the embers became
+			// sub-pixel-long dots and the meteor's burning forest turned into a carpet of golden grain
+			// (ue-fx-meteor-main-v4b-f300). The longer, dimmer streak reads right; left as is.)
 			const double Len = double(S) * P.Aspect + Sp * P.Stretch;
 			FVector Side = FVector::CrossProduct(Dir, ToCam).GetSafeNormal();
 			if (Side.IsNearlyZero()) Side = Vw.Right;
@@ -813,7 +878,7 @@ void ADmFx::DrawParticles()
 		else
 		{
 			// emissive colour (already premultiplied: it is light), opacity as given
-			Q.Col = FLinearColor(C.R * Fade * Flick, C.G * Fade * Flick, C.B * Fade * Flick, C.A);
+			Q.Col = FLinearColor(C.R * Fade * Flick * Thin, C.G * Fade * Flick * Thin, C.B * Fade * Flick * Thin, C.A);
 		}
 		if (P.Temp0 > 0.f && P.Glow > 0.f)
 		{
@@ -821,7 +886,8 @@ void ADmFx::DrawParticles()
 			const float Tk = FMath::Lerp(P.Temp0, P.Temp1, FMath::Pow(T, P.ColorPow));
 			const float Hot = FMath::Pow(FMath::Max(Tk, 1.f) / P.Temp0, 4.f);
 			const FLinearColor Bb = Blackbody(Tk);
-			const float Inc = P.Glow * Hot * Fade * Flick;
+			// wave 4b: no glow below ~900 K (dull red light added to grey smoke read as salmon-pink plumes)
+			const float Inc = P.Glow * Hot * Fade * Flick * Thin * Smooth01((Tk - 850.f) / 450.f);
 			Q.Col.R += Bb.R * Inc; Q.Col.G += Bb.G * Inc; Q.Col.B += Bb.B * Inc;
 		}
 		Renderer.Add(Q);
@@ -993,9 +1059,10 @@ void ADmFx::HandleEvent(const dm::Event& E)
 			if (Id == "rain") AddEffect(DmFxFx::MakeRain(*this, P->cell, P->ang > 0 ? P->ang : 0.1, 1.6f));
 			else if (Id == "bloom")
 			{
-				// a held brush sends up to 4 pulses a second: one wave per 0.7 s, motes in between
-				if (Clock - LastBloomAt > 0.7) { LastBloomAt = Clock; AddEffect(DmFxFx::MakeGreenWave(*this, P->cell, P->ang > 0 ? P->ang : 0.08, 0.8f, false)); }
-				else { const FLinearColor Gc(1.4f, 3.2f, 0.9f, 0.f); Spawn(TEXT("motes"), CellSurface(P->cell, 0.05 * kKm), 10, 2.f, &Gc, 1.f); }
+				// a held brush sends up to 4 pulses a second (wave 4b): the running wave follows the brush and holds
+				// (a new wave per 0.7 s stacked concentric target rings); a new wave only after a pause
+				FDmFxEffect* Wv = FindEffect(TEXT("bloom"));
+				if (!(Wv && Wv->Refresh(P->cell))) { LastBloomAt = Clock; AddEffect(DmFxFx::MakeGreenWave(*this, P->cell, P->ang > 0 ? P->ang : 0.08, 0.8f, false)); }
 			}
 			else if (Id == "seed") AddEffect(DmFxFx::MakeGreenWave(*this, P->cell, P->ang > 0 ? P->ang : 0.12, 1.f, true));
 			else if (Id == "raise" || Id == "lower") DmFxFx::BurstSculpt(*this, P->cell, P->ang > 0 ? P->ang : 0.06, Id == "raise");

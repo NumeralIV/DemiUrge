@@ -88,6 +88,21 @@ namespace
 		Q.Seed = R.Byte();
 		return Q;
 	}
+	/** An incandescent lava bomb / ember clot: a round blob slightly drawn out along its arc (not a long streak, which
+	 *  seen from above made every eruption a radial starburst), cooling from yellow-orange to dull red. */
+	FParticle Bomb(FRand& R, const FVector& P, const FVector& V, float Life, float Size)
+	{
+		FParticle Q;
+		Q.P = P; Q.V = V; Q.Life = Life;
+		Q.Size0 = Size; Q.Size1 = Size * 0.8f; Q.Aspect = 1.25f; Q.Stretch = 0.012f;
+		Q.Shape = EShape::Glow; Q.Orient = EOrient::Velocity;
+		Q.Rise = float(-1.8 * KmU); Q.Drag = 0.05f;
+		Q.C0 = Rgb(0, 0, 0); Q.C1 = Rgb(0, 0, 0);
+		Q.Temp0 = 1500.f; Q.Temp1 = 900.f; Q.Glow = 9.f; Q.ColorPow = 0.8f;
+		Q.FadeIn = 0.02f; Q.FadeOut = 0.2f;
+		Q.Seed = R.Byte();
+		return Q;
+	}
 	FParticle MoteP(FRand& R, const FVector& P, const FVector& V, float Life, float Size, const FLinearColor& C)
 	{
 		FParticle Q;
@@ -101,9 +116,9 @@ namespace
 	}
 
 	const FLinearColor DustAlb(0.24f, 0.21f, 0.17f, 0.6f);
-	const FLinearColor AshAlb(0.10f, 0.095f, 0.09f, 0.78f);
+	const FLinearColor AshAlb(0.085f, 0.08f, 0.075f, 0.92f);   // wave 4b: dense charcoal (the billow shading lights the tops)
 	const FLinearColor SteamAlb(0.82f, 0.84f, 0.88f, 0.45f);
-	const FLinearColor SmokeAlb(0.13f, 0.12f, 0.115f, 0.6f);
+	const FLinearColor SmokeAlb(0.09f, 0.083f, 0.078f, 0.62f);   // wave 4b: darker (the softer billow shading read white)
 
 	// ================================================================ comet / meteor flight
 
@@ -263,6 +278,26 @@ namespace
 				P.C0 = P.C1 = Rgb(0.08f, 0.07f, 0.06f, 1.f); P.FadeIn = 0.01f; P.FadeOut = 0.1f; P.Seed = R.Byte();
 				Fx.Emit(P);
 			}
+			if (!bWet)
+			{
+				// wave 4b: a scorched blast pattern of dark ejecta rays radiating from the crater (lingers with the
+				// glowing floor), so the impact still reads from orbit once the dust has gone
+				for (int32 I = 0; I < 44; ++I)
+				{
+					const double Az = (I + R.Range(-0.4f, 0.4f)) * TwoPi / 44.0;
+					const double Len = Rc * R.Range(0.35f, 0.9f);
+					const FVector Dd = Fx.Offset(Up, (Rc * 0.9 + Len) / DmCoords::RadiusUU, Az);
+					FParticle P;
+					P.P = Dd * (Fx.SurfaceR(Dd) + 0.04 * KmU);
+					P.Orient = EOrient::Flat; P.Shape = EShape::Streak; P.bLit = true;
+					P.Rot = float(HALF_PI - Az + PI);   // U points back at the crater: the dense head sits at the rim
+					P.Size0 = P.Size1 = float(Rc * R.Range(0.14f, 0.26f)); P.Aspect = float(Len / P.Size0);
+					P.Life = 48.f; P.FadeIn = 0.01f; P.FadeOut = 0.35f;
+					P.C0 = P.C1 = Rgb(0.06f, 0.05f, 0.045f, R.Range(0.3f, 0.5f));
+					P.Seed = R.Byte();
+					Fx.Emit(P);
+				}
+			}
 			if (bSea)
 			{
 				// water crown and spray
@@ -314,8 +349,18 @@ namespace
 				// night): soft profile, a third of the brightness, gone in about a second
 				const float FrontFade = FMath::Exp(-Tt / 0.6f) * (1.f - Smooth01((Tt - 0.8f) / 1.0f));
 				if (FrontFade > 0.002f)
-					Fx.AddRing(Up, Rr / DmCoords::RadiusUU, 0.35 * KmU, float(Rc * 0.09 + Rr * 0.03), EShape::Bolt,
-						Scale(Rgb(0.92f, 0.95f, 1.f), 2.4f * FrontFade), false, Segs, 0, 215, float(0.3 * KmU));
+					// (wave 4b: half as bright and twice as wide again: at 48 km it still read as a crisp white UI circle)
+					Fx.AddRing(Up, Rr / DmCoords::RadiusUU, 0.35 * KmU, float(Rc * 0.18 + Rr * 0.06), EShape::Bolt,
+						Scale(Rgb(0.92f, 0.95f, 1.f), 1.1f * FrontFade), false, Segs, 0, 250, float(0.3 * KmU));
+				// wave 4b: the condensation dome (a Wilson cloud) racing out with the shock in the first second: a
+				// pale translucent shell whose silhouette is a soft ring, lit by the sun
+				if (Tt > 0.04f && Tt < 1.4f)
+				{
+					const float Dp = (Tt - 0.04f) / 1.36f;
+					const float Dome = float(Rc * (0.4 + 1.5 * (1.0 - FMath::Exp(-Tt / 0.4))));
+					const float Da = 0.32f * Smooth01(Dp * 6.f) * (1.f - Smooth01(Dp));
+					Fx.AddFacing(G + Up * (Dome * 0.2), Dome, EShape::Ring, Rgb(0.9f, 0.92f, 0.95f, Da), true, 23, 90);
+				}
 				DustGap += Dt;
 				if (Tt < 2.6f && DustGap > 0.045)
 				{
@@ -328,7 +373,7 @@ namespace
 						const FVector P = Dd * (Fx.SurfaceR(Dd) + 0.3 * KmU);
 						const FVector Out = (P - G).GetSafeNormal();
 						FParticle Q = Puff(R, P, Out * (Speed * 0.45) + Dd * (0.15 * KmU), R.Range(8.f, 14.f), RcF * 0.10f, RcF * R.Range(0.35f, 0.55f),
-							bSea ? WithA(SteamAlb, 0.45f * Fade) : WithA(DustAlb, 0.55f * Fade));
+							bSea ? WithA(SteamAlb, 0.4f * Fade) : WithA(DustAlb, 0.42f * Fade));
 						Q.Drag = 0.9f; Q.bGround = true; Q.Param = 70;
 						Fx.Emit(Q);
 					}
@@ -453,20 +498,54 @@ namespace
 
 		bool Tick(ADmFx& Fx, float) override
 		{
-			if (!bBuilt) Build(Fx);
+			if (!bBuilt)
+			{
+				Build(Fx);
+				// the strike lights the real cloud deck from inside (C2 API), not only our glow
+				if (ADmSky* Sky = ADmSky::Get(&Fx))
+				{
+					const int32 Cl = Fx.CellAt(Ground.GetSafeNormal());
+					if (Cl >= 0) Sky->Strike(Cl, bVisualOnly ? 0.5f : 0.9f);
+				}
+			}
 			const float B = Brightness(T) * Strength;
+			// afterglow (wave 4b): the heated channel stays visible as a fading violet-blue ghost for about a second
+			// after the return strokes, and a strike's ground point glows like a hot ember (reads after the flash)
+			const float After = Strength * 0.55f * FMath::Exp(-T / 0.38f) * Smooth01(T / 0.05f);
+			const FLinearColor Col = Rgb(0.72f, 0.80f, 1.f);
+			const FLinearColor Ghost = Rgb(0.55f, 0.55f, 1.f);
+			// soft channel width: at least ~2.5 px so the bolt and its ghost read from strategy distances
+			const float Wm = float(0.03 * KmU);
+			const float Wsoft = FMath::Max(float(0.11 * KmU), Fx.UUPerPixel(Ground) * 2.5f);
+			if (B > 0.01f || After > 0.01f)
+			{
+				for (int32 I = 0; I + 1 < Main.Num(); ++I)
+				{
+					if (B > 0.01f) Fx.AddAxis(Main[I], Main[I + 1], Wm, EShape::Bolt, Scale(Col, 46.f * B), false, uint8(I), 0);
+					Fx.AddAxis(Main[I], Main[I + 1], Wsoft, EShape::Bolt, Scale(Ghost, 2.2f * B + 1.6f * After), false, uint8(I), 230);
+				}
+				for (const TArray<FVector>& Br : Branches)
+					for (int32 I = 0; I + 1 < Br.Num(); ++I)
+					{
+						const float Tip = 1.f - float(I) / Br.Num();
+						if (B > 0.01f) Fx.AddAxis(Br[I], Br[I + 1], Wm * 0.55f, EShape::Bolt, Scale(Col, 20.f * B * Tip), false, uint8(I), 0);
+						Fx.AddAxis(Br[I], Br[I + 1], Wsoft * 0.6f, EShape::Bolt, Scale(Ghost, (1.0f * B + 0.7f * After) * Tip), false, uint8(I), 230);
+					}
+			}
 			if (B > 0.01f)
 			{
-				const FLinearColor Col = Rgb(0.72f, 0.80f, 1.f);
-				const float Wm = float(0.03 * KmU);
-				for (int32 I = 0; I + 1 < Main.Num(); ++I) Fx.AddAxis(Main[I], Main[I + 1], Wm, EShape::Bolt, Scale(Col, 46.f * B), false, uint8(I), 0);
-				for (const TArray<FVector>& Br : Branches)
-					for (int32 I = 0; I + 1 < Br.Num(); ++I) Fx.AddAxis(Br[I], Br[I + 1], Wm * 0.55f, EShape::Bolt, Scale(Col, 20.f * B * (1.f - float(I) / Br.Num())), false, uint8(I), 0);
-				Fx.AddFacing(Top, float(2.6 * KmU), EShape::Glow, Scale(Rgb(0.6f, 0.68f, 1.f), 3.5f * B));
+				// the cloud base lit from inside, and the flash on the ground
+				Fx.AddFacing(Top, float(2.0 * KmU), EShape::Glow, Scale(Rgb(0.6f, 0.68f, 1.f), 2.2f * B));
+				Fx.AddFlash(Top, float(3.5 * KmU), Scale(Rgb(0.6f, 0.68f, 1.f), 0.1f * B));
 				Fx.AddFacing(Ground + Up * (0.05 * KmU), float(0.45 * KmU), EShape::Glow, Scale(Rgb(0.85f, 0.9f, 1.f), 12.f * B));
-				Fx.AddLight(Ground + Up * (0.9 * KmU), Rgb(0.75f, 0.8f, 1.f), 28.f * B, float(5.0 * KmU));
 			}
-			return T < 0.75f;
+			Fx.AddLight(Ground + Up * (0.9 * KmU), Rgb(0.75f, 0.8f, 1.f), 28.f * B + 3.f * After, float(5.0 * KmU));
+			if (!bVisualOnly && T > 0.05f)
+			{
+				const float Ember = FMath::Exp(-(T - 0.05f) / 0.9f);
+				Fx.AddFacing(Ground + Up * (0.04 * KmU), float(0.16 * KmU), EShape::Glow, Scale(Rgb(1.f, 0.55f, 0.2f), 6.f * Ember));
+			}
+			return T < (bVisualOnly ? 1.1f : 2.6f);
 		}
 	};
 
@@ -477,6 +556,7 @@ namespace
 		int32 Cell = -1;
 		float Gone = 0.f;
 		float NextBolt = 1.5f;
+		float Pour = 0.f;   // 0..1: how far the lava rivers have run (wave 4b)
 		bool bBlast = false;
 
 		bool Tick(ADmFx& Fx, float Dt) override
@@ -501,65 +581,124 @@ namespace
 			const FVector Vent = Fx.CellGround(Cell, 0.05 * KmU);
 			const float Flick = 0.8f + 0.35f * FMath::PerlinNoise1D(float(Fx.Now()) * 3.1f);
 
+			const float NightV = 1.f - Fx.DayAt(Vent);
 			if (!bBlast)
 			{
 				bBlast = true;
 				Fx.Shake(0.6f, Vent, 180.0 * KmU);
-				for (int32 I = 0; I < 40; ++I)
+				// the opening blast: a burst of dark billows thrown up and out, glowing at their roots, and a ring
+				// of ash rolling down the flanks (a small pyroclastic skirt)
+				for (int32 I = 0; I < 34; ++I)
 				{
-					const FVector V = (Up * R.Range(0.8f, 1.4f) + RandHoriz(R, Up) * 0.5).GetSafeNormal() * (KmU * R.Range(0.8f, 2.0f));
-					FParticle P = Puff(R, Vent + R.Dir() * (0.2 * KmU), V, R.Range(26.f, 40.f), float(0.35 * KmU), float(R.Range(1.6f, 2.8f) * KmU), AshAlb);
-					P.Drag = 0.32f; P.Wind = 1.f; P.Temp0 = 2200.f; P.Temp1 = 400.f; P.Glow = 1.5f; P.ColorPow = 0.3f;
+					const FVector V = (Up * R.Range(0.8f, 1.4f) + RandHoriz(R, Up) * 0.5).GetSafeNormal() * (KmU * R.Range(0.9f, 2.2f));
+					FParticle P = Puff(R, Vent + R.Dir() * (0.2 * KmU), V, R.Range(26.f, 38.f), float(0.4 * KmU), float(R.Range(1.8f, 3.0f) * KmU), AshAlb);
+					P.Drag = 0.32f; P.Wind = 1.f; P.Temp0 = 1900.f; P.Temp1 = 300.f; P.Glow = 2.f; P.ColorPow = 0.3f; P.Param = 30;   // glows only in its first seconds
 					Fx.Emit(P);
 				}
-				for (int32 I = 0; I < 60; ++I)
+				for (int32 I = 0; I < 26; ++I)
 				{
-					const FVector V = (Up + RandHoriz(R, Up) * R.Range(0.2f, 0.9f)).GetSafeNormal() * (KmU * R.Range(1.5f, 3.2f));
-					Fx.Emit(Spark(R, Vent, V, R.Range(1.8f, 3.f), float(0.04 * KmU), float(4.0 * KmU), 1900.f, 1000.f, 16.f));
+					const FVector H = RandHoriz(R, Up);
+					FParticle P = Puff(R, Vent + H * (0.3 * KmU), H * (KmU * R.Range(0.5f, 0.9f)), R.Range(14.f, 20.f), float(0.3 * KmU), float(KmU * R.Range(0.9f, 1.4f)), WithA(Rgb(0.17f, 0.16f, 0.15f), 0.8f));
+					P.bGround = true; P.Drag = 0.5f; P.Wind = 0.4f; P.Param = 60;
+					Fx.Emit(P);
+				}
+				for (int32 I = 0; I < 30; ++I)
+				{
+					const FVector V = (Up + RandHoriz(R, Up) * R.Range(0.2f, 0.7f)).GetSafeNormal() * (KmU * R.Range(1.4f, 2.8f));
+					Fx.Emit(Bomb(R, Vent, V, R.Range(2.f, 3.2f), float(KmU * R.Range(0.025f, 0.045f))));
 				}
 			}
 			if (E > 0.01f)
 			{
-				// ash column: buoyant, carried by the wind aloft, spreading into a sheet
-				for (int32 I = 0, N = Count(R, 11.0 * E, Dt); I < N; ++I)
+				// ash column (wave 4b): a dense convecting column that keeps rising (buoyancy against drag gives a
+				// steady ~0.2 km/s), its lower part glowing from the vent, its head spreading downwind as an
+				// umbrella. Fewer, larger billows than before: the shader's lobes give the cauliflower volume.
+				for (int32 I = 0, N = Count(R, 8.0 * E, Dt); I < N; ++I)
 				{
-					const FVector V = Up * (KmU * R.Range(0.9f, 1.6f)) + R.Dir() * (0.15 * KmU);
-					FParticle P = Puff(R, Vent + Up * (0.15 * KmU) + R.Dir() * (0.12 * KmU), V, R.Range(30.f, 48.f), float(0.25 * KmU), float(R.Range(1.8f, 3.2f) * KmU), AshAlb);
-					P.Drag = 0.27f; P.Wind = 1.1f; P.SizePow = 0.5f; P.Param = 50;
+					const FVector V = Up * (KmU * R.Range(1.3f, 2.0f)) + R.Dir() * (0.12 * KmU);
+					FParticle P = Puff(R, Vent + Up * (0.25 * KmU) + R.Dir() * (0.15 * KmU), V, R.Range(30.f, 42.f), float(0.45 * KmU), float(R.Range(2.4f, 3.8f) * KmU), AshAlb);
+					P.Drag = 0.32f; P.Rise = float(0.065 * KmU); P.Wind = 1.1f; P.SizePow = 0.55f; P.Param = 25;
+					P.Rot = R.F() * 6.283f; P.Spin = R.Sym(0.08f);
+					// (no incandescence: blackbody light at ash temperatures is nearly pure red and turned the grey column
+					// salmon-pink; the vent's glow and light underlight the column instead)
+					P.C1 = WithA(Rgb(0.13f, 0.12f, 0.115f), 0.75f);                          // ash thins and greys as it spreads
 					Fx.Emit(P);
 				}
-				for (int32 I = 0, N = Count(R, 4.0 * E, Dt); I < N; ++I)
+				// pale steam and gas wisps round the crater rim
+				for (int32 I = 0, N = Count(R, 3.0 * E, Dt); I < N; ++I)
 				{
-					FParticle P = Puff(R, Vent + RandHoriz(R, Up) * (0.25 * KmU), Up * (0.3 * KmU), R.Range(9.f, 13.f), float(0.3 * KmU), float(1.1 * KmU), WithA(Rgb(0.24f, 0.23f, 0.22f), 0.6f));
-					P.Wind = 0.6f;
+					FParticle P = Puff(R, Vent + RandHoriz(R, Up) * (0.35 * KmU), Up * (0.35 * KmU), R.Range(9.f, 13.f), float(0.25 * KmU), float(0.9 * KmU), WithA(Rgb(0.55f, 0.54f, 0.52f), 0.5f));
+					P.Wind = 0.7f; P.Param = 150;
 					Fx.Emit(P);
 				}
-				// lava fountain
-				for (int32 I = 0, N = Count(R, 55.0 * E, Dt); I < N; ++I)
+				// lava fountain (wave 4b: was 55 radial streaks a second, the "starburst" from above): a pulsing jet
+				// of flame tongues standing on the vent, and a few incandescent bombs on short ballistic arcs
+				const float Jet = E * Flick;
+				const float JetH = float(KmU * (0.28 + 0.12 * FMath::Sin(float(Fx.Now()) * 2.3f)));
+				Fx.AddUpright(Vent - Up * (0.05 * KmU), float(0.11 * KmU), JetH, EShape::Flame, Scale(Rgb(1.f, 0.62f, 0.2f), 4.5f * Jet), false, 17, 0);
+				Fx.AddUpright(Vent - Up * (0.05 * KmU), float(0.07 * KmU), JetH * 1.35f, EShape::Flame, Scale(Rgb(1.f, 0.8f, 0.42f), 3.f * Jet), false, 91, 0);
+				for (int32 I = 0, N = Count(R, 9.0 * E, Dt); I < N; ++I)
 				{
-					const FVector V = (Up + RandHoriz(R, Up) * R.Range(0.f, 0.4f)).GetSafeNormal() * (KmU * R.Range(1.1f, 2.3f));
-					Fx.Emit(Spark(R, Vent, V, R.Range(1.f, 1.8f), float(0.03 * KmU), float(4.0 * KmU), 1750.f, 1050.f, 14.f));
+					const FVector V = (Up + RandHoriz(R, Up) * R.Range(0.05f, 0.45f)).GetSafeNormal() * (KmU * R.Range(0.9f, 1.8f));
+					Fx.Emit(Bomb(R, Vent, V, R.Range(1.2f, 2.0f), float(KmU * R.Range(0.018f, 0.032f))));
 				}
-				// vent glow and light
-				Fx.AddFacing(Vent + Up * (0.12 * KmU), float(0.5 * KmU), EShape::Glow, Scale(Rgb(1.f, 0.45f, 0.12f), 7.f * E * Flick));
-				Fx.AddFacing(Vent + Up * (0.35 * KmU), float(1.6 * KmU), EShape::Glow, Scale(Rgb(1.f, 0.32f, 0.07f), 0.7f * E * Flick));
+				// vent: a hot core and a small orange halo (wave 4b: the 1.6 km glow tinted the plume and the ground pink)
+				Fx.AddFacing(Vent + Up * (0.1 * KmU), float(0.32 * KmU), EShape::Glow, Scale(Rgb(1.f, 0.6f, 0.2f), 8.f * Jet));
+				Fx.AddFacing(Vent + Up * (0.3 * KmU), float(0.9 * KmU), EShape::Glow, Scale(Rgb(1.f, 0.36f, 0.06f), (0.25f + 0.6f * NightV) * Jet));
 				// volcanic lightning in the plume
 				NextBolt -= Dt * E;
 				if (NextBolt <= 0.f)
 				{
 					NextBolt = R.Range(0.7f, 2.6f);
-					Fx.AddEffect(DmFxFx::MakeLightning(Fx, Vent + Up * (0.4 * KmU) + RandHoriz(R, Up) * (0.5 * KmU), 0.55f, true));
+					Fx.AddEffect(DmFxFx::MakeLightning(Fx, Vent + Up * (1.2 * KmU) + RandHoriz(R, Up) * (0.7 * KmU), 0.55f, true));
 				}
 			}
-			// lava field: every hot cell glows (the planet draws the rock; this is the light)
+			// lava (wave 4b). Rivers: a few glowing rivulets winding down the cone from the vent (lengths grow while the
+			// vent pours, they crust over and dim once it stops), each a chain of lava-channel quads with a soft glow
+			// band over it. Field: every lava cell further out is a pool of crusted lava (round, not a line, so the
+			// cell grid never shows), a faint glow haze over it at night, and steam where it meets the sea.
 			float LavaSum = 0.f;
+			const double ConeAng = D ? FMath::Clamp(D->ang, 0.02, 0.08) : 0.04;
+			{
+				Pour = FMath::Clamp(Pour + Dt * (E > 0.05f ? 0.15f : -0.05f), 0.f, 1.f);
+				const float Glow = FMath::Max(E, 0.25f * Pour);
+				if (Pour > 0.01f)
+				{
+					const float NightR = 1.f - Fx.DayAt(Vent);
+					const int32 NRiv = 5;
+					for (int32 K = 0; K < NRiv; ++K)
+					{
+						const uint32 Hk = uint32(Cell) * 2654435761u + uint32(K) * 40503u;
+						const double Az0 = (K + 0.5 * ((Hk >> 8) % 1000) / 1000.0) * TwoPi / NRiv;
+						const double LenA = ConeAng * (0.55 + 0.45 * ((Hk >> 18) % 1000) / 1000.0) * Smooth01(Pour * (1.2f + 0.15f * K));
+						const int32 Segs = 10;
+						FVector Prev = Vent;
+						for (int32 J = 1; J <= Segs; ++J)
+						{
+							const double F = double(J) / Segs;
+							const double Wig = 0.4 * FMath::Sin(F * 5.0 + K * 1.9) * F + 0.15 * FMath::Sin(F * 13.0 + K) * F;
+							const FVector Dd = Fx.Offset(Up, LenA * F, Az0 + Wig);
+							const FVector Pj = Dd * (Fx.SurfaceR(Dd) + 0.03 * KmU);
+							if (Fx.IsSeaCell(Fx.CellAt(Dd))) break;
+							const FVector Along = Pj - Prev;
+							const FVector Mid = (Pj + Prev) * 0.5;
+							const FVector UpC = Mid.GetSafeNormal();
+							const FVector Across = FVector::CrossProduct(UpC, Along).GetSafeNormal();
+							const float Heat = Glow * float(1.0 - 0.55 * F);
+							const FLinearColor Bb = Blackbody(1050.f + 650.f * Heat);
+							const float Bright = (1.0f + 3.4f * Heat) * (0.55f + 0.45f * NightR);
+							const float W = float(KmU * (0.16 + 0.12 * (1.0 - F)));
+							Fx.AddPlanetQuad(Mid, Across * W, Along * 0.78, EShape::Lava, WithA(Scale(Bb, Bright), 0.75f), false, uint8(K * 31 + J), 0, float(0.06 * KmU));
+							Fx.AddAxis(Prev + UpC * (0.06 * KmU), Pj + UpC * (0.06 * KmU), FMath::Max(W * 2.5f, Fx.UUPerPixel(Mid) * 1.6f), EShape::Bolt,
+								Scale(Bb, (0.25f + 0.5f * NightR) * Bright * Heat), false, uint8(K * 31 + J), 245);
+							Prev = Pj;
+						}
+					}
+				}
+			}
 			if (D)
 			{
-				// The planet (C1) draws the lava surface and its glow; this is the light the lava throws into the
-				// air above it. Verifier fix: cell-sized, heavily mottled discs at up to 1.2 units by day read as
-				// pink / magenta blobs on the ground and, from orbit, as a grid of red polka dots. Now: wide and
-				// overlapping (a continuous haze over the field), weakly mottled, faint by day.
-				const double Half = Wd->geo ? Wd->geo->step * DmCoords::RadiusUU * 1.25 : 1.2 * KmU;
+				const double Half = Wd->geo ? Wd->geo->step * DmCoords::RadiusUU * 0.75 : 0.8 * KmU;
 				for (int32_t C : D->cells)
 				{
 					if (C < 0 || C >= Wd->n) continue;
@@ -567,15 +706,26 @@ namespace
 					if (!(L > 0.02f)) continue;
 					const float Hot = FMath::Clamp(L / 1.2f, 0.f, 1.f);
 					LavaSum += Hot;
-					const float Tk = 1150.f + 650.f * Hot;
 					const FVector P = Fx.CellGround(C, double(L) * DmCoords::UUPerElev + 0.03 * KmU);
 					const float Night = 1.f - Fx.DayAt(P);
-					Fx.AddFlat(P, float(Half), float(Half), float(C % 7), EShape::Disc, WithA(Scale(Blackbody(Tk), (0.15f + 0.85f * Hot) * (0.12f + 0.88f * Night) * 0.55f), 0.f), false, uint8(C), 90, float(0.03 * KmU));
-					if (Hot > 0.3f && Fx.IsSeaCell(C) && R.F() < Dt * 1.5f)
-						Fx.Emit(Puff(R, P, Up * (0.5 * KmU), R.Range(8.f, 12.f), float(0.25 * KmU), float(1.0 * KmU), WithA(SteamAlb, 0.5f)));
+					const FLinearColor Bb = Blackbody(1000.f + 600.f * Hot);
+					if (!Fx.IsSeaCell(C))
+					{
+						// (the planet draws the lava surface itself; square crusted-lava quads per cell showed the cell grid as
+						// red blotches, so the field gets only its light: a soft glow haze at night)
+						if (Night > 0.15f)
+							Fx.AddFlat(P, float(Half * 1.4), float(Half * 1.4), float(C % 7), EShape::Disc, WithA(Scale(Bb, 0.22f * Hot * Night), 0.f), false, uint8(C), 40, float(0.03 * KmU));
+					}
+					else if (Hot > 0.25f && R.F() < Dt * 2.5f)
+					{
+						FParticle S = Puff(R, P, Up * (0.6 * KmU), R.Range(9.f, 14.f), float(0.3 * KmU), float(KmU * R.Range(1.1f, 1.6f)), WithA(SteamAlb, 0.7f));
+						S.Param = 40; S.Wind = 0.8f;
+						Fx.Emit(S);
+					}
 				}
 			}
-			Fx.AddLight(Vent + Up * (0.5 * KmU), Rgb(1.f, 0.42f, 0.15f), 14.f * E * Flick + 0.3f * FMath::Min(LavaSum, 30.f), float(7.0 * KmU));
+			// the vent's light: a tight pool (wave 4b: at 7 km it lit the whole ash column salmon-pink at night)
+			Fx.AddLight(Vent + Up * (0.4 * KmU), Rgb(1.f, 0.4f, 0.12f), 10.f * E * Flick + 0.2f * FMath::Min(LavaSum, 30.f), float(3.5 * KmU));
 			return true;
 		}
 	};
@@ -906,28 +1056,47 @@ namespace
 			if (!Fx.W() || Cell < 0) return false;
 			const FVector Up = Fx.CellDir(Cell);
 			const FVector G = Fx.CellSurface(Cell, 0.02 * KmU);
-			const FLinearColor Col = BKind == 1 ? Rgb(0.45f, 0.72f, 1.f) : BKind == 0 ? Rgb(1.f, 0.74f, 0.36f) : Rgb(1.f, 0.66f, 0.28f);
-			const float E = Env(T, 0.7f, 2.2f, 1.6f);
-			const double Top = 7.0 * KmU;
-			const double Bottom = Top * (1.0 - Smooth01(T / 0.7f));
-			Fx.AddAxis(G + Up * Bottom, G + Up * Top, float(0.32 * KmU), EShape::Beam, Scale(Col, 3.2f * E), false, 3, 0);
-			Fx.AddAxis(G + Up * Bottom, G + Up * Top, float(1.2 * KmU), EShape::Beam, Scale(Col, 0.9f * E), false, 11, 0);
-			const float Rr = float(KmU * (0.3 + 2.4 * Smooth01((T - 0.5f) / 2.2f)));
-			// a soft spreading halo on the ground (verifier fix: the thin 3-unit ring read as a neon UI marker)
-			if (T > 0.5f) Fx.AddFlat(G + Up * (0.03 * KmU), Rr, Rr, 0.f, EShape::Ring, Scale(Col, 1.3f * E * (1.f - Smooth01((T - 0.5f) / 3.f))), false, 5, 100, float(0.05 * KmU));
-			Fx.AddFlat(G + Up * (0.02 * KmU), float(1.4 * KmU), float(1.4 * KmU), 0.f, EShape::Disc, Scale(Col, 0.8f * E), false, 9, 60, float(0.05 * KmU));
-			Fx.AddLight(G + Up * (0.5 * KmU), Col, 10.f * E, float(4.0 * KmU));
+			// wave 4b: warm light from a gap in the sky, not a neon column. A broad shaft leaning in from the sun's side
+			// (strands of crepuscular rays inside it, dust motes drifting down through the light), a bright opening
+			// in the air at its top, and the town bathed in a warm pool of light that lingers after the shaft fades.
+			const FLinearColor Col = BKind == 1 ? Rgb(0.62f, 0.8f, 1.f) : BKind == 0 ? Rgb(1.f, 0.8f, 0.48f) : Rgb(1.f, 0.74f, 0.4f);
+			const float E = Env(T, 0.9f, 2.4f, 1.8f);
+			// (cloud base height: the light comes out of the weather, it is not a beam from space)
+			const double Top = 4.2 * KmU;
+			// the shaft leans toward the sun (as real light through a cloud gap does), about 15 degrees
+			FVector Sun = Fx.SunPlanet() - Up * FVector::DotProduct(Fx.SunPlanet(), Up);
+			const double SunH = Sun.Size();
+			Sun = SunH > 1e-3 ? Sun / SunH : Horiz(Up, 0.6);
+			const FVector Lean = Sun * (Top * 0.26);
+			const FVector Src = G + Up * Top + Lean;
+			const double Open = Smooth01(T / 0.9f);   // the shaft reaches down from the sky
+			const FVector Foot = FMath::Lerp(Src, G, Open);
+			// a broad soft shaft (widening toward the ground) with a few strands inside it
+			Fx.AddAxis(Foot, Src, float(1.5 * KmU), EShape::Beam, Scale(Col, 0.8f * E), false, 11, 160);
+			Fx.AddAxis(Foot, Src, float(0.7 * KmU), EShape::Beam, Scale(Col, 1.0f * E), false, 3, 110);
+			for (int32 K = 0; K < 3; ++K)
+			{
+				const FVector Off = Horiz(Up, K * 2.1 + 0.4) * (KmU * (0.3 + 0.2 * K));
+				Fx.AddAxis(Foot + Off * 1.4, Src + Off * 0.6, float(KmU * (0.22 + 0.06 * K)), EShape::Beam, Scale(Col, 0.55f * E), false, uint8(40 + K * 23), 0);
+			}
+			// the bright opening in the air where the light breaks through (soft, wide, dim: not a second sun)
+			Fx.AddFacing(Src, float(2.6 * KmU), EShape::Glow, Scale(Col, 0.45f * E));
+			// warm pool on the town: a soft lit disc, and a light that lingers a little after the shaft
+			const float Pool = Env(T, 0.9f, 2.8f, 2.4f);
+			Fx.AddFlat(G + Up * (0.02 * KmU), float(1.8 * KmU), float(1.8 * KmU), 0.f, EShape::Disc, Scale(Col, 0.7f * Pool), false, 9, 30, float(0.05 * KmU));
+			Fx.AddFacing(G + Up * (0.15 * KmU), float(0.7 * KmU), EShape::Glow, Scale(Col, 1.6f * Pool));
+			Fx.AddLight(G + Up * (0.6 * KmU), Col, 12.f * Pool, float(4.5 * KmU));
 			FRand& R = Fx.R();
-			if (T > 0.5f && T < 3.5f)
-				for (int32 I = 0, N = Count(R, 34.0, Dt); I < N; ++I)
+			if (T > 0.6f && T < 4.f)
+				for (int32 I = 0, N = Count(R, 24.0, Dt); I < N; ++I)
 				{
-					const double Az = R.F() * TwoPi;
-					const double Rad = KmU * R.Range(0.2f, 1.3f);
-					const FVector H = Horiz(Up, Az);
-					const FVector Swirl = Horiz(Up, Az + 1.5708) * (KmU * (BKind == 1 ? 0.45 : 0.15));
-					Fx.Emit(MoteP(R, G + H * Rad + Up * (KmU * 0.3 * R.F()), Up * (KmU * R.Range(0.3f, 0.8f)) + Swirl, R.Range(2.5f, 4.f), float(KmU * R.Range(0.04f, 0.07f)), Scale(Col, R.Range(3.f, 6.f))));
+					// motes of light settling through the shaft (and, for Inspire, rising and swirling)
+					const float Along = R.F();
+					const FVector P = FMath::Lerp(G + Up * (0.2 * KmU), Src, double(Along) * 0.8) + RandHoriz(R, Up) * (KmU * 0.5 * R.F());
+					const FVector V = BKind == 1 ? Up * (KmU * R.Range(0.25f, 0.5f)) + Horiz(Up, R.F() * TwoPi) * (0.3 * KmU) : -Up * (KmU * R.Range(0.12f, 0.3f)) - Lean.GetSafeNormal() * (0.05 * KmU);
+					Fx.Emit(MoteP(R, P, V, R.Range(2.f, 3.2f), float(KmU * R.Range(0.02f, 0.035f)), Scale(Col, R.Range(2.5f, 4.5f))));
 				}
-			return T < 4.8f;
+			return T < 6.f;
 		}
 	};
 
@@ -942,15 +1111,12 @@ namespace
 			const float E = Env(T, 0.8f, 2.4f, 1.8f);
 			const FLinearColor Col = Rgb(1.f, 0.9f, 0.68f);
 			Fx.AddFacing(C, float(KmU * (1.2 + 0.15 * FMath::Sin(T * 3.f))), EShape::Glow, Scale(Col, 6.f * E));
-			const FVector Rt = Fx.CamRightPlanet(), Uq = Fx.CamUpPlanet();
 			Fx.AddFacing(C, float(KmU * 3.0), EShape::Glow, Scale(Col, 0.8f * E));
-			for (int32 K = 0; K < 8; ++K)
-			{
-				const double A = K * TwoPi / 8.0 + T * 0.15 + 0.2;
-				const double L = KmU * (2.2 + 1.4 * FMath::Sin(K * 2.7 + T * 1.3));
-				const FVector D = Rt * FMath::Cos(A) + Uq * FMath::Sin(A);
-				Fx.AddAxis(C, C + D * (L * 0.75), float(0.3 * KmU), EShape::Beam, Scale(Col, 0.9f * E), false, uint8(K * 19), 0);   // verifier: shorter, dimmer (read as a lens-flare star)
-			}
+			// wave 4b: the eight screen-space rays read as a lens-flare star; now a soft column of light rising from
+			// the chosen one into the sky, with motes of light drifting up through it
+			const FVector G0 = C - Up * (0.48 * KmU);
+			Fx.AddAxis(G0, G0 + Up * (KmU * (3.0 + 3.0 * Smooth01(T / 1.2f))), float(0.5 * KmU), EShape::Beam, Scale(Col, 1.2f * E), false, 61, 120);
+			Fx.AddAxis(G0, G0 + Up * (KmU * 5.0), float(0.14 * KmU), EShape::Beam, Scale(Col, 2.0f * E), false, 62, 0);
 			Fx.AddLight(C, Col, 9.f * E, float(4.0 * KmU));
 			FRand& R = Fx.R();
 			for (int32 I = 0, N = Count(R, 16.0 * E, Dt); I < N; ++I)
@@ -1007,38 +1173,133 @@ namespace
 		double Ang = 0.08;
 		float Strength = 1.f;
 		bool bSeed = false;
+		float HoldUntil = 0.f;     // a held brush keeps the wave alive (Refresh) until this time
+		FVector Centre = FVector::ZeroVector;   // glides after the brush
+		bool Refresh(int32 NewCell) override
+		{
+			if (bSeed || NewCell < 0 || T > FMath::Max(HoldUntil, 2.2f * 0.6f) + 0.3f) return false;   // fading: start a new wave
+			Cell = NewCell;
+			HoldUntil = T + 0.8f;
+			return true;
+		}
 		bool Tick(ADmFx& Fx, float Dt) override
 		{
 			if (!Fx.W() || Cell < 0) return false;
 			const float Dur = bSeed ? 3.5f : 2.2f;
-			const FVector Up = Fx.CellDir(Cell);
-			const FVector G = Fx.CellSurface(Cell, 0.03 * KmU);
+			const FVector Want = Fx.CellDir(Cell);
+			Centre = Centre.IsNearlyZero() ? Want : FMath::Lerp(Centre, Want, FMath::Min(1.0, double(Dt) * 5.0)).GetSafeNormal();
+			const FVector Up = Centre;
+			const FVector G = Up * (Fx.SurfaceR(Up) + 0.03 * KmU);
 			const float Pr = FMath::Clamp(T / Dur, 0.f, 1.f);
-			const float Fade = 1.f - Smooth01((T - Dur * 0.6f) / (Dur * 0.5f));
+			const float FadeAt = FMath::Max(Dur * 0.6f, HoldUntil);
+			const float Fade = 1.f - Smooth01((T - FadeAt) / (Dur * 0.5f));
 			const double Rr = Ang * FMath::Pow(double(Pr), 0.7);
 			FRand& R = Fx.R();
+			// wave 4b: the life wave reads as a front of living light rolling over the land, not as target rings: one
+			// soft warm-gold leading edge with a broad green glow trailing behind it (a gradient, no second ring), a
+			// faint green wash over the ground it has crossed, pollen drifting up behind the front. The planet's own
+			// vegetation update supplies the lasting green.
 			if (Rr > 0.002)
 			{
-				const int32 Segs = FMath::Clamp(int32(TwoPi * Rr * DmCoords::RadiusKm / 0.6), 24, 220);
-				// verifier fix: at 1.1 units (and several at once under a held brush) the wave read as neon target rings;
-				// now a fainter, wider band of green light, the motes carry the sparkle
-				Fx.AddRing(Up, Rr, 0.05 * KmU, float(KmU * (0.8 + 10.0 * Rr)), EShape::Bolt, Scale(Rgb(0.42f, 1.f, 0.30f), 0.45f * Strength * Fade), false, Segs, 2, 252);
-				Fx.AddRing(Up, Rr * 0.85, 0.05 * KmU, float(KmU * (0.3 + 4.0 * Rr)), EShape::Bolt, Scale(Rgb(1.f, 0.9f, 0.45f), 0.2f * Strength * Fade), false, Segs, 2, 252);
+				// wave 4b retry: the broad 0.55 additive band (a quarter of the radius wide) washed out to a pale beige
+				// haze over sunlit land and no front could be seen (shots/ue-fx-bloom-4b-f300). Now, as in
+				// docs/concept/genesis/genesis-5-life-wave: a THIN bright gold-white leading edge with a soft halo, the
+				// land behind it TINTED living green (lit, alpha-blended: it greens the ground instead of adding light),
+				// greenest just behind the front, and only over land.
+				const float Rw = float(Rr * DmCoords::RadiusUU);
+				const float Breath = 0.88f + 0.12f * FMath::Sin(T * 3.1f);
+				// (verifier fx4b-verify: the edge was 0.035 x radius half-width on 120 segments, i.e. each quad WIDER than
+				// it was long, so every bend showed a wedge seam (ticks across the line in ue-fx-bloom-4c-f300); and at
+				// 1.45 additive over sunlit land it tonemapped to cream-white, not gold. Now 72 segments about twice as
+				// long as the line is wide, a thinner line, a deeper gold with almost no white core.)
+				const float Edge = float(KmU * 0.08 + Rw * 0.02);      // half-width of the leading edge
+				const float Lift = float(0.25 * KmU);                    // above the rendered relief (0.05 km sank under it)
+				const float Gold = Strength * Fade * Breath;
+				// leading edge: a ragged line of light over LAND only (the first try, one flat Ring quad, read as a cream
+				// halo ring over sea and land alike). Segments along the front, the radius wavering with a few
+				// harmonics (it flows round the land like spreading growth, not a drawn circle), brightness varying.
+				const int32 Segs = 72;
+				const double Step = TwoPi / Segs;
+				const double Ph = Cell * 0.37;
+				auto FrontR = [&](double Az) { return Rr * (1.0 + 0.045 * FMath::Sin(5.0 * Az + Ph) + 0.03 * FMath::Sin(11.0 * Az + 2.0 * Ph) + 0.012 * FMath::Sin(17.0 * Az + T * 0.7)); };
+				auto LandAt = [&](double Az) { return Fx.IsLandAt(Fx.Offset(Up, FrontR(Az), Az)); };
+				// the coast where the front leaves the land, between a land azimuth and a sea one (verifier: segments were
+				// kept or dropped whole, so the line ended in a stub hanging over the water or short of the shore)
+				auto Shore = [&](double ALand, double ASea) { for (int32 It = 0; It < 4; ++It) { const double Mid = 0.5 * (ALand + ASea); if (LandAt(Mid)) ALand = Mid; else ASea = Mid; } return ALand; };
+				for (int32 K = 0; K < Segs; ++K)
+				{
+					double A0 = K * Step, A1 = A0 + Step;
+					const double Am = A0 + 0.5 * Step;
+					const bool L0 = LandAt(A0), Lm = LandAt(Am), L1 = LandAt(A1);
+					if (!L0 && !Lm && !L1) continue;
+					if (Lm) { if (!L0) A0 = Shore(Am, A0); if (!L1) A1 = Shore(Am, A1); }
+					else if (L0) A1 = Shore(A0, Am);
+					else A0 = Shore(A1, Am);
+					const bool bCut = !(L0 && L1 && Lm);
+					const FVector D0 = Fx.Offset(Up, FrontR(A0), A0), D1 = Fx.Offset(Up, FrontR(A1), A1);
+					const FVector P0 = D0 * (Fx.SurfaceR(D0) + Lift), P1 = D1 * (Fx.SurfaceR(D1) + Lift);
+					// overlap: the Bolt end ramps sum flat between whole segments; a segment cut at the shore keeps its
+					// own length so its end ramp fades out on the beach
+					const FVector Pm = (P0 + P1) * 0.5, Hd = (P1 - P0) * 0.5 * (bCut ? 1.0 : 12.0 / 11.0);
+					const float B = 0.75f + 0.25f * FMath::Sin(float(17.0 * Am + Ph)) * FMath::Sin(float(7.0 * Am) + T * 1.3f);
+					// (one soft band: a separate wide halo band, far wider than a segment is long, showed its segment
+					// ends as radial spokes)
+					Fx.AddAxis(Pm - Hd, Pm + Hd, Edge, EShape::Bolt, Scale(Rgb(1.f, 0.6f, 0.1f), 1.7f * Gold * B), false, uint8(K), 225);
+					// a faint green-gold breath of light around it (the concept's glow), soft only: no core
+					Fx.AddAxis(Pm - Hd, Pm + Hd, Edge * 1.8f, EShape::Bolt, Scale(Rgb(0.42f, 0.62f, 0.08f), 0.4f * Gold), false, uint8(K + 101), 255);
+				}
+				// living green over the land the wave has crossed: lit, alpha-blended mottled patches on a polar grid
+				// (they green the ground rather than add light), greener toward the front; none over the sea
+				{
+					const int32 Rings = 8;   // smaller patches: less green spilling past the coast
+					const double Sp = Rr / Rings;
+					for (int32 J = 0; J < Rings; ++J)
+					{
+						const double F = (J + 0.5) / Rings;
+						const int32 N = FMath::Max(6, int32(TwoPi * F * Rings + 0.5));
+						for (int32 K = 0; K < N; ++K)
+						{
+							const double Az = (K + 0.5 * (J & 1)) * TwoPi / N + Ph;
+							const FVector D = Fx.Offset(Up, Rr * F, Az);
+							if (!Fx.IsLandAt(D)) continue;
+							// wide overlap: at 0.85 the patches showed as dots. Near a coast the patch shrinks until no sea lies
+							// within its visible radius (8 probes at 0.95 of it), or is dropped (verifier fx4b-verify: four probes
+							// and a fixed half size left whole green blots on the sea round islets, ue-fx-seed-4c-f260)
+							float Hs = 0.f;
+							for (const double Fit : { 1.0, 0.6, 0.36 })
+							{
+								const double Pr8 = Sp * 1.25 * Fit * 0.95;
+								bool bWet = false;
+								for (int32 Q = 0; Q < 8 && !bWet; ++Q) bWet = !Fx.IsLandAt(Fx.Offset(D, Pr8, Az + Q * (TwoPi / 8.0)));
+								if (!bWet) { Hs = float(Sp * DmCoords::RadiusUU * 1.25 * Fit); break; }
+							}
+							if (Hs <= 0.f) continue;
+							Fx.AddFlat(D * (Fx.SurfaceR(D) + Lift * 0.7), Hs, Hs, float(Az * 3.0), EShape::Disc,
+								WithA(Rgb(0.035f, 0.1f, 0.018f), (0.36f + 0.3f * float(F)) * Strength * Fade * (0.3f + 0.7f * Fx.DayAt(D))), true, uint8(J * 31 + K), 150, float(0.6 * KmU));
+							// (verifier: by night the lit tint is near black while exposure lifts the ground: the wave left a
+							// dark olive smudge, ue-fx-bloom-night-v4b3-f260; at night the gold edge carries the wave)
+						}
+					}
+				}
+				// (a low mist along the front was tried: at strategy distance its puffs read as stray white dots)
 			}
 			if (bSeed && T < 1.2f)
 			{
-				Fx.AddFacing(G + Up * (0.3 * KmU), float(KmU * (1.0 + 2.0 * T)), EShape::Glow, Scale(Rgb(0.5f, 1.f, 0.45f), 4.f * (1.f - T / 1.2f)));
+				Fx.AddFacing(G + Up * (0.3 * KmU), float(KmU * (1.0 + 2.0 * T)), EShape::Glow, Scale(Rgb(0.6f, 1.f, 0.45f), 3.f * (1.f - T / 1.2f)));
 				Fx.AddLight(G + Up * (0.5 * KmU), Rgb(0.6f, 1.f, 0.5f), 8.f * (1.f - T / 1.2f), float(5.0 * KmU));
 			}
-			if (T < Dur)
-				for (int32 I = 0, N = Count(R, 46.0 * Strength, Dt); I < N; ++I)
+			if (T < FMath::Max(Dur, HoldUntil))
+				for (int32 I = 0, N = Count(R, 40.0 * Strength, Dt); I < N; ++I)
 				{
-					const FVector Dd = Fx.Offset(Up, Rr * FMath::Sqrt(R.F()), R.F() * TwoPi);
+					// pollen and seed-down just behind the front: tiny, warm, drifting up and downwind
+					const FVector Dd = Fx.Offset(Up, Rr * FMath::Sqrt(R.Range(0.5f, 1.f)), R.F() * TwoPi);
 					if (Fx.IsSeaCell(Fx.CellAt(Dd))) continue;
-					Fx.Emit(MoteP(R, Dd * (Fx.SurfaceR(Dd) + 0.04 * KmU), Dd * (KmU * R.Range(0.15f, 0.45f)), R.Range(1.8f, 3.f), float(0.045 * KmU),
-						R.F() < 0.7f ? Rgb(1.4f, 3.2f, 0.9f) : Rgb(3.2f, 2.8f, 1.0f)));
+					FParticle M = MoteP(R, Dd * (Fx.SurfaceR(Dd) + 0.03 * KmU), Dd * (KmU * R.Range(0.05f, 0.18f)), R.Range(2.f, 3.5f), float(0.012 * KmU),
+						R.F() < 0.6f ? Rgb(1.1f, 1.7f, 0.55f) : Rgb(1.8f, 1.5f, 0.6f));
+					M.Wind = 0.4f;
+					Fx.Emit(M);
 				}
-			return T < Dur + 0.6f;
+			return T < FMath::Max(Dur, HoldUntil) + Dur * 0.5f + 0.2f;
 		}
 	};
 
@@ -1483,8 +1744,12 @@ namespace DmFxFx
 		const float Heat = FMath::Clamp(Fire, 0.f, 1.f);        // visual heat: 1 burning .. 0 cold
 		const float F = FMath::Clamp((Heat - 0.35f) / 0.65f, 0.f, 1.f);   // flames die first, smoke lingers
 		const float Flick = 0.75f + 0.4f * FMath::PerlinNoise1D(float(Fx.Now()) * 5.f + Cell * 0.37f);
-		const float NightF = 0.15f + 0.85f * (1.f - Fx.DayAt(G));
+		const float NightF = 0.4f + 0.6f * (1.f - Fx.DayAt(G));   // wave 4b: 0.15 by day hid a wildfire at strategy distances
 		Fx.AddFacing(G + Up * (0.08 * KmU), float(KmU * (0.3 + 0.5 * Heat)), EShape::Glow, Scale(Rgb(1.f, 0.42f, 0.12f), (0.6f + 5.f * F) * Flick * NightF));
+		// wave 4b: the burning ground itself, a mottled bed of embers under the flames (the fire front reads as a
+		// ragged glowing line from strategy distances), darkening the ground as it chars
+		Fx.AddFlat(G + Up * (0.02 * KmU), float(KmU * 0.62), float(KmU * 0.5), float(Cell % 11), EShape::Disc,
+			WithA(Scale(Blackbody(1000.f + 450.f * F), (0.2f + 1.6f * F) * Flick * NightF), 0.3f * Heat), false, uint8(Cell * 13), 230, float(0.05 * KmU));
 		if (F > 0.f) Fx.AddLight(G + Up * (0.3 * KmU), Rgb(1.f, 0.45f, 0.15f), (1.f + 4.f * F) * Flick, float(2.2 * KmU));
 		if (bNear && F > 0.f)
 		{

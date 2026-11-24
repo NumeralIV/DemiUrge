@@ -1,0 +1,74 @@
+2026-11-23, wave 4b fx: independent adversarial verification (lane fx4b-verify, Unreal/lanes/fx4b-verify.owned).
+Builder's marker: docs/handoff/done-ue/wave4b-fx.built.txt (first pass 2026-11-20 + retry pass 2026-11-23).
+
+SCORE: 7 / 10
+The track turned the effects from flat sprites into readable spectacle at strategy distance: the volcano's lit charcoal
+ash column, the meteor's fireball + ejecta + shock front, the blessing shaft and the wildfire smoke all read as volumes,
+within budget. The retry's two fixes (life wave, sub-pixel grain) held up in principle, but the life wave still had
+visible defects that this verification fixed (below). Not a 9: fires at strategy distance are mostly smoke with a few
+tiny orange points, the blessing shaft is pale-white rather than warm, and the night views (lit by other tracks) look odd.
+
+Re-run (fresh lane from main, built, scenarios on the fixed 1/30 s step, trigger frame 200)
+- Baseline reproduced: shots/ue-fx-bloom-v4b-f{240,300}.png, ue-fx-seed-v4b-f{230,260}.png (identical to the
+  builder's -4c shots).
+- Defects found in the builder's life wave (FGreenWave, Game/FX/DmFxEffects.cpp):
+  1. Green blots ON THE SEA round islets and along coasts (ue-fx-seed-v4b-f260: three green discs on the water by the
+     islet; ue-fx-bloom-v4b-f300: green haze over the bay west of the front). Cause: coast test = nearest sim cell
+     (CellAt + IsSeaCell). A cell's Voronoi region straddles the drawn coastline by up to a cell (~1.7 km on the
+     40962-cell planet), and the 4-probe "half size near coasts" still left a 0.56-cell patch on a one-cell islet.
+  2. Seam ticks across the gold edge at every bend (ue-fx-bloom-4c-f300 / v4b-f300). Cause: 120 segments with a
+     half-width of 0.035 x radius, i.e. every Bolt quad was WIDER than it was long, so camera-facing quads of
+     neighbouring segments wedged at each bend.
+  3. The edge read cream-white, not gold (1.45 additive over sunlit beige land tonemaps to white; Bolt par 200 adds a
+     white core), and its ends at the coast were whole segments: stubs hanging over the water or stopping short.
+  4. By night the lit, alpha-blended green tint is near black while exposure lifts the ground: the wave left a dark
+     olive smudge (ue-fx-bloom-night-v4b3-f260, -sun=-10,61).
+  5. (ADmFx::DrawParticles, Game/FX/DmFx.cpp) the builder's sub-pixel fix grows S, then a velocity streak's length is
+     S x Aspect, so a widened streak also gets longer and keeps Grow x its energy, not 1 x as its comment says.
+     TRIED and REVERTED: keeping the pre-grow length made every ember a bright sub-pixel-long dot, and the meteor's
+     burning forest became a carpet of golden grain (shots/ue-fx-meteor-main-v4b-f300.png vs -v4b2-f300.png). The
+     builder's longer, dimmer streak is what reads right; left as is, with a comment saying why.
+
+Fixes (in the track's own files; synced to main)
+- DmFx.h / DmFx.cpp: new ADmFx::IsLandAt(Dir): land at sub-cell precision, elevation above sea level interpolated
+  over the sim triangle holding the direction (same gnomonic barycentrics as the picker), i.e. the drawn coast.
+- FGreenWave edge: 72 segments (each ~2x as long as the line is wide), half-width 0.08 km + 0.02 x radius, deeper
+  gold Rgb(1, 0.6, 0.1) x 1.7 with Bolt par 225 (no white core), plus a soft green-gold glow band (1.8x width,
+  par 255, 0.4). Segments are trimmed to the shore by a 4-step bisection on IsLandAt, so the line ends on the beach;
+  a trimmed segment keeps its own length so its end ramp fades out there. Top harmonic 23 -> 17 (3 samples per period
+  at 72 segments read as jaggies).
+- FGreenWave tint: patch centres need IsLandAt; each patch takes the largest size of {1, 0.6, 0.36} x its grid size
+  whose 8 probes at 0.95 of its radius are all land, else it is dropped. Alpha x (0.3 + 0.7 x DayAt).
+- DrawParticles: unchanged in the end (see 5; only a comment added).
+
+Proof (shots/, lane fx4b-verify unless noted)
+- ue-fx-bloom-v4b4-f{240,300,380}.png vs ue-fx-bloom-4c / -v4b: gold front, no seam ticks, no green on the bay, ends
+  at the shore. Before/after crop: shots/ue-fx-bloom-verify-cmp.png (top = builder f300, bottom = fixed f300).
+- ue-fx-bloom-close-v4b4-f260.png (-cam=29.37,-118.51,9,20,38,60): close-up, soft gold ribbon, faint joints only.
+- ue-fx-bloom-night-v4b4-f260.png: no dark smudge; the gold front carries the wave at night.
+- ue-fx-seed-main-v4b-f{230,260,300}.png, rendered from the MAIN build after the sync: no green on the sea round
+  the islet (compare ue-fx-seed-v4b-f260), edge gold and cut at the coasts.
+- ue-fx-fire-v4b4-f{300,450}.png: unchanged vs -4c (no regression).
+- ue-fx-meteor-main-v4b2-f{264,300,450}.png, MAIN build after the final sync: identical to the builder's
+  ue-fx-meteor-main-4c-f300 (fireball, ejecta, separate flames under smoke, no grain); 1896-2632 particles, FX tick
+  1.8 ms on the loaded machine (same counts as the builder's run).
+- Main: Unreal/build.ps1 Succeeded, 0 errors / 0 C warnings (DmFx.cpp, DmFxEffects.cpp recompiled).
+Budget: bloom with the brush held: 350-380 quads (was 380, 72 edge + 72 glow segments now vs 120), FX tick 0.52-0.59 ms
+  measured while the machine ran three other lanes' renders (game thread 11.9 ms vs 3.4 ms in the idle baseline run,
+  where the builder's version ticked 0.33-0.35 ms); IsLandAt costs one cellAt + <= 6 triple products. Fire 0.15-0.28 ms.
+  GPU 12.1-12.7 ms in these scenarios (shared machine).
+Sync: lane.ps1 sync fx4b-verify -Force (3 files: DmFx.cpp, DmFx.h, DmFxEffects.cpp; then DmFx.cpp again for the revert,
+  main rebuilt: Succeeded, 0 errors). -Force only because the stale
+  wave-1 lane fx-verify still claims Game/FX/**; status showed "yours" for all three, no main change since the lane
+  was made, 0 conflicts. Main's previous copies kept in the verifier scratchpad (fx-premerge).
+
+Still open
+- FX: the meteor's wildfire reads as evenly spaced flame + grey puff stamps at f300 (sprite-like); green tint now stops ~0.5-1 km short of very ragged coasts (beige margin; the trade for no spill); fires at
+  strategy distance are smoke columns with a few tiny flame points; blessing shaft reads pale white more than warm;
+  wildfire puffs repeat (builder's note).
+- Not FX: night renders (-sun=-10,61 over the bloom fixture) show a pale grey-white sea, glowing white road lines and
+  dark cloud blobs (Game/Planet / Game/Towns / Game/Sky); city lights as white blobs (Game/Towns); the orange crack
+  network over the lava field (Game/Planet). Owner issue 4's "grey land after seeding" is the lasting vegetation
+  colour, which comes from the planet's vegetation update, not this effect.
+- Harness: on this overloaded machine two renders stalled during engine start (seed-v4b4 timeout, seed-v4b5 silent
+  log) and two games did not exit 60 s after their last shot (killed after writing all shots); not FX code.

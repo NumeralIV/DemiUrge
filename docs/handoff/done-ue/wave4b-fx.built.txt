@@ -1,0 +1,68 @@
+2026-11-20, wave 4b fx (lane fx4b, Unreal/lanes/fx4b.owned): owner playtest 1 issue 5 ("effects read as sprites").
+Lane synced with -Force (10 files: Game/FX/DmFx.cpp/.h, DmFxEffects.cpp, DmFxRender.cpp, DmFxScenarios.cpp, DmFxTypes.h,
+Scripts/fx/fx.hlsl, new Scripts/fx/fx-mats.ps1, Content/FX/M_Fx + M_FxOverlay regenerated); main Unreal/build.ps1 Succeeded.
+
+What changed
+- Smoke shader (fx.hlsl shape 1): every ash / smoke / steam / dust puff is a lit volume: 5 seeded lobes + fbm form a height
+  field, its slope toward the sun shades the billows (sunlit tops, dark crevices). Volcano, meteor, nuke, fire smoke all use it.
+- Volcano: dense charcoal ash column with buoyancy (rises ~8-10 km, spreads downwind), no incandescence on ash (that made the
+  plume salmon-pink); lava fountain = flame jet + short incandescent bombs (no more 55 radial streaks/s = the "starburst");
+  small orange vent core (the 1.6 km pink halo is gone); 5 lava rivulets down the cone (new Lava channel shape 12: hot core
+  under drifting crust) with a soft glow band; field lava = night glow haze only (square pools showed the cell grid);
+  vent light radius 7 -> 3.5 km.
+- Bloom / seed: one wave per held brush that follows and holds (was a new wave every 0.7 s = concentric target rings);
+  front = two flat noise-broken Ring quads (warm gold edge, green trail) lifted 0.25 km (at 0.05 km it sank under the
+  rendered relief and was invisible), faint green wash, tiny pollen motes. Motes are capped at 3.5 px half size and the
+  four-point star glint is opt-in (par > 0.5): no more screen-filling sparkles close up.
+- Lightning: afterglow (violet-blue channel ghost ~1 s, >= 2.5 px wide so it reads at strategy distance), ember at the
+  strike point, lights the real cloud deck (ADmSky::Strike), smaller sky flash.
+- Meteor impact: scorched ejecta rays (44, linger 48 s, read from orbit), brief Wilson condensation dome, softer and wider
+  shock front (was a crisp white UI circle), dust wall alpha down.
+- Blessing (heal / inspire / consecrate / answered prayer): broad warm shaft from cloud-base height leaning toward the sun,
+  crepuscular strands and dust motes inside (Beam shape par > 0), soft opening glow, warm pool + lingering light (was a
+  7 km neon column with a ring). Prophet: soft rising column (the 8-ray lens-flare star is gone).
+- Fire: ember bed under the flames (reads as a glowing front), darker smoke, day visibility floor 0.15 -> 0.4.
+- Global: renderer depth-fade floor = 1.2 % of distance (ground quads with 30-60 m fades made golden per-pixel speckle under
+  fires and strikes); incandescence fades out below ~900 K (dull red on grey smoke read pink); FX lights by day 0.2 -> 0.06,
+  smoke underlight by day 0.25 -> 0.1; softer sunset tint on lit smoke.
+- Scenarios: Godly() also raises the world age to Industry (v3 unlocks Volcano by age; fx-volcano was REFUSED on the Sail
+  fixture and showed nothing). Not Atomic/Space (Monsoon / Star-fall would change rain and meteor).
+
+Proof (lane fx4b, fixed 1/30 s step, trigger frame 200; shots/):
+  ue-fx-volcano-4b-f{260,450,700}.png, ue-fx-volcano-night-4b-f{450,700}.png, ue-fx-volcano-perf-4b-f455.png,
+  ue-fx-bloom-4b-f{240,300,380}.png (+ ue-fx-bloom-4b-ov-f300.png, -fxringoverlay diagnostic),
+  ue-fx-lightning-4b-f{201,204,215,240}.png, ue-fx-heal-4b-f{230,260,320}.png, ue-fx-meteor-4b-f{256,264,300,450}.png,
+  ue-fx-fire-4b-f{300,450}.png, ue-fx-nuke-4b-f{215,300,420}.png, ue-fx-orbit-4b-f{260,330}.png
+  main: ue-fx-volcano-main-4b-f455.png
+Budget: FX tick 0.1-0.26 ms CPU (volcano at full eruption, 400 particles, 730 quads, -fxstats); GPU over the 60 frames of a
+  running eruption 13.3 ms vs 13.9-15.7 ms in the same view before the trigger (machine shared with other renders) = no
+  measurable FX GPU cost; orbit view 10.5 ms.
+
+Open / not mine
+- City lights at night as white blobs (playtest issue 5, last clause) are Game/Towns (wave 4 owns it): not touched.
+- The planet's own lava-surface rendering (orange crack network over the whole lava field) is Game/Planet.
+- Volcano at dusk: plume tops above ~3 km catch the sun on this 100 km planet (physically right, reads warm).
+- Engine assertion at exit once (QueuedThreadPoolWrapper Work->GetRefCount, after all shots written) in fx-bloom; not FX code.
+- Repetition: wildfire / base-surge puffs are uniform at strategy distance (one puff kind per cell).
+
+==== 2026-11-23, retry pass (lane fx4b refreshed from main, synced -Force again: DmFx.cpp, DmFxEffects.cpp; main build.ps1 Succeeded)
+Why: reviewing the 4b shots, two effects still failed the brief.
+1. Life wave (Bloom brush and the genesis seed wave, FGreenWave): the broad 0.55 additive Ring band washed out to a pale
+   beige haze over sunlit land; no front could be seen (ue-fx-bloom-4b-f300; release notes issue 4 "the life wave barely
+   colours the land"). Now, after docs/concept/genesis/genesis-5-life-wave: a thin ragged gold leading edge built from 120
+   Bolt segments along a wavering radius (5/11/23 harmonics), drawn over LAND only; behind it the ground is tinted living
+   green by lit, alpha-blended mottled Disc patches on an 8-ring polar grid (greener toward the front, half-size patches
+   at coasts, none centred on sea). Tried and dropped: one flat Ring edge (a cream halo ring over sea and land), a wide
+   halo band (segment ends showed as radial spokes), a mist of puffs along the front (stray white dots at strategy distance).
+2. Golden grain (meteor, wildfire): sparks and embers 10-50 m across are sub-pixel at strategy distance, so only the quads
+   covering a pixel centre drew: a sparse field of random hot pixels (ue-fx-meteor-4b-f300). ADmFx::DrawParticles now
+   draws any particle smaller than 0.9 px half-size at 0.9 px with light and opacity scaled by the area gained (width only
+   for velocity-stretched streaks): energy kept, aliasing gone. Fires now read as distinct flames + smoke columns.
+Proof (lane fx4b unless noted): shots/ue-fx-bloom-4c-f{240,300,380}.png, ue-fx-seed-4c-f{230,260,300}.png,
+  ue-fx-meteor-4c-f{256,264,300,450}.png, ue-fx-volcano-4c-f{260,450,700}.png, ue-fx-fire-4c-f{300,450}.png;
+  main: ue-fx-meteor-main-4c-f300.png. Compare with the -4b shots of the same frames.
+Budget: volcano at full eruption FX tick 0.22-0.33 ms CPU (render build 0.11-0.17 ms), 300-400 particles, 480-736 quads
+  (-fxstats); the life wave adds at most ~120 edge + ~200 tint quads while a brush is held; GPU 12.3-13.2 ms in the fx
+  scenarios (machine shared with two other lanes' renders).
+Still open / not mine: city lights as white blobs (Game/Towns); the lava field's orange crack network (Game/Planet);
+  a few half-size green patches still spill a little past very ragged coasts; the edge shows faint seams where it bends.

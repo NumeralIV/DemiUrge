@@ -27,6 +27,7 @@ namespace DmFx
 		Curtain = 9,   // aurora ribbon (U0.x continuous)
 		Rain = 10,     // falling streak sheet
 		Dot = 11,      // small hard disc (debris, cinders, birds)
+		Lava = 12,     // lava channel: V along the flow, hot core under drifting crust (alpha darkens the ground)
 	};
 
 	/** How a particle's quad is oriented. */

@@ -1,0 +1,52 @@
+2026-11-23, wave 4b audio (lane audio4b, Unreal/lanes/audio4b.owned = Source/Demiurge/Game/Audio/**): docs/content/sound-direction.md
+in the C++ synthesiser. Lane refreshed from main (109 files) and built clean (0 errors, 0 C warnings).
+NOT YET IN MAIN: `lane.ps1 sync audio4b` refused all 15 files because the stale wave-C9 lanes 'audio' and 'audio-verify'
+(Unreal/lanes/audio.owned, audio-verify.owned, 2026-11-19, inactive) still claim them. Main has not changed these files since
+the lane's base (status: all "yours", none "both changed"), so a `sync audio4b -Force` (or retiring those two .owned files)
+is safe; it needs the lead's go-ahead. After it: Unreal/build.ps1 on main.
+
+What the synth does (detail in docs/audio-preview/index.md, "The C++ synth against these previews")
+- Music 1.1-1.4: tonic and scale family from the seed, mode by age, per-age tempo / voice / colour / pulse as in 1.2, the phrase
+  grammar of 1.1 (>= 50 % rest in the voice layer), zoom thinning with 8 s fades, the moods of 1.3 (war, plague, golden, doom)
+  with fades and overlays, age changes at phrase end with the stinger and a 12 s ground crossfade, every stinger of 1.4
+  (queued one per 6 s, endings never dropped, -8 dB duck on the rest of the score).
+- Ambience 2: space hum (55 Hz 6 dB under 82.5 Hz, preview flag adopted), high air, wind and gusts, land beds by biome (sea,
+  surf, birds, leaves, crickets/owl, rainforest, grass, desert, tundra, mountain, wetland), rain, fire, lava, town by age;
+  at most 6 beds (quietest dropped).
+- Cues 3 and UI 4: every power and disaster cue with variants, distance low-pass, far echo, hall / sky sends, +/-3 % pitch on
+  noise cues and +/-5 cents on tonal cues; every UI sound.
+- Mix 5: default volumes 0.8/0.7/0.9/0.8/0.6, per-bus DC blockers, 30 Hz master high-pass, glue compressor, -1 dBFS look-ahead
+  limiter, ducking 5.2 (deepest request wins), 24 voices with 30 ms steals, per-name limits, 12 starts a second.
+
+This run (on top of the earlier wave 4b lane work)
+- Comet roar level: gain 0.18 -> 0.31; was 4.7 dB under its 3.2 target (st-max -32.7 vs -28 +/-2.5, the one FAIL), now -28.0.
+- New triggers in DmAudioDirector.cpp: the v4 Word powers had no sound (Speak = soft choir, Bless = heal chime + bloom grains,
+  Reveal = inspire shimmer, Test = far toll, Renew = quake rumble under the waking choir); the HUD toast (ui:toast) now plays
+  the toast ping (it had no trigger); card stages (gameplay-v4 3.10): open = far toll, answered = peace chime, lapsed =
+  softer toll, withdrawn = silent.
+- audio-live now injects Reveal, Speak, a toast and a card open / answer and checks that they reach the mix.
+
+Proof (lane audio4b, every launch through tools/render_slot.py)
+- shot.ps1 audio-render -noshot: RESULT PASS, 42 mix + 43 cue/stinger/instrument scripts, 2252 s of audio rendered in 45.9 s
+  (2.0 % of real time), deterministic (seed 7 twice 0aeddcd7; seed 8 differs). 0 clipped, 0 NaN, DC 0 in all. 5.5 table:
+  orbit -28.0 LUFS pk -17.3; coast-day -25.6 pk -9.1; forest-night -27.7; city -27.7; storm -24.2 pk -5.0; meteor -23.4 pk -3.9;
+  age-advance -26.6; stone -30.0; industry -25.5; space -30.2. Music alone: ages -30/-29/-28/-28/-26/-26/-30 LUFS, moods
+  peace -28.0, war -26.7, plague -30.4, golden -26.2, doom -29.9 (5.1 targets). Ambience: landscape -32.1, space -38.0,
+  orbit -36.0, town -33.7. Stress-all -18.2 LUFS pk -1.1; 300 s marathon -22.5 LUFS pk -1.9; sub < 60 Hz at most 20.7 %
+  (ambience-space), 2-5 kHz at most 9.8 %. Panels: shots/ue-audio-*.png (looked at city, live).
+- shot.ps1 audio-live -noshot: RESULT PASS. Fixture world, real director, 6 camera stops, 14 injected events, 35.8 s captured
+  at -26.2 LUFS, peak -4.8 dBFS, 0 clipped, sub 10.5 %, harsh 3.0 %, never silent; city town bed 0.97 (it was 0.00 on 11-20:
+  the town zone fix is in), forest-day birds 0.94, coast surf 0.98, orbit space 1.00; cues heard include choir, toast, toll,
+  chime. Director Sense 0.06 ms per call (10 Hz). shots/ue-audio-live.png.
+- powers-check (Flow scenario) in the lane: the 14 earlier powers PASS with audio cues; Speak, Bless, Reveal, Test and Renew
+  FAIL there because the HUD never arms them ("HUD armed consecrate", no power:used): a UI / control gap, not audio.
+
+For other owners
+- UI: nothing calls the hover sound; the HUD should call FDmAudio::Play(this, TEXT("hover")) on button hover (engine
+  rate-limits it). The settings screen has no UI volume slider (engine default 0.6 is used).
+- UI / control: the Word powers cannot be armed from the power bar in powers-check (see above).
+- Sky: one audio-live run asserted on engine exit (QueuedThreadPoolWrapper Work->GetRefCount() == 0) right after "DmSky: EndPlay
+  left a weather build running"; the same assert is in shot-perf-play-tnone.log and towns3 logs. The scenario had already
+  passed with code 0; the rerun exited cleanly.
+- The machine was at 100 % CPU for over an hour (other workflows); render_slot timed out once (exit 3) and the run was
+  repeated with --timeout 7200.

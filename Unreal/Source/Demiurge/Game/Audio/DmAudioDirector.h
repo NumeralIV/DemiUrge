@@ -57,7 +57,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	/** A cue placed at a cell (-1: unplaced, e.g. UI). Throttled per cue. */
-	bool PlayCue(EDmCue Cue, int32 Cell = -1, float Vol = 1.f, float Param = 0.f);
+	bool PlayCue(EDmCue Cue, int32 Cell = -1, float Vol = 1.f, float Param = 0.f, uint8 Variant = 0);
 	bool PlayStinger(EDmStinger S);
 	void SetVolumes(const FDmAudioVolumes& V);
 	void Suspend(bool bSuspend);
@@ -71,6 +71,8 @@ public:
 	int64 GetEventsHeard() const { return EventsHeard; }
 	/** The last cue names the director played (newest last; diagnostics). */
 	const TArray<FString>& GetRecent() const { return Recent; }
+	/** Every name ever added to Recent (cues and stingers), so a test can take exactly the names one event added. */
+	int64 GetNotesTotal() const { return NotesTotal; }
 	int32 GetFocusCell() const { return FocusCell; }
 	double GetAltitudeKm() const { return AltKm; }
 	/** Game-thread cost of sensing (verifier instrumentation): mean milliseconds per Sense() call and the call count. */
@@ -102,12 +104,18 @@ private:
 	double CueLast[int32(EDmCue::Count)] = {};
 	double StingerLast[int32(EDmStinger::Count)] = {};
 	float TensionHold = 0.f;
+	float GoldenHold = 0.f, DoomHold = 0.f;      // seconds left: a miracle just landed; a nuclear event
+	struct FYearSample { double Year = 0, Pop = 0, Devotion = 0; };
+	TArray<FYearSample> History;                // one sample a sim year (the golden-age and doom tests of 1.3)
+	uint8 LastArmGroup = 0;
+	FDmAudioVolumes LastVol;
+	double VolClickLast = -1;
 	float BrushRain = 0.f;
 	TArray<bool> Unlocked;
 	bool bUnlockPrimed = false;
 	int32 FocusCell = -1;
 	double AltKm = 0;
-	int64 CuesRequested = 0, EventsHeard = 0;
+	int64 CuesRequested = 0, EventsHeard = 0, NotesTotal = 0;
 	double SenseSec = 0;
 	int64 SenseCalls = 0;
 	TArray<FString> Recent;

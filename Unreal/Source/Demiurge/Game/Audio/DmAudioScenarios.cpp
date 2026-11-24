@@ -1,6 +1,8 @@
-// DEMIURGE — Game/Audio/DmAudioScenarios.cpp : the audio module's scenarios. Owner: C9 audio.
+﻿// DEMIURGE — Game/Audio/DmAudioScenarios.cpp : the audio module's scenarios. Owner: C9 audio.
 //
 //   shot.ps1 audio-render -noshot [-only=coast-day,cue-thunder] [-panels=mix|all|none]
+//       [-audioseeds=7,8,1234,99]   (the default: every script on four seeds, both scale families; the level of each cue
+//       and score is judged on its mean over the seeds, each render allowing the designed per-play jitter)
 //       renders every script of DmAudioTest offline (48 kHz), measures it, writes
 //       shots/ue-audio-<script>.png panels, shots/ue-audio-summary.png, ue-audio-summary-cues.png and
 //       WAVs under <project>/Saved/Audio/; exit code 1 if any check failed.
@@ -40,13 +42,28 @@ namespace
 	}
 	FString AudioDir() { return FPaths::Combine(FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()), TEXT("Audio")); }
 
-	bool IsMix(const FString& S) { return !S.StartsWith(TEXT("cue-")) && !S.StartsWith(TEXT("stinger-")); }
+	bool IsMix(const FString& S) { return !S.StartsWith(TEXT("cue-")) && !S.StartsWith(TEXT("stinger-")) && !S.StartsWith(TEXT("inst-")); }
 
 	void RunRender(FDmScenarioContext& Ctx)
 	{
 		FString Only, Panels = TEXT("all");
 		FDmShotArgs::Value(TEXT("-only="), Only);
 		FDmShotArgs::Value(TEXT("-panels="), Panels);
+		// (wave 4b verify) -audioseeds=7,8,... renders the whole suite once per world seed (default 7,8,1234,99: both scale families).
+		// An even seed takes the other family, another tonic and other phrases, so the targets are checked on more than
+		// one key and mode. Panels, WAVs and the summary come from the first seed; later seeds log as "<script>@<seed>".
+		FString SeedArg;
+		TArray<uint32> Seeds;
+		if (FDmShotArgs::Value(TEXT("-audioseeds="), SeedArg))
+		{
+			TArray<FString> Parts;
+			SeedArg.ParseIntoArray(Parts, TEXT(","));
+			for (const FString& P : Parts) if (!P.IsEmpty()) Seeds.Add(uint32(FCString::Strtoui64(*P, nullptr, 10)));
+		}
+		if (Seeds.Num() == 0) Seeds = { 7u, 8u, 1234u, 99u };
+		const bool bAcross = Seeds.Num() > 1;
+		TMap<FString, TArray<float>> Levels;   // script -> its judged loudness on each seed
+		TMap<FString, double> CpuBest;          // script -> the cheapest render over the seeds (share of real time)
 		TArray<FString> Want;
 		Only.ParseIntoArray(Want, TEXT(","));
 		const FString Shots = ShotsDir();
@@ -54,21 +71,37 @@ namespace
 		bool bAllPass = true;
 		double Audio = 0, Wall = 0;
 		const double T0 = FPlatformTime::Seconds();
-		for (const FString& Name : DmAudioTest::Scripts())
+		for (int32 SeedIdx = 0; SeedIdx < Seeds.Num(); ++SeedIdx)
 		{
-			if (Want.Num() && !Want.Contains(Name)) continue;
+		const uint32 Seed = Seeds[SeedIdx];
+		const bool bFirstSeed = SeedIdx == 0;
+		int32 SeedPass = 0, SeedFail = 0;
+		FString SeedFailed;
+		Ctx.Log(FString::Printf(TEXT("DmAudio: rendering the suite with seed %u"), Seed));
+		for (const FString& Script : DmAudioTest::Scripts())
+		{
+			if (Want.Num() && !Want.Contains(Script)) continue;
+			const FString Name = bFirstSeed ? Script : FString::Printf(TEXT("%s@%u"), *Script, Seed);
 			FDmAudioRender R;
-			const double Sec = DmAudioTest::DefaultSeconds(Name);
-			if (!DmAudioTest::Render(Name, Sec, R)) { Ctx.Log(FString::Printf(TEXT("DmAudio %s: unknown script"), *Name)); bAllPass = false; continue; }
+			const double Sec = DmAudioTest::DefaultSeconds(Script);
+			if (!DmAudioTest::Render(Script, Sec, R, Seed)) { Ctx.Log(FString::Printf(TEXT("DmAudio %s: unknown script"), *Name)); bAllPass = false; continue; }
 			const FDmAudioStats S = DmAudioAnalysis::Analyse(R.L.GetData(), R.R.GetData(), R.L.Num(), R.Sr);
-			const TArray<FDmAudioCheck> Checks = DmAudioTest::Checks(Name, R, S);
+			const TArray<FDmAudioCheck> Checks = DmAudioTest::Checks(Script, R, S, bAcross);
+			{
+				float Tg = 0.f, Tl = 0.f; bool bSt = false;
+				if (DmAudioTest::LevelTarget(Script, Tg, Tl, bSt)) Levels.FindOrAdd(Script).Add(bSt ? S.StMax : S.Lufs);
+				const double Cpu = R.RenderSeconds / FMath::Max(1e-6, S.Seconds);
+				double& Best = CpuBest.FindOrAdd(Script, 1e9);
+				Best = FMath::Min(Best, Cpu);
+			}
 			bool bPass = true;
 			FString Failed;
 			for (const FDmAudioCheck& K : Checks) if (!K.bPass) { bPass = false; Failed += FString::Printf(TEXT(" [%s: %s]"), *K.Name, *K.Detail); }
 			bAllPass &= bPass;
+			if (bPass) ++SeedPass; else { ++SeedFail; SeedFailed += TEXT(" ") + Script; }
 			Audio += S.Seconds; Wall += R.RenderSeconds;
 			FString Inst;
-			for (int32 I = 0; I < int32(EDmInst::Count) && I < 14; ++I)
+			for (int32 I = 0; I < int32(EDmInst::Count) && I < 20; ++I)
 				if (R.End.InstNotes[I] > 0) Inst += FString::Printf(TEXT("%s%s %d"), Inst.IsEmpty() ? TEXT("") : TEXT(", "), FDmMusic::InstName(EDmInst(I)), R.End.InstNotes[I]);
 			FString Layers;
 			for (int32 I = 0; I < int32(EDmLayer::Count); ++I)
@@ -78,18 +111,54 @@ namespace
 				R.End.CuesStarted, R.End.StingersStarted, R.MaxVoices, R.MaxMusicVoices, R.MeanMusicVoices, R.End.LimiterMinGain, R.End.SafetyClips,
 				*FString::Printf(TEXT("root %d"), R.End.ScaleRoot), FDmScale::ModeName(R.End.ScaleMode), *Layers, *Inst, *Failed));
 
+			if (!bFirstSeed) continue;
 			DmAudioAnalysis::WriteWav(FPaths::Combine(AudioDir(), Name + TEXT(".wav")), R.L.GetData(), R.R.GetData(), R.L.Num(), R.Sr);
 			const bool bPanel = Panels == TEXT("all") || (Panels == TEXT("mix") && IsMix(Name));
 			if (bPanel)
 			{
 				const FString Title = FString::Printf(TEXT("AUDIO  %s"), *Name.ToUpper());
-				const FString Sub = FString::Printf(TEXT("%s   %.0f S AT %.0f HZ, SEED 7, OFFLINE RENDER OF THE FULL MIX   CPU %.1f%%"), *R.Help.ToUpper(), Sec, R.Sr, 100.0 * R.RenderSeconds / FMath::Max(1e-6, S.Seconds));
+				const FString Sub = FString::Printf(TEXT("%s   %.0f S AT %.0f HZ, SEED %u, OFFLINE RENDER OF THE FULL MIX   CPU %.1f%%"), *R.Help.ToUpper(), Sec, R.Sr, Seed, 100.0 * R.RenderSeconds / FMath::Max(1e-6, S.Seconds));
 				DmAudioAnalysis::WritePanel(FPaths::Combine(Shots, FString::Printf(TEXT("ue-audio-%s.png"), *Name)), Title, Sub, R.L.GetData(), R.R.GetData(), R.L.Num(), R.Sr, S, Checks, R.Tracks, R.Markers);
 			}
 			DmAudioAnalysis::FRow Row;
 			Row.Name = Name.ToUpper(); Row.Stats = S; Row.bPass = bPass;
 			Row.Note = bPass ? FString() : Failed.Left(60).ToUpper();
-			(IsMix(Name) ? MixRows : CueRows).Add(Row);
+			if (!DmAudioTest::IsCalibration(Name)) (IsMix(Name) ? MixRows : CueRows).Add(Row);
+		}
+		Ctx.Log(FString::Printf(TEXT("DmAudio seed %u: %d PASS, %d FAIL%s%s"), Seed, SeedPass, SeedFail, SeedFail ? TEXT(":") : TEXT(""), *SeedFailed));
+		}
+
+		// (wave 4b verify) the calibration is judged on the mean over the seeds (each render carries the designed jitter)
+		if (bAcross)
+		{
+			int32 NOk = 0, NBad = 0;
+			FString Bad;
+			for (const TPair<FString, TArray<float>>& Lv : Levels)
+			{
+				float Tg = 0.f, Tl = 0.f; bool bSt = false;
+				if (!DmAudioTest::LevelTarget(Lv.Key, Tg, Tl, bSt) || Lv.Value.Num() < 2) continue;
+				double Sum = 0; float Lo = 1e9f, Hi = -1e9f;
+				for (const float V : Lv.Value) { Sum += V; Lo = FMath::Min(Lo, V); Hi = FMath::Max(Hi, V); }
+				const float Mean = float(Sum / Lv.Value.Num());
+				const bool bOk = FMath::Abs(Mean - Tg) <= Tl;
+				if (bOk) ++NOk; else { ++NBad; Bad += FString::Printf(TEXT(" [%s mean %.1f, target %.0f +/- %.1f]"), *Lv.Key, Mean, Tg, Tl); }
+				Ctx.Log(FString::Printf(TEXT("DmAudio level %s: %s mean %.1f (%.1f .. %.1f over %d seeds), target %.0f +/- %.1f %s"), *Lv.Key, bOk ? TEXT("PASS") : TEXT("FAIL"),
+					Mean, Lo, Hi, Lv.Value.Num(), Tg, Tl, bSt ? TEXT("short-term max") : TEXT("integrated")));
+			}
+			bAllPass &= NBad == 0;
+			Ctx.Log(FString::Printf(TEXT("DmAudio calibration across seeds: %s, %d levels on target, %d off%s"), NBad == 0 ? TEXT("PASS") : TEXT("FAIL"), NOk, NBad, *Bad));
+			// the cost rule (CPU < 15 % of real time) on each script's cheapest render (wall time: on a loaded machine other
+			// jobs inflate single renders, as on 2026-11-23 when fast-time read 24.5 % on one seed and 7.3-7.6 % on the others)
+			FString Slow;
+			double Worst = 0;
+			for (const TPair<FString, double>& Cb : CpuBest)
+			{
+				Worst = FMath::Max(Worst, Cb.Value);
+				if (Cb.Value >= 0.15) Slow += FString::Printf(TEXT(" %s %.1f%%"), *Cb.Key, Cb.Value * 100.0);
+			}
+			bAllPass &= Slow.IsEmpty();
+			Ctx.Log(FString::Printf(TEXT("DmAudio cost across seeds: %s, the dearest script at %.1f%% of real time (best of %d renders)%s"),
+				Slow.IsEmpty() ? TEXT("PASS") : TEXT("FAIL"), Worst * 100.0, Seeds.Num(), *Slow));
 		}
 
 		// determinism: the same script and seed render the same bits
@@ -192,6 +261,7 @@ namespace
 		double NextSample = 0;
 		int64 CuesBefore = 0;
 		TArray<FString> EventLog;
+		TMap<FString, FString> Heard;   // injected event -> the cues it produced ("choir+chime")
 		bool bDone = false;
 		int32 StormCell = -1, CityId = -1;
 	};
@@ -271,8 +341,29 @@ namespace
 	{
 		dm::World* W = Ctx.Sim ? Ctx.Sim->SimMutable() : nullptr;
 		if (!W) return;
-		auto Due = [&S, Local](int32 Bit, double At) { if (Local < At || (S.Fired & (1u << Bit))) return false; S.Fired |= 1u << Bit; return true; };
-		auto Log = [&](const TCHAR* What) { GLive.EventLog.Add(FString::Printf(TEXT("%s@%.1f %s"), *S.Name, Local, What)); FDmAudioMarker M; M.Time = Ctx.Time; M.Label = What; GLive.Markers.Add(M); };
+		// (wave 4b verify) each injected event records the cues the director played for it (the bus dispatches synchronously)
+		ADmAudioDirector* Dir = GLive.Dir.Get();
+		int64 Before = 0;
+		auto Due = [&S, Local, Dir, &Before](int32 Bit, double At)
+		{
+			if (Local < At || (S.Fired & (1u << Bit))) return false;
+			S.Fired |= 1u << Bit;
+			Before = Dir ? Dir->GetNotesTotal() : 0;
+			return true;
+		};
+		auto Log = [&](const TCHAR* What)
+		{
+			FString Got;
+			if (Dir)
+			{
+				const TArray<FString>& Rc = Dir->GetRecent();
+				const int32 New = int32(FMath::Min<int64>(Dir->GetNotesTotal() - Before, Rc.Num()));
+				for (int32 I = Rc.Num() - New; I < Rc.Num(); ++I) Got += (Got.IsEmpty() ? TEXT("") : TEXT("+")) + Rc[I];
+			}
+			GLive.Heard.Add(FString(What), Got);
+			GLive.EventLog.Add(FString::Printf(TEXT("%s@%.1f %s -> %s"), *S.Name, Local, What, Got.IsEmpty() ? TEXT("(nothing)") : *Got));
+			FDmAudioMarker M; M.Time = Ctx.Time; M.Label = What; GLive.Markers.Add(M);
+		};
 		if (S.Name == TEXT("orbit"))
 		{
 			if (Due(1, 1.0)) { W->bus.emit(dm::EvMeteorLaunched{ S.Cell, 2.5, dm::ImpactKind::Meteor, 99 }); Log(TEXT("METEOR:LAUNCHED")); }
@@ -282,23 +373,33 @@ namespace
 		{
 			if (Due(3, 2.0)) { W->bus.emit(dm::EvUiPower{ std::string("rain") }); Log(TEXT("UI:POWER")); }
 			if (Due(4, 3.0)) { W->bus.emit(dm::EvPowerUsed{ std::string("rain"), S.Cell, 0.1, true }); Log(TEXT("POWER:USED RAIN")); }
+			// (wave 4b verify) the Word powers the builder did not inject: Bless here, Renew in the forest night, Test in the storm
+			if (Due(15, 4.5)) { W->bus.emit(dm::EvPowerUsed{ std::string("bless"), S.Cell, 0.0, false }); Log(TEXT("POWER:USED BLESS")); }
 		}
 		else if (S.Name == TEXT("forest-day"))
 		{
 			if (Due(5, 2.5)) { W->bus.emit(dm::EvPowerUsed{ std::string("bloom"), S.Cell, 0.08, true }); Log(TEXT("POWER:USED BLOOM")); }
+			if (Due(14, 4.0)) { W->bus.emit(dm::EvPowerUsed{ std::string("reveal"), S.Cell, 0.0, false }); Log(TEXT("POWER:USED REVEAL")); }
 		}
 		else if (S.Name == TEXT("forest-night"))
 		{
 			if (Due(6, 3.0)) { W->bus.emit(dm::EvFireStart{ S.Cell }); Log(TEXT("FIRE:START")); }
+			if (Due(16, 4.0)) { W->bus.emit(dm::EvPowerUsed{ std::string("renew"), S.Cell, 0.0, false }); Log(TEXT("POWER:USED RENEW")); }
 		}
 		else if (S.Name == TEXT("city"))
 		{
 			if (Due(7, 1.5)) { W->bus.emit(dm::EvPrayerAnswered{ GLive.CityId, dm::PrayerKind::Rain }); Log(TEXT("PRAYER:ANSWERED")); }
 			if (Due(8, 3.0)) { W->bus.emit(dm::EvWorldAge{ 4 }); Log(TEXT("WORLD:AGE")); }
+			// (wave 4b) the v4 Word powers, a card's stages and a HUD toast
+			if (Due(10, 3.8)) { W->bus.emit(dm::EvPowerUsed{ std::string("speak"), S.Cell, 0.0, false }); Log(TEXT("POWER:USED SPEAK")); }
+			if (Due(11, 4.3)) { W->bus.emit(dm::EvUiToast{ std::string("A card"), std::string("card") }); Log(TEXT("UI:TOAST")); }
+			if (Due(12, 4.6)) { W->bus.emit(dm::EvCard{ 1, std::string("situation"), std::string("open"), -1, -1 }); Log(TEXT("CARD:OPEN")); }
+			if (Due(13, 5.2)) { W->bus.emit(dm::EvCard{ 1, std::string("situation"), std::string("answered"), -1, 0 }); Log(TEXT("CARD:ANSWERED")); }
 		}
 		else if (S.Name == TEXT("storm"))
 		{
 			if (Due(9, 1.5)) { W->bus.emit(dm::EvLightning{ S.Cell, false }); Log(TEXT("LIGHTNING")); }
+			if (Due(17, 3.0)) { W->bus.emit(dm::EvPowerUsed{ std::string("test"), S.Cell, 0.0, false }); Log(TEXT("POWER:USED TEST")); }
 		}
 	}
 
@@ -385,6 +486,43 @@ namespace
 						Add(TEXT("CITY: TOWN >= 0.3"), T >= 0.3f, FString::Printf(TEXT("%.2f (age %d)"), T, S2.CtxAt.TownAge));
 					}
 					if (S2.Name == TEXT("storm")) Add(TEXT("STORM: RAIN >= 0.4"), Ly(S2, EDmLayer::Rain) >= 0.4f, FString::Printf(TEXT("%.2f"), Ly(S2, EDmLayer::Rain)));
+				}
+				{
+					// (wave 4b verify) every injected event produced its own cue(s), named per event, not just "somewhere in the run"
+					struct FWant { const TCHAR* Ev; const TCHAR* Cues; bool bWord; };
+					static const FWant Wants[] = {
+						{ TEXT("METEOR:LAUNCHED"), TEXT("fall"), false }, { TEXT("METEOR:IMPACT"), TEXT("impact"), false },
+						{ TEXT("UI:POWER"), TEXT("arm"), false }, { TEXT("POWER:USED RAIN"), TEXT("rainfall"), false },
+						{ TEXT("POWER:USED BLOOM"), TEXT("shimmer"), false }, { TEXT("FIRE:START"), TEXT("crackle"), false },
+						{ TEXT("PRAYER:ANSWERED"), TEXT("chime"), false }, { TEXT("WORLD:AGE"), TEXT("rumble"), false },
+						{ TEXT("LIGHTNING"), TEXT("thunder"), false },
+						{ TEXT("POWER:USED SPEAK"), TEXT("choir"), true }, { TEXT("POWER:USED BLESS"), TEXT("chime+shimmer"), true },
+						{ TEXT("POWER:USED REVEAL"), TEXT("shimmer"), true }, { TEXT("POWER:USED TEST"), TEXT("toll"), true },
+						{ TEXT("POWER:USED RENEW"), TEXT("rumble+choir"), true }, { TEXT("UI:TOAST"), TEXT("toast"), true },
+						{ TEXT("CARD:OPEN"), TEXT("toll"), true }, { TEXT("CARD:ANSWERED"), TEXT("chime"), true },
+					};
+					for (int32 Pass = 0; Pass < 2; ++Pass)
+					{
+						bool bOk = true;
+						FString Detail;
+						for (const FWant& Wn : Wants)
+						{
+							if (Wn.bWord != (Pass == 1)) continue;
+							const FString* Got = GLive.Heard.Find(Wn.Ev);
+							bool bHit = Got != nullptr;
+							if (Got)
+							{
+								// every wanted cue among the names the event added (a stinger may come with it)
+								TArray<FString> Need, Have;
+								FString(Wn.Cues).ParseIntoArray(Need, TEXT("+"));
+								Got->ParseIntoArray(Have, TEXT("+"));
+								for (const FString& Nd : Need) bHit &= Have.Contains(Nd);
+							}
+							bOk &= bHit;
+							if (!bHit) Detail += FString::Printf(TEXT("%s%s WANTS %s GOT %s"), Detail.IsEmpty() ? TEXT("") : TEXT("; "), Wn.Ev, Wn.Cues, Got ? (Got->IsEmpty() ? TEXT("NOTHING") : **Got) : TEXT("NOT INJECTED"));
+						}
+						Add(Pass == 1 ? TEXT("WORD + CARD + TOAST: EACH EVENT ITS CUE") : TEXT("POWERS + DISASTERS: EACH EVENT ITS CUE"), bOk, bOk ? TEXT("ALL") : Detail.ToUpper());
+					}
 				}
 				const FDmAudioLevels End = D->GetEngine()->GetLevels();
 				Add(TEXT("EVENTS BECAME CUES"), End.CuesStarted >= 6, FString::Printf(TEXT("%lld CUES, %lld STINGERS, EVENTS HEARD %lld"), End.CuesStarted, End.StingersStarted, D->GetEventsHeard()));

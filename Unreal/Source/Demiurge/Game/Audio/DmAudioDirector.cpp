@@ -71,6 +71,14 @@ bool FDmAudio::Play(const UObject* WorldContext, const TCHAR* Name, int32 Cell, 
 	return D->PlayCue(C, Cell, Vol);
 }
 
+bool FDmAudio::PlayIndexed(const UObject* WorldContext, const TCHAR* Name, int32 Index)
+{
+	ADmAudioDirector* D = ADmAudioDirector::Find(WorldContext);
+	EDmCue C = EDmCue::Click;
+	if (!D || !Name || !DmAudio::CueFromName(FString(Name), C)) return false;
+	return D->PlayCue(C, -1, 1.f, float(FMath::Max(0, Index)));
+}
+
 bool FDmAudio::Stinger(const UObject* WorldContext, const TCHAR* Name)
 {
 	ADmAudioDirector* D = ADmAudioDirector::Find(WorldContext);
@@ -90,7 +98,7 @@ void FDmAudio::SetVolumes(const UObject* WorldContext, float Master, float Music
 	{
 		FDmAudioVolumes V;
 		V.Master = FMath::Clamp(Master, 0.f, 1.f); V.Music = FMath::Clamp(Music, 0.f, 1.f);
-		V.Sfx = FMath::Clamp(Sfx, 0.f, 1.f); V.Ambience = FMath::Clamp(Ambience, 0.f, 1.f); V.Ui = V.Sfx;
+		V.Sfx = FMath::Clamp(Sfx, 0.f, 1.f); V.Ambience = FMath::Clamp(Ambience, 0.f, 1.f); V.Ui = V.Sfx * (0.6f / 0.9f);   // 5.1: ui 0.6 by default
 		D->SetVolumes(V);
 	}
 }
@@ -132,11 +140,12 @@ void ADmAudioDirector::BeginPlay()
 	{
 		const dm::save::UserSettings Def = dm::save::defaultSettings();
 		FDmAudioVolumes V;
-		V.Master = float(Def.master); V.Music = float(Def.music); V.Sfx = float(Def.sfx); V.Ambience = float(Def.ambience); V.Ui = V.Sfx;
+		V.Master = float(Def.master); V.Music = float(Def.music); V.Sfx = float(Def.sfx); V.Ambience = float(Def.ambience); V.Ui = V.Sfx * (0.6f / 0.9f);
 		// test hook (verifier): -dmaudiomaster=0 starts a real-device run silent from its first block
 		float TestMaster = -1.f;
 		if (FParse::Value(FCommandLine::Get(), TEXT("-dmaudiomaster="), TestMaster)) V.Master = FMath::Clamp(TestMaster, 0.f, 1.f);
 		Engine->SetVolumes(V);
+		LastVol = V;
 	}
 	Unlocked.Init(false, dm::powers::kPowerCount);
 	Sense();
@@ -177,7 +186,8 @@ void ADmAudioDirector::OnWorldChanged(const dm::World* W)
 {
 	bUnlockPrimed = false;
 	for (bool& B : Unlocked) B = false;
-	TensionHold = 0.f;
+	TensionHold = 0.f; GoldenHold = 0.f; DoomHold = 0.f;
+	History.Reset();
 	if (W) EngineSeed = W->seed;
 	Sense();
 }
@@ -248,6 +258,7 @@ void ADmAudioDirector::Sense()
 			}
 	double WarLand = 0;
 	const int32 Count = G.within(Focus, Ang, Within);
+	double Rainf = 0, Wetl = 0;
 	double Sea = 0, Coast = 0, Forest = 0, Open = 0, Desert = 0, Cold = 0, Mount = 0, Urban = 0, Fire = 0, Lava = 0, Wet = 0, Tot = 0;
 	for (int32 I = 0; I < Count; ++I)
 	{
@@ -261,8 +272,10 @@ void ADmAudioDirector::Sense()
 		const double Veg = FMath::Clamp(double(W->veg[size_t(Cl)]) * 1.4, 0.0, 1.0);
 		switch (B)
 		{
-		case dm::Biome::FOREST: case dm::Biome::RAINFOREST: case dm::Biome::TAIGA: Forest += Wt * (0.4 + 0.6 * Veg); break;
-		case dm::Biome::GRASSLAND: case dm::Biome::SAVANNA: case dm::Biome::WETLAND: Open += Wt; break;
+		case dm::Biome::FOREST: case dm::Biome::TAIGA: Forest += Wt * (0.4 + 0.6 * Veg); break;
+		case dm::Biome::RAINFOREST: Rainf += Wt * (0.4 + 0.6 * Veg); break;
+		case dm::Biome::GRASSLAND: case dm::Biome::SAVANNA: Open += Wt; break;
+		case dm::Biome::WETLAND: Wetl += Wt; break;
 		case dm::Biome::DESERT: case dm::Biome::BARREN: case dm::Biome::BEACH: Desert += Wt; break;
 		case dm::Biome::ICE: case dm::Biome::TUNDRA: case dm::Biome::SEAICE: Cold += Wt; break;
 		case dm::Biome::SNOWPEAK: Cold += Wt; Mount += Wt; break;
@@ -283,6 +296,7 @@ void ADmAudioDirector::Sense()
 	}
 	const double Inv = Tot > 0 ? 1.0 / Tot : 0.0;
 	C.Sea = float(Sea * Inv); C.Coast = float(FMath::Min(1.0, Coast * Inv * 2.5)); C.Forest = float(Forest * Inv); C.Open = float(Open * Inv);
+	C.Rainforest = float(Rainf * Inv); C.Wetland = float(Wetl * Inv);
 	C.Desert = float(Desert * Inv); C.Cold = float(Cold * Inv); C.Mountain = float(FMath::Min(1.0, Mount * Inv));
 	C.Town = float(FMath::Min(1.0, Urban * Inv * 3.0));
 	C.Fire = float(FMath::Min(1.0, Fire * Inv * 8.0));
@@ -331,6 +345,40 @@ void ADmAudioDirector::Sense()
 	// a war anywhere: a faint darker layer; over the warring lands: the darker mode
 	const float WarT = NumWar > 0 ? 0.3f + 0.5f * float(FMath::Min(1.0, WarLand * Inv * 3.0)) : 0.f;
 	C.Tension = FMath::Clamp(FMath::Max3(WarT, Disaster, TensionHold), 0.f, 1.f);
+
+	// the music moods (sound-direction 1.3), derived from the world: war while any war is on; plague while any settlement
+	// is ill; a golden age when devotion is high and the people have grown for 30 years (or a miracle just landed); doom
+	// when CO2 is very high, the sea rises fast, a nuclear event struck, or the people fell by 20 % in 10 years
+	{
+		double Pop = 0, Dev = 0;
+		bool bPlague = false;
+		for (const dm::Settlement& S : W->settlements)
+		{
+			if (S.dead) continue;
+			Pop += S.pop; Dev += S.pop * S.devotion;
+			bPlague |= S.plague > 0.0;
+		}
+		Dev = Pop > 0 ? Dev / Pop : 0;
+		if (W->phase >= dm::Phase::History && (History.Num() == 0 || W->year >= History.Last().Year + 1.0))
+		{
+			FYearSample Y; Y.Year = W->year; Y.Pop = Pop; Y.Devotion = Dev;
+			History.Add(Y);
+			if (History.Num() > 64) History.RemoveAt(0);
+		}
+		auto PopAgo = [this](double Years, double Now) { for (int32 I = History.Num() - 1; I >= 0; --I) if (History[I].Year <= Now - Years) return History[I].Pop; return -1.0; };
+		const double P30 = PopAgo(30.0, W->year), P10 = PopAgo(10.0, W->year);
+		const bool bGrowing = P30 > 0 && Pop > P30 * 1.05;
+		const bool bShrinking = P10 > 0 && Pop < P10 * 0.8;
+		double SeaRise = 0;
+		for (int32 I = History.Num() - 1; I >= 0; --I) if (History[I].Year <= W->year - 10.0) { SeaRise = 0; break; }
+		const bool bCo2 = W->co2 > 200.0;
+		const bool bSeaFast = W->vars.seaBase.has_value() && std::isfinite(*W->vars.seaBase) && W->seaLevel - *W->vars.seaBase > 0.6;
+		C.Mood[0] = NumWar > 0 ? 1.f : 0.f;
+		C.Mood[1] = bPlague ? 1.f : 0.f;
+		C.Mood[2] = ((Dev > 0.65 && bGrowing) || GoldenHold > 0.f) ? 1.f : 0.f;
+		C.Mood[3] = (bCo2 || bSeaFast || DoomHold > 0.f || bShrinking) ? 1.f : 0.f;
+		(void)SeaRise;
+	}
 	Ctx = C;
 	Engine->SetContext(C);
 }
@@ -364,16 +412,18 @@ bool ADmAudioDirector::Place(int32 Cell, bool bPlanetary, FDmCueParams& P) const
 void ADmAudioDirector::Note(const TCHAR* What)
 {
 	Recent.Add(What);
+	++NotesTotal;
 	if (Recent.Num() > 32) Recent.RemoveAt(0);
 }
 
-bool ADmAudioDirector::PlayCue(EDmCue Cue, int32 Cell, float Vol, float Param)
+bool ADmAudioDirector::PlayCue(EDmCue Cue, int32 Cell, float Vol, float Param, uint8 Variant)
 {
 	if (!Engine.IsValid() || int32(Cue) < 0 || Cue >= EDmCue::Count) return false;
 	static const float MinGap[int32(EDmCue::Count)] = {
-		/* hover */ 0.05f, /* click */ 0.03f, /* arm */ 0.08f, /* deny */ 0.25f, /* unlock */ 0.5f, /* thunder */ 0.12f, /* impact */ 0.1f,
-		/* rumble */ 0.35f, /* wave */ 1.2f, /* rainfall */ 0.45f, /* shimmer */ 0.6f, /* chime */ 0.4f, /* choir */ 1.f, /* horn */ 2.f,
-		/* toll */ 2.f, /* roar */ 2.f, /* crackle */ 1.2f, /* fall */ 0.05f,
+		// sound-direction 4 and 3.2 rate limits: hover 80 ms, deny 300 ms, shimmer 1.2 s, toast 1.5 s, a chronicle entry 4 s
+		/* hover */ 0.08f, /* click */ 0.03f, /* arm */ 0.08f, /* deny */ 0.3f, /* unlock */ 0.5f, /* thunder */ 0.12f, /* impact */ 0.1f,
+		/* rumble */ 0.35f, /* wave */ 1.2f, /* rainfall */ 0.45f, /* shimmer */ 1.2f, /* chime */ 0.4f, /* choir */ 1.f, /* horn */ 2.f,
+		/* toll */ 2.f, /* roar */ 2.f, /* crackle */ 1.2f, /* fall */ 0.05f, /* toast */ 1.5f, /* chronicle */ 4.f,
 	};
 	const int32 K = int32(Cue);
 	if (Now - CueLast[K] < MinGap[K] && CueLast[K] > 0) return false;
@@ -382,6 +432,7 @@ bool ADmAudioDirector::PlayCue(EDmCue Cue, int32 Cell, float Vol, float Param)
 	FDmCueParams P;
 	P.Vol = FMath::Clamp(Vol, 0.f, 2.f);
 	P.Param = Param;
+	P.Variant = Variant;
 	const bool bPlanetary = Cue == EDmCue::Impact || Cue == EDmCue::Thunder || Cue == EDmCue::Fall || Cue == EDmCue::Roar || Cue == EDmCue::Wave
 		|| (Cue == EDmCue::Rumble && Param >= 0.35f);
 	if (Cell >= 0)
@@ -406,13 +457,10 @@ bool ADmAudioDirector::PlayStinger(EDmStinger S)
 {
 	if (!Engine.IsValid()) return false;
 	const int32 K = int32(S);
-	const double Gap = S == EDmStinger::Founding ? 20.0 : 8.0;
+	// 1.4 and 3.1 rule 6: founding at most once per 30 s, wrath and miracle once per 20 s (the score itself queues
+	// stingers one per 6 s and drops any more than 20 s late, except endings)
+	const double Gap = S == EDmStinger::Founding ? 30.0 : ((S == EDmStinger::Wrath || S == EDmStinger::Miracle) ? 20.0 : (S >= EDmStinger::EndingBeloved ? 0.0 : 8.0));
 	if (StingerLast[K] > 0 && Now - StingerLast[K] < Gap) return false;
-	// one stinger at a time: anything within 4 s of another is dropped (endings always play)
-	const bool bEnding = S >= EDmStinger::EndingBeloved;
-	if (!bEnding)
-		for (int32 I = 0; I < int32(EDmStinger::Count); ++I)
-			if (StingerLast[I] > 0 && Now - StingerLast[I] < 4.0) return false;
 	StingerLast[K] = Now;
 	Engine->Stinger(S);
 	Note(DmAudio::StingerName(S));
@@ -421,7 +469,22 @@ bool ADmAudioDirector::PlayStinger(EDmStinger S)
 
 void ADmAudioDirector::SetVolumes(const FDmAudioVolumes& V)
 {
-	if (Engine.IsValid()) Engine->SetVolumes(V);
+	if (!Engine.IsValid()) return;
+	Engine->SetVolumes(V);
+	// 4: a settings slider plays the click at the new volume of its own bus, at most every 120 ms
+	float BusVol = -1.f;
+	if (!FMath::IsNearlyEqual(V.Music, LastVol.Music, 1e-3f)) BusVol = V.Music;
+	else if (!FMath::IsNearlyEqual(V.Ambience, LastVol.Ambience, 1e-3f)) BusVol = V.Ambience;
+	else if (!FMath::IsNearlyEqual(V.Sfx, LastVol.Sfx, 1e-3f)) BusVol = V.Sfx;
+	else if (!FMath::IsNearlyEqual(V.Master, LastVol.Master, 1e-3f)) BusVol = 1.f;
+	LastVol = V;
+	if (BusVol >= 0.f && (VolClickLast < 0 || Now - VolClickLast >= 0.12))
+	{
+		VolClickLast = Now;
+		FDmCueParams P;
+		P.Vol = FMath::Clamp(BusVol / FMath::Max(0.05f, V.Ui), 0.f, 2.f);
+		Engine->Play(EDmCue::Click, P);
+	}
 }
 
 void ADmAudioDirector::Suspend(bool bSuspend)
@@ -449,32 +512,40 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 {
 	++EventsHeard;
 	using namespace dm;
+	const int32 WAge = [this]() { const UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this); return (Sim && Sim->Sim()) ? Sim->Sim()->age : 0; }();
 	if (const EvLightning* X = E.as<EvLightning>()) { PlayCue(EDmCue::Thunder, X->cell, 0.9f); return; }
 	if (const EvMeteorLaunched* X = E.as<EvMeteorLaunched>())
 	{
-		PlayCue(EDmCue::Fall, X->cell, X->kind == ImpactKind::Comet ? 0.8f : 1.f, float(FMath::Clamp(X->eta, 0.6, 8.0)));
+		// 3.2: a meteor roars before it lands (the falling band); a comet is a soft, high roar
+		if (X->kind == ImpactKind::Comet) PlayCue(EDmCue::Roar, X->cell, 0.8f, 0.f, DmCueVar::RoarComet);
+		else PlayCue(EDmCue::Fall, X->cell, 1.f, float(FMath::Clamp(X->eta, 0.6, 8.0)));
 		return;
 	}
 	if (const EvMeteorImpact* X = E.as<EvMeteorImpact>())
 	{
 		const bool bComet = X->kind == ImpactKind::Comet;
-		PlayCue(EDmCue::Impact, X->cell, bComet ? 0.7f : 1.f, bComet ? 0.5f : 1.f);
-		if (X->sea) PlayCue(EDmCue::Wave, X->cell, 0.7f);
-		if (!bComet) TensionHold = FMath::Max(TensionHold, 0.6f);
+		if (bComet) PlayCue(EDmCue::Wave, X->cell, 0.8f, 0.f, DmCueVar::WaveComet);    // water arriving
+		else
+		{
+			PlayCue(EDmCue::Impact, X->cell, 1.f, 1.f);
+			if (X->sea) PlayCue(EDmCue::Wave, X->cell, 0.7f, 0.f, DmCueVar::WaveTsunami);
+			TensionHold = FMath::Max(TensionHold, 0.6f);
+		}
 		return;
 	}
-	if (const EvTsunamiStart* X = E.as<EvTsunamiStart>()) { PlayCue(EDmCue::Wave, X->cell, 1.f); return; }
-	if (const EvTsunamiHit* X = E.as<EvTsunamiHit>()) { PlayCue(EDmCue::Wave, X->cell, float(FMath::Clamp(0.4 + X->height, 0.4, 1.0))); return; }
+	if (const EvTsunamiStart* X = E.as<EvTsunamiStart>()) { PlayCue(EDmCue::Wave, X->cell, 1.f, 0.f, DmCueVar::WaveTsunami); return; }
+	if (const EvTsunamiHit* X = E.as<EvTsunamiHit>()) { PlayCue(EDmCue::Wave, X->cell, float(FMath::Clamp(0.4 + X->height, 0.4, 1.0)), 0.f, DmCueVar::WaveTsunami); return; }
 	if (const EvVolcanoStart* X = E.as<EvVolcanoStart>())
 	{
-		PlayCue(EDmCue::Rumble, X->cell, 1.f, 1.f);
-		PlayCue(EDmCue::Roar, X->cell, 0.6f);
+		// 3.2: rumble (eruption) + crackle
+		PlayCue(EDmCue::Rumble, X->cell, 1.f, 1.f, DmCueVar::RumbleEruption);
+		PlayCue(EDmCue::Crackle, X->cell, 0.7f);
 		TensionHold = FMath::Max(TensionHold, 0.6f);
 		return;
 	}
 	if (const EvQuake* X = E.as<EvQuake>())
 	{
-		PlayCue(EDmCue::Rumble, X->cell, 1.f, float(FMath::Clamp(0.4 + X->power * 0.6, 0.4, 1.2)));
+		PlayCue(EDmCue::Rumble, X->cell, 1.f, float(FMath::Clamp(0.4 + X->power * 0.6, 0.4, 1.2)), DmCueVar::RumbleQuake);
 		TensionHold = FMath::Max(TensionHold, 0.45f);
 		return;
 	}
@@ -484,16 +555,41 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 	{
 		const std::string& Id = X->id;
 		if (Id == "rain") { PlayCue(EDmCue::Rainfall, X->cell, 0.9f); BrushRain = 0.8f; }
-		else if (Id == "raise" || Id == "lower") PlayCue(EDmCue::Rumble, X->cell, 0.8f, 0.2f);
+		else if (Id == "raise" || Id == "lower") PlayCue(EDmCue::Rumble, X->cell, 0.8f, 0.2f, Id == "raise" ? DmCueVar::RumbleRaise : DmCueVar::RumbleLower);
 		else if (Id == "bloom" || Id == "seed") PlayCue(EDmCue::Shimmer, X->cell, 0.9f);
-		else if (Id == "heal" || Id == "inspire") PlayCue(EDmCue::Chime, X->cell, Id == "heal" ? 1.f : 0.75f);
-		else if (Id == "prophet" || Id == "awaken") PlayCue(EDmCue::Choir, X->cell, 1.f);
+		else if (Id == "heal") PlayCue(EDmCue::Chime, X->cell, 1.f, 0.f, DmCueVar::ChimeHeal);
+		else if (Id == "inspire") { PlayCue(EDmCue::Chime, X->cell, 0.8f, 0.f, DmCueVar::ChimeHeal); PlayCue(EDmCue::Shimmer, X->cell, 0.8f, 0.f, DmCueVar::ShimmerInspire); }
+		else if (Id == "prophet") PlayCue(EDmCue::Choir, X->cell, 1.f, 0.f, DmCueVar::ChoirProphet);
+		else if (Id == "awaken") PlayCue(EDmCue::Choir, X->cell, 1.f, 0.f, DmCueVar::ChoirAwaken);
 		else if (Id == "consecrate") { PlayCue(EDmCue::Choir, X->cell, 0.8f); PlayCue(EDmCue::Chime, X->cell, 0.6f); }   // (wave3-final) v3 power had no cue
-		else if (Id == "peace") { PlayCue(EDmCue::Chime, X->cell, 0.7f); PlayCue(EDmCue::Choir, X->cell, 0.6f); }
+		else if (Id == "peace") { PlayCue(EDmCue::Chime, X->cell, 0.8f, 0.f, DmCueVar::ChimePeace); PlayStinger(EDmStinger::Miracle); }
 		else if (Id == "plague") { PlayCue(EDmCue::Toll, X->cell, 1.f); TensionHold = FMath::Max(TensionHold, 0.4f); }
+		// (wave 4b) the Word powers of v4 had no cue: a voice for Speak, a blessing's chime and grains, the inspire
+		// shimmer for Reveal, a far bell for a Test, and for Renew the world's ground giving way under a waking choir
+		else if (Id == "speak") PlayCue(EDmCue::Choir, X->cell, 0.6f, 0.f, DmCueVar::ChoirProphet);
+		else if (Id == "bless") { PlayCue(EDmCue::Chime, X->cell, 0.9f, 0.f, DmCueVar::ChimeHeal); PlayCue(EDmCue::Shimmer, X->cell, 0.5f, 0.f, DmCueVar::ShimmerBloom); }
+		else if (Id == "reveal") PlayCue(EDmCue::Shimmer, X->cell, 0.9f, 0.f, DmCueVar::ShimmerInspire);
+		else if (Id == "test") PlayCue(EDmCue::Toll, X->cell, 0.5f);
+		else if (Id == "renew")
+		{
+			PlayCue(EDmCue::Rumble, X->cell, 1.f, 1.f, DmCueVar::RumbleQuake);
+			PlayCue(EDmCue::Choir, -1, 0.7f, 0.f, DmCueVar::ChoirAwaken);
+			TensionHold = FMath::Max(TensionHold, 0.6f);
+		}
+		// 3.1 rule 6: the music answers; wrath powers call the wrath stinger, grace powers the miracle (each at most once per 20 s)
+		if (const dm::powers::PowerDef* Def = dm::powers::byId(Id))
+		{
+			if (Def->group == dm::powers::Group::Wrath) PlayStinger(EDmStinger::Wrath);
+			else if (Def->group == dm::powers::Group::Grace) PlayStinger(EDmStinger::Miracle);
+		}
 		return;
 	}
-	if (const EvMiracleWitnessed* X = E.as<EvMiracleWitnessed>()) { PlayStinger(X->good >= 0 ? EDmStinger::Miracle : EDmStinger::Wrath); return; }
+	if (const EvMiracleWitnessed* X = E.as<EvMiracleWitnessed>())
+	{
+		if (X->good >= 0) GoldenHold = FMath::Max(GoldenHold, 40.f);   // 1.3: a miracle just landed
+		PlayStinger(X->good >= 0 ? EDmStinger::Miracle : EDmStinger::Wrath);
+		return;
+	}
 	if (const EvSettlementFounded* X = E.as<EvSettlementFounded>()) { (void)X; PlayStinger(EDmStinger::Founding); return; }
 	if (const EvSettlementPlague* X = E.as<EvSettlementPlague>())
 	{
@@ -509,12 +605,20 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 		if (const UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))
 			if (const Culture* Cu = Sim->Sim() ? state::culture(*Sim->Sim(), X->a) : nullptr)
 				if (const Settlement* S = state::settlement(*Sim->Sim(), Cu->capital)) Cell = S->cell;
-		PlayCue(EDmCue::Horn, Cell, 0.9f);
+		PlayCue(EDmCue::Horn, Cell, 0.9f, float(WAge));   // the age decides the horn
 		TensionHold = FMath::Max(TensionHold, 0.5f);
 		return;
 	}
-	if (const EvBattle* X = E.as<EvBattle>()) { PlayCue(EDmCue::Horn, X->cell, 0.5f); return; }
-	if (const EvWorldAge* X = E.as<EvWorldAge>()) { (void)X; PlayStinger(EDmStinger::Age); return; }
+	if (const EvBattle* X = E.as<EvBattle>()) { PlayCue(EDmCue::Horn, X->cell, 0.5f, float(WAge)); return; }
+	if (const EvWorldAge* X = E.as<EvWorldAge>())
+	{
+		// 3.3: the score plays the age stinger itself when the phrase ends (it follows the context's age); under it a low
+		// rumble swell (the sculpting variant, -6 dB re music, 3 s); an unlock at the same time waits 2 s
+		(void)X;
+		PlayCue(EDmCue::Rumble, -1, 0.6f, 0.f, DmCueVar::RumbleAge);
+		UnlockTimer = FMath::Max(UnlockTimer, 2.f);
+		return;
+	}
 	if (const EvPrayerAnswered* X = E.as<EvPrayerAnswered>())
 	{
 		if (const UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))
@@ -536,8 +640,9 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 	if (const EvNuke* X = E.as<EvNuke>())
 	{
 		PlayCue(EDmCue::Impact, X->cell, 1.f, 1.2f);
-		PlayCue(EDmCue::Rumble, X->cell, 1.f, 1.f);
+		PlayCue(EDmCue::Rumble, X->cell, 1.f, 1.f, DmCueVar::RumbleEruption);
 		TensionHold = 1.f;
+		DoomHold = FMath::Max(DoomHold, 120.f);   // 1.3: a nuclear event
 		return;
 	}
 	if (const EvArkLaunched* X = E.as<EvArkLaunched>())
@@ -545,7 +650,7 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 		int32 Cell = -1;
 		if (const UDmSimSubsystem* Sim = UDmSimSubsystem::Get(this))
 			if (const Settlement* S = Sim->Sim() ? state::settlement(*Sim->Sim(), X->settlement) : nullptr) Cell = S->cell;
-		PlayCue(EDmCue::Roar, Cell, 1.f);
+		PlayCue(EDmCue::Roar, Cell, 1.f, 0.f, DmCueVar::RoarLaunch);
 		return;
 	}
 	if (const EvEnding* X = E.as<EvEnding>())
@@ -566,6 +671,13 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 		return;
 	}
 	// (integration) the sim events that had no sound yet (audio report: drought; and the quieter history beats)
+	if (E.as<EvChronicleEntry>())
+	{
+		// 4: the soft quill, at most every 4 s; major entries (founding, war, age) have their stinger instead
+		for (int32 I = 0; I < int32(EDmStinger::Count); ++I) if (StingerLast[I] > 0 && Now - StingerLast[I] < 2.0) return;
+		PlayCue(EDmCue::Chronicle);
+		return;
+	}
 	if (const EvDrought* X = E.as<EvDrought>()) { if (X->start) PlayCue(EDmCue::Crackle, X->cell, 0.35f); return; }
 	if (const EvWarEnded* X = E.as<EvWarEnded>()) { PlayCue(EDmCue::Chime, -1, 0.45f); return; }
 	if (const EvSettlementCaptured* X = E.as<EvSettlementCaptured>())
@@ -578,8 +690,38 @@ void ADmAudioDirector::OnSimEvent(const dm::Event& E)
 	if (E.as<EvCultureDied>()) { PlayCue(EDmCue::Toll, -1, 0.7f); return; }
 	if (E.as<EvProphetDied>()) { PlayCue(EDmCue::Toll, -1, 0.35f); return; }
 	if (E.as<EvAweShort>()) { PlayCue(EDmCue::Deny); return; }
-	if (const EvUiPower* X = E.as<EvUiPower>()) { PlayCue(X->id.empty() ? EDmCue::Click : EDmCue::Arm); return; }
+	if (const EvUiPower* X = E.as<EvUiPower>())
+	{
+		// 4: arming pitches by power group; disarming (an empty id) plays the same pair reversed, 4 dB softer
+		if (X->id.empty()) { PlayCue(EDmCue::Arm, -1, 1.f, 0.f, uint8(LastArmGroup | DmCueVar::ArmDisarm)); return; }
+		uint8 G = DmCueVar::ArmSky;
+		if (const dm::powers::PowerDef* Def = dm::powers::byId(X->id))
+		{
+			switch (Def->group)
+			{
+			case dm::powers::Group::Shape: G = DmCueVar::ArmShape; break;
+			case dm::powers::Group::Wrath: G = DmCueVar::ArmWrath; break;
+			case dm::powers::Group::Grace: G = DmCueVar::ArmGrace; break;
+			case dm::powers::Group::Genesis: G = DmCueVar::ArmGenesis; break;
+			default: G = DmCueVar::ArmSky; break;
+			}
+		}
+		LastArmGroup = G;
+		PlayCue(EDmCue::Arm, -1, 1.f, 0.f, G);
+		return;
+	}
 	if (E.as<EvUiSelect>() || E.as<EvUiSpeed>() || E.as<EvUiOverlay>() || E.as<EvUiState>()) { PlayCue(EDmCue::Click); return; }
+	// (wave 4b) 4: the toast's soft ping had no trigger; the HUD's toasts arrive as ui:toast
+	if (E.as<EvUiToast>()) { PlayCue(EDmCue::Toast); return; }
+	// (wave 4b, gameplay-v4 3.10) a card's stages: it opens low (a far bell), an answer resolves (the peace chime), a lapse
+	// falls away (a softer, lower bell); a withdrawn card is silent
+	if (const EvCard* X = E.as<EvCard>())
+	{
+		if (X->stage == "open") PlayCue(EDmCue::Toll, -1, 0.4f);
+		else if (X->stage == "answered") PlayCue(EDmCue::Chime, -1, 0.55f, 0.f, DmCueVar::ChimePeace);
+		else if (X->stage == "lapsed") PlayCue(EDmCue::Toll, -1, 0.3f);
+		return;
+	}
 	if (const EvPhase* X = E.as<EvPhase>()) { if (X->phase != X->prev) PlayCue(EDmCue::Unlock); return; }
 }
 
@@ -604,6 +746,8 @@ void ADmAudioDirector::Tick(float DeltaSeconds)
 	Now += DeltaSeconds;
 	BrushRain = FMath::Max(0.f, BrushRain - DeltaSeconds * 0.8f);
 	TensionHold = FMath::Max(0.f, TensionHold - DeltaSeconds * 0.025f);
+	GoldenHold = FMath::Max(0.f, GoldenHold - DeltaSeconds);
+	DoomHold = FMath::Max(0.f, DoomHold - DeltaSeconds);
 	SenseTimer -= DeltaSeconds;
 	if (SenseTimer <= 0.f)
 	{
